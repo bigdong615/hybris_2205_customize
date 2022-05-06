@@ -154,6 +154,34 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String POSTAL_CODE = "PostalCode";
 	public static final String COUNTRY_CODE = "CountryCode";
 	public static final String DESTINATION_ADDRESS = "DestinationAddress";
+	public static final String NAME_MAX_CHARACTER = "name.max.character";
+
+
+	public static final String FEDEX_SERVICE_ID = "ship";
+	public static final int FEDEX_MAJOR = 28;
+	public static final int FEDEX_INTERMEDIATE = 0;
+	public static final int FEDEX_MINOR = 0;
+	public static final String ONE = "1";
+	public static final String TWO = "1";
+	public static final String FEDEX_MASTER = "Master";
+	public static final String FEDEX_CHILD = "Child";
+	public static final String FEDEX_PACKAGING_TYPE = "YOUR_PACKAGING";
+	public static final String FEDEX_COUNTRY_CODE = "US";
+	public static final String FEDEX_SERVICE_TYPE = "PRIORITY_OVERNIGHT";
+	public static final String OUT_BOUND_LABEL = "outbound";
+	public static final String IN_BOUND_LABEL = "inbound";
+	public static final int SIXTEEN = 16;
+	public static final int EIGHTEEN = 18;
+	public static final int THIRTY_ONE = 31;
+	public static final int TWENTY = 20;
+	public static final int MINUS_SEVEN = -7;
+	public static final String END_POINT = "endPoint";
+	public static final String DELIVERY_ZIP_CODE_SF = "95054";
+	public static final String DELIVERY_ZIP_CODE_NYC = "10109";
+	public static final int STATUS_CODE_200 = 200;
+	public static final int STATUS_CODE_201 = 201;
+	public static final int STATUS_CODE_400 = 400;
+
 
 	private BlintegrationConstants()
 	{

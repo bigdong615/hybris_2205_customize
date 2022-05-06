@@ -11,14 +11,18 @@ import com.google.common.collect.Lists;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.CartEntryModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.impl.DefaultOrderDao;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -37,10 +41,21 @@ import org.apache.log4j.Logger;
  */
 public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 {
-	private UserService userService;
 	private static final Logger LOG = Logger.getLogger(DefaultBlOrderDao.class);
+	private UserService userService;
+	private ConfigurationService configurationService;
+	private BaseStoreService baseStoreService;
 	private static final String MANUAL_REVIEW_STATUS_BY_RESHUFFLER = "manualReviewStatusByReshuffler";
 	private static final String ORDER_COMPLETED_DATE = "orderCompletedDate";
+	private static final String TIMER = "timer";
+	private static final Integer BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS = 8;
+	private static final String IS_EXTENDED_ORDER ="isExtendedOrder";
+	private static final String IS_REPLACEMENT_ORDER ="isReplacementOrder";
+	private static final String IS_AUTHORIZATION_VOIDED ="isAuthorizationVoided";
+	private static final String DELAY_VOID_TRANSACTION_BY_TIME = "delay.void.transaction.time";
+	private static final String IS_GIFT_CARD_ORDER = "isGiftCardOrder";
+	private static final String IS_NEW_GEAR_ORDER = "isNewGearOrder";
+
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} NOT IN "
@@ -57,8 +72,8 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE ({con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
 			+ "} BETWEEN ?startDate AND ?endDate) AND {o:status} IN "
-			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND {" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER
-			+ "} =?manualReviewStatusByReshuffler";
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND ({o:" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER
+			+ "} =?manualReviewStatusByReshuffler OR {o:" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER + "}  is null)";
 
 	private static final String GET_ORDERS_OF_UNAVAILABLE_SOFT_ASSIGNED_SERIALS = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o JOIN " + OrderEntryModel._TYPECODE + " AS oe ON {oe:order} = {o:pk} JOIN " + BlProductModel._TYPECODE
@@ -67,7 +82,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ " AND {o:status} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED'}})";
 
 	private static final String GET_COMPLETED_RENTAL_ORDERS_FOR_SHARE_A_SALE = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALCART + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALORDER + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
 			+ " as type} where {type:code} = ?code}})";
 
 	private static final String GET_ONE_YEAR_OLD_COMPLETED_ORDERS = "SELECT {" + ItemModel.PK + "} FROM {"
@@ -88,7 +103,52 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ PackagingInfoModel._TYPECODE + "}" + "WHERE  {" + PackagingInfoModel.RETURNINGDATE + "} BETWEEN ?startDate AND ?endDate OR {"
 			+ PackagingInfoModel.DELAYEDDATE +"} BETWEEN ?startDate AND ?endDate";
 
+	private static final String GET_ORDERS_TO_OPTIMIZE_SHIP_FROM_WH_QUERY = "SELECT o.PK FROM ({{SELECT{" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} GROUP BY {"
+	    + ItemModel.PK + "} HAVING COUNT(*) > 1}} INTERSECT {{SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE ({con:"
+			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
+			+ "} BETWEEN ?startDate AND ?endDate) AND {" + OrderModel.STATUS + "} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED'}})}}) o";
 
+	private static final String ORDERS_TO_FEED_FTP  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERMODIFIEDDATE + "} BETWEEN ?orderModifiedDate AND ?orderModifiedEndDate ";
+
+	private static final String ORDERS_BILL_TO_FEED_FTP  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERBILLMODIFIEDDATE + "} BETWEEN ?orderBillModifiedDate AND ?orderBillModifiedEndDate";
+
+	private static final String ORDERS_TO_FEED_FTP_BY_DATE  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERMODIFIEDDATE +
+			"} BETWEEN ?orderModifiedDate AND ?orderModifiedEndDate AND {o.sentOrderFeedToSalesforce} IN "
+			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
+
+	private static final String ORDERS_BILL_TO_FEED_FTP_BY_DATE  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERBILLMODIFIEDDATE +
+			"} BETWEEN ?orderBillModifiedDate AND ?orderBillModifiedEndDate AND {o.sentOrderFeedToSalesforce} IN "
+			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
+
+	private static final String USED_GEAR_ABANDONED_CARTS  = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ CartEntryModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartEntryModel.CREATIONTIME + "},current_timestamp) > ?timer";
+
+	private static final String GET_ORDERS_TO_VOID_TRANSACTION  = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISAUTHORIZATIONVOIDED +
+			"} =?isAuthorizationVoided AND {o:" + OrderModel.ISEXTENDEDORDER + "} =?isExtendedOrder AND "
+			+ "{o:" + OrderModel.ISREPLACEMENTORDER + "} =?isReplacementOrder AND "
+			+ "{o:" + OrderModel.GIFTCARDORDER + "} =?isGiftCardOrder AND "
+			+ "{o:" + OrderModel.ISRETAILGEARORDER + "} =?isNewGearOrder AND "
+			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},current_timestamp) > ?timer";
+
+	private static final String GET_ALL_RENTAL_LEGACY_ORDERS_QUERY = "SELECT {o:" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE "
+					+ "{o:" + AbstractOrderModel.STATUS + "} = ({{SELECT {os:" + ItemModel.PK + "} from {"+ OrderStatus._TYPECODE + " AS os} where {os:code} = ?orderStatus}}) AND "
+					+ "({o:" + AbstractOrderModel.ISSAPORDER + "} IS NULL OR "
+					+ "{o:" + AbstractOrderModel.ISSAPORDER + "} = ?isSAPOrder ) AND "
+					+ "{o:" + AbstractOrderModel.ISRENTALORDER + "} = ?isRentalOrder AND "
+					+ "{o:" + AbstractOrderModel.GIFTCARDORDER + "} = ?isGiftCardOrder AND "
+					+ "{o:" + AbstractOrderModel.ISRETAILGEARORDER + "} = ?isRetailGearOrder AND "
+					+ "{o:" + AbstractOrderModel.ISREPLACEMENTORDER + "} = ?isReplacementOrder AND "
+					+ "{o:" + AbstractOrderModel.ISEXTENDEDORDER + "} = ?isExtendedOrder AND "
+					+ "{o:" + AbstractOrderModel.INTERNALTRANSFERORDER + "} = ?internalTransferOrder" ;
+	
 	/**
  	* {@inheritDoc}
  	*/
@@ -300,6 +360,141 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public List<AbstractOrderModel> getOrdersToOptimizeShipFromWH(final Date currentDate) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_TO_OPTIMIZE_SHIP_FROM_WH_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
+		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		if (CollectionUtils.isEmpty(result.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"There are no orders to be processed via reshuffler job to optimize ship from warehouse for the day {} ", currentDate);
+		}
+		return result.getResult();
+	}
+
+	/**
+	 * This method created to get Order to Feed FTP
+	 * @return list of orders
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersForOrderFeedToFTP() {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_FEED_FTP);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order feed with date {}",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
+	}
+
+	/**
+	 * This method created to get OrderBill to Feed FTP
+	 * @return list of orders
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersForOrderBillFeedToFTP() {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_BILL_TO_FEED_FTP);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order bill feed with date {} ",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
+	}
+
+
+  /**
+   * This method created to get list of orders based on specified date
+   * @param orderFeedDate date to get orders
+   * @return list of order models
+   */
+	@Override
+	public List<AbstractOrderModel> getOrdersForOrderFeedToFTPBasedOnSpecificDate(final Date orderFeedDate) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_FEED_FTP_BY_DATE);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderFeedDate).getTime()));
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(orderFeedDate).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order feed with date {}",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderFeedDate).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
+	}
+
+	/**
+	 * This method created to get list of orders based on specified date
+	 * @param orderBillFeedDate date to get orders
+	 * @return list of order models
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersForOrderBillFeedToFTPBasedOnSpecificDate(final Date orderBillFeedDate) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_BILL_TO_FEED_FTP_BY_DATE);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderBillFeedDate).getTime()));
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(orderBillFeedDate).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order bill feed with date {}",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderBillFeedDate).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<CartEntryModel> getAllUsedGearAbandonedCarts() {
+		final BaseStoreModel baseStore = getBaseStoreService()
+				.getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(USED_GEAR_ABANDONED_CARTS);
+		// Added 8 seconds buffer, so that cron job will never clear the carts before it gets cleared from front end
+		fQuery.addQueryParameter(TIMER, Integer.valueOf(baseStore.getUsedGearCartTimer())
+				+ BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<CartEntryModel> cartEntries = result.getResult();
+		if (CollectionUtils.isEmpty(cartEntries)) {
+			BlLogger.logMessage(LOG, Level.INFO, "No abandoned carts found for for used gear products");
+			return Collections.emptyList();
+		}
+		return cartEntries;
+	}
+
+		/**
+		 * {@inheritDoc}
+		 */
+	@Override
+	public List<OrderModel> getOrdersToVoidTransactions() {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_TO_VOID_TRANSACTION);
+		fQuery.addQueryParameter(IS_AUTHORIZATION_VOIDED, Boolean.FALSE);
+		fQuery.addQueryParameter(IS_EXTENDED_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(IS_REPLACEMENT_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(IS_GIFT_CARD_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(IS_NEW_GEAR_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(TIMER, getConfigurationService().getConfiguration().getInt(DELAY_VOID_TRANSACTION_BY_TIME));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logMessage(LOG , Level.INFO , "No orders found to void $1 authorization transactions");
+			return Collections.emptyList();
+		}
+		return orders;
+	}
+
+	/**
 	 * This method created to convert date into specific format
 	 * @param dateToConvert the date which required to convert
 	 * @return String after conversion into specific format
@@ -324,7 +519,42 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	{
 		this.userService = userService;
 	}
-	
-	
 
+	public ConfigurationService getConfigurationService() {
+		return configurationService;
+	}
+
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
+	public BaseStoreService getBaseStoreService() {
+		return baseStoreService;
+	}
+
+	public void setBaseStoreService(BaseStoreService baseStoreService) {
+		this.baseStoreService = baseStoreService;
+	}
+
+	@Override
+	public List<OrderModel> getAllLegacyOrders()
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ALL_RENTAL_LEGACY_ORDERS_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.QRY_ORDER_STATUS, OrderStatus.PENDING.getCode());
+		fQuery.addQueryParameter(BlCoreConstants.IS_SAP_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.IS_RENTAL_ORDER, Boolean.TRUE);
+		fQuery.addQueryParameter(IS_GIFT_CARD_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.IS_RETAIL_GEAR_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.IS_REPLACEMENT_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.IS_EXTENDED_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.INTERNAL_TRANSFER_ORDER, Boolean.FALSE);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logMessage(LOG , Level.INFO , "No Legacy rental orders found");
+			return Collections.emptyList();
+		}
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Number of Legacy rental orders found : {}", orders.size());
+		return orders;
+	}
 }

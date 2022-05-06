@@ -109,6 +109,9 @@
 											<br>
 										</c:otherwise>
 									</c:choose>
+									<c:if test="${not empty cartEntry.selectedOptions}">
+										+ ${cartEntry.selectedOptions} <br>
+									</c:if>
 								</c:if>
 								Total
 								<format:price priceData="${cartEntry.totalPrice}"
@@ -186,7 +189,7 @@
 														<button class="dropdown-item" data-id="${paymentInfo.id}"
 															data-nonce="${paymentInfo.paymentMethodNonce}">
 															<img src="${paymentInfo.accountHolderName}"
-																style="max-width: 33px; height: auto;"> &nbsp
+																style="max-width: 33px; height: auto;"> ${paymentInfo.cardType} &nbsp
 															${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp
 															${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
 														</button>

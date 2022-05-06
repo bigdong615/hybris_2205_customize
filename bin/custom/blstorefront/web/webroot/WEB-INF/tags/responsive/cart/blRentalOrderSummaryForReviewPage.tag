@@ -17,10 +17,10 @@
 		<spring:theme code="checkout.multi.order.summary" />
 	</h5>
 	<hr>
-	  <p>
+	  <p style="display: flex;">
 			<b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
 					type="text" class="form-control cart-picker"
-					id="summary-litepicker"
+					id="summary-litepicker" style="margin: 0; padding: 0;"
 					placeholder="<spring:theme code="text.rental.cart.select.date"/>">
 		</p>
 	<hr>
@@ -113,8 +113,7 @@
 			</tr>
 		</tbody>
 	</table>
-  <small class="gray60"><spring:theme
-			code="text.checkout.multi.order.summary.msg" /></small>
+  
 	<div class="cart-actions">
 		<form:form action="${placeOrderUrl}" id="placeOrderForm1"
 			modelAttribute="placeOrderForm">

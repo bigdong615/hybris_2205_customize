@@ -25,6 +25,8 @@ import com.bl.storefront.file.validate.BlValidator;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.ReturnOrderForm;
 import com.bl.storefront.forms.VerificationDocumentForm;
+import com.bl.storefront.promotion.validate.BlPromotionValidator;
+import com.bl.storefront.validator.BlPasswordValidator;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.model.BrainTreePaymentInfoModel;
@@ -296,10 +298,21 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource
 	private AssistedServiceFacade assistedServiceFacade;
+	
+	@Resource(name = "blPromotionValidator")
+	private BlPromotionValidator blPromotionValidator;
+	
+	@Resource(name = "blPasswordValidator")
+	private BlPasswordValidator blPasswordValidator;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
 		return BlRentalDateUtils.getRentalsDuration();
+	}
+
+	@ModelAttribute(name = "isRentalPage")
+	private boolean getRentalDuration() {
+		return Boolean.TRUE;
 	}
 
 	protected PasswordValidator getPasswordValidator()
@@ -422,6 +435,7 @@ public class AccountPageController extends AbstractSearchPageController
 			setUpMetaDataForContentPage(model, orderHistoryPage);
 		model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs("text.account.orderHistory"));
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE ,ORDER_HISTORY_CMS_PAGE);
 		return getViewForPage(model);
 	}
 
@@ -458,7 +472,7 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute(BlControllerConstants.PAGE_TYPE, BlControllerConstants.ORDER_DETAILS);
 		if(null != blCartService.getSessionCart() && CollectionUtils.isNotEmpty(blCartService.getSessionCart().getEntries())) {
 			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE,
-					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalCart()));
+					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalOrder()));
 		}
 		else {
 			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE, false);
@@ -720,7 +734,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String updatePassword(final UpdatePasswordForm updatePasswordForm, final BindingResult bindingResult, final Model model,
 			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
-		getPasswordValidator().validate(updatePasswordForm, bindingResult);
+		getBlPasswordValidator().validate(updatePasswordForm, bindingResult);
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_PASSWORD_PAGE_IDENTIFIER);
 		if (!bindingResult.hasErrors())
 		{
@@ -1213,7 +1227,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String uploadVerificationImages(
 			@ModelAttribute("verificationDocumentForm") final VerificationDocumentForm verificationDocumentForm,
 			final BindingResult bindingResult, final Model model, final RedirectAttributes redirectModel, final HttpServletRequest request) throws CMSItemNotFoundException {
-	   blVerificationDocumentValidator.validate(verificationDocumentForm, bindingResult, model);
+	   blVerificationDocumentValidator.validate(verificationDocumentForm, bindingResult, model,redirectModel);
 		final ContentPageModel verificationImagesPage = getContentPageForLabelOrId(
 				VERIFICATION_IMAGES_CMS_PAGE);
 		VerificationDocumentForm verificationDocument = new VerificationDocumentForm();
@@ -1223,7 +1237,7 @@ public class AccountPageController extends AbstractSearchPageController
 		setUpMetaDataForContentPage(model, verificationImagesPage);
 
 		if (bindingResult.hasErrors()) {
-			return setErrorMessagesForVerification(model);
+			return REDIRECT_TO_VERIFICATION_IMAGES_PAGE;
 		}
 		final VerificationDocumentData documentData = getVerificationDocumentData(
 				verificationDocumentForm);
@@ -1380,30 +1394,39 @@ public class AccountPageController extends AbstractSearchPageController
 			if (bindingResult.hasErrors())
 			{
 				model.addAttribute(BlControllerConstants.EXTEND_ORDER ,
-						getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID , null , getI18nService().getCurrentLocale()));
+						getMessageSource().getMessage("promotion.validation.message.default" , null , getI18nService().getCurrentLocale()));
 			}
 			else
 			{
 					final String referer = request.getHeader(BlControllerConstants.REFERER);
-					final List<String> errorList = new ArrayList<>();
-					final OrderData orderData = defaultBlCouponFacade.applyVoucherForExtendOrder(form.getVoucherCode() , referer , errorList);
-					model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
+					if(blPromotionValidator.checkInvalidPromotionsForExtendOrder(form.getVoucherCode(), BlControllerConstants.EXTEND_ORDER, model, null, referer))
+					{
+						final List<String> errorList = new ArrayList<>();
+						final OrderData orderData = defaultBlCouponFacade.applyVoucherForExtendOrder(form.getVoucherCode() , referer , errorList);
+						model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
 
-					if(CollectionUtils.isNotEmpty(errorList)) {
-						model.addAttribute(BlControllerConstants.EXTEND_ORDER  ,
-								getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID  , null , getI18nService().getCurrentLocale()));
+						if(CollectionUtils.isNotEmpty(errorList)) {
+							model.addAttribute(BlControllerConstants.EXTEND_ORDER  ,
+									getMessageSource().getMessage("promotion.validation.message.default" , null , getI18nService().getCurrentLocale()));
+						}
+						else
+						{
+							model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+						}
 					}
 					else
 					{
-						model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+						final OrderData orderDataForExtendedOrder = defaultBlCouponFacade.getOrderDataForExtendedOrder(referer);
+						model.addAttribute(BlControllerConstants.ORDER_DATA , orderDataForExtendedOrder);
 					}
+					
 				}
 
 		}
 		catch (final VoucherOperationException e)
 		{
 			model.addAttribute(BlControllerConstants.EXTEND_ORDER  ,
-					getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID , null , getI18nService().getCurrentLocale()));
+					getMessageSource().getMessage("promotion.validation.message.default" , null , getI18nService().getCurrentLocale()));
 			if (LOG.isDebugEnabled())
 			{
 				BlLogger.logMessage(LOG , Level.DEBUG , e.getMessage() , e);
@@ -1463,10 +1486,9 @@ public class AccountPageController extends AbstractSearchPageController
 						}
 					}
 				else {
-
-					// Needs to uncomment below code once Payment related PR merged
+				// It creates a cloned payment info from the original payment info
 				final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
-						.getBrainTreePaymentInfoForCode(
+						.getClonedBrainTreePaymentInfoCode(
 								(CustomerModel) orderModel.getUser(), paymentInfoId, paymentMethodNonce);
 				if(null != paymentInfo) {
 					paymentInfo.setBillPayment(Boolean.FALSE);
@@ -1557,7 +1579,7 @@ public class AccountPageController extends AbstractSearchPageController
 		if (null != blCartService.getSessionCart() && CollectionUtils.isNotEmpty(blCartService.getSessionCart().getEntries()))
 		{
 			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE,
-					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalCart()));
+					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalOrder()));
 		}
 		else
 		{
@@ -1573,5 +1595,21 @@ public class AccountPageController extends AbstractSearchPageController
 		final OrderModel order = blOrderFacade.getOrderModelFromOrderCode(orderCode);
 		blReturnOrderFacade.createReturnRequest(order, productList);
 		return REDIRECT_PREFIX + ROOT;
+	}
+
+	/**
+	 * @return the blPasswordValidator
+	 */
+	public BlPasswordValidator getBlPasswordValidator()
+	{
+		return blPasswordValidator;
+	}
+
+	/**
+	 * @param blPasswordValidator the blPasswordValidator to set
+	 */
+	public void setBlPasswordValidator(BlPasswordValidator blPasswordValidator)
+	{
+		this.blPasswordValidator = blPasswordValidator;
 	}
 }

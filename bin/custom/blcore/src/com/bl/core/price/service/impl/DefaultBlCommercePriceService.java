@@ -109,9 +109,12 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 							? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
 							defaultPriceInformation, rentalDays)
 							: defaultPriceInformation;
+				final int quantity =	productReferenceModel.getQuantity()!=null ? productReferenceModel.getQuantity() : Integer.valueOf(BlCoreConstants.DEFAULT_PRODUCT_QUANTITY);
+				double productPrice =info.getPriceValue()!=null ? info.getPriceValue().getValue() : Double.valueOf(BlCoreConstants.ZERO);
+				productPrice = productPrice*quantity;
 				final Double discount = baseStoreModel.getBundleDiscount();
-					final double discountPrice = (info.getPriceValue().getValue() * discount) / 100;
-					final double  bundlePrice= info.getPriceValue().getValue() - discountPrice;
+					final double discountPrice = (productPrice * discount) / 100;
+					final double  bundlePrice= productPrice - discountPrice;
 				final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
 							.createNewPriceInformation(info, BigDecimal.valueOf(bundlePrice));
 					    lPrices.add(newPriceInformation);
@@ -154,9 +157,12 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 					final PriceInformation info = noOfRentalDays != BlCoreConstants.DEFAULT_RENTAL_DAY ?getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
 							defaultPriceInformation, Long.valueOf(noOfRentalDays)) :defaultPriceInformation;
 
+					final int quantity =	productReferenceModel.getQuantity()!=null ? productReferenceModel.getQuantity() : Integer.valueOf(BlCoreConstants.DEFAULT_PRODUCT_QUANTITY);
+					double productPrice =info.getPriceValue()!=null ? info.getPriceValue().getValue() : Double.valueOf(BlCoreConstants.ZERO);
+					productPrice = productPrice*quantity;
 					final Double discount = baseStoreModel.getBundleDiscount();
-					final double discountPrice = (info.getPriceValue().getValue() * discount) / 100;
-					final double  bundlePrice= info.getPriceValue().getValue() - discountPrice;
+					final double discountPrice = (productPrice * discount) / 100;
+					final double  bundlePrice= productPrice - discountPrice;
 					final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
 							.createNewPriceInformation(info, BigDecimal.valueOf(bundlePrice));
 					lPrices.add(newPriceInformation);

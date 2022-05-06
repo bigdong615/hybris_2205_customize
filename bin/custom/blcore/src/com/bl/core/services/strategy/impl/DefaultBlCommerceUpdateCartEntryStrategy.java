@@ -138,32 +138,11 @@ private void updateOptionEntry(final AbstractOrderEntryModel orderEntry){
 
     long stockLevel;
     final long newTotalQuantityAfterStockLimit;
-    final RentalDateDto rentalDateDto = getBlDatePickerService().getRentalDatesFromSession();
-
-    final List<WarehouseModel> warehouseModelList = getBaseStoreService().getCurrentBaseStore()
-        .getWarehouses();
-
     final long cartLevel = checkCartLevel(productModel, cartModel, pointOfServiceModel);
 
     // How many will we have in our cart if we add quantity
     final long newTotalQuantity = cartLevel + quantityToAdd;
-
-    if (rentalDateDto != null) {
-      final Date startDay = BlDateTimeUtils
-          .convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
-              BlCoreConstants.DATE_FORMAT);
-      final Date endDay = BlDateTimeUtils
-          .convertStringDateToDate(rentalDateDto.getSelectedToDate(), BlCoreConstants.DATE_FORMAT);
-			stockLevel = ((BlProductModel) productModel).isBundleProduct() ? getBlCommerceStockService()
-					.getAvailableCountForBundle(((BlProductModel) productModel), warehouseModelList, startDay,
-							endDay) : getBlCommerceStockService()
-					.getAvailableCount(productModel.getCode(), warehouseModelList, startDay, endDay);
-
-      // this is to update the quantity as per availability.
-      newTotalQuantityAfterStockLimit = Math.min(newTotalQuantity, stockLevel);
-    } else {
-      newTotalQuantityAfterStockLimit = newTotalQuantity;
-    }
+    newTotalQuantityAfterStockLimit = newTotalQuantity;
 
     // So now work out what the maximum allowed to be added is (note that
     // this may be negative! We can remove this commented code later on, if maxOrderQuantity not required in BL)

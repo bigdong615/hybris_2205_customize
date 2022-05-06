@@ -13,6 +13,7 @@
 
 <%-- ToDo - Need to update html, as of now used rental cart html here for used cart --%>
 <spring:htmlEscape defaultHtmlEscape="true" />
+<c:url value="cart/emptyCart" var="emptyCart" />
 <c:url value="/rent/product/${entry.product.code}" var="productUrl" />
 <c:url value="/cart/update" var="cartUpdateFormAction" />
 <c:url value="/checkout/multi/payment-method/giftCardPaymentAdd" var="paymentPageUrl" />
@@ -25,21 +26,9 @@
 		</div>
 		<div class="col-md-6 mt-3">
 			<b>${entry.product.name}</b>
-			<form:form id="removeCartForm${entry.entryNumber}"
-				action="${cartUpdateFormAction}" method="post"
-				modelAttribute="updateQuantityForm${entry.entryNumber}"
-				class="js-qty-form${entry.entryNumber}">
-				<input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
-				<input type="hidden" name="productCode"
-					value="${entry.product.code}" />
-				<input type="hidden" name="initialQuantity"
-					value="${entry.quantity}" />
-				<input type="hidden" name="quantity" value=0 />
-				<input type="hidden" name="removeEntry" value="true" />
-				<a href="" class="shopping-cart__item-remove"
+				<a href="${emptyCart}" class="clear-cart-continue"
 					id="removeEntry_${entry.entryNumber}"><small>Remove
 						Item</small></a>
-			</form:form>
 		</div>
 		<div class="col-md-4 mt-3">
 			<p class="text-md-end">
@@ -65,6 +54,8 @@
 						placeholder="<spring:theme code='giftcard.PurchaseForm.message.placeholder' />"
 						name="message">${entry.recipientMessage}</textarea>
 				</div>
+				<div class="notification notification-warning mb-2 gc-error-message"
+        								style="display: none;"></div>
 			</form:form>
 		</div>
 	</div>

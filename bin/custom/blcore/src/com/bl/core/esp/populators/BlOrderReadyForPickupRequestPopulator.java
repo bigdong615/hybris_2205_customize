@@ -80,7 +80,7 @@ public class BlOrderReadyForPickupRequestPopulator extends ESPEventCommonPopulat
 			data.setCustomername(getRequestValue(userModel.getName()));
 		}
 		data.setType(getOrderType(orderModel));
-		data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
+		data.setReplacement(BooleanUtils.isTrue(orderModel.getIsReplacementOrder())
 				? Boolean.TRUE.toString() : Boolean.FALSE.toString());
 		data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
 	  data.setDateplaced(formatter.format(orderModel.getDate()));
@@ -91,7 +91,7 @@ public class BlOrderReadyForPickupRequestPopulator extends ESPEventCommonPopulat
 			data.setShippingmethod(getRequestValue(delivery.getCode()));
 			data.setShippingmethodtext(getRequestValue(delivery.getName()));
 		}
-		if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+		if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
 			data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
 			data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
 			data.setRentalduration((int) getRentalDuration(orderModel));
@@ -123,9 +123,10 @@ public class BlOrderReadyForPickupRequestPopulator extends ESPEventCommonPopulat
 				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_STATE,
 						Objects.nonNull(shippingAddress.getRegion()) ? shippingAddress.getRegion().getName() : StringUtils.EMPTY);
 				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
-				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
+				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getPhone1()));
 				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
-				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS, StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
+				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS,
+						StringUtils.isEmpty(orderModel.getPickUpPersonEmail()) ? StringUtils.EMPTY : getStoreOpeningHours(shippingAddress));
 				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES, StringUtils.isNotBlank(orderModel.getDeliveryNotes())  ? orderModel.getDeliveryNotes() : StringUtils.EMPTY);
 
 				final Transformer transformer = getTransformerFactoryObject();

@@ -5,6 +5,7 @@ package com.bl.storefront.file.validate;
 
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 /**
@@ -21,5 +22,5 @@ public interface BlValidator
 	 * @param Errors the errors
 	 * @param Model the model
 	 */
-	public void validate(final Object object, final Errors errors, final Model model);
+	public void validate(final Object object, final Errors errors, final Model model,final RedirectAttributes redirectModel);
 }

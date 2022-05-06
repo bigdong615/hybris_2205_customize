@@ -10,6 +10,8 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.facades.product.data.ExtendOrderData;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -25,7 +27,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +38,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import java.math.RoundingMode;
+
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 
 /**
@@ -52,7 +56,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
-    target.setIsRentalCart(source.getIsRentalCart());
+    target.setIsRentalCart(source.getIsRentalOrder());
     populateDatesForOrderDetails(source , target);
     populatePriceDetails(source , target);
     if(!source.isGiftCardOrder()){	 
@@ -70,7 +74,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    	 target.setHasGiftCart(Boolean.TRUE);
     }
 
-    if ((null != source.getReturnRequestForOrder()) && (source.getIsCartUsedForReplacementOrder().booleanValue())) {
+    if ((null != source.getReturnRequestForOrder()) && BooleanUtils.toBoolean(source.getIsReplacementOrder())) {
       target.setIsReplacementOrder(true);
     }
     if(null != source.getReturnRequestForOrder()) {
@@ -94,8 +98,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
-    if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
-      target.setIsNewGearOrder(source.getIsNewGearOrder());
+    if(BooleanUtils.isTrue(source.getIsRetailGearOrder())){
+      target.setIsRetailGearOrder(source.getIsRetailGearOrder());
     }
     
  // BL-1134 to add total discount with gift cart discount to display on summary section
@@ -109,33 +113,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
     final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
     target.setTotalDiscounts(createPrice(source , totalDiscount));
-   populateGiftCard(source , target);
+    populateTrackingNumberAndUrl(source , target);
   }
 
-
-  /**
-   * This method created to set the gift card details
-   * @param orderModel orderModel
-   * @param orderData orderData
-   */
-  private void populateGiftCard(final OrderModel orderModel, final OrderData orderData) {
-    if (CollectionUtils.isNotEmpty(orderModel.getGiftCard()) && !orderModel.isGiftCardOrder())
-    {
-      final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
-      for (final GiftCardModel giftCardModel : orderModel.getGiftCard())
-      {
-        final BLGiftCardData blGiftCardData = new BLGiftCardData();
-        blGiftCardData.setCode(giftCardModel.getCode());
-        final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
-        //rounding off double value to 2 decimal places
-        BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
-        blGiftCardData.setRedeemamount(createPrice(orderModel , gcRedeemedAmount.doubleValue()));
-        blGiftCardData.setBalanceamount(createPrice(orderModel , giftCardModel.getBalance()));
-        blGiftCardDataList.add(blGiftCardData);
-      }
-      orderData.setGiftCardData(blGiftCardDataList);
-    }
-  }
 
   /**
    * This method created to populate dates for order details
@@ -190,7 +170,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   private void populateOrderDetailsForRentalOrder(final OrderModel source , final OrderData target) {
     target.setOrderedFormatDateForExtendRental(convertDateToString(source.getDate() , BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN));
-    if(BooleanUtils.isTrue(source.getIsRentalCart())) {
+    if(BooleanUtils.isTrue(source.getIsRentalOrder())) {
       target.setRentalEndDateForJs(convertDateToString(source.getRentalEndDate(), BlFacadesConstants.START_DATE_PATTERN));
       target.setRentalStartDateForJs(
           convertDateToString(source.getRentalStartDate(), BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN_FOR_JS));
@@ -374,19 +354,100 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
   private void populateGiftCardDetails(final OrderModel source, final OrderData target)
   {
     final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
-    if(CollectionUtils.isNotEmpty(source.getGiftCard())) {
-      for(final GiftCardModel giftCardModel : source.getGiftCard()){
-        final BLGiftCardData blGiftCardData = new BLGiftCardData();
-        blGiftCardData.setCode(giftCardModel.getCode());
-        for(final GiftCardMovementModel giftCardMovementModel : giftCardModel.getMovements()){
-          if(null != giftCardMovementModel.getOrder() && source.getCode().equalsIgnoreCase(giftCardMovementModel.getOrder().getCode())) {
-            setGiftCardData(giftCardMovementModel , blGiftCardData , blGiftCardDataList , source);
-          }
-        }
-      }
-
-    }
+    final List<GiftCardModel> appliedGcList = Lists.newArrayList();
+    if(CollectionUtils.isNotEmpty(source.getGiftCard()))
+    {
+   	 appliedGcList.addAll(source.getGiftCard());
+    }    
+    filterGcList(appliedGcList, source.getModifiedOrderAppliedGcList());    
+    processGcDetails(source, blGiftCardDataList, appliedGcList);
     target.setGiftCardData(blGiftCardDataList);
+  }
+
+
+  /**
+   * Process Gift Card details.
+   *
+   * @param source
+   *           the source
+   * @param blGiftCardDataList
+   *           the bl gift card data list
+   * @param gcList
+   *           the gc list
+   */
+  private void processGcDetails(final OrderModel source, final List<BLGiftCardData> blGiftCardDataList,
+		  final List<GiftCardModel> gcList)
+  {
+	  if (CollectionUtils.isNotEmpty(gcList))
+	  {
+		  for (final GiftCardModel giftCardModel : gcList)
+		  {
+			  processGcMovements(source, blGiftCardDataList, giftCardModel);
+		  }
+	  }
+  }
+
+
+  /**
+   * Process Gift Card movements details.
+   *
+   * @param source
+   *           the source
+   * @param blGiftCardDataList
+   *           the bl gift card data list
+   * @param giftCardModel
+   *           the gift card model
+   */
+  private void processGcMovements(final OrderModel source, final List<BLGiftCardData> blGiftCardDataList,
+		  final GiftCardModel giftCardModel)
+  {
+	  for (final GiftCardMovementModel giftCardMovementModel : giftCardModel.getMovements())
+	  {
+		  if (doCheckGC(source, giftCardMovementModel))
+		  {
+			  final BLGiftCardData blGiftCardData = new BLGiftCardData();
+			  blGiftCardData.setCode(giftCardModel.getCode());
+			  setGiftCardData(giftCardMovementModel, blGiftCardData, blGiftCardDataList, source);
+		  }
+	  }
+  }
+  
+  /**
+   * Do check GC before adding data.
+   *
+   * @param source
+   *           the source
+   * @param blGiftCardDataList
+   *           the bl gift card data list
+   * @param giftCardModel
+   *           the gift card model
+   * @param giftCardMovementModel
+   *           the gift card movement model
+   * @return true, if successful
+   */
+  private boolean doCheckGC(final OrderModel source, final GiftCardMovementModel giftCardMovementModel)
+  {
+	  return null != giftCardMovementModel.getOrder()
+			  && source.getCode().equalsIgnoreCase(giftCardMovementModel.getOrder().getCode());
+  }
+  
+  /**
+   * Filter GiftCard list having same GiftCard code.
+   *
+   * @param appliedGcList the applied gc list
+   * @param gcList the gc list
+   */
+  private void filterGcList(final List<GiftCardModel> appliedGcList, final List<GiftCardModel> gcList)
+  {
+	  if(CollectionUtils.isNotEmpty(gcList))
+	  {
+		  gcList.forEach(giftCard -> {
+			  if(appliedGcList.stream().noneMatch(gc -> gc.getCode().equalsIgnoreCase(giftCard.getCode())))
+			  {
+				  appliedGcList.add(giftCard);
+			  }
+		  });
+	  }
   }
 
   /**
@@ -458,6 +519,30 @@ private PriceData createPrice(final AbstractOrderModel source, final Double val)
   private String getValue(final String value){
   return StringUtils.isBlank(value) ? StringUtils.EMPTY : value;
   }
+
+  /**
+   * This method created to get tracking number and tracking URL from package
+   * @param orderModel orderModel
+   * @param orderData orderDate
+   */
+  private void populateTrackingNumberAndUrl(final OrderModel orderModel, final OrderData orderData) {
+    final Map<String, String> trackingNumberInfo = new HashMap<>();
+    if(CollectionUtils.isNotEmpty(orderModel.getConsignments())){
+      orderModel.getConsignments().forEach(consignmentModel -> {
+        if(CollectionUtils.isNotEmpty(consignmentModel.getPackaginginfos())){
+          consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
+            if(StringUtils.isNotEmpty(packagingInfoModel.getOutBoundTrackingNumber())){
+              trackingNumberInfo.put(packagingInfoModel.getOutBoundTrackingNumber() ,
+                  StringUtils.isBlank(packagingInfoModel.getLabelURL()) ? BlFacadesConstants.HASH :packagingInfoModel.getLabelURL());
+            }
+          });
+        }
+      });
+    }
+
+    orderData.setTrackingNumber(trackingNumberInfo);
+  }
+
 
   public PriceDataFactory getPriceDataFactory() {
     return priceDataFactory;

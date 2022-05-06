@@ -45,6 +45,9 @@
             <value code="LITHIUM_ION"/>
             <value code="LITHIUM_METAL"/>
             <value code="NON_LITHIUM"/>
+            <value code="LI_PO"/>
+            <value code="LITHIUM_POLYMER"/>
+            <value code="NI_MH"/>
         </enumtype>
         <!--BL custom enum type-->
 
@@ -78,6 +81,7 @@
             <value code="IN_HOUSE" />
             <value code="SHIPPED" />
             <value code="LATE" />
+          <value code="INACTIVE"/>
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
@@ -110,6 +114,8 @@
             <value code="MONITORS"/>
             <value code="GIFTCARD"/>
             <value code="PACKAGE"/>
+            <value code="RETAILGEAR"/>
+            <value code="MANUAL"/>
         </enumtype>
 
         <enumtype generate="true" code="InventoryLocationTypeEnum" autocreate="true" dynamic="true">
@@ -261,6 +267,7 @@
       		<value code="RECEIVED_READY_FOR_PICKUP" />
           <value code="RECEIVED" />
           <value code="RECEIVED_PICKED_UP" />
+          <value code="PENDING" />
         </enumtype>
       
       
@@ -314,7 +321,7 @@
       <enumtype generate="true" code="RepairTechClaimEnum" autocreate="true" dynamic="true">
       	<value code="TECH_ONE" />
       	<value code="TECH_TWO" />
-      	<value code="TECH_THEREE" />
+      	<value code="TECH_THREE" />
       	<value code="SUPERVISOR" />
     </enumtype>
 	  
@@ -422,7 +429,7 @@
       </enumtype>
 
         <enumtype generate="true" code="InventoryCycleCountSerialStatus" autocreate="true" dynamic="true">
-            <value code="REGULAR"/>
+            <value code="FOUND"/>
             <value code="MISSING"/>
             <value code="UNEXPECTED"/>
         </enumtype>
@@ -468,7 +475,17 @@
             <value code="MODIFY_PAYMENT"/>
             <value code="BILL_PAYMENT"/>
       </enumtype>
-      
+
+      <enumtype code="PackageTypeEnum" autocreate="true" generate="true" dynamic="true">
+        <value code="SERIAL_PRODUCT" />
+        <value code="BARCODED_SUBPART" />
+        <value code="NON_BARCODED_SUBPART" />
+      </enumtype>
+      <!-- BL-1311: This enum is created to track billing status.-->
+      <enumtype code="BillInfoStatus" autocreate="true" generate="true">
+        <value code="NEW_BILL" />
+        <value code="UPDATED_BILL" />
+      </enumtype>
 	  </enumtypes>
 
     <maptypes>
@@ -602,7 +619,7 @@
       </relation>
       <!-- Gift card End-->
 
-      <relation code="BlProduct2BlProductRelation" autocreate="true" generate="true" localized="false">
+     <!--  <relation code="BlProduct2BlProductRelation" autocreate="true" generate="true" localized="false">
         <deployment table="blprod2blprodrel" typecode="12221"/>
         <sourceElement qualifier="blProducts" type="BlProduct" cardinality="many">
           <modifiers read="true" write="true" search="true" optional="true"/>
@@ -610,7 +627,8 @@
         <targetElement qualifier="subParts" type="BlProduct" cardinality="many">
           <modifiers read="true" write="true" search="true" optional="true"/>
         </targetElement>
-      </relation>
+      </relation> -->
+
 
       <relation code="BlProduct2OptionsRelation" generate="true" localized="false"
         autocreate="true">
@@ -656,6 +674,15 @@
         </sourceElement>
         <targetElement qualifier="restrictedPrincipals" type="Principal" cardinality="many" collectiontype="set" ordered="true">
           <description>Principals which are restricted to access this catalogProduct</description>
+          <modifiers read="true" write="true" search="true" optional="true"/>
+        </targetElement>
+      </relation>
+      <relation code="BlSubparts2BlProductRelation" autocreate="true" generate="true" localized="false">
+        <deployment table="Subparts2ProdRel" typecode="12244"/>
+        <sourceElement qualifier="subpartProducts" type="BlSubparts" cardinality="many">
+          <modifiers read="true" write="true" search="true" optional="true"/>
+        </sourceElement>
+        <targetElement qualifier="blProducts" type="BlProduct" cardinality="many">
           <modifiers read="true" write="true" search="true" optional="true"/>
         </targetElement>
       </relation>
@@ -740,6 +767,21 @@
           <persistence type="property"/>
           <modifiers read="true" write="false" search="true" optional="true" unique="true"  initial="true"/>
         </attribute>
+        <attribute qualifier="nonRefundableDeposit" type="boolean">
+          <persistence type="property" />
+          <modifiers read="true" write="true" search="true" optional="false" />
+          <defaultvalue>Boolean.FALSE</defaultvalue>
+          <description>Defines Flag for Non-Refundable Deposit Amount</description>
+        </attribute>
+        <attribute autocreate="true" qualifier="orderID" type="java.lang.String" generate="true">
+		  <persistence type="property" />
+		  <modifiers read="true" write="true" search="true" optional="true" unique="true" />
+		  <custom-properties>
+			<property name="hmcIndexField">
+			<value>"thefield"</value>
+		  </property>
+		  </custom-properties>
+	   </attribute>
       </attributes>
       </itemtype>
 
@@ -1320,23 +1362,17 @@
                      <modifiers read="true" write="true" optional="false" />
                      <description>Manufacturer name for the BL Product</description>
                      </attribute>
-                   <attribute qualifier="subpartQuantity" type="java.lang.Integer">
-                     <description>It tells shipper how much quantity we need to add for this sub-part</description>
-                     <persistence type="property" />
-                     <modifiers read="true" write="true" optional="false" initial="true"/>
-                     <defaultvalue>Integer.valueOf(0)</defaultvalue>
-                   </attribute>
                    <attribute qualifier="retailGear" type="java.lang.Boolean">
                      <persistence type="property" />
                      <modifiers read="true" write="true" search="true" optional="false"/>
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                     <description>Determines the product is new gear</description>
+                     <description>Determines the product is retail gear</description>
                    </attribute>
                    <attribute qualifier="retailGearPrice" type="java.math.BigDecimal">
                      <persistence type="property" />
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
-                     <description>New Gear Price field</description>
+                     <description>Retail Gear Price field</description>
                    </attribute>
                    <attribute qualifier="onSale" type="java.lang.Boolean">
                      <persistence type="property"/>
@@ -1344,17 +1380,27 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>To identify whether product is OnSale or not</description>
                    </attribute>
-                   <attribute qualifier="newGearInStock" type="boolean">
+                   <attribute qualifier="retailGearInStock" type="boolean">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                     <description>To identify whether the new gear product is in Stock or not</description>
+                     <description>To identify whether the retail gear product is in Stock or not</description>
                    </attribute>
                    <attribute qualifier="bufferInvPercChangedManually" type="boolean">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <defaultvalue>false</defaultvalue>
                      <description>To identify whether buffer inventory percentage changed manually or not</description>
+                   </attribute>
+                   <attribute qualifier="procurementID" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true" />
+                     <description>ProcurementID of the product</description>
+                   </attribute>
+                   <attribute qualifier="primaryCategoryID" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Primary Category Linked to the product</description>
                    </attribute>
                  </attributes>
              </itemtype>
@@ -1372,6 +1418,12 @@
                          <modifiers read="true" write="true" unique="true" optional="true"
                            initial="true"/>
                          <description>Serial barcode assigned specifically to the serial</description>
+                     </attribute>
+                   <attribute qualifier="serialNumber" type="java.lang.String">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" unique="true" optional="true"
+                           initial="true"/>
+                         <description>Serial number assigned to the serials</description>
                      </attribute>
                      <attribute qualifier="warehouseLocation" type="Warehouse">
                          <persistence type="property"/>
@@ -1416,12 +1468,12 @@
                      <description>The total no of days the serial was rented for all orders</description>
                    </attribute>
                    <attribute qualifier="noDaysNotInService" type="java.lang.long">
-                     <persistence type="dynamic" attributeHandler="serialProductNotInServiceHandler" />
+                     <persistence type="property" />
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Calculated based on the days an item spends with a shipping carrier</description>
                    </attribute>
                    <attribute qualifier="noDaysInTransit" type="java.lang.long">
-                     <persistence type="dynamic" attributeHandler="serialProductTotalTransitDaysHandler"  />
+                     <persistence type="property" />
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Calculated based on the days an item is neither in transit nor with a customer</description>
                    </attribute>
@@ -1567,10 +1619,20 @@
                          <defaultvalue>em().getEnumerationValue("RepairReasonsEnum", "NONE")</defaultvalue>
                          <description>Determines what type of repair is required</description>
                      </attribute>
-                     <attribute qualifier="otherRepairReasons" type="java.lang.String">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true" />
-                         <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+                     <attribute qualifier="otherRepairsReason" type="java.lang.String">
+                        <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+         			     <modifiers read="true" write="true" optional="true"/>
+			              <persistence type="property">
+			                <columntype database="oracle">
+			                  <value>CLOB</value>
+			                </columntype>
+			                <columntype database="sap">
+			                  <value>NCLOB</value>
+			                </columntype>
+			                <columntype>
+			                  <value>HYBRIS.LONG_STRING</value>
+			                </columntype>
+			              </persistence>
                      </attribute>
                      <attribute qualifier="dirtyPriorityStatus" type="boolean">
                          <persistence type="property" />
@@ -1621,9 +1683,55 @@
                        <description>last OC location date at the time of unbox</description>
                    </attribute>
                    <attribute qualifier="userChangedConditionRating" type="java.lang.String">
-				<modifiers read="true" write="true" optional="true" />
-				<persistence type="property" />
-			</attribute>
+                      <modifiers read="true" write="true" optional="true" />
+                      <persistence type="property" />
+                   </attribute>
+                   <attribute qualifier="displayName" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" search="true" write="true" optional="true"/>
+                       <description>Product Display Name</description>
+                     </attribute>
+                     <attribute autocreate="true" qualifier="name" type="localized:java.lang.String" redeclare="true">
+                     	<modifiers read="true" write="true" search="true" optional="true" />
+                     	<persistence type="property" />
+						<custom-properties>
+							<property name="hmcIndexField">
+								<value>"thefield"</value>
+							</property>
+						</custom-properties>
+					</attribute>
+                     <attribute qualifier="mpn" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" write="true" optional="true"/>
+                       <description>Manufactuer's part number</description>
+                     </attribute>
+                     <attribute qualifier="upc" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" write="true" optional="true"/>
+                       <description>UPC code for the BL Product</description>
+                     </attribute>
+                     <attribute qualifier="procurementSource" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" write="true" optional="true"/>
+                       <description>Link or number for the item at the source we can purchase replacements</description>
+                     </attribute>
+                     <attribute qualifier="procurementCost" type="java.math.BigDecimal" redeclare="true">
+                       <persistence type="property"/>
+                       <modifiers read="true" write="true" optional="true"/>
+                       <description>Starting base price for the sku for used gear sales of all serials</description>
+                     </attribute>
+                     <attribute qualifier="manufacturerAID" type="java.lang.String" redeclare="true">
+                       <modifiers read="true" write="true" search="true" optional="true"/>
+                       <persistence type="property"/>
+                       <custom-properties>
+                         <property name="hmcIndexField"><value>"thefield"</value></property>
+                       </custom-properties>
+                     </attribute>
+                     <attribute qualifier="manufacturerName" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" write="true" optional="true" />
+                       <description>Manufacturer name for the BL Product</description>
+                     </attribute>
                  </attributes>
              </itemtype>
 
@@ -1795,7 +1903,7 @@
               </attribute>
               <attribute qualifier="videoTitle" type="java.lang.String">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="false" initial="true"/>
+                <modifiers read="true" write="true" optional="true"/>
                 <description>Localized Video title</description>
               </attribute>
               <attribute qualifier="videoLink" type="java.lang.String">
@@ -1805,7 +1913,7 @@
               </attribute>
               <attribute qualifier="videoDuration" type="java.lang.Long">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="false" initial="true"/>
+                <modifiers read="true" write="true" optional="true"/>
                 <description>video duration need to be put in second</description>
               </attribute>
             </attributes>
@@ -1876,6 +1984,11 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="false" optional="false" initial="true"/>
                         <description>BlSerialProduct's barcode</description>
+                    </attribute>
+                    <attribute qualifier="ocParent" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="false" optional="true" initial="true"/>
+                        <description>Parent Inventory Location Code</description>
                     </attribute>
                     <attribute qualifier="serialProduct" type="BLSerialProduct">
                         <persistence type="property"/>
@@ -2012,6 +2125,11 @@
                 <persistence type="property" />
                 <modifiers write="true" read="true" search="false" optional="true" />
               </attribute>
+              <attribute qualifier="discountID" type="java.lang.String">
+             	 <description>Discount ID</description>
+               	 <persistence type="property" />
+                	<modifiers write="true" read="true" search="true" optional="true" unique="true"/>
+	          </attribute>
             </attributes>
           </itemtype>
 
@@ -2149,6 +2267,23 @@
               </attribute>
             </attributes>
           </itemtype>
+          <itemtype code="BlSubparts" autocreate="true" generate="true" >
+			    <description>Contains all subparts with quantity mapping</description>
+			    <deployment table="BlSubparts" typecode="12243"/>
+			      <attributes>
+			        <attribute qualifier="subpartProduct" type="BlProduct">
+			          <persistence type="property"/>
+			          <modifiers read="true" write="true" optional="false"/>
+			          <description>SubPart BlProduct</description>
+			        </attribute>
+			        <attribute qualifier="quantity" type="java.lang.Integer">
+			          <persistence type="property"/>
+			          <modifiers read="true" write="true" optional="false"/>
+			          <description>Quantity associated to Subpart</description>
+			          <defaultvalue>Integer.valueOf(1)</defaultvalue>
+			        </attribute>
+			      </attributes>
+   		</itemtype>
         </typegroup>
 
         <typegroup name="Pricing">
@@ -2246,7 +2381,7 @@
              </attributes>
            </itemtype>
          </typegroup>
-      <typegroup name="Cart">
+      <typegroup name="Cart">	
         <itemtype code="AbstractOrderEntry" autocreate="false" generate="false">
           <description>Extending the AbstractOrderEntry with additional attributes.</description>
           <attributes>
@@ -2372,6 +2507,11 @@
               <modifiers read="true" write="true" optional="true"/>
               <defaultvalue>0L</defaultvalue>
               <description>The number of quantity allocated in both warehouses through reshuffler job</description>
+            </attribute>
+            <attribute qualifier="updatedTime" type="java.util.Date">
+              <persistence type="property" />
+              <modifiers read="true" write="true" optional="true" />
+              <description>To identify whether the order/Order Bill is modified or not</description>
             </attribute>
           </attributes>
         </itemtype>
@@ -2680,7 +2820,7 @@
                     <modifiers read="true" write="true" optional="true" />
                     <description>return date of a consignment/order</description>
                   </attribute>
-                    <attribute qualifier="isRentalCart" type="java.lang.Boolean">
+                    <attribute qualifier="isRentalOrder" type="java.lang.Boolean">
                       <persistence type="property" />
                       <modifiers optional="true" read="true" write="true" />
                       <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
@@ -2779,11 +2919,6 @@
                     <persistence type="property" />
                     <description>flag to identify whether the order has been extended or not</description>
                   </attribute>
-                  <attribute qualifier="extendStartEndDate" type="java.util.Date">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true" />
-                    <description>return date of a for extend order</description>
-                  </attribute>
                   <attribute qualifier="extendRentalEndDate" type="java.util.Date">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
@@ -2793,11 +2928,6 @@
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
                     <description>To get the number of days extended .</description>
-                  </attribute>
-                  <attribute qualifier="totalDaysWithExistingOrder" type="java.lang.Integer">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true" />
-                    <description>To get the Total number of days.</description>
                   </attribute>
                   <attribute qualifier="extendedOrderCopyList" type="ExtendOrderCopyList">
                     <modifiers read="true" write="true" search="true" optional="true" initial="true" />
@@ -2848,15 +2978,15 @@
                       This is required to manage Extend Order button Visibilty for ASM agent till order is not back to warehouse.
                     </description>
                   </attribute>
-                  <attribute qualifier="isNewGearOrder" type="java.lang.Boolean">
+                  <attribute qualifier="isRetailGearOrder" type="java.lang.Boolean">
                     <persistence type="property" />
-                    <description>Flag to identify the order type is new gear order or not. By using
+                    <description>Flag to identify the order type is retail gear order or not. By using
                       this flag we are stopping the order process.
                     </description>
                     <modifiers read="true" write="true" search="true" optional="true" />
                     <defaultvalue>Boolean.FALSE</defaultvalue>
                   </attribute>
-                  <attribute qualifier="isCartUsedForReplacementOrder" type="java.lang.Boolean">
+                  <attribute qualifier="isReplacementOrder" type="java.lang.Boolean">
                     <persistence type="property" />
                     <description>This is created to identify whether this cart is used for replacement order . </description>
                     <modifiers read="true" write="true" search="true" optional="true" />
@@ -2993,7 +3123,107 @@
                       <persistence type="property" />
                       <description>It indicates current status of an uploaded document</description>
                     </attribute>
-                </attributes>
+                  <attribute qualifier="orderModifiedDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify whether the order is modified or not</description>
+                  </attribute>
+                  <attribute qualifier="orderBillModifiedDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify whether the order Bill is modified or not</description>
+                  </attribute>
+              <attribute qualifier="updatedTime" type="java.util.Date">
+                <persistence type="property" />
+                <modifiers read="true" write="true" optional="true" />
+                <description>To identify whether the order/Order Bill is modified or not</description>
+              </attribute>
+                  <attribute autocreate="true" qualifier="coiAmount" type="java.math.BigDecimal">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <persistence type="property" />
+                    <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+                    <description>COI amount</description>
+                  </attribute>
+              <attribute autocreate="true" qualifier="sentOrderFeedToSalesforce" type="ExportStatus">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>em().getEnumerationValue("ExportStatus", "NOTEXPORTED")</defaultvalue>
+                <description>To identify whether the order is exported to FTP or Not. </description>
+              </attribute>
+              <attribute qualifier="isVideoOrder" type="java.lang.Boolean">
+              	<persistence type="property" />
+                <modifiers read="true" write="true" search="true" optional="false" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                <description>Order will be marked as video order</description>
+              </attribute>
+                  <attribute qualifier="depositAmount" type="java.lang.Double">
+                    <modifiers optional="true" read="true" write="true" search="false"/>
+                    <description>Deposit Amount to be add be CS Agent.</description>
+                    <persistence type="property"/>
+                    <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                  </attribute>
+                  <!-- BL-1678 Start -->
+                  <attribute qualifier="runTot_grandTotal" type="java.lang.Double">
+                      <description>Total of Grand Total amount for all the previous extended orders including original order</description>
+                      <modifiers read="true" write="true" optional="true" />
+                      <persistence type="property" />
+                      <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="runTot_subtotal" type="java.lang.Double">
+                    	<description>Total of Subtotal amount for all the previous extended orders including original order</description>
+                    	<persistence type="property">
+                        	<columntype>
+                            	<value>java.math.BigDecimal</value>
+                        	</columntype>
+                    	</persistence>
+                    	<modifiers read="true" write="true" optional="true"/>
+                    	<defaultvalue>Double.valueOf(0.0d)</defaultvalue>
+                	</attribute>
+                    <attribute qualifier="runTot_totalOptionsCost" type="java.lang.Double">
+                        <description>Total of total options cost for all the previous extended orders including original order</description>
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute> 
+                    <attribute qualifier="runTot_totalPrice" type="java.lang.Double">
+	                    <description>Total of total price amount for all the previous extended orders including original order</description>
+	                    <persistence type="property">
+	                        <columntype>
+	                            <value>java.math.BigDecimal</value>
+	                        </columntype>
+	                    </persistence>
+	                    <modifiers read="true" write="true" optional="true"/>
+	                    <defaultvalue>Double.valueOf(0.0d)</defaultvalue>
+                	</attribute>
+                	<attribute qualifier="runTot_totalTax" type="java.lang.Double">
+                		<description>Total of total tax amount for all the previous extended orders including original order</description>
+	                    <persistence type="property">
+	                        <columntype>
+	                            <value>java.math.BigDecimal</value>
+	                        </columntype>
+	                    </persistence>
+	                    <modifiers read="true" write="true" optional="true"/>
+                    	<defaultvalue>Double.valueOf(0.0d)</defaultvalue>
+                	</attribute>
+                	<attribute qualifier="isLatestOrder" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <defaultvalue>true</defaultvalue>
+                        <description>To identify the latest order among the extended orders</description>
+                    </attribute>
+                    <attribute qualifier="runTot_daysRented" type="java.lang.Integer">
+	                    <persistence type="property" />
+	                    <modifiers read="true" write="true" optional="true" />
+	                    <description>Total of total number of days extended for all the previous extended orders including original order</description>
+	                </attribute>
+                	<!-- BL-1678 End -->
+                	<attribute qualifier="isSAPOrder" type="java.lang.Boolean">
+                      <persistence type="property" />
+                      <modifiers optional="true" read="true" write="true" />
+                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                      <description>flag to identify whether the order has been placed through storefront</description>
+                    </attribute>
+            </attributes>
             </itemtype>
 
           <!--Added New attribute to identify the order for replacement in Return Request . -->
@@ -3019,6 +3249,17 @@
           
           <itemtype code="BlReturnEntry" extends="ReturnEntry" jaloclass="com.bl.core.jalo.BlReturnEntry" autocreate="true" generate="true" />
 
+
+          <itemtype code="BlOrderFeedCronJob" extends="CronJob">
+            <description>This type represents a cron job for order which failed for export to FTP location.</description>
+          <attributes>
+          <attribute qualifier="orderFeedDate" type="java.util.Date">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>To perform the Order FTP feed for specified date.</description>
+          </attribute>
+          </attributes>
+          </itemtype>
         </typegroup>
 
         <typegroup>
@@ -3043,6 +3284,11 @@
                         <modifiers read="true" write="true" search="true" optional="true" />
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
+                    <attribute qualifier="addressID" type="java.lang.String">
+						<persistence type="property"/>
+						<modifiers read="true" write="true" optional="true"/>
+						<description>Address ID as unique identifier for legacy addresses</description>
+			  		</attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -3577,11 +3823,6 @@
                 <persistence type="property" />
                 <description>identifies Photo or Video customer</description>
               </attribute>
-              <attribute autocreate="true" qualifier="outstandingBillType" type="BillTypeEnum">
-                <modifiers read="true" write="true" search="true" optional="true" />
-                <persistence type="property" />
-                <description>Type of outstanding bill (associated with most recent order)</description>
-              </attribute>
               <attribute autocreate="true" qualifier="badBehaviorNotes" type="java.lang.String">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property">
@@ -3676,7 +3917,7 @@
                 <persistence type="property" />
                 <description>Number of orders in Completed status to date</description>
               </attribute>
-              <attribute autocreate="true" qualifier="incompletedOrderCount" type="int">
+              <attribute autocreate="true" qualifier="inprocessOrderCount" type="int">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <description>Number of orders in Inompleted status to date</description>
@@ -3687,11 +3928,10 @@
                 <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
                 <description>Total spend in a rolling 1 year period</description>
               </attribute>
-              <attribute autocreate="true" qualifier="outstandingBillAmount" type="java.math.BigDecimal">
+              <attribute autocreate="true" qualifier="outstandingBills" type="BlItemCharges">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
-                <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
-                <description>Amount due on associated bill</description>
+                <description>Outstanding bill due on associated bill</description>
               </attribute>
               <attribute autocreate="true" qualifier="blRewards" type="java.math.BigDecimal">
                 <modifiers read="true" write="true" search="true" optional="true" />
@@ -3705,13 +3945,13 @@
                 <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
                 <description>Sum of all outstanding bills</description>
               </attribute>
-               <attribute autocreate="true" qualifier="averageOrderValue" type="double">
+               <attribute autocreate="true" qualifier="averageGearOrderValue" type="double">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                 <description>Average of all order value</description>
               </attribute>
-              <attribute autocreate="true" qualifier="orderValuePriorToShippedStatus" type="double">
+              <attribute autocreate="true" qualifier="gearValueOrdersInProgress" type="double">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
@@ -3839,6 +4079,31 @@
             <modifiers read="true" write="true" search="true" optional="true"/>
             <description>This date refers to returning date of this package by UPS scrape.</description>
           </attribute>
+
+          <!--Newly Created attribute-->
+          <attribute qualifier="orderCode" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>order code to map package from order </description>
+          </attribute>
+          <attribute qualifier="packageId" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true" unique="true"/>
+            <description>packageId it should be unique for Package and if package is associated with order then
+              we need the package ID and warehouse in the packages attribute on the order schema.</description>
+          </attribute>
+          <attribute type="PackageTypeEnum" qualifier="packageType">
+            <modifiers read="true" write="true" optional="true" />
+            <persistence type="property" />
+            <description>Package Enum will be setted based on Product.</description>
+          </attribute>
+          <attribute qualifier="subpartName" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>if package entry contains non barcoded subpart then we will require subpart name in this attribute</description>
+          </attribute>
+
+
         </attributes>
 			</itemtype>
 		</typegroup>
@@ -4007,7 +4272,41 @@
                          <modifiers read="true" write="true" search="true" optional="true" />
                          <description>This attribute is used to add notes for unpaid bill.</description>
                          <persistence type="property"/>
-                  </attribute>   
+                  </attribute>
+
+        <!--Newly Created attributes-->
+        <attribute qualifier="code" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true" unique="true"/>
+          <description>unique code for billing charge</description>
+        </attribute>
+        <attribute qualifier="serialCode" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>serial code to map bill charge against serial</description>
+        </attribute>
+        <attribute qualifier="orderCode" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>order number to map for which order the serial is charged</description>
+        </attribute>
+        <attribute qualifier="customer" type="Customer">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>To identify the customer on billing charges.</description>
+        </attribute>
+        <!--BL-1311 : Changes related to tracking bill related changes start.-->
+        <attribute qualifier="updatedBillTime" type="java.util.Date">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>To identify whether the bill is modified or not.</description>
+        </attribute>
+        <attribute qualifier="billStatus" type="BillInfoStatus">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>To identify bill status.</description>
+        </attribute>
+        <!--BL-1311 : Changes related to tracking bill related changes End.-->
 			</attributes>
 		</itemtype>
       </typegroup>
@@ -4022,7 +4321,7 @@
 				<persistence type="property" />
 			</attribute>
 			<attribute qualifier="itemBarcode" type="java.lang.String">
-				<modifiers read="true" write="true" optional="false" />
+				<modifiers read="true" write="true" optional="true" />
 				<persistence type="property" />
 			</attribute>
 			<attribute qualifier="repairTechsForClaim" type="RepairTechClaimEnum">
@@ -4103,11 +4402,21 @@
 				<persistence type="property" />
 			</attribute>
 			<!-- Tech Eng Notes Attributes -->
-			<attribute qualifier="notesOnIssue" type="java.lang.String">
-				<persistence type="property" />
-				<modifiers read="true" write="true" optional="true" />
-				<description>Tech Eng. Team member can specify notes on the issue</description>
-			</attribute>
+			<attribute qualifier="notesForIssue" type="java.lang.String">
+              <description>Tech Eng. Team member can specify notes on the issue</description>
+              <modifiers read="true" write="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
+            </attribute>
 			<attribute qualifier="conditionRating" type="java.lang.Double">
 				<modifiers read="true" write="false" optional="true" />
 				<description>Total for Parts and Labor costs</description>
@@ -4118,10 +4427,20 @@
 				<modifiers read="true" write="true" optional="true" />
 				<description>Determines what type of repair is required</description>
 			</attribute>
-			<attribute qualifier="otherRepairReasons" type="java.lang.String">
-				<persistence type="property" />
-				<modifiers read="true" write="true" optional="true" />
-				<description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+			<attribute qualifier="otherRepairsReason" type="java.lang.String">
+			<description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+              <modifiers read="true" write="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
 			</attribute>
 			<attribute qualifier="frequency" type="IssueFrequencyEnum">
 				<persistence type="property" />
@@ -4170,6 +4489,22 @@
 				<description>Damage Waiver taken by Customer for the item</description>
 				<persistence type="dynamic" attributeHandler="blDamageWaiverForRepairLogHandler" />
 			</attribute>
+			<attribute qualifier="repairLogId" type="java.lang.String">
+          		<persistence type="property"/>
+          		<modifiers read="true" write="true" optional="true" unique="true"/>
+        	</attribute>
+        	<!-- Attribute warehouse created for requirement on BL-1862 -->
+        	<attribute qualifier="warehouse" type="Warehouse">
+                <modifiers read="true" write="true" optional="true" />
+                <description>Warehouse instance picked from Consignment attached to Repair log</description>
+                <persistence type="property" />
+            </attribute>
+            <!-- Attribute ocLocation created for requirement on BL-1863 -->
+            <attribute qualifier="ocLocation" type="java.lang.String">
+                <modifiers read="true" write="true" optional="true" />
+                <description>Serial scanned OC location code</description>
+                <persistence type="property" />
+            </attribute>
 		</attributes>
 	</itemtype>
 
@@ -4503,7 +4838,7 @@
         <custom-properties>
             <property name="query">
                 <value>
-                    "SELECT {c.code} as consignmentCode, {order:code} as orderNumber,{order:rentalEndDate} as rentalEndDate, {serial.ocLocation} as ocLocation, {serial.code} as serialProductCode,{cs.code} as consignmentStatus, {order.consolidatedOrderNote} as orderNote FROM {Consignment as c} ,{AbstractOrder as order},{OrderTypeEnum as ot},{ConsignmentStatus as cs},{BlSerialProduct as serial},{ConsignmentEntry as ce} where {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {c.order} = {order.pk} AND {order.orderType} = {ot.pk} AND {ot.code} = 'FD' AND {c.status} = {cs.pk} AND {c:optimizedShippingStartDate} >= ?optimizedShippingStartDate AND {c.warehouse} =?warehouse"
+                    "SELECT {c.code} as consignmentCode, {order:code} as orderNumber,{order:rentalEndDate} as rentalEndDate, {serial.ocLocation} as ocLocation, {serial.code} as serialProductCode,{cs.code} as consignmentStatus, {order.consolidatedOrderNote} as orderNote, {order.pickUpPersonFirstName} as FirstNameOfPickUpPerson, {order.pickUpPersonLastName} as LastNameOfPickUpPerson FROM {Consignment as c} ,{AbstractOrder as order},{OrderTypeEnum as ot},{ConsignmentStatus as cs},{BlSerialProduct as serial},{ConsignmentEntry as ce} where {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {c.order} = {order.pk} AND {order.orderType} = {ot.pk} AND {ot.code} = 'FD' AND {c.status} = {cs.pk} AND (CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) OR {c:optimizedShippingStartDate} >= ?optimizedShippingStartDate) AND {c.warehouse} =?warehouse AND {order.pickUpPersonFirstName}=?pickUpPersonFirstName AND {order.pickUpPersonLastName}=?pickUpPersonLastName"
                 </value>
             </property>
         </custom-properties>
@@ -4604,6 +4939,70 @@
                     </property>
                 </custom-properties>
             </attribute>
+            <attribute generate="false" autocreate="true" qualifier="FirstNameOfPickUpPerson" type="java.lang.String" metatype="ViewAttributeDescriptor">
+				<persistence type="jalo" qualifier=""/>
+				<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+				<custom-properties>
+					<property name="param">
+						<value>
+							Boolean.FALSE
+						</value>
+					</property>
+					<property name="position">
+						<value>
+							new Integer(7)
+						</value>
+					</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="pickUpPersonFirstName" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+						Boolean.TRUE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+						new Integer(0)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="LastNameOfPickUpPerson" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+						Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+						new Integer(8)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="pickUpPersonLastName" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+						Boolean.TRUE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+						new Integer(0)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
             <attribute generate="false" autocreate="true" qualifier="rentalEndDate" type="java.lang.String" metatype="ViewAttributeDescriptor">
                 <persistence type="jalo" qualifier=""/>
                 <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
@@ -5005,244 +5404,275 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalCart} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {serial.dirtyPriorityStatus} = 1 and {b.pk} = {serial:blProduct} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {order:pk} = {c:order} and {ot:pk} = {order:orderType}"
+"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalOrder} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber,{serial:barcode} as barcode, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {serial.dirtyPriorityStatus} = 1 and {b.pk} = {serial:blProduct} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {order:pk} = {c:order} and {ot:pk} = {order:orderType} and {serial:barcode}=?itemBarcode"
 			</value>
 		</property>
 	</custom-properties>
-	<attributes>
-		<attribute generate="false" autocreate="true" qualifier="currentDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.TRUE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(0)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="isUsedGearOrder" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(3)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="isVipOrder" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(2)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="ocLocationCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(10)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="ocParentLocationCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(9)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="orderNotes" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(4)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="orderNumber" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(0)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="orderTypeFlag" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(1)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="productCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(5)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="productName" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(6)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="serialDirtyPriorityFlag" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(11)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="serialNumber" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(7)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="warehouse" type="Warehouse" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.TRUE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(0)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="warehouseCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(8)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-	</attributes>
+  <attributes>
+    <attribute generate="false" autocreate="true" qualifier="barcode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(8)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="currentDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.TRUE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(0)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="isUsedGearOrder" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(3)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="isVipOrder" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(2)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="itemBarcode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.TRUE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(0)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="ocLocationCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(11)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="ocParentLocationCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(10)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="orderNotes" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(4)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="orderNumber" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(0)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="orderTypeFlag" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(1)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="productCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(5)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="productName" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(6)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="serialDirtyPriorityFlag" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(12)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="serialNumber" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(7)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="warehouse" type="Warehouse" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.TRUE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(0)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+    <attribute generate="false" autocreate="true" qualifier="warehouseCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <persistence type="jalo" qualifier=""/>
+      <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+      <custom-properties>
+        <property name="param">
+          <value>
+            Boolean.FALSE
+          </value>
+        </property>
+        <property name="position">
+          <value>
+            new Integer(9)
+          </value>
+        </property>
+      </custom-properties>
+    </attribute>
+  </attributes>
 </itemtype>
-
   <!--  BL-827, BL-828, BL-829 invnetory user clean complete / in-complete order queue -->
   <itemtype code="InventoryPulledOrdersView" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {order:code} as orderCode, {ot:code} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod, {order:rentalEndDate} as orderReturnDate FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm}, {OrderTypeEnum as ot} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 1 AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shipdate,110) AND {ot:pk} = {order:orderType}"
+          "SELECT {order:code} as orderCode, {ot:code} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalOrder} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod, {order:rentalEndDate} as orderReturnDate FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm}, {OrderTypeEnum as ot} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 1 AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shipdate,110) AND {ot:pk} = {order:orderType}"
         </value>
       </property>
     </custom-properties>
@@ -5493,7 +5923,7 @@ new Integer(8)
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {order:code} as orderCode, {ot:code} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm}, {OrderTypeEnum as ot} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 0 AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shipdate,110) AND {ot:pk} = {order:orderType}"
+          "SELECT {order:code} as orderCode, {ot:code} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalOrder} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm}, {OrderTypeEnum as ot} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 0 AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shipdate,110) AND {ot:pk} = {order:orderType}"
         </value>
       </property>
     </custom-properties>
@@ -6313,7 +6743,7 @@ new Integer(0)
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {s:code} as serialCode, {no:code} as nextOrderCode,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as no}, {Consignment as c}, {ConsignmentEntry as ce} where {s:testingStatus} = ({{select {tse:pk} from {ItemTestingStatusEnum as tse} where {tse:code} = 'TESTING_NEEDED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = ?warehouse and {no:pk} = {c:order}"
+"select {s:code} as serialCode, {no:code} as nextOrderCode,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as no}, {Consignment as c}, {ConsignmentEntry as ce} where {s:testingStatus} = ({{select {tse:pk} from {ItemTestingStatusEnum as tse} where {tse:code} = 'TESTING_NEEDED'}}) and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = ?warehouse and {no:pk} = {c:order}"
 			</value>
 		</property>
 	</custom-properties>
@@ -7045,7 +7475,7 @@ new Integer(0)
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
                         <description>cycle count serial status </description>
-                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountSerialStatus", "REGULAR")</defaultvalue>
+                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountSerialStatus", "FOUND")</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -7060,8 +7490,104 @@ new Integer(0)
                      	<modifiers read="true" write="true" optional="true"/>
                      	<description>The type of the transaction</description>
                    </attribute>
+                   <attribute qualifier="legacyTransaction" type="boolean">
+              			<persistence type="property" />
+                		<modifiers read="true" write="true" search="true" optional="true" />
+                		<defaultvalue>false</defaultvalue>
+                		<description>Payment Transaction will be marked as legacy order</description>
+              	  </attribute>
                 </attributes>
              </itemtype>
         </typegroup>
-	</itemtypes>
+
+  <typegroup name="SerialLog">
+    <itemtype code="BlSerialLog" autocreate="true" generate="true">
+      <description>BlSerialLog</description>
+      <deployment table="serialLog" typecode="12242" />
+      <attributes>
+        <attribute qualifier="serialsLogID" type="java.lang.String">
+          <modifiers read="true" write="true" optional="false"  unique="true"/>
+          <description>Unique Serial Log ID</description>
+          <persistence type="property" />
+        </attribute>
+        <attribute qualifier="logUserName" type="java.lang.String">
+          <modifiers read="true" write="true" optional="false" />
+          <description>User Name who logged changes</description>
+          <persistence type="property" />
+        </attribute>
+        <attribute qualifier="serialNumber" type="java.lang.String">
+          <modifiers read="true" write="true" optional="false" />
+          <description>Serial Number associated to serial</description>
+          <persistence type="property" />
+        </attribute>
+        <attribute qualifier="serialsId" type="BlSerialProduct">
+          <modifiers read="true" write="true" optional="false" />
+          <description>Serial product which is logged</description>
+          <persistence type="property" />
+        </attribute>
+        <attribute qualifier="itemBarcode" type="java.lang.String">
+          <modifiers read="true" write="true" optional="true" />
+          <description>Serial Barcode</description>
+          <persistence type="property" />
+        </attribute>
+        <attribute qualifier="logTime" type="java.util.Date">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true" />
+          <description>Time when serial logging happened</description>
+        </attribute>
+        <attribute qualifier="willBeActiveOn" type="java.util.Date">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true" />
+          <description>Time when serial is first active</description>
+        </attribute>
+        <attribute qualifier="logChanged" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true" />
+          <description>Pattern Log Changed</description>
+        </attribute>
+        <attribute qualifier="serialStatus" type="SerialStatusEnum">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="false"/>
+          <description>The status of the Serial Product</description>
+        </attribute>
+        <attribute qualifier="notes" type="java.lang.String">
+            <persistence type="property" />
+            <modifiers read="true" write="true" optional="true" />
+            <description>Notes on the serial</description>
+        </attribute>
+        <attribute qualifier="conditions" type="java.lang.String">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>Conditions applied on the Serial</description>
+        </attribute>
+        <attribute qualifier="firmwareVersion" type="java.lang.String">
+             <persistence type="property" />
+             <modifiers read="true" write="true" optional="true" />
+             <description>The version the SKU's firmware is currently at</description>
+        </attribute>
+        <attribute qualifier="isAvailableForSale" type="boolean">
+          <persistence type="property" />
+          <modifiers read="true" write="true" search="true" optional="false" />
+          <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
+          <description>If the serial is available for sale</description>
+        </attribute>
+        <attribute qualifier="forSalePrice" type="java.math.BigDecimal">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>For Sale Price of Serial</description>
+        </attribute>
+        <attribute qualifier="forSalePricingValue" type="java.math.BigDecimal">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>For Sale Pricing Value</description>
+        </attribute>
+        <attribute qualifier="withOrderId" type="Order">
+          <modifiers read="true" write="true" optional="true" />
+          <description>Order ID Associated to the log</description>
+          <persistence type="property" />
+        </attribute>
+      </attributes>
+    </itemtype>
+  </typegroup>
+</itemtypes>
 </items>

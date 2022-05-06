@@ -72,17 +72,17 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
     final OrderExtensionData data = new OrderExtensionData();
     populateCommonData(orderModel , data);
     data.setOldorderid(StringUtils.EMPTY);
-    data.setType(BooleanUtils.isTrue(orderModel.getIsRentalCart()) ? BlCoreConstants.RENTAL : BlCoreConstants.USED_GEAR);
+    data.setType(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) ? BlCoreConstants.RENTAL : BlCoreConstants.USED_GEAR);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXTENSION_EVENT_TEMPLATE)));
     data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
     data.setDateplaced(formatter.format(orderModel.getDate()));
-    data.setItemcost(getDoubleValueForRequest(getItemCostFromOrderEntry(orderModel)));
-    data.setDamagewaivercost(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost()));
-    data.setSubtotal(getDoubleValueForRequest(orderModel.getSubtotal()));
-    data.setShippingamount(getDoubleValueForRequest(orderModel.getDeliveryCost()));
-    data.setTaxamount(getDoubleValueForRequest(orderModel.getTotalTax()));
-    data.setDiscountamount(getDoubleValueForRequest(orderModel.getTotalDiscounts()));
-    data.setTotalcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
+    data.setItemcost(formatAmount(getDoubleValueForRequest(getItemCostFromOrderEntry(orderModel))));
+    data.setDamagewaivercost(formatAmount(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost())));
+    data.setSubtotal(formatAmount(getDoubleValueForRequest(orderModel.getSubtotal())));
+    data.setShippingamount(formatAmount(getDoubleValueForRequest(orderModel.getDeliveryCost())));
+    data.setTaxamount(formatAmount(getDoubleValueForRequest(orderModel.getTotalTax())));
+    data.setDiscountamount(formatAmount(getDoubleValueForRequest(orderModel.getTotalDiscounts())));
+    data.setTotalcost(formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
     data.setArrivaldate(formatter.format(orderModel.getExtendRentalStartDate()));
     data.setReturndate(formatter.format(orderModel.getExtendRentalEndDate()));
     data.setRentalduration((int) BlDateTimeUtils
@@ -91,7 +91,7 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
     if (Objects.nonNull(userModel)) {
       data.setCustomername(getRequestValue(userModel.getName()));
     }
-    data.setExtensionamount(getDoubleValueForRequest(orderModel.getTotalPrice()));
+    data.setExtensionamount(formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
     populateOrderItemXMLData(orderModel, data);
     orderExtensionRequest.setData(data);
   }
@@ -137,6 +137,8 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_TEXT, getDamageWaiverName(entryModel));
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_TOTAL_PRICE,
               String.valueOf(getDoubleValueForRequest(entryModel.getTotalPrice())));
+          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.QUANTITY, String.valueOf(entryModel.getQuantity()));
+          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.TAX, String.valueOf(getDoubleValueForRequest(entryModel.getAvalaraLineTax())));
         }
       }
 

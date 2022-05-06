@@ -742,9 +742,11 @@ p.customer-item-note {
     font-size: 20px;
     font-weight: bold;
 }
+/*
 #accountContent hr {
   height: 0 !important;
-}
+} 
+*/
 .savecart-modal .btn-primary{
 color:#fff !important;
 }
@@ -784,3 +786,8 @@ color:#fff !important;
  font-style: normal;
     padding-right: 3px;	
 }
+
+.refund-msg{
+	color: #e64b4f;
+}
+.verification-error-message { color: red; }

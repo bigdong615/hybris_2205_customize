@@ -1,6 +1,8 @@
 package com.bl.core.job;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
+import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.MarkReadyToShipConsignmentsCleanJobModel;
@@ -23,6 +25,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 
 
 /**
@@ -129,7 +132,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
       }
       consignment.setCleanCompleteConsignment(
           allCleanConsignmentEntryList.stream().allMatch(AtomicBoolean::get));
-
+      updateConsignmentStatusForShippingCart(consignment);
       if (allCleanConsignmentEntryList.stream().allMatch(AtomicBoolean::get)) {
 
         BlLogger
@@ -196,8 +199,73 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
     return cleanCartLocationCategoryList;
   }
 
+	/**
+	 * This method is used to update the consignment status for clean shipping cart
+	 * @param consignment
+	 */
+	private void updateConsignmentStatusForShippingCart(final ConsignmentModel consignment)
+	{
+		for (final ConsignmentEntryModel entryModel : consignment.getConsignmentEntries())
+		{
+			for (final BlProductModel productModel : entryModel.getSerialProducts())
+			{
+				if(productModel instanceof BlSerialProductModel)
+				{
+				markConsignmentToReadyToShip(consignment, productModel);
+				}
+			}
+		}
+	}
+
+	/**
+	 * This method will be used to mark consignment status as Ready To Ship
+	 * @param consignment
+	 * @param productModel
+	 */
+	private void markConsignmentToReadyToShip(final ConsignmentModel consignment, final BlProductModel productModel)
+	{
+		final BlSerialProductModel blSerialProductModel = ((BlSerialProductModel) productModel);
+		final String locationCode = null != blSerialProductModel.getOcLocationDetails()
+				&& null != blSerialProductModel.getOcLocationDetails().getLocationCategory()
+						? blSerialProductModel.getOcLocationDetails().getLocationCategory().getCode()
+						: BlInventoryScanLoggingConstants.EMPTY_STRING;
+		if (consignment.isCleanCompleteConsignment()
+				&& isShippingCartLocation(blSerialProductModel))
+			{
+			consignment.setStatus(ConsignmentStatus.RECEIVED_READY_TO_SHIP);
+			modelService.save(consignment);
+			modelService.refresh(consignment);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status for consignment {} is marked as {} for location {}", consignment.getCode(),consignment.getStatus(),locationCode);
+			}
+	}
 
   /**
+   * This method is used to check the shipping cart location 
+	 * @param blSerialProductModel
+	 * @return
+	 */
+	private boolean isShippingCartLocation(final BlSerialProductModel blSerialProductModel)
+	{
+		return BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(getLocationCategoryCodeFromSerial(blSerialProductModel));
+	}
+
+	/**
+	 * This method is used to get the location Category code for serial
+	 * @param blSerialProductModel
+	 * @return
+	 */
+	private String getLocationCategoryCodeFromSerial(final BlSerialProductModel blSerialProductModel)
+	{
+		if(blSerialProductModel.getOcLocationDetails() ==null)
+		{
+			return StringUtils.EMPTY;
+		}
+	 final BlInventoryLocationModel parentInventoryLocation = blSerialProductModel.getOcLocationDetails().getParentInventoryLocation();
+	 return parentInventoryLocation ==null ? StringUtils.EMPTY : parentInventoryLocation.getLocationCategory().getCode();
+
+}
+
+/**
    * @return the blConsignmentDao
    */
   public BlConsignmentDao getBlConsignmentDao() {

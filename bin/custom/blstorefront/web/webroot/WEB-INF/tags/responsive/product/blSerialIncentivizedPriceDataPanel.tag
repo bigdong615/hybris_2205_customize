@@ -35,7 +35,7 @@
 		<c:forEach items="${product.serialproducts}" var="serialProduct"
 			varStatus="loop">
    <c:if test="${serialProduct.serialSoftAssignedOrHardAssigned eq 'true'}">
-		<c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true  and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
+		<c:if test="${serialProduct.serialStatus ne 'SOLD' &&  serialProduct.isSerialNotAssignedToRentalOrder eq true }">
 			<c:set value="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && product.onSale eq true && serialProduct.onSale eq true}" var="hasPromotion"/>
 			<tr class=" ${loop.index >= 3 ? 'hide-product-row ' : ''} <c:if test="${hasPromotion}"> noborder</c:if>">
 				<td><a href="#" data-bs-toggle="modal"
@@ -65,7 +65,7 @@
 						access="hasAnyRole('ROLE_ANONYMOUS')">
 						<c:set value=" hidebutton" var="hidebutton" />
 					</sec:authorize> <c:choose>
-						<c:when test="${serialProduct.serialStatus eq 'ACTIVE'}">
+						<c:when test="${serialProduct.serialStatus eq 'ACTIVE' || serialProduct.serialStatus eq 'RECEIVED_OR_RETURNED' || serialProduct.serialStatus eq 'IN_HOUSE'}">
 							<button type="button"
 								data-link="<c:url value='/login/loginpopup'/>"
 								class="btn btn-primary  js-login-popup hide-after-login"

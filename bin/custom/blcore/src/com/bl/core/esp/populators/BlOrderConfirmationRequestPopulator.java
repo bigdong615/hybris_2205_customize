@@ -5,6 +5,7 @@ package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderconfirmation.data.OrderConfirmationData;
 import com.bl.esp.exception.BlESPIntegrationException;
@@ -14,18 +15,18 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.Map;
+import java.util.Date;
 import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -85,7 +86,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
             data.setCustomername(getRequestValue(userModel.getName()));
         }
         data.setType(getOrderType(orderModel));
-        data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
+        data.setReplacement(BooleanUtils.isTrue(orderModel.getIsReplacementOrder())
             ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
         data.setStatus(getRequestValue(getOrderStatus(orderModel)));
         data.setDateplaced(formatter.format(orderModel.getDate()));
@@ -97,15 +98,15 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
           data.setShippingmethodtext(getRequestValue(delivery.getName()));
         }
         data.setTrackinginfo(StringUtils.EMPTY);
-        data.setItemcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
-        data.setDamagewaivercost(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost()));
-        data.setSubtotal(getDoubleValueForRequest(orderModel.getSubtotal()));
-        data.setShippingamount(getDoubleValueForRequest(orderModel.getDeliveryCost()));
-        data.setTaxamount(getDoubleValueForRequest(orderModel.getTotalTax()));
-        data.setDiscountamount(getDoubleValueForRequest(orderModel.getTotalDiscounts()));
-        data.setTotalcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
+        data.setItemcost(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
+        data.setDamagewaivercost(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost())));
+        data.setSubtotal(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getSubtotal())));
+        data.setShippingamount(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getDeliveryCost())));
+        data.setTaxamount(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalTax())));
+        data.setDiscountamount(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalDiscounts())));
+        data.setTotalcost(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
         data.setDiscounttext(StringUtils.EMPTY);
-        if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
+        if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(
             orderModel.isGiftCardOrder())) {
           data.setExpectedshippingdate(formatter.format(orderModel.getRentalStartDate()));
           data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
@@ -122,11 +123,21 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
           data.setPaymenttype(BlCoreConstants.PO);
         }
         data.setPaymenttext(StringUtils.EMPTY);
-        data.setExtensiontotal(0.0);
-        data.setVerificationlevel(orderModel.getVerificationLevel());
+        data.setExtensiontotal(BlDateTimeUtils.formatAmount(0.0));
+        data.setVerificationlevel(Objects.isNull(orderModel.getVerificationLevel()) ? BlCoreConstants.VERIFICATION_LEVEL_ZERO : orderModel.getVerificationLevel());
+        data.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
+        data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
         populateXMLData(orderModel, data);
+        
+        final Date coiExpirationDateFromCustomer = getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser());
+        if(coiExpirationDateFromCustomer !=null)
+        {
+      	  data.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(coiExpirationDateFromCustomer,BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+        }
         orderConfirmationEventRequest.setData(data);
     }
+
+
 
   /**
    * This method created to get order status from order model
@@ -173,11 +184,12 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_STATE,
                     Objects.nonNull(shippingAddress.getRegion()) ? shippingAddress.getRegion().getName() : StringUtils.EMPTY);
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getPhone1()));
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
-              if(StringUtils.isNotEmpty(orderModel.getPickUpPersonEmail())){
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS, getStoreOpeningHours(shippingAddress));
-              }
+
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS,
+                    StringUtils.isNotEmpty(orderModel.getPickUpPersonEmail()) ? getStoreOpeningHours(shippingAddress) : StringUtils.EMPTY);
+
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES, StringUtils.isNotBlank(orderModel.getDeliveryNotes())  ? orderModel.getDeliveryNotes() : StringUtils.EMPTY);
 
               final Transformer transformer = getTransformerFactoryObject();
@@ -193,23 +205,6 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
             }
         }
     }
-
-  /**
-   * It returns opening hours of a store.
-   *
-   * @param shippingAddress the AddressModel
-   * @return opening hours
-   */
-  private String getStoreOpeningHours(final AddressModel shippingAddress) {
-    final Map<String, String> openingDaysDetails = shippingAddress.getOpeningDaysDetails();
-    final StringBuilder stringBuilder = new StringBuilder();
-    if (MapUtils.isNotEmpty(openingDaysDetails)) {
-      openingDaysDetails.forEach(
-          (key, value) -> stringBuilder.append(key).append(BlCoreConstants.COLON).append(value)
-              .append(StringUtils.SPACE));
-    }
-    return stringBuilder.toString();
-  }
 
 
   /**
@@ -240,7 +235,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_ZIP_CODE,
                     getRequestValue(billingAddress.getPostalcode()));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_PHONE,
-                    getRequestValue(billingAddress.getCellphone()));
+                    getRequestValue(billingAddress.getPhone1()));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_EMAIL,
                     getRequestValue(billingAddress.getEmail()));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_NOTES,getOrderNotesFromOrderModel(orderModel));
@@ -308,15 +303,19 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
             entryModel.getProduct() instanceof BlSerialProductModel ? getProductTitle(entryModel.getProduct().getCode()) :entryModel.getProduct().getName());
       }
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
-          entryModel.getProduct() instanceof BlSerialProductModel ? getProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
+          entryModel.getProduct() instanceof BlSerialProductModel ? getSerialProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
       if (Objects.nonNull(entryModel.getBasePrice())) {
-        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, BlDateTimeUtils.formatAmount(entryModel.getBasePrice()));
       }
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_PRICE,
-          String.valueOf(getDamageWaiverPriceFromEntry(entryModel)));
+          BlDateTimeUtils.formatAmount(getDamageWaiverPriceFromEntry(entryModel)));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_TEXT, getDamageWaiverName(entryModel));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_TOTAL_PRICE,
-          String.valueOf(getDoubleValueForRequest(entryModel.getTotalPrice())));
+          BlDateTimeUtils.formatAmount(getDoubleValueForRequest(entryModel.getTotalPrice())));
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.QUANTITY,
+          String.valueOf(entryModel.getQuantity()));
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.TAX,
+          BlDateTimeUtils.formatAmount(getDoubleValueForRequest(Objects.isNull(entryModel.getAvalaraLineTax()) ? 0.0 :entryModel.getAvalaraLineTax())));
     }
 
 

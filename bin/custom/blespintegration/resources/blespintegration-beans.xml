@@ -114,25 +114,25 @@
 		<property name="trackinginfo" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("tracking info")</annotations>
 		</property>
-		<property name="itemcost" type="java.lang.Double" equals="true">
+		<property name="itemcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("item cost")</annotations>
 		</property>
-		<property name="damagewaivercost" type="java.lang.Double" equals="true">
+		<property name="damagewaivercost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("damage waiver cost")</annotations>
 		</property>
-		<property name="subtotal" type="java.lang.Double" equals="true">
+		<property name="subtotal" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("subtotal")</annotations>
 		</property>
-		<property name="shippingamount" type="java.lang.Double" equals="true">
+		<property name="shippingamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("shipping amount")</annotations>
 		</property>
-		<property name="taxamount" type="java.lang.Double" equals="true">
+		<property name="taxamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("tax amount")</annotations>
 		</property>
-		<property name="discountamount" type="java.lang.Double" equals="true">
+		<property name="discountamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("discount amount")</annotations>
 		</property>
-		<property name="totalcost" type="java.lang.Double" equals="true">
+		<property name="totalcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("total cost")</annotations>
 		</property>
 		<property name="discounttext" type="java.lang.String" equals="true">
@@ -162,7 +162,7 @@
 		<property name="paymenttext" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("payment text")</annotations>
 		</property>
-		<property name="extensiontotal" type="java.lang.Double" equals="true">
+		<property name="extensiontotal" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("extension total")</annotations>
 		</property>
 		<property name="shippinginfo" type="java.lang.String" equals="true">
@@ -177,6 +177,16 @@
 		<property name="verificationlevel" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("verification level")</annotations>
 		</property>
+		<property name="returningcustomer" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Returning Customer")</annotations>
+		</property>
+		<property name="totalvalue" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Total Value")</annotations>
+		</property>
+		<property name="coiExpirationDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("COI Expiration Date")</annotations>
+		</property>
+
 	</bean>
 
 	<!-- Order verification more info Event data Request Object -->
@@ -254,7 +264,7 @@
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
-		<property name="totalcost" type="java.lang.Double" equals="true">
+		<property name="totalcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("total cost")</annotations>
 		</property>
 		<property name="reason" type="java.lang.String" equals="true">
@@ -312,11 +322,20 @@
 		<property name="verificationlevel" type="java.lang.Integer" equals="true">
 			<annotations>@JsonProperty("verification level")</annotations>
 		</property>
-		<property name="coiamount" type="java.lang.Double" equals="true">
+		<property name="coiamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("coi amount")</annotations>
 		</property>
 		<property name="verificationtext" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("verification text")</annotations>
+		</property>
+		<property name="returningcustomer" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Returning Customer")</annotations>
+		</property>
+		<property name="totalvalue" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Total Value")</annotations>
+		</property>
+		<property name="coiExpirationDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("COI Expiration Date")</annotations>
 		</property>
 	</bean>
 	<!-- Order verification COI needed Event  ends -->
@@ -351,7 +370,7 @@
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
-		<property name="totalcost" type="java.lang.Double" equals="true">
+		<property name="totalcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("total cost")</annotations>
 		</property>
 		<property name="paymenttype" type="java.lang.String" equals="true">
@@ -398,6 +417,12 @@
 		</property>
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+		<property name="orderstatus" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("order status")</annotations>
+		</property>
+		<property name="ordersubstatus" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("order sub status")</annotations>
 		</property>
 		<property name="actualreturndate" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("actual return date")</annotations>
@@ -477,6 +502,15 @@
 		</property>
 		<property name="verificationText" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Verification Text")</annotations>
+		</property>
+		<property name="returningcustomer" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Returning Customer")</annotations>
+		</property>
+		<property name="totalvalue" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Total Value")</annotations>
+		</property>
+		<property name="coiExpirationDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("COI Expiration Date")</annotations>
 		</property>
 	</bean>
 	<!-- Order Verification Required Event data Object End-->
@@ -643,7 +677,7 @@
 		<property name="verificationlevel" type="java.lang.Integer" equals="true">
 			<annotations>@JsonProperty("verification level")</annotations>
 		</property>
-		<property name="depositamount" type="java.math.BigDecimal" equals="true">
+		<property name="depositamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("deposit amount")</annotations>
 		</property>
 		<property name="verificationtext" type="java.lang.String" equals="true">
@@ -729,25 +763,25 @@
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
-		<property name="itemcost" type="java.lang.Double" equals="true">
+		<property name="itemcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("item cost")</annotations>
 		</property>
-		<property name="damagewaivercost" type="java.lang.Double" equals="true">
+		<property name="damagewaivercost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("damage waiver cost")</annotations>
 		</property>
-		<property name="subtotal" type="java.lang.Double" equals="true">
+		<property name="subtotal" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("subtotal")</annotations>
 		</property>
-		<property name="shippingamount" type="java.lang.Double" equals="true">
+		<property name="shippingamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("shipping amount")</annotations>
 		</property>
-		<property name="taxamount" type="java.lang.Double" equals="true">
+		<property name="taxamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("tax amount")</annotations>
 		</property>
-		<property name="discountamount" type="java.lang.Double" equals="true">
+		<property name="discountamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("discount amount")</annotations>
 		</property>
-		<property name="totalcost" type="java.lang.Double" equals="true">
+		<property name="totalcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("total cost")</annotations>
 		</property>
 		<property name="arrivaldate" type="java.lang.String" equals="true">
@@ -762,7 +796,7 @@
 		<property name="customername" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("customername")</annotations>
 		</property>
-		<property name="extensionamount" type="java.lang.Double" equals="true">
+		<property name="extensionamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("extension amount")</annotations>
 		</property>
 		<property name="orderitems" type="java.lang.String" equals="true">
@@ -937,7 +971,7 @@
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
-		<property name="refundamount" type="java.lang.Double" equals="true">
+		<property name="refundamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Refund Amount")</annotations>
 		</property>
 		<property name="refundmethod" type="java.lang.String" equals="true">
@@ -1008,6 +1042,284 @@
 	<bean class="com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData">
 		<property name="totalBillPaidAmount" type="java.lang.String" equals="true"/>
 		<property name="billPaidTypesMap" type="java.util.Map&lt;String,java.util.List&lt;String&gt;&gt;" equals="true"/>
+	</bean>
+
+
+	<!-- Order pull back ESP -->
+
+	<bean class="com.bl.esp.dto.orderpullback.data.OrderPullBackItems" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+	<property name="oldOrderId" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("Old Order ID")</annotations>
+	</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("status")</annotations>
+		</property>
+		<property name="ordertype" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Order Type")</annotations>
+		</property>
+		<property name="dateplaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Date Placed")</annotations>
+		</property>
+		<property name="shippingmethodtype" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method Type")</annotations>
+		</property>
+		<property name="shippingmethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method")</annotations>
+		</property>
+		<property name="expectedshippingdate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Expected Shipping Date")</annotations>
+		</property>
+		<property name="arrivaldate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Arrival Date")</annotations>
+		</property>
+		<property name="returndate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Return Date")</annotations>
+		</property>
+		<property name="itemsxml" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Items XML")</annotations>
+		</property>
+	</bean>
+
+	<!-- Order pull back Event Request Object-->
+	<bean class="com.bl.esp.dto.orderpullback.OrderPullBackRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.orderpullback.data.OrderPullBackItems" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+		<property name="serialProducts" type="java.util.List&lt;com.bl.core.model.BlSerialProductModel>" />
+		<property name="orderEntry" type="de.hybris.platform.core.model.order.AbstractOrderEntryModel" />
+	</bean>
+
+
+
+	<!--Order Manual Allocation ESP-->
+	<bean class="com.bl.esp.dto.manualallocation.data.OrderManualAllocationData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="oldOrderId" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Old Order ID")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Status")</annotations>
+		</property>
+		<property name="orderType" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Order Type")</annotations>
+		</property>
+		<property name="datePlaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Date Placed")</annotations>
+		</property>
+		<property name="shippingMethodType" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method Type")</annotations>
+		</property>
+		<property name="shippingMethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method")</annotations>
+		</property>
+		<property name="expectedShippingdate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Expected Shipping Date")</annotations>
+		</property>
+		<property name="arrivalDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Arrival Date")</annotations>
+		</property>
+		<property name="returnDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Return Date")</annotations>
+		</property>
+		<property name="orderItems" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("order items")</annotations>
+		</property>
+	</bean>
+
+	<!-- Order Manual Allocation Event Request Object-->
+	<bean class="com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.manualallocation.data.OrderManualAllocationData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+
+	<bean class="com.bl.esp.dto.OrderFeedData">
+		<property name="data" type="org.w3c.dom.Document" />
+		<property name="element" type="org.w3c.dom.Element" />
+	</bean>
+
+	<!-- Order Deposit Required Event Request Object-->
+	<bean class="com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.depositrequired.data.OrderDepositRequired" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+
+	<!--Order Deposit Required ESP-->
+	<bean class="com.bl.esp.dto.depositrequired.data.OrderDepositRequired" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="oldOrderId" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Old Order ID")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Status")</annotations>
+		</property>
+		<property name="datePlaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Date Placed")</annotations>
+		</property>
+		<property name="shippingMethodType" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method Type")</annotations>
+		</property>
+		<property name="shippingMethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method")</annotations>
+		</property>
+		<property name="expectedShipping" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Expected Shipping")</annotations>
+		</property>
+		<property name="arrivalDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Arrival Date")</annotations>
+		</property>
+		<property name="returnDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Return Date")</annotations>
+		</property>
+		<property name="rentalduration" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("rental duration")</annotations>
+		</property>
+		<property name="customername" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("customer name")</annotations>
+		</property>
+		<property name="verificationlevel" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("verification level")</annotations>
+		</property>
+		<property name="depositamount" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("deposit amount")</annotations>
+		</property>
+		<property name="verificationtext" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("verification text")</annotations>
+		</property>
+	</bean>
+
+
+	<!-- BL-1826 Gift card Purchase Confirmation Event Request Object-->
+	<bean class="com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.giftcard.data.GiftCardPurchaseData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+		<property name="orderModel" type="de.hybris.platform.core.model.order.AbstractOrderModel" />
+	</bean>
+
+
+	<!-- Gift card Purchase Confirmation ESP-->
+	<bean class="com.bl.esp.dto.giftcard.data.GiftCardPurchaseData">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="subscriberid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Subscriber_ID")</annotations>
+		</property>
+		<property name="orderid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Order_ID")</annotations>
+		</property>
+		<property name="template" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Template")</annotations>
+		</property>
+		<property name="giftcardamount" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Gift_Card_Amount")</annotations>
+		</property>
+		<property name="giftcardcode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Gift_Card_Code")</annotations>
+		</property>
+		<property name="customername" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Customer_Name")</annotations>
+		</property>
+		<property name="customeremail" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Customer_Email")</annotations>
+		</property>
+		<property name="datePlaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Date_Placed")</annotations>
+		</property>
+		<property name="giftcardnote" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Gift_Card_Note")</annotations>
+		</property>
+
+	</bean>
+
+	<!--BL-1813,BL-1814,BL-1815 common email data(reset password,notify me & Back in stock notification) for ESP Event Request Object start-->
+	<bean class="com.bl.esp.dto.common.data.ESPEmailCommonRequestData" >
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="subscriberid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Subscriber_ID")</annotations>
+		</property>
+		<property name="emailAddress" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Email_Address")</annotations>
+		</property>
+		<property name="template" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Template")</annotations>
+		</property>
+		<property name="requestedDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Requested_Date")</annotations>
+		</property>
+	</bean>
+
+	<!--BL-1813,BL-1814,BL-1815 common email data(reset password,notify me & Back in stock notification) for ESP Event Request Object start-->
+	<bean class="com.bl.esp.dto.common.ESPEmailCommonEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.common.data.ESPEmailCommonRequestData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+	<!--BL-1813:DTO for reset password email link ESP Event -->
+	<bean class="com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData" extends="com.bl.esp.dto.common.data.ESPEmailCommonRequestData">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="passwordLink" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Password_Link")</annotations>
+		</property>
+		<property name="timeout" type="int" equals="true">
+			<annotations>@JsonProperty("Timeout")</annotations>
+		</property>
+	</bean>
+	<!--BL-1814,BL-1815:DTO for notify me and back in stock email link ESP Event -->
+	<bean class="com.bl.esp.dto.notify.data.NotifyMeEmailRequestData" extends="com.bl.esp.dto.common.data.ESPEmailCommonRequestData">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="productName" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Product_Name")</annotations>
+		</property>
+		<property name="productUrl" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Product_URL")</annotations>
+		</property>
+		<property name="productThumbURL" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Product_Thumb")</annotations>
+		</property>
+	</bean>
+
+	<!--BL-1827 ESP - Free Gift Card Confirmation Email-->
+	<bean class="com.bl.esp.dto.giftcard.FreeGiftCardPurchaseEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.giftcard.data.GiftCardPurchaseData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
 	</bean>
 
 </beans>

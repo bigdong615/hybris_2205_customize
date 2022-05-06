@@ -112,8 +112,20 @@
         <property name="blOrderService" ref="blOrderService"/>
         <property name="blDatePickerService" ref="blDatePickerService"/>
         <property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+        <property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/> 
     </bean>
 
+    <alias name="defaultBlOrderModificationService" alias="blOrderModificationService" />
+    <bean id="defaultBlOrderModificationService" class="com.bl.Ordermanagement.services.impl.DefaultBlOrderModificationService">
+        <property name="blSourcingService" ref="blSourcingService"/>
+        <property name="blSourceOrderAction" ref="blSourceOrderAction"/>
+        <property name="modelService" ref="modelService"/>
+        <property name="blStockLevelDao" ref="blStockLevelDao"/>
+        <property name="allocationService" ref="allocationService"/>
+        <property name="calculationService" ref="calculationService"/>
+
+    </bean>
+    
     <alias name="defaultBlSourcingLocationService" alias="blSourcingLocationService" />
     <bean id="defaultBlSourcingLocationService" class="com.bl.Ordermanagement.services.impl.DefaultBlSourcingLocationService">
        <property name="sourcingLocationPopulators">
@@ -178,7 +190,9 @@
 
 <!-- BL-982 Modify order changes-->   
 	<alias name="blOrderEntryValidateInterceptor" alias="blOrderEntryValidateInterceptor"/>
-	<bean id="blOrderEntryValidateInterceptor" class="com.bl.Ordermanagement.interceptor.BlOrderEntryValidateInterceptor"/>
+	<bean id="blOrderEntryValidateInterceptor" class="com.bl.Ordermanagement.interceptor.BlOrderEntryValidateInterceptor">
+    <property name="defaultBlESPEventService" ref="blEspEventService"/>
+  </bean>
 
 	<bean id="blOrderEntryValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
 		<property name="interceptor" ref="blOrderEntryValidateInterceptor"/>
@@ -197,11 +211,24 @@
 		<property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
 		<property name="modelService" ref="modelService"/>
 		<property name="blAssignSerialService" ref="blAssignSerialService"/>
-		<property name="blAllocationService" ref="allocationService"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao" />
-		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 		<property name="blProductService" ref="productService"/>
-	</bean>
+		<property name="blOptimizeShippingFromWHService" ref="blOptimizeShippingFromWHService"/>
+  </bean>
+
+  <alias alias="blOptimizeShippingFromWHService" name="defaultBlOptimizeShippingFromWHService"/>
+  <bean id="defaultBlOptimizeShippingFromWHService" class="com.bl.Ordermanagement.reshuffler.service.impl.DefaultBlOptimizeShippingFromWHService">
+    <property name="orderDao" ref="orderDao"/>
+    <property name="baseStoreService" ref="baseStoreService"/>
+    <property name="blCommerceStockService" ref="blCommerceStockService" />
+    <property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
+    <property name="modelService" ref="modelService"/>
+    <property name="blAssignSerialService" ref="blAssignSerialService"/>
+    <property name="blAllocationService" ref="allocationService"/>
+    <property name="blStockLevelDao" ref="blStockLevelDao" />
+    <property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+    <property name="blProductService" ref="productService"/>
+  </bean>
 
   <!-- BL-956 reallocation consignment -->
   <bean id="blReallocationService" class="com.bl.Ordermanagement.reallocation.impl.DefaultBlReallocationService">

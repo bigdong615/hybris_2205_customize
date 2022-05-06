@@ -1,0 +1,27 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLUserGroup.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLUserGroup; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLUserGroup	; PrincipalGroup   	; PrincipalGroup   	; 	; ALL_SUBTYPES           	;  
+; InboundBLUserGroup	; ComposedType     	; ComposedType     	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLUserGroup	; UserGroup        	; UserGroup        	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLUserGroup	; Principal        	; Principal        	; 	; ALL_SUBTYPES           	;  
+; InboundBLUserGroup	; SearchRestriction	; SearchRestriction	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLUserGroup:PrincipalGroup   	; uid               	; PrincipalGroup:uid              	;                                     	; true	;  
+; InboundBLUserGroup:ComposedType     	; code              	; ComposedType:code               	;                                     	; true	;  
+; InboundBLUserGroup:UserGroup        	; description       	; UserGroup:description           	;                                     	; 	;  
+; InboundBLUserGroup:UserGroup        	; allGroups         	; UserGroup:allGroups             	; InboundBLUserGroup:PrincipalGroup   	; 	;  
+; InboundBLUserGroup:UserGroup        	; uid               	; UserGroup:uid                   	;                                     	; true	;  
+; InboundBLUserGroup:UserGroup        	; groups            	; UserGroup:groups                	; InboundBLUserGroup:PrincipalGroup   	; 	;  
+; InboundBLUserGroup:UserGroup        	; name              	; UserGroup:name                  	;                                     	; 	;  
+; InboundBLUserGroup:UserGroup        	; searchRestrictions	; UserGroup:searchRestrictions    	; InboundBLUserGroup:SearchRestriction	; 	;  
+; InboundBLUserGroup:UserGroup        	; displayName       	; UserGroup:displayName           	;                                     	; 	;  
+; InboundBLUserGroup:Principal        	; uid               	; Principal:uid                   	;                                     	; true	;  
+; InboundBLUserGroup:SearchRestriction	; code              	; SearchRestriction:code          	;                                     	; true	;  
+; InboundBLUserGroup:SearchRestriction	; restrictedType    	; SearchRestriction:restrictedType	; InboundBLUserGroup:ComposedType     	; true	;  
+; InboundBLUserGroup:SearchRestriction	; principal         	; SearchRestriction:principal     	; InboundBLUserGroup:Principal        	; true	;  

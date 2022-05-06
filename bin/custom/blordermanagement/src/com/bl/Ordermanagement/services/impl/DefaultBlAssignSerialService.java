@@ -5,6 +5,7 @@ import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
@@ -13,6 +14,7 @@ import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -74,12 +77,14 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
     final List<AtomicBoolean> allEntrySourceComplete = new ArrayList<>();
     SourcingResult result = new SourcingResult();
-
-    final SourcingLocation finalSourcingLocation =
-        isOrderBeingTransferredToOtherWarehouse(context, sourcingLocation.getWarehouse())
+    final SourcingLocation finalSourcingLocation;
+        if(!isFrontDeskOrder(context)){
+        finalSourcingLocation = isOrderBeingTransferredToOtherWarehouse(context, sourcingLocation.getWarehouse())
             ?  sourcingLocation : getBlShippingOptimizationStrategy()
             .getProductAvailabilityForThreeDayGround(context, sourcingLocation);
-
+        }else{
+          finalSourcingLocation = sourcingLocation;
+        }
     if(null != finalSourcingLocation.getAllocatedMap()) {
       BlLogger
           .logFormatMessageInfo(LOG, Level.INFO, "Allocation map after shipping optimization:- {}",
@@ -98,6 +103,22 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     }
 
     return allEntrySourceComplete.stream().allMatch(AtomicBoolean::get) && isAllQuantityFulfilled(context);
+  }
+
+  /**
+   *  This method used for checking front desk.
+   * @param context
+   * @return
+   */
+  private boolean isFrontDeskOrder(final SourcingContext context) {
+    if (context != null && CollectionUtils.isNotEmpty(context.getOrderEntries())) {
+      final Optional<AbstractOrderEntryModel> orderEntryModel = context.getOrderEntries().stream().findFirst();
+      if (orderEntryModel.isPresent() && null != orderEntryModel.get().getOrder().getDeliveryMode()) {
+        final DeliveryModeModel deliveryModeModel = orderEntryModel.get().getOrder().getDeliveryMode();
+        return (deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && deliveryModeModel.getCode().startsWith(BlCoreConstants.FRONT_DESK_DELIVERY_MODE_KEY_PREFIX));
+      }
+    }
+    return Boolean.FALSE;
   }
 
   public void fulfillEachEntry(final SourcingContext context, final SourcingResult result,

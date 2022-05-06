@@ -135,6 +135,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target,
      final String categoryCode) {
     final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
+    addQueryForCategory(target,BlCoreConstants.IS_GIFT_CARD,BlCoreConstants.FALSE);
     if (category.isRentalCategory()) {
       if (!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
         addIsNewToRentalSearchQuery(target, categoryCode);

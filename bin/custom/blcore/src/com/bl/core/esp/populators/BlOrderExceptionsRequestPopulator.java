@@ -7,6 +7,7 @@ import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.product.ProductService;
@@ -17,6 +18,7 @@ import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -76,7 +78,9 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     orderExceptionsData.setOldorderid(StringUtils.EMPTY);
     orderExceptionsData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXCEPTION_EVENT_TEMPLATE)));
     orderExceptionsData.setDateplaced(formatter.format(orderModel.getDate()));
-    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
+    orderExceptionsData.setOrderstatus(getRequestValue(Objects.isNull(orderModel.getStatus()) ? StringUtils.EMPTY :orderModel.getStatus().getCode()));
+    orderExceptionsData.setOrdersubstatus(getSubStatusFromOrder(orderModel));
+    if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(
         orderModel.isGiftCardOrder())) {
       orderExceptionsData
           .setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
@@ -111,7 +115,7 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
             getRequestValue(getProductTitle(orderExceptionsExtraData.getSerialCode())));
         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
             BlCoreConstants.ITEM_PRODUCT_URL,
-            getRequestValue(getProductUrl(orderExceptionsExtraData.getSerialCode())));
+            getRequestValue(getSerialProductUrl(orderExceptionsExtraData.getSerialCode())));
         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
             BlCoreConstants.ITEM_AMOUNT_DUE_ROOT_ELEMENT,
             getRequestValue(String.valueOf(orderExceptionsExtraData.getTotalChargedAmount())));
@@ -133,6 +137,23 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
       throw new BlESPIntegrationException(exception.getMessage(),
           LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode(), exception);
     }
+  }
+
+  /**
+   * This method created to get consignment status from order
+   * @param abstractOrderModel order model
+   * @return String
+   */
+  private String getSubStatusFromOrder(final AbstractOrderModel abstractOrderModel){
+    final StringBuilder stringBuilder = new StringBuilder(StringUtils.EMPTY);
+    if(CollectionUtils.isNotEmpty(abstractOrderModel.getConsignments())) {
+      abstractOrderModel.getConsignments().forEach(consignmentModel -> {
+        if(Objects.nonNull(consignmentModel.getStatus())){
+          stringBuilder.append(consignmentModel.getStatus().getCode()).append(BlCoreConstants.SHARE_A_SALE_COMMA);
+        }
+      });
+    }
+    return StringUtils.chop(stringBuilder.toString());
   }
 
   public ProductService getProductService() {

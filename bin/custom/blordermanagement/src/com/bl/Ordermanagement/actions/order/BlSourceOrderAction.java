@@ -98,7 +98,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
             "Number of consignments created during allocation: {}", consignments.size());
         startConsignmentSubProcess(consignments, process);
-        order.setStatus(OrderStatus.RECEIVED);
+        order.setStatus(OrderStatus.PENDING);
 
         if (order.getEntries().stream()
             .anyMatch(orderEntry -> orderEntry.getUnAllocatedQuantity().longValue() > 0)) {
@@ -152,7 +152,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   private SourcingResults getSourcingResults(final OrderModel order) {
 
     SourcingResults results = null;
-    if (order.getIsRentalCart().booleanValue()) {
+    if (order.getIsRentalOrder().booleanValue()) {
 
       if (blOrderService.isAquatechProductOrder(order)) {
         results =  getResultsForOrderWithOnlyAquatechProducts(order);
@@ -255,7 +255,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    * @param warehouseModel - warehouseModel
    * @param sourcingResult - sourcingResult
    */
-  private void updateResultAndAssignSerials(final Set<SourcingResult> resultSet,
+  public void updateResultAndAssignSerials(final Set<SourcingResult> resultSet,
       final AbstractOrderEntryModel entry, final WarehouseModel warehouseModel,
       final SourcingResult sourcingResult) {
 

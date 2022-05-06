@@ -139,9 +139,15 @@
 					<ea:attribute qualifier="isNew"/>
 					<ea:attribute qualifier="isVideo"/>
 					<ea:attribute qualifier="productType" label="label.pcmbackoffice.producttype"/>
-					<ea:attribute qualifier="shortDescription" editor="com.hybris.cockpitng.editor.wysiwyg"/>
+					<ea:attribute qualifier="shortDescription">
+					<ea:editor-parameter>
+						<ea:name>rows</ea:name>
+						<ea:value>10</ea:value>
+					</ea:editor-parameter>
+					</ea:attribute>
 					<ea:attribute qualifier="titleTag" label="label.pcmbackoffice.titletag"/>
 					<ea:attribute qualifier="specifications" editor="com.hybris.cockpitng.editor.wysiwyg"/>
+					<ea:attribute qualifier="subpartProducts" />
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.rentaldetails">
 					<ea:attribute qualifier="rentalVideosLink" />
@@ -156,6 +162,7 @@
 					<ea:attribute qualifier="onSale"/>
 					<ea:attribute qualifier="bufferedInventoryPercentage"/>
 					<ea:attribute qualifier="bufferInvPercChangedManually"/>
+					<ea:attribute qualifier="bundleProduct"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.additional">
 					<ea:attribute qualifier="staffPick"/>
@@ -167,7 +174,6 @@
 						<ea:attribute
 							editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
 							qualifier="description"/>
-						<ea:attribute qualifier="summary"/>
 						<ea:attribute qualifier="data_sheet"/>
 					</ea:panel>
 				</ea:section>
@@ -185,6 +191,7 @@
 			<ea:tab name="hmc.tab.product.categorysystem" position="10">
 				<ea:section name="hmc.section.product.productincategory">
 					<ea:attribute qualifier="supercategories"/>
+					<ea:attribute qualifier="primaryCategoryID"/>
 					<ea:attribute qualifier="classificationClasses"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.productreferences">
@@ -223,10 +230,30 @@
 					<ea:attribute qualifier="unit"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.dimensions">
-					<ea:attribute qualifier="weight"/>
-					<ea:attribute qualifier="length"/>
-					<ea:attribute qualifier="width"/>
-					<ea:attribute qualifier="height"/>
+					<ea:attribute qualifier="weight">
+						<ea:editor-parameter>
+							<ea:name>numberFormat</ea:name>
+							<ea:value>##0.000</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
+					<ea:attribute qualifier="length">
+						<ea:editor-parameter>
+							<ea:name>numberFormat</ea:name>
+							<ea:value>##0.000</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
+					<ea:attribute qualifier="width">
+						<ea:editor-parameter>
+							<ea:name>numberFormat</ea:name>
+							<ea:value>##0.000</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
+					<ea:attribute qualifier="height">
+						<ea:editor-parameter>
+							<ea:name>numberFormat</ea:name>
+							<ea:value>##0.000</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.multimedia" position="18">
@@ -292,10 +319,13 @@
 					<ea:attribute qualifier="mpn"/>
 					<ea:attribute qualifier="procurementCost"/>
 					<ea:attribute qualifier="procurementSource"/>
+					<ea:attribute qualifier="procurementID"/>
 					<ea:attribute qualifier="purchaseNotes" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.purchasenotes"/>
 					<ea:attribute qualifier="retailPrice"/>
 					<ea:attribute qualifier="upc"/>
-					<ea:attribute qualifier="newGearInStock"/>
+					<ea:attribute qualifier="retailGearInStock"/>
+					<ea:attribute qualifier="retailGearPrice"/>
+					<ea:attribute qualifier="retailGear"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.community" position="34">
@@ -563,7 +593,7 @@
 					<ea:attribute qualifier="hardAssigned"/>
 					<ea:attribute qualifier="gearRated"/>
 					<ea:attribute qualifier="repairReasons"/>
-					<ea:attribute qualifier="otherRepairReasons"/>
+					<ea:attribute qualifier="otherRepairsReason"/>
 					<ea:attribute qualifier="dirtyPriorityStatus"/>
 					<ea:attribute qualifier="testingStatus"/>
 					<ea:attribute qualifier="repairLogType"/>

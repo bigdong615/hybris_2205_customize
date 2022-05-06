@@ -17,10 +17,12 @@ import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -38,6 +40,8 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
     private PriceDataFactory priceDataFactory;
     private CommonI18NService commonI18NService;
     private BlProductService productService;
+    @Resource(name = "stockNotificationFacade")
+    private StockNotificationFacade stockNotificationFacade;
 
     @Override
     public void populate(final BlProductModel source, final ProductData target) {
@@ -89,11 +93,12 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         target.setUpc(StringUtils.isNotEmpty(source.getUpc()) ? source.getUpc() : StringUtils.EMPTY );
         target.setBrandName(StringUtils.isNotEmpty(source.getManufacturerName()) ? source.getManufacturerName() : StringUtils.EMPTY);
         target.setRetailGear(BooleanUtils.toBoolean(source.getRetailGear()));
-        target.setIsNewGearInStock(BooleanUtils.toBoolean(source.isNewGearInStock()));
+        target.setIsRetailGearInStock(BooleanUtils.toBoolean(source.isRetailGearInStock()));
         if(null != source.getRetailGearPrice()) {
             target.setRetailGearPrice(getProductPriceData(source.getRetailGearPrice()));
         }
         getBlProductTagPopulator().populate(source, target);
+        target.setIsWatching(stockNotificationFacade.isWatchingProduct(target));
     }
 
     /*

@@ -40,6 +40,7 @@
 					</div>
 					<div id="productInfo" class="col-lg-5 offset-lg-1">
 					<div class="hide-on-mobile">
+					<input type="hidden" id="doReload" name="doReload" value="false" />
 					<h1 class="mb-4">${product.displayName}</h1>
 					</div>
                       <c:choose>
@@ -62,7 +63,7 @@
 												 --%>
 												
 							<div class="gc-pdp-form">
-								<input type="text" class="form-control" id="amount"
+								<input type="number" class="form-control" id="amount"
 									placeholder="<spring:theme code='giftcard.PurchaseForm.amount.placeholder' />" name="amount"> <input
 									type="text" class="form-control" id="first-name"
 									placeholder="<spring:theme code='giftcard.PurchaseForm.name.placeholder' />" name="name"> <input
@@ -71,9 +72,10 @@
 								<textarea class="form-control mt-2 mb-4"
 									placeholder="<spring:theme code='giftcard.PurchaseForm.message.placeholder' />" name="message"></textarea>
 							</div>
-							<div class="notification notification-warning mb-2"
-								style="display: none;"><spring:theme
-							code="giftcard.pdp.amount.limit" /></div>
+							
+						<div class="gc-error-div"></div>
+<!-- 							<div class="notification notification-warning mb-2 gc-error-message"
+								style="display: none;"></div> -->
 
 							<sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
 						       <c:set value="hidebutton" var="hidebutton" />

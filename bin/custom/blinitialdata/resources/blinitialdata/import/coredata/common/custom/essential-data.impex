@@ -133,6 +133,8 @@ INSERT_UPDATE BlPricingLogic ; productType(code)[unique=true];tier(code);greater
                              ;MONITORS;ONE;;1000;12
                              ;MONITORS;TWO;1000;3000;6
                              ;MONITORS;THREE;3000;;5
+                             ;MANUAL;ONE;0;1000000;0
+
 
 INSERT_UPDATE BlStandardPricingRatio ;duration(code)[unique=true];pricingRatio
                                      ;3;0.69
@@ -159,9 +161,17 @@ INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
 ;defaultBlAutomatedUPSScrapeJob;defaultBlAutomatedUPSScrapeJob
 ;blHighDemandConstrainedProductJob;blHighDemandConstrainedProductJob
 ;blReshufflerJob;blReshufflerJob
+;defaultBlOrderFeedJob;defaultBlOrderFeedJob
+;defaultBlOrderBillFeedJob;defaultBlOrderBillFeedJob
+;blVoidAuthTransactionJob;blVoidAuthTransactionJob
+;blUsedGearCartAbandonmentJob;blUsedGearCartAbandonmentJob
 
 INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blStockCreationCronJob ;blStockCreationJob ; ;true;;
+
+INSERT_UPDATE BlOrderFeedCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
+;blOrderFeedJob ;defaultBlOrderFeedJob ; ;true;;
+;blOrderBillFeedJob ;defaultBlOrderBillFeedJob ; ;true;;
 
 INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blAutomatedStockCreationCronJob ;blAutomatedStockCreationJob ; ;true;;
@@ -169,7 +179,9 @@ INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[
 ;blBufferInventoryCronJob ;blBufferInventoryJob ; ;true;;
 ;blHighDemandConstrainedProductCronJob ;blHighDemandConstrainedProductJob ; ;true;;
 ;blReshufflerCronJob ;blReshufflerJob ; ;true;;
- ;blUPSScrapeCronJob ;defaultBlAutomatedUPSScrapeJob ; ;true;;
+;blUPSScrapeCronJob ;defaultBlAutomatedUPSScrapeJob ; ;true;;
+;blUsedGearCartAbandonmentCronJob ;blUsedGearCartAbandonmentJob ; ;true;;
+;blVoidAuthTransactionCronJob ;blVoidAuthTransactionJob ; ;true;;
 
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
@@ -178,6 +190,11 @@ INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 ;blBufferInventoryCronJob; 0 0 0/6 1/1 * ?
 ;blUPSScrapeCronJob; 0 0 0 * * ?
 ;blHighDemandConstrainedProductCronJob; 0 0 0 ? * 4/7 *
+;blOrderFeedJob; 0 0 0 * * ?
+;blOrderBillFeedJob; 0 0 0 * * ?
+;blReshufflerCronJob; 0 0 0 * * ?
+;blUsedGearCartAbandonmentCronJob; 0 0/5 * * * ?
+;blVoidAuthTransactionCronJob; 0 0 0/4 1/1 * ?
 
 INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
                                     ; VIDEO                                   ; 28               
@@ -220,7 +237,7 @@ INSERT_UPDATE MarkReadyToShipConsignmentsCleanJob; code[unique = true]; job(code
                                                  ;markReadyToShipConsignmentsCleanJob;markConsignmentsCleanJob; ;true
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
-                     ;markReadyToShipConsignmentsCleanJob; 0 0/30 * * * ?
+                     ;markReadyToShipConsignmentsCleanJob; 0	0/5	3-18	?	*	*	*
 
 ##Package Box Sizes
 INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true];weight[unique=true];weightUnit[default=lb];dimensionUnit[default=in]
@@ -331,6 +348,20 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; REPAIR_CABINET                        ; Repair Cabinet                                   
                                               ; REPAIR_MOBILE_SHELF                   ; Repair Mobile Shelf                              
                                               ; REPAIR_MOBILE_LAUNDRY_BIN             ; Repair Mobile Laundry Bin                         
+                                              ; CART_CLEAN_AND_READY_TO_SHIP                  ; Cart - Clean and Ready to Ship                         
+                                              ; CART_DIRTY_PRIORITY                           ; Cart - Dirty gear to be sent to dirty priority         
+                                              ; CART_HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION ; Cart - Hard assigned and waiting on payment resolution 
+                                              ; CLEAN_AND_READY_TO_SHIP                       ; Clean and Ready to Ship                                
+                                              ; CUSTOMER_ITEMS                                ; Customer Items                                         
+                                              ; DIRTY_GEAR_CAGE                               ; Dirty Gear Cage                                        
+                                              ; DIRTY_PRIORITY                                ; Dirty Gear to be sent to Dirty Priority                
+                                              ; DIRTY_MOBILE_CART                             ; Dirty Mobile Cart                                      
+                                              ; HARD_ASSIGNED_AND_BOXED_GEAR                  ; Hard assigned and Boxed Gear                           
+                                              ; HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION      ; Hard assigned and waiting on payment resolution        
+                                              ; INVENTORY_WORKSTATION                         ; Inventory Workstation                                  
+                                              ; SCRAPPED                                      ; Scrapped                                               
+                                              ; UNBOXING_WORKSTATION                          ; Unboxing Workstation                                   
+                                              ; VIP_WORKSTATION_UNBOX                         ; VIP Workstation (Unboxing)                             
 
 INSERT_UPDATE OptionTypeEnum;code[unique=true];name[lang=en]
                             ;COMPACT;COMPACT
@@ -444,6 +475,45 @@ INSERT_UPDATE VendorsEnum ; code[unique=true] ; name[lang=en]
                           ; ZEISS             ; Zeiss             
                           ; ZACUTO            ; Zacuto            
                           ; ZHIYUN            ; Zhiyun            
+                          ; CALIFORNIA_PS      ; CALIFORNIA_PS      
+                          ; BOWENS             ; BOWENS             
+                          ; ELINCHROM          ; ELINCHROM          
+                          ; PROMARK            ; PROMARK            
+                          ; TECHTWO            ; TECHTWO            
+                          ; KODAK              ; KODAK              
+                          ; ZOOM_NORTH_AMERICA ; ZOOM_NORTH_AMERICA 
+                          ; LITEPANELS_INC     ; LITEPANELS_INC     
+                          ; BLACK_MAGIC        ; BLACK_MAGIC        
+                          ; THK                ; THK                
+                          ; RODE               ; RODE               
+                          ; GO_PRO             ; GO_PRO             
+                          ; WESCOTT            ; WESCOTT            
+                          ; ELITE              ; ELITE              
+                          ; TECH3              ; TECH3              
+                          ; CINEVATE           ; CINEVATE           
+                          ; FILEX              ; FILEX              
+                          ; MAC_GROUP          ; MAC_GROUP          
+                          ; GRADUS_GROUP       ; GRADUS_GROUP       
+                          ; QUANTUM            ; QUANTUM            
+                          ; SUPERVISOR         ; SUPERVISOR         
+                          ; BL_WEST            ; BL_WEST            
+                          ; TECHONE            ; TECHONE            
+                          ; TECHTHREE          ; TECHTHREE          
+                          ; HIVELIGHTING       ; HIVELIGHTING       
+                          ; QUIN               ; QUIN               
+                          ; SCHNEIDER_OPTICS   ; SCHNEIDER_OPTICS   
+                          ; UNITED_CAMERA      ; UNITED_CAMERA      
+                          ; BL_EAST            ; BL_EAST            
+                          ; SIGMA              ; SIGMA              
+                          ; LECTRONICS         ; LECTRONICS         
+                          ; LYTRO              ; LYTRO              
+                          ; BEACHTEK_INC       ; BEACHTEK_INC 
+                          ; SOUNDDEVICES               ; SOUNDDEVICES               
+                          ; CALIFORNIA_MEDIA_SOLUTIONS ; CALIFORNIA_MEDIA_SOLUTIONS 
+                          ; LETUS_CORPORATION          ; LETUS_CORPORATION          
+                          ; DIGITALSPUTNIK             ; DIGITALSPUTNIK             
+                          ; INSTA360                   ; INSTA360                   
+                                
                           
 INSERT_UPDATE ItemBillingChargeTypeEnum ; code[unique=true] 			; name[lang=en]  
                                         ; MISSING_CHARGE    			; MISSING CHARGE 
@@ -507,3 +577,14 @@ REMOVE AttributeConstraint;id[unique=true];annotation[allownull=true];descriptor
                           ;CustomerName;de.hybris.platform.validation.annotations.NotBlank;Customer:name;name;ERROR:Severity;de.hybris.platform.core.model.user.CustomerModel;Customer
 
 $de.hybris.platform.core.Registry.getApplicationContext().getBean(de.hybris.platform.validation.services.ValidationService.class).reloadValidationEngine()
+
+
+UPDATE AttributeDescriptor ; qualifier[unique=true] ; enclosingType(code)[unique=true] ; description[lang=en]
+;billPaid;BlItemsBillingCharge;"Value = TRUE means Bill is COMPLETE
+Value = FALSE means Bill is INCOMPLETE"
+
+INSERT_UPDATE ServicelayerJob ; code[unique=true]          ; springId[unique=true]      
+                              ; blFutureOrderAllocationJob ; blFutureOrderAllocationJob 
+
+INSERT_UPDATE CronJob ; code[unique=true]                    ; job(code)                  ; sessionLanguage(isoCode)[default = en] ; active ;  
+                      ; blFutureOrderAllocationJob 			 ; blFutureOrderAllocationJob ;                                        ; true   ;  

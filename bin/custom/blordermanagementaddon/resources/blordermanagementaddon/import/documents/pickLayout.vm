@@ -117,23 +117,25 @@
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.firstname)} $!{ctx.escapeHtml($ctx.consignment.shippingAddress.lastname)}
                 </td>
                 <td>
-                    <strong>$!{ctx.messages.billTo} </strong>
+                    <strong>$!{ctx.messages.billTo} </strong><br/>
+					$!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.firstname)} $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.lastname)}
                 </td>
             </tr>
             <tr>
-                <td >
-                    $!{ctx.messages.shippingAddressLine1} <br/>
-                    $!{ctx.messages.shippingAddressLine2} <br/>
-                    $!{ctx.messages.shippingAddressCity} <br/>
-                    $!{ctx.messages.shippingAddressPostalCode} <br/>
-                    $!{ctx.messages.shippingAddressPhone} <br/>
-                </td>
+
                 <td>
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.line1)} <br/>
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.line2)} <br/>
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.town)} <br/>
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.postalcode)} <br/>
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.phone1)} <br/>
+                </td>
+				<td >
+                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.line1)} <br/>
+                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.line2)} <br/>
+                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.town)} <br/>
+                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.postalcode)} <br/>
+                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.phone1)} <br/>
                 </td>
             </tr>
             <tr>
@@ -162,12 +164,12 @@
                 <td colspan="6"><div class="pick-slip-border"></div></td>
             </tr>
 
-            #foreach( $consignmentEntry in ${ctx.consignmentEntries} )
+			#foreach( $serialCode in ${ctx.consignment.packagingInfo.serialProducts} )
                 <tr>
                     <td>$foreach.count</td>
-                    <td>$!{ctx.escapeHtml($consignmentEntry.orderEntry.product.code)}</td>
-                    <td>$!{ctx.escapeHtml($consignmentEntry.orderEntry.product.name)}</td>
-                    <td>$!{consignmentEntry.quantityPending}</td>
+                    <td>$!{ctx.escapeHtml($serialCode.blProduct.code)}</td>
+                    <td>$!{ctx.escapeHtml($serialCode.blProduct.name)}</td>
+                     <td>1</td>
                 </tr>
             #end
             <tr>

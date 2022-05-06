@@ -1,0 +1,14 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLInventoryScanConfiguration.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLInventoryScanConfiguration; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLInventoryScanConfiguration	; BlInventoryScanConfiguration	; BlInventoryScanConfiguration	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLInventoryScanConfiguration:BlInventoryScanConfiguration	; blScanConfigKey  	; BlInventoryScanConfiguration:blScanConfigKey  	;                                     	; true	;  
+; InboundBLInventoryScanConfiguration:BlInventoryScanConfiguration	; blScanConfigValue	; BlInventoryScanConfiguration:blScanConfigValue	;                                     	; 	;  
+; InboundBLInventoryScanConfiguration:BlInventoryScanConfiguration	; creationtime     	; BlInventoryScanConfiguration:creationtime     	;                                     	; 	;  
+; InboundBLInventoryScanConfiguration:BlInventoryScanConfiguration	; modifiedtime     	; BlInventoryScanConfiguration:modifiedtime     	;                                     	; 	;  

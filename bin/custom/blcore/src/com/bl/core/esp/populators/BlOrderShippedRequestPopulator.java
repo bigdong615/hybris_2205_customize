@@ -79,7 +79,7 @@ public class BlOrderShippedRequestPopulator extends
       data.setCustomerName(getRequestValue(userModel.getName()));
     }
     data.setType(getOrderType(orderModel));
-    data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
+    data.setReplacement(BooleanUtils.isTrue(orderModel.getIsReplacementOrder())
         ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
     data.setStatus(getRequestValue(
         Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode()
@@ -96,7 +96,7 @@ public class BlOrderShippedRequestPopulator extends
       data.setShippingMethod(StringUtils.EMPTY);
       data.setShippingMethodText(StringUtils.EMPTY);
     }
-   if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+   if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
       data.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
       data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
       data.setRentalDuration((int) getRentalDuration(orderModel));
@@ -139,11 +139,11 @@ public class BlOrderShippedRequestPopulator extends
         createElementForRootElement(shippingInfoInXMLDocument, root,
             BlCoreConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE,
-            getRequestValue(shippingAddress.getCellphone()));
+            getRequestValue(shippingAddress.getPhone1()));
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL,
             getRequestValue(shippingAddress.getEmail()));
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS,
-            StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
+            StringUtils.isEmpty(orderModel.getPickUpPersonEmail()) ? StringUtils.EMPTY : getStoreOpeningHours(shippingAddress));
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES,
             StringUtils.isNotBlank(orderModel.getDeliveryNotes())  ? orderModel.getDeliveryNotes() : StringUtils.EMPTY);
 

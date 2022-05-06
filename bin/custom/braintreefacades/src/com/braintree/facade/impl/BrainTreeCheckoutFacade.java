@@ -10,7 +10,6 @@ import com.bl.core.order.dao.BlOrderDao;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAddressRequest;
 import com.braintree.command.result.BrainTreeAddressResult;
-import com.braintree.command.result.BrainTreeVoidResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
 import com.braintree.converters.utils.BlBrainTreeConvertUtils;
@@ -44,20 +43,18 @@ import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.payment.commands.request.VoidRequest;
 import de.hybris.platform.payment.dto.TransactionStatus;
-import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
-import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -125,7 +122,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	@Override
 	public boolean authorizePayment(final String securityCode)
 	{
-		return authorizePayment(securityCode, getCustomFields());
+		return authorizePayment(securityCode, Collections.emptyMap());
 	}
 
 	/**
@@ -294,7 +291,12 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
       setRegionShortCodeIfNotAvailable(addressData);
       final BrainTreeAddressRequest brainTreeAddressRequest =
           BlBrainTreeConvertUtils.convertBrainTreeAddress(currentUserForCheckout.getBraintreeCustomerId(), addressData);
-      final String brainTreeAddressId = paymentInfo.getBillingAddress().getBrainTreeAddressId();
+      String brainTreeAddressId = paymentInfo.getBillingAddress().getBrainTreeAddressId();
+			if(StringUtils.isBlank(brainTreeAddressId)) {
+				brainTreeAddressId = getBrainTreeTransactionService().getBraintreeAddressIDForLegacyPaymentMethods(paymentInfo.getPaymentMethodToken());
+				paymentInfo.getBillingAddress().setBrainTreeAddressId(brainTreeAddressId);
+				getModelService().save(paymentInfo);
+			}
       if (StringUtils.isNotBlank(brainTreeAddressId))
       {
         brainTreeAddressRequest.setAddressId(brainTreeAddressId);
@@ -523,6 +525,18 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 			paymentInfoId, final String nonce) {
 		return brainTreePaymentService.getBrainTreePaymentInfoForCode(customer, paymentInfoId, nonce);
 	}
+
+	/**
+	 * It gets payment info model by payment info id for extend order
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the payment method nonce
+	 * @return BrainTreePaymentInfoModel
+	 */
+	public BrainTreePaymentInfoModel getClonedBrainTreePaymentInfoCode(final CustomerModel customer, final String
+			paymentInfoId, final String nonce) {
+		return brainTreePaymentService.getClonedPaymentInfoForCode(customer, paymentInfoId, nonce);
+	}
 	
 	/**
 	 * It gets payment info model by payment info id for Deposit.
@@ -545,13 +559,21 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	public Map<String,List<String>> setPayBillFlagTrue(final AbstractOrderModel order) {
 		AtomicBoolean isOrderComplete = new AtomicBoolean(true);
 		final Map<String,List<String>> productCodeWiseItemCharge = new HashMap<>();
+		order.setOrderBillModifiedDate(new Date());
+		getModelService().save(order);
+		getModelService().refresh(order);
+		BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+				"Updating order {} for payment of pending bill at updated time {}",
+				order.getCode(), order.getOrderBillModifiedDate());
 		order.getConsignments()
 				.forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
 						.getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
 							if(BooleanUtils.isFalse(billing.isBillPaid())) {
 								billing.setBillPaid(true);
+								billing.setUpdatedBillTime(new Date());
 								getModelService().save(billing);
 								setTotalAmountPastDue(consignment.getOrder().getUser(), billing);
+								setOutstandingBill(consignment.getOrder().getUser(), billing);
                 storeBillingChargesTypeToMap(productCodeWiseItemCharge, consignmentEntry, billing);
               }
 						}))));
@@ -575,7 +597,22 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		return productCodeWiseItemCharge;
 	}
 
-  /**
+	/**
+	 * It removes the billing charges instance which has been paid by the customer
+	 * @param user the customer model
+	 * @param billing the billing charges
+	 */
+	private void setOutstandingBill(final UserModel user, final BlItemsBillingChargeModel billing) {
+		final CustomerModel customerModel = (CustomerModel) user;
+		if (CollectionUtils.isNotEmpty(customerModel.getOutstandingBills())) {
+			final List<BlItemsBillingChargeModel> outstandingBills = new ArrayList<>(customerModel.getOutstandingBills());
+			outstandingBills.remove(billing);
+			customerModel.setOutstandingBills(outstandingBills);
+			getModelService().save(customerModel);
+		}
+	}
+
+	/**
    * It stores billing charge type to a map.
    *
    * @param productCodeWiseItemCharge
@@ -779,48 +816,6 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		{
 			getModelService().remove(cartModel);
 			getModelService().refresh(orderModel);
-		}
-	}
-
-	/**
-	 * It voids the auth transaction of the order
-	 */
-	public void voidAuthTransaction() {
-		final CartModel cart = cartService.getSessionCart();
-  	try {
-			final String merchantTransactionCode = cart.getUser().getUid();
-			List<PaymentTransactionModel> transactions = cart.getPaymentTransactions();
-			if (CollectionUtils.isNotEmpty(transactions) && null != merchantTransactionCode) {
-				List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
-				final Optional<PaymentTransactionEntryModel> authEntry = transactionEntries.stream()
-						.filter(transactionEntry ->
-								transactionEntry.getType().equals(PaymentTransactionType.AUTHORIZATION))
-						.findFirst();
-				if (authEntry.isPresent()) {
-					final VoidRequest voidRequest = new VoidRequest(merchantTransactionCode,
-							authEntry.get().getRequestId(), StringUtils.EMPTY,
-							StringUtils.EMPTY);
-					final BrainTreeVoidResult voidResult = brainTreePaymentService
-							.voidTransaction(voidRequest);
-					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), cart);
-				}
-			}
-		} catch (final Exception ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction "
-					+ "for order {} ", cart.getCode(), ex);
-		}
-	}
-
-	/**
-	 * @param transactionStatus
-	 * @param cart
-	 * This is used to set the isAuthorized flag of order
-	 */
-	private void setAuthorizedFlagInOrder(TransactionStatus transactionStatus,
-			CartModel cart) {
-		if (TransactionStatus.ACCEPTED.equals(transactionStatus)) {
-			cart.setIsAuthorizationVoided(Boolean.TRUE);
-			getModelService().save(cart);
 		}
 	}
 	

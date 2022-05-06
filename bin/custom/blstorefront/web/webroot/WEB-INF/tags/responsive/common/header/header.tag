@@ -134,7 +134,7 @@
            <div id="liveagent_button_offline_${buttonId}" style=""><!-- Offline Chat Content --></div>
           </li>
           </c:if>
-	   <li class="nav-item nav-cart">
+	   <li class="nav-item">
 	   <cms:pageSlot position="MiniCartSlot" var="component" class="">
 			<cms:component component="${component}" />
 	   </cms:pageSlot>      

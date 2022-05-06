@@ -5,7 +5,6 @@ import com.bl.core.model.BlProductModel;
 
 import com.bl.facades.product.data.BlBundleReferenceData;
 import com.bl.facades.product.data.BlOptionData;
-import com.google.common.collect.Lists;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderEntryPopulator;
@@ -49,6 +48,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 			super.populate(source, target);
 			populateDamageWaiverValues(source, target);
 			populateOptionsValues(source, target);
+			populateSelectedOptions(source, target);
 			populateGiftCartPurcahseValues(source, target);
 			target.setAqautechProduct(BooleanUtils.isTrue(source.getAqautechProduct()));
 		}
@@ -64,15 +64,28 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	 */
 	private void populateDamageWaiverValues(final AbstractOrderEntryModel source, final OrderEntryData target)
 	{
+		final Long quantity = source.getQuantity();
 		final Double gearGuardWaiverPrice = source.getGearGuardWaiverPrice();
 		target.setGearGuardWaiverPrice(
-				createPrice(source, Objects.nonNull(gearGuardWaiverPrice) ? gearGuardWaiverPrice : Double.valueOf(0.0d)));
+				createPrice(source, Objects.nonNull(gearGuardWaiverPrice) ? getDamageWaiverPrice(gearGuardWaiverPrice, quantity) : Double.valueOf(0.0d)));
 		final Double gearGuardProFullWaiverPrice = source.getGearGuardProFullWaiverPrice();
 		target.setGearGuardProFullWaiverPrice(createPrice(source,
-				Objects.nonNull(gearGuardProFullWaiverPrice) ? gearGuardProFullWaiverPrice : Double.valueOf(0.0d)));
+				Objects.nonNull(gearGuardProFullWaiverPrice) ? getDamageWaiverPrice(gearGuardProFullWaiverPrice, quantity) : Double.valueOf(0.0d)));
 		target.setNoDamageWaiverSelected(BooleanUtils.toBoolean(source.getNoDamageWaiverSelected()));
 		target.setGearGuardWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardWaiverSelected()));
 		target.setGearGuardProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardProFullWaiverSelected()));
+	}
+	
+	/**
+	 * Gets the damage waiver price.
+	 *
+	 * @param gearGuardWaiverPrice the gear guard waiver price
+	 * @param quantity the quantity
+	 * @return the damage waiver price
+	 */
+	private Double getDamageWaiverPrice(final Double gearGuardWaiverPrice, final Long quantity)
+	{
+		return gearGuardWaiverPrice * quantity;
 	}
 	
 	/**
@@ -102,40 +115,39 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	{
 		final List<BlOptionData> optionsDataList = new ArrayList<>();
 		final ProductModel product = source.getProduct();
-		if(product instanceof BlProductModel){
+		if (product instanceof BlProductModel)
+		{
 			final BlProductModel blProductModel = (BlProductModel) product;
 			final List<BlOptionsModel> options = blProductModel.getOptions();
 
-			if(CollectionUtils.isNotEmpty(options)){
-				final BlOptionsModel blOptionsModel = options.iterator().next();
-				final BlOptionData blOptionData = new BlOptionData();
-				blOptionData.setOptionCode(blOptionsModel.getCode());
-				blOptionData.setOptionName(blOptionsModel.getName());
-
-				List<BlOptionsModel> subOptions = Lists.newArrayList(CollectionUtils.emptyIfNull(blOptionsModel.getSubOptions()));
-				subOptions.forEach(option -> {
-					final BlOptionData subBlOptionData = new BlOptionData();
-					subBlOptionData.setOptionCode(option.getCode());
-					subBlOptionData.setOptionName(option.getName());
-					subBlOptionData.setOptionPrice(createPrice(source,
-							Objects.nonNull(option.getUnitPrice()) ? option.getUnitPrice() : Double.valueOf(0.0d)));
-					optionsDataList.add(subBlOptionData);
+			if (CollectionUtils.isNotEmpty(options))
+			{
+				options.forEach(option -> {
+					final BlOptionData blOptionData = new BlOptionData();
+					blOptionData.setOptionCode(option.getCode());
+					blOptionData.setOptionName(option.getName());
+					blOptionData.setOptionPrice(
+							createPrice(source, Objects.nonNull(option.getUnitPrice()) ? option.getUnitPrice() : Double.valueOf(0.0d)));
+					optionsDataList.add(blOptionData);
 				});
-				blOptionData.setSubOptions(optionsDataList);
-				if(CollectionUtils.isNotEmpty(source.getOptions())){
-					final BlOptionsModel selectedBlOptionsModel = source.getOptions().iterator().next();
-					blOptionData.setOptionCode(selectedBlOptionsModel.getCode());
-					blOptionData.setOptionName(selectedBlOptionsModel.getName());
-					blOptionData.setOptionPrice(createPrice(source,
-							Objects.nonNull(selectedBlOptionsModel.getUnitPrice()) ? selectedBlOptionsModel.getUnitPrice() : Double.valueOf(0.0d)));
-					
+				target.setOption(optionsDataList);
+				if(CollectionUtils.isNotEmpty(options.iterator().next().getOptions()))
+				{
+				target.setMainOptionName(options.iterator().next().getOptions().get(0).getName());
 				}
-				target.setOption(blOptionData);
-
+			}
+			if (CollectionUtils.isNotEmpty(source.getOptions()))
+			{
+				final BlOptionsModel selectedBlOptionsModel = source.getOptions().iterator().next();
+				final BlOptionData selectOptionData = new BlOptionData();
+				selectOptionData.setOptionCode(selectedBlOptionsModel.getCode());
+				selectOptionData.setOptionName(selectedBlOptionsModel.getName());
+				selectOptionData.setOptionPrice(createPrice(source,
+						Objects.nonNull(selectedBlOptionsModel.getUnitPrice()) ? selectedBlOptionsModel.getUnitPrice()
+								: Double.valueOf(0.0d)));
+				target.setSelectedProductOptions(selectOptionData);
 			}
 		}
-
-
 	}
 
 	
@@ -195,6 +207,18 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		}
 	}
 
-
+	/**
+	 * This method is used to populate selected option
+	 *
+	 * @param source
+	 * @param target
+	 */
+	private void populateSelectedOptions(final AbstractOrderEntryModel source, final OrderEntryData target)
+	{
+		if (CollectionUtils.isNotEmpty(source.getOptions()))
+		{
+			target.setSelectedOptions(source.getOptions().get(0).getName());
+		}
+	}
 
 }

@@ -119,8 +119,8 @@ public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderI
     orderItem.setIsVipOrder(consignmentModel.getOrder().getIsVipOrder());
 
     orderItem.setIsUsedGearOrder(
-        null != consignmentModel.getOrder().getIsRentalCart() && !consignmentModel.getOrder()
-            .getIsRentalCart());
+        null != consignmentModel.getOrder().getIsRentalOrder() && !consignmentModel.getOrder()
+            .getIsRentalOrder());
 
     orderItem.setOrderNotes(
         null != consignmentModel.getOrder().getConsolidatedOrderNote() ? consignmentModel.getOrder()

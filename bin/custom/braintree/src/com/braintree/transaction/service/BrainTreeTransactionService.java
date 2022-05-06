@@ -9,13 +9,14 @@ import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.hybris.data.BraintreeTransactionEntryData;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.payment.dto.BraintreeInfo;
+import com.braintreegateway.Result;
+import com.braintreegateway.Transaction;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
-
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -220,4 +221,26 @@ public interface BrainTreeTransactionService
    * @return the remaining amount to refund
    */
   public BigDecimal getRemainingAmountToRefund(final AbstractOrderModel order);
+
+	/**
+	 * It voids the auth transaction of the order
+	 * @param order the order
+	 */
+	public void voidAuthTransaction(final OrderModel order);
+
+	/**
+	 * To issue a credit/refund for legacy orders (Bl-1740 and BL-1763)
+	 * @param paymentTransactionEntry payment transaction entry
+	 * @param refundAmount refund amount
+	 * @return result object
+	 */
+	public Result<Transaction> issueBlindCredit(final PaymentTransactionEntryModel paymentTransactionEntry,
+			final BigDecimal refundAmount);
+
+	/**
+	 * It gets the Braintree address id for legacy payment methods where braintreeAddressID is not present (BL-1744)
+	 * @param paymentMethodToken the payment method token
+	 * @return braintree address id
+	 */
+	public String getBraintreeAddressIDForLegacyPaymentMethods(final String paymentMethodToken);
 }

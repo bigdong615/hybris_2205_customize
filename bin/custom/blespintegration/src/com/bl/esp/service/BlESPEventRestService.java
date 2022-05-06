@@ -3,13 +3,19 @@ package com.bl.esp.service;
 
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
+import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.giftcard.FreeGiftCardPurchaseEventRequest;
+import com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest;
+import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderextension.OrderExtensionRequest;
+import com.bl.esp.dto.orderpullback.OrderPullBackRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
@@ -175,4 +181,61 @@ public interface BlESPEventRestService {
    * @return
    */
   ESPEventResponseWrapper sendOrderBillPaidEvent(final OrderBillPaidEventRequest orderBillPaidEventRequest);
+
+  /**
+   * Send Order Pull Back Items Added Event by calling Order Pull Back Items Added ESP Event API
+   *
+   * @param orderPullBackRequest the orderPullBackRequest
+   * @return
+   */
+  ESPEventResponseWrapper sendOrderPullBackItemsAdded(final OrderPullBackRequest orderPullBackRequest);
+
+  /**
+   * Send Order Pull Back Items Removed Event by calling Order Pull Back Items Removed ESP Event API
+   *
+   * @param orderPullBackRequest the orderPullBackRequest
+   * @return
+   */
+  ESPEventResponseWrapper sendOrderPullBackItemsRemoved(final OrderPullBackRequest orderPullBackRequest);
+
+
+  /** Send Order Manual Allocation by calling Order Manual Allocation ESP Event API
+   *
+   * @param orderManualAllocationEventRequest the OrderManualAllocationEventRequest
+   * @return ESPEventResponseWrapper
+   */
+  ESPEventResponseWrapper sendOrderManualAllocationEvent(
+      final OrderManualAllocationEventRequest orderManualAllocationEventRequest);
+
+  /**
+   * Send Order Deposit Required by calling Order Deposit Required ESP Event API
+   * @param orderDepositRequiredEventRequest order deposit request
+   * @return ESPEventResponseWrapper
+   */
+  ESPEventResponseWrapper sendOrderDepositRequired(
+      final OrderDepositRequiredEventRequest orderDepositRequiredEventRequest);
+
+  /**
+   * Send Gift Card Purchase by calling Gift Card Purchase ESP Event API
+   * @param giftCardPurchaseEventRequest giftCardPurchaseEventRequest
+   * @return ESPEventResponseWrapper
+   */
+  ESPEventResponseWrapper sendGiftCardPurchase(
+      final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest);
+
+  /**
+   * Send Gift Card Purchase by calling Gift Card Purchase ESP Event API
+   * @param freeGiftCardPurchaseEventRequest freeGiftCardPurchaseEventRequest
+   * @return ESPEventResponseWrapper
+   */
+  ESPEventResponseWrapper sendFreeGiftCardPurchase(
+      final FreeGiftCardPurchaseEventRequest freeGiftCardPurchaseEventRequest);
+
+   /**
+   * BL-1813,1814: send email request ESP Event API
+   * @param  emailRequiredEventRequest emailRequiredEventRequest
+   * @return espEventResponseWrapper
+   */
+  ESPEventResponseWrapper sendESPEmailEventRequest(
+      ESPEmailCommonEventRequest emailRequiredEventRequest);
 }

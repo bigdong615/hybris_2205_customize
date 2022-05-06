@@ -43,6 +43,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String DEFAULT_SORT_NEWEST_CODE = "default.sort.newest";
 	public static final String USED_VIDEO = "Used-Video";
 	public static final String FOR_RENT = "forRent";
+	public static final String IS_GIFT_CARD = "giftCard";
+	public static final String GIFTCARD = "GIFTCARD";
 	public static final String FOR_SALE = "forSale";
 	public static final String ITEM_TYPE = "itemtype";
 	public static final String BLPRODUCT = "BlProduct";
@@ -255,6 +257,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String HTML_ENABLED = "HTML Enabled";
 
 	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
+	public static final String NUMERIC_VALUES = "0123456789" ;
+	public static final long SEVEN = 7 ;
 	public static final String BL_SAN_CARLOS = "BL_SAN_CARLOS";
 	public static final String BL_WALTHAM = "BL_WALTHAM";
 
@@ -346,7 +350,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHARE_A_SALE_NEW_CUSTOMER = "&newcustomer=";
 	public static final String ONE = "1";
 	public static final String SHARE_A_SALE_URL_LINK = "&urllink=";
-	public static final String SHARE_A_SALE_UTF = "UTF-8";
+	public static final String DEFAULT_ENCODING = "UTF-8";
 	public static final String SHARE_A_SALE_COUPON_CODE = "&couponcode=";
 	public static final String SHARE_A_SALE_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
 	public static final String SHARE_A_SALE_GMT = "GMT";
@@ -405,6 +409,21 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_EXTRA_ITEM_EVENT_DEFINITION_KEY = "order.extra.item.event.definition.key";
 	public static final String ORDER_EXTRA_ITEM_EVENT_TEMPLATE = "order.extra.item.event.template";
 
+
+	public static final String ORDER_PULL_BACK_ADDED_ITEMS_EVENT_DEFINITION_KEY = "order.pull.back.item.added.event.definition.key";
+
+	public static final String ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_DEFINITION_KEY = "order.pull.back.item.removed.event.definition.key";
+	public static final String ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE = "pullBackOrderRemoveItems";
+
+	public static final String BORROW_LENSES_SUBSCRIBER_ID = "borrow.lenses.subscriber.id";
+
+	public static final String ORDER_DEPOSIT_REQUIRED_EVENT_DEFINITION_KEY = "order.deposit.required.event.definition.key";
+	public static final String ORDER_DEPOSIT_REQUIRED_EVENT_TEMPLATE = "order.deposit.required.event.template";
+
+	public static final String ORDER_GIFT_CARD_EVENT_DEFINITION_KEY = "order.giftcard.purchase.event.definition.key";
+	public static final String ORDER_GIFT_CARD_EVENT_TEMPLATE = "order.giftcard.purchase.event.template";
+	public static final String FREE_GIFT_CARD_EVENT_TEMPLATE = "free.giftcard.purchase.event.template";
+
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
 	public static final String SHIPPING_LAST_NAME = "shippinglastname";
@@ -452,6 +471,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ITEM_NOTES_ROOT_ELEMENT = "notes";
 
 	public static final String DATE_PATTERN = "yyyy-MM-dd";
+	public static final String COI_EXPIRATION_DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
 	public static final String CUSTOMER_CHECKOUT_ORDER_NOTES = "CUSTOMER_CHECKOUT_ORDER_NOTES";
 	public static final String RENTAL = "Rental";
 	public static final String UN_BOXED = "UNBOXED_COMPLETELY";
@@ -478,7 +498,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_ITEM_PRODUCT_CANCEL_REASON = "reason";
 
 
-	//public static final String UID = "uid";
 	public static final String BILLING_CHARGES = "billingCharges";
 	public static final String UNBOXED = "UNBOXED";
 
@@ -498,6 +517,122 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GC_TYPE = "GC";
 	public static final String PLUS = "+";
 	public static final String BL_PRODUCT_VALIDATE_INTERCEPTOR = "BlProductValidateInterceptor";
+	public static final String ORDER_MANUAL_ALLOCATION_EVENT_DEFINITION_KEY = "order.manual.allocation.event.definition.key";
+	public static final String UNALLOCATED_QUANTITY = "unallocatedquantity";
+	public static final String SERIAL_ALLOCATED = "serialallocated";
+	public static final String SERIAL_ALLOCATED_YES = "Yes";
+	public static final String SERIAL_ALLOCATED_NO = "No";
+
+	public static final String FEDEX = "fedex";
+	public static final String UPS = "ups";
+	public static final String USPS = "usps";
+	
+	public static final String ANONYMOUS = "anonymous";
+	public static final String FRONT_DESK_DELIVERY_MODE_KEY_PREFIX = "BL_";
+
+	public static final String OPTIMIZEDSHIPPINGSTARTDATE = "optimizedShippingStartDate";
+	public static final String PULLED_ORDERS_QUEUE = "PulledOrdersQueue";
+	public static final String AWAITING_ORDERS_QUEUE = "OrdersAwaitingQueue";
+	public static final String COMPLTED_ORDER_QUEUE = "ShippingCompleteOrderQueue";
+	public static final String FRONT_DESK_QUEUE = "FrontDeskQueue";
+	
+	public static final String BL_ORDER_VALIDATE_INTERCEPTOR = "BlOrderValidateInterceptor";
+	public static final String BL_REPAIR_LOG_PREPARE_INTERCEPTOR = "BlRepairLogPrepareInterceptor";
+	public static final String BL_GIFT_CARD_LOG_PREPARE_INTERCEPTOR = "BlGiftCardPrepareInterceptor";
+
+	public static final String ACTIVE_STATUS = "ACTIVE";
+	public static final String PARTIALLY_UNBOXED = "PARTIALLY_UNBOXED";
+	public static final String RECEIVED_OR_RETURNED = "RECEIVED_OR_RETURNED";
+	public static final String BOXED = "BOXED";
+	public static final String SHIPPED = "SHIPPED";
+	public static final String IN_HOUSE = "IN_HOUSE";
+	public static final String ADDED_TO_CART = "ADDED_TO_CART";
+	
+	public static final String SYNC_ACTIVE_PROPERTY = "catalog.sync.active";
+
+	public static final int NAME_LENGTH_SIZE = 48;
+
+
+	public static final String ORDER_MODIFIED_DATE = "orderModifiedDate";
+	public static final String ORDER_MODIFIED_END_DATE = "orderModifiedEndDate";
+	public static final String ORDER_BILL_MODIFIED_DATE = "orderBillModifiedDate";
+	public static final String ORDER_BILL_MODIFIED_END_DATE = "orderBillModifiedEndDate";
+
+	// Order Status
+	public static final String RECEIVED_IN_VERIFICATION = "RECEIVED_IN_VERIFICATION";
+	public static final String RECEIVED_MANUAL_REVIEW = "RECEIVED_MANUAL_REVIEW";
+	public static final String RECEIVED_SHIPPING_MANUAL_REVIEW = "RECEIVED_SHIPPING_MANUAL_REVIEW";
+	public static final String RECEIVED_PAYMENT_DECLINED = "RECEIVED_PAYMENT_DECLINED";
+	public static final String UNBOXED_PARTIALLY = "UNBOXED_PARTIALLY";
+	public static final String UNBOXED_COMPLETELY = "UNBOXED_COMPLETELY";
+	public static final String RECEIVED_ROLLING = "RECEIVED_ROLLING";
+	public static final String SOLD_SHIPPED = "SOLD_SHIPPED";
+	public static final String SOLD_RMA_CREATED = "SOLD_RMA_CREATED";
+	public static final String RETURNED = "RETURNED";
+	public static final String ORDER_COMPLETED = "COMPLETED";
+	public static final String INCOMPLETE = "INCOMPLETE";
+	public static final String INCOMPLETE_BALANCE_DUE = "INCOMPLETE_BALANCE_DUE";
+	public static final String INCOMPLETE_STOLEN = "INCOMPLETE_STOLEN";
+	public static final String INCOMPLETE_LOST_IN_TRANSIT = "INCOMPLETE_LOST_IN_TRANSIT";
+	public static final String INCOMPLETE_ITEMS_IN_REPAIR = "INCOMPLETE_ITEMS_IN_REPAIR";
+	public static final String INCOMPLETE_MISSING_ITEMS = "INCOMPLETE_MISSING_ITEMS";
+	public static final String INCOMPLETE_MISSING_AND_BROKEN_ITEMS = "INCOMPLETE_MISSING_AND_BROKEN_ITEMS";
+	public static final String CANCELLED = "CANCELLED";
+	public static final String LATE = "LATE";
+	public static final String RECEIVED_STATUS = "RECEIVED";
+	public static final String PENDING_STATUS = "PENDING";
+	public static final String SOLD = "SOLD";
+	public static final String TAX = "Tax";
+	public static final String QUANTITY = "Quantity";
+	public static final String FORMAT_STRING= "##0.00";
+
+	// Consignment Status
+	public static final String RECEIVED_READY_TO_SHIP = "RECEIVED_READY_TO_SHIP";
+	public static final String RECEIVED_READY_FOR_PICKUP = "RECEIVED_READY_FOR_PICKUP";
+	
+	public static final int INT_ONE = 1;
+   public static final int INT_TWO = 2;
+   public static final int INT_SIX = 6;
+   public static final int INT_SEVEN = 7;
+   public static final int INT_EIGHT = 8;
+   public static final int INT_ZERO = 0;
+   public static final int INT_NINE = 9;
+   public static final int INT_TEN = 10;
+   public static final int INT_ELEVEN = 11;
+   public static final int INT_TWELVE = 12;
+   public static final int INT_THIRTEEN = 13;
+   public static final String CARD_MASK = "******";
+   public static final String MASKED_CARD_SEPARATOR = "\\*\\*\\*\\*\\*\\*";
+   public static final String MASKED_CARD_FORMAT = "****%s";
+
+	public static final String OUT_CONFIRM = "orderdepositrequired";
+	public static final String COMPLETE = "completed";
+	public static final String MESSAGE_BOX_TITLE = "success.message.depositRequired.title";
+	public static final String MESSAGE_BOX_TEXT = "success.message.depositRequired.emailsent";
+	public static final String MESSAGE_BOX_ERROR_TEXT = "error.message.depositRequired.emailsent";
+	public static final String INPUT_OBJECT = "inputObject";
+	public static final String DEPOSIT_REQUIRED_TITLE = "blbackoffice.depositrequired.confirm.title";
+	public static final String DEPOSIT_REQUIRED_MISSING_AMOUNT = "blbackoffice.depositrequired.missing.amount";
+	public static final String DEPOSIT_REQUIRED_NOT_AN_AMOUNT = "blbackoffice.depositrequired.amount.notanumber";
+	public static final String UNDO_CHANGES = "undochanges";
+	public static final String CONFIRM_TRIGGER = "confirmTriggerEmail";
+	public static final String UPDATE_PASSWORD_URL = "/login/pw/change";
+	public static final String CUSTOMER_MODEL = "customerModel";
+	public static final String TOKEN = "token=";
+	public static final String THUMBNAIL = "thumbnail";
+	public static final String RENTAL_PDP_URL_PREFIX = "/rent/product/";
+
+	public static final String RULE_STATUS = "ruleStatus";
+	public static final String PROMO_GROUP = "promoGroup";
+	public static final String BARCODE_LIST = "barcodeList";
+	public static final String IS_SAP_ORDER = "isSAPOrder";
+	public static final String IS_RENTAL_ORDER = "isRentalOrder";
+	public static final String IS_RETAIL_GEAR_ORDER = "isRetailGearOrder";
+	public static final String QRY_ORDER_STATUS = "orderStatus";
+	public static final String IS_REPLACEMENT_ORDER = "isReplacementOrder";
+	public static final String IS_EXTENDED_ORDER = "isExtendedOrder";
+	public static final String INTERNAL_TRANSFER_ORDER = "internalTransferOrder";
+
 
 	private BlCoreConstants()
 	{

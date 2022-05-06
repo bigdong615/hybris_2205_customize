@@ -26,7 +26,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <title>Borrow Lenses - Checkout - Step 1</title>
+    <title>BorrowLenses - Checkout - Step 1</title>
     
 	<!-- Required CSS -->
     <link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/bootstrap.min.css"/>
@@ -86,6 +86,9 @@
 																+ <spring:theme code="text.review.page.damage.waiver.gear.no"/><br>
 															</c:otherwise>
 														</c:choose>
+														<c:if test="${not empty cartEntry.selectedOptions}">
+															+ ${cartEntry.selectedOptions} <br>
+														</c:if>
 													<spring:theme code="text.review.page.your.rental.total"/>  <format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" />
 											    <c:if test="${not empty cartEntry.product.bundleProductReference}">
                       			 <ul class="checklist mt-4">

@@ -94,7 +94,7 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 
 		//Added condition for used gear product
 
-		 if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) || cartModel.isGiftCardOrder())
+		 if (BooleanUtils.isFalse(cartModel.getIsRentalOrder()) || cartModel.isGiftCardOrder())
 		{
 			return returnSuccessModification(cartEntryModel, cartEntryLevel);
 		}

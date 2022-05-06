@@ -2,13 +2,19 @@ package com.bl.esp.service.impl;
 
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
+import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.giftcard.FreeGiftCardPurchaseEventRequest;
+import com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest;
+import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderextension.OrderExtensionRequest;
+import com.bl.esp.dto.orderpullback.OrderPullBackRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
@@ -166,6 +172,15 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
     return super.getTokenAndTriggerEvent(orderBillPaidEventRequest);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendOrderManualAllocationEvent(
+      final OrderManualAllocationEventRequest orderManualAllocationEventRequest) {
+    return super.getTokenAndTriggerEvent(orderManualAllocationEventRequest);
+  }
+
 
   /**
    * {@inheritDoc}
@@ -178,4 +193,63 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
   }
 
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendOrderPullBackItemsAdded(
+      final OrderPullBackRequest orderPullBackRequest) {
+
+    return super.getTokenAndTriggerEvent(orderPullBackRequest);
+  }
+
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendOrderPullBackItemsRemoved(
+      final OrderPullBackRequest orderPullBackRequest) {
+
+    return super.getTokenAndTriggerEvent(orderPullBackRequest);
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendOrderDepositRequired(
+      final OrderDepositRequiredEventRequest orderDepositRequiredEventRequest) {
+
+    return super.getTokenAndTriggerEvent(orderDepositRequiredEventRequest);
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendGiftCardPurchase(
+      final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest) {
+
+    return super.getTokenAndTriggerEvent(giftCardPurchaseEventRequest);
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendFreeGiftCardPurchase(
+      final FreeGiftCardPurchaseEventRequest freeGiftCardPurchaseEventRequest) {
+
+    return super.getTokenAndTriggerEvent(freeGiftCardPurchaseEventRequest);
+  }
+
+  public ESPEventResponseWrapper sendESPEmailEventRequest(
+      ESPEmailCommonEventRequest emailRequiredEventRequest){
+    return super.getTokenAndTriggerEvent(emailRequiredEventRequest);
+  }
 }

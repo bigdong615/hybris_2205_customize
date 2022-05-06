@@ -47,7 +47,7 @@
 				    <a href="${cart}" class="text-decoration-none">
                         <span class="step1 complete"><i class="icon-check"></i>
                             <c:choose>
-                                <c:when test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}"><spring:theme code="text.checkout.multi.order.rental"/></c:when>
+                                <c:when test="${cartData.isRentalCart && cartData.isRetailGearOrder eq false}"><spring:theme code="text.checkout.multi.order.rental"/></c:when>
                                 <c:otherwise><spring:theme code="text.checkout.multi.order.UsedGear"/></c:otherwise>
                             </c:choose>
                         </span>
@@ -75,7 +75,7 @@
 							<h1>Payment</h1>
 							<hr>
 						 <c:if test="${!cartData.hasGiftCart}">
-							<c:if test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
+							<c:if test="${cartData.isRentalCart && cartData.isRetailGearOrder eq false}">
 							  <p><b>Dates</b>&emsp;<input type="text"
 									class="form-control cart-picker" id="litepicker"
 									placeholder="<spring:theme code="text.rental.cart.select.date"/>">
@@ -123,7 +123,7 @@
 																	<b class="mt-4">Saved Credit Cards</b>
 																	<div class="dropdown my-2">
 																		<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
-																			<img src="${userSelectedPaymentInfo.accountHolderName}" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
+																			<img src="${userSelectedPaymentInfo.accountHolderName}" style="max-width: 33px; height: auto;"> ${userSelectedPaymentInfo.cardType} &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
 																		</button>
 																	</div>
 																		<a href="#" id="addNewCardForm" class="gray80" data-bs-toggle="collapse" data-bs-target="#credit-card-form-expand" aria-controls="credit-card-form-expand">+ Add a new credit card</a>
@@ -135,7 +135,7 @@
 																	<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
 																		<c:choose>
 																			<c:when test="${not empty userSelectedPaymentInfo}">
-																				<img src="${userSelectedPaymentInfo.accountHolderName }" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
+																				<img src="${userSelectedPaymentInfo.accountHolderName }" style="max-width: 33px; height: auto;"> ${userSelectedPaymentInfo.cardType} &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
 																			</c:when>
 																			<c:otherwise>
 																				Select or Enter new card
@@ -148,6 +148,7 @@
 																			<li>
 																				<button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}">
 																					<img src="${paymentInfo.accountHolderName }" style="max-width: 33px; height: auto;">
+																					${paymentInfo.cardType}
 																					&nbsp ${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
 																				</button>
 																			</li>
@@ -416,7 +417,7 @@
 							         <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
 							    </c:when>
 							    <c:otherwise>
-							         <a href="${shippingPageUrl}" class="gray80"><c:choose> <c:when test="${cartData.isNewGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
+							         <a href="${shippingPageUrl}" class="gray80"><c:choose> <c:when test="${cartData.isRetailGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
                                      <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
                                       <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
                                </c:otherwise>
@@ -434,7 +435,7 @@
 						    </c:otherwise>
 						</c:choose>
 							<c:if test ="${not empty fn:escapeXml(errorMsg)}">
-                      <div class="notification notification-error">
+                      <div class="notification notification-error js-promo-error">
                            ${fn:escapeXml(errorMsg)}
                       </div>
               </c:if>
@@ -446,10 +447,11 @@
                    </c:if>
                    </c:forEach>
                </c:if>
-               <c:if test="${cartData.isNewGearOrder eq false}">
+                              <div class="notification notification-error d-none"id="errorMessages_voucher" ></div>
+
+               <c:if test="${cartData.isRetailGearOrder eq false && cartData.isRentalCart eq true}">
                      <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                </c:if>
-               <div class="notification notification-error d-none"id="errorMessages_voucher" />
             </div>
 					</div>
 				</div>	

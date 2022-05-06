@@ -505,6 +505,9 @@
 		<property name="enumerationService" ref="enumerationService"/>
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="catalogVersionService" ref="catalogVersionService"/>
+		<property name="sessionService" ref="sessionService"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
+        <property name="blProductService" ref="productService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -523,7 +526,10 @@
 
 	<!--BL-30 : This is created to override register method and disable registration email. -->
 	<alias name="defaultBlCustomerAccountService" alias="customerAccountService"/>
-	<bean id="defaultBlCustomerAccountService" class="com.bl.core.services.customer.impl.DefaultBlCustomerAccountService" parent="defaultCustomerAccountService"/>
+	<bean id="defaultBlCustomerAccountService" class="com.bl.core.services.customer.impl.DefaultBlCustomerAccountService" parent="defaultCustomerAccountService">
+	<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
+		<property name="blESPEventService" ref="blEspEventService"/>
+	</bean>
 
 
 	<!--This is created for override OOB classes to get the media to be indexed to solr -->
@@ -658,6 +664,7 @@
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 		<property name="blOrderService" ref="blOrderService"/>
 		<property name="blProductService" ref="productService"/>
+		<property name="sessionService" ref="sessionService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -725,7 +732,11 @@
 
  <!--BL-331 Solr Field Value Resolver -->
 
-  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver"/>
+  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver">
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+	</bean>
+
+  <bean id="blProductTypeValueResolver" class="com.bl.core.resolvers.BlProductTypeValueResolver" parent="abstractValueResolver"/>
 
   <bean id="abstractBlCategoryCodeValueResolver" abstract="true" class="com.bl.core.resolvers.BlCategoryCodeValueResolver" parent="abstractValueResolver" >
     <property name="modelService" ref="modelService"/>
@@ -840,8 +851,7 @@
 	<!--BL-565 Gift Card Email Start -->
 	<bean id="giftCardEmailEventListener" class="com.bl.core.event.BlGiftCardEmailEventListener"
 		parent="abstractAcceleratorSiteEventListener">
-		<property name="modelService" ref="modelService" />
-		<property name="businessProcessService" ref="businessProcessService" />
+		<property name="defaultBlESPEventService" ref="blEspEventService" />
 	</bean>
 
 	<bean id="giftCardEmailProcessDefinitionResource"
@@ -949,7 +959,9 @@
 	
 	<alias alias="orderDao" name="defaultBlOrderDao"/>
 	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
-	<property name="userService" ref="userService"/>
+		<property name="userService" ref="userService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="configurationService" ref="configurationService" />
 	</bean>
 	
 	<bean id="blPaymentService" class="com.bl.core.payment.service.impl.DefaultBlPaymentService">
@@ -1207,7 +1219,9 @@
 
 	<!--Added for extend order coupon promotion-->
 
+	<alias name="defaultBlCouponManagementService" alias="couponManagementService" />
 	<bean id="defaultBlCouponManagementService" class="com.bl.core.coupon.impl.DefaultBlCouponManagementService" parent="defaultCouponManagementService">
+		<property name="couponDao" ref="couponDao"/>
 	</bean>
 	
 	<!-- Interceptor for NotesModel to perform custom logic before saving the model -->
@@ -1222,6 +1236,15 @@
 		<property name="typeCode" value="Notes"/>
 	</bean>
 
+	<alias name="blGiftCardPrepareInterceptor" alias="blGiftCardPrepareInterceptor"/>
+	<bean id="blGiftCardPrepareInterceptor" class="com.bl.core.model.interceptor.BlGiftCardPrepareInterceptor"/>
+	
+	<!-- Adding GiftCardModel interceptor to Interceptor mapping list -->
+	<bean id="blGiftCardPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blGiftCardPrepareInterceptor"/>
+		<property name="typeCode" value="GiftCard"/>
+	</bean>
+	
 	<bean id="blVerificationDocumentService" class="com.bl.core.services.documentupload.impl.DefaultBlVerificationDocumentService">
 		<property name="userService" ref="userService"/>
 		<property name="modelService" ref="modelService"/>
@@ -1276,6 +1299,7 @@
 	<alias name="blConsignmentEntryPrepareInterceptor" alias="blConsignmentEntryPrepareInterceptor"/>
 	<bean id="blConsignmentEntryPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentEntryPrepareInterceptor">
 		<property name="blEspEventService" ref="blEspEventService"/>
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 	</bean>
 	
 	<!-- Adding ConsignmentEntryModel interceptor to Interceptor mapping list -->
@@ -1290,6 +1314,7 @@
 		<property name="blProductDao" ref="productDao"/>
 		<property name="userService" ref="userService"/>
 		<property name="blRepairLogService" ref="blRepairLogService"/>
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 	</bean>
 	
 	<!-- Adding BlRepairLogModel interceptor to Interceptor mapping list -->
@@ -1347,6 +1372,7 @@
 	<alias alias="commercePlaceOrderStrategy" name="defaultBlCommercePlaceOrderStrategy"/>
 	<bean id="defaultBlCommercePlaceOrderStrategy"
 		class="com.bl.core.order.strategy.DefaultBlCommercePlaceOrderStrategy" parent="defaultCommercePlaceOrderStrategy">
+	<property name="defaultBlProductService" ref="defaultBlProductService"/>
 	</bean>
 
 	<!-- [BL-983] New gear Related changes-->
@@ -1381,8 +1407,10 @@
 	<!-- Added for creating custom method to set custom parameter -->
 
 	<alias name="blSerialProductValidateInterceptor" alias="blSerialProductValidateInterceptor"/>
-	<bean id="blSerialProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlSerialProductValidateInterceptor"/>
-	
+	<bean id="blSerialProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlSerialProductValidateInterceptor">
+		<property name="productDao" ref="productDao"/>
+	</bean>
+
 	<bean id="blSerialProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
 		<property name="interceptor" ref="blSerialProductValidateInterceptor"/>
 		<property name="typeCode" value="BlSerialProduct"/>
@@ -1563,7 +1591,14 @@
 		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
 		<property name="blOrderRefundRequestPopulator" ref="blOrderRefundRequestPopulator"/>
 		<property name="blOrderBillPaidRequestPopulator" ref="blOrderBillPaidRequestPopulator"/>
+		<property name="blOrderPullBackItemsAddedRequestPopulator" ref="blOrderPullBackItemsAddedRequestPopulator"/>
+		<property name="blOrderPullBackItemRemovedRequestPopulator" ref="blOrderPullBackItemRemovedRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blOrderManualAllocationRequestPopulator" ref="blOrderManualAllocationRequestPopulator"/>
+		<property name="blOrderDepositRequiredRequestPopulator" ref="blOrderDepositRequiredRequestPopulator"/>
+		<property name="blOrderGiftCardPurchaseEventPopulator" ref="blOrderGiftCardPurchaseEventPopulator"/>
+		<property name="blFreeGiftCardPurchaseEventPopulator" ref="blFreeGiftCardPurchaseEventPopulator"/>
+		<property name="blESPEmailCommonRequestPopulator" ref="blESPEmailCommonRequestPopulator"/>
 	</bean>
 
 
@@ -1639,6 +1674,7 @@
 		class="com.bl.core.model.interceptor.BlAddressPrepareInterceptor">
 		<property name="blEspEventService" ref="blEspEventService"/>
 		<property name="defaultBlUserService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
 
 	<bean id="blAddressPrepareInterceptorMapping"
@@ -1706,5 +1742,175 @@
 
 	<!--BL-803 UPS Scrape Ends-->
 
+	<!-- Order Manual Allocation populator ESP -->
+	<bean id="blOrderManualAllocationRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderManualAllocationRequestPopulator">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
 
+	<!-- BL-1516 Order Pull Back Items Added ESP Event populator -->
+	<bean id="blOrderPullBackItemsAddedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPullBackItemsAddedRequestPopulator">
+	</bean>
+
+	<!-- BL-1515 Order Pull Back Items Removed ESP Event populator -->
+	<bean id="blOrderPullBackItemRemovedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPullBackItemRemovedRequestPopulator">
+	</bean>
+	
+	<bean id="blSerialOnlineToStagedDataPopulator" class="com.bl.core.serial.model.populator.BlSerialOnlineToStagedDataPopulator"/>
+	
+	<bean id="blSerialProductAfterSaveListener" class="com.bl.core.after.save.listener.BlSerialProductAfterSaveListener">
+        <property name="modelService" ref="modelService"/>
+        <property name="productService" ref="productService"/>
+        <property name="catalogVersionDao" ref="catalogVersionDao"/>
+        <property name="populator" ref="blSerialOnlineToStagedDataPopulator"/>
+        <property name="sessionService" ref="sessionService"/>
+    </bean>
+
+	<alias name="blItemsBillingChargePrepareInterceptor" alias="itemsBillingChargePrepareInterceptor"/>
+	<bean id="blItemsBillingChargePrepareInterceptor"	class="com.bl.core.model.interceptor.BlItemsBillingChargePrepareInterceptor">
+		<property name="userService" ref="userService"/>
+	</bean>
+
+	<bean id="blItemsBillingChargePrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="itemsBillingChargePrepareInterceptor"/>
+		<property name="typeCode" value="BlItemsBillingCharge"/>
+	</bean>
+	
+	<alias name="blOrderValidateInterceptor" alias="orderValidateInterceptor"/>
+	<bean id="blOrderValidateInterceptor"	class="com.bl.core.model.interceptor.BlOrderValidateInterceptor">
+		<property name="userService" ref="userService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="baseStoreService" ref="baseStoreService" />
+	</bean>
+
+	<bean id="blOrderValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="orderValidateInterceptor"/>
+		<property name="typeCode" value="Order"/>
+	</bean>
+	
+	<alias name="blAddressValidateInterceptor" alias="addressValidateInterceptor"/>
+	<bean id="blAddressValidateInterceptor"	class="com.bl.core.model.interceptor.BlAddressValidateInterceptor"/>
+
+	<bean id="blAddressValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="addressValidateInterceptor"/>
+		<property name="typeCode" value="Address"/>
+	</bean>
+
+
+	<!--BL-1311 start-->
+	<bean id="blOrderBillFeedPopulator"
+		class="com.bl.core.esp.populators.BlOrderBillFeedPopulator" parent="abstractBlFeedPopulater">
+	</bean>
+
+	<bean id="defaultBlOrderFeedFTPService" class="com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService">
+		<property name="blOrderFeedPopulator" ref="blOrderFeedPopulator"/>
+		<property name="blOrderBillFeedPopulator" ref="blOrderBillFeedPopulator"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<bean id="defaultBlOrderFeedJob" class="com.bl.core.job.BlOrderFeedJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="defaultBlOrderFeedFTPService" ref="defaultBlOrderFeedFTPService"/>
+	</bean>
+
+	<bean id="defaultBlOrderBillFeedJob" class="com.bl.core.job.BlOrderBillFeedJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="defaultBlOrderFeedFTPService" ref="defaultBlOrderFeedFTPService"/>
+	</bean>
+
+	<bean id="abstractBlFeedPopulater"
+		class="com.bl.core.esp.populators.AbstractBlOrderFeedPopulater" >
+		<property name="productService" ref="productService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
+	</bean>
+	<bean id="blOrderFeedPopulator"
+		class="com.bl.core.esp.populators.BlOrderFeedPopulator" >
+		<property name="productService" ref="productService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
+	</bean>
+	<!--BL-1311 End-->
+
+	<!-- Order Extra Item populator ESP -->
+	<bean id="blOrderDepositRequiredRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderDepositRequiredRequestPopulator">
+	</bean>
+
+  <!--BL-1826 Gift Card Purchase ESP-->
+	<bean id="blOrderGiftCardPurchaseEventPopulator"
+		class="com.bl.core.esp.populators.BlOrderGiftCardPurchaseEventPopulator" >
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<!--BL-1827 Free Gift Card Purchase ESP-->
+	<bean id="blFreeGiftCardPurchaseEventPopulator"
+		class="com.bl.core.esp.populators.BlFreeGiftCardPurchaseEventPopulator" >
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+
+	<!--BL-1813,BL-1814,BL-1815:This populator created to populate reset password, notify me and back in stock email related common data.-->
+	<bean id="blESPEmailCommonRequestPopulator"
+		class="com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator">
+	</bean>
+
+	<!--BL-1815: This processor is used to provide back in stock notification email related ESP event data.-->
+	<alias name="defaultBlStockNotificationEmailProcessor" alias="stockNotificationEmailProcessor" />
+	<bean id="defaultBlStockNotificationEmailProcessor" class="com.bl.core.services.email.processor.impl.DefaultBlStockNotificationEmailProcessor" parent="defaultStockNotificationEmailProcessor">
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="blESPEventService" ref="blEspEventService"/>
+		<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService" />
+		<property name="populator" ref="productPrimaryImagePopulator"/>
+	</bean>
+	
+	<!-- BL-1600 Start-->
+	<bean id="blUsedGearCartCleanService" class="com.bl.core.usedGearCart.clean.impl.DefaultBlUsedGearCartCleanService">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="blCartService" ref="cartService"/>
+	</bean>
+	<bean id="blUsedGearCartAbandonmentJob" class="com.bl.core.job.BlUsedGearCartAbandonmentJob" parent="abstractJobPerformable">
+		<property name="blUsedGearCartCleanService" ref="blUsedGearCartCleanService"/>
+	</bean>
+	<!-- BL-1600 End-->
+
+	<!-- BL-1854 Start-->
+	<bean id="blVoidAuthTransactionJob" class="com.bl.core.job.BlVoidAuthTransactionJob" parent="abstractJobPerformable">
+		<property name="blPaymentService" ref="blPaymentService"/>
+	</bean>
+	<!-- BL-1854 End-->
+	
+    <!-- BL-1764 Starts -->
+    <alias name="defaultBlPromotionDao" alias="promotionDao"/>
+    <bean id="defaultBlPromotionDao" class="com.bl.core.dao.promotion.impl.DefaultBlPromotionDao" parent="defaultPromotionDao" />
+    
+    <alias alias="ruleFirstTimeUserConditionTranslator" name="defaultRuleFirstTimeUserConditionTranslator" />
+    <bean id="defaultRuleFirstTimeUserConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleFirstTimeUserConditionTranslator" />
+    <!-- BL-1764 Ends -->
+    
+    <alias name="defaultBlPlaceOrderMethodHook" alias="orderMethodHook" />
+    <bean id="defaultBlPlaceOrderMethodHook" class="com.bl.core.order.hook.impl.BlPlaceOrderMethodHook">
+		<property name="modelService" ref="modelService" />
+		<property name="blOrderService" ref="blOrderService"/>
+	</bean>
+	
+	<bean id="commerceOrderMethodHookMergeDirective" depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+		<property name="add" ref="orderMethodHook" />
+	</bean>
+	
+	<alias alias="blOrderIDGenerator" name="defaultBlOrderIDGenerator"/>
+	<bean id="defaultBlOrderIDGenerator"
+	      class="de.hybris.platform.servicelayer.keygenerator.impl.PersistentKeyGenerator">
+		<property name="key" value="${keygen.order.id.name}"/>
+		<property name="digits" value="${keygen.order.id.digits}"/>
+		<property name="start" value="${keygen.order.id.start}"/>
+		<property name="type" value="${keygen.order.id.type}"/>
+		<property name="template" value="${keygen.order.id.template}"/>
+	</bean>
+	
+	<bean id="blFutureOrderAllocationJob" class="com.bl.core.job.BlFutureOrderAllocationJob" parent="abstractJobPerformable">
+		<property name="blOrderDao" ref="orderDao"/>
+		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
+	</bean>
+	
 </beans>

@@ -115,7 +115,7 @@ public class BlReplaceMentOrderUtils {
         abstractOrderModel.setPaymentInfo(paymentInfoModel);
       }
 
-      abstractOrderModel.setIsCartUsedForReplacementOrder(Boolean.TRUE);
+      abstractOrderModel.setIsReplacementOrder(Boolean.TRUE);
       if (BooleanUtils.isFalse(abstractOrderModel.getCalculated())) {
         abstractOrderModel.setCalculated(Boolean.TRUE);
       }
@@ -130,7 +130,7 @@ public class BlReplaceMentOrderUtils {
    */
   public static boolean isCartForReplacement(final AbstractOrderModel abstractOrderModel){
     return Objects.nonNull(abstractOrderModel.getReturnRequestForOrder()) &&
-        BooleanUtils.isTrue(abstractOrderModel.getIsCartUsedForReplacementOrder());
+        BooleanUtils.isTrue(abstractOrderModel.getIsReplacementOrder());
   }
 
   public static SessionService getSessionService() {

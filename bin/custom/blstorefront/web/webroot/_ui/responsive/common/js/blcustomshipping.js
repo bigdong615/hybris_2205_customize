@@ -62,7 +62,7 @@ function reverseTraverseOnShipping() {
                     select = document.getElementById('ship-it-savedAddresses');
                     var opt = document.createElement('option');
                     opt.value = data.id;
-                    opt.innerHTML = data.line1 + ", " + data.town + ", " + data.country.isocode + ", " + data.postalCode;
+                    opt.innerHTML = data.line1 + ", " + data.town + ", "+ data.region.isocodeShort + ", " + data.postalCode;
                     select.appendChild(opt);
                     $("#ship-it-savedAddresses option[value='"+data.id+"']").attr('selected', 'selected');
                 }
@@ -105,6 +105,7 @@ function reverseTraverseOnShipping() {
  // MainContinueMethod
  function shippingMethodContinue() {
  	$("#validationMessage").empty();
+ 	$('#showErrorForInputValidation').empty();
     var shippingCategory = $('input[name="shipProduct"]:checked').attr('id');
     if(shippingCategory == 'ship-it') {
         $('#ship-it-notification').html("");
@@ -233,8 +234,15 @@ function reverseTraverseOnShipping() {
       else if(checkAvailability(deliveryMode))
       {
           if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
+			if($('select[id="ship-it-savedAddresses"]').val() == null)
+			{
+				showErrorForShipToHomeError();	
+			}
+			else
+			{
               saveSelectedAddress($('select[id="ship-it-savedAddresses"]').val(), 'SHIP_HOME_HOTEL_BUSINESS', deliveryMode, null, businessType);
-          } else {
+	         } 
+	} else {
               var firstName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
               var lastName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]');
               var companyName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]');
@@ -245,16 +253,33 @@ function reverseTraverseOnShipping() {
               var regionIso = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('select[id="address.countryIso"]');
               var email = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]');
               var phone = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]');
+              
               if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone, "Ship")) {
-                  if($('#showErrorForInvalidZipInputValidation').css('display') == "none" &&
+                  if(validateFirstNameAndLastName(firstName, lastName))
+              {
+              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combined length of First Name and Last Name should not be more than 48 characters </div> <br>';
+              	$('#showErrorForInputValidation').append(errorMsg);
+    			$('#showErrorForInputValidation').show();
+              }
+                 else if($('#showErrorForInvalidZipInputValidation').css('display') == "none" &&
                         $('#showErrorForInvalidEmailInputValidation').css('display') == "none" &&
-                        $('#showErrorForInvalidPhoneInputValidation').css('display') == "none") {
-                  addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
+                        $('#showErrorForInvalidPhoneInputValidation').css('display') == "none" && 
+						$('#showErrorForInputValidation').css('display') == "none")
+						{
+                  			addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
                                                                      'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
                                                                      phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP', businessType);
                   }
               } else {
                   showErrorForInputValidation('Ship');
+                  if(validateFirstNameAndLastName(firstName, lastName))
+              {
+              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combined length of First Name and Last Name should not be more than 48 characters </div> <br>';
+              	
+              	$('#showErrorForInputValidation').append(errorMsg);
+    			$('#showErrorForInputValidation').show();
+              }
+              
               }
           }
 
@@ -1042,7 +1067,13 @@ function reverseTraverseOnShipping() {
             var email = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]');
             var phone = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]');
             if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone, "Rush")) {
-                if($('#showErrorForInvalidZipInputValidation').css('display') == "none" &&
+            if(validateFirstNameAndLastName(firstName, lastName))
+              {
+              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combined length of First Name and Last Name should not be more than 48 characters </div> <br>';
+              	$('#showErrorForInputValidation').append(errorMsg);
+    			$('#showErrorForInputValidation').show();
+              }
+                 else if($('#showErrorForInvalidZipInputValidation').css('display') == "none" &&
                     $('#showErrorForInvalidEmailInputValidation').css('display') == "none" &&
                     $('#showErrorForInvalidPhoneInputValidation').css('display') == "none") {
                     $.ajax({
@@ -1074,6 +1105,13 @@ function reverseTraverseOnShipping() {
                 }
             } else {
                 showErrorForInputValidation('Rush');
+                if(validateFirstNameAndLastName(firstName, lastName))
+              {
+              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combined length of First Name and Last Name should not be more than 48 characters </div> <br>';
+              	
+              	$('#showErrorForInputValidation').append(errorMsg);
+    			$('#showErrorForInputValidation').show();
+              }
                 $('.page-loader-new-layout').hide();
             }
         }
@@ -1124,6 +1162,10 @@ function reverseTraverseOnShipping() {
         $($('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error')).each(function(k, v) {
             if(v.value == "") {
                 len = len + 1;
+            }
+            else if(v.classList.length > 0 && v.classList.contains("lengthError"))
+            {
+            	len = len + 1;
             }
         });
         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You are missing ' + len + ' required fields.' +
@@ -1211,6 +1253,13 @@ function reverseTraverseOnShipping() {
     function showErrorForUPSOrPickAddressError() {
          let notification = '';
          notification += '<div class="notification notification-error"> You need to select a Pickup location';
+         notification += '</div>' + '<br>';
+         $('#showErrorForUPSOrPickAddressError').html(notification);
+         $('#showErrorForUPSOrPickAddressError').show();
+     }
+    function showErrorForShipToHomeError() {
+         let notification = '';
+         notification += '<div class="notification notification-error"> You need to select a Shipping Address';
          notification += '</div>' + '<br>';
          $('#showErrorForUPSOrPickAddressError').html(notification);
          $('#showErrorForUPSOrPickAddressError').show();
@@ -1483,6 +1532,7 @@ function reverseTraverseOnShipping() {
  function validatePhone(phone, fieldName, section) {
       if(phone == "" && phone.trim() == '') {
           fieldName.addClass('error');
+		showErrorForInputValidation(section);
           return true;
       } else {
           if(phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
@@ -2043,6 +2093,31 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
       	window.location.reload();
       }
 
+  }
+  
+  function validateFirstNameAndLastName(firstName, lastName)
+  {
+  	var isValid = false;
+  	var flen = firstName.val().length;
+  	var llen = lastName.val().length;
+  	
+  	var totalLength = flen + llen;
+  	
+  	if(totalLength > 48)
+  	{
+  		firstName.addClass('error');
+  		lastName.addClass('error');
+  		firstName.addClass('lengthError');
+  		lastName.addClass('lengthError');
+  		isValid = true;
+  	}
+  	else
+  	{
+  		firstName.removeClass('lengthError');
+  		lastName.removeClass('lengthError');
+  		isValid = false;
+  	}
+  	return isValid;
   }
 
 

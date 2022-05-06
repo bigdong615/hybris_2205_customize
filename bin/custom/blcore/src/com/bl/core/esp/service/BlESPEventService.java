@@ -1,11 +1,18 @@
 package com.bl.core.esp.service;
 
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.GiftCardModel;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
+import com.bl.esp.dto.common.data.ESPEmailCommonRequestData;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public interface BlESPEventService {
 
@@ -138,4 +145,63 @@ public interface BlESPEventService {
      */
     void triggerBillPaidEspEvent(final String payBillTotal,
         final Map<String, List<String>> billingChargeTypeMap, final OrderModel orderModel);
+
+    /**
+     * This method created for Order pull back items added ESP Event
+     * @param orderModel order model  to get the values
+     */
+    void sendOrderPullBackItemsAdded(final OrderModel orderModel , final
+    AbstractOrderEntryModel abstractOrderEntryModel);
+
+    /**
+     * This method created for Order pull back items removed ESP Event
+     * @param orderModel order model  to get the values
+     */
+    void sendOrderPullBackItemsRemoved(final OrderModel orderModel , 	final List<BlSerialProductModel> previousChangedOrderEntriesList);
+
+    /**
+     *  Send manual allocation data by calling  order manual allocation ESP Event API
+     * @param orderModel OrderModel
+     */
+    void sendOrderManualAllocationEvent(final OrderModel orderModel) ;
+
+    /**
+     * This method created for Order Deposit required ESP Event
+     * @param orderModel order model to get the values
+     *
+     */
+     void sendOrderDepositRequired(final OrderModel orderModel , final Double amount);
+
+
+    /**
+     * This method created for Free Gift Card Purchase
+     * @param giftCardModel giftCardModel
+     */
+    void sendFreeGiftCardPurchaseEvent(final GiftCardModel giftCardModel);
+
+    /**
+     * This method created for Gift Card Purchase
+     * @param giftCardModel giftCardModel
+     * @param abstractOrderModel abstractOrderModel
+     */
+    void sendGiftCardPurchaseEvent(final GiftCardModel giftCardModel , final AtomicReference<AbstractOrderModel> abstractOrderModel);
+
+    /**
+     * This method created for reset password request ESP Event.
+     * @param espEventCommonRequestData requested password required data.
+     */
+     void sendForgotPasswordRequest(final ESPEmailCommonRequestData espEventCommonRequestData);
+
+    /**
+     * This method created for sending notify me email related esp Event.
+     * @param emailRequestData requested email required data.
+     */
+    void sendNotifyMeConfirmEmailRequest(final ESPEmailCommonRequestData emailRequestData);
+
+    /**
+     * This method created for sending back in stock notification email related esp Event.
+     * @param emailRequestData requested email required data.
+     * @param requestedDate requestedDate
+     */
+    void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData,final Date requestedDate);
 }

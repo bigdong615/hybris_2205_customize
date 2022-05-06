@@ -3,6 +3,7 @@ package com.bl.facades.cart.impl;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlOptionsModel;
@@ -88,7 +89,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
    */
   @Override
   public void removeCartEntries() {
-    getBlCartService().clearCartEntries();
+    getBlCartService().clearCartEntries(null);
   }
   
   /**
@@ -201,18 +202,17 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         .addToCart(parameter);
     setCartType(blSerialProductModel, cartModel, commerceCartModification,parameter);
 		updateCartOptionEntry(commerceCartModification.getEntry(),cartModel);
-
 		return getCartModificationConverter().convert(commerceCartModification);
   }
 	/**
 	 * Update cart options on entry
-	 * @param AbstractOrderEntryModel
+	 * @param orderEntry
 	 *           the orderEntry
-	 * @param CartModel
+	 * @param cartModel
 	 *           the cartModel
 	 */
   private void updateCartOptionEntry(final AbstractOrderEntryModel orderEntry, final CartModel cartModel ){
-	  	if(cartModel.getIsRentalCart() &&CollectionUtils.isNotEmpty(orderEntry.getOptions())){
+	  	if(cartModel.getIsRentalOrder() &&CollectionUtils.isNotEmpty(orderEntry.getOptions())){
 				final BlOptionsModel optionsModel = orderEntry.getOptions().iterator().next();
 				final Integer quantity = Integer.parseInt(orderEntry.getQuantity().toString());
 				List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
@@ -233,7 +233,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 *           the quantity
 	 * @param serialCode
 	 *           the serial code
-	 * @param GiftCardPurchaseForm
+	 * @param giftCardForm
 	 *           the giftCardForm
 	 * @return CartModificationData
 	 * @throws CommerceCartModificationException
@@ -302,12 +302,12 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         .equals(BlFacadesConstants.SUCCESS)) {
 
     	if(Boolean.TRUE.equals(parameter.getRetailGear())){
-    		cartModel.setIsNewGearOrder(Boolean.TRUE);
+    		cartModel.setIsRetailGearOrder(Boolean.TRUE);
 			}
     	else if (blSerialProductModel == null) {
-        cartModel.setIsRentalCart(Boolean.TRUE);
+        cartModel.setIsRentalOrder(Boolean.TRUE);
       } else {
-        cartModel.setIsRentalCart(Boolean.FALSE);
+        cartModel.setIsRentalOrder(Boolean.FALSE);
           //Added code for serial status changes
 		  blSerialProductModel.setSerialStatus(SerialStatusEnum.ADDED_TO_CART);
 		  BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ADDED_TO_CART);
@@ -332,18 +332,18 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
 
 			if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
-				return BooleanUtils.isFalse(cartModel.getIsNewGearOrder());
-			}else if (BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+				return BooleanUtils.isFalse(cartModel.getIsRetailGearOrder());
+			}else if (BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())){
 				return true;
 			}
       //It prevents user to add product to cart, if current cart is rental cart and user tries to add used gear product.
-      if (Boolean.TRUE.equals(cartModel.getIsRentalCart())
+      if (Boolean.TRUE.equals(cartModel.getIsRentalOrder())
           && blSerialProductModel != null) {
         isAddToCartNotAllowed = true;
       }
 
       //It prevents user to add product to cart, if current cart is used gear cart and user tries to add rental product.
-      if (Boolean.FALSE.equals(cartModel.getIsRentalCart())
+      if (Boolean.FALSE.equals(cartModel.getIsRentalOrder())
           && blSerialProductModel == null) {
         isAddToCartNotAllowed = true;
       }
@@ -363,8 +363,8 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         .getProductForCode(productCode);
     if( BooleanUtils.isTrue(blProductModel.getRetailGear())) {
       if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
-        return cartModel.getIsNewGearOrder() != null && BooleanUtils
-            .isFalse(cartModel.getIsNewGearOrder()) ;
+        return cartModel.getIsRetailGearOrder() != null && BooleanUtils
+            .isFalse(cartModel.getIsRetailGearOrder()) ;
       }
     }
   return false;
@@ -650,8 +650,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		final CartModel cartModel = getBlCartService().getSessionCart();
 		if (Objects.nonNull(sessionRentalDate) && Objects.nonNull(cartModel) && CollectionUtils.isNotEmpty(cartModel.getEntries()))
 		{
-			final Date startDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedFromDate(), BlFacadesConstants.DATE_FORMAT);
-			final Date endDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedToDate(), BlFacadesConstants.DATE_FORMAT);
+			final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(
+					BlackoutDateTypeEnum.HOLIDAY);
+			final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS, sessionRentalDate.getSelectedFromDate(), blackOutDates);
+			final Date endDay = BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS, sessionRentalDate.getSelectedToDate(), blackOutDates);
 
 			final List<String> listOfProductCodes =  cartModel.getEntries().stream().filter(cartEntry -> !((BlProductModel)cartEntry.getProduct()).isBundleProduct())
 					.map(cartEntry -> cartEntry.getProduct().getCode())
@@ -697,14 +699,14 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	public String identifyCartType() {
 		final CartModel cartModel = blCartService.getSessionCart();
 		if (CollectionUtils
-				.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+				.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())) {
 			return BlFacadesConstants.NEW_GEAR_CART;
 		}
       else if (CollectionUtils
-				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart()) && !cartModel.isGiftCardOrder()) {
+				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalOrder()) && !cartModel.isGiftCardOrder()) {
 			return BlFacadesConstants.RENTAL_CART;
 		} else if (CollectionUtils
-				.isNotEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {
+				.isNotEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalOrder())) {
 			return BlFacadesConstants.USED_GEAR_CART;
 		} else if (CollectionUtils
 				.isEmpty(cartModel.getEntries())) {
@@ -824,6 +826,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
 		this.commerceCartParameterConverter = commerceCartParameterConverter;
 	}
+	
+	/**
+    * @inheritDoc
+    */
+   @Override
+ 	public boolean isRentalCartOnly()
+ 	{
+   	return getBlCartService().isRentalCartOnly();
+ 	}
 
   /**
    * Gets the bl cart service.

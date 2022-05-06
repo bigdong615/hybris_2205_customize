@@ -28,6 +28,4 @@
 		<%-- <formElement:formSelectBox idKey="address.region" labelKey="address.state" path="billTo_state" mandatory="true" skipBlank="false"  skipBlankMessageKey="address.selectState" items="${regions}" itemValue="isocodeShort"  selectCSSClass="form-control"/>--%>
 		<formElement:formInputBox idKey="address.email" labelKey="" placeholder="address.email" path="billTo_email" inputCSS="form-control" mandatory="false" />
 		<formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="billTo_phoneNumber" inputCSS="form-control mb-3" mandatory="false" />
-		<input type="checkbox" id="save-address"><label for="save-address"><span class="gray80">Save address</span></label>
-	
-	
+		<input type="checkbox" id="save-address"><label for="save-address"><span class="gray80">Save address</span></label>	

@@ -2,26 +2,43 @@ package com.bl.core.order.strategy;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import de.hybris.platform.catalog.model.ProductReferenceModel;
+
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.impl.DefaultBlProductService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommercePlaceOrderStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.promotions.model.PromotionResultModel;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Manikandan
  * This class override for setting order is to submit
  */
 public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOrderStrategy {
+
+	private DefaultBlProductService defaultBlProductService;
 
   private static final Logger LOG = Logger.getLogger(DefaultBlCommercePlaceOrderStrategy.class);
 
@@ -45,6 +62,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
       final CustomerModel customer = (CustomerModel) cartModel.getUser();
       validateParameterNotNull(customer, "Customer model cannot be null");
       final OrderModel orderModel = getOrderService().createOrderFromCart(cartModel);
+      checkifVideoOrder(orderModel);
       if (orderModel != null)
       {
         // Reset the Date attribute for use in determining when the order was placed
@@ -71,6 +89,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
           getModelService().save(orderModel.getPaymentInfo());
         }
         setPickFormDetailsInAddress(orderModel);
+        orderModel.setIsSAPOrder(Boolean.TRUE);
         getModelService().save(orderModel);
         // Transfer promotions to the order
         getPromotionsService().transferPromotionsToOrder(cartModel, orderModel, false);
@@ -79,6 +98,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
         try
         {
           orderModel.setIsOrderSubmit(Boolean.TRUE);
+          orderModel.setOrderModifiedDate(new Date());
           getCalculationService().calculateTotals(orderModel, false);
           getExternalTaxesService().calculateExternalTaxes(orderModel);
         }
@@ -93,6 +113,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
         result.setOrder(orderModel);
 
         this.beforeSubmitOrder(parameter, result);
+
 
         getOrderService().submitOrder(orderModel);
       }
@@ -126,5 +147,103 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
       getModelService().refresh(deliveryAddress);
     }
   }
+  
+	/**
+	 * This method is used to check if order is video order or not
+	 *
+	 * @param orderModel
+	 */
+	private void checkifVideoOrder(final OrderModel orderModel)
+	{
+		if (BooleanUtils.isFalse(orderModel.getIsRetailGearOrder()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()))
+		{
+			final List<AbstractOrderEntryModel> newCreatedMainBundleEntry = orderModel.getEntries().stream()
+					.filter(entry -> entry.isBundleMainEntry() && !entry.isEntryCreated()).collect(Collectors.toList());
+
+			if (CollectionUtils.isNotEmpty(newCreatedMainBundleEntry))
+			{
+				checkifBundleOrder(orderModel, newCreatedMainBundleEntry);
+			}
+			if (Objects.isNull(orderModel.getIsVideoOrder()) || BooleanUtils.isFalse(orderModel.getIsVideoOrder()))
+			{
+				checkifRentalOrUsedGearOrder(orderModel);
+			}
+		}
+	}
+
+	/**
+	 * This method will update video flag for rental or used gear order
+	 * @param orderModel
+	 */
+	private void checkifRentalOrUsedGearOrder(final OrderModel orderModel)
+	{
+		for (final AbstractOrderEntryModel orderEntries : orderModel.getEntries())
+		{
+			final ProductModel blProduct = orderEntries.getProduct();
+			if (isVideoProduct(blProduct))
+			{
+				orderModel.setIsVideoOrder(Boolean.TRUE);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * This method will mark bundle order as video order 
+	 * @param orderModel
+	 * @param newCreatedMainBundleEntry
+	 */
+	private void checkifBundleOrder(final OrderModel orderModel, final List<AbstractOrderEntryModel> newCreatedMainBundleEntry)
+	{
+		newCreatedMainBundleEntry.forEach(bundleEntry -> {
+			final ProductModel bundleProduct = bundleEntry.getProduct();
+			final List<ProductReferenceModel> bundleProductReferenceModel = getDefaultBlProductService()
+					.getBundleProductReferenceModel(bundleProduct);
+			for (final ProductReferenceModel referenceProduct : bundleProductReferenceModel)
+			{
+				if (referenceProduct.getTarget() instanceof BlProductModel
+						&& Boolean.TRUE.equals(((BlProductModel) referenceProduct.getTarget()).getIsVideo()))
+				{
+					orderModel.setIsVideoOrder(Boolean.TRUE);
+					break;
+				}
+			}
+		});
+	}
+
+	/**
+	 * This method is used to check if product is video product or not
+	 *
+	 * @param blProduct
+	 * @return
+	 */
+	private boolean isVideoProduct(final ProductModel blProduct)
+	{
+		if (blProduct instanceof BlSerialProductModel)
+		{
+			return ((BlSerialProductModel) blProduct).getBlProduct().getIsVideo();
+		}
+		else if (blProduct instanceof BlProductModel)
+		{
+			return ((BlProductModel) blProduct).getIsVideo();
+		}
+		return false;
+	}
+
+	/**
+	 * @return the defaultBlProductService
+	 */
+	public DefaultBlProductService getDefaultBlProductService()
+	{
+		return defaultBlProductService;
+	}
+
+	/**
+	 * @param defaultBlProductService the defaultBlProductService to set
+	 */
+	public void setDefaultBlProductService(DefaultBlProductService defaultBlProductService)
+	{
+		this.defaultBlProductService = defaultBlProductService;
+	}
 
 }

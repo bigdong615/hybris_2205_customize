@@ -24,6 +24,9 @@
 
                 				</p>
                 		</div>
+                		<c:url value="/contactus" var="link"/>
+                		<c:set var ="notificationDate" value="${jalosession.tenant.config.getParameter('bl.order.history.notification.message.date')}"/>
+            <div class="mt-2 notification notification-warning"><spring:theme code="text.myaccount.notification.message.order.history" arguments="${fn:escapeXml(notificationDate)}" htmlEscape="false"/> <a href="${link}"> <spring:theme code="text.myaccount.contactus.message.order.history"/></a></div>
                 	</div>
                 </c:if>
                 <c:if test="${not empty searchPageData.results}">
@@ -67,14 +70,14 @@
                 								</li>
                 								<li>
                 						
-                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Received') && (order.isCaptured eq false) }">
+                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending') && (order.isCaptured eq false) }">
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                  <a href="${modifyPaymentAction}">
                                                         <spring:theme code="order.myaccount.modify.payment"/> </a>
                 							  </c:if>
                 								</li>
                 								<li>
-                									<c:if test="${not empty agent.uid && order.orderStatus eq 'Received' }">
+                									<c:if test="${not empty agent.uid && order.orderStatus eq 'Pending' }">
                 								 <c:url value="/my-account/${order.code}/depositPayment" var="depositPaymentAction" />
                                  <a href="${depositPaymentAction}">
                                                         <spring:theme code="order.myaccount.deposit.payment"/> </a>
@@ -122,7 +125,7 @@
                      						</div>
                                  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
                                   <c:choose>
-                                    <c:when test="${order.newGearOrder eq true}">
+                                    <c:when test="${order.retailGearOrder eq true}">
                                       <p class="my-2"> ${order.status.code}</p>
                                     </c:when>
                                     <c:otherwise>
@@ -194,7 +197,7 @@
                 								
                 								
                 						
-                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Received') && (order.isCaptured eq false) }">
+                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending') && (order.isCaptured eq false) }">
 													<li></li>
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                                       <a href="${modifyPaymentAction}">
@@ -203,7 +206,7 @@
                 							  </c:if>
                 								
                 								
-                									<c:if test="${not empty agent.uid && (order.orderStatus eq 'Received') }">
+                									<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending') }">
 														<li>
                 								 <c:url value="/my-account/${order.code}/depositPayment" var="depositPaymentAction" />
                                               <a href="${depositPaymentAction}">
@@ -263,6 +266,8 @@
                 		</c:forEach>
                 		<div class="account-orderhistory-pagination">
                 			<nav:pagination searchPageData="${searchPageData}" searchUrl="${searchUrl}" /> </div>
-                	</div>
-                	</div>
-								</c:if>
+                			<c:url value="/contactus" var="link"/>
+                		<c:set var ="notificationDate" value="${jalosession.tenant.config.getParameter('bl.order.history.notification.message.date')}"/>
+            <div class="mt-2 notification notification-warning"><spring:theme code="text.myaccount.notification.message.order.history" arguments="${fn:escapeXml(notificationDate)}" htmlEscape="false"/> <a href="${link}"> <spring:theme code="text.myaccount.contactus.message.order.history"/></a></div>
+                              	</div>
+                	</c:if>

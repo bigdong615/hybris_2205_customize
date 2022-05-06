@@ -26,7 +26,7 @@ public class BlZoneDeliveryModePopulator extends ZoneDeliveryModePopulator {
         
        //Added condition for used Gear Delivery mode  
        final CartModel sessionCart = blCartService.getSessionCart();
-       if(Objects.nonNull(sessionCart) && BooleanUtils.isFalse(sessionCart.getIsRentalCart()))
+       if(Objects.nonNull(sessionCart) && BooleanUtils.isFalse(sessionCart.getIsRentalOrder()))
        {
       	 String deliveryMethodName = String.valueOf(source.getName());
           String usedGearDeliveryMode = deliveryMethodName.replace(BlFacadesConstants.ROUND_TRIP, "");

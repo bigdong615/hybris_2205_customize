@@ -1,14 +1,17 @@
 package com.bl.storefront.controllers.pages;
 
+import de.hybris.platform.ruledefinitions.AmountOperator;
+
 public class BlControllerConstants
 {
 
 	public static final String FORM_GLOBAL_ERROR = "form.global.error";
 	public static final String VALIDATE_CHECKPASSWORD_EQUALS = "validation.checkPwd.equals";
 	public static final String REGISTER_CHECKPASSWORD_INVALID = "register.checkPwd.invalid";
+	public static final String UPDATE_CHECKPASSWORD_INVALID = "updatePwd.checkPwd.invalid";
 	public static final String REGISTER_PASSWORD_INVALID = "register.pwd.invalid";
 	public static final String REGISTER_EMAIL_INVALID = "register.email.invalid";
-	public static final int PASSWORD_MIN_LENGTH = 6;
+	public static final int PASSWORD_MIN_LENGTH = 8;
 	public static final int PASSWORD_MAX_LENGTH = 255;
 	public static final int EMAIL_MAX_LENGTH = 255;
 	public static final String DUBLICATE_UID_ERROR = "registration.error.account.exists.title";
@@ -52,6 +55,9 @@ public class BlControllerConstants
 	public static final String REGISTER_EMAIL_EMPTY = "register.email.empty";
 	public static final String PASSWORD_STRING = "pwd";
   public static final String CONFIRM_PASSWORD_STRING = "checkPwd";
+  public static final String CHECK_NEW_PASSWORD="checkNewPassword";
+  public static final String NEW_PASSWORD = "newPassword";
+  public static final String CURRENT_PASSWORD="currentPassword";
   public static final String REFERER= "Referer";
   public static final String HOME_PAGE_URL = "/";
 	public static final String RENTAL_DATE_FAILURE_RESULT = "rentalDateNotSelected";
@@ -199,7 +205,45 @@ public class BlControllerConstants
 	public static final String ENABLE_DATE_PICKER = "enableDatePicker";
 	public static final String HAS_USER_RESTRICTION = "hasUserRestriction";
 	public static final String BL_GROUP = "BLGroup";
-
+	
+	public static final String MESSAGE_KEY = "messageKey";
+	public static final String GC_ERROR_MESSAGE_KEY = "giftcard.PurchaseForm.not.allow.addtocart.popup";
+	public static final String USED_CART_ERROR_MESSAGE_KEY = "text.addtocart.interception.popup";
+	public static final String USED_CART_LOG_ERROR_MESSAGE = "Used Cart Found";
+	
+	public static final String RENTAL_START_MESSAGE = "rentalStartMessageKey";
+	public static final String RENTAL_END_MESSAGE = "rentalEndMessageKey";
+	public static final String RENTAL_TO_DATE_ARGUMENT = "rentalErrorToDate";
+	public static final String RENTAL_START_MESSAGE_KEY = "blackout.rental.start.date.error";
+	public static final String RENTAL_END_MESSAGE_KEY = "blackout.rental.end.date.error";
+	public static final String NEWEST_STRING = "newest";
+	public static final String USED_SUBSTRING = "used";
+	public static final String FILE_SIZE_ERROR = "fileSizeError";
+	public static final String FILE_FORMAT_ERROR = "fileFormatError";
+	public static final String ENABLE_POPUP = "enablePopup";
+	public static final String SEARCHED_WORD = "searchedWord";
+	
+	public static final String PRODUCT_CODE_SPLITTER = "::";
+	public static final String PRODUCTS = "products";
+	public static final String PRODUCTS_OPERATOR = "products_operator";
+	public static final String Y_QUALIFYING_PRODUCTS = "y_qualifying_products";
+	public static final String RENTAL_DURATION = "rentalDuration";
+	public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
+	public static final String Y_RENTAL_DURATION_CONDITION = "y_rental_duration_condition";
+	public static final String DD_MMM_YYYY = "dd MMM yyyy";
+	public static final String RENTAL_ARRIVAL_DATE = "rentalArrivalDate";
+	public static final String Y_RENTAL_ARRIVAL_DATE_CONDITION = "y_rental_arrival_date_condition";
+	public static final String CUSTOMERS = "customers";
+	public static final String Y_TARGET_CUSTOMERS = "y_target_customers";
+	public static final String Y_FIRST_TIME_USER_CONDITION = "y_first_time_user_condition";
+	public static final String GREATER_THAN_OR_EQUAL = AmountOperator.GREATER_THAN_OR_EQUAL.toString();
+	public static final String EQUAL = AmountOperator.EQUAL.toString();
+	public static final String RENTAL_CART_TRUE = "CartRAO(rentalCart == Boolean.TRUE)";
+	public static final String RENTAL_CART_FALSE = "CartRAO(rentalCart == Boolean.FALSE)";
+	public static final String CHECK_FIRST_TIME_USER = "CartRAO(firstTimeCustomer == Boolean.TRUE)";
+	public static final String Y_RENTAL_CART_CONDITION = "y_rental_cart_condition";
+	public static final String OPERATOR = "operator";
+	public static final String LESS_THAN_OR_EQUAL = AmountOperator.LESS_THAN_OR_EQUAL.toString();
 
 	private BlControllerConstants()
 	{

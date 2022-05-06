@@ -56,13 +56,7 @@
 			<c:forEach items="${UploadedDocument['DRIVING_LICENSE']}"
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
-				<c:set var="doc" value="${uploadedDocument.code}" />
-			    <c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
-				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
-				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
-				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
-				
-			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate}
+				${uploadedDocument.realFileName} <br/> ${uploadedDocument.expiryDate}
 				<%--  ${uploadedDocument.code} --%>
 				<div class="uploaded-doc">
 					<form action="${removeDocument}" method="get"
@@ -138,13 +132,7 @@
 			<c:forEach items="${UploadedDocument['UTILITY_BILL']}"
 				var="uploadedDocument">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
-				<c:set var="doc" value="${uploadedDocument.code}" />
-			    <c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
-				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
-				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
-				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
-				
-			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate}
+		${uploadedDocument.realFileName} <br/> ${uploadedDocument.expiryDate}
 				
 					<form action="${removeDocument}" method="get"
 					id="removeDocumentForm_UTILITY_BILL_${loopindex.index}">
@@ -203,13 +191,7 @@
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
-					<c:set var="doc" value="${uploadedDocument.code}" />
-				<c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
-				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
-				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
-				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
-				
-			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate}
+		${uploadedDocument.realFileName} <br/> ${uploadedDocument.expiryDate}
 					<%-- <fmt:formatDate value="${uploadedDocument.expiryDate}" pattern="dd-MM-yy" /> --%>
 					 <input type="hidden" class="existing-doc">
 				</div>
@@ -264,14 +246,8 @@
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
-					<c:set var="doc" value="${uploadedDocument.code}" />
-			    <c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
-				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
-				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
-				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
-				
-			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate} <input
-						type="hidden" class="existing-doc">
+			${uploadedDocument.realFileName} <br/> ${uploadedDocument.expiryDate}
+			<input type="hidden" class="existing-doc">
 				</div>
 
 				<form action="${removeDocument}" method="get"
@@ -319,14 +295,8 @@
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
-					<c:set var="doc" value="${uploadedDocument.code}" />
-			    <c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
-				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
-				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
-				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
-				
-			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate} <input
-						type="hidden" class="existing-doc">
+		${uploadedDocument.realFileName} <br/> ${uploadedDocument.expiryDate}
+		<input type="hidden" class="existing-doc">
 				</div>
 
 				<form action="${removeDocument}" method="get"
@@ -375,14 +345,8 @@
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
-					<c:set var="doc" value="${uploadedDocument.code}" />
-					<c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
-				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
-				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
-				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
-				
-			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate} <input
-						type="hidden" class="existing-doc">
+			${uploadedDocument.realFileName} <br/> ${uploadedDocument.expiryDate}
+			<input type="hidden" class="existing-doc">
 				</div>
 
 				<form action="${removeDocument}" method="get"
@@ -426,14 +390,8 @@
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
-					<c:set var="doc" value="${uploadedDocument.code}" />
-				<c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
-				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
-				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
-				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
-				
-			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate} <input
-						type="hidden" class="existing-doc">
+		     ${uploadedDocument.realFileName} <br/> ${uploadedDocument.expiryDate}
+		     <input type="hidden" class="existing-doc">
 				</div>
 
 				<form action="${removeDocument}" method="get"
@@ -479,14 +437,8 @@
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
-					<c:set var="doc" value="${uploadedDocument.code}" />
-				<c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
-				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
-				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
-				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
-				
-			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate} <input
-						type="hidden" class="existing-doc">
+	    	${uploadedDocument.realFileName} <br/> ${uploadedDocument.expiryDate}
+	    	<input type="hidden" class="existing-doc">
 				</div>
 
 				<form action="${removeDocument}" method="get"
@@ -532,3 +484,25 @@
 		</div>
 
 		<!-- modal for remove -->
+<div class="modal fade" id="editWarning" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><spring:theme code="bl.verification.documents.popup.wait" /></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+          		<input type="hidden" id="enablePopup" value="${enablePopup}">
+          		<c:if test="${not empty fileFormatError }">
+          			<p class="body14 verification-error-message"><spring:theme code="${fileFormatError }" /></p>
+          		</c:if>
+              	<c:if test="${not empty fileSizeError }">
+          			<p class="body14 verification-error-message"><spring:theme code="${fileSizeError }" /></p>
+          		</c:if>
+              <p class="body14"><spring:theme code="${code }" /></p>
+              <p class="text-center mb-0"><a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close">
+              <spring:theme code="bl.verification.documents.popup.cancel"/></a></p>
+          </div>
+        </div>
+      </div>
+    </div>

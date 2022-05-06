@@ -1,0 +1,53 @@
+#% import com.bl.initialdata.setup.InitialDataSystemSetup
+#% impex.enableExternalImpExSyntaxParsing(true)
+#% impex.enableExternalDataCodeExecution(true)
+ 
+#% impex.info("=============================== Importing content from BLInitialData sample_custom_product_data_sequence =========================");
+
+#mention custom paths here 
+$productCatalogsCategoriesPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom/rootcategory
+$productInventoryLocationPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom/inventory
+$productShippingLocationPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom/shipping
+
+#Mention here categories related custom impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/categories.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/categories_en.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/categories-classifications.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/categories-classifications_en.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/suppliers.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/suppliers_en.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/suppliers-media.impex"), "utf-8", 0, 0);
+
+#Mention here product related custom impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/products.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/products_en.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/products-media.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/serial-products.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/product-relations.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/product-restriction.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/gift-card.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/options.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/newgear.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/affiliate-page.impex"), "utf-8", 0, 0);
+
+#Mention here catlog permission on user related custom impex in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCatalogPermissionPath/user-permission.impex"), "utf-8", 0, 0);
+
+
+#Mention here InventoryLocation related custom impex in sequence
+##% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productInventoryLocationPath/blproduct-Inventory-location.impex"), "utf-8", 0, 0);
+##% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productInventoryLocationPath/blInventory-child-parent-location.impex"), "utf-8", 0, 0);
+
+#Mention here Shipping related custom impex in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/shipping-group.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/partner-pickup-store.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/zone-delivery-mode.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/pick-up-zone-delivery-mode.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/rush-delivery-mode.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/shipping-cost.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/base-store.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/paypal-default-address.impex"), "utf-8", 0, 0);
+##% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/shipping-optimization.impex"), "utf-8", 0, 0);
+
+# Point of Service Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/points-of-service.impex"), "utf-8", 0, 0);

@@ -4,12 +4,17 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.DocumentType;
 import com.bl.core.enums.GearGaurdEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.esp.dto.orderpullback.data.OrderPullBackItems;
+import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.order.ESPEventCommonOrderDataRequest;
 import com.bl.esp.order.ESPEventCommonRequest;
+import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
@@ -17,10 +22,17 @@ import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
-import java.util.List;
-import java.util.Objects;
+import java.io.StringWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,9 +40,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -46,6 +63,12 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     private ConfigurationService configurationService;
     private ProductService productService;
     private CatalogVersionService catalogVersionService;
+
+
+    private static final String POPULATOR_ERROR = "Error while populating data for ESP Event";
+    private static final Logger LOG = Logger.getLogger(ESPEventCommonPopulator.class);
+
+
 
     /**
      * Populate common attributes with values from the OrderModel.
@@ -183,7 +206,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         if (CollectionUtils.isNotEmpty(orderModel.getGiftCard())) {
             orderModel.getGiftCard().forEach(giftCardModel -> giftCardModel.getMovements().forEach(giftCardMovementModel -> {
                 if(StringUtils.equals(orderModel.getCode() , (giftCardMovementModel.getOrder() != null ? giftCardMovementModel.getOrder().getCode() :StringUtils.EMPTY))) {
-                    giftCardBalance.set(String.valueOf(giftCardMovementModel.getBalanceAmount()));
+                    giftCardBalance.set(formatAmount(giftCardMovementModel.getBalanceAmount()));
                 }
             }));
         }
@@ -243,13 +266,13 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         if(BooleanUtils.isTrue(orderModel.isGiftCardOrder())) {
             orderType.set(BlCoreConstants.GIFT_CARD_ORDER);
         }
-        else if(BooleanUtils.isTrue(orderModel.getIsNewGearOrder())){
+        else if(BooleanUtils.isTrue(orderModel.getIsRetailGearOrder())){
             orderType.set(BlCoreConstants.NEW_GEAR_ORDER);
         }
-        else if(BooleanUtils.isTrue(orderModel.getIsRentalCart())){
+        else if(BooleanUtils.isTrue(orderModel.getIsRentalOrder())){
             orderType.set(BlCoreConstants.RENTAL);
         }
-        else if(BooleanUtils.isFalse(orderModel.getIsRentalCart())){
+        else if(BooleanUtils.isFalse(orderModel.getIsRentalOrder())){
             orderType.set(BlCoreConstants.USED_GEAR);
         }
 
@@ -291,7 +314,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @param serialProductCode serial product code
      * @return string
      */
-    protected String getProductUrl(final String serialProductCode) {
+    protected String getSerialProductUrl(final String serialProductCode) {
         final AtomicReference<String> productUrl = new AtomicReference<>(StringUtils.EMPTY);
         final CatalogVersionModel catalogVersion = getCatalogVersionService().getCatalogVersion(BlCoreConstants.CATALOG_VALUE,BlCoreConstants.ONLINE);
         final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(catalogVersion, serialProductCode);
@@ -325,16 +348,209 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
 
     /**
      * This method check Gift card payment type
-     * @param orderModel
      * @return string
      */
-    protected String checkIsGiftCardUsed(final OrderModel orderModel , final String creditCart){
+    protected String checkIsGiftCardUsed(final String creditCart){
        final StringBuilder paymentType= new StringBuilder();
-        /*if(CollectionUtils.isNotEmpty (orderModel.getGiftCard())){
-            return orderModel.getTotalPrice() == 0 ? paymentType.append(BlCoreConstants.GIFT_CARD_TYPE).toString() :
-                paymentType.append(creditCart).append(StringUtils.SPACE).append(BlCoreConstants.PLUS).append(StringUtils.SPACE ).append(BlCoreConstants.GC_TYPE).toString();
-        }*/
         return paymentType.append(creditCart).toString();
+    }
+
+
+    /**
+     * This method created to populate order data from order model
+     * @param order order model to get the data
+     * @param data data to get updated
+     * @param blSerialProductModels
+     * @param orderEntry
+     */
+    protected void populateOrderDataForOrderPullBackItems(final OrderModel order,
+        final OrderPullBackItems data, final String templateName,
+        final List<BlSerialProductModel> blSerialProductModels,
+        final AbstractOrderEntryModel orderEntry) {
+        final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
+        data.setOldOrderId(StringUtils.EMPTY);
+        data.setStatus(getRequestValue(
+            Objects.nonNull(order.getStatus()) ? order.getStatus().getCode() : StringUtils.EMPTY));
+        data.setOrdertype(getOrderType(order));
+        data.setDateplaced(formatter.format(order.getDate()));
+        if(Objects.nonNull(order.getDeliveryMode())) {
+            final ZoneDeliveryModeModel delivery = ((ZoneDeliveryModeModel) order
+                .getDeliveryMode());
+            data.setShippingmethodtype(getRequestValue(delivery.getShippingGroup().getName()));
+            data.setShippingmethod(getRequestValue(delivery.getCode()));
+        }
+        data.setExpectedshippingdate(formatter.format(order.getRentalStartDate()));
+        data.setArrivaldate(formatter.format(order.getRentalStartDate()));
+        data.setReturndate(formatter.format(order.getRentalEndDate()));
+        populateOrderItemsInXML(data , templateName , blSerialProductModels , orderEntry);
+    }
+
+    /**
+     * This method created to populate order
+     * @param orderModel order model to get the data
+     * @param data date to get updated
+     * @param templateName template for request
+     * @param blSerialProductModels
+     * @param orderEntry
+     */
+    private void populateOrderItemsInXML(final OrderPullBackItems data,
+        final String templateName, final List<BlSerialProductModel> blSerialProductModels,
+        final AbstractOrderEntryModel orderEntry) {
+        try {
+            final Document orderItemsInXMLDocument = createNewXMLDocument();
+            final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlCoreConstants.ITEMS_ROOT_ELEMENT);
+                if(StringUtils.equalsIgnoreCase(templateName , BlCoreConstants.ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE) && CollectionUtils.isNotEmpty(blSerialProductModels)){
+                    populateOrderDetailsForRemovedEntriesInXMl(orderItemsInXMLDocument , rootOrderItems , blSerialProductModels);
+                }
+                else if(Objects.nonNull(orderEntry) && CollectionUtils.isNotEmpty(orderEntry.getModifiedSerialProductList())) {
+                    for (final BlSerialProductModel blSerialProductModel : orderEntry.getModifiedSerialProductList()) {
+                        populateOrderDetailsInXML(blSerialProductModel, orderItemsInXMLDocument, rootOrderItems , orderEntry);
+                    }
+                }
+            final Transformer transformer = getTransformerFactoryObject();
+            final StringWriter writer = new StringWriter();
+
+            //transform document to string
+            transformer.transform(new DOMSource(orderItemsInXMLDocument), new StreamResult(writer));
+            data.setItemsxml(writer.getBuffer().toString());
+
+        } catch (final Exception exception) {
+            BlLogger.logMessage(LOG , Level.ERROR , POPULATOR_ERROR , exception);
+            throw new BlESPIntegrationException(exception.getMessage() , LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode() , exception);
+        }
+    }
+
+
+    /**
+     * This method created to populate data in XML format
+     * @param orderEntry entryModel
+     * @param orderItemsInXMLDocument orderItemsInXMLDocument
+     * @param rootOrderItems rootOrderItems
+     * @param blSerialProductModel blserial product
+     */
+    private void populateOrderDetailsInXML(final BlSerialProductModel blSerialProductModel,
+        final Document orderItemsInXMLDocument,
+        final Element rootOrderItems,
+        final AbstractOrderEntryModel orderEntry) {
+        final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
+            createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
+                getRequestValue(blSerialProductModel.getCode()));
+            createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
+                orderEntry.getProduct() instanceof BlSerialProductModel ? getProductTitle(orderEntry.getProduct().getCode()) :orderEntry.getProduct().getName());
+
+    }
+
+
+    /**
+     * This method created to populate removed entry data in XML format
+     * @param orderItemsInXMLDocument  orderItemsInXMLDocument
+     * @param rootOrderItems rootOrderItems
+     * @param blSerialProductModels list of removed entries
+     */
+    private void populateOrderDetailsForRemovedEntriesInXMl(final Document orderItemsInXMLDocument,
+        final Element rootOrderItems, final List<BlSerialProductModel> blSerialProductModels) {
+        final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
+
+        blSerialProductModels.forEach(blSerialProductModel -> {
+                if(Objects.nonNull(blSerialProductModel)) {
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
+                        getRequestValue(blSerialProductModel.getCode()));
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
+                        getProductTitle(blSerialProductModel.getCode()));
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_QUANTITY,
+                        BlCoreConstants.ONE);
+                }
+        });
+
+    }
+
+    /**
+     * This method created to check whether is returning customer or not
+     * @param orderModel order model
+     * @return boolean value
+     */
+    protected boolean isReturningCustomer(final OrderModel orderModel) {
+        final Collection<OrderModel> abstractOrderEntryModel =  orderModel.getUser().getOrders();
+        return CollectionUtils.isNotEmpty(abstractOrderEntryModel) && abstractOrderEntryModel.size() > 1;
+    }
+
+    /**
+     * This method created to format the amount for double
+     * @param amount the amount
+     * @return the string
+     */
+    protected String formatAmount(final Double amount) {
+        final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
+        decimalFormat.applyPattern(BlCoreConstants.FORMAT_STRING);
+        return decimalFormat.format(amount);
+    }
+
+    /**
+     * This method created to get the total value from order model
+     * @param abstractOrderModel abstractOrderModel
+     * @return double
+     */
+    protected String getTotalValueFromOrder(final AbstractOrderModel abstractOrderModel){
+    final AtomicDouble totalValue = new AtomicDouble(0.0);
+     if(CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())){
+         abstractOrderModel.getEntries().forEach(abstractOrderEntryModel -> {
+             if(abstractOrderEntryModel.getProduct() instanceof BlProductModel){
+                 final BlProductModel blProductModel = ((BlProductModel) abstractOrderEntryModel.getProduct());
+                 totalValue.addAndGet(Objects.isNull(blProductModel.getRetailPrice()) ?
+                     0.0 :blProductModel.getRetailPrice() * abstractOrderEntryModel.getQuantity());
+             }
+         });
+     }
+    return formatAmount(totalValue.get());
+    }
+
+    /**
+     * This method created to check whether to get total price from product
+     * @param abstractOrderModel ordermodel
+     * @return boolean
+     */
+    protected boolean isOrderAllowToGetTotalValueFromOrder(final AbstractOrderModel abstractOrderModel) {
+       return BooleanUtils.isTrue(abstractOrderModel.getIsRentalOrder()) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder()) &&
+            BooleanUtils.isFalse(abstractOrderModel.getIsRetailGearOrder());
+    }
+
+
+
+    /**
+     * It returns opening hours of a store.
+     *
+     * @param shippingAddress the AddressModel
+     * @return opening hours
+     */
+    protected String getStoreOpeningHours(final AddressModel shippingAddress) {
+        final Map<String, String> openingDaysDetails = shippingAddress.getOpeningDaysDetails();
+        final StringBuilder stringBuilder = new StringBuilder();
+        if (MapUtils.isNotEmpty(openingDaysDetails)) {
+            openingDaysDetails.forEach(
+                (key, value) -> stringBuilder.append(key).append(BlCoreConstants.COLON).append(value)
+                    .append(StringUtils.SPACE));
+        }
+        return stringBuilder.toString();
+    }
+
+
+    /* This method created to get COI expiration time from verification document
+    * @param user user
+    * @return string
+   */
+    public Date getCOIExpirationDateFromCustomer(final CustomerModel user) {
+        final List<Date> dateList = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(user.getVerificationDocuments())) {
+            user.getVerificationDocuments().forEach(verificationDocumentMediaModel -> {
+                if (StringUtils.equalsIgnoreCase(verificationDocumentMediaModel.getDocumentType().getCode() ,
+                        DocumentType.INSURANCE_CERTIFICATE.getCode())&& Objects.nonNull(verificationDocumentMediaModel.getExpiryDate())) {
+                    dateList.add(verificationDocumentMediaModel.getExpiryDate());
+                }
+            });
+        }
+        dateList.sort(Date::compareTo);
+        return dateList.isEmpty() ? null : dateList.get(dateList.size()-1);
+
     }
 
     public ConfigurationService getConfigurationService() {

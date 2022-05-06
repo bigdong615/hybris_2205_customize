@@ -142,6 +142,15 @@
 						$("#paymentNonce").val(paymentnonce);
 				 });
 				 
+				 var mediaQuery = window.matchMedia('(min-width: 768px)');
+				 if(mediaQuery.matches)
+				 {
+					 $("#js-site-search-input-mob").val("");	 
+				 }
+				 else
+				 {
+					 $("#js-site-search-input").val("");
+				 }
 			});
 		</script>
 		
@@ -375,7 +384,7 @@
   	</c:if>
 
   	<!-- This js is used for rental search box component-->
-  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalgear')}">
+  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalgear') || isRentalPage eq true}">
   	<script type="text/javascript">
 
             if ($(window).width() < 400 ) {
@@ -1841,8 +1850,8 @@
            var orderCode = $("#orderCode").val(); // To Get Order Code
 
            startDate.setDate(startDate.getDate() + 89); // To add max days from existing order startDate
-                                     const disallowedDates = [['2001-01-01', endDate]];
-                                       const picker = new Litepicker({
+                                     const disallowedDatesForExendOrder = [['2001-01-01', endDate]];
+                                       const extendRentalDatePicker = new Litepicker({
                                       element: document.getElementById('rental-litepicker'),
                                   //    plugins: ['mobilefriendly'],
                                       singleMode: true,
@@ -1863,8 +1872,8 @@
                           				 tooltipNumber: (totalDays) => {
                                     return totalDays - 1;
                                   },
-                                      setup: (picker) => {
-                                			picker.on('button:apply', (newEndDate) => {
+                                      setup: (extendRentalDatePicker) => {
+                                			extendRentalDatePicker.on('button:apply', (newEndDate) => {
                                 				$.ajax({
                             	                    url: ACC.config.encodedContextPath +'/my-account/extendDate/',
                             	                    data: {extendEndDate: newEndDate.toDateString() , orderCode : orderCode , orderEndDate:endDate},
@@ -1872,6 +1881,7 @@
                             	                    success: function (data) {
                             	                    $('#orderSummary').html(data);
                             	                    $('#js-totalCost-update').html( $('#js-totalExtendCost').html());
+                            	                                      $('.js-extend-button-enable').attr('disabled',false);
                             	                    var dayOrDays = "";
                             	                    if(($('#js-totalExtendDays').val() == 1)) {
                             	                    dayOrDays = $('#js-totalExtendDays').val() + ' ' + 'Day';
@@ -1903,7 +1913,7 @@
                                               }
                                               return [6, 0].includes(d);
                                             },
-                                          lockDays: disallowedDates,
+                                          lockDays: disallowedDatesForExendOrder,
                                       //Disable dates after one year from today
                                           maxDate: startDate,
                                      //Change the defaul button values

@@ -1,29 +1,5 @@
 package com.bl.core.services.consignment.entry.impl;
 
-import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
-import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.search.restriction.SearchRestrictionService;
-import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.session.SessionExecutionBody;
-import de.hybris.platform.servicelayer.session.SessionService;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
 import com.bl.core.enums.ItemStatusEnum;
@@ -31,12 +7,40 @@ import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.BlSubpartsModel;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.session.SessionExecutionBody;
+import de.hybris.platform.servicelayer.session.SessionService;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -176,30 +180,32 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	public void setItemsMap(final ConsignmentEntryModel entry, final Set<BlSerialProductModel> serialProductModels)
 	{
 		final Map<String, ItemStatusEnum> itemsMap = new HashMap<>();
-		final List<BlProductModel> allSerialSubPartProducts = new ArrayList<>();
+		final List<BlSubpartsModel> allSerialSubPartProducts = new ArrayList<>();
 		serialProductModels.forEach(serial -> {
 			itemsMap.put(serial.getCode(), ItemStatusEnum.NOT_INCLUDED);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"Serial product with code {} added to the products list on consignment entry with consignment code {}",
 					serial.getCode(), entry.getConsignment().getCode());
+
 			allSerialSubPartProducts.addAll(getSessionService().executeInLocalView(new SessionExecutionBody()
 			{
 				@Override
-				public List<BlProductModel> execute()
+				public Collection<BlSubpartsModel> execute()
 				{
 					getSearchRestrictionService().disableSearchRestrictions();
-					if (null != serial.getBlProduct() && CollectionUtils.isNotEmpty(serial.getBlProduct().getSubParts()))
+					if (null != serial.getBlProduct() && CollectionUtils.isNotEmpty(serial.getBlProduct().getSubpartProducts()))
 					{
-
-						return (List<BlProductModel>) serial.getBlProduct().getSubParts();
+						return serial.getBlProduct().getSubpartProducts();
 					}
-					return new ArrayList<>();
+					return Collections.emptyList();
 				}
 			}));
 		});
+
 		putSubPartProductsInToItemsMap(entry, itemsMap, allSerialSubPartProducts);
 		putProductOptionsInToItemsMap(entry, itemsMap);
 		entry.setItems(itemsMap);
+
 	}
 
 	/**
@@ -236,19 +242,18 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 * @param allSerialSubPartProducts
 	 */
 	private void putSubPartProductsInToItemsMap(final ConsignmentEntryModel consignmentEntry,
-			final Map<String, ItemStatusEnum> itemsMap, final List<BlProductModel> allSerialSubPartProducts)
+			final Map<String, ItemStatusEnum> itemsMap, final List<BlSubpartsModel> allSerialSubPartProducts)
 	{
 		final Map<BlProductModel, Integer> allSerialSubPartProductMap = new HashMap<>();
-		for (final BlProductModel productModel : allSerialSubPartProducts)
+		for (final BlSubpartsModel subpartModel : allSerialSubPartProducts)
 		{
-			if (null != allSerialSubPartProductMap.get(productModel))
+			if (null != allSerialSubPartProductMap.get(subpartModel.getSubpartProduct()))
 			{
-				allSerialSubPartProductMap.put(productModel,
-						allSerialSubPartProductMap.get(productModel) + productModel.getSubpartQuantity());
+				allSerialSubPartProductMap.put(subpartModel.getSubpartProduct(),allSerialSubPartProductMap.get(subpartModel.getSubpartProduct()) + subpartModel.getQuantity());
 			}
 			else
 			{
-				allSerialSubPartProductMap.put(productModel, productModel.getSubpartQuantity());
+				allSerialSubPartProductMap.put(subpartModel.getSubpartProduct(),subpartModel.getQuantity());
 			}
 		}
 		allSerialSubPartProductMap.entrySet().forEach(mapEntry -> {
@@ -270,6 +275,23 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				}
 			}
 		});
+	}
+
+
+	/**
+	 * This method used to map subpart and its total count for particular serial.
+	 * @param allSerialSubPartProducts
+	 * @param subPartsForGivenSerial
+	 */
+	private void addingSubpartToMap(final Map<BlProductModel, Integer> allSerialSubPartProducts,final Map<BlProductModel, Integer> subPartsForGivenSerial){
+		subPartsForGivenSerial.forEach( (productKey,quantity) ->{
+		if(allSerialSubPartProducts.containsKey(productKey)){
+			Integer existingQuantity =allSerialSubPartProducts.get(productKey);
+			allSerialSubPartProducts.put(productKey,existingQuantity+quantity);
+		}else{
+			allSerialSubPartProducts.put(productKey,quantity);
+		}
+	} );
 	}
 
 	/**
@@ -334,6 +356,84 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 				"Product option with name {} added to the options list on consignment entry with consignment code {}",
 				optionsModel.getName(), consignmentEntry.getConsignment().getCode());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void assignSerialAndOrderCodeOnBillingCharges(final ConsignmentEntryModel consignmentEntryModel)
+	{
+		if (Objects.nonNull(consignmentEntryModel) && MapUtils.isNotEmpty(consignmentEntryModel.getBillingCharges()))
+		{
+			final String orderCode = getOrderCodeFromConsignmentEntry(consignmentEntryModel);
+			doSetSerialAndOrderCodeOnCharges(consignmentEntryModel, orderCode);
+		}
+	}
+
+	/**
+	 * Do set serial and order code on charges.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @param interceptorContext
+	 *           the interceptor context
+	 * @param orderCode
+	 *           the order code
+	 */
+	private void doSetSerialAndOrderCodeOnCharges(final ConsignmentEntryModel consignmentEntryModel, final String orderCode)
+	{
+		consignmentEntryModel.getBillingCharges().forEach((serialCode, listOfCharges) -> {
+			if (CollectionUtils.isNotEmpty(listOfCharges))
+			{
+				listOfCharges.forEach(charge -> {
+					charge.setOrderCode(orderCode);
+					charge.setSerialCode(serialCode);
+					getModelService().save(charge);
+				});
+			}
+		});
+	}
+
+	/**
+	 * Gets the order code from consignment entry.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @return the order code from consignment entry
+	 */
+	private String getOrderCodeFromConsignmentEntry(final ConsignmentEntryModel consignmentEntryModel)
+	{
+		return Objects.nonNull(consignmentEntryModel) && Objects.nonNull(consignmentEntryModel.getConsignment())
+				&& Objects.nonNull(consignmentEntryModel.getConsignment().getOrder())
+						? consignmentEntryModel.getConsignment().getOrder().getCode()
+						: StringUtils.EMPTY;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ConsignmentEntryModel getConsignmentEntryFromOrderForSerial(final OrderModel order, final String serialCode)
+	{
+		ConsignmentEntryModel consignmentEntryModel = null;
+		if (StringUtils.isNotBlank(serialCode) && Objects.nonNull(order) && CollectionUtils.isNotEmpty(order.getConsignments()))
+		{
+			final Set<ConsignmentModel> consignments = order.getConsignments();
+			for (final ConsignmentModel consignment : consignments)
+			{
+				final Set<ConsignmentEntryModel> consignmentEntries = consignment.getConsignmentEntries();
+				if (CollectionUtils.isNotEmpty(consignmentEntries) && Objects.isNull(consignmentEntryModel))
+				{
+					final Optional<ConsignmentEntryModel> consignmentEntryFromConsignment = consignmentEntries.stream()
+							.filter(consignmentEntry -> consignmentEntry.getSerialProducts().stream()
+									.anyMatch(product -> serialCode.equalsIgnoreCase(product.getCode())))
+							.findFirst();
+					consignmentEntryModel = consignmentEntryFromConsignment.isPresent() ? consignmentEntryFromConsignment.get() : null;
+				}
+			}
+		}
+		return consignmentEntryModel;
 	}
 
 	/**

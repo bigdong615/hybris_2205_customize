@@ -16,7 +16,6 @@ import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.core.utils.BlUpdateStagedProductUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
@@ -88,19 +87,24 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * {@inheritDoc}
      */
     @Override
-    public void clearCartEntries() {
+    public void clearCartEntries (CartModel cartModel) {
 
-        final CartModel cartModel = getSessionCart();
-
+        if(null == cartModel) {
+            cartModel = getSessionCart();
+        }
         if (CollectionUtils.isNotEmpty(cartModel.getEntries())) {
 
-            if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
-                setUsedGearSerialProductStatus(cartModel, null);
+            if (BooleanUtils.isFalse(cartModel.getIsRentalOrder())) {
+                for(AbstractOrderEntryModel cartEntry : cartModel.getEntries()) {
+                    setUsedGearSerialProductStatus(cartModel, cartEntry);
+                }
             }
-            cartModel.setIsNewGearOrder(false);
-            cartModel.setIsRentalCart(false);
+            cartModel.setIsRetailGearOrder(false);
+            cartModel.setIsRentalOrder(false);
             cartModel.setRentalStartDate(null);
             cartModel.setRentalEndDate(null);
+            cartModel.setGiftCardCost(0.0);
+            cartModel.setGiftCardOrder(Boolean.FALSE);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
             final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
@@ -108,9 +112,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             commerceCartParameter.setCart(cartModel);
             getCommerceCartService().removeAllEntries(commerceCartParameter);
 
-
             BlLogger.logFormattedMessage(LOGGER, Level.DEBUG, BlCoreConstants.EMPTY_STRING,
-                    "All entries removed from cart with code : {}", cartModel.getCode());
+                "All entries removed from cart with code : {}", cartModel.getCode());
         }
     }
 
@@ -194,29 +197,27 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * @param String the selectedOptionCode
      */
     private void setOptionOnCartEntry(final AbstractOrderEntryModel cartEntryModel,
-    final String selectedOptionCode){
-    ProductModel product = cartEntryModel.getProduct();
-    if(product instanceof BlProductModel){
-        BlProductModel blProductModel = (BlProductModel) product;
-        List<BlOptionsModel> options = blProductModel.getOptions();
-        if(CollectionUtils.isNotEmpty(options)){
-            BlOptionsModel option = options.iterator().next();
-            if(CollectionUtils.isNotEmpty(option.getSubOptions())){
-                final Optional<BlOptionsModel> selectedSubOption = option.getSubOptions().stream()
-                    .filter(subOption -> selectedOptionCode.equals(subOption.getCode())).findFirst();
-                if(selectedSubOption.isPresent()){
-                    final Integer quantity = Integer.parseInt(cartEntryModel.getQuantity().toString());
-                    List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
-                    for(int i = 0 ; i < quantity ; i++){
-                        selectOptionList.add(selectedSubOption.get());
-                    }
-                    cartEntryModel.setOptions(selectOptionList);
-                }
-            }
+   	    final String selectedOptionCode){
+   	    ProductModel product = cartEntryModel.getProduct();
+   	    if(product instanceof BlProductModel){
+   	        BlProductModel blProductModel = (BlProductModel) product;
+   	        List<BlOptionsModel> options = blProductModel.getOptions();
+   	        if(CollectionUtils.isNotEmpty(options)){
+   	      	  Optional<BlOptionsModel> selectedOptionModel = options.stream().filter(option -> selectedOptionCode.equals(option.getCode())).findAny();
+   	          
+   	            if(selectedOptionModel.isPresent()){
+   	               	  BlOptionsModel option = 	selectedOptionModel.get();
+   	                    final Integer quantity = Integer.parseInt(cartEntryModel.getQuantity().toString());
+   	                    List<BlOptionsModel> selectOptionList = new ArrayList<>(quantity);
+   	                    for(int i = 0 ; i < quantity ; i++){
+   	                        selectOptionList.add(option);
+   	                    }
+   	                    cartEntryModel.setOptions(selectOptionList);
+   	            }
 
-        }
-    }
-}
+   	        }
+   	    }
+   	}
     /**
      * {@inheritDoc}
      */
@@ -224,7 +225,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate) {
         final CartModel cartModel = getSessionCart();
         final String cartCode = cartModel.getCode();
-        if(BooleanUtils.isTrue(cartModel.getIsRentalCart())) {
+        if(BooleanUtils.isTrue(cartModel.getIsRentalOrder())) {
             cartModel.setRentalStartDate(rentalStartDate);
             cartModel.setRentalEndDate(rentalEndDate);
             try {
@@ -366,7 +367,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     @Override
     public void updateNewGearPurchaseStatus(final CartModel cartModel){
         if(CollectionUtils.isEmpty(cartModel.getEntries())){
-            cartModel.setIsNewGearOrder(Boolean.FALSE);
+            cartModel.setIsRetailGearOrder(Boolean.FALSE);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
         }
@@ -399,7 +400,6 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
 		  if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus())) {
 		      blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
-		      BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ACTIVE);
 		      getModelService().save(blSerialProductModel);
 		  }
 	}
@@ -532,7 +532,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     /**
      * This method returns true if this is Front desk order.
      *
-     * @param cartModel
+     * @param cartModel as cartModel
+     * @return boolean
      */
     public boolean isFrontDeskOrder(final CartModel cartModel) {
 
@@ -588,7 +589,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
  		final CartModel cartModel = getSessionCart();
  		if(Objects.nonNull(cartModel))
  		{
- 			return BooleanUtils.isTrue(cartModel.getIsRentalCart()) && BooleanUtils.isFalse(cartModel.isGiftCardOrder()) && BooleanUtils.isFalse(cartModel.getIsNewGearOrder());
+ 			return BooleanUtils.isTrue(cartModel.getIsRentalOrder()) && BooleanUtils.isFalse(cartModel.isGiftCardOrder()) && BooleanUtils.isFalse(cartModel.getIsRetailGearOrder());
  		}
  		return Boolean.FALSE;
  	}

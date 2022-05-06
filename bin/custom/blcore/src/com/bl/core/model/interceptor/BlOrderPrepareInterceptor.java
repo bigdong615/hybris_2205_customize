@@ -34,6 +34,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
@@ -84,11 +85,25 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	@Resource(name = "blConsignmentEntryService")
 	BlConsignmentEntryService blConsignmentEntryService;
 
+	@Resource(name = "blOrderIDGenerator")
+	private KeyGenerator blOrderIDGenerator;
+
   @Override
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
-	  
-	  if (getDefaultBlUserService().isCsUser() && abstractOrderModel.getIsRentalCart() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
+
+  	if(abstractOrderModel instanceof OrderModel) {
+			final OrderModel orderModel = (OrderModel) abstractOrderModel;
+			if (BooleanUtils.isTrue(orderModel.getIsExtendedOrder())) {
+				if(Objects.isNull(orderModel.getOrderID()) || (Objects.nonNull(orderModel.getOrderID())
+						&& orderModel.getOrderID().equals(orderModel.getCode()))) {
+					orderModel.setOrderID((String) this.blOrderIDGenerator.generate());
+				}
+			} else if(Objects.isNull(orderModel.getOrderID())){
+				orderModel.setOrderID(orderModel.getCode());
+			}
+		}
+	  if (getDefaultBlUserService().isCsUser() && abstractOrderModel.getIsRentalOrder() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
 				|| interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALENDDATE)))
 		{
 			modifyOrderDate(abstractOrderModel);
@@ -133,11 +148,19 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 			triggerNewShippingInfoEvent(abstractOrderModel, interceptorContext);
 			triggerExceptionExtraItemEvent(abstractOrderModel,interceptorContext);
 			triggerVerificationCompletedEvent(abstractOrderModel,interceptorContext);
+			triggerManualAllocationEvent(abstractOrderModel,interceptorContext);
     }
     catch (final Exception e){
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
           "Event API call failed", e);
     }
+
+    // To set Modified Order Date
+		if ((Objects.nonNull(abstractOrderModel.getExtendRentalStartDate()) && (getDefaultBlUserService().isCsUser() && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALSTARTDATE)) ||
+						(getDefaultBlUserService().isCsUser() && Objects.nonNull(abstractOrderModel.getExtendRentalEndDate()) && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALENDDATE)))||
+				checkOrderStatusEligibleForOrderModification(abstractOrderModel , interceptorContext)) {
+			abstractOrderModel.setOrderModifiedDate(new Date());
+		}
   }
 
 	/**
@@ -147,10 +170,10 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	private void setInCompletedOrderCount(final AbstractOrderModel abstractOrderModel) {
 		if(OrderStatus.INCOMPLETE.getCode().contains(abstractOrderModel.getStatus().getCode())) {
 			final CustomerModel customerModel = (CustomerModel) abstractOrderModel.getUser();
-			customerModel.setIncompletedOrderCount(customerModel.getIncompletedOrderCount() + 1);
+			customerModel.setInprocessOrderCount(customerModel.getInprocessOrderCount() + 1);
 			modelService.save(customerModel);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "InCompleted order count : {} updated for the customer {} ",
-					customerModel.getIncompletedOrderCount(), customerModel.getUid());
+					customerModel.getInprocessOrderCount(), customerModel.getUid());
 		}
 	}
 
@@ -162,9 +185,14 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   	if(OrderStatus.COMPLETED.equals(abstractOrderModel.getStatus())) {
   		final CustomerModel customerModel = (CustomerModel) abstractOrderModel.getUser();
   		customerModel.setCompletedOrderCount(customerModel.getCompletedOrderCount() + 1);
-  		modelService.save(customerModel);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Completed order count : {} updated for the customer {} ",
 					customerModel.getCompletedOrderCount(), customerModel.getUid());
+			final Object previousStatus = abstractOrderModel.getItemModelContext()
+					.getOriginalValue(AbstractOrderModel.STATUS);
+			if(Objects.nonNull(previousStatus) && OrderStatus.INCOMPLETE.getCode().contains(previousStatus.toString())) {
+				customerModel.setInprocessOrderCount(customerModel.getInprocessOrderCount() - 1);
+			}
+			modelService.save(customerModel);
 		}
 	}
 
@@ -175,15 +203,15 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	private void setOrderValuePriorToShippedStatus(final AbstractOrderModel order) {
   	if(isOrderAfterShippedStatus(order.getStatus())) {
 			final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) order.getItemModelContext();
-			final OrderStatus status = itemModelCtx.getOriginalValue(BlCoreConstants.STATUS);
+			final OrderStatus status = itemModelCtx.getOriginalValue(AbstractOrderModel.STATUS);
 			if(OrderStatus.SHIPPED.equals(status)) {
 				final CustomerModel customerModel = (CustomerModel) order.getUser();
 				final Double priceOfProducts = order.getEntries().stream().mapToDouble(
 						AbstractOrderEntryModel::getTotalPrice).sum();
-				customerModel.setOrderValuePriorToShippedStatus(customerModel.getOrderValuePriorToShippedStatus() - priceOfProducts);
+				customerModel.setGearValueOrdersInProgress(customerModel.getGearValueOrdersInProgress() - priceOfProducts);
 				modelService.save(customerModel);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order value prior to shipped status : {} updated for the customer {} ",
-						customerModel.getOrderValuePriorToShippedStatus(), customerModel.getUid());
+						customerModel.getGearValueOrdersInProgress(), customerModel.getUid());
 			}
 		}
 	}
@@ -197,7 +225,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		return OrderStatus.INCOMPLETE.getCode().startsWith(orderStatus.getCode()) ||
 				BlCoreConstants.UNBOXED.startsWith(orderStatus.getCode()) ||
 				isOrderStatusAfterShipped(orderStatus) ||
-				BlCoreConstants.COMPLETED.startsWith(orderStatus.getCode());
+				OrderStatus.COMPLETED.getCode().startsWith(orderStatus.getCode());
 	}
 
 	private boolean isOrderStatusAfterShipped(final OrderStatus orderStatus) {
@@ -349,7 +377,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 * @param interceptorContext the interceptor context
 	 */
 	private void triggerNewShippingInfoEvent(final AbstractOrderModel abstractOrderModel, final InterceptorContext interceptorContext) {
-		if(getDefaultBlUserService().isCsUser() && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.DELIVERYADDRESS) && abstractOrderModel instanceof OrderModel){
+		if(getDefaultBlUserService().isCsUser() && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.DELIVERYADDRESS)
+				&& abstractOrderModel instanceof OrderModel && (StringUtils.isBlank(((OrderModel) abstractOrderModel).getVersionID()))){
 			getBlEspEventService().sendOrderNewShippingEvent((OrderModel) abstractOrderModel);
 		}
 	}
@@ -386,6 +415,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		final AtomicBoolean isGroundAvailability = new AtomicBoolean();
 		if(CollectionUtils.isNotEmpty(abstractOrderModel.getConsignments())) {
 			for (final ConsignmentModel consignmentModel : abstractOrderModel.getConsignments()) {
+				consignmentModel.getOrder().setRentalStartDate(abstractOrderModel.getRentalStartDate());
+				consignmentModel.getOrder().setRentalEndDate(abstractOrderModel.getRentalEndDate());
 				updareShippingOptimizationDate(abstractOrderModel, sourcingLocation, isGroundAvailability, consignmentModel);
 			}
 		}
@@ -393,6 +424,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		{
 			updateActualRentalDatesForOrder(abstractOrderModel, deliveryMode);
 		}
+		abstractOrderModel.setOrderModifiedDate(new Date());
 	}
 
 	/**
@@ -442,6 +474,26 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 				getBlEspEventService().sendOrderVerificationCompletedEvent((OrderModel) abstractOrderModel);
 			} catch (final Exception exception) {
 				BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger verification completed Event",
+						exception);
+			}
+		}
+	}
+
+	/**
+	 * It triggers manual allocation event.
+	 *
+	 * @param abstractOrderModel the AbstractOrderModel
+	 * @param interceptorContext the InterceptorContext
+	 */
+	private void triggerManualAllocationEvent(final AbstractOrderModel abstractOrderModel,
+			final InterceptorContext interceptorContext) {
+		if (abstractOrderModel instanceof OrderModel && interceptorContext
+				.isModified(abstractOrderModel, AbstractOrderModel.STATUS ) && OrderStatus.RECEIVED_MANUAL_REVIEW.equals(abstractOrderModel.getStatus())
+				) {
+			try {
+				getBlEspEventService().sendOrderManualAllocationEvent((OrderModel) abstractOrderModel);
+			} catch (final Exception exception) {
+				BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger manual allocation ESP Event",
 						exception);
 			}
 		}
@@ -566,6 +618,54 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		sourcingLocation.setGroundAvailability(Boolean.FALSE);
 		sourcingLocation.setGroundAvailabilityCode(OptimizedShippingMethodEnum.DEFAULT.getCode());
 		return sourcingLocation;
+	}
+
+	/**
+	 * This method created to check , if order is Eligible for modification
+	 * @param abstractOrderModel order model
+	 * @param interceptorContext interceptorContext
+	 * @return boolean value
+	 */
+	private boolean checkOrderStatusEligibleForOrderModification(final AbstractOrderModel abstractOrderModel,
+			final InterceptorContext interceptorContext) {
+		return Objects.nonNull(abstractOrderModel.getStatus()) && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel
+				&& checkStatusForOrder(abstractOrderModel.getStatus());
+	}
+
+	/**
+	 * This method created to check for matching order status to update order modification date
+	 * @param orderStatus order status to check
+	 * @return boolean value
+	 */
+	private boolean checkStatusForOrder(final OrderStatus orderStatus) {
+		switch (orderStatus.getCode()) {
+			case BlCoreConstants.RECEIVED_IN_VERIFICATION :
+			case BlCoreConstants.RECEIVED_MANUAL_REVIEW :
+			case BlCoreConstants.RECEIVED_SHIPPING_MANUAL_REVIEW:
+			case BlCoreConstants.RECEIVED_PAYMENT_DECLINED:
+			case BlCoreConstants.UNBOXED_PARTIALLY :
+			case BlCoreConstants.UNBOXED_COMPLETELY :
+			case BlCoreConstants.RECEIVED_ROLLING:
+			case BlCoreConstants.SOLD_SHIPPED :
+			case BlCoreConstants.SOLD_RMA_CREATED:
+			case BlCoreConstants.RETURNED:
+			case BlCoreConstants.ORDER_COMPLETED:
+			case BlCoreConstants.INCOMPLETE:
+			case BlCoreConstants.INCOMPLETE_BALANCE_DUE :
+			case BlCoreConstants.INCOMPLETE_STOLEN:
+			case BlCoreConstants.INCOMPLETE_LOST_IN_TRANSIT:
+			case BlCoreConstants.INCOMPLETE_ITEMS_IN_REPAIR:
+			case BlCoreConstants.INCOMPLETE_MISSING_ITEMS:
+			case BlCoreConstants.INCOMPLETE_MISSING_AND_BROKEN_ITEMS:
+			case BlCoreConstants.CANCELLED :
+			case BlCoreConstants.LATE :
+			case BlCoreConstants.SHIPPED:
+			case BlCoreConstants.RECEIVED_STATUS:
+			case BlCoreConstants.SOLD:
+				return Boolean.TRUE;
+			default :
+		}
+		return Boolean.FALSE;
 	}
 	
   public BlOrderNoteService getBlOrderNoteService() {

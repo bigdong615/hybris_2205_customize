@@ -12,6 +12,10 @@ jQuery(document).ready(function () {
                 $('.return-minus-btn'+index).attr('disabled', true);
             }
         }) ;
+        if($('#enablePopup').val() == 'true')
+            {
+            	$('#editWarning').modal("show");
+            }
 });
 
 //BL-467 clear cart functionality from cart page.
@@ -372,12 +376,28 @@ $('#applyGcCode').click(function (e) {
 //BL-927 Gift Card Purchase Amount
 $('#add-to-gc').click(function(e) {
     $('.page-loader-new-layout').hide();
+	$('.gc-error-div').empty();
+	var hasValidationError  = false;
     var form = $('#giftCardPurchaseForm');
     var amount = form.find('input[name=amount]').val();
+ 	var email = form.find('input[name=email]').val();
     if (amount < 25 || amount > 500) {
-        $('.notification').show();
-        return false;
+	var validationDiv = $('<div class="notification notification-warning mb-2" />').text(ACC.giftCardError.amount);
+	 $('.gc-error-div').append(validationDiv);
+       /* $('.notification').show();*/
+        hasValidationError = true;
     }
+	 if( (email != undefined) && (!validateGiftEmail(email))){
+			var validationDiv = $('<div class="notification notification-warning mb-2" />').text(ACC.giftCardError.emailValidation);
+			 $('.gc-error-div').append(validationDiv);
+         /*  $('.gc-error-message').append(ACC.giftCardError.emailValidation);
+          $('.notification').show();*/
+ 			 hasValidationError = true;
+		  }
+	if( hasValidationError)
+	{
+		return false;
+	}
     else{
     	$('.notification').hide();
     	$('#signIn').modal('show');
@@ -763,10 +783,12 @@ function createHiddenParameter(name, value) {
 //BL -471 Used Gear cart timer
 
 $('.usedgear-signout').on("click", function (e) {
+   e.preventDefault();
+  var url = $('.usedgear-signout').prop('href');
 	fetchdata();
 	clearInterval(z);
 	localStorage.removeItem('saved_countdown');
-	
+	window.location.href = url;
 });
 
 function startUsedGearCartTimer() {
@@ -863,9 +885,13 @@ function startUsedGearCartTimer() {
 	
 	$('.js-add-to-used-cart').on("click",function(e) {
         e.preventDefault();
+        $('.gc-error-message').empty();
         var form = $('#giftCardPurchaseForm');
         var amount = form.find('input[name=amount]').val();
-        if (amount < 25 || amount > 500) {
+        var message = form.find('textarea[name=message]').val();
+        var email = form.find('input[name=email]').val();
+        if ((amount != undefined) && (amount < 25 || amount > 500)) {
+            $('.gc-error-message').append(ACC.giftCardError.amount);
             $('.notification').show();
             $("body").removeClass("modal-open");
             $("body").removeAttr("style");
@@ -875,6 +901,24 @@ function startUsedGearCartTimer() {
         }
         if (amount >25 || amount < 500){
         	 $('.notification').hide();
+        }
+        if((message != undefined) && message != null &&  message.length > 255){
+          $('.gc-error-message').html(ACC.giftCardError.recipientMessage);
+          $('.notification').show();
+          $("body").removeClass("modal-open");
+          $("body").removeAttr("style");
+          $('tn-gift-card-pdp').show();
+          $(".modal-backdrop").remove();
+          return false;
+        }
+        if( (email != undefined) && (!validateGiftEmail(email))){
+          $('.gc-error-message').html(ACC.giftCardError.emailValidation);
+          $('.notification').show();
+          $("body").removeClass("modal-open");
+          $("body").removeAttr("style");
+          $('tn-gift-card-pdp').show();
+          $(".modal-backdrop").remove();
+          return false;
         }
          var form = $('#giftCardPurchaseForm');
     
@@ -993,7 +1037,7 @@ function startUsedGearCartTimer() {
 
 	function onGiftCardCloseModal()
 	{
-		$("#closeGiftCardModal , #cancelGiftCardModal").on("click", function(event){
+		$("#closeGiftCardModal , #cancelGiftCardModal ,#closeGiftCardModelWhenMixedCartError , #closeMultipleGiftCardError").on("click", function(event){
 			event.preventDefault();
 			var doReload = $("#doReload").val();
 			if(doReload === 'true')
@@ -1026,7 +1070,7 @@ function onUsedCloseModal()
 }
 
 //BL-625 place order with order notes.
-$('#placeOrderSummary').one("click", function(e) {
+$('#placeOrderSummary').on("click", function(e) {
 	$('#placeOrder').click();
 });
 
@@ -1041,9 +1085,11 @@ $('#placeOrderSummary').one("click", function(e) {
     	reviewPageError: reviewPageError
     	});
     }
- $('#placeOrder').one(
+ $('#placeOrder').on(
 			"click",
 			function(e) {
+			$('#placeOrder').attr("disabled",true);
+			$('#placeOrderSummary').attr("disabled",true);
 				var submitForm = $("#placeOrderForm1");
 				
 				var csrfTokan = createHiddenParameter("CSRFToken",
@@ -1051,6 +1097,30 @@ $('#placeOrderSummary').one("click", function(e) {
 				if($("#giftCardPurchaseForm").length > 0)
 				{
 					var giftCardForm = $("#giftCardPurchaseForm");
+					 var message = giftCardForm.find('textarea[name=message]').val();
+					 var email = giftCardForm.find('input[name=email]').val();
+              if(message != null &&  message.length > 255){
+                        $('.gc-error-message').html(ACC.giftCardError.recipientMessage);
+                        $('.notification').show();
+                        $("body").removeClass("modal-open");
+                        $("body").removeAttr("style");
+                        $('tn-gift-card-pdp').show();
+                        $(".modal-backdrop").remove();
+                        $('#placeOrder').attr("disabled",false);
+                        $('#placeOrderSummary').attr("disabled",false);
+                        return false;
+              }
+              if( !validateGiftEmail(email)){
+               $('.gc-error-message').html(ACC.giftCardError.emailValidation);
+                $('.notification').show();
+                $("body").removeClass("modal-open");
+                $("body").removeAttr("style");
+                $('tn-gift-card-pdp').show();
+                $(".modal-backdrop").remove();
+                $('#placeOrder').attr("disabled",false);
+                $('#placeOrderSummary').attr("disabled",false);
+                return false;
+              }
 					var name = createHiddenParameter("name",giftCardForm.find('input[name="name"]').val());
 					var email = createHiddenParameter("email",giftCardForm.find('input[name="email"]').val());
 					var message = createHiddenParameter("message",giftCardForm.find('textarea[name="message"]').val());
@@ -1122,10 +1192,40 @@ function hideShorting(){
   
   $("#submitCard").on("click",function(e) {
 	  e.preventDefault();
+	  $('.gc-error-message').empty();
 		var submitForm = $("#giftCardPurchaseForm");
+    var message = submitForm.find('textarea[name=message]').val();
+    var email = submitForm.find('input[name=email]').val();
+    if(message != null &&  message.length > 255){
+              $('.gc-error-message').html(ACC.giftCardError.recipientMessage);
+              $('.notification').show();
+              $("body").removeClass("modal-open");
+              $("body").removeAttr("style");
+              $('tn-gift-card-pdp').show();
+              $(".modal-backdrop").remove();
+              return false;
+    }
+    if((email != undefined) && (!validateGiftEmail(email))){
+      $('.gc-error-message').html(ACC.giftCardError.emailValidation);
+      $('.notification').show();
+      $("body").removeClass("modal-open");
+      $("body").removeAttr("style");
+      $('tn-gift-card-pdp').show();
+      $(".modal-backdrop").remove();
+      return false;
+    }
 		submitForm.submit();
   });
 
+/* Validate email data*/
+     function validateGiftEmail(email) {
+        var regex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (regex.test(email))
+        	{
+              return true;
+         	}
+              return false;
+        }
   //BL-917: Replacement order
   $('.return-button-cls').on("click",function(e) {
     e.preventDefault();

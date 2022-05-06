@@ -120,6 +120,9 @@
                                										 <spring:theme code="text.myaccount.order.damage.waiver.gear.no"/><br>
                                								</c:otherwise>
                                						</c:choose>
+                               						 <c:if test="${not empty cartEntry.selectedOptions}">
+														+ ${cartEntry.selectedOptions} <br>
+													</c:if>
                                						</c:if>
                                             Total <format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" /></p>
                                         </p>    
@@ -167,7 +170,7 @@
 																	<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
 																		<c:choose>
 																			<c:when test="${not empty userSelectedPaymentInfo}">
-																				<img src="${userSelectedPaymentInfo.accountHolderName }" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
+																				<img src="${userSelectedPaymentInfo.accountHolderName }" style="max-width: 33px; height: auto;"> ${userSelectedPaymentInfo.cardType} &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
 																			</c:when>
 																			<c:otherwise>
 																				Select or Enter new card
@@ -180,7 +183,7 @@
 																			<li>
 																				<button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}">
 																					<img src="${paymentInfo.accountHolderName}" style="max-width: 33px; height: auto;">
-																					&nbsp ${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
+																					${paymentInfo.cardType} &nbsp ${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
 																				</button>
 																			</li>
 																		</c:if>

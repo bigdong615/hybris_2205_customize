@@ -122,20 +122,30 @@
 			<p class="body14 mb-1"><spring:theme code="text.cart.rental.options"/></p>
 			<div class="dropdown">
 				<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
-                 ${entry.option.optionName}
-                 <c:choose>
-                     <c:when test="${isReplacementOrderCart eq true}">
-                    <span class="float-end"><spring:theme code="text.replacement.option.cost"/></span>
-                     </c:when>
-                  <c:otherwise>
-                       <c:if test="${not empty entry.option.optionPrice}"><span class="float-end"><format:price
-								                 priceData="${entry.option.optionPrice}" /></span></c:if>
-								  </c:otherwise>
+						<c:choose>
+							<c:when test="${not empty entry.selectedProductOptions}">
+										                 ${entry.selectedProductOptions.optionName}
+              			   <c:choose>
+									<c:when test="${isReplacementOrderCart eq true}">
+										<span class="float-end"><spring:theme
+												code="text.replacement.option.cost" /></span>
+									</c:when>
+									<c:otherwise>
+										<c:if test="${not empty entry.selectedProductOptions.optionPrice}">
+											<span class="float-end"><format:price
+													priceData="${entry.selectedProductOptions.optionPrice}" /></span>
+										</c:if>
+									</c:otherwise>
 								</c:choose>
-				</a>
+							</c:when>
+							<c:otherwise>
+						${entry.mainOptionName}
+					</c:otherwise>
+						</c:choose>
+					</a>
 				<ul class="dropdown-menu damage-wavier bl-options-update"
 					aria-labelledby="coverageOptions1">
-					<c:forEach items="${entry.option.subOptions}" var="subOptions">
+					<c:forEach items="${entry.option}" var="subOptions">
 						<li><a class="dropdown-item" href="#" href="#" data-id="${subOptions.optionCode}" data-entry="${entry.entryNumber}" data-product-code="${entry.product.code}">${subOptions.optionName} </a><span class="float-end">
 						  <c:choose>
                 <c:when test="${isReplacementOrderCart eq true}">

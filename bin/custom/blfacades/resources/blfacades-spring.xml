@@ -518,6 +518,8 @@
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
+		<property name="blESPEventService" ref="blEspEventService"/>
+		<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService" />
 	</bean>
 	<bean id="blBackInStockNotificationEmailContext" class="com.bl.facades.process.email.context.BlBackInStockNotificationEmailContext" parent="backInStockNotificationEmailContext" scope="prototype" >
 	</bean>
@@ -542,7 +544,9 @@
 	</bean>
 
 	<!--[BL-643]: Custom Promotions-->
-	<bean id="blCartRaoPopulator" class="com.bl.facades.promotions.populator.BlCartRaoPopulator"/>
+	<bean id="blCartRaoPopulator" class="com.bl.facades.promotions.populator.BlCartRaoPopulator">
+		<property name="userService" ref="userService"/>
+	</bean>
 
 	<alias name="defaultCartRaoConverter" alias="cartRaoConverter" />
 	<bean id="defaultCartRaoConverter" parent="abstractPopulatingConverter">
@@ -747,5 +751,8 @@
 
 	<alias name="defaultBlReturnOrderFacade" alias="blReturnOrderFacade" />
     <bean id="defaultBlReturnOrderFacade" class="com.bl.facades.order.DefaultBlReturnOrderFacade" />
+
+	<alias name="defaultBlSingleLineAddressFormatPopulator" alias="usSingleLineAddressFormatPopulator"/>
+	<bean id="defaultBlSingleLineAddressFormatPopulator" class="com.bl.facades.populators.BlSingleLineAddressFormatPopulator" parent="defaultUsSingleLineAddressFormatPopulator"/>
 
 </beans>

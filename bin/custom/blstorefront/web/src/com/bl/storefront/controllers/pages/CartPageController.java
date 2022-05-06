@@ -23,6 +23,7 @@ import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.promotion.validate.BlPromotionValidator;
 import com.bl.storefront.security.cookie.BlRentalDurationCookieGenerator;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
@@ -195,6 +196,9 @@ public class CartPageController extends AbstractCartPageController
 
 	@Resource(name = "blPromotionService")
 	private BlPromotionService blPromotionService;
+	
+	@Resource(name = "blPromotionValidator")
+	private BlPromotionValidator blPromotionValidator;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -217,7 +221,7 @@ public class CartPageController extends AbstractCartPageController
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
-		if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+		if(BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())) {
 			if (getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER) == null ||
 					((AssistedServiceSession) getSessionService()
 							.getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER)).getAgent() == null) {
@@ -328,12 +332,13 @@ public class CartPageController extends AbstractCartPageController
 			final Date rentalStartDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(), BlControllerConstants.DATE_FORMAT_PATTERN);
 			if(blCartService.isSelectedDateIsBlackoutDate(rentalStartDate, BlackoutDateTypeEnum.RENTAL_START_DATE))
 			{
-				GlobalMessages.addErrorMessage(model, "blackout.rental.start.date.error");
+				model.addAttribute(BlControllerConstants.RENTAL_START_MESSAGE,BlControllerConstants.RENTAL_START_MESSAGE_KEY);
 			}
 			final Date rentalEndDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedToDate(), BlControllerConstants.DATE_FORMAT_PATTERN);
 			if(blCartService.isSelectedDateIsBlackoutDate(rentalEndDate, BlackoutDateTypeEnum.RENTAL_END_DATE))
 			{
-				GlobalMessages.addMessage(model,GlobalMessages.ERROR_MESSAGES_HOLDER , "blackout.rental.end.date.error", new Object[]{getRentalsDuration().getSelectedToDate()});
+				model.addAttribute(BlControllerConstants.RENTAL_END_MESSAGE,BlControllerConstants.RENTAL_END_MESSAGE_KEY);
+				model.addAttribute(BlControllerConstants.RENTAL_TO_DATE_ARGUMENT,getRentalsDuration().getSelectedToDate());
 			}
 		}
 	}
@@ -508,16 +513,16 @@ public class CartPageController extends AbstractCartPageController
 					{
 						blCartService.updateGiftCardPurchaseStatus(cartModel);
 				  }
-          if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder()))
+          if(BooleanUtils.isTrue(cartModel.getIsRetailGearOrder()))
           {
             blCartService.updateNewGearPurchaseStatus(cartModel);
           }
 					//Added condition to change serial status when entry remove from cart
-					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent()) // NOSONAR
+					if (BooleanUtils.isFalse(cartModel.getIsRentalOrder()) && findEntry.isPresent()) // NOSONAR
 					{
 						blCartService.setUsedGearSerialProductStatus(null, findEntry.get());
 					}
-				}else if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+				}else if(BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())){
 					getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
 				}
 				else
@@ -563,21 +568,8 @@ public class CartPageController extends AbstractCartPageController
 			{
 				setNextAvailableDate(entryNumber, productCode, form, redirectModel, rentalDateDto);
 			}
-			else if (availableStockForProduct < form.getQuantity().longValue())
-			{
-				redirectModel.addFlashAttribute("entryNumber", entryNumber);
-				redirectModel.addFlashAttribute("entryMessage", getMessage("cart.entry.item.availability.low.stock.available",
-						Arrays.asList(String.valueOf(availableStockForProduct))));
-			}
-			else
-			{
-				getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
-			}
 		}
-		else
-		{
-			getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
-		}
+		getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
 	}
 
 	/**
@@ -851,7 +843,7 @@ public class CartPageController extends AbstractCartPageController
 			if (bindingResult.hasErrors())
 			{
 				redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
-						getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()));
+						getMessageSource().getMessage("promotion.validation.message.default", null, getI18nService().getCurrentLocale()));
 			}
 			else
 			{
@@ -860,23 +852,26 @@ public class CartPageController extends AbstractCartPageController
 				{
 					redirectAttributes.addFlashAttribute("disableUpdate", Boolean.valueOf(true));
 					redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
-							getMessageSource().getMessage("text.voucher.apply.bruteforce.error", null, getI18nService().getCurrentLocale()));
+							getMessageSource().getMessage("promotion.validation.message.default", null, getI18nService().getCurrentLocale()));
 				}
 				else
 				{
-					voucherFacade.applyVoucher(form.getVoucherCode());
-					redirectAttributes.addFlashAttribute("successMsg",
-							getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
-							{ form.getVoucherCode() }, getI18nService().getCurrentLocale()));
+					if(blPromotionValidator.checkInvalidPromotions(form.getVoucherCode(), BlControllerConstants.ERROR_MSG_TYPE, null, redirectAttributes))
+					{
+						voucherFacade.applyVoucher(form.getVoucherCode());
+						redirectAttributes.addFlashAttribute("successMsg",
+								getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
+								{ form.getVoucherCode() }, getI18nService().getCurrentLocale()));
+					}					
 				}
 			}
 		}
-		catch (final VoucherOperationException e)
+		catch (final Exception e)
 		{
 			redirectAttributes.addFlashAttribute(BlControllerConstants.VOUCHER_FORM, form);
 			redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
 					getMessageSource().getMessage(e.getMessage(), null,
-							getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()),
+							getMessageSource().getMessage("promotion.validation.message.default", null, getI18nService().getCurrentLocale()),
 							getI18nService().getCurrentLocale()));
 			if (LOG.isDebugEnabled())
 			{
@@ -1204,7 +1199,8 @@ public class CartPageController extends AbstractCartPageController
 
 	{
 		final CartData cartData = getCartFacade().getSessionCart();
-		if (isUsedGearTimerEnd && BooleanUtils.isFalse(cartData.getIsRentalCart()))
+		if (isUsedGearTimerEnd && BooleanUtils.isFalse(cartData.getIsRentalCart()) && BooleanUtils.isFalse(cartData.getHasGiftCart())
+		 && CollectionUtils.isNotEmpty(cartData.getEntries()))
 		{
 			getBlCartFacade().removeCartEntries();
 			return REDIRECT_CART_URL;

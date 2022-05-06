@@ -21,15 +21,16 @@
 	<h5>
 		<spring:theme code="checkout.multi.order.summary" />
 	</h5>
-	<c:if test="${cartData.isNewGearOrder eq false}">
+	<c:if test="${cartData.isRetailGearOrder eq false}">
     <hr>
     <c:choose>
       <c:when test="${cartData.isRentalCart}">
-        <p>
+        <p style="display: flex;">
           <b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
             type="text" class="form-control cart-picker"
-            id="summary-litepicker"
+            id="summary-litepicker" style="margin: 0; padding: 0;"
             placeholder="<spring:theme code="text.rental.cart.select.date"/>">
+
         </p>
       </c:when>
       <c:otherwise>
@@ -44,7 +45,7 @@
 			<tr>
 				<td class="gray80">
 				<c:choose>
-          <c:when test="${cartData.isNewGearOrder eq true}">
+          <c:when test="${cartData.isRetailGearOrder eq true}">
             <spring:theme code="text.checkout.multi.newgear.order.summary.cost" />
           </c:when>
           <c:when test="${cartData.isRentalCart}">
@@ -68,7 +69,7 @@
 				</c:choose>
 				</td>
 			</tr>
-			<c:if test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
+			<c:if test="${cartData.isRentalCart && cartData.isRetailGearOrder eq false}">
 				<tr>
 					<td class="gray80"><spring:theme
 							code="text.cart.damage.waiver" /> <a href="#"
@@ -186,7 +187,7 @@
 	<c:if test="${not empty fn:escapeXml(errorMsg)}">
 		<c:set var="errormsgvalid" value="error" />
 	</c:if>
-	<c:if test="${currentStepUrl  ne '/checkout/multi/summary/view' && cartData.isNewGearOrder eq false}">
+	<c:if test="${currentStepUrl  ne '/checkout/multi/summary/view' && cartData.isRetailGearOrder eq false}">
 		<c:url value="/cart/voucher/apply" var="voucherUrl" />
 		<form:form action="${voucherUrl}" modelAttribute="voucherForm"
 			method="POST" id="applyVoucherForm">
@@ -207,8 +208,10 @@
 			</div>
 		</form:form>
 	</c:if>
+	<c:if test="${pageType =='CART' || pageType == 'shippingPage'}">
 	<small class="gray60"><spring:theme
 			code="text.checkout.multi.order.summary.msg" /></small>
+			</c:if>
 	<c:url value="/cart/voucher/remove" var="voucherRemoveUrl" />
 
       <c:forEach items="${cartData.appliedVouchers}" var="voucher"

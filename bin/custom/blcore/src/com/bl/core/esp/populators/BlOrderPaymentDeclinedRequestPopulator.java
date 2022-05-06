@@ -60,15 +60,15 @@ public class BlOrderPaymentDeclinedRequestPopulator extends ESPEventCommonPopula
     data.setOldorderid(StringUtils.EMPTY);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_PAYMENT_DECLINED_EVENT_TEMPLATE)));
     data.setType(getOrderType(orderModel));
-    data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
+    data.setReplacement(BooleanUtils.isTrue(orderModel.getIsReplacementOrder())
         ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
     data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
     data.setDateplaced(formatter.format(orderModel.getDate()));
-    data.setTotalcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
+    data.setTotalcost(formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
     if (Objects.nonNull(orderModel.getPaymentInfo())) {
            final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
       data.setPaymenttype(StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
-          ? BlCoreConstants.PAY_PAL :checkIsGiftCardUsed(orderModel,getRequestValue(brainTreePaymentInfoModel.getPaymentProvider())));
+          ? BlCoreConstants.PAY_PAL :checkIsGiftCardUsed(getRequestValue(brainTreePaymentInfoModel.getPaymentProvider())));
 
     }
     else if(StringUtils.isNotBlank(orderModel.getPoNumber())){

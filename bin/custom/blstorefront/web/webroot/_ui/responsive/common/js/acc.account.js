@@ -83,7 +83,7 @@ ACC.account = {
 								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 									$("#errorMessages_sigin_errorbox").removeClass("d-none");
 								}
-								$("#errorMessages_sigin_pwd").html("Your password needs to be at least 6 characters long");
+								$("#errorMessages_sigin_pwd").html("Your password needs to be at least 8 characters long");
 								// BL-689: below line added
 								$("#errorMessages_sigin_pwd").removeClass("d-none");
 							}
@@ -155,7 +155,7 @@ ACC.account = {
 				if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 					$("#errorMessages_sigin_errorbox").removeClass("d-none");
 				}
-				$("#errorMessages_sigin_pwd").html("Your password needs to be at least 6 characters long");
+				$("#errorMessages_sigin_pwd").html("Your password needs to be at least 8 characters long");
 				$("#errorMessages_sigin_pwd").removeClass("d-none");
 			} else {
 				$("#errorMessages_sigin_pwd").html("");
@@ -179,6 +179,7 @@ ACC.account = {
 			e.preventDefault();
 			var formValues = $('#login-popup-validation').serialize();
 			var targetUrl = $(this).val();
+			var isLoginError = false;
 			if ($('#j_username').val() !== '' && $('#j_password').val() !== '') {
 				$.ajax({
 					type: "POST",
@@ -188,12 +189,15 @@ ACC.account = {
 					 // This code added temporary to show the error message. Once we have the user story needs to change the code accordingly
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
-							$("#errorMessages_login").html("Your Email or Password was incorrect");
+							var resetPasswrdUrl = ACC.config.encodedContextPath + "/login/pw/request";
+              $("#errorMessages_login").html('Your login was incorrect, ' + '<a href="#forgotPass" data-bs-dismiss="modal" class="js-forgot-password popup-reset-password" data-link="' + resetPasswrdUrl + '">reset your password</a>');
+							isLoginError = true;
 						} 
 						else if(response === 'login.error.account.deactivate.title') 
 						{
 							$("#errorMessages_login").removeClass("d-none");
 							$("#errorMessages_login").html(ACC.deActivateAccount.login);
+							isLoginError = true;
 						}
 						else {
 							var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
@@ -214,6 +218,7 @@ ACC.account = {
 						}
 					},
 					complete: function(){
+					if(isLoginError == false){
 						var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
 						var productCode = $('#login-popup-validation').find('input[name="js-selected-product"]').val();
 						if(serialId == "" || serialId  == undefined)
@@ -231,6 +236,7 @@ ACC.account = {
             	addingProductToBookMark(productCode);
             	$("#signIn").hide();
             	}
+            	}
 					},					
 					error: function (e) {
 						// do nothing
@@ -238,7 +244,9 @@ ACC.account = {
 				});
 			} else {
 				$("#errorMessages_login").removeClass("d-none");
-				$("#errorMessages_login").html("Your Email or Password was incorrect");
+				var resetPasswrdUrl = ACC.config.encodedContextPath + "/login/pw/request";
+        $("#errorMessages_login").html('Your login was incorrect, ' + '<a href="#forgotPass" data-bs-dismiss="modal" class="js-forgot-password popup-reset-password" data-link="' + resetPasswrdUrl + '">reset your password</a>');
+
 			}
 		});
 
