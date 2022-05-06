@@ -86,7 +86,6 @@ public final class BlInventoryScanUtility
 		cleanCartLocations.add(BlInventoryScanLoggingConstants.CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART);
 		cleanCartLocations.add(BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART);
 		cleanCartLocations.add(BlInventoryScanLoggingConstants.CLEAN_MOBILE_LAUNDRY_BIN);
-		cleanCartLocations.add(BlInventoryScanLoggingConstants.SCRAPPED);
 		return cleanCartLocations;
 	}
 
@@ -101,7 +100,6 @@ public final class BlInventoryScanUtility
 		cleanPriorityCartLocations.add(BlInventoryScanLoggingConstants.CLEAN_PRIORITY_GEAR_CART);
 		cleanPriorityCartLocations.add(BlInventoryScanLoggingConstants.CLEAN_PRIORITY_MOBILE_CART);
 		cleanPriorityCartLocations.add(BlInventoryScanLoggingConstants.VIP_CLEAN_PRIORITY_GEAR);
-		cleanPriorityCartLocations.add(BlInventoryScanLoggingConstants.SCRAPPED);
 		return cleanPriorityCartLocations;
 	}
 
@@ -142,6 +140,7 @@ public final class BlInventoryScanUtility
 		defaultLocations.add(BlInventoryScanLoggingConstants.CAR);
 		defaultLocations.add(BlInventoryScanLoggingConstants.BOXING_FEDEX);
 		defaultLocations.add(BlInventoryScanLoggingConstants.UPS);
+		defaultLocations.add(BlInventoryScanLoggingConstants.CA);
 		return defaultLocations;
 	}
 
