@@ -23,23 +23,21 @@
 
     <context:annotation-config/>
 
-	<bean id="batchBundleProductConverterMapping"
+	<bean id="batchDefaultPaymentConverterMapping"
           class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
-          p:mapping="BUNDLEPRODUCTMAPPING"
-          p:converter-ref="batchBundleProductConverter"/>
+          p:mapping="DEFAULTPAYMENT"
+          p:converter-ref="batchDefaultPaymentConverter"/>
 
  <!-- Transformer converters mappings -->
-	<bean id="batchBundleProductConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+	<bean id="batchDefaultPaymentConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
 		<property name="header">
-			<value>
-				$productCatalog=blProductCatalog
-				$productCatalogName=Bl Product Catalog
-				$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
-				INSERT_UPDATE ProductReference[disable.interceptor.beans='blProductValidateInterceptor']; source(code,$catalogVersion)[unique=true] ; target(code,$catalogVersion)[unique=true] ; referenceType(code) ; quantity; active[default=true]; preselected[default=true]
+			<value>#{defaultImpexProductHeader}
+				# Insert customer default payment
+				UPDATE CUSTOMER;uid[unique=true];defaultPaymentInfo(code);
 			</value>
 		</property>
 		<property name="impexRow">
-            <value>;{+0};{2};{+1};{3};</value>
+            <value>;{+0};{+1}</value>
         </property>
 	</bean>
 

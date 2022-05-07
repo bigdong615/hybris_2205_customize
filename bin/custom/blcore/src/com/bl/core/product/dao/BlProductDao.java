@@ -1,12 +1,13 @@
 package com.bl.core.product.dao;
 
-import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.product.daos.ProductDao;
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.bl.core.model.BlProductModel;
-import java.util.Set;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.BlSubpartsModel;
 
 
 /**
@@ -47,5 +48,7 @@ public interface BlProductDao extends ProductDao {
    * @return the serial by serial code
    */
   public BlSerialProductModel getSerialBySerialCode(final String serialCode);
+
+  public BlSubpartsModel getBlSubPartsPk(final String code, Integer quantity);
 
 }

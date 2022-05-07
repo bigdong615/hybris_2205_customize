@@ -23,24 +23,43 @@
 
     <context:annotation-config/>
 
-	<bean id="batchBundleProductConverterMapping"
-          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
-          p:mapping="BUNDLEPRODUCTMAPPING"
-          p:converter-ref="batchBundleProductConverter"/>
+	<bean id="batchSubPartQtyConverterMapping"
+		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+        p:mapping="SUBPARTQTY"
+        p:converter-ref="batchSubPartQtyConverter"/>
+          
+   	<bean id="batchProductSubproductConverterMapping" 
+   		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping" 
+	  	p:mapping="PRODSUBPARTMAPPING" 
+	  	p:converter-ref="batchProductSubproductConverter"/>
+	  
 
  <!-- Transformer converters mappings -->
-	<bean id="batchBundleProductConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+	<bean id="batchSubPartQtyConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
 		<property name="header">
 			<value>
-				$productCatalog=blProductCatalog
-				$productCatalogName=Bl Product Catalog
-				$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
-				INSERT_UPDATE ProductReference[disable.interceptor.beans='blProductValidateInterceptor']; source(code,$catalogVersion)[unique=true] ; target(code,$catalogVersion)[unique=true] ; referenceType(code) ; quantity; active[default=true]; preselected[default=true]
+				$catalogVersion=catalogversion(catalog(id[default=blProductCatalog]),version[default='Online'])[unique=true,default=blProductCatalog:Online]
+				INSERT_UPDATE BlSubparts;subpartProduct[unique=true](code,$catalogVersion);quantity[unique=true]
 			</value>
 		</property>
 		<property name="impexRow">
-            <value>;{+0};{2};{+1};{3};</value>
-        </property>
+			<value> 
+				;{+0};{+1}
+			</value>
+		</property>
+	</bean>
+	
+	<bean id="batchProductSubproductConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>
+				INSERT_UPDATE BlSubparts2BlProductRelation;target(pk)[unique=true][translator=com.bl.batch.imports.translator.BlOnlineProductsTranslator];source(pk)[unique=true][translator=com.bl.batch.imports.translator.BlSubpartsToProductsTranslator]
+			</value>
+		</property>
+		<property name="impexRow">
+			<value>
+				;{+0};{1}:{2}
+			</value>
+		</property>
 	</bean>
 
 </beans>
