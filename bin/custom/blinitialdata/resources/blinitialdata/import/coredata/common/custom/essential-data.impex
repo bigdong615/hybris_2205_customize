@@ -348,6 +348,20 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; REPAIR_CABINET                        ; Repair Cabinet                                   
                                               ; REPAIR_MOBILE_SHELF                   ; Repair Mobile Shelf                              
                                               ; REPAIR_MOBILE_LAUNDRY_BIN             ; Repair Mobile Laundry Bin                         
+                                              ; CART_CLEAN_AND_READY_TO_SHIP                  ; Cart - Clean and Ready to Ship                         
+                                              ; CART_DIRTY_PRIORITY                           ; Cart - Dirty gear to be sent to dirty priority         
+                                              ; CART_HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION ; Cart - Hard assigned and waiting on payment resolution 
+                                              ; CLEAN_AND_READY_TO_SHIP                       ; Clean and Ready to Ship                                
+                                              ; CUSTOMER_ITEMS                                ; Customer Items                                         
+                                              ; DIRTY_GEAR_CAGE                               ; Dirty Gear Cage                                        
+                                              ; DIRTY_PRIORITY                                ; Dirty Gear to be sent to Dirty Priority                
+                                              ; DIRTY_MOBILE_CART                             ; Dirty Mobile Cart                                      
+                                              ; HARD_ASSIGNED_AND_BOXED_GEAR                  ; Hard assigned and Boxed Gear                           
+                                              ; HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION      ; Hard assigned and waiting on payment resolution        
+                                              ; INVENTORY_WORKSTATION                         ; Inventory Workstation                                  
+                                              ; SCRAPPED                                      ; Scrapped                                               
+                                              ; UNBOXING_WORKSTATION                          ; Unboxing Workstation                                   
+                                              ; VIP_WORKSTATION_UNBOX                         ; VIP Workstation (Unboxing)                             
 
 INSERT_UPDATE OptionTypeEnum;code[unique=true];name[lang=en]
                             ;COMPACT;COMPACT
