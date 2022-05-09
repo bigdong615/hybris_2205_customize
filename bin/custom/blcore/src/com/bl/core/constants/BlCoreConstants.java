@@ -632,6 +632,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String IS_REPLACEMENT_ORDER = "isReplacementOrder";
 	public static final String IS_EXTENDED_ORDER = "isExtendedOrder";
 	public static final String INTERNAL_TRANSFER_ORDER = "internalTransferOrder";
+	
+	public static final String ESP_GEAR_GUARD = "GEAR GUARD"; // BL-2130
+	public static final String ESP_GEAR_GUARD_PRO = "GEAR GUARD PRO"; // BL-2130
 
 
 	private BlCoreConstants()
