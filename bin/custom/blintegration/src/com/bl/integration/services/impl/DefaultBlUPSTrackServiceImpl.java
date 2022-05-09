@@ -82,7 +82,7 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
   }
 
   /**
-	 * method will be used to get teh service URL
+	 * method will be used to get the service URL
 	 *
 	 * @return
 	 */
