@@ -18,19 +18,26 @@ import com.bl.integration.ups.v1.UPSSecurity.UsernameToken;
 import com.bl.logging.BlLogger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ups.wsdl.xoltws.ship.v1.ShipService;
+
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * This class created to call the UPS Service
@@ -39,7 +46,12 @@ import org.apache.log4j.Logger;
 public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlUPSTrackServiceImpl.class);
+  
+	@Value("${blintegration.ups.track.create.qname}")
+	private String qName;
 
+	@Value("${blintegration.ups.scrape.wsdl.location}")
+	private String trackLocation;
   /**
    * {@inheritDoc}
    */
@@ -49,8 +61,10 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     BlLogger.logMessage(LOG  , Level.INFO , "Started Performing UPS Scrape for UPS service");
     final Map<String, Object> stringObjectMap = new HashMap<>();
       try {
-        final TrackService trackService = new TrackService();
-        final TrackPortType trackPortType = trackService.getTrackPort();
+      	TrackService trackService = null;
+   		final QName qname = new QName(qName, BlintegrationConstants.Q_NAME_TRACK_CODE);
+   		trackService = new TrackService(getServiceURL(), qname);
+   		final TrackPortType trackPortType = trackService.getTrackPort();
         final BindingProvider bindingProvider = (BindingProvider)trackPortType;
         getEndPointURLForUPS(bindingProvider);
         final TrackResponse response = trackPortType.processTrack(getTrackRequestForUPS(packagingInfoModel), getSecurityDetailsForUPS());
@@ -67,6 +81,16 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     return stringObjectMap;
   }
 
+  /**
+	 * method will be used to get teh service URL
+	 *
+	 * @return
+	 */
+	private URL getServiceURL()
+	{
+		return this.getClass().getClassLoader().getResource(Config.getString(trackLocation, "TrackClient/META-INF/trackwsdl/Track.wsdl"));
+	}
+	
   /**
    * This method created to get the URL for UPS service
    * @param bindingProvider bindingProvider
