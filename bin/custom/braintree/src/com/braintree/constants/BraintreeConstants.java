@@ -109,6 +109,10 @@ public final class BraintreeConstants extends GeneratedBraintreeConstants
 
 	public static final String EMPTY_STRING = "";
 
+	public static final String NAME = "BorrowLenses*Rental";
+	public static final String URL = "borrowlenses.com";
+	public static final String PHONE_NUMBER = "8448536737";
+
 	private BraintreeConstants()
 	{
 		//empty to avoid instantiating this constant class
