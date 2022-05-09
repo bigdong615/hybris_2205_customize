@@ -252,8 +252,8 @@ public class BlInventoryScanLoggingConstants {
     public static final String FETCH_OUT_ORDER_SERIAL = "Fetching OUT orders for serial: {} and found {} orders";
     public static final String FETCH_OUT_TODAYS_ORDER_SERIAL = "Fetching OUT todays orders for serial: {} and found {} orders";
     
-    public static final String UNBOXING_WORKSTATION = "TECH_ENGINEERING_WORKSTATION";
-    public static final String UNBOXING_WORKSTATION_LOCATION = "VIP_WORKSTATION_TECH_ENG";
+    public static final String UNBOXING_WORKSTATION = "UNBOXING_WORKSTATION";
+    public static final String UNBOXING_WORKSTATION_LOCATION = "VIP_WORKSTATION_UNBOX";
     public static final String DIRTY_PRIORITY_GEAR = "DIRTY_PRIORITY_GEAR";
     public static final String DIRTY_PRIORITY_MOBILE_CART = "DIRTY_PRIORITY_MOBILE_CART";
     public static final String DIRTY_GEAR_MOBILE_CART = "DIRTY_GEAR_MOBILE_CART";
@@ -358,6 +358,19 @@ public class BlInventoryScanLoggingConstants {
     public static final String REGEX_N = "\n";
     public static final String ONLINE = "Online";
     public static final String FOR_PRODUCT_MESSAGE = " for product: ";
+    
+    public static final String CART_CLEAN_AND_READY_TO_SHIP = "CART_CLEAN_AND_READY_TO_SHIP";
+    public static final String CART_DIRTY_PRIORITY = "CART_DIRTY_PRIORITY";
+    public static final String CART_HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION = "CART_HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION";
+    public static final String CLEAN_AND_READY_TO_SHIP = "CLEAN_AND_READY_TO_SHIP";
+    public static final String CUSTOMER_ITEMS = "CUSTOMER_ITEMS";
+    public static final String DIRTY_GEAR_CAGE = "DIRTY_GEAR_CAGE";
+    public static final String DIRTY_PRIORITY = "DIRTY_PRIORITY";
+    public static final String DIRTY_MOBILE_CART = "DIRTY_MOBILE_CART";
+    public static final String HARD_ASSIGNED_AND_BOXED_GEAR = "HARD_ASSIGNED_AND_BOXED_GEAR";
+    public static final String HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION = "HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION";
+    public static final String INVENTORY_WORKSTATION = "INVENTORY_WORKSTATION";
+    public static final String SCRAPPED = "SCRAPPED";
 
     private BlInventoryScanLoggingConstants() { }
 

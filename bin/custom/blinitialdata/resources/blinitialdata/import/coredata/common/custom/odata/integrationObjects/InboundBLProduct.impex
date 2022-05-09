@@ -101,7 +101,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLProduct:BlProduct                  	; procurementSource    	; BlProduct:procurementSource        	;                                             	; 	;  
 ; InboundBLProduct:BlProduct                  	; forSaleDiscount      	; BlProduct:forSaleDiscount          	;                                             	; 	;  
 ; InboundBLProduct:BlProduct                  	; isNew                	; BlProduct:isNew                    	;                                             	; 	;  
-; InboundBLProduct:BlProduct                  	; subparts             	; BlProduct:subparts                 	; InboundBLProduct:BlSubparts                 	; 	;  
+#; InboundBLProduct:BlProduct                  	; subparts             	; BlProduct:subparts                 	; InboundBLProduct:BlSubparts                 	; 	;  
 ; InboundBLProduct:BlProduct                  	; level2Required       	; BlProduct:level2Required           	;                                             	; 	;  
 ; InboundBLProduct:BlProduct                  	; isAccounting         	; BlProduct:isAccounting             	;                                             	; 	;  
 ; InboundBLProduct:BlProduct                  	; discontinued         	; BlProduct:discontinued             	;                                             	; 	;  
@@ -126,7 +126,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLProduct:BlProduct                  	; approvalStatus       	; BlProduct:approvalStatus           	; InboundBLProduct:ArticleApprovalStatus      	; 	;  
 ; InboundBLProduct:BlProduct                  	; name                 	; BlProduct:name                     	;                                             	; 	;  
 ; InboundBLProduct:BlProduct                  	; createdDate          	; BlProduct:createdDate              	;                                             	; 	;  
-; InboundBLProduct:BlProduct                  	; blProducts           	; BlProduct:blProducts               	; InboundBLProduct:BlProduct                  	; 	;  
+#; InboundBLProduct:BlProduct                  	; blProducts           	; BlProduct:blProducts               	; InboundBLProduct:BlProduct                  	; 	;  
 ; InboundBLProduct:BlProduct                  	; supercategories      	; BlProduct:supercategories          	; InboundBLProduct:Category                   	; 	;  
 ; InboundBLProduct:BlProduct                  	; mpn                  	; BlProduct:mpn                      	;                                             	; 	;  
 ; InboundBLProduct:BlProduct                  	; usedDescription      	; BlProduct:usedDescription          	;                                             	; 	;  

@@ -68,7 +68,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLOrder:Order                     	; internalTransferOrder     	; Order:internalTransferOrder       	;                                          	; 	;  
 ; InboundBLOrder:Order                     	; totalOptionsCost          	; Order:totalOptionsCost            	;                                          	; 	;  
 ; InboundBLOrder:Order                     	; refundShippingTotalAmount 	; Order:refundShippingTotalAmount   	;                                          	; 	;  
-; InboundBLOrder:Order                     	; extendStartEndDate        	; Order:extendStartEndDate          	;                                          	; 	;  
+#; InboundBLOrder:Order                     	; extendStartEndDate        	; Order:extendStartEndDate          	;                                          	; 	;  
 ; InboundBLOrder:Order                     	; extendRentalEndDate       	; Order:extendRentalEndDate         	;                                          	; 	;  
 ; InboundBLOrder:Order                     	; isExtendedOrder           	; Order:isExtendedOrder             	;                                          	; 	;  
 ; InboundBLOrder:Order                     	; poNumber                  	; Order:poNumber                    	;                                          	; 	;  

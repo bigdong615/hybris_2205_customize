@@ -1,4 +1,4 @@
-<textarea class="form-control" rows="4">
+<textarea readonly class="form-control" rows="4">
 Agree To Purchasing Terms CONDITION OF EQUIPMENT: All gear is individually reviewed and graded according to our used gear quality ratings. Our used gear is in good working order, in some cases with cosmetic flaws unless otherwise stated. We would never sell you equipment that is not in full working order. Each item is well tested and cleaned, upon return from previous rentals, to ensure you are receiving a quality used product from our inventory. We are unable to provide photos of the exact piece of gear you may be purchasing. We are also not able to list estimated or exact actuation counts for camera bodies.
 
 Purchases Include:

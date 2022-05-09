@@ -110,6 +110,8 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     extendOrderModel.setExtendedOrderCopyList(Collections.emptyList());
     extendOrderModel.setIsLatestOrder(true);
     extendOrderModel.setIsSAPOrder(Boolean.TRUE);
+    extendOrderModel.setGiftCardAmount(0.0);
+    extendOrderModel.setGiftCard(Collections.emptyList());
   }
 
   /**

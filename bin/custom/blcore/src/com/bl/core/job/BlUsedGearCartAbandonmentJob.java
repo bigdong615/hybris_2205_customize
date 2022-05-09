@@ -33,7 +33,7 @@ public class BlUsedGearCartAbandonmentJob extends AbstractJobPerformable<CronJob
 		try
 		{
 			getBlUsedGearCartCleanService().cleanUsedGearAbandonedCart();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "BlUsedGearCartAbandonmentJob finished successfully");
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlUsedGearCartAbandonmentJob finished successfully");
 		}
 		catch(final Exception ex)
 		{

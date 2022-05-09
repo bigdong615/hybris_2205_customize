@@ -17,7 +17,7 @@
 $contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 $lang=en
-
+$picture=media(code, $contentCV); 
 
 # Import modulegen config properties into impex macros
 UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true] 
@@ -29,10 +29,14 @@ INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; na
                            ;                         ; affiliatePageTemplate ; Affiliate Page Template ; affiliate/affiliatePage ; $jarResourceCms/structure-view/structure_affiliatePageTemplate.vm                                      ; CategoryPage,ContentPage  
                            
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                        ;                          ; affiliateHomePageBannerSearchBoxSlot     ; affiliate search Slot              ; true
+                        ;                          ; affiliateSection0Slot     ; affiliate Section0 Slot              ; true
                         ;                          ; affiliateSection1Slot     ; affiliate Section1 Slot              ; true
                         ;                          ; affiliateSection2Slot     ; affiliate Section2 Slot              ; true
                         ;                          ; affiliateSection3Slot     ; affiliate Section3 Slot              ; true
                         ;                          ; affiliateSection4Slot     ; affiliate Section4 Slot              ; true
+                        ;                          ; affiliateSection5Slot     ; affiliate Section5 Slot              ; true
+                        ;                          ; affiliateSection6Slot     ; affiliate Section6 Slot              ; true
 
 ###  Define Content SlotNames  ###
 INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='affiliatePageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
@@ -81,58 +85,61 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; MobileMiniCartSlot-AffiliatePage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
                                      ;                         ; SocialMediaSectionSlot-AffiliatePage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
                                      ;                         ; TopHeaderSlot-AffiliatePage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
-									 ;                         ; Sectiont1Slot-AffiliatePage              ; Section1Slot        ;                                                                           ; Section1Slot                   ; true
 
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='affiliatePage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; SearchBoxSlot-AffiliatePage             ; HomePageBannerSearchBoxSlot            ;                         ; affiliateHomePageBannerSearchBoxSlot                   ; true
+                                 ;                         ; Section0Slot-AffiliatePage             ; Section0Slot            ;                                                       ; affiliateSection0Slot                   ; true
+                                 ;                         ; Section0Slot-AffiliatePage             ; Section0Slot            ;                                                       ; affiliateSection0Slot                   ; true
                                  ;                         ; Section1Slot-AffiliatePage             ; Section1Slot            ;                                                       ; affiliateSection1Slot                   ; true
                                  ;                         ; Section2Slot-AffiliatePage             ; Section2Slot            ;                                                       ; affiliateSection2Slot                   ; true
                                  ;                         ; Section3Slot-AffiliatePage             ; Section3Slot            ;                                                       ; affiliateSection3Slot                   ; true
                                  ;                         ; Section4Slot-AffiliatePage             ; Section4Slot            ;                                                       ; affiliateSection4Slot                   ; true
-
+                                 ;                         ; Section5Slot-AffiliatePage             ; Section5Slot            ;                                                       ; affiliateSection5Slot                   ; true
+                                 ;                         ; Section6Slot-AffiliatePage             ; Section6Slot            ;                                                       ; affiliateSection6Slot                   ; true
 
 INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
-                          ;                    ; affiliatePage ; Affiliate Page ; affiliatePageTemplate           ; /affiliatePage
+                          ;                    ; affiliatePage ; Affiliate Page ; affiliatePageTemplate           ; /affiliate
 
 INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
-                                    ;                    ; affiliateCMSParagraphComponent   ; Affiliate Page Component        ; affiliateCMSParagraphComponent      ; "BorrowLenses' mission is to advance the photographic and cinematic dreams of our customers by delivering superior, cutting-edge gear and providing exceptional customer service. Rent, shoot, return - it's as easy as that. You choose what you want, when you want to receive it, and for how long you want to rent it for. We ship the gear directly to you, or to one of our many convenient pick-up locations. Your specially-packaged gear comes with a prepaid return label for ship-back ease. Our entire rental process is done completely through our website but if you ever have a special request you can call us and talk to a real person working at one of our two main headquarters in California and Massachusetts."
+                                    ;                    ; affiliateCMSParagraphComponent   ; Affiliate Page Component        ; affiliateCMSParagraphComponent      ; "<p>BorrowLenses' mission is to advance the photographic and cinematic dreams of our customers by delivering superior, cutting-edge gear and providing exceptional customer service. Rent, shoot, return - it's as easy as that. You choose what you want, when you want to receive it, and for how long you want to rent it for. We ship the gear directly to you, or to one of our many convenient pick-up locations. Your specially-packaged gear comes with a prepaid return label for ship-back ease. Our entire rental process is done completely through our website but if you ever have a special request you can call us and talk to a real person working at one of our two main headquarters in California and Massachusetts.</p>"
+# CMS Link Components
+INSERT_UPDATE CMSLinkComponent;$contentCV[unique=true];uid[unique=true];name;url;&linkRef;&componentRef;target(code)[default='sameWindow'];;;
+;;AffiliateGetStartedLink;AffiliateGetStartedLink;/affiliate;AffiliateGetStartedLink;AffiliateGetStartedLink;;;;
+
+UPDATE CMSLinkComponent;$contentCV[unique=true];uid[unique=true];linkName[lang=$lang]
+ ;;AffiliateGetStartedLink;"Get Started"
+
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; affiliateCMSBreadcrumbBlComponent   ; Affiliate Breadcrumb Component         ; affiliateCMSBreadcrumbBlComponent   ;""   ;   "<div class=""row justify-content-center""><div class=""col-12""><div class=""breadcrumbs my-4 position-relative""><a href=""#"">Home</a> &gt; <a href=""#"">Affiliate</a></div></div></div>"
+
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; affiliateCMSParagraphTitleComponent   ; Affiliate Page Title Component        ; affiliateCMSParagraphTitleComponent      ; "START EARNING TODAY"
+
 
 INSERT_UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique=true]              ; name                  ; &componentRef                ;
                                           ;                         ; PromoBannerComponent ; Promo Banner Component ; PromoBannerComponent ; "#"
 
 
-###  Assign Components to the Slots  ###
-UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
-                   ;                    ; affiliateSection1Slot        ; affiliateCMSParagraphComponent
-                   ;                    ; affiliateSection3Slot        ; affiliateCMSParagraphComponent
-                   ;                    ; affiliateSection4Slot        ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns
 
-#### ContactUs page
-INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
-                         ;                          ; contactUsSection1Slot     ; contactUs Section1 Slot              ; true
-                         ;                          ; contactUsSection2Slot     ; contactUs Section2 Slot              ; true
-                         ;                          ; contactUsSection3Slot     ; contactUs Section3 Slot              ; true
-                         ;                          ; contactUsSection4Slot     ; contactUs Section4 Slot              ; true
+INSERT_UPDATE RotatingHomePageImagesComponent ; $contentCV[unique=true] ; uid[unique=true]                 ; name                                 ; &componentRef                    ; urlLink ; $picture[lang=$lang]         ; rentProData                 ; borrowData                    
+                                              ;                         ; RotatingAffiliatedPageImagesComponent ; Rotating Home Page Images Component1 ; RotatingHomePageImagesComponent1 ; ; pexels-taryn-elliott-5271713.mp4      ;  ;
 
-INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
-                          ;                    ; contactUsPage ; Contact Us Page ; affiliatePageTemplate           ; /contactus
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; affiliateCMSAccordianTitleComponent   ; Affiliate Accordian Title Component        ; affiliateCMSAccordianTitleComponent      ; "<h3>Tools for success</h3>"
 
-########################### Define Content slots for page######################
-INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='contactUsPage'] ; contentSlot(uid,$contentCV)[unique=true]
-                                 ;                         ; Section1Slot-contactUsPage             ; Section1Slot            ;                                                       ; contactUsSection1Slot                   ; true
-                                 ;                         ; Section2Slot-contactUsPage             ; Section2Slot            ;                                                       ; contactUsSection2Slot                   ; true
-                                 ;                         ; Section3Slot-contactUsPage             ; Section3Slot            ;                                                       ; contactUsSection3Slot                   ; true
-                                 ;                         ; Section4Slot-contactUsPage             ; Section4Slot            ;                                                       ; contactUsSection4Slot                   ; true
 
 INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
-                                         ;                    ; contactUsCMSParagraphComponent   ; Contact Us Page Component        ; contactUsCMSParagraphComponent   ;""   ; "<a style="" text-decoration:none;"" id=""liveagent_button_online_5731I0000005Sk4"" href=""#"" onclick=""liveagent.startChat('5731I0000005Sk4')"" name=""&amp;lid=GlobalHeader_live-chat clickGA""><span class=""expertHelpIcon"">Live Chat</span></a>"
-
-INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                          ; &componentRef         ;  medias(code)
-                              ;                         ; contactUsBannerComponent ; Contact Us  Section Component ; contactUsBannerComponent ;
+                                         ;                    ; affiliateCMSAccordianBlComponent   ; Affiliate Accordian Component         ; affiliateCMSAccordianBlComponent   ;""   ;   "<section id=""productExtras""> <div class=""row justify-content-center""> <div class=""col-lg-12 col-xl-12""> <hr> <a class=""filter-expand"" data-bs-toggle=""collapse"" href=""#deep-links"" role=""button"" aria-expanded=""false"" aria-controls=""deep-links""> <h5>How to create custom deep links</h5> </a> <div class=""collapse"" id=""deep-links""> <p> Are you familiar with creating your own unique deep links within Share-A-Sale? What&apos;s a unique deep link you ask? There is a tool within the Share-A-Sale system that allows you to attach your personalized affiliate link to any of the sellable items on the BorrowLenses website. Using this tool means you can write content specific to your audience and insert trackable URLs into the copy to help generate sales and earn commission. Anyone who clicks the deep link will have a cookie set in their browser for the next 30 days, meaning that if an order is placed at any time within that window you will earn a commission. Here’s how: <ul> <li>In the top banner menu hover over 'link'.</li> <li>Click 'Create a Custom Link'.</li> <li>Select ""BorrowLenses"" as the merchant.</li> <li>If you have a tracking code, enter it into the 'Optional - Additional Tracking for your end (afftrack)'. </li> <li>Skip if you don't know what this is.</li> <li>Copy/Paste the BorrowLenses page URL you want to link to in 'Destination URL'. Make sure to remove the HTTPS://</li> <li>Optional: generate a 'license plate' URL (short form link) for social media sharing</li> <li>Insert the newly created deep link into your unique content or image as a hyperlink to direct traffic and earn commission!</li> </ul> </p> </div> <hr> <a class=""filter-expand"" data-bs-toggle=""collapse"" href=""#image-library"" role=""button"" aria-expanded=""false"" aria-controls=""image-library""> <h5>How to access our stock image library</h5> </a> <div class=""collapse"" id=""image-library""> <p> Do our automatically updating image banners not meet with the look and feel of your blog or website? Are you interested in pushing a specific piece of gear or brand of equipment? Don't feel limited by what’s happening in our neck of the woods. Tap into our huge image library that will allow you to hand pick the image you think will best resonate with your audience to earn you commissions. Here’s how: <ul> <li>Sign on to our <a href=""http://www.shareasale.com/shareasale.cfm?merchantID=79702&source=BLSite"" target=""_blank"">Share-A-Sale affiliate program</a></li> <li>Hover over the 'Get Link' on the homepage of Share-A-Sale</li> <li>Choose specific merchant: BorrowLenses</li> <li>'Refresh report' on bottom right of filter menu</li> <li>Under merchant organization column click 'Get Links' hyperlink</li> <li>On the following page sort by category BorrowLenses (optional) and refresh report</li> <li>Click the 'Banners' tab on the bottom half of the page</li> <li>Choose the banner you'd like to incorporate into your content or page</li> <li>Copy and paste the image code into your own HTML to display on website or blog</li> </ul> </p> </div> <hr> <a class=""filter-expand"" data-bs-toggle=""collapse"" href=""#current-deals-coupons"" role=""button"" aria-expanded=""false"" aria-controls=""current-deals-coupons""> <h5>How to access all current deals and coupons</h5> </a> <div class=""collapse"" id=""current-deals-coupons""> <p> BorrowLenses Affiliates also belong to the Shutterfly family of brands. Access all the most current deals and coupons to help you earn your max potential in commissions. Here’s how: <ul> <li>Sign on to our <a href=""http://www.shareasale.com/shareasale.cfm?merchantID=79702&source=BLSite"" target=""_blank"">Share-A-Sale affiliate program</a></li> <li>Hover over the 'Merchants' on the homepage of Share-A-Sale</li> <li>Choose 'View Coupons and Deals Database'</li> <li>Click 'View Current Deals/Coupons (merchants only) to filter results</li> <li>Choose the deal or deals you would like to promote making sure to use your affiliate code</li> <li>Earn more commission!</li> </ul> </p> </div> <hr> </div> </div> </section>"
 
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
-                          ;                    ; contactUsSection1Slot        ; contactUsCMSParagraphComponent
-                          ;                    ; contactUsSection2Slot        ; contactUsBannerComponent
-                          ;                    ; contactUsSection3Slot        ;
-                          ;                    ; contactUsSection4Slot        ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns
+                   ;                    ; affiliateSection0Slot        ; affiliateCMSBreadcrumbBlComponent
+                   ;                    ; affiliateSection1Slot        ; affiliateCMSParagraphTitleComponent
+                   ;                    ; affiliateSection2Slot        ; affiliateCMSParagraphComponent
+                   ;                    ; affiliateSection3Slot        ; AffiliateGetStartedLink
+                   ;                    ; affiliateSection4Slot        ; RotatingAffiliatedPageImagesComponent
+                   ;                    ; affiliateSection5Slot        ; affiliateCMSAccordianTitleComponent
+                   ;                    ; affiliateSection6Slot        ; affiliateCMSAccordianBlComponent
+                   ;                    ; affiliateHomePageBannerSearchBoxSlot ; BlSearchBox
+

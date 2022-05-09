@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="0 0 20 16">
+  <g id="local_atm-24px" transform="translate(0 0)">
+    <path id="Shape" d="M18,16H2a2,2,0,0,1-2-2L.01,2A1.974,1.974,0,0,1,2,0H18a2,2,0,0,1,2,2V14A2,2,0,0,1,18,16ZM2,2V14H18V2Zm9,11H9V12H7V10h4V9H8A1,1,0,0,1,7,8V5A1,1,0,0,1,8,4H9V3h2V4h2V6H9V7h3a1,1,0,0,1,1,1v3a1,1,0,0,1-1,1H11v1Z" fill="#3d3c3c"/>
+  </g>
+</svg>
