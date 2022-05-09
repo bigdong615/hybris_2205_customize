@@ -16,6 +16,8 @@ import com.bl.integration.ups.v1.UPSSecurity;
 import com.bl.integration.ups.v1.UPSSecurity.ServiceAccessToken;
 import com.bl.integration.ups.v1.UPSSecurity.UsernameToken;
 import com.bl.logging.BlLogger;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -52,6 +54,9 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
         final BindingProvider bindingProvider = (BindingProvider)trackPortType;
         getEndPointURLForUPS(bindingProvider);
         final TrackResponse response = trackPortType.processTrack(getTrackRequestForUPS(packagingInfoModel), getSecurityDetailsForUPS());
+        final Gson gson = new GsonBuilder().create();
+        final String json = gson.toJson(response);
+        BlLogger.logMessage(LOG  , Level.INFO , json);
         convertResponse(response , stringObjectMap);
       } catch(final Exception e) {
         BlLogger.logMessage(LOG , Level.ERROR , "Error while executing trackUPSService " , e);
@@ -86,6 +91,9 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     trackRequest.setInquiryNumber(StringUtils.isBlank(packagingInfoModel.getInBoundTrackingNumber())
         ? StringUtils.EMPTY : packagingInfoModel.getInBoundTrackingNumber());
     trackRequest.setTrackingOption(BlintegrationConstants.TRACKING_OPTION);
+      final Gson gson = new GsonBuilder().create();
+      final String json = gson.toJson(trackRequest);
+      BlLogger.logMessage(LOG  , Level.INFO , json);
     return trackRequest;
   }
 
@@ -102,6 +110,9 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     usernameToken.setUsername(getValuesFromProperty(BlintegrationConstants.UPS_API_USER_NAME));
     usernameToken.setPassword(getValuesFromProperty(BlintegrationConstants.UPS_API_PASSWORD));
     upsSecurity.setUsernameToken(usernameToken);
+      final Gson gson = new GsonBuilder().create();
+      final String json = gson.toJson(upsSecurity);
+      BlLogger.logMessage(LOG  , Level.INFO , json);
     return upsSecurity;
   }
 
