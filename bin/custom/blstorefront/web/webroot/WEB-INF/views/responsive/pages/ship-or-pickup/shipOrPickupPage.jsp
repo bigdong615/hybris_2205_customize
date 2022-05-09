@@ -5,11 +5,16 @@ uri="http://hybris.com/tld/cmstags"%> <%@ taglib prefix="spring"
 uri="http://www.springframework.org/tags"%>
 
 <template:page pageTitle="${pageTitle}">
-    <script type="text/javascript" src="https://c.la2-c1-iad.salesforceliveagent.com/content/g/js/48.0/deployment.js">
-    </script>
-    <div class="screen"></div>
+    <div class="container search-container">
+		<cms:pageSlot position="HomePageBannerSearchBoxSlot" var="feature">
+			<cms:component component="${feature}" />
+		</cms:pageSlot>
+	</div>
     <section id="">
         <div class="container">
+            <cms:pageSlot position="Section0Slot" var="feature">
+				<cms:component component="${feature}" />
+			</cms:pageSlot>
             <div class="main-section-shipit row justify-content-center ">
                 <div class="col-xl-12 text-center specialofferpage">
                     <cms:pageSlot position="Section1Slot" var="feature">

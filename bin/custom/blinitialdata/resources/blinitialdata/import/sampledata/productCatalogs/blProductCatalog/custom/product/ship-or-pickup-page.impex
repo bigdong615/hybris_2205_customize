@@ -85,6 +85,8 @@ INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name 
                           ;                    ; shipOrPickupPage ; Ship or pickup Page ; shipOrPickUpPageTemplate           ; /ship-or-pickup
 #### ShipOrPick page
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                         ;                          ; ShipOrPickupHomePageBannerSearchBoxSlot     ; ShipOrPick search Slot              ; true
+                         ;                          ; ShipOrPickupSection0Slot     ; ShipOrPick Section0 Slot              ; true
                          ;                          ; ShipOrPickupSection1Slot     ; ShipOrPick Section1 Slot              ; true
                          ;                          ; ShipOrPickupSection2Slot     ; ShipOrPick Section2 Slot              ; true
                          ;                          ; ShipOrPickupSection3Slot     ; ShipOrPick Section3 Slot              ; true
@@ -97,6 +99,8 @@ INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]        
 
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='shipOrPickupPage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; SearchBoxSlot-ShipOrPickupPage             ; HomePageBannerSearchBoxSlot            ;                         ; ShipOrPickupHomePageBannerSearchBoxSlot                   ; true
+                                 ;                         ; Section0Slot-ShipOrPickupPage             ; Section0Slot            ;                                                       ; ShipOrPickupSection0Slot                   ; true
                                  ;                         ; Section1Slot-ShipOrPickupPage             ; Section1Slot            ;                                                       ; ShipOrPickupSection1Slot                   ; true
                                  ;                         ; Section2Slot-ShipOrPickupPage             ; Section2Slot            ;                                                       ; ShipOrPickupSection2Slot                   ; true
                                  ;                         ; Section3Slot-ShipOrPickupPage             ; Section3Slot            ;                                                       ; ShipOrPickupSection3Slot                   ; true
@@ -108,6 +112,9 @@ INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]   
                                  ;                         ; Section9Slot-ShipOrPickupPage             ; Section9Slot            ;                                                       ; ShipOrPickupSection9Slot                   ; true
 
 ## Title
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; ShipOrPickCMSBreadcrumbBlComponent   ; ShipOrPick Breadcrumb Component         ; ShipOrPickCMSBreadcrumbBlComponent   ;""   ;   "<div class=""row justify-content-center""><div class=""col-12""><div class=""breadcrumbs my-4 position-relative""><a href=""/"">Home</a> &gt; <a href=""#"">Ship Or Pickup</a></div></div></div>"
+
 INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
                                     ;                    ; ShipOrPickCMSParagraphTitleComponent   ; ShipOrPick  Title Component        ; ShipOrPickCMSParagraphTitleComponent      ; "<h1>Ways to get your gear</h1>"
 
@@ -128,6 +135,8 @@ INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=
 
 
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                          ;                    ; ShipOrPickupSection0Slot        ; ShipOrPickCMSBreadcrumbBlComponent
+                          ;                    ; ShipOrPickupHomePageBannerSearchBoxSlot ; BlSearchBox
                           ;                    ; ShipOrPickupSection1Slot        ; ShipOrPickCMSParagraphTitleComponent
                           ;                    ; ShipOrPickupSection2Slot        ; ShipOrPickCMSParagraphNoticeComponent
                           ;                    ; ShipOrPickupSection3Slot        ; ShipOrPickImgCustomBLParagraphComponent
