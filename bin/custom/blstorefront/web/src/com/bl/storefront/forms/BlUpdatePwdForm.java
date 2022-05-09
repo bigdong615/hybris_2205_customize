@@ -23,8 +23,8 @@ public class BlUpdatePwdForm
 	/**
 	 * @return the pwd
 	 */
-	@NotNull(message = "{updatePwd.pwd.invalid}")
-	@Size(min = 8, message = "{updatePwd.pwd.invalid}")
+	@NotNull(message = "{register.pwd.invalid}")
+	@Size(min = 8, message = "{register.pwd.invalid}")
 	public String getPwd()
 	{
 		return pwd;
@@ -42,7 +42,7 @@ public class BlUpdatePwdForm
 	/**
 	 * @return the checkPwd
 	 */
-	@Size(min = 8, message = "{updatePwd.pwd.invalid}")
+	@Size(min = 8, message = "{register.pwd.invalid}")
 	public String getCheckPwd()
 	{
 		return checkPwd;

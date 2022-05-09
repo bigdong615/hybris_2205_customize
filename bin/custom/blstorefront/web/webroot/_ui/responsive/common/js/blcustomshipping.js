@@ -62,7 +62,7 @@ function reverseTraverseOnShipping() {
                     select = document.getElementById('ship-it-savedAddresses');
                     var opt = document.createElement('option');
                     opt.value = data.id;
-                    opt.innerHTML = data.line1 + ", " + data.town + ", " + data.country.isocode + ", " + data.postalCode;
+                    opt.innerHTML = data.line1 + ", " + data.town + ", "+ data.region.isocodeShort + ", " + data.postalCode;
                     select.appendChild(opt);
                     $("#ship-it-savedAddresses option[value='"+data.id+"']").attr('selected', 'selected');
                 }
@@ -263,8 +263,10 @@ function reverseTraverseOnShipping() {
               }
                  else if($('#showErrorForInvalidZipInputValidation').css('display') == "none" &&
                         $('#showErrorForInvalidEmailInputValidation').css('display') == "none" &&
-                        $('#showErrorForInvalidPhoneInputValidation').css('display') == "none") {
-                  addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
+                        $('#showErrorForInvalidPhoneInputValidation').css('display') == "none" && 
+						$('#showErrorForInputValidation').css('display') == "none")
+						{
+                  			addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
                                                                      'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
                                                                      phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP', businessType);
                   }
@@ -1530,6 +1532,7 @@ function reverseTraverseOnShipping() {
  function validatePhone(phone, fieldName, section) {
       if(phone == "" && phone.trim() == '') {
           fieldName.addClass('error');
+		showErrorForInputValidation(section);
           return true;
       } else {
           if(phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
