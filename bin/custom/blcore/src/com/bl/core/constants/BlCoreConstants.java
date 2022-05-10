@@ -167,7 +167,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BUSINESS_ADDRESS_TYPE_CODE = "1";
 
 	public static final String BL_IMAGE = "blimage";
-	public static final String MEDIA_FORMAT = "300Wx300H";
+	public static final String MEDIA_FORMAT = "500Wx500H";
 
 	public static final String ISO_CODE_SHORT = "isoCodeShort";
 	public static final String CODES = "codes";

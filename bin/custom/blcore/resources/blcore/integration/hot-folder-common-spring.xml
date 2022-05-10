@@ -43,7 +43,7 @@
 		<property name="impexRow">
 			<value>;1200Wx1200H;/1200Wx1200H/{+1};;;;{+1};$importFolder/1200Wx1200H/{+1}
 ;515Wx515H;/515Wx515H/{+1};;;;{+1};$importFolder/515Wx515H/{+1}
-;300Wx300H;/300Wx300H/{+1};;;;{+1};$importFolder/300Wx300H/{+1}
+;500Wx500H;/500Wx500H/{+1};;;;{+1};$importFolder/500Wx500H/{+1}
 ;96Wx96H;/96Wx96H/{+1};;;;{+1};$importFolder/96Wx96H/{+1}
 ;65Wx65H;/65Wx65H/{+1};;;;{+1};$importFolder/65Wx65H/{+1}
 ;30Wx30H;/30Wx30H/{+1};;;;{+1};$importFolder/30Wx30H/{+1}</value>
@@ -57,7 +57,7 @@
 			</value>
 		</property>
 		<property name="impexRow">
-			<value>;{1};/1200Wx1200H/{1},/515Wx515H/{1},/300Wx300H/{1},/96Wx96H/{1},/65Wx65H/{1},/30Wx30H/{1}</value>
+			<value>;{1};/1200Wx1200H/{1},/515Wx515H/{1},/500Wx500H/{1},/96Wx96H/{1},/65Wx65H/{1},/30Wx30H/{1}</value>
 		</property>
 	</bean>
 	<bean id="batchMediaProductConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
@@ -75,7 +75,7 @@
 			</value>
 		</property>
 		<property name="impexRow">
-			<value>;{+0};/300Wx300H/{1};/96Wx96H/{1};/1200Wx1200H/{1};/515Wx515H/{1},/96Wx96H/{1},/30Wx30H/{1};/300Wx300H/{1};/96Wx96H/{1};{1};{S}</value>
+			<value>;{+0};/500Wx500H/{1};/96Wx96H/{1};/1200Wx1200H/{1};/515Wx515H/{1},/96Wx96H/{1},/30Wx30H/{1};/500Wx500H/{1};/96Wx96H/{1};{1};{S}</value>
 		</property>
 	</bean>
 </beans>
