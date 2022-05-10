@@ -1,0 +1,15 @@
+
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$picture=media(code, $contentCV);
+
+# Language
+$lang=de
+
+
+# Site Logo Component
+
+UPDATE SimpleBannerComponent ; $contentCV[unique=true] ; uid[unique=true]  ; $picture[lang=$lang]                        
+
+                             ;                         ; SiteLogoComponent ; /images/favicon.png
+

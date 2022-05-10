@@ -1,0 +1,8 @@
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+## site logo ##                       
+
+
+INSERT_UPDATE Media ; $contentCV[unique=true] ; code[unique=true]                ; realfilename       ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='image/svg+xml'] ; altText            ; folder(qualifier)[default='images']
+                    ;                         ; /images/favicon.png ;              favicon.png ; $siteResource/images/favicon.png                              ; image/jpg                     ; hybris Accelerator ;                                    
+
