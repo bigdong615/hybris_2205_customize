@@ -34,8 +34,8 @@ import org.mockito.MockitoAnnotations;
 @UnitTest
 public class BlImageValueResolverTest {
 
-  private static final String INDEXED_PROPERTY_NAME = "img-500Wx500H";
-  private static final String MEDIA_FORMAT = "500Wx500H";
+  private static final String INDEXED_PROPERTY_NAME = "img-300Wx300H";
+  private static final String MEDIA_FORMAT = "300Wx300H";
   private static final String MEDIA_QUALIFIER = "Canon-EOS-1DMark-II_Small";
   private static final String MEDIA_NAME = "Canon EOS 1DMark II Small";
 

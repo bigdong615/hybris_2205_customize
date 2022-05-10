@@ -244,8 +244,6 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .splide { margin-bottom: 60px; }
 .splide__track { margin: 0 50px; }
 .splide__slide { text-align: center; }
-/* slider images */
-.splide__slide img { max-width: 100%; height: auto; }
 .splide__arrows { position: absolute; width: 100%; top: 50%; margin-top: -12px; }
 .home .splide__arrows { z-index: 99; }
 .splide__arrow { background: none; border: none; }

@@ -46,8 +46,8 @@
 	<bean id="image515ValueProvider" parent="abstractImageValueProvider" >
 		<property name="mediaFormat" value="515Wx515H"/>
 	</bean>
-	<bean id="image500ValueProvider" parent="abstractImageValueProvider" >
-		<property name="mediaFormat" value="500Wx500H"/>
+	<bean id="image300ValueProvider" parent="abstractImageValueProvider" >
+		<property name="mediaFormat" value="300Wx300H"/>
 	</bean>
 	<bean id="image96ValueProvider" parent="abstractImageValueProvider" >
 		<property name="mediaFormat" value="96Wx96H"/>
@@ -764,7 +764,7 @@
 
 
   <bean id="blImageValueResolver" class="com.bl.core.resolvers.BlImageValueResolver" parent="abstractValueResolver" >
-    <property name="mediaFormat" value="500Wx500H"/>
+    <property name="mediaFormat" value="300Wx300H"/>
     <property name="mediaService" ref="mediaService" />
     <property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
   </bean>
