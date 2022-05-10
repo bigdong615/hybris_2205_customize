@@ -49,7 +49,7 @@ UPDATE DistanceUnit ; code[unique=true] ; name[lang=$lang]
 # MediaFormats      
 UPDATE MediaFormat ; qualifier[unique=true] ; name[lang=$lang] ;  
                    ; 1200Wx1200H            ; "1200Wx1200H"    
-                   ; 500Wx500H              ; "500Wx500H"
+                   ; 300Wx300H              ; "300Wx300H"      
                    ; 30Wx30H                ; "30Wx30H"        
                    ; 365Wx246H              ; "365Wx246H"      
                    ; 515Wx515H              ; "515Wx515H"      
