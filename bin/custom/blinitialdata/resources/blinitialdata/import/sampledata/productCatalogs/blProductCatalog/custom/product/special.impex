@@ -1,0 +1,139 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2000-2016 SAP SE or an SAP affiliate company.
+# All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+#
+# Import the CMS content for the Borrow Lenses site
+#
+ 
+#% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs core_data_homepage.impex =========================");
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$lang=en
+$picture=media(code, $contentCV); 
+
+# Import modulegen config properties into impex macros
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true] 
+$jarResourceCms=$config-jarResourceCmsValue    
+
+###  Page Template For Borrow Lenses Special Page  ###                                                                                                                           
+
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; name                    ; frontendTemplateName      ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true] 
+                           ;                         ; specialPageTemplate ; special Page Template ; special/special ; $jarResourceCms/structure-view/structure_specialPageTemplate.vm                                      ; CategoryPage,ContentPage  
+     
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='specialPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                    ;                                                                       ;                           ; wide
+                              ; SiteLogoHeaderSlot                 ;                                                                       ;                           ; logo
+                              ; HeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; HeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; NavigationPromoSlot                ;                                                                       ;                           ; logo
+                              ; NavigationBarSlot                  ;                                                                       ;                           ; navigation
+                              ; NavigationBarMobileSlot            ;                                                                       ;                           ; navigation
+                              ; MiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; FooterSlot                         ;                                                                       ;                           ; footer
+                              ; FooterSubscriptionSlot             ;                                                                       ;                           ; wide
+                              ; FooterCopyRightslot                ;                                                                       ;                           ; wide
+                              ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                              ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; HomePageBannerSearchBoxSlot              ;                                                                       ;                           ; searchbox
+                              ; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox
+                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; TopHeaderSlot                    ;                                                                             ;                           ; wide
+                              ; Section1Slot                   ;                                             ;                           ; wide
+                              ; Section2Slot                  ;                                             ;                           ; wide
+                              ; Section3Slot                  ;                                             ;                           ; wide
+                              ; Section4Slot                  ;                                             ;                          ;wide                                               
+                              ; Section5Slot                  ;                                             ;                           ; wide
+                              ; Section6Slot                  ;                                             ;                          ;wide
+                              ; Section7Slot                  ;                                             ;                          ;wide
+                              ; Section8Slot                  ;                                             ;                          ;wide
+                              ; Section9Slot                  ;                                             ;                          ;wide
+
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='specialPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
+                                     ;                         ; PromoBannerSlot-SpecialPage               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true           
+                                     ;                         ; SiteLogoHeaderSlot-SpecialPage            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true           
+                                     ;                         ; NavigationPromoSlot-SpecialPage           ; NavigationPromoSlot           ;                                                                           ; NavigationPromoSlot                      ; true           
+                                     ;                         ; NavigationBarSlot-SpecialPage             ; NavigationBarSlot             ;                                                                           ; NavigationBarSlot                        ; true           
+                                     ;                         ; NavigationBarMobileSlot-SpecialPage       ; NavigationBarMobileSlot       ;                                                                           ; NavigationBarMobileSlot                  ; true           
+                                     ;                         ; HeaderLinkForSupportSlot-SpecialPage      ; HeaderLinkForSupportSlot      ;                                                                           ; HeaderLinkForSupportSlot                 ; true           
+                                     ;                         ; HeaderLinkForShipOrPickupSlot-SpecialPage ; HeaderLinkForShipOrPickupSlot ;                                                                           ; HeaderLinkForShipOrPickupSlot            ; true           
+                                     ;                         ; MiniCartSlot-SpecialPage                  ; MiniCartSlot                  ;                                                                           ; MiniCartSlot                             ; true           
+                                     ;                         ; FooterSlot-SpecialPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true           
+                                     ;                         ; FooterSubscriptionSlot-SpecialPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true           
+                                     ;                         ; FooterCopyRightslot-SpecialPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true           
+                                     ;                         ; MobileHeaderLinkForShipOrPickupSlot-SpecialPage ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MobileHeaderLinkForSupportSlot-SpecialPage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
+                                     ;                         ; MobileHeaderLinkForAccountSlot-SpecialPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
+                                     ;                         ; MobileHeaderBottomInfo-SpecialPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
+                                     ;                         ; MobileMiniCartSlot-SpecialPage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
+                                     ;                         ; SocialMediaSectionSlot-SpecialPage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+                                     ;                         ; TopHeaderSlot-SpecialPage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
+
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
+                          ;                    ; specialPage ; special Page ; specialPageTemplate           ; /special
+#### Special page
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                         ;                          ; SpecialHomePageBannerSearchBoxSlot     ; Special search Slot              ; true
+                         ;                          ; SpecialSection0Slot     ; Special Section0 Slot              ; true
+                         ;                          ; SpecialSection1Slot     ; Special Section1 Slot              ; true
+                         ;                          ; SpecialSection2Slot     ; Special Section2 Slot              ; true
+                         ;                          ; SpecialSection3Slot     ; Special Section3 Slot              ; true
+                         ;                          ; SpecialSection4Slot     ; Special Section4 Slot              ; true
+                         ;                          ; SpecialSection5Slot     ; Special Section5 Slot              ; true
+                         ;                          ; SpecialSection6Slot     ; Special Section6 Slot              ; true
+                         ;                          ; SpecialSection7Slot     ; Special Section7 Slot              ; true
+                         ;                          ; SpecialSection8Slot     ; Special Section8 Slot              ; true
+                         ;                          ; SpecialSection9Slot     ; Special Section9 Slot              ; true
+
+########################### Define Content slots for page######################
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='specialPage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; SearchBoxSlot-SpecialPage             ; HomePageBannerSearchBoxSlot            ;                         ; SpecialHomePageBannerSearchBoxSlot                   ; true
+                                 ;                         ; Section0Slot-SpecialPage             ; Section0Slot            ;                                                       ; SpecialSection0Slot                   ; true
+                                 ;                         ; Section1Slot-SpecialPage             ; Section1Slot            ;                                                       ; SpecialSection1Slot                   ; true
+                                 ;                         ; Section2Slot-SpecialPage             ; Section2Slot            ;                                                       ; SpecialSection2Slot                   ; true
+                                 ;                         ; Section3Slot-SpecialPage             ; Section3Slot            ;                                                       ; SpecialSection3Slot                   ; true
+                                 ;                         ; Section4Slot-SpecialPage             ; Section4Slot            ;                                                       ; SpecialSection4Slot                   ; true
+                                 ;                         ; Section5Slot-SpecialPage             ; Section5Slot            ;                                                       ; SpecialSection5Slot                   ; true
+                                 ;                         ; Section6Slot-SpecialPage             ; Section6Slot            ;                                                       ; SpecialSection6Slot                   ; true
+                                 ;                         ; Section7Slot-SpecialPage             ; Section7Slot            ;                                                       ; SpecialSection7Slot                   ; true
+                                 ;                         ; Section8Slot-SpecialPage             ; Section8Slot            ;                                                       ; SpecialSection8Slot                   ; true
+                                 ;                         ; Section9Slot-SpecialPage             ; Section9Slot            ;                                                       ; SpecialSection9Slot                   ; true
+
+## Title
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; SpecialCMSBreadcrumbBlComponent   ; Special Breadcrumb Component         ; SpecialCMSBreadcrumbBlComponent   ;""   ;   "<div class=""row justify-content-center""><div class=""col-12""><div class=""breadcrumbs my-4 position-relative""><a href=""/"">Home</a> &gt; <a href=""#"">Special</a></div></div></div>"
+
+
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; SpecilaHeaderBLParagraphComponent   ; Special page Header Component        ; SpecilaHeaderBLParagraphComponent   ;""   ;   "<p class=""caption""><strong>SAVE ON RENTALS EVERYDAY</strong></p> <h1>FREE 2-DAY<br>SHIPPING</h1> <p>Free shipping to you and free shipping back on rentals $149+. <br>No coupon needed.</p> <a href=""#"" class=""btn btn-sm btn-primary mb-5"">RENT NOW</a> <img class=""img-fluid"" src=""/_ui/responsive/theme-bltheme/images/special/specialoffer.png"" alt="""">"
+
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; SpecilaCouponBLParagraphComponent   ; Special page coupon Component        ; SpecilaCouponBLParagraphComponent   ;""   ;   "<p class=""body14 gray60"">BorrowLenses Coupon Code Details:<br><br>*FREE 2-DAY UPS STANDARD SHIPPING APPLIES TO RENTALS WITH A DURATION COST OF $149 OR MORE.</p>"
+
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; SpecilBehindBLParagraphComponent   ; Special page behind Component        ; SpecilBehindBLParagraphComponent   ;""   ;   " <h4 class=""text-center mt-5"">We&apos;re your behind the scenes<br>production crew</h4>"
+
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; SpecilBottomBLParagraphComponent   ; Special page bottom Component        ; SpecilBottomBLParagraphComponent   ;""   ;   "<div class=""row mt-5""> <div class=""col-6 col-lg-3 text-center px-4 mb-5""> <img class=""mb-3"" src=""/_ui/responsive/theme-bltheme/images/icons/icon-expert-advice.svg""> <h6>Expert Advice</h6> <p class=""gray60"">Benefit from our experienced team of working photographers & cinematographers.</p> </div> <div class=""col-6 col-lg-3 text-center px-5 mb-5""> <img class=""mb-3"" src=""/_ui/responsive/theme-bltheme/images/icons/icon-gear-arrives.svg""> <h6>The Top Gear</h6> <p class=""gray60"">Get the latest and greatest with a searchable live inventory.</p> </div> <div class=""col-6 col-lg-3 text-center px-5 mb-5""> <img class=""mb-3"" src=""/_ui/responsive/theme-bltheme/images/icons/icon-no-surprises.svg""> <h6>No Surprises</h6> <p class=""gray60"">Breathe easy with gear that’s tested for the unexpected.</p> </div> <div class=""col-6 col-lg-3 text-center px-5 mb-5""> <img class=""mb-3"" src=""/_ui/responsive/theme-bltheme/images/icons/icon-select-dates.svg""> <h6>Fast & Convenient</h6> <p class=""gray60"">Get what you need, when you need it.</p> </div> </div>"
+
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                          ;                    ; SpecialSection0Slot        ; SpecialCMSBreadcrumbBlComponent
+                          ;                    ; SpecialHomePageBannerSearchBoxSlot ; BlSearchBox
+                          ;                    ; SpecialSection1Slot        ; SpecilaHeaderBLParagraphComponent
+                          ;                    ; SpecialSection2Slot        ; SpecilaCouponBLParagraphComponent
+                          ;                    ; SpecialSection3Slot        ; SpecilBehindBLParagraphComponent
+                          ;                    ; SpecialSection4Slot        ; SpecilBottomBLParagraphComponent
+                          ;                    ; SpecialSection5Slot        ; 
+                          ;                    ; SpecialSection6Slot        ; 
