@@ -17,7 +17,7 @@
 <div id="not-found">
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="/"><img src="../../../../../assets/bl-logo@2x.png"></a>
+            <a class="navbar-brand" href="/"><img src="../../../../../_ui/responsive/theme-bltheme/assets/bl-logo@2x.png"></a>
         </div>
     </nav>
     <div class="container">
