@@ -99,7 +99,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      target.setIsRentalActive(isRentalCartAcive(source));
      if(source.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
           paymentTransactionModel.getEntries().stream().anyMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
-              PaymentTransactionType.CAPTURE)))) {
+              PaymentTransactionType.CAPTURE))) || (CollectionUtils.isNotEmpty(source.getGiftCard()) && Double.compare(source.getTotalPrice(), 0.0) == 0)) {
        target.setIsRentalStartDateActive(Boolean.TRUE);
      }
    }
