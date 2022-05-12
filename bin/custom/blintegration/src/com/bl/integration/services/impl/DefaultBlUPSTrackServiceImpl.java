@@ -136,7 +136,8 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     upsSecurity.setUsernameToken(usernameToken);
       final Gson gson = new GsonBuilder().create();
       final String json = gson.toJson(upsSecurity);
-      BlLogger.logMessage(LOG  , Level.INFO , json);
+      BlLogger.logMessage(LOG  , Level.DEBUG , json);
+      
     return upsSecurity;
   }
 
