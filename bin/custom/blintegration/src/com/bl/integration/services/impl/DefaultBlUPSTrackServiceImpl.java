@@ -70,7 +70,7 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
         final TrackResponse response = trackPortType.processTrack(getTrackRequestForUPS(packagingInfoModel), getSecurityDetailsForUPS());
         final Gson gson = new GsonBuilder().create();
         final String json = gson.toJson(response);
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "UPS Scrape Response", json);
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "UPS Scrape Response {}" , json);
         convertResponse(response , stringObjectMap);
       } catch(final Exception e) {
         BlLogger.logMessage(LOG , Level.ERROR , "Error while executing trackUPSService " , e);
@@ -117,7 +117,7 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     trackRequest.setTrackingOption(BlintegrationConstants.TRACKING_OPTION);
       final Gson gson = new GsonBuilder().create();
       final String json = gson.toJson(trackRequest);
-      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "UPS Scrape Request", json);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "UPS Scrape Request {}" , json);
     return trackRequest;
   }
 
