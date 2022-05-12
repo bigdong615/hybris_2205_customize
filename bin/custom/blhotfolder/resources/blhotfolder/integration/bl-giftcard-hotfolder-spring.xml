@@ -27,6 +27,11 @@
           class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
           p:mapping="GIFTCARD"
           p:converter-ref="batchGiftCardConverter"/>
+          
+    <bean id="batchGiftCardTransactionsConverterMapping"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+          p:mapping="GIFTTRANSACTIONS"
+          p:converter-ref="batchGiftCardTransactionsConverter"/>
 
  <!-- Transformer converters mappings -->
 	<bean id="batchGiftCardConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
@@ -37,6 +42,17 @@
 		</property>
 		<property name="impexRow">
             <value>;{+0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13}</value>
+        </property>
+	</bean>
+	
+	<bean id="batchGiftCardTransactionsConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>
+				INSERT_UPDATE GiftCardMovement;TransactionID[unique=true];giftCard(code);Amount;balanceAmount;currency(isocode);order(code);committed;redeemDate[dateformat=dd.MM.yyyy HH:mm:ss]
+			</value>
+		</property>
+		<property name="impexRow">
+            <value>;{+1};{0};{2};{3};{4};{5};{6};{7}</value>
         </property>
 	</bean>
 
