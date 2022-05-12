@@ -269,10 +269,10 @@ public class AuthorizationCommandImpl extends AbstractCommand<AuthorizationReque
 
 		setCustomFields(brainTreeAuthorizationRequest, request);
 		TransactionDescriptorRequest descriptor = request.descriptor();
-		descriptor.name(BraintreeConstants.NAME);
+		descriptor.name(configurationService.getConfiguration().getString(BraintreeConstants.NAME));
 		// As URL can not be more than 13 characters
 		// descriptor.url(BraintreeConstants.URL);
-		descriptor.phone(BraintreeConstants.PHONE_NUMBER);
+		descriptor.phone(configurationService.getConfiguration().getString(BraintreeConstants.PHONE_NUMBER));
 
 		setPayee(options);
 
