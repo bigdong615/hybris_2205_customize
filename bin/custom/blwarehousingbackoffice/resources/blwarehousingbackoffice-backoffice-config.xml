@@ -5,6 +5,7 @@
 <config xmlns="http://www.hybris.com/cockpit/config"
 	      xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
 	      xmlns:y="http://www.hybris.com/cockpit/config/hybris"
+		  xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
 	      xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
 	      xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
 	      xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch"
@@ -244,6 +245,12 @@
 				<y:label>ticketID + ' - ' +  headline</y:label>
 			</y:labels>
 		</y:base>
+	</context>
+
+	<context merge-by="module" principal="warehouseagentrole" component="cs-explorer-tree" module="warehousingbackoffice">
+		<n:navigation-node id="blinventoryscan_name">
+			<n:navigation-node id="WebScanTool"/>
+		</n:navigation-node>
 	</context>
 
 	<context type="CsTicket" component="warehouseListviewActions" module="warehousingbackoffice">
