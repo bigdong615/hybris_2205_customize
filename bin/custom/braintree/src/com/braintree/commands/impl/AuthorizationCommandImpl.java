@@ -8,6 +8,7 @@ import com.braintree.enums.BrainTreePaymentMethod;
 
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
+import com.braintreegateway.TransactionDescriptorRequest;
 import com.braintreegateway.TransactionLineItem;
 import com.braintreegateway.TransactionLineItemRequest;
 import com.braintreegateway.TransactionOptionsRequest;
@@ -267,6 +268,11 @@ public class AuthorizationCommandImpl extends AbstractCommand<AuthorizationReque
 		request.merchantAccountId(brainTreeAuthorizationRequest.getMerchantAccountIdForCurrentSite());
 
 		setCustomFields(brainTreeAuthorizationRequest, request);
+		TransactionDescriptorRequest descriptor = request.descriptor();
+		descriptor.name(configurationService.getConfiguration().getString(BraintreeConstants.NAME));
+		// As URL can not be more than 13 characters
+		// descriptor.url(BraintreeConstants.URL);
+		descriptor.phone(configurationService.getConfiguration().getString(BraintreeConstants.PHONE_NUMBER));
 
 		setPayee(options);
 

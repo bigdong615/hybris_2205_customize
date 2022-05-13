@@ -73,11 +73,11 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
         final TrackPortType port = service.getTrackServicePort();
         final Gson gson = new GsonBuilder().create();
         final String json = gson.toJson(trackRequest);
-        BlLogger.logMessage(LOG  , Level.INFO , json);
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "FedEx Scrape Request {}" , json);
         final TrackReply response  = port.track(trackRequest);
         final Gson gson1 = new GsonBuilder().create();
         final String toJson = gson1.toJson(response);
-        BlLogger.logMessage(LOG  , Level.INFO , toJson);
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "FedEx Scrape Response {}" , toJson);
         convertResponse(response , results);
       } catch (final Exception e) {
         BlLogger.logMessage(LOG, Level.ERROR, "Error While Calling Track service ", e);

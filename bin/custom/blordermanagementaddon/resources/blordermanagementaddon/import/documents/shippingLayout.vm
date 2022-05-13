@@ -70,7 +70,8 @@
     			</tr>
     			<tr>
         			<td colspan="4"><strong>$!{ctx.messages.trackingNumber}</strong> $!{ctx.escapeHtml($ctx.consignment.trackingID)}</td>
-    			</tr>
+        			Outbound Tracking Number <img src="data:image/gif;base64,$!{ctx.escapeHtml($packInfo.graphicImage)}"/>
+    			</tr>   
 				<tr>
 					<td colspan="3" class="title">$!{ctx.messages.packInfo}</td>
 					<td>

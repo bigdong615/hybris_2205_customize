@@ -38,6 +38,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String CONTENT_TYPE = "Content-Type";
 	public static final String AUTHORIZATION = "Authorization";
 	public static final String Q_NAME_CODE = "ShipService";
+	public static final String Q_NAME_TRACK_CODE ="TrackService";
 
 	public static final String INTERNAL_SERVER_ERROR_CODE = "500";
 	public static final String FAILURE_STRING = "Failure";
