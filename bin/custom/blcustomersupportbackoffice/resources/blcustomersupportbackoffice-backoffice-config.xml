@@ -3,8 +3,9 @@
  Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved
 -->
 <config xmlns="http://www.hybris.com/cockpit/config"
-	xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+	    xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
 	xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+
 
 	<!-- blcustomersupportbackoffice UI configuration should be provided here -->
 
@@ -41,6 +42,7 @@
 			</wz:step>
 		</wz:flow>
 	</context>
+
 
 	<context type="OrderEntry" component="configurableFlowDynamicForms">
 		<df:dynamicForms xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" modelProperty="orderEntry">
