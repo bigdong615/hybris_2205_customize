@@ -4,7 +4,6 @@
 -->
 <config xmlns="http://www.hybris.com/cockpit/config"
 	    xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
-		xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
 	xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 
 
@@ -42,12 +41,6 @@
 				</wz:navigation>
 			</wz:step>
 		</wz:flow>
-	</context>
-
-	<context merge-by="module" principal="customersupportagentrole" component="cs-explorer-tree" module="customersupportbackoffice">
-		<n:navigation-node id="blinventoryscan_name">
-			<n:navigation-node id="WebScanTool"/>
-		</n:navigation-node>
 	</context>
 
 
