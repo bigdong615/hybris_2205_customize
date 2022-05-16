@@ -51,6 +51,7 @@ public class BlSerialOnlineToStagedDataPopulator implements Populator<BlSerialPr
 			stagedSerial.setUserChangedConditionRating(onlineSerial.getUserChangedConditionRating());
 			stagedSerial.setIsBufferedInventory(onlineSerial.getIsBufferedInventory());
 			stagedSerial.setAssociatedShippedConsignment(onlineSerial.getAssociatedShippedConsignment());
+			stagedSerial.setWarehouseLocation(onlineSerial.getWarehouseLocation());
 			if(Objects.isNull(stagedSerial.getDateFirstActive()))
 			{
 				stagedSerial.setDateFirstActive(onlineSerial.getDateFirstActive());
