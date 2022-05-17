@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2020 SAP SE or an SAP affiliate company.  All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:file="http://www.springframework.org/schema/integration/file"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <bean id="baseDirectoryBl" class="java.lang.String">
+        <constructor-arg value="#{baseDirectory}/${tenantId}/bl" />
+    </bean>
+
+   <!-- 1) Scan for files -->
+	<file:inbound-channel-adapter id="batchFilesBl" directory="#{baseDirectoryBl}"
+		filename-regex="^(CATEGORY|PRODUCT|SERIPROD|CUSTOMER|ADDRESS|CUSTOMERADDRESS|VERIFICATIONMEDIA|BILLINGCHARGES|PAYMENTINFO|OUTSTANDINGBILLS|BLPRODUCTRECOMMENDATIONS|BUNDLEPRODUCTMAPPING|PRICE|MEDIA|PRODUCTMEDIA|INVENTORY|ENTRIES|ORDER|NOTES|OPTIONSMAIN|INBOUNDFLOW|OUTBOUNDFLOW|OPTIONSSUB|CONSIGNMENT|CONENTRY|CLASSIFICATIONATTRIBUTE|CLASSATTRIBUTE|CLASSIFICATIONATTRVALUE|CLASSIFICATIONCATEGORIESRELATION|CLASSIFICATIONCLASS|BLINVENTORYLOCATION|BLSERIPRODORDER|CLASSPRODUCTVALUE|CLASSPRODUCTENUMVALUE|SUBPARTQTY|PRODSUBPARTMAPPING|DEFAULTPAYMENT|GIFTCARD|GIFTTRANSACTIONS|SERIALLOG)_[0-9]{14}.csv" comparator="fileOrderComparator">
+		<int:poller fixed-rate="1000" />
+	</file:inbound-channel-adapter>
+
+
+    <!-- 2) move the file to processing and create header -->
+    <file:outbound-gateway request-channel="batchFilesBl" reply-channel="batchFilesBlProc"
+                           directory="#{baseDirectoryBl}/processing" delete-source-files="true" />
+
+    <int:service-activator input-channel="batchFilesBlProc" output-channel="blBatchFilesHeaderInit" ref="blHeaderSetupTask"
+                           method="execute" />
+
+   <int:service-activator input-channel="blBatchFilesHeaderInit" output-channel="blBatchFilesHeader" ref="headerInitTask"
+		method="execute" />
+
+   <int:service-activator input-channel="blBatchFilesHeader" output-channel="batchBlFilesTran" ref="blImpexTransformerTask"
+		method="execute" />
+
+    <bean id="blHeaderSetupTask" class="de.hybris.platform.acceleratorservices.dataimport.batch.task.HeaderSetupTask">
+        <property name="catalog" value="blProductCatalog" />
+        <property name="net" value="false" />
+        <property name="storeBaseDirectory" ref="baseDirectoryBl" />
+    </bean>
+
+	<bean id="batchSequenceIdParser" class="com.bl.hotfolder.dataimport.batch.util.BlSequenceIdParser">
+		<property name="parser">
+			<bean class="de.hybris.platform.acceleratorservices.util.RegexParser">
+				<property name="regex" value="[0-9]{14}" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="blImpexTransformerTask" class="de.hybris.platform.acceleratorservices.dataimport.batch.task.ImpexTransformerTask"
+		init-method="initConvertersMap">
+		<property name="fieldSeparator" value="|" />
+		<property name="encoding" value="UTF-8" />
+		<property name="linesToSkip" value="1" />
+		<property name="cleanupHelper" ref="cleanupHelper" />
+	</bean>
+
+	<int:service-activator input-channel="batchBlFilesTran" output-channel="batchFilesImp" ref="batchBlRunnerTask"
+		method="execute" />
+
+	<bean id="batchBlRunnerTask" class="de.hybris.platform.acceleratorservices.dataimport.batch.task.AbstractImpexRunnerTask">
+		<property name="sessionService" ref="sessionService" />
+		<property name="importService" ref="importService" />
+		<lookup-method name="getImportConfig" bean="importConfig" />
+	</bean>
+
+</beans>

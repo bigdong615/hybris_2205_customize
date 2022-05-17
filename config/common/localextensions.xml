@@ -158,7 +158,7 @@
 	<extension name='blcustomersupportbackoffice'/>
 	<extension name='blwarehousingbackoffice'/>
     <extension name='blespintegration' />
-	
+
 	<extension name='braintree' />
       <extension name='braintreeacceleratorfacades' />
       <extension name='braintreeaddon' />
@@ -170,5 +170,6 @@
     <extension name="integrationmonitoringbackoffice" />
     <extension name="outboundsyncbackoffice" />
 
+	<extension name='blhotfolder' />
   </extensions>
 </hybrisconfig>
