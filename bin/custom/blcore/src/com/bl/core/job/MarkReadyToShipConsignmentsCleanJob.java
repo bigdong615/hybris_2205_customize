@@ -9,6 +9,8 @@ import com.bl.core.model.MarkReadyToShipConsignmentsCleanJobModel;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
@@ -195,6 +197,8 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
     final List<String> cleanCartLocationCategoryList = new ArrayList<>();
     cleanCartLocationCategoryList.addAll(BlInventoryScanUtility.getTechEngCleanCartLocations());
     cleanCartLocationCategoryList.addAll(BlInventoryScanUtility.getTechEngCleanPriorityCartLocations());
+    cleanCartLocationCategoryList.add(BlInventoryScanLoggingConstants.CART_CLEAN_AND_READY_TO_SHIP);
+    cleanCartLocationCategoryList.add(BlInventoryScanLoggingConstants.CLEAN_AND_READY_TO_SHIP);
 
     return cleanCartLocationCategoryList;
   }
@@ -246,7 +250,21 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	 */
 	private boolean isShippingCartLocation(final BlSerialProductModel blSerialProductModel)
 	{
-		return BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(getLocationCategoryCodeFromSerial(blSerialProductModel));
+		return getLocationsToMarkReadyToShip().contains(getLocationCategoryCodeFromSerial(blSerialProductModel));
+	}
+	
+	/**
+	 * Gets the locations to mark ready to ship.
+	 *
+	 * @return the locations to mark ready to ship
+	 */
+	private List<String> getLocationsToMarkReadyToShip()
+	{
+		final List<String> locationsToMarkReadyToShip = Lists.newArrayList();
+		locationsToMarkReadyToShip.add(BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART);
+		locationsToMarkReadyToShip.add(BlInventoryScanLoggingConstants.CART_CLEAN_AND_READY_TO_SHIP);
+		locationsToMarkReadyToShip.add(BlInventoryScanLoggingConstants.CLEAN_AND_READY_TO_SHIP);
+		return locationsToMarkReadyToShip;
 	}
 
 	/**
