@@ -245,10 +245,10 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     protected String getDamageWaiverName(final AbstractOrderEntryModel abstractOrderEntryModel) {
         final AtomicReference<String> damageWaiverText = new AtomicReference<>(StringUtils.EMPTY);
         if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardWaiverSelected())) {
-            damageWaiverText.set(GearGaurdEnum.GEAR_GAURD.getCode());
+            damageWaiverText.set(BlCoreConstants.ESP_GEAR_GUARD);
         }
         else if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardProFullWaiverSelected())){
-            damageWaiverText.set(GearGaurdEnum.GEAR_GAURD_PRO.getCode());
+            damageWaiverText.set(BlCoreConstants.ESP_GEAR_GUARD_PRO);
         }
         else if(BooleanUtils.isTrue(abstractOrderEntryModel.getNoDamageWaiverSelected())){
             damageWaiverText.set(GearGaurdEnum.NONE.getCode());

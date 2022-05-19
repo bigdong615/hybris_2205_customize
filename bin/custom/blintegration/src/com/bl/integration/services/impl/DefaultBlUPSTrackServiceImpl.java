@@ -16,19 +16,28 @@ import com.bl.integration.ups.v1.UPSSecurity;
 import com.bl.integration.ups.v1.UPSSecurity.ServiceAccessToken;
 import com.bl.integration.ups.v1.UPSSecurity.UsernameToken;
 import com.bl.logging.BlLogger;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.ups.wsdl.xoltws.ship.v1.ShipService;
+
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * This class created to call the UPS Service
@@ -37,7 +46,12 @@ import org.apache.log4j.Logger;
 public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlUPSTrackServiceImpl.class);
+  
+	@Value("${blintegration.ups.track.create.qname}")
+	private String qName;
 
+	@Value("${blintegration.ups.scrape.wsdl.location}")
+	private String trackLocation;
   /**
    * {@inheritDoc}
    */
@@ -47,11 +61,16 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     BlLogger.logMessage(LOG  , Level.INFO , "Started Performing UPS Scrape for UPS service");
     final Map<String, Object> stringObjectMap = new HashMap<>();
       try {
-        final TrackService trackService = new TrackService();
-        final TrackPortType trackPortType = trackService.getTrackPort();
+      	TrackService trackService = null;
+   		final QName qname = new QName(qName, BlintegrationConstants.Q_NAME_TRACK_CODE);
+   		trackService = new TrackService(getServiceURL(), qname);
+   		final TrackPortType trackPortType = trackService.getTrackPort();
         final BindingProvider bindingProvider = (BindingProvider)trackPortType;
         getEndPointURLForUPS(bindingProvider);
         final TrackResponse response = trackPortType.processTrack(getTrackRequestForUPS(packagingInfoModel), getSecurityDetailsForUPS());
+        final Gson gson = new GsonBuilder().create();
+        final String json = gson.toJson(response);
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "UPS Scrape Response {}" , json);
         convertResponse(response , stringObjectMap);
       } catch(final Exception e) {
         BlLogger.logMessage(LOG , Level.ERROR , "Error while executing trackUPSService " , e);
@@ -62,6 +81,16 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     return stringObjectMap;
   }
 
+  /**
+	 * method will be used to get the service URL
+	 *
+	 * @return
+	 */
+	private URL getServiceURL()
+	{
+		return this.getClass().getClassLoader().getResource(Config.getString(trackLocation, "TrackClient/META-INF/trackwsdl/Track.wsdl"));
+	}
+	
   /**
    * This method created to get the URL for UPS service
    * @param bindingProvider bindingProvider
@@ -86,6 +115,9 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     trackRequest.setInquiryNumber(StringUtils.isBlank(packagingInfoModel.getInBoundTrackingNumber())
         ? StringUtils.EMPTY : packagingInfoModel.getInBoundTrackingNumber());
     trackRequest.setTrackingOption(BlintegrationConstants.TRACKING_OPTION);
+      final Gson gson = new GsonBuilder().create();
+      final String json = gson.toJson(trackRequest);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "UPS Scrape Request {}" , json);
     return trackRequest;
   }
 
@@ -102,6 +134,10 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     usernameToken.setUsername(getValuesFromProperty(BlintegrationConstants.UPS_API_USER_NAME));
     usernameToken.setPassword(getValuesFromProperty(BlintegrationConstants.UPS_API_PASSWORD));
     upsSecurity.setUsernameToken(usernameToken);
+      final Gson gson = new GsonBuilder().create();
+      final String json = gson.toJson(upsSecurity);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "UPS Securtiy Credential {}" , json);
+      
     return upsSecurity;
   }
 
