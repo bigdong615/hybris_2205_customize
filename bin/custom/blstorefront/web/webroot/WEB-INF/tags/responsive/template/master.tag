@@ -4,6 +4,7 @@
 <%@ attribute name="metaKeywords" required="false" %>
 <%@ attribute name="pageCss" required="false" fragment="true" %>
 <%@ attribute name="pageScripts" required="false" fragment="true" %>
+<%@ attribute name="facetData" required="false" type="de.hybris.platform.commerceservices.search.facetdata.FacetData" %>
 
 <%@ taglib prefix="template" tagdir="/WEB-INF/tags/responsive/template" %>
 <%@ taglib prefix="analytics" tagdir="/WEB-INF/tags/shared/analytics" %>
@@ -15,13 +16,22 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="tealium" tagdir="/WEB-INF/tags/addons/tealiumiqaddon/shared/analytics" %>
+<%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <spring:htmlEscape defaultHtmlEscape="true" />
 
 <!DOCTYPE html>
 <html lang="${fn:escapeXml(currentLanguage.isocode)}">
 <head>
 	<title>
-		${not empty pageTitle ? pageTitle : not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
+		<c:choose>
+			<c:when test="${pageType=='CATEGORY'||pageType=='PRODUCTSEARCH'}">
+				<c:set var="titleParts" value="${fn:split(not empty pageTitle? pageTitle:not empty cmsPage.title? fn:escapeXml(cmsPage.title):'AcceleratorTitle', '|')}" />
+				${titleParts[0]} Rentals | Shipped To You | BorrowLenses
+			</c:when>
+			<c:otherwise>
+				${not empty pageTitle? pageTitle:not empty cmsPage.title? fn:escapeXml(cmsPage.title):'AcceleratorTitle'}
+			</c:otherwise>
+		</c:choose>
 	</title>
 
 	<%-- Meta Content --%>
