@@ -1,5 +1,6 @@
 package com.braintree.order.submitForSettlement.service.impl;
 
+import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeSubmitForSettlementTransactionRequest;
 import com.braintree.command.result.BrainTreeSubmitForSettlementTransactionResult;
 import com.braintree.exceptions.BraintreeErrorException;
@@ -14,6 +15,7 @@ import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
@@ -47,14 +49,16 @@ public class BraintreeSubmitForSettlementServiceImpl implements BraintreeSubmitF
 
 		BrainTreeSubmitForSettlementTransactionResult brainTreeSubmitForSettlementTransactionResult = getBrainTreePaymentService()
 				.submitForSettlementTransaction(request);
-
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Payment capture response {} for the order {}",
+				brainTreeSubmitForSettlementTransactionResult, orderModel.getCode());
 		if (brainTreeSubmitForSettlementTransactionResult.isSuccess())
 		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Payment capture is successful for the order {}", orderModel.getCode());
 			createTransaction(orderModel, brainTreeSubmitForSettlementTransactionResult);
 			if (getBrainTreePaymentTransactionService().isOrderFullyCaptured(orderModel))
 			{
 				getBrainTreePaymentTransactionService().setOrderStatus(orderModel, OrderStatus.PAYMENT_CAPTURED);
-				getBrainTreePaymentTransactionService().continueOrderProcess(orderModel);
+				//getBrainTreePaymentTransactionService().continueOrderProcess(orderModel);
 			}
 			else
 			{

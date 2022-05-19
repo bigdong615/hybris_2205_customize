@@ -146,7 +146,7 @@ nav, .alert-promo { z-index: 1030; } /* was 1999 - interfered with modal */
 /* mobile navigation */
 #my-menu:not( .mm-menu ) { display: none; }
 .mobileNavToggle { display: inline-block; background: url(../assets/icon-m-nav.svg) center no-repeat; height: 16px; width: 24px; }
-.mobile-right .nav-cart { position: relative;  }
+.mobile-right .nav-cart { position: relative; right: 7px; }
 .mobile-right .nav-cart .cart-count { right: -3px; top: -5px; }
 .mobile-right { width: 80px; }
 .mobile-right .nav-cart, .mobile-right .nav-account { display: inline-block; }

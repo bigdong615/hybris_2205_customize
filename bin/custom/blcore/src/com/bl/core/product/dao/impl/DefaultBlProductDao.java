@@ -1,6 +1,5 @@
 package com.bl.core.product.dao.impl;
 
-import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.catalog.model.CatalogModel;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
@@ -11,14 +10,17 @@ import de.hybris.platform.servicelayer.search.SearchResult;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import java.util.Set;
+
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.BlSubpartsModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.logging.BlLogger;
 
@@ -55,19 +57,20 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
           " as cv} WHERE {cv:VERSION} = ?version AND {cv:catalog} in ({{SELECT {c:pk} FROM {"
           + CatalogModel._TYPECODE +
           " as c} WHERE {c:id} = ?catalog}})}})";
-  
+
   private static final String GET_BLSERIALPRODUCTS_FOR_BARCODE_QUERY = "SELECT {pk} from {" + BlSerialProductModel._TYPECODE
 			+ " as p} WHERE {p:" + BlSerialProductModel.BARCODE + "} = ?barcode" + " AND {p:" + BlSerialProductModel.CATALOGVERSION
 			+ "} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE + " as cv} WHERE {cv:" + CatalogVersionModel.VERSION
 			+ "} = ?version AND {cv:" + CatalogVersionModel.CATALOG + "} in ({{SELECT {c:pk} FROM {" + CatalogModel._TYPECODE
 			+ " as c} WHERE {c:" + CatalogModel.ID + "} = ?catalog}})}})";
-  
+
   private static final String GET_BLSERIALPRODUCTS_FOR_CODE_QUERY = "SELECT {pk} from {" + BlSerialProductModel._TYPECODE
 			+ " as p} WHERE {p:" + BlSerialProductModel.CODE + "} = ?serialCode" + " AND {p:" + BlSerialProductModel.CATALOGVERSION
 			+ "} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE + " as cv} WHERE {cv:" + CatalogVersionModel.VERSION
 			+ "} = ?version AND {cv:" + CatalogVersionModel.CATALOG + "} in ({{SELECT {c:pk} FROM {" + CatalogModel._TYPECODE
 			+ " as c} WHERE {c:" + CatalogModel.ID + "} = ?catalog}})}})";
 
+  private static final String GET_SUBPARTS_FOR_PRODUCT_MAPPING_QUERY = "select {sp.pk} from {BlSubparts as sp join blProduct as p on {sp.subpartProduct}={p.pk}} where {p.code}=?productCode and {sp.quantity} =?quantity";
   /**
    * @param typecode
    */
@@ -160,5 +163,18 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 		  return null;
 	  }
 	  return serialProducts.iterator().next();
+  }
+
+  @Override
+  public BlSubpartsModel getBlSubPartsPk(final String productCode, final Integer quantity)
+  {
+	  Validate.notNull(productCode, "Product must not be null", null);
+	  Validate.notNull(quantity, "Quantity must not be null", null);
+
+	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_SUBPARTS_FOR_PRODUCT_MAPPING_QUERY);
+	  fQuery.addQueryParameter("productCode", productCode);
+	  fQuery.addQueryParameter("quantity", quantity);
+	  final SearchResult<BlSubpartsModel> result = getFlexibleSearchService().search(fQuery);
+	  return result.getResult().get(0);
   }
 }

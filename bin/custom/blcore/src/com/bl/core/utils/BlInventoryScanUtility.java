@@ -118,6 +118,7 @@ public final class BlInventoryScanUtility
 		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_CABINET);
 		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_MOBILE_SHELF);
 		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_MOBILE_LAUNDRY_BIN);
+		repairLocations.add(BlInventoryScanLoggingConstants.SCRAPPED);
 		return repairLocations;
 	}
 
@@ -139,6 +140,7 @@ public final class BlInventoryScanUtility
 		defaultLocations.add(BlInventoryScanLoggingConstants.CAR);
 		defaultLocations.add(BlInventoryScanLoggingConstants.BOXING_FEDEX);
 		defaultLocations.add(BlInventoryScanLoggingConstants.UPS);
+		defaultLocations.add(BlInventoryScanLoggingConstants.CA);
 		return defaultLocations;
 	}
 
@@ -211,6 +213,9 @@ public final class BlInventoryScanUtility
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.BIN);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.CARRIER);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPING_BIN);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.CART_HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.HARD_ASSIGNED_AND_BOXED_GEAR);
 		shippingAllowedLocation.addAll(getTechEngCleanCartLocations());
 		shippingAllowedLocation.addAll(getTechEngCleanPriorityCartLocations());
 		return shippingAllowedLocation;
@@ -254,6 +259,8 @@ public final class BlInventoryScanUtility
 		final List<String> dirtyCartLocations = new ArrayList<>();
 		dirtyCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_GEAR_MOBILE_CART);
 		dirtyCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_MOBILE_LAUNDRY_BIN);
+		dirtyCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_GEAR_CAGE);
+		dirtyCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_MOBILE_CART);
 		return dirtyCartLocations;
 	}
 
@@ -268,6 +275,8 @@ public final class BlInventoryScanUtility
 		final List<String> dirtyPriorityCartLocations = new ArrayList<>();
 		dirtyPriorityCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_PRIORITY_GEAR);
 		dirtyPriorityCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_PRIORITY_MOBILE_CART);
+		dirtyPriorityCartLocations.add(BlInventoryScanLoggingConstants.CART_DIRTY_PRIORITY);
+		dirtyPriorityCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_PRIORITY);
 		return dirtyPriorityCartLocations;
 	}
 }

@@ -27,7 +27,7 @@
 <c:set var="requestUrl" value="${pageContext.request.requestURL}" />
 <c:set var="baseUrl" value="${fn:substringBefore(requestUrl,'/WEB-INF')}" />
 
-<script src="//ui.powerreviews.com/stable/4.0/ui.js"></script>
+<script src="//ui.powerreviews.com/stable/4.1/ui.js"></script>
 
 <script>
 	window.pwr = window.pwr || function() {
@@ -40,8 +40,8 @@
 				locale : 'en_US',
 				merchant_group_id : '${merchantGroupId}',
 				merchant_id : '${merchantID}',
-				page_id : '${product.code}',
-				review_wrapper_url : '${baseUrl}/rent/product/${product.code}/writeReview/?pr_page_id= ${product.code}',
+				page_id : '${fn:substring(product.code, 0, 41)}',
+				review_wrapper_url : '${baseUrl}/rent/product/${product.code}/writeReview/?pr_page_id= ${fn:substring(product.code, 0, 41)}',
 				REVIEW_DISPLAY_SNAPSHOT_TYPE : 'SIMPLE',
 				REVIEW_DISPLAY_PAGINATION_TYPE : 'VERTICAL',
 				style_sheet: '${fn:escapeXml(themeResourcePath)}/css/powereview.css',

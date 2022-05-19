@@ -21,6 +21,8 @@ import com.bl.integration.fedex.tracking.pojo.WebAuthenticationCredential;
 import com.bl.integration.fedex.tracking.pojo.WebAuthenticationDetail;
 import com.bl.integration.services.BlTrackWebService;
 import com.bl.logging.BlLogger;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -69,7 +71,13 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
         final TrackServiceLocator service = new TrackServiceLocator();
         updateEndPoint(service);
         final TrackPortType port = service.getTrackServicePort();
+        final Gson gson = new GsonBuilder().create();
+        final String json = gson.toJson(trackRequest);
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "FedEx Scrape Request {}" , json);
         final TrackReply response  = port.track(trackRequest);
+        final Gson gson1 = new GsonBuilder().create();
+        final String toJson = gson1.toJson(response);
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "FedEx Scrape Response {}" , toJson);
         convertResponse(response , results);
       } catch (final Exception e) {
         BlLogger.logMessage(LOG, Level.ERROR, "Error While Calling Track service ", e);

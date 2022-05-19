@@ -116,7 +116,7 @@
                                                                 <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                                                   <!--BL-605 removed bootstrap class from below-->
                                                                     <button type="button" class="btn btn-primary btn-block js-add-to-cart" data-bs-toggle="modal"
-                                                                       data-bs-target="#addToCart" data-product-code="${product.code}">
+                                                                       data-bs-target="#addToCart" data-product-code="${productReference.target.code}">
                                                                       <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
                                                                     </button>
                                                                 </form>

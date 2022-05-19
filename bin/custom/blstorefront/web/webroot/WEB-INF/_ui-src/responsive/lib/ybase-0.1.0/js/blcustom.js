@@ -1391,3 +1391,16 @@ $('.bookmark-addToCart').on("click", function(e) {
 $('.forcolor-change').click(function(){
 $( ".forcolor-change" ).addClass( 'hide-error');
   });
+
+  $(document).ready(function() {
+    
+		if($('.contact-live-chat').length > 0){
+			liveagent.init(
+			"https://d.la2-c1-iad.salesforceliveagent.com/chat",
+			"5721I0000005VsD",
+			"00D1I000002xB0t"
+			);
+		}
+	  
+});
+

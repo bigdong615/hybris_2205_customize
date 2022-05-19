@@ -56,11 +56,6 @@ public class BlProductClassFeatureTranslator extends AbstractSpecialValueTransla
 		final String[] productFeatureContainersList = ptr.split(cellValue);
 		commonI18NService.setCurrentLanguage(commonI18NService.getLanguage("en"));
 		final FeatureList existingFeaturesList = classificationService.getFeatures(product);
-		// remove existing features
-		for (final Feature existingFeature : existingFeaturesList)
-		{
-			existingFeature.removeAllValues();
-		}
 		classificationService.replaceFeatures(product, existingFeaturesList);
 		final List<Feature> newFeatureList = new ArrayList<>();
 		FeatureList updatedFeaturesList = null;
@@ -94,9 +89,9 @@ public class BlProductClassFeatureTranslator extends AbstractSpecialValueTransla
 		{
 			attributeAuthorCode = SYSTEM_VERSION + productClass.getCode() + "." + featureContainersList[0].toLowerCase();
 			productFeature = existingFeaturesList.getFeatureByCode(attributeAuthorCode);
-
 			if (productFeature != null)
 			{
+				productFeature.removeAllValues();
 				if (productFeature instanceof LocalizedFeature)
 				{
 					final Locale localeEn = new Locale("en");
