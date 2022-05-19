@@ -52,9 +52,11 @@ public class DefaultBlPaymentService implements BlPaymentService
 						BigDecimal.valueOf(order.getTotalPrice()), Boolean.FALSE, null);
 				if (isSuccessAuth) {
 					order.setIsAuthorised(Boolean.TRUE);
+					order.setIsAuthorizationAttempted(true);
 					getModelService().save(order);
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is successful for the order {}", order.getCode());
 				} else {
+					order.setIsAuthorizationAttempted(true);
 					order.setStatus(OrderStatus.PAYMENT_NOT_AUTHORIZED);
 					modelService.save(order);
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is not successful for the order {}", order.getCode());
