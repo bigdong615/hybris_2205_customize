@@ -25,6 +25,7 @@
     <import resource="classpath:/blhotfolder/integration/bl-options-sub-hotfolder-spring.xml"/>
     <import resource="classpath:/blhotfolder/integration/bl-inventory-location-hotfolder-spring.xml"/>
     <import resource="classpath:/blhotfolder/integration/bl-serial-product-order-hotfolder-spring.xml"/>
+     <import resource="classpath:/blhotfolder/integration/bl-default-payment-hotfolder-spring.xml"/>
  	
 	<import resource="classpath:/blhotfolder/integration/bl-verificationdocumentmedia-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-product-recommendation-hotfolder-spring.xml"/>
@@ -51,7 +52,8 @@
 	<import resource="classpath:/blhotfolder/integration/bl-classificationcategoriesrelation-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-productclassmapping-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-enumproductmapping-hotfolder-spring.xml"/>
-	
+	<import resource="classpath:/blhotfolder/integration/bl-productsubproductmapping-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-giftcard-hotfolder-spring.xml"/>
 	
 	
 	

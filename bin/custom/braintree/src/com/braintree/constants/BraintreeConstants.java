@@ -109,6 +109,10 @@ public final class BraintreeConstants extends GeneratedBraintreeConstants
 
 	public static final String EMPTY_STRING = "";
 
+	public static final String NAME = "braintree.dynamic.descriptor.name";
+	public static final String URL = "braintree.dynamic.descriptor.url";
+	public static final String PHONE_NUMBER = "braintree.dynamic.descriptor.phone";
+
 	private BraintreeConstants()
 	{
 		//empty to avoid instantiating this constant class

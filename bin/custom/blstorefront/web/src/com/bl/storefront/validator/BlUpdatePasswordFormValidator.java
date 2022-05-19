@@ -3,26 +3,25 @@
  */
 package com.bl.storefront.validator;
 
-import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePasswordForm;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePwdForm;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.forms.BlUpdatePwdForm;
 
-/** 
- * @author Aditi
- * Created validator for BL-2094 : Password Policy - InfoSec updates 
- * To Update validation on reset password.
+
+/**
+ * @author Aditi Created validator for BL-2094 : Password Policy - InfoSec updates To Update validation on reset
+ *         password.
  */
 
 @Component("blUpdatePasswordFormValidator")
 public class BlUpdatePasswordFormValidator implements Validator
 {
 	@Override
-	public boolean supports(Class<?> aClass)
+	public boolean supports(final Class<?> aClass)
 	{
 		return BlUpdatePwdForm.class.equals(aClass);
 	}
@@ -31,20 +30,20 @@ public class BlUpdatePasswordFormValidator implements Validator
 	 * This method is used to validate password during reset password
 	 */
 	@Override
-	public void validate(Object object, Errors errors)
+	public void validate(final Object object, final Errors errors)
 	{
 		final BlUpdatePwdForm updatePasswordForm = (BlUpdatePwdForm) object;
-        final String newPassword = updatePasswordForm.getPwd();
+		final String newPassword = updatePasswordForm.getPwd();
 		final String checkPassword = updatePasswordForm.getCheckPwd();
 
 		if (StringUtils.isNotEmpty(newPassword) && StringUtils.isNotEmpty(checkPassword)
-				&& !StringUtils.equals(newPassword,checkPassword))
+				&& !StringUtils.equals(newPassword, checkPassword))
 		{
-			errors.rejectValue("checkPwd", "validation.checkPwd.equals");
+			errors.rejectValue(BlControllerConstants.CONFIRM_PASSWORD_STRING, BlControllerConstants.VALIDATE_CHECKPASSWORD_EQUALS);
 		}
-		else if(StringUtils.isEmpty(checkPassword))
+		else if (StringUtils.isEmpty(checkPassword))
 		{
-			errors.rejectValue("checkPwd", "updatePwd.checkPwd.invalid");
+			errors.rejectValue(BlControllerConstants.CONFIRM_PASSWORD_STRING, BlControllerConstants.UPDATE_CHECKPASSWORD_INVALID);
 		}
 	}
 }

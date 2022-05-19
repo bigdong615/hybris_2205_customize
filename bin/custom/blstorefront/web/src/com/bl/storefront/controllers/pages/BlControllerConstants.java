@@ -8,6 +8,7 @@ public class BlControllerConstants
 	public static final String FORM_GLOBAL_ERROR = "form.global.error";
 	public static final String VALIDATE_CHECKPASSWORD_EQUALS = "validation.checkPwd.equals";
 	public static final String REGISTER_CHECKPASSWORD_INVALID = "register.checkPwd.invalid";
+	public static final String UPDATE_CHECKPASSWORD_INVALID = "updatePwd.checkPwd.invalid";
 	public static final String REGISTER_PASSWORD_INVALID = "register.pwd.invalid";
 	public static final String REGISTER_EMAIL_INVALID = "register.email.invalid";
 	public static final int PASSWORD_MIN_LENGTH = 8;
@@ -54,6 +55,9 @@ public class BlControllerConstants
 	public static final String REGISTER_EMAIL_EMPTY = "register.email.empty";
 	public static final String PASSWORD_STRING = "pwd";
   public static final String CONFIRM_PASSWORD_STRING = "checkPwd";
+  public static final String CHECK_NEW_PASSWORD="checkNewPassword";
+  public static final String NEW_PASSWORD = "newPassword";
+  public static final String CURRENT_PASSWORD="currentPassword";
   public static final String REFERER= "Referer";
   public static final String HOME_PAGE_URL = "/";
 	public static final String RENTAL_DATE_FAILURE_RESULT = "rentalDateNotSelected";

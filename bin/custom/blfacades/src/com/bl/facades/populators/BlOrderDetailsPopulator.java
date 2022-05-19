@@ -103,11 +103,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
     
  // BL-1134 to add total discount with gift cart discount to display on summary section
-    Double totalPromotionDiscount = 0.0;
+    Double totalPromotionDiscount = Objects.nonNull(target.getTotalDiscounts()) && Objects.nonNull(target.getTotalDiscounts().getValue())
+        ? target.getTotalDiscounts().getValue().doubleValue() : 0.0;
     Double totalGiftCardDiscount = 0.0;
-    if(null != source.getTotalDiscounts()){
-      totalPromotionDiscount = source.getTotalDiscounts();
-    }
     if(null != source.getGiftCardAmount()){
       totalGiftCardDiscount = source.getGiftCardAmount();
     }
