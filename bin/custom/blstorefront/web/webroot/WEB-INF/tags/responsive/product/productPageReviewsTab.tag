@@ -27,7 +27,7 @@
 <c:set var="requestUrl" value="${pageContext.request.requestURL}" />
 <c:set var="baseUrl" value="${fn:substringBefore(requestUrl,'/WEB-INF')}" />
 
-<script src="//ui.powerreviews.com/stable/4.0/ui.js"></script>
+<script src="//ui.powerreviews.com/stable/4.1/ui.js"></script>
 
 <script>
 	window.pwr = window.pwr || function() {

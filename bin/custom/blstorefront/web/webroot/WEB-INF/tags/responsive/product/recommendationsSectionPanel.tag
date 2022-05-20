@@ -25,7 +25,7 @@
                                                         </div>
                                                     <ul class="splide__pagination"><li><button class="splide__pagination__page is-active" type="button" aria-current="true" aria-controls="splide01-slide01" aria-label="Go to slide 1"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide01-slide02" aria-label="Go to slide 2"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide01-slide03" aria-label="Go to slide 3"></button></li></ul></div>
                                                     <p class="overline">Canon</p>
-                                                    <h6 class="product">BG-10 Battery Grip</h6>
+                                                    <h3 class="product"><div class="sizeAdj-6">BG-10 Battery Grip</div></h3>
                                                     <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
                                                     <!-- Form added for BL-456 -->
                                                     <form id="addToCartForm" class="add_to_cart_form" action="${addToCartUrl}" method="post">
@@ -50,7 +50,7 @@
                                                         </div>
                                                     <ul class="splide__pagination"><li><button class="splide__pagination__page is-active" type="button" aria-current="true" aria-controls="splide02-slide01" aria-label="Go to slide 1"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide02-slide02" aria-label="Go to slide 2"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide02-slide03" aria-label="Go to slide 3"></button></li></ul></div>
                                                     <p class="overline">Canon</p>
-                                                    <h6 class="product">BG-10 Battery Grip</h6>
+                                                    <h3 class="product"><div class="sizeAdj-6">BG-10 Battery Grip</div></h3>
                                                     <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
                                                     <a href="#" class="btn btn-primary">Add to Rental</a>
                                                 </div>
@@ -69,7 +69,7 @@
                                                         </div>
                                                     <ul class="splide__pagination"><li><button class="splide__pagination__page is-active" type="button" aria-current="true" aria-controls="splide03-slide01" aria-label="Go to slide 1"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide03-slide02" aria-label="Go to slide 2"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide03-slide03" aria-label="Go to slide 3"></button></li></ul></div>
                                                     <p class="overline">Canon</p>
-                                                    <h6 class="product">BG-10 Battery Grip</h6>
+                                                    <h3 class="product"><div class="sizeAdj-6">BG-10 Battery Grip</div></h3>
                                                     <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
                                                     <a href="#" class="btn btn-primary">Add to Rental</a>
                                                 </div>
@@ -88,7 +88,7 @@
                                                         </div>
                                                     <ul class="splide__pagination"><li><button class="splide__pagination__page is-active" type="button" aria-current="true" aria-controls="splide04-slide01" aria-label="Go to slide 1"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide04-slide02" aria-label="Go to slide 2"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide04-slide03" aria-label="Go to slide 3"></button></li></ul></div>
                                                     <p class="overline">Canon</p>
-                                                    <h6 class="product">BG-10 Battery Grip</h6>
+                                                    <h3 class="product"><div class="sizeAdj-6">BG-10 Battery Grip</div></h3>
                                                     <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
                                                     <a href="#" class="btn btn-primary">Add to Rental</a>
                                                 </div>
@@ -107,7 +107,7 @@
                                                         </div>
                                                     <ul class="splide__pagination"><li><button class="splide__pagination__page is-active" type="button" aria-current="true" aria-controls="splide05-slide01" aria-label="Go to slide 1"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide05-slide02" aria-label="Go to slide 2"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide05-slide03" aria-label="Go to slide 3"></button></li></ul></div>
                                                     <p class="overline">Canon</p>
-                                                    <h6 class="product">BG-10 Battery Grip</h6>
+                                                    <h3 class="product"><div class="sizeAdj-6">BG-10 Battery Grip</div></h3>
                                                     <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
                                                     <a href="#" class="btn btn-primary">Add to Rental</a>
                                                 </div>
@@ -126,8 +126,8 @@
                                                         </div>
                                                     <ul class="splide__pagination"><li><button class="splide__pagination__page is-active" type="button" aria-current="true" aria-controls="splide06-slide01" aria-label="Go to slide 1"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide06-slide02" aria-label="Go to slide 2"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="splide06-slide03" aria-label="Go to slide 3"></button></li></ul></div>
                                                     <p class="overline">Canon</p>
-                                                    <h6 class="product">BG-10 Battery Grip</h6>
-                                                    <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
+                                                    <h3 class="product"><div class="sizeAdj-6">BG-10 Battery Grip</div></h3>
+                                                    <h4 class="price"><div class="sizeAdj-6">$44 <span class="period">Jan 31 - Feb 2</span></div></h4>
                                                     <a href="#" class="btn btn-primary">Add to Rental</a>
                                                 </div>
                                             </li>
