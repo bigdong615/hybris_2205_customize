@@ -4,6 +4,7 @@
 <%@ attribute name="metaKeywords" required="false" %>
 <%@ attribute name="pageCss" required="false" fragment="true" %>
 <%@ attribute name="pageScripts" required="false" fragment="true" %>
+<%@ attribute name="facetData" required="false" type="de.hybris.platform.commerceservices.search.facetdata.FacetData" %>
 
 <%@ taglib prefix="template" tagdir="/WEB-INF/tags/responsive/template" %>
 <%@ taglib prefix="analytics" tagdir="/WEB-INF/tags/shared/analytics" %>
@@ -15,13 +16,46 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="tealium" tagdir="/WEB-INF/tags/addons/tealiumiqaddon/shared/analytics" %>
+<%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <spring:htmlEscape defaultHtmlEscape="true" />
 
 <!DOCTYPE html>
 <html lang="${fn:escapeXml(currentLanguage.isocode)}">
 <head>
 	<title>
-		${not empty pageTitle ? pageTitle : not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
+		<c:choose>
+			<c:when test="${pageType == 'PRODUCT'}">
+				<c:choose>
+					<c:when test="${IsRentalPage eq true}">
+						<c:choose>
+							<c:when test="${not empty pageTitle}">
+								Rent ${product.name} | BorrowLenses
+							</c:when>
+							<c:otherwise>
+								${not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+					<c:otherwise>
+						<c:choose>
+							<c:when test="${not empty pageTitle}">
+								Buy ${product.name} | BorrowLenses
+							</c:when>
+							<c:otherwise>
+								${not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
+							</c:otherwise>
+						</c:choose>
+					</c:otherwise>
+				</c:choose>
+			</c:when>
+			<c:when test="${pageType=='CATEGORY'||pageType=='PRODUCTSEARCH'}">
+				<c:set var="titleParts" value="${fn:split(not empty pageTitle? pageTitle:not empty cmsPage.title? fn:escapeXml(cmsPage.title):'AcceleratorTitle', '|')}" />
+				${titleParts[0]} Rentals | Shipped To You | BorrowLenses
+			</c:when>
+			<c:otherwise>
+				${not empty pageTitle? pageTitle:not empty cmsPage.title? fn:escapeXml(cmsPage.title):'AcceleratorTitle'}
+			</c:otherwise>
+		</c:choose>
 	</title>
 
 	<%-- Meta Content --%>
@@ -29,13 +63,19 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<c:if test="${pageType == 'PRODUCT'}">
+		<meta name="description" content="${product.shortDescription}">
+	</c:if>
 
 	<%-- Additional meta tags --%>
 	<htmlmeta:meta items="${metatags}"/>
-
+	<link id="canonicalLink" rel="canonical" />
+	<script type="text/javascript">
+		document.getElementById("canonicalLink").setAttribute("href", window.location.href);
+	</script>
 	<%-- Favourite Icon --%>
 	<spring:theme code="img.favIcon" text="/" var="favIconPath"/>
-	
+
 	<c:choose>
 		<%-- if empty webroot, skip originalContextPath, simply use favIconPath --%>
 		<c:when test="${fn:length(originalContextPath) eq 1}" >
@@ -77,7 +117,7 @@
 
 	<%-- Load JavaScript required by the site --%>
 	<template:javaScript/>
-	
+
 	<%-- Inject any additional JavaScript required by the page --%>
 	<jsp:invoke fragment="pageScripts"/>
 

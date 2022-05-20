@@ -73,7 +73,7 @@
                                                    </div>
                                                    <p class="overline"><a href="#">${fn:escapeXml(productReference.target.manufacturer)}</a></p>
                                                    <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
-                                                   <h6 class="product"><a href="${rentalPDPUrl}">${fn:escapeXml(productReference.target.name)}</a></h6>
+                                                <h3 class="product"><div class="sizeAdj-6"><a href="${rentalPDPUrl}">${fn:escapeXml(productReference.target.name)}</a></div></h3>
                                                    <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
                                                    <h6 class="price"><product:productListerItemPrice product="${productReference.target}"/>
                                                    <c:choose>
@@ -116,7 +116,7 @@
                                                                 <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                                                   <!--BL-605 removed bootstrap class from below-->
                                                                     <button type="button" class="btn btn-primary btn-block js-add-to-cart" data-bs-toggle="modal"
-                                                                       data-bs-target="#addToCart" data-product-code="${product.code}">
+                                                                       data-bs-target="#addToCart" data-product-code="${productReference.target.code}">
                                                                       <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
                                                                     </button>
                                                                 </form>

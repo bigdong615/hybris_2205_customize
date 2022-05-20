@@ -226,11 +226,13 @@
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-lg-11 col-xl-9">
-                            <h5>
+                            <h2>
+                                <div class="sizeAdj-5">
                              <cms:pageSlot position="HomePageRentingGearIsEasyTitleSlot" var="feature">
                            							<cms:component component="${feature}" />
                            	 </cms:pageSlot>
-                            </h5>
+                                </div>
+                            </h2>
                             <div class="row mt-5">
                                <cms:pageSlot position="HomePageRentingGearSectionSlot" var="feature">
                                		<cms:component component="${feature}" />
@@ -247,7 +249,7 @@
                                 <hr>
                                 <!-- Product overview -->
                                 <a class="filter-expand" data-bs-toggle="collapse" href="#overview" role="button" aria-expanded="true" aria-controls="overview">
-                                <h5><spring:theme code= "pdp.overview.section.text"/></h5>
+                                    <h2><div class="sizeAdj-5"><spring:theme code= "pdp.overview.section.text"/></div></h2>
                                 </a>
                                 <div class="collapse show" id="overview">
                                      <p>${ycommerce:sanitizeHTML(product.description)}</p>

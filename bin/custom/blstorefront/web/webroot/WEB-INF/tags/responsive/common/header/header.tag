@@ -52,11 +52,11 @@
 
             </li>
             <!-- BL-380 : Mini Cart Section for Mobile Device -->
-            <div class="nav-cart">
+            <!-- <div class="nav-cart"> -->
 	            <cms:pageSlot position="MobileMiniCartSlot" var="component">
 					<cms:component component="${component}"/>
 			    </cms:pageSlot>
-	   		</div>
+	   	    <!-- </div> -->
   </div>
   <!-- Mobile Menu -->	
   <nav id="my-menu">	

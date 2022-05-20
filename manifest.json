@@ -4,7 +4,7 @@
     "extensions": [
 	    "cloudmediaconversion",
         "mediaconversionbackoffice",
-        "azurecloudhotfolder"   		
+        "azurecloudhotfolder"
 	],
 	"useConfig": {
         "properties": [
@@ -27,34 +27,34 @@
         ],
         "extensions": {
             "location": "/config/common/localextensions.xml",
-            "exclude": []      
+            "exclude": []
 	   },
 	"solr": {
 		"location": "/config/common/solr"
 	   }
-	},   
-	"properties":[ 
-	   { 
+	},
+	"properties":[
+	   {
 		  "key":"lang.packs",
 		  "value":"de,en"
 	   },
-	   { 
+	   {
 		  "key":"endpoint.hac.platform.init.disabled",
 		  "value":"true"
 	   },
-	   { 
+	   {
 		  "key":"endpoint.hac.platform.update.disabled",
 		  "value":"true"
 	   },
-	   { 
+	   {
 		  "key":"googleApiKey",
 		  "value":""
 	   },
-	   { 
+	   {
 		  "key":"multicountrysampledataaddon.import.active",
 		  "value":"false"
 	   },
-	   { 
+	   {
 		  "key":"apiregistryservices.events.exporting",
 		  "value":"false"
 	   },
@@ -66,74 +66,74 @@
 		  "key": "cronjob.timertask.loadonstartup",
 	      "value": "false"
 	   }
-	 ],  
-	"storefrontAddons":[ 
-	   { 
+	 ],
+	"storefrontAddons":[
+	   {
 		  "addon":"promotionenginesamplesaddon",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
 	   },
-	   { 
+	   {
 		  "addon":"smarteditaddon",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
 	   },
-	   { 
+	   {
 		  "addon":"blassistedservicestorefront",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
 	   },
-	   { 
+	   {
 		  "addon":"blcustomerticketingaddon",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
 	   },
-	   { 
+	   {
 		  "addon":"blorderselfserviceaddon",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
 	   },
-	   { 
+	   {
 		  "addon":"pcmbackofficesamplesaddon",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
 	   },
-	   { 
+	   {
 		  "addon":"blordermanagementaddon",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
 	   },
-	   { 
+	   {
 		  "addon":"blconfigurablebundleaddon",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
 	   },
-	   { 
+	   {
 		  "addon":"blstocknotificationaddon",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
 	   },
-	   { 
+	   {
 		  "addon":"tealiumiqaddon",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
 	   }
 
 	],
-	"aspects":[ 
-	   { 
+	"aspects":[
+	   {
 		  "name":"backoffice",
 		  "properties":[],
-		  "webapps":[ 
-			 { 
+		  "webapps":[
+			 {
 				"name":"hac",
 				"contextPath":"/hac"
 			 },
-			 { 
+			 {
 				"name":"mediaweb",
 				"contextPath":"/medias"
 			 },
-			 { 
+			 {
 				"name":"backoffice",
 				"contextPath":"/backoffice"
 			 },
@@ -160,7 +160,7 @@
 			 {
 	   			"name": "smartedit",
 				"contextPath": "/smartedit"
-			 }, 
+			 },
 			 {
 	   			"name": "cmscockpit",
 				"contextPath": "/cmscockpit"
@@ -188,173 +188,213 @@
 			 {
 				"name": "personalizationwebservices",
 				"contextPath": "/personalizationwebservices"
-			} 
+			}
 		  ]
 	   },
-	   { 
+	   {
 		  "name":"accstorefront",
-		  "properties":[ 
-			 { 
+		  "properties":[
+			 {
 				"key":"spring.session.enabled",
 				"value":"true"
 			 },
-			 { 
+			 {
 				"key":"spring.session.blstorefront.save",
 				"value":"async"
 			 },
-			 { 
+			 {
 				"key":"spring.session.blstorefront.cookie.name",
 				"value":"JSESSIONID"
 			 },
-			 { 
+			 {
 				"key":"spring.session.blstorefront.cookie.path",
 				"value":"/"
 			 },
-			 { 
+			 {
 				"key":"storefrontContextRoot",
 				"value":""
 			 },
-			 { 
+			 {
 				"key":"xss.filter.header.X-Frame-Options",
 				"value":""
 			 }
 		  ],
-		  "webapps":[ 
-			 { 
+		  "webapps":[
+			 {
 				"name":"mediaweb",
 				"contextPath":"/medias"
 			 },
-			 { 
+			 {
 				"name":"blstorefront",
 				"contextPath":""
 			 },
-			 { 
+			 {
 				"name":"acceleratorservices",
 				"contextPath":"/acceleratorservices"
 			 },
-			 { 
+			 {
 				"name":"hac",
 				"contextPath":"/hac"
 			 }
 		  ]
 	   },
-	   { 
+	   {
 		  "name":"api",
-		  "properties":[ 
-			 { 
+		  "properties":[
+			 {
 				"key":"xss.filter.header.X-Frame-Options",
 				"value":""
 			 },
-			 { 
+			 {
 				"key":"storefrontContextRoot",
 				"value":"/blstorefront"
 			 }
 		  ],
-		  "webapps":[ 
-			 { 
+		  "webapps":[
+			 {
 				"name":"mediaweb",
 				"contextPath":"/medias"
 			 },
-			 { 
+			 {
 				"name":"adaptivesearchwebservices",
 				"contextPath":"/adaptivesearchwebservices"
 			 },
-			 { 
+			 {
 				"name":"odata2webservices",
 				"contextPath":"/odata2webservices"
 			 },
-			 { 
+			 {
 				"name":"blstorefront",
 				"contextPath":"/blstorefront"
 			 },
-			 { 
+			 {
 				"name":"acceleratorservices",
 				"contextPath":"/acceleratorservices"
 			 },
-			 { 
+			 {
 				"name":"ycommercewebservices",
 				"contextPath":"/rest"
 			 },
-			 { 
+			 {
 				"name":"smartedit",
 				"contextPath":"/smartedit"
 			 },
-			 { 
+			 {
 				"name":"cmssmartedit",
 				"contextPath":"/cmssmartedit"
 			 },
-			 { 
+			 {
 				"name":"smarteditwebservices",
 				"contextPath":"/smarteditwebservices"
 			 },
-			 { 
+			 {
 				"name":"cmssmarteditwebservices",
 				"contextPath":"/cmssmarteditwebservices"
 			 },
-			 { 
+			 {
 				"name":"personalizationsmartedit",
 				"contextPath":"/personalizationsmartedit"
 			 },
-			 { 
+			 {
 				"name":"personalizationpromotionssmartedit",
 				"contextPath":"/personalizationpromotionssmartedit"
 			 },
-			 { 
+			 {
 				"name":"oauth2",
 				"contextPath":"/authorizationserver"
 			 },
-			 { 
+			 {
 				"name":"cmswebservices",
 				"contextPath":"/cmswebservices"
 			 },
-			 { 
+			 {
 				"name":"permissionswebservices",
 				"contextPath":"/permissionswebservices"
 			 },
-			 { 
+			 {
 				"name":"previewwebservices",
 				"contextPath":"/previewwebservices"
 			 },
-			 { 
+			 {
 				"name":"personalizationwebservices",
 				"contextPath":"/personalizationwebservices"
 			 },
-			 { 
+			 {
 				"name":"personalizationsearchsmartedit",
 				"contextPath":"/personalizationsearchsmartedit"
 			 },
-			 { 
+			 {
 				"name":"merchandisingsmartedit",
 				"contextPath":"/merchandisingsmartedit"
 			 },
-			 { 
+			 {
 				"name":"merchandisingcmswebservices",
 				"contextPath":"/merchandisingcmswebservices"
 			 },
-			 { 
+			 {
 				"name":"warehousingwebservices",
 				"contextPath":"/warehousingwebservices"
 			 }
 		  ]
 	   },
-	   { 
-		  "name":"backgroundProcessing",
-		  "properties":[ 
-		     {
-					"key":"cluster.node.groups",
-					"value":"integration,yHotfolderCandidate"
-		     }
-            ],
-		  "webapps":[ 
-			 { 
-				"name":"hac",
-				"contextPath":"/hac"
-			 },
-			 { 
-				"name":"mediaweb",
-				"contextPath":"/medias"
-			 }
-		  ]
-	   }
-	]	
+     {
+         "name": "backgroundProcessing",
+         "properties": [
+             {
+                 "key": "cluster.node.groups",
+                 "value": "integration,yHotfolderCandidate"
+             },
+             {
+                 "key": "cloud.hotfolder.default.zip.header.catalog",
+                 "value": "blProductCatalog"
+             },
+             {
+                 "key": "azure.hotfolder.storage.container.hotfolder",
+                 "value": "master/bl"
+             },
+             {
+                 "key": "azure.hotfolder.storage.container.match.pattern",
+                 "value": "^((?!ignore).)*$"
+             },
+             {
+                 "key": "cloud.hotfolder.default.mapping.header.catalog",
+                 "value": "blProductCatalog"
+             },
+             {
+                 "key": "cloud.hotfolder.default.mapping.root.dir",
+                 "value": "bl"
+             },
+             {
+                 "key": "cloud.hotfolder.default.mapping.file.name.pattern",
+                 "value": "^(CATEGORY|PRODUCT)_[0-9]{14}"
+             },
+             {
+                 "key": "cloud.hotfolder.storage.file.sort.name.prefix.priority",
+                 "value": "CATEGORY,PRODUCT"
+             },
+             {
+                 "key": "acceleratorservices.batch.impex.max-threads",
+                 "value":"8"
+             },
+             {
+                 "key": "spring.profiles.active",
+                 "value":"cloud"
+             }
+         ],
+         "webapps": [
+             {
+                 "name": "hac",
+                 "contextPath": ""
+             },
+             {
+                 "name": "mediaweb",
+                 "contextPath": "/medias"
+             },
+             {
+                 "name": "backoffice",
+                 "contextPath": "/backoffice"
+             }
+         ]
+     }
+	]
  }

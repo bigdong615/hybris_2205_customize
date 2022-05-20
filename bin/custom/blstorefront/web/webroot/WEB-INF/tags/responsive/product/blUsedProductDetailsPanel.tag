@@ -181,9 +181,11 @@
 				<!-- Product overview -->
 				<a class="filter-expand" data-bs-toggle="collapse" href="#overview"
 					role="button" aria-expanded="true" aria-controls="overview">
-					<h5>
+					<h2>
+						<div class="sizeAdj-5">
 						<spring:theme code="pdp.overview.section.text" />
-					</h5>
+						</div>
+					</h2>
 				</a>
 				<div class="collapse show" id="overview">
 					<p>${ycommerce:sanitizeHTML(product.usedDescription)}</p>
