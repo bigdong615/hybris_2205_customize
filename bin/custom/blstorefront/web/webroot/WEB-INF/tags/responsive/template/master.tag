@@ -24,6 +24,30 @@
 <head>
 	<title>
 		<c:choose>
+			<c:when test="${pageType == 'PRODUCT'}">
+				<c:choose>
+					<c:when test="${IsRentalPage eq true}">
+						<c:choose>
+							<c:when test="${not empty pageTitle}">
+								Rent ${product.name} | BorrowLenses
+							</c:when>
+							<c:otherwise>
+								${not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+					<c:otherwise>
+						<c:choose>
+							<c:when test="${not empty pageTitle}">
+								Buy ${product.name} | BorrowLenses
+							</c:when>
+							<c:otherwise>
+								${not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
+							</c:otherwise>
+						</c:choose>
+					</c:otherwise>
+				</c:choose>
+			</c:when>
 			<c:when test="${pageType=='CATEGORY'||pageType=='PRODUCTSEARCH'}">
 				<c:set var="titleParts" value="${fn:split(not empty pageTitle? pageTitle:not empty cmsPage.title? fn:escapeXml(cmsPage.title):'AcceleratorTitle', '|')}" />
 				${titleParts[0]} Rentals | Shipped To You | BorrowLenses
@@ -39,13 +63,19 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<c:if test="${pageType == 'PRODUCT'}">
+		<meta name="description" content="${product.shortDescription}">
+	</c:if>
 
 	<%-- Additional meta tags --%>
 	<htmlmeta:meta items="${metatags}"/>
-
+	<link id="canonicalLink" rel="canonical" />
+	<script type="text/javascript">
+		document.getElementById("canonicalLink").setAttribute("href", window.location.href);
+	</script>
 	<%-- Favourite Icon --%>
 	<spring:theme code="img.favIcon" text="/" var="favIconPath"/>
-	
+
 	<c:choose>
 		<%-- if empty webroot, skip originalContextPath, simply use favIconPath --%>
 		<c:when test="${fn:length(originalContextPath) eq 1}" >
@@ -87,7 +117,7 @@
 
 	<%-- Load JavaScript required by the site --%>
 	<template:javaScript/>
-	
+
 	<%-- Inject any additional JavaScript required by the page --%>
 	<jsp:invoke fragment="pageScripts"/>
 
