@@ -74,10 +74,10 @@
 								</div>
 								<p class="overline"><a href="#">${product.manufacturer}</a></p>
 								<c:url var="rentalPDPUrl" value="/rent/product/${product.code}"/>
-								<h3 class="product"><div class="sizeAdj-6"><a href="${rentalPDPUrl}" class="js-pdplinkUrl" data-productCode="${product.code}"
+								<h6 class="product"><a href="${rentalPDPUrl}" class="js-pdplinkUrl" data-productCode="${product.code}"
                  data-brand="${product.manufacturer}" data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="rental">
-								<c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /></a><div class="sizeAdj-6"></h3>
-                                <h4 class="price"><div class="sizeAdj-6"><format:price priceData="${product.price}"/> <span class="period">
+								<c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /></a></h6>
+                                <h6 class="price"><format:price priceData="${product.price}"/> <span class="period">
                                 <c:choose>
                                 	<c:when test="${not empty rentalDate.selectedFromDate and not empty rentalDate.selectedToDate}">
                                 	${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}
@@ -85,8 +85,8 @@
                                 	<c:otherwise>
                                 		<spring:theme code="text.product.tile.rental.days" arguments="${rentalDate.numberOfDays}"/>    
                                 	</c:otherwise>
-                                </c:choose>
-								</span></div></h4>
+                                </c:choose>              
+                                </span></h6>
                                 <cart:blRentalGearAddToRental productData="${product}"/>
 							</div>
 						</li>
