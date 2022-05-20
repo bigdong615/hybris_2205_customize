@@ -88,14 +88,12 @@
 		<c:if test="${product.productType ne 'GIFTCARD'}">
 			<p class="overline">${product.manufacturer}</p>
 		</c:if>
-		<h3 class="product">
-			<div class="sizeAdj-6">
+		<h6 class="product">
           <c:url var="rentUrl" value="/rent/product/${product.code}"/>
            <a href="${rentUrl}" role="button" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
             data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="rental">
             <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
-			</div>
-       </h3>
+       </h6>
 		<ycommerce:testId code="product_wholeProduct">
 
 			<c:if test="${not empty product.potentialPromotions}">
@@ -105,8 +103,7 @@
 					</c:forEach>
 				</div>
 			</c:if>
-			<h4 class="price">
-				<div class="sizeAdj-6">
+			<h6 class="price">
 			<!-- BL-926: Added condition for Gift Card as per requirement --> 
 				<c:choose>
 					<c:when test="${product.productType eq 'GIFTCARD'}">
@@ -127,8 +124,7 @@
 						</c:choose>
 					</c:otherwise>
 				</c:choose>
-				</div>
-			</h4>
+			</h6>
 			<c:forEach var="variantOption" items="${product.variantOptions}">
 				<c:forEach items="${variantOption.variantOptionQualifiers}" var="variantOptionQualifier">
 					<c:if test="${variantOptionQualifier.qualifier eq 'rollupProperty'}">
