@@ -45,9 +45,6 @@ h3 { font-size: 48px; }
 h4 { font-size: 34px; }
 h5 { font-size: 24px; }
 h6 { font-size: 20px; }
-.sizeAdj-5 {
-    font-size: 24px;
-}
 .sizeAdj-6 { font-size: 20px;}
 p, ol, ul, .body16 { font-size: 16px; }
 .body14 { font-size: 14px; }
@@ -562,7 +559,6 @@ input[type=checkbox] + label:before{ border-radius:0px; }
 #productInfo ul.checklist li { padding-bottom: 10px; }
 #productInfo ul.checklist li:before { background-image: url(../assets/icon-check-teal.svg); opacity: 1; }
 #productExtras h5 { padding: 10px 30px 10px 10px; display: inline-block; }
-.sizeAdj-5 { padding: 10px 30px 10px 10px; display: inline-block; }
 #productExtras .collapse, #productExtras .collapsing { padding: 10px; }
 #productExtras .filter-expand { margin-right: 10px; display: block; color: #3d3c3c; text-decoration: none; background: url(../assets/icon-filter-open.svg) right center no-repeat; }
 #productExtras .filter-expand[aria-expanded="true"] { background: url(../assets/icon-filter-close.svg) right center no-repeat; }
@@ -757,10 +753,6 @@ input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!im
     h4 { font-size: 24px; }
     h5 { font-size: 20px; }
     h6 { font-size: 16px; }
-
-    .sizeAdj-5 {
-        font-size: 20px;
-    }
 
     .sizeAdj-6 { font-size: 16px; }
 
