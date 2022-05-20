@@ -75,8 +75,8 @@
                           <span class="bookmark"></span>
                           <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg"></li>
                           <p class="overline"><a href="#">Canon</a></p>
-                          <h3 class="product"><div class="sizeAdj-6"><a href="#">BG-10 Battery Grip</a></div></h3>
-                          <h4 class="price"><div class="sizeAdj-6">$44</div></h4>
+                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                          <h6 class="price">$44</h6>
                           <a href="#" class="btn btn-primary">Add to Rental</a>
                       </div>
                   </div>
@@ -86,8 +86,8 @@
                           <span class="bookmark"></span>
                           <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
                           <p class="overline"><a href="#">Canon</a></p>
-                          <h3 class="product"><div class="sizeAdj-6"><a href="#">BG-10 Battery Grip</a></div></h3>
-                          <h4 class="price"><div class="sizeAdj-6">$44</div></h4>
+                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                          <h6 class="price">$44</h6>
                           <a href="#" class="btn btn-primary">Add to Rental</a>
                       </div>
                   </div>
@@ -97,8 +97,8 @@
                           <span class="bookmark"></span>
                           <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
                           <p class="overline"><a href="#">Canon</a></p>
-                          <h3 class="product"><div class="sizeAdj-6"><a href="#">BG-10 Battery Grip</a></div></h3>
-                          <h4 class="price"><div class="sizeAdj-6">$44</div></h4>
+                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                          <h6 class="price">$44</h6>
                           <a href="#" class="btn btn-primary">Add to Rental</a>
                       </div>
                   </div>

@@ -6,7 +6,7 @@
   <!---BL-607:remove extra space from h6 tag -->
 <c:choose>
    <c:when test="${not empty searchPageData.freeTextSearch && searchPageData.freeTextSearch ne null}">
-	   <h1 class="search-term mb-4"><div class="sizeAdj-6">&quot;${searchPageData.freeTextSearch}&quot;<span class="search-count"> &#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span></div></h1>
+      <h6 class="search-term mb-4">&quot;${searchPageData.freeTextSearch}&quot;<span class="search-count"> &#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span></h6>
    </c:when>
    <c:otherwise>
    
@@ -15,25 +15,20 @@
      <c:choose>
 		<c:when
 			test="${pageType == 'PRODUCTSEARCH' && blPageType == 'rentalGear'}">
-			<h1 class="search-term mb-4">
-				<div class="sizeAdj-6">
+			<h6 class="search-term mb-4">
 				&quot;<spring:theme code="text.rental.gear.slp"/>&quot;<span class="search-count">
 					&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
-				</div>
-			</h1>
+			</h6>
 		</c:when>		
 		<c:when
 			test="${pageType == 'PRODUCTSEARCH' && blPageType == 'usedGear'}">
-			<h1 class="search-term mb-4">
-				<div class="sizeAdj-6">
+			<h6 class="search-term mb-4">
 				&quot;<spring:theme code="text.used.gear.slp"/>&quot;<span class="search-count">
 					&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
-				</div>
-			</h1>
+			</h6>
 		</c:when>		
 		<c:otherwise> 
-		<h1 class="search-term mb-4">
-			<div class="sizeAdj-6">
+		<h6 class="search-term mb-4">
 		<c:set var="displayText" value="${searchPageData.categoryCode}"/>
 		<c:if test ="${displayText eq 'rentalgear'}">
 		   <spring:theme code="text.rental.gear.slp" var="rentalText"/>
@@ -51,8 +46,7 @@
 			&quot;${categoryName}&quot;<span class="search-count">
 				&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
 			</c:if>
-			</div>
-		</h1>
+		</h6>
 		</c:otherwise>	
 		</c:choose>			
 		 <!-- condition ends here  -->
