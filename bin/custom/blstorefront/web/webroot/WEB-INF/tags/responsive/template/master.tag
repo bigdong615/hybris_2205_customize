@@ -48,11 +48,6 @@
 					</c:otherwise>
 				</c:choose>
 			</c:when>
-			<c:otherwise>
-				${not empty pageTitle ? pageTitle : not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
-			</c:otherwise>
-		</c:choose>
-		<c:choose>
 			<c:when test="${pageType=='CATEGORY'||pageType=='PRODUCTSEARCH'}">
 				<c:set var="titleParts" value="${fn:split(not empty pageTitle? pageTitle:not empty cmsPage.title? fn:escapeXml(cmsPage.title):'AcceleratorTitle', '|')}" />
 				${titleParts[0]} Rentals | Shipped To You | BorrowLenses
@@ -74,10 +69,13 @@
 
 	<%-- Additional meta tags --%>
 	<htmlmeta:meta items="${metatags}"/>
-
+	<link id="canonicalLink" rel="canonical" />
+	<script type="text/javascript">
+		document.getElementById("canonicalLink").setAttribute("href", window.location.href);
+	</script>
 	<%-- Favourite Icon --%>
 	<spring:theme code="img.favIcon" text="/" var="favIconPath"/>
-	
+
 	<c:choose>
 		<%-- if empty webroot, skip originalContextPath, simply use favIconPath --%>
 		<c:when test="${fn:length(originalContextPath) eq 1}" >
@@ -119,7 +117,7 @@
 
 	<%-- Load JavaScript required by the site --%>
 	<template:javaScript/>
-	
+
 	<%-- Inject any additional JavaScript required by the page --%>
 	<jsp:invoke fragment="pageScripts"/>
 
