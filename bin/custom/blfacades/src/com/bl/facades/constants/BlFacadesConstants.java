@@ -69,12 +69,25 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String CANCELED = "Canceled";
   public static final String LATE = "Late";
   public static final String SOLD = "Sold";
-  
+
+  public static final int ZERO = 0;
   public static final int ONE = 1;
   public static final int TWO = 2;
+  public static final int THREE = 3;
 
   public static final String COMMA = ",";
   public static final String HASH = "#";
+
+  public static final String TWELVE = "12";
+  public static final int FOUR = 4;
+  public static final int INT_SEVEN = 7;
+  public static final String SIX = "6";
+  public static final String SEVEN = "7";
+  public static final String EIGHT = "8";
+  public static final String TWENTY_FOUR = "24";
+  public static final String SIXTEEN = "16";
+  public static final String FORTY_EIGHT = "48";
+  public static final String THIRTY_SIX = "36";
 
   private BlFacadesConstants() {
     //empty
