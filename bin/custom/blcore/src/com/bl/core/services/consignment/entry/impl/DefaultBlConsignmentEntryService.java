@@ -303,7 +303,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 * @param consignmentEntry
 	 * @param subPartProduct
 	 */
-	void addSubPartsOnItemMap(final String productName, final ItemStatusEnum enumStatus,
+	private void addSubPartsOnItemMap(final String productName, final ItemStatusEnum enumStatus,
 			final Map<String, ItemStatusEnum> itemsMap, final ConsignmentEntryModel consignmentEntry,
 			final BlProductModel subPartProduct)
 	{
