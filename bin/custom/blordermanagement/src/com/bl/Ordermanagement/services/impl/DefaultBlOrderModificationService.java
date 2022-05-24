@@ -306,10 +306,10 @@ public class DefaultBlOrderModificationService
 	public void recalculateOrder(final AbstractOrderModel order)
 	{
 		order.setCalculated(false);
-		getModelService().save(order);
-		getModelService().refresh(order);
 		try
 		{
+			getModelService().save(order);
+			getModelService().refresh(order);
 			getCalculationService().recalculate(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order {} recalculated successfully", order.getCode());
 		}
@@ -317,6 +317,11 @@ public class DefaultBlOrderModificationService
 		{
 			 BlLogger.logMessage(LOG, Level.ERROR, "Exception occur while recalculating order {} ",
 					 order.getCode(), cx);
+		}
+		catch (final Exception e)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Exception occur while trying to save order {} ",
+					order.getCode(), e);
 		}
 	}
 
