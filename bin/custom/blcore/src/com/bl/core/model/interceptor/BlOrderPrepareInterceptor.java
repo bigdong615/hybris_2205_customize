@@ -11,6 +11,7 @@ import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.services.order.note.BlOrderNoteService;
@@ -20,6 +21,7 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.collect.Lists;
+import de.hybris.platform.basecommerce.enums.CancelReason;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -29,6 +31,11 @@ import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.order.strategies.impl.EventPublishingSubmitOrderStrategy;
+import de.hybris.platform.ordercancel.OrderCancelEntry;
+import de.hybris.platform.ordercancel.OrderCancelException;
+import de.hybris.platform.ordercancel.OrderCancelRequest;
+import de.hybris.platform.ordercancel.OrderCancelService;
+import de.hybris.platform.ordercancel.model.OrderCancelRecordEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -37,25 +44,21 @@ import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import javax.annotation.Resource;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 
 /**
@@ -69,6 +72,10 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   private BlOrderNoteService blOrderNoteService;
   private EventPublishingSubmitOrderStrategy eventPublishingSubmitOrderStrategy;
   private DefaultBlESPEventService blEspEventService;
+  private OrderCancelService orderCancelService;
+  private UserService userService;
+  private BlProductService blProductService;
+
   
 	@Resource(name = "blDeliveryModeService")
 	private BlDeliveryModeService blDeliveryModeService;
@@ -142,6 +149,13 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 			setOrderValuePriorToShippedStatus(abstractOrderModel);
 		}
     try {
+		if (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS)
+				&& OrderStatus.CANCELLED.equals(abstractOrderModel.getStatus()) && BooleanUtils
+				.isTrue(getDefaultBlUserService().isCsUser()) ) {
+			if(null != cancelOrder(abstractOrderModel)) {
+				getBlEspEventService().sendOrderCanceledEvent((OrderModel) abstractOrderModel);
+			}
+		}
       triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
       triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
       triggerEspShipped(abstractOrderModel, interceptorContext);
@@ -667,8 +681,77 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		}
 		return Boolean.FALSE;
 	}
-	
-  public BlOrderNoteService getBlOrderNoteService() {
+
+
+	/**
+	 * cancel order/entry and return result
+	 * @return true if cancellation success
+	 * @param abstractOrderModel
+	 */
+	private OrderCancelRecordEntryModel cancelOrder(AbstractOrderModel abstractOrderModel) {
+		try {
+			final OrderCancelRecordEntryModel orderCancelRecordEntryModel = getOrderCancelService()
+					.requestOrderCancel(this.buildCancelRequest(abstractOrderModel), this.getUserService().getCurrentUser());
+			final Set<ConsignmentModel> consignments = abstractOrderModel.getConsignments();
+			if (orderCancelRecordEntryModel != null) {
+				updateStockForCancelledOrder(consignments);
+				return orderCancelRecordEntryModel;
+			}
+
+		} catch (final OrderCancelException e) {
+
+		}
+		return null;
+	}
+
+
+
+	private OrderCancelRequest buildCancelRequest(AbstractOrderModel abstractOrderModel) {
+		if (null != abstractOrderModel) {
+			List<OrderCancelEntry> orderCancelEntries = new ArrayList<>();
+			abstractOrderModel.getEntries().forEach(abstractOrderEntryModel -> {
+				OrderCancelEntry orderCancelEntry = new OrderCancelEntry(abstractOrderEntryModel);
+				orderCancelEntry.setCancelReason(CancelReason.CUSTOMERREQUEST);
+
+				orderCancelEntries.add(orderCancelEntry);
+			});
+			//createOrderCancelEntry(orderCancelEntries);
+				final OrderCancelRequest orderCancelRequest = new OrderCancelRequest((OrderModel) abstractOrderModel, orderCancelEntries);
+				orderCancelRequest.setCancelReason(CancelReason.CUSTOMERREQUEST);
+				orderCancelRequest.setNotes(CancelReason.CUSTOMERREQUEST.getCode());
+				return orderCancelRequest;
+			}
+	return null;
+	}
+
+
+
+	private void createOrderCancelEntry(final List<OrderCancelEntry> orderCancelEntries) {
+		orderCancelEntries.forEach(cancelEntry -> {
+			final OrderCancelEntry orderCancelEntry = new OrderCancelEntry(
+					cancelEntry.getOrderEntry(),
+					cancelEntry.getCancelQuantity(), null,
+					null);
+			orderCancelEntries.add(orderCancelEntry);
+		});
+	}
+
+
+	public void updateStockForCancelledOrder(final Set<ConsignmentModel> consignments)
+	{
+		for (final ConsignmentModel consignment : consignments)
+		{
+			consignment.getConsignmentEntries()
+					.forEach(consignmentEntry -> consignmentEntry.getSerialProducts()
+							.forEach(serialProduct -> getBlProductService().updateStockForCancelledProduct(serialProduct,
+									consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate())));
+		}
+	}
+
+
+
+
+	public BlOrderNoteService getBlOrderNoteService() {
     return blOrderNoteService;
   }
 
@@ -719,5 +802,29 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	public void setBlShippingOptimizationStrategy(DefaultBlShippingOptimizationStrategy blShippingOptimizationStrategy)
 	{
 		this.blShippingOptimizationStrategy = blShippingOptimizationStrategy;
+	}
+
+	public OrderCancelService getOrderCancelService() {
+		return orderCancelService;
+	}
+
+	public void setOrderCancelService(OrderCancelService orderCancelService) {
+		this.orderCancelService = orderCancelService;
+	}
+
+	public UserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public BlProductService getBlProductService() {
+		return blProductService;
+	}
+
+	public void setBlProductService(BlProductService blProductService) {
+		this.blProductService = blProductService;
 	}
 }

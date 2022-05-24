@@ -1125,6 +1125,9 @@
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
 		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
 		<property name="blEspEventService" ref="blEspEventService"/>
+		<property name="orderCancelService" ref="orderCancelService"/>
+		<property name="userService" ref="userService"/>
+		<property name="blProductService" ref="productService"/>
 	</bean>
 
 	<bean id="blOrderPrepareInterceptorMapping"
@@ -1911,6 +1914,11 @@
 	<bean id="blFutureOrderAllocationJob" class="com.bl.core.job.BlFutureOrderAllocationJob" parent="abstractJobPerformable">
 		<property name="blOrderDao" ref="orderDao"/>
 		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
+	</bean>
+
+	<alias name="blOrderCancelStateMappingStrategy" alias="orderCancelStateMappingStrategy"/>
+	<bean id="blOrderCancelStateMappingStrategy"
+		  class="com.bl.core.order.strategy.BlOrderCancelStateMappingStrategy" parent="warehousingOrderCancelStateMappingStrategy">
 	</bean>
 	
 </beans>
