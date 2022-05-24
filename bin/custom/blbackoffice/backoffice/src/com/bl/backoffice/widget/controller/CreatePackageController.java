@@ -161,11 +161,13 @@ public class CreatePackageController extends DefaultWidgetController
 		final List<SerialProductDTO> serials = new ArrayList<>();
 		for (final BlProductModel blProductModel : allSerialProducts)
 		{
-			final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
-			final SerialProductDTO serialProduct = new SerialProductDTO();
-			serialProduct.setSerialProduct(blSerialProductModel);
-			this.weight = blSerialProductModel.getBlProduct().getWeight().doubleValue() + this.weight;
-			serials.add(serialProduct);
+			if(blProductModel instanceof BlSerialProductModel) {
+				final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
+				final SerialProductDTO serialProduct = new SerialProductDTO();
+				serialProduct.setSerialProduct(blSerialProductModel);
+				this.weight = blSerialProductModel.getBlProduct().getWeight().doubleValue() + this.weight;
+				serials.add(serialProduct);
+			}
 		}
 		this.serialEntries.setModel(new ListModelList<>(serials));
 		final ListModelList<PackagingInfoData> packageBox = new ListModelList<>(createPackageCombobox());
