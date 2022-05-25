@@ -187,7 +187,7 @@ public class CreatePackageController extends DefaultWidgetController
 		{
 			final Map<String, ItemStatusEnum> itemsMap = consignmentEntryModel.getItems();
 
-			consignmentEntryModel.getSerialProducts().stream().filter(serialProduct -> itemsMap.containsKey(serialProduct.getCode())
+			consignmentEntryModel.getSerialProducts().stream().filter(serialProduct -> serialProduct instanceof BlSerialProductModel && itemsMap.containsKey(serialProduct.getCode())
 					&& ItemStatusEnum.INCLUDED.equals(itemsMap.get(serialProduct.getCode()))).forEach(allSerialProducts::add);
 		}
 		final List<PackagingInfoModel> packageInfo = consignment.getPackaginginfos();
