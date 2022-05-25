@@ -99,9 +99,9 @@ public class BLWarehousingConsignmentFacadeImpl extends DefaultWarehousingConsig
 				putDefaultSizesOnTop(packagingInfoDataList, packagingInfoData);
 			}
 		}
-		PackagingInfoData packagingInfoData = packagingInfoDataList.get(BlFacadesConstants.INT_SEVEN);
-		packagingInfoDataList.remove(BlFacadesConstants.INT_SEVEN);
-		packagingInfoDataList.add(BlFacadesConstants.FOUR,packagingInfoData);
+		PackagingInfoData packagingInfoData = packagingInfoDataList.get(BlFacadesConstants.INT_EIGHT);
+		packagingInfoDataList.remove(BlFacadesConstants.INT_EIGHT);
+		packagingInfoDataList.add(BlFacadesConstants.FIVE,packagingInfoData);
 		return packagingInfoDataList;
 	}
 
@@ -132,15 +132,15 @@ public class BLWarehousingConsignmentFacadeImpl extends DefaultWarehousingConsig
 	 * @param packagingInfoData the packagingInfoData
 	 */
 	private void sortRemainingList(final List<PackagingInfoData> packagingInfoDataList, final PackagingInfoData packagingInfoData) {
-		if (packagingInfoData.getLength().equals(BlFacadesConstants.TWENTY_FOUR) && packagingInfoData
-				.getWidth().equals(BlFacadesConstants.TWENTY_FOUR) && packagingInfoData.getHeight().equals(BlFacadesConstants.SIXTEEN)) {
+		if (packagingInfoData.getLength().equals(BlFacadesConstants.TWELVE) && packagingInfoData
+				.getWidth().equals(BlFacadesConstants.TWELVE) && packagingInfoData.getHeight().equals(BlFacadesConstants.EIGHTEEN)) {
 			packagingInfoDataList.add(BlFacadesConstants.THREE, packagingInfoData);
+		} else if (packagingInfoData.getLength().equals(BlFacadesConstants.TWENTY_FOUR) && packagingInfoData
+				.getWidth().equals(BlFacadesConstants.TWENTY_FOUR) && packagingInfoData.getHeight().equals(BlFacadesConstants.SIXTEEN)) {
+			packagingInfoDataList.add(BlFacadesConstants.FOUR, packagingInfoData);
 		} else if (packagingInfoData.getLength().equals(BlFacadesConstants.EIGHT) && packagingInfoData
 				.getWidth().equals(BlFacadesConstants.EIGHT) && packagingInfoData.getHeight().equals(BlFacadesConstants.FORTY_EIGHT)) {
 			packagingInfoDataList.add(BlFacadesConstants.THREE, packagingInfoData);
-		} else if (packagingInfoData.getLength().equals(BlFacadesConstants.SIX) && packagingInfoData
-				.getWidth().equals(BlFacadesConstants.SIX) && packagingInfoData.getHeight().equals(BlFacadesConstants.SIX)) {
-			packagingInfoDataList.add(BlFacadesConstants.ZERO, packagingInfoData);
 		} else {
 			sortTheRest(packagingInfoDataList, packagingInfoData);
 		}
@@ -153,6 +153,9 @@ public class BLWarehousingConsignmentFacadeImpl extends DefaultWarehousingConsig
 	 */
 	private void sortTheRest(List<PackagingInfoData> packagingInfoDataList, PackagingInfoData packagingInfoData) {
 		if (packagingInfoData.getLength().equals(BlFacadesConstants.SIX) && packagingInfoData
+				.getWidth().equals(BlFacadesConstants.SIX) && packagingInfoData.getHeight().equals(BlFacadesConstants.SIX)) {
+			packagingInfoDataList.add(BlFacadesConstants.ZERO, packagingInfoData);
+		} else if (packagingInfoData.getLength().equals(BlFacadesConstants.SIX) && packagingInfoData
 				.getWidth().equals(BlFacadesConstants.SIX) && packagingInfoData.getHeight().equals(BlFacadesConstants.TWENTY_FOUR)) {
 			packagingInfoDataList.add(BlFacadesConstants.ONE, packagingInfoData);
 		} else if (packagingInfoData.getLength().equals(BlFacadesConstants.EIGHT) && packagingInfoData

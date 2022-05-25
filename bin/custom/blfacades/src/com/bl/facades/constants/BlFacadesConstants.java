@@ -80,7 +80,9 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
 
   public static final String TWELVE = "12";
   public static final int FOUR = 4;
+  public static final int FIVE = 5;
   public static final int INT_SEVEN = 7;
+  public static final int INT_EIGHT = 8;
   public static final String SIX = "6";
   public static final String SEVEN = "7";
   public static final String EIGHT = "8";
@@ -88,6 +90,7 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String SIXTEEN = "16";
   public static final String FORTY_EIGHT = "48";
   public static final String THIRTY_SIX = "36";
+  public static final String EIGHTEEN = "18";
 
   private BlFacadesConstants() {
     //empty
