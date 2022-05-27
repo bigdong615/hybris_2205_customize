@@ -84,4 +84,7 @@ public interface BlProductService extends ProductService {
 	 */
 	public void updateStockForCancelledProduct(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
 			final Date optimizedShippingEndDate);
+
+    void updateStockForCancelledProductFromBackoffice(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
+                                                       Date optimizedShippingEndDate, final List<String> serialProductCodes);
 }

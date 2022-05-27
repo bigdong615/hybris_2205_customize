@@ -1125,9 +1125,6 @@
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
 		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
 		<property name="blEspEventService" ref="blEspEventService"/>
-		<property name="orderCancelService" ref="orderCancelService"/>
-		<property name="userService" ref="userService"/>
-		<property name="blProductService" ref="productService"/>
 	</bean>
 
 	<bean id="blOrderPrepareInterceptorMapping"
@@ -1920,5 +1917,9 @@
 	<bean id="blOrderCancelStateMappingStrategy"
 		  class="com.bl.core.order.strategy.BlOrderCancelStateMappingStrategy" parent="warehousingOrderCancelStateMappingStrategy">
 	</bean>
+
+    <bean id="blOrderEntryCancelledQuantityHandler"
+          class="com.bl.core.model.handler.BlOrderEntryCancelledQuantityHandler" parent="orderEntryCancelledQuantityHandler">
+    </bean>
 	
 </beans>

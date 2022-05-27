@@ -755,4 +755,9 @@
 	<alias name="defaultBlSingleLineAddressFormatPopulator" alias="usSingleLineAddressFormatPopulator"/>
 	<bean id="defaultBlSingleLineAddressFormatPopulator" class="com.bl.facades.populators.BlSingleLineAddressFormatPopulator" parent="defaultUsSingleLineAddressFormatPopulator"/>
 
+	<alias name="blOrderCancelPopulator" alias="blOrderCancelPopulator"/>
+	<bean id="blOrderCancelPopulator" class="com.bl.facades.populators.BlCancelOrderPopulator" >
+	</bean>
+
+
 </beans>
