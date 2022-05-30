@@ -757,6 +757,7 @@
 
 	<alias name="blOrderCancelPopulator" alias="blOrderCancelPopulator"/>
 	<bean id="blOrderCancelPopulator" class="com.bl.facades.populators.BlCancelOrderPopulator" >
+ 		<property name="modelService" ref="modelService"/>
 	</bean>
 
 

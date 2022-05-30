@@ -3,11 +3,16 @@
  */
 package com.bl.backoffice.actions;
 
+import com.bl.core.constants.GeneratedBlCoreConstants;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
 import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * ###################### BL-749 ################
@@ -34,8 +39,9 @@ public class CapturePaymentAction extends AbstractComponentWidgetAdapterAware
   public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
   {
     final ConsignmentModel consignmentModel = actionContext.getData();
-    return consignmentModel != null && consignmentModel.getOrder() != null;
-        //&& BooleanUtils.isFalse(contextData.getOrder().getIsCaptured());
+    return consignmentModel != null && consignmentModel.getOrder() != null
+        && (BooleanUtils.isFalse(StringUtils.equalsIgnoreCase(consignmentModel.getStatus().getCode() , ConsignmentStatus.CANCELLED.getCode())) &&
+            BooleanUtils.isFalse(StringUtils.equalsIgnoreCase(consignmentModel.getOrder().getStatus().getCode() , OrderStatus.CANCELLED.getCode())));
   }
 
   /**
