@@ -149,19 +149,15 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
         	abstractOrderEntryModel.setCalculated(Boolean.FALSE);
 				});
      	final Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
-			try {
-				if (BooleanUtils.isFalse(orderModel.getInternalTransferOrder())) {
-					/* getDefaultBlCalculationService().recalculateOrderForTax(orderModel); */
-					try {
-						performSendOrderPullBackItemsRemovedESPEventService(blSerialProductModels , orderModel);
-					}
-					catch (final Exception e) {
-						BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY ,  e,
-								"BlDefaultEditorAreaLogicHandler :Exception while performing Order pull back removed ESP Event for order {}", orderModel.getCode());
-					}
+			if (BooleanUtils.isFalse(orderModel.getInternalTransferOrder())) {
+				/* getDefaultBlCalculationService().recalculateOrderForTax(orderModel); */
+				try {
+					performSendOrderPullBackItemsRemovedESPEventService(blSerialProductModels , orderModel);
 				}
-			} catch (CalculationException e) {
-				BlLogger.logMessage(LOG, Level.ERROR, "Error while BlDefaultEditorAreaLogicHandler", e);
+				catch (final Exception e) {
+					BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY ,  e,
+							"BlDefaultEditorAreaLogicHandler :Exception while performing Order pull back removed ESP Event for order {}", orderModel.getCode());
+				}
 			}
 
 
