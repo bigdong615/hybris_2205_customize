@@ -151,7 +151,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
      	final Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
 			try {
 				if (BooleanUtils.isFalse(orderModel.getInternalTransferOrder())) {
-					getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
+					/* getDefaultBlCalculationService().recalculateOrderForTax(orderModel); */
 					try {
 						performSendOrderPullBackItemsRemovedESPEventService(blSerialProductModels , orderModel);
 					}
