@@ -28,6 +28,9 @@
      <import resource="classpath:/blhotfolder/integration/bl-default-payment-hotfolder-spring.xml"/>
      <import resource="classpath:/blhotfolder/integration/bl-serial-log-hotfolder-spring.xml"/>
       <import resource="classpath:/blhotfolder/integration/bl-inventory-scan-history-hotfolder-spring.xml"/>
+      <import resource="classpath:/blhotfolder/integration/bl-product-video-media-hotfolder-spring.xml"/>
+      <import resource="classpath:/blhotfolder/integration/bl-product-video-hotfolder-spring.xml"/>
+      
      
  	
 	<import resource="classpath:/blhotfolder/integration/bl-verificationdocumentmedia-hotfolder-spring.xml"/>
