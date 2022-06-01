@@ -7,21 +7,31 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.services.upsscrape.UpdateSerialService;
+import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlUpdateStagedProductUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import javax.annotation.Resource;
 
 /**
  * This class created to update the serial products
@@ -35,13 +45,14 @@ public class BlUpdateSerialService implements UpdateSerialService {
   private CustomerAccountService customerAccountService;
   private ModelService modelService;
   private BlOrderDao orderDao;
+  private BlStockLevelDao blStockLevelDao;
 
   /**
    * {@inheritDoc}
    */
   @Override
   public void updateSerialProducts(final String packageCode, final String orderCode,
-      final Date upsDeliveryDate, final int numberOfRepetition, final PackagingInfoModel packagingInfoModel) {
+      final Date upsDeliveryDate, final int numberOfRepetition, final PackagingInfoModel packagingInfoModel , final Date trackDate) {
     BlLogger.logFormattedMessage(LOG , Level.INFO , "Started Performing Update serial products for order {} -> package {} -> number of repetitions  {}"
         , orderCode , packageCode , numberOfRepetition);
     final AbstractOrderModel orderModel = getOrderDao().getOrderByCode(orderCode);
@@ -54,7 +65,7 @@ public class BlUpdateSerialService implements UpdateSerialService {
       getModelService().save(notesModel);
       orderModel.setOrderNotes(Lists.newArrayList(notesModel));
       saveAndRefreshOrderModel(orderModel);
-      performSerialUpdate(orderModel, packagingInfoModel, numberOfRepetition, upsDeliveryDate);
+      performSerialUpdate(orderModel, packagingInfoModel, numberOfRepetition, upsDeliveryDate,trackDate);
       BlLogger.logFormattedMessage(LOG , Level.INFO , "Finished Performing Update serial products for order{} -> package {} -> number of repetitions  {} "
           , orderCode , packageCode , numberOfRepetition);
     }
@@ -69,11 +80,11 @@ public class BlUpdateSerialService implements UpdateSerialService {
    * @param upsDeliveryDate ups delivery date from response
    */
   private void performSerialUpdate(final AbstractOrderModel orderModel ,final PackagingInfoModel packagingInfoModel , final int numberOfRepetition ,
-      final Date upsDeliveryDate){
+      final Date upsDeliveryDate , final Date trackDate){
       orderModel.getConsignments().forEach(consignmentModel -> consignmentModel.getPackaginginfos().forEach(infoModel ->{
         if(packagingInfoModel.getPk().equals(infoModel.getPk())) {
           infoModel.getSerialProducts().forEach(blProductModel ->
-              updateSerialStatusBasedOnResponse(blProductModel , numberOfRepetition , packagingInfoModel , upsDeliveryDate));
+              updateSerialStatusBasedOnResponse(blProductModel , numberOfRepetition , packagingInfoModel , upsDeliveryDate , trackDate));
         }
       }));
   }
@@ -86,8 +97,8 @@ public class BlUpdateSerialService implements UpdateSerialService {
    * @param upsDeliveryDate ups delivery date from response
    */
   private void updateSerialStatusBasedOnResponse(final BlProductModel blProductModel, final int numberOfRepetition,
-      final PackagingInfoModel packagingInfoModel, final Date upsDeliveryDate){
-      updateSerialProduct(blProductModel , numberOfRepetition , packagingInfoModel , upsDeliveryDate);
+      final PackagingInfoModel packagingInfoModel, final Date upsDeliveryDate , final Date trackDate){
+      updateSerialProduct(blProductModel , numberOfRepetition , packagingInfoModel , upsDeliveryDate , trackDate);
   }
 
   /**
@@ -98,12 +109,12 @@ public class BlUpdateSerialService implements UpdateSerialService {
    * @param upsDeliveryDate ups delivery date from response
    */
   private void updateSerialProduct(final BlProductModel blProductModel, final int numberOfRepetition,
-      final PackagingInfoModel packagingInfoModel, final Date upsDeliveryDate) {
+      final PackagingInfoModel packagingInfoModel, final Date upsDeliveryDate , final Date trackDate) {
     if (blProductModel instanceof BlSerialProductModel) {
       final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
       if (Objects.isNull(numberOfRepetition) || numberOfRepetition < 3) {
         updateSerialStatus(blSerialProductModel, packagingInfoModel, numberOfRepetition,
-            upsDeliveryDate);
+            upsDeliveryDate , trackDate);
       } else if (numberOfRepetition == 3) {
         updateStolenSerialStatus(blSerialProductModel, packagingInfoModel);
       }
@@ -120,11 +131,14 @@ public class BlUpdateSerialService implements UpdateSerialService {
    * @param upsDeliveryDate ups delivery date from response
    */
   private void updateSerialStatus(final BlSerialProductModel blSerialProductModel,
-      final PackagingInfoModel packagingInfoModel, final int numberOfRepetition, final Date upsDeliveryDate)
+      final PackagingInfoModel packagingInfoModel, final int numberOfRepetition, final Date upsDeliveryDate , final Date trackDate)
   {
-    blSerialProductModel.setSerialStatus(SerialStatusEnum.LATE);
+    /*blSerialProductModel.setSerialStatus(SerialStatusEnum.LATE);
     BlUpdateStagedProductUtils
-        .changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),SerialStatusEnum.LATE);
+        .changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),SerialStatusEnum.LATE);*/
+    ConsignmentModel consignmentModel = packagingInfoModel.getConsignment();
+
+    updateStockBasedOnUPSScrapeResponse(blSerialProductModel , consignmentModel , packagingInfoModel , trackDate);
     packagingInfoModel.setNumberOfRepetitions(Objects.isNull(numberOfRepetition) ? 0 : numberOfRepetition + 1);
     packagingInfoModel.setPackageReturnedToWarehouse(Boolean.FALSE);
     packagingInfoModel.setIsScrapeScanCompleted(Boolean.TRUE);
@@ -167,6 +181,43 @@ public class BlUpdateSerialService implements UpdateSerialService {
     getModelService().save(blSerialProductModel);
     getModelService().refresh(blSerialProductModel);
 
+  }
+
+
+
+  public void updateStockBasedOnUPSScrapeResponse(final BlProductModel serialProduct,
+                                                  final ConsignmentModel consignmentModel, final PackagingInfoModel packagingInfoModel , final Date trackDate)
+  {
+
+    final AbstractOrderModel abstractOrderModel = consignmentModel.getOrder();
+    final Date optimizedShippingStartDate = consignmentModel.getOptimizedShippingEndDate();
+    Calendar optimizedShippingEndDate = Calendar.getInstance();
+    if(Objects.nonNull(packagingInfoModel.getReturningDate())){
+      optimizedShippingEndDate.setTime(packagingInfoModel.getReturningDate());
+    }
+    else if(Objects.nonNull(trackDate)){
+      optimizedShippingEndDate.setTime(trackDate);
+  }
+    else {
+      optimizedShippingEndDate.setTime(consignmentModel.getOptimizedShippingEndDate());
+      optimizedShippingEndDate.add(Calendar.DAY_OF_MONTH ,2);
+    }
+    final Collection<StockLevelModel> findSerialStockLevelForDate = getBlStockLevelDao()
+            .findSerialStockLevelForDate(serialProduct.getCode(), optimizedShippingStartDate, optimizedShippingEndDate.getTime());
+    if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
+    {
+      findSerialStockLevelForDate.forEach(stockLevel -> {
+        stockLevel.setHardAssigned(true);
+        stockLevel.setReservedStatus(true);
+        stockLevel.setOrder(abstractOrderModel.getCode());
+        ((BlSerialProductModel) serialProduct).setHardAssigned(true); // NOSONAR
+        getModelService().save(stockLevel);
+        getModelService().save(serialProduct);
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
+                stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct.getCode());
+      });
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct.getCode());
+    }
   }
 
   /**
@@ -217,5 +268,13 @@ public class BlUpdateSerialService implements UpdateSerialService {
 
   public void setOrderDao(BlOrderDao orderDao) {
     this.orderDao = orderDao;
+  }
+
+  public BlStockLevelDao getBlStockLevelDao() {
+    return blStockLevelDao;
+  }
+
+  public void setBlStockLevelDao(BlStockLevelDao blStockLevelDao) {
+    this.blStockLevelDao = blStockLevelDao;
   }
 }
