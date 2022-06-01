@@ -141,7 +141,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}",
 						totalPriceWithDamageWaiverCostAndOption);
 			}
-			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+			/* getDefaultBlExternalTaxesService().calculateExternalTaxes(order); */
 		}
 	}
 	/**
