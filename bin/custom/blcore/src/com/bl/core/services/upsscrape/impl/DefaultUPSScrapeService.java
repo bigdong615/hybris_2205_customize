@@ -59,7 +59,6 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
     final List<AbstractOrderModel> orderModelList = getOrderDao().getOrdersForUPSScrape();
     orderModelList.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel ->
         consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
-          packagingInfoModel.isIsScrapeScanCompleted();
           if(BooleanUtils.isFalse(packagingInfoModel.isIsScrapeScanCompleted())) {
             final String carrierCode = getCarrierType(packagingInfoModel);
             BlLogger.logMessage(LOG, Level.INFO, "Performing UPS Scrape job for carrier ", carrierCode);
