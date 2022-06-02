@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -261,22 +262,80 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"Sub part with code {} and quantity {} added to the products list on consignment entry.", subPartProduct.getCode(),
 					mapEntry.getValue());
-			if (mapEntry.getValue() == 1)
+			updateItemMap(consignmentEntry, itemsMap, mapEntry, subPartProduct, isBarcodedSubpart(subPartProduct));
+		});
+	}
+
+	/**
+	 * This method is used to update item map.
+	 * @param consignmentEntry
+	 * @param itemsMap
+	 * @param mapEntry
+	 * @param subPartProduct
+	 * @param isBarcodedSubpart
+	 */
+	private void updateItemMap(final ConsignmentEntryModel consignmentEntry, final Map<String, ItemStatusEnum> itemsMap,
+			final Entry<BlProductModel, Integer> mapEntry, final BlProductModel subPartProduct,
+			final boolean isBarcodedSubpart)
+	{
+		if (mapEntry.getValue() == 1)
+		{
+			addSubPartsOnItemMap(subPartProduct.getName(),
+					isBarcodedSubpart ? ItemStatusEnum.NOT_INCLUDED : ItemStatusEnum.INCLUDED, itemsMap, consignmentEntry,
+					subPartProduct);
+		}
+		else
+		{
+			for (int i = 1; i <= mapEntry.getValue(); i++)
 			{
-				itemsMap.put(subPartProduct.getName(), ItemStatusEnum.NOT_INCLUDED);
-				addSubPartToConsignmentEntry(consignmentEntry, subPartProduct);
+				addSubPartsOnItemMap(subPartProduct.getName() + BlCoreConstants.DOUBLE_HYPHEN + i,
+						isBarcodedSubpart ? ItemStatusEnum.NOT_INCLUDED : ItemStatusEnum.INCLUDED, itemsMap, consignmentEntry,
+						subPartProduct);
 			}
-			else
+		}
+	}
+
+	/**
+	 * This method is used to add subpart on item map
+	 * @param productName
+	 * @param enumStatus
+	 * @param itemsMap
+	 * @param consignmentEntry
+	 * @param subPartProduct
+	 */
+	private void addSubPartsOnItemMap(final String productName, final ItemStatusEnum enumStatus,
+			final Map<String, ItemStatusEnum> itemsMap, final ConsignmentEntryModel consignmentEntry,
+			final BlProductModel subPartProduct)
+	{
+		itemsMap.put(productName, enumStatus);
+		addSubPartToConsignmentEntry(consignmentEntry, subPartProduct);
+	}
+
+	/**
+	 * This method is used to check is barcoded subpart
+	 *
+	 * @param subPartProduct
+	 * @return boolean
+	 */
+	private boolean isBarcodedSubpart(final BlProductModel subPartProduct)
+	{
+		return getSessionService().executeInLocalView(new SessionExecutionBody()
+		{
+			@Override
+			public Object execute()
 			{
-				for (int i = 1; i <= mapEntry.getValue(); i++)
+				try
 				{
-					itemsMap.put(subPartProduct.getName() + BlCoreConstants.DOUBLE_HYPHEN + i, ItemStatusEnum.NOT_INCLUDED);
-					addSubPartToConsignmentEntry(consignmentEntry, subPartProduct);
+					getSearchRestrictionService().disableSearchRestrictions();
+					return CollectionUtils.isNotEmpty(subPartProduct.getSerialProducts());
+				}
+				finally
+				{
+					getSearchRestrictionService().enableSearchRestrictions();
 				}
 			}
 		});
 	}
-
 
 	/**
 	 * This method used to map subpart and its total count for particular serial.
