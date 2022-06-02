@@ -19,23 +19,23 @@
         <collectiontype code="ExtendOrderCopyList" elementtype="AbstractOrder" type="list"/>
 
         <collectiontype code="BlItemCharges" elementtype="BlItemsBillingCharge" autocreate="true" generate="true" type="list"/>
-        
+
         <collectiontype code="CatalogUnawareMediaList" elementtype="CatalogUnawareMedia" type="list"/>
 
         <collectiontype code="OrderGiftCardTransactions" elementtype="java.lang.String" type="list"/>
-        
+
         <collectiontype code="BlockInventoryList" elementtype="BlockInventory" type="list"/>
-        
+
         <collectiontype code="AssessmentNotes" elementtype="Notes" type="list"/>
-        
+
         <collectiontype code="DepositPaymentInfoList" elementtype="PaymentInfo" type="list"/>
-        
+
         <collectiontype code="DepositPaymentTransactions" elementtype="PaymentTransaction" type="list"/>
 
         <collectiontype code="InventoryCycleCountSkipDays" elementtype="java.util.Date" type="list"/>
 
         <collectiontype code="InventoryCycleCountProducts" elementtype="BlInventoryCycleCountDetails" type="list"/>
-        
+
         <collectiontype code="ModifiedOrderGCPaymentList" elementtype="GiftCard" type="list"/>
 
     </collectiontypes>
@@ -127,7 +127,7 @@
             <value code="UNKNOWN"/>
             <value code="WORK_STATION"/>
         </enumtype>
-        
+
         <enumtype generate="true" code="RentalGearType" autocreate="true" dynamic="true">
             <value code="VIDEO"/>
             <value code="PHOTO"/>
@@ -196,7 +196,7 @@
         <value code="FD"/>
         <value code="SHIPPING"/>
       </enumtype>
-      
+
       <!-- BL-766 End-->
 
       <enumtype generate="true" code="NotesEnum" autocreate="true" dynamic="true">
@@ -227,7 +227,7 @@
 
 
       <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
-      
+
       <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
       	<value code="OTHERS"/>
       </enumtype>
@@ -242,7 +242,7 @@
         <value code="PROCESSING"/>
         <value code="COMPLETED"/>
       </enumtype>
-     
+
       <enumtype code="OrderStatus" autocreate="false" generate="false">
             <value code="RECEIVED_IN_VERIFICATION"/>
             <value code="RECEIVED_MANUAL_REVIEW"/>
@@ -269,14 +269,14 @@
           <value code="RECEIVED_PICKED_UP" />
           <value code="PENDING" />
         </enumtype>
-      
-      
+
+
       <!-- BL-798 : Adding repair reason enum to set by Tech. Eng. Team Member -->
       <enumtype generate="true" code="RepairReasonsEnum" autocreate="true" dynamic="true">
       	<value code="NONE"/>
       	<value code="OTHERS"/>
       </enumtype>
-      
+
       <!-- Extend the ConsignmentStatus with values used during OMS Process -->
       <enumtype generate="true" code="ConsignmentStatus" autocreate="false" dynamic="true">
       	<value code="COMPLETED" />
@@ -295,66 +295,66 @@
         <value code="PARTIALLY_SHIPPED" />
         <value code="PICKED_UP" />
       </enumtype>
-      
+
       <enumtype code="PackagingInfoStatus" autocreate="true" generate="true" dynamic="true">
             <!-- PackagingInfoStatus for PackagingInfo details -->
             <value code="PARTIALLY_UNBOXED" />
             <value code="UNBOXED" />
         </enumtype>
-      
+
       <enumtype code="ItemTestingStatusEnum" autocreate="true" generate="true" dynamic="true">
       		<value code="NONE"/>
             <value code="TESTING_NEEDED" />
             <value code="TESTING_COMPLETE_ISSUE_CONFIRMED" />
             <value code="TESTING_COMPLETE_ISSUE_NOT_CONFIRMED" />
       </enumtype>
-      
+
       <enumtype code="RepairTypeEnum" autocreate="true" generate="true" dynamic="true">
       		<value code="NONE"/>
             <value code="IN_HOUSE_REPAIR" />
             <value code="VENDOR_REPAIR" />
             <value code="PARTS_NEEDED_REPAIR" />
       </enumtype>
-      
+
       <enumtype code="ItemBillingChargeTypeEnum" autocreate="true" generate="true" dynamic="true"/>
-      
+
       <enumtype generate="true" code="RepairTechClaimEnum" autocreate="true" dynamic="true">
       	<value code="TECH_ONE" />
       	<value code="TECH_TWO" />
       	<value code="TECH_THREE" />
       	<value code="SUPERVISOR" />
     </enumtype>
-	  
+
 	<enumtype generate="true" code="VendorsEnum" autocreate="true" dynamic="true">
         <value code="NONE" />
     </enumtype>
-	
+
 	<enumtype generate="true" code="PartsStatusEnum" autocreate="true" dynamic="true">
         <value code="NOT_STARTED" />
 		<value code="ORDERED" />
-		<value code="BACK_ORDERED" />		
+		<value code="BACK_ORDERED" />
     </enumtype>
-    
+
     <enumtype generate="true" code="RepairLogStatusEnum" autocreate="true" dynamic="true">
         <value code="OPEN" />
 		<value code="CLOSED" />
     </enumtype>
-    
+
     <enumtype generate="true" code="IssueFrequencyEnum" autocreate="true" dynamic="true">
         <value code="ALWAYS" />
         <value code="INTERMITTENT" />
-        <value code="ONCE_BUT_NEVER_AGAIN" />        
+        <value code="ONCE_BUT_NEVER_AGAIN" />
     </enumtype>
-    
+
     <enumtype generate="true" code="RepairBlameEnum" autocreate="true" dynamic="true">
         <value code="CUSTOMER" />
         <value code="INTERNAL_BL" />
         <value code="PARTS_BREAKDOWN" />
         <value code="SHIPPING" />
         <value code="VENDOR" />
-        <value code="UNKNOWN" />      
+        <value code="UNKNOWN" />
     </enumtype>
-    
+
     <enumtype generate="true" code="ReplacementRequestStatus" autocreate="true" dynamic="true">
     	<value code="PROCESSING"/>
         <value code="COMPLETED"/>
@@ -366,7 +366,7 @@
         <value code="WAIVED" />
         <value code="INSTALLMENT_PLAN" />
     </enumtype>
-    
+
     <enumtype generate="true" code="TestingGearNeededStatusEnum" autocreate="true" dynamic="true">
         <value code="OPEN" />
         <value code="RESOLVED" />
@@ -388,24 +388,24 @@
         <value code="EXTRA_DOCUMENT4"/>
         <value code="EXTRA_DOCUMENT5"/>
       </enumtype>
-      
+
       <enumtype generate="true" code="BlackoutDateShippingMethodEnum" autocreate="true" dynamic="true">
       	<value code="ALL" />
       </enumtype>
-      
+
       <enumtype generate="true" code="BlackoutDateTypeEnum" autocreate="true" dynamic="true">
       	<value code="RENTAL_START_DATE" />
         <value code="RENTAL_END_DATE" />
         <value code="HOLIDAY" />
       </enumtype>
-      
+
       <enumtype generate="true" code="GearGaurdEnum" autocreate="true" dynamic="true">
         <value code="GEAR_GAURD" />
 		<value code="GEAR_GAURD_PRO" />
 		<value code="NONE" />
     </enumtype>
-	
-	
+
+
 	<enumtype generate="true" code="CustomerResponsibleEnum" autocreate="true" dynamic="true">
         <value code="YES" />
 		<value code="NO" />
@@ -469,7 +469,7 @@
         <value code="DENY"/>
         <value code="NA"/>
       </enumtype>
-      
+
       <enumtype generate="true" code="PaymentTransactionTypeEnum" autocreate="true" dynamic="true">
             <value code="EXTEND_ORDER"/>
             <value code="MODIFY_PAYMENT"/>
@@ -695,23 +695,23 @@
 			<itemtype code="CustomPromoMessageComponent" extends="CMSParagraphComponent" autocreate="true" generate="true" >
 				<description>CMS Paragraph Component that contains the Promotion message section on header</description>
 			</itemtype>
-		
-			<itemtype code="CustomSiteLogoComponent" extends="SimpleBannerComponent" autocreate="true" generate="true" >				
+
+			<itemtype code="CustomSiteLogoComponent" extends="SimpleBannerComponent" autocreate="true" generate="true" >
 				<description>Custom Simple Banner Component to display SiteLogo on header</description>
 			</itemtype>
-		
+
 			<itemtype code="CustomBLParagraphComponent" extends="CMSParagraphComponent" autocreate="true" generate="true" >
 				<description>Custom CMS Paragraph Component type that contains additional attribute to display required information.</description>
 				<attributes>
 					<attribute qualifier="mode" type="localized:java.lang.String" >
 						<persistence type="property"/>
 						<modifiers read="true" write="true" optional="true" />
-						<description>Localized value for storing content data</description>						
+						<description>Localized value for storing content data</description>
 					</attribute>
 					<attribute qualifier="title" type="localized:java.lang.String" >
 						<persistence type="property"/>
 						<modifiers read="true" write="true" optional="true" />
-						<description>Localized title of the paragraph. </description>						
+						<description>Localized title of the paragraph. </description>
 					</attribute>
           <attribute qualifier="htmlDescription" type="localized:java.lang.String" >
             <modifiers read="true" write="true" optional="true" search="true"/>
@@ -733,26 +733,26 @@
             </custom-properties>
             <description>It is message to show html content</description>
           </attribute>
-				</attributes>				
+				</attributes>
 			</itemtype>
-			
+
 			<itemtype code="CustomFeaturedStoriesComponent" extends="SimpleBannerComponent" autocreate="true" generate="true" >
 				<description>Custom Simple Banner Component type that contains additional attribute to display Featured Stories.</description>
 				<attributes>
 					<attribute qualifier="storyCategory" type="localized:java.lang.String">
 						<persistence type="property"/>
 						<modifiers read="true" write="true" optional="true" />
-						<description>Localized Featured stories Category on component </description>						
+						<description>Localized Featured stories Category on component </description>
 					</attribute>
 					<attribute qualifier="storyTitle" type="localized:java.lang.String">
 						<persistence type="property"/>
 						<modifiers read="true" write="true" optional="true" />
-						<description>Localized Featured Stories Title on component</description>						
+						<description>Localized Featured Stories Title on component</description>
 					</attribute>
 					<attribute qualifier="storyDate" type="localized:java.lang.String">
 						<persistence type="property"/>
 						<modifiers read="true" write="true" optional="true" />
-						<description>Localized Featured Stories Date on component </description>						
+						<description>Localized Featured Stories Date on component </description>
 					</attribute>
 				</attributes>
 			</itemtype>
@@ -773,23 +773,15 @@
           <defaultvalue>Boolean.FALSE</defaultvalue>
           <description>Defines Flag for Non-Refundable Deposit Amount</description>
         </attribute>
-        <attribute autocreate="true" qualifier="orderID" type="java.lang.String" generate="true">
-		  <persistence type="property" />
-		  <modifiers read="true" write="true" search="true" optional="true" unique="true" />
-		  <custom-properties>
-			<property name="hmcIndexField">
-			<value>"thefield"</value>
-		  </property>
-		  </custom-properties>
-	   </attribute>
+
       </attributes>
       </itemtype>
 
-			<itemtype code="CustomNavigationPromoComponent" extends="SimpleBannerComponent" autocreate="true" generate="true" >				
+			<itemtype code="CustomNavigationPromoComponent" extends="SimpleBannerComponent" autocreate="true" generate="true" >
 				<description>Custom Simple Banner Component type that contains additional attribute to display Promotion Image under category navigation.</description>
 			</itemtype>
-			
-			<itemtype code="RotatingHomePageImagesComponent" extends="AbstractBannerComponent" autocreate="true" generate="true" 		 
+
+			<itemtype code="RotatingHomePageImagesComponent" extends="AbstractBannerComponent" autocreate="true" generate="true"
 				jaloclass="com.bl.core.cms.components.RotatingHomePageImagesComponent">
 				<description>Custom Banner Component type that contains additional attribute to display Hero Banner Carousel on HomePage.</description>
                 <attributes>
@@ -865,13 +857,13 @@
                     </attribute>
                 </attributes>
             </itemtype>
-            
-            <itemtype code="CustomBorrowFromUsComponent" extends="AbstractBannerComponent" autocreate="true" generate="true" 
+
+            <itemtype code="CustomBorrowFromUsComponent" extends="AbstractBannerComponent" autocreate="true" generate="true"
 				jaloclass="com.bl.core.jalo.CustomBorrowFromUsComponent">
 				<description>Custom Banner Component type to display Borrow From Us Section on HomePage.</description>
 			</itemtype>
-            
-            <itemtype code="CustomFooterSubscriptionComponent" extends="SimpleCMSComponent" autocreate="true" generate="true" 
+
+            <itemtype code="CustomFooterSubscriptionComponent" extends="SimpleCMSComponent" autocreate="true" generate="true"
             	jaloclass="com.bl.core.cms.components.CustomFooterSubscriptionComponent">
 				<description>Custom Simple CMS Component type that contains additional attribute to display Footer Subscription on footer</description>
 				<attributes>
@@ -887,8 +879,8 @@
 					</attribute>
 				</attributes>
 			</itemtype>
-			
-			<itemtype code="CustomFooterCopyRightComponent" extends="CMSParagraphComponent" autocreate="true" generate="true" 
+
+			<itemtype code="CustomFooterCopyRightComponent" extends="CMSParagraphComponent" autocreate="true" generate="true"
 				jaloclass="com.bl.core.cms.components.CustomFooterCopyRightComponent">
 				<description>Custom Paragraph Component type that contains additional attribute for footer copyright section</description>
 				<attributes>
@@ -904,8 +896,8 @@
 					</attribute>
 				</attributes>
 			</itemtype>
-			
-			<itemtype code="CustomWhyBorrowLensesBannerComponent" extends="RotatingImagesComponent" autocreate="true" generate="true">			
+
+			<itemtype code="CustomWhyBorrowLensesBannerComponent" extends="RotatingImagesComponent" autocreate="true" generate="true">
 				<description>Custom Banner Component type that contains additional attribute to display Why Borrow Lenses section.</description>
 				<attributes>
 					<attribute qualifier="title" type="localized:java.lang.String">
@@ -930,7 +922,7 @@
 					</attribute>
 				</attributes>
 			</itemtype>
-			
+
 			<itemtype code="NavigationComponent" autocreate="false" generate="false">
                 <description>Extending from core with additional attributes</description>
                 <attributes>
@@ -941,12 +933,12 @@
 					</attribute>
 				</attributes>
             </itemtype>
-			
+
 			<itemtype code="PickUpOrDeliveryNavigationComponent" extends="NavigationComponent" autocreate="true" generate="true"
 				jaloclass="de.hybris.platform.acceleratorcms.jalo.components.PickUpOrDeliveryNavigationComponent">
 				<description>Custom Navigation component for PickUp Or Delivery navigation node on header.</description>
 			</itemtype>
-			
+
 			<itemtype code="SupportNavigationComponent" extends="NavigationComponent" autocreate="true" generate="true"
 				jaloclass="de.hybris.platform.acceleratorcms.jalo.components.SupportNavigationComponent">
 				<description>Custom Navigation component for Support navigation node on header.</description>
@@ -2273,16 +2265,22 @@
 			      <attributes>
 			        <attribute qualifier="subpartProduct" type="BlProduct">
 			          <persistence type="property"/>
-			          <modifiers read="true" write="true" optional="false"/>
+			          <modifiers unique="true" read="true" write="true" optional="false"/>
 			          <description>SubPart BlProduct</description>
 			        </attribute>
 			        <attribute qualifier="quantity" type="java.lang.Integer">
 			          <persistence type="property"/>
-			          <modifiers read="true" write="true" optional="false"/>
+			          <modifiers unique="true" read="true" write="true" optional="false"/>
 			          <description>Quantity associated to Subpart</description>
 			          <defaultvalue>Integer.valueOf(1)</defaultvalue>
 			        </attribute>
 			      </attributes>
+			      <indexes>
+			        <index name="BlSubpartsIdx" unique="true">
+			            <key attribute="subpartProduct" />
+			            <key attribute="quantity" />
+			        </index>
+    			  </indexes>
    		</itemtype>
         </typegroup>
 
@@ -2381,7 +2379,7 @@
              </attributes>
            </itemtype>
          </typegroup>
-      <typegroup name="Cart">	
+      <typegroup name="Cart">
         <itemtype code="AbstractOrderEntry" autocreate="false" generate="false">
           <description>Extending the AbstractOrderEntry with additional attributes.</description>
           <attributes>
@@ -2763,7 +2761,7 @@
                         <description>Total cost of selected Damage Waiver</description>
                         <persistence type="property"/>
                         <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
-                    </attribute>                                        
+                    </attribute>
                     <attribute qualifier="pickUpByMe" type="boolean">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" optional="false" />
@@ -2998,7 +2996,7 @@
                     <modifiers read="true" write="true" optional="true" />
                     <description>Start date of a for extend order</description>
                   </attribute>
-                  
+
                   <attribute qualifier="unPaidBillPresent" type="boolean">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
@@ -3043,12 +3041,12 @@
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
                     <description>List of Payment Info </description>
-                </attribute> 
+                </attribute>
                 <attribute qualifier="depositPaymentTransactions" type="DepositPaymentTransactions">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
                     <description>List of Payment Transactions </description>
-                </attribute>                 
+                </attribute>
                 <attribute qualifier="depositAmountTotal" type="java.lang.Double">
                         <modifiers optional="true" read="true" write="true"/>
                         <description>Total deposit amount of order</description>
@@ -3184,7 +3182,7 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
                         <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
-                    </attribute> 
+                    </attribute>
                     <attribute qualifier="runTot_totalPrice" type="java.lang.Double">
 	                    <description>Total of total price amount for all the previous extended orders including original order</description>
 	                    <persistence type="property">
@@ -3217,11 +3215,29 @@
 	                    <description>Total of total number of days extended for all the previous extended orders including original order</description>
 	                </attribute>
                 	<!-- BL-1678 End -->
+
+
+                	 <attribute autocreate="true" qualifier="orderID" type="java.lang.String" generate="true">
+            		       <persistence type="property" />
+            		       <modifiers read="true" write="true" search="true" optional="true" unique="true" />
+            		           <custom-properties>
+            			              <property name="hmcIndexField">
+            			                   <value>"thefield"</value>
+            		                </property>
+            		           </custom-properties>
+            	    </attribute>
+
                 	<attribute qualifier="isSAPOrder" type="java.lang.Boolean">
                       <persistence type="property" />
                       <modifiers optional="true" read="true" write="true" />
                       <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                       <description>flag to identify whether the order has been placed through storefront</description>
+                    </attribute>
+                    <attribute qualifier="isAuthorizationAttempted" type="boolean">
+                      <persistence type="property" />
+                      <modifiers optional="true" read="true" write="true" />
+                      <defaultvalue>Boolean.FALSE</defaultvalue>
+                      <description>flag to identify whether the authorization has already been attempted or not on the order</description>
                     </attribute>
             </attributes>
             </itemtype>
@@ -3246,7 +3262,7 @@
               </attribute>
             </attributes>
           </itemtype>
-          
+
           <itemtype code="BlReturnEntry" extends="ReturnEntry" jaloclass="com.bl.core.jalo.BlReturnEntry" autocreate="true" generate="true" />
 
 
@@ -3668,7 +3684,7 @@
       <!--  BL-827 Inventory team clean complete / in-complete orders queue  end -->
 
 		</typegroup>
-	
+
         <typegroup name="BaseStore">
             <itemtype code="BaseStore" autocreate="false" generate="false">
                 <description>Extending BaseStore type with additional attributes.</description>
@@ -3714,8 +3730,8 @@
                     <persistence type="property"/>
                     <modifiers optional="true" read="true" write="true"/>
                     <defaultvalue>Integer.valueOf(0)</defaultvalue>
-                    <description>To decide the minimum quantity needed to have for a SKU, so that any associated 
-                    	serial product can be part of buffer inventory 
+                    <description>To decide the minimum quantity needed to have for a SKU, so that any associated
+                    	serial product can be part of buffer inventory
                     </description>
                   </attribute>
                   <attribute qualifier="bufferInventoryPercentage" autocreate="true"
@@ -3986,17 +4002,17 @@
 					<description>Shipment identification number</description>
 					<persistence type="property" />
 				</attribute>
-				
+
 				<attribute qualifier="outBoundTrackingNumber" type="java.lang.String">
 					<description>Shipment Package tracking number</description>
 					<persistence type="property" />
 				</attribute>
-				
+
 				<attribute qualifier="inBoundTrackingNumber" type="java.lang.String">
 					<description>Shipment Package tracking number</description>
 					<persistence type="property" />
 				</attribute>
-				
+
 				<attribute qualifier="graphicImage" type="java.lang.String">
 					<description>Graphic Image</description>
 					<persistence type="property">
@@ -4017,7 +4033,7 @@
 						</columntype>
 					</persistence>
 				</attribute>
-				
+
 				<attribute qualifier="hTMLImage" type="java.lang.String">
 					<description>Html image</description>
 					<persistence type="property">
@@ -4036,17 +4052,17 @@
 						<columntype>
 							<value>HYBRIS.LONG_STRING</value>
 						</columntype>
-					</persistence>	
+					</persistence>
 				</attribute>
 				 <attribute type="serialProducts" qualifier="serialProducts">
 				<modifiers read="true" write="true"/>
 				<persistence type="property"/>
-			  </attribute>		
+			  </attribute>
 			  <attribute type="PackagingInfoStatus" qualifier="packagingInfoStatus">
                         <modifiers read="true" write="true" unique="false" optional="true" />
                         <persistence type="property" />
                         <description>It holds information about Package status to track package journey</description>
-                    </attribute>										  
+                    </attribute>
           <attribute qualifier="latePackageDate" type="java.util.Date">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
@@ -4144,7 +4160,7 @@
           </attributes>
         </itemtype>
       </typegroup>
-      
+
       <typegroup name="Notes">
         <itemtype code="Notes" autocreate="true" generate="true" >
           <description>Table to contain all type of order notes.</description>
@@ -4241,7 +4257,7 @@
 			</attributes>
 		</itemtype>
       </typegroup>
-      
+
       <typegroup name="BlItemsBillingCharge">
       	<itemtype code="BlItemsBillingCharge" generate="true" autocreate="true">
 				<deployment table="blItemsBillingCharge" typecode="12231"/>
@@ -4310,7 +4326,7 @@
 			</attributes>
 		</itemtype>
       </typegroup>
-      
+
       <typegroup name="RepairLog">
 	<itemtype code="BlRepairLog" autocreate="true" generate="true">
 		<description>BlRepairLog</description>
@@ -4571,7 +4587,7 @@
 		</attributes>
 	</itemtype>
 </typegroup>
-		
+
 		<!-- BL-957 Testing Gear Needed -->
 		<typegroup name="TestingGear">
 			<itemtype code="BlTestingGearNeeded" autocreate="true" generate="true">
@@ -4592,7 +4608,7 @@
 				</attributes>
 			</itemtype>
 		</typegroup>
-		
+
 		<!-- BL-1087 BL-1088 BL-1089 -->
         <typegroup name="BlackoutDate">
             <itemtype code="BlBlackoutDate" autocreate="true" generate="true">
@@ -4618,7 +4634,7 @@
                 </attributes>
             </itemtype>
         </typegroup>
-      
+
 <typegroup name="BlReportDefinition">
 <itemtype code="PulledOrdersQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
 	<custom-properties>
@@ -6155,7 +6171,7 @@
     </attributes>
   </itemtype>
   <!--  BL-827, BL-828, BL-829 invnetory user clean complete / in-complete order queue end-->
-  
+
   <itemtype code="RemainingRepairItems" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
 	<custom-properties>
 		<property name="query">
@@ -7480,7 +7496,7 @@ new Integer(0)
                 </attributes>
             </itemtype>
         </typegroup>
-        
+
         <typegroup name="Payment">
             <itemtype code="PaymentTransaction" autocreate="false" generate="false">
                 <description>Extending PaymentTransaction type with additional attributes.</description>

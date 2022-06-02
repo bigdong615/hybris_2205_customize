@@ -401,7 +401,7 @@
              //BL-520 - disable dates after one year from today's date
                  let oneYearFromNow = new Date();
                  let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-			     const disallowedDates = [['2001-01-01', today], '2022-05-20', '2022-05-23', '2022-05-24'];
+			     const disallowedDates = [['2001-01-01', today], '2022-05-25', '2022-05-26', '2022-05-27', '2022-05-30', '2022-05-31', '2022-06-01'];
             const picker = new Litepicker({
                 element: document.getElementById('litepicker'),
                 //plugins: ['mobilefriendly'],
@@ -1275,7 +1275,7 @@
                         //BL-520 - disable dates after one year from today's date
                            let oneYearFromNow = new Date();
                            let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-				 const disallowedDates = [['2001-01-01', today], '2022-05-20', '2022-05-23', '2022-05-24'];
+				 const disallowedDates = [['2001-01-01', today], '2022-05-25', '2022-05-26', '2022-05-27', '2022-05-30', '2022-05-31', '2022-06-01'];
                         const picker = new Litepicker({
                             element: document.getElementById('litepicker'),
                             plugins: ['mobilefriendly'],
@@ -1479,7 +1479,7 @@
                         //BL-520 - disable dates after one year from today's date
                            let oneYearFromNow = new Date();
                            let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-					       const disallowedDates = [['2001-01-01', today], '2022-05-20', '2022-05-23', '2022-05-24'];
+					       const disallowedDates = [['2001-01-01', today], '2022-05-25', '2022-05-26', '2022-05-27', '2022-05-30', '2022-05-31', '2022-06-01'];
                            </script>
                            </c:if>
                            <c:if test="${enableDatePicker == true and cmsPage.uid eq 'multiStepCheckoutSummaryPage' and fn:containsIgnoreCase(currentPage, 'Review') == false}">
@@ -1747,7 +1747,7 @@
                  // BL-520 - disable dates after one year from today's date
                     let oneYearFromNow = new Date();
                     let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-					const disallowedDates = [['2001-01-01', today], '2022-05-20', '2022-05-23', '2022-05-24'];
+					const disallowedDates = [['2001-01-01', today], '2022-05-25', '2022-05-26', '2022-05-27', '2022-05-30', '2022-05-31', '2022-06-01'];
                         
                  // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
                     const summarypicker = new Litepicker({
@@ -1850,7 +1850,7 @@
            var orderCode = $("#orderCode").val(); // To Get Order Code
 
            startDate.setDate(startDate.getDate() + 89); // To add max days from existing order startDate
-		  const disallowedDatesForExendOrder = [['2001-01-01', today], '2022-05-20', '2022-05-23', '2022-05-24'];
+		  const disallowedDatesForExendOrder = [['2001-01-01', endDate], '2022-05-25', '2022-05-26', '2022-05-27', '2022-05-30', '2022-05-31', '2022-06-01'];
                                        const extendRentalDatePicker = new Litepicker({
                                       element: document.getElementById('rental-litepicker'),
                                   //    plugins: ['mobilefriendly'],

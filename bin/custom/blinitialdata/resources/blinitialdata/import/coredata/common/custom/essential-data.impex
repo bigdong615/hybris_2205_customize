@@ -186,7 +186,7 @@ INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 ;blAutomatedStockCreationCronJob; 0 0 0 * * ?
-;blAuthorizePaymentCronJob; 0 0 0/3 1/1 * ?
+;blAuthorizePaymentCronJob; 0 0 0 * * ?
 ;blBufferInventoryCronJob; 0 0 0/6 1/1 * ?
 ;blUPSScrapeCronJob; 0 0 0 * * ?
 ;blHighDemandConstrainedProductCronJob; 0 0 0 ? * 4/7 *
@@ -194,7 +194,7 @@ INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 ;blOrderBillFeedJob; 0 0 0 * * ?
 ;blReshufflerCronJob; 0 0 0 * * ?
 ;blUsedGearCartAbandonmentCronJob; 0 0/5 * * * ?
-;blVoidAuthTransactionCronJob; 0 0 0/4 1/1 * ?
+;blVoidAuthTransactionCronJob; 0 0 0 * * ?
 
 INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
                                     ; VIDEO                                   ; 28               
