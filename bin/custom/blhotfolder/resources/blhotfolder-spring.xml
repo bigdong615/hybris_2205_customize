@@ -31,6 +31,8 @@
       <import resource="classpath:/blhotfolder/integration/bl-product-video-media-hotfolder-spring.xml"/>
       <import resource="classpath:/blhotfolder/integration/bl-product-video-hotfolder-spring.xml"/>
       <import resource="classpath:/blhotfolder/integration/bl-repair-log-vendor-hotfolder-spring.xml"/>
+      <import resource="classpath:/blhotfolder/integration/bl-repair-log-parts-needed-hotfolder-spring.xml"/>
+      <import resource="classpath:/blhotfolder/integration/bl-repair-log-inhouse-sources-hotfolder-spring.xml"/>
  	
 	<import resource="classpath:/blhotfolder/integration/bl-verificationdocumentmedia-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-product-recommendation-hotfolder-spring.xml"/>
