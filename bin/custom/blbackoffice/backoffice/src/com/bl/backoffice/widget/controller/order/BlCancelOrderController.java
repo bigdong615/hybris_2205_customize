@@ -1,26 +1,29 @@
 package com.bl.backoffice.widget.controller.order;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.enums.BlCancelReason;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
-import com.bl.core.jalo.BlProduct;
+import com.bl.core.model.BlOrderCancellationHistoryModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
-import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.populators.BlCancelOrderPopulator;
 import com.bl.logging.BlLogger;
+import com.hybris.backoffice.i18n.BackofficeLocaleService;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
+import de.hybris.platform.basecommerce.enums.CancelReason;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -28,6 +31,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.ListModelArray;
 import org.zkoss.zul.Messagebox;
 
 import javax.annotation.Resource;
@@ -40,6 +47,10 @@ public class BlCancelOrderController extends DefaultWidgetController {
     @Resource(name = "orderDao")
     private BlOrderDao orderDao;
 
+    public void setCockpitLocaleService(BackofficeLocaleService cockpitLocaleService) {
+        this.cockpitLocaleService = cockpitLocaleService;
+    }
+
     @Resource(name = "modelService")
     private ModelService modelService;
 
@@ -50,33 +61,40 @@ public class BlCancelOrderController extends DefaultWidgetController {
     private BlCancelOrderPopulator blOrderCancelPopulator;
 
     private OrderModel orderModel;
+    private final List<String> cancelReasons = new ArrayList<>();
 
     @Resource(name = "blEspEventService")
     private DefaultBlESPEventService blEspEventService;
 
 
+    @WireVariable
+    private transient EnumerationService enumerationService;
+
+    @Wire
+    private Combobox CancelReasons;
+
+    @WireVariable
+    private transient BackofficeLocaleService cockpitLocaleService;
 
     /**
      * Init cancellation order form.
-     * @param inputObject the input object
+     * @param orderModel the input object
      */
     @SocketEvent(socketId = BlCustomCancelRefundConstants.INPUT_OBJECT)
     public void initCancellationOrderForm(final OrderModel orderModel) {
-     setOrderModel(orderModel);
-     if(StringUtils.equalsIgnoreCase(orderModel.getStatus().getCode() , OrderStatus.SHIPPED.getCode())) {
-         this.getWidgetInstanceManager()
-                 .setTitle("Order cannot be cancelled as it is already Shipped");
-         Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_MSG),
-                 this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_TITLE) + org.apache.commons.lang3.StringUtils.SPACE
-                         + this.getOrderModel().getCode(), new Messagebox.Button[]{Messagebox.Button.NO, Messagebox.Button.YES},
-                 BlCustomCancelRefundConstants.OMS_WIDGET_CANCELORDER_CONFIRM_ICON, null);
-     }
+        setOrderModel(orderModel);
+        this.getEnumerationService().getEnumerationValues(BlCancelReason.class).forEach(reason ->
+                this.cancelReasons.add(this.getEnumerationService().getEnumerationName(reason, this.getLocale())));
+        this.CancelReasons.setModel(new ListModelArray<>(this.cancelReasons));
+
         this.getWidgetInstanceManager()
-                .setTitle("Do you want to cancel this order" + " : " + orderModel.getCode());
+                .setTitle(this.getWidgetInstanceManager().getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_TITLE)+ org.apache.commons.lang3.StringUtils.SPACE
+                        + orderModel.getCode());
+
     }
 
     /**
-     * This method is used to close the cancel and refund Popup
+     * This method is used to close the cancel Popup
      */
     @ViewEvent(componentID = "closePopup", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
     public void cancelPopup()
@@ -89,16 +107,26 @@ public class BlCancelOrderController extends DefaultWidgetController {
      */
     @ViewEvent(componentID = BlCustomCancelRefundConstants.CONFIRM_CANCELLATION, eventName = BlCustomCancelRefundConstants.ON_CLICK)
     public void confirmCancellation() {
-        final AbstractOrderModel order = this.getOrderModel();
-        if(null != order) {
-            if(CollectionUtils.isNotEmpty(order.getConsignments())) {
-                updateStockForCancelledOrder(order.getConsignments() , order);
-                this.sendOutput(OUT_CONFIRM, "");
+        if(Boolean.FALSE.equals(validateOrderCancelReason())) {
+            final AbstractOrderModel order = this.getOrderModel();
+            if (null != order) {
+                if (CollectionUtils.isNotEmpty(order.getConsignments())) {
+                    updateStockForCancelledOrder(order.getConsignments(), order);
+                    this.sendOutput(OUT_CONFIRM, "");
+                }
             }
         }
     }
 
 
+
+    private boolean validateOrderCancelReason() {
+        if(this.CancelReasons.getSelectedIndex() == -BlInventoryScanLoggingConstants.ONE) {
+            Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON), this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON_HEADER), Messagebox.OK, Messagebox.ERROR);
+            return Boolean.TRUE;
+        }
+       return Boolean.FALSE;
+    }
 
     private void updateStockForCancelledOrder(final Set<ConsignmentModel> consignments, final AbstractOrderModel abstractOrderModel)
     {
@@ -115,14 +143,15 @@ public class BlCancelOrderController extends DefaultWidgetController {
                             } ));
         }
 
-        if(CollectionUtils.isEmpty(serialProductCodes)){
+        if(CollectionUtils.isEmpty(serialProductCodes)) {
             abstractOrderModel.getEntries().forEach(abstractOrderEntryModel -> {
-               OrderEntryData orderEntryData =  new OrderEntryData();
-               orderEntryData.setCancellableQty(abstractOrderEntryModel.getQuantity());
+                OrderEntryData orderEntryData = new OrderEntryData();
+                orderEntryData.setCancellableQty(abstractOrderEntryModel.getQuantity());
                 blOrderCancelPopulator.populate(orderEntryData, (OrderEntryModel) abstractOrderEntryModel);
                 modelService.save(abstractOrderEntryModel);
                 modelService.refresh(abstractOrderEntryModel);
             });
+        }
 
             abstractOrderModel.setStatus(OrderStatus.CANCELLED);
             BlLogger.logFormattedMessage(LOG , Level.INFO , "Order has been Cancelled {} " , abstractOrderModel.getCode());
@@ -133,6 +162,9 @@ public class BlCancelOrderController extends DefaultWidgetController {
                 modelService.save(consignmentModel);
                 modelService.refresh(consignmentModel);
             });
+
+            saveOrderCancellationHistoryLog(abstractOrderModel);
+
             try {
                 blEspEventService.sendOrderCanceledEvent((OrderModel) abstractOrderModel);
             }catch(final Exception e)
@@ -141,6 +173,23 @@ public class BlCancelOrderController extends DefaultWidgetController {
             }
 
         }
+
+
+
+    void saveOrderCancellationHistoryLog(AbstractOrderModel orderModel)
+    {
+        final BlOrderCancellationHistoryModel blOrderCancellationHistoryModel = modelService.create(BlOrderCancellationHistoryModel.class);
+        blOrderCancellationHistoryModel.setCancelReason(this.CancelReasons.getValue());
+        blOrderCancellationHistoryModel.setOrderNumber(this.getOrderModel().getCode());
+        blOrderCancellationHistoryModel.setTimeStamp(new Date());
+        modelService.save(blOrderCancellationHistoryModel);
+        modelService.refresh(blOrderCancellationHistoryModel);
+
+        orderModel.setOrderCancellationHistoryLog(blOrderCancellationHistoryModel);
+        modelService.save(orderModel);
+        modelService.refresh(orderModel);
+
+
     }
 
 
@@ -179,4 +228,21 @@ public class BlCancelOrderController extends DefaultWidgetController {
     public void setOrderModel(OrderModel orderModel) {
         this.orderModel = orderModel;
     }
+
+    public EnumerationService getEnumerationService() {
+        return enumerationService;
+    }
+
+    public void setEnumerationService(EnumerationService enumerationService) {
+        this.enumerationService = enumerationService;
+    }
+
+    private Locale getLocale() {
+        return this.getCockpitLocaleService().getCurrentLocale();
+    }
+
+    private BackofficeLocaleService getCockpitLocaleService() {
+        return this.cockpitLocaleService;
+    }
+
 }

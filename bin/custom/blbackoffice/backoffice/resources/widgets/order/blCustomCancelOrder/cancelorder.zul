@@ -15,14 +15,38 @@
         sclass="oms-widget-cancelorder-configuration" xmlns:h="http://www.w3.org/1999/xhtml"
         id="cancelorderview" height="100%" width="100%">
 
-    <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer">
+
+<hlayout width="50%" sclass="oms-widget-cancelorder-list">
+<div sclass="oms-widget-cancelorder-list-container">
+
+<grid style="margin-left:50px;margin-top:10px">
+     <rows>
+     <row>
+     <label value="${labels.customersupportbackoffice.custom.cancelorder.sure.cancel}" />
+
+     </row>
+         <row>
+
+          <label value="${labels.customersupportbackoffice.cancelorder.cancellationreason}" />
+
+          <combobox id="CancelReasons" placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}"/>
+
+
+</row>
+</rows>
+</grid>
+</div>
+    </hlayout>
+
+
+ <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer">
      <button id="closePopup"
 				label="${labels.customersupportbackoffice.custom.cancelorder.button.cancel}"
 				sclass="oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-revert-button" />
         <button id="confirmcancellation" label="${labels.customersupportbackoffice.custom.cancelorder.button.confirm}"
                 sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button" />
-    </div>
 
+</div>
     <html><![CDATA[
 		<script type="text/javascript">
 

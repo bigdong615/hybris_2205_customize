@@ -1918,8 +1918,9 @@
 		  class="com.bl.core.order.strategy.BlOrderCancelStateMappingStrategy" parent="warehousingOrderCancelStateMappingStrategy">
 	</bean>
 
-    <bean id="blOrderEntryCancelledQuantityHandler"
-          class="com.bl.core.model.handler.BlOrderEntryCancelledQuantityHandler" parent="orderEntryCancelledQuantityHandler">
+    <alias name="blOrderEntryCancelledQuantityHandler" alias="orderEntryCancelledQuantityHandler"/>
+	<bean id="blOrderEntryCancelledQuantityHandler" class="com.bl.core.model.handler.BlOrderEntryCancelledQuantityHandler">
+
     </bean>
 	
 </beans>

@@ -32,6 +32,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String ON_CUSTOM_CHANGE = "onCustomChange";
     public static final String UNDO_CANCELLATION = "undocancellation";
     public static final String CONFIRM_CANCELLATION = "confirmcancellation";
+
     public static final String ON_LATER_CUSTOM_CHANGE = "onLaterCustomChange";
 
     public static final String CANCELLING_THE_ORDER_FOR_CODE = "Cancelling the order for code : {}";
@@ -43,7 +44,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String CANCELORDER_CONFIRM_TITLE = "customersupportbackoffice.cancelorder.confirm.title";
 
     public static final String CANCELORDER_CONFIRM_ERROR = "customersupportbackoffice.cancelorder.confirm.error";
-
+    public static final String FAILED_TO_CANCEL_ORDER_FOR_SHIPPEDORDER_ERROR = "customersupportbackoffice.cancelorder.shippedorder.error";
     public static final String CANCEL_CONFIRM_MISSING_SELECT_LINE = "customersupportbackoffice.cancelorder.missing.selectedLine";
     public static final String CANCEL_CONFIRM_MISSING_SELECT_LINE_SELECTION = "customersupportbackoffice.cancelorder.missing.selectedLine.header";
     public static final String CANCELORDER_MISSING_QUANTITY_HEADER = "customersupportbackoffice.cancelorder.missing.quantity.header";
@@ -64,6 +65,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG = "Failed to cancel order, please try again later";
     public static final String AND_CAPTURED_PAYMENT_WITH_REMAINING_AMOUNT = " and authorize payment with remaining amount for order: {}";
     public static final String SUCCESS_CANCEL_REFUND = "Successfully cancelled and initiated refund";
+
     public static final String FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_AUTHORIZATION = "Failed to cancel order as error occurred during authorization for order: {}";
     public static final String FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_CANCELLATION = "Failed to cancel order as error occurred during cancellation for order: {}";
     public static final String FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_AUTHORIZATION_MSG = "Failed to cancel order as error occurred during authorization";
@@ -89,6 +91,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String TOT_REFUND_AMT = "Total refund amount: {} for order: {}";
     public static final String SUCCESS_CANCEL_REFUND_WITH_GC = "Successfully cancelled and initiated refund for order: {}. Please create gift card with amount: {}";
     public static final String SUCCESSFULLY_CANCELLED_AND_INITIATED_REFUND_FOR_ORDER = "Successfully cancelled and initiated refund for order: ";
+
     public static final String PLEASE_CREATE_GIFT_CARD_WITH_AMOUNT = ". Please create gift card with amount: ";
 
     public static final String SPLIT_PATTERN = "Expires at:";

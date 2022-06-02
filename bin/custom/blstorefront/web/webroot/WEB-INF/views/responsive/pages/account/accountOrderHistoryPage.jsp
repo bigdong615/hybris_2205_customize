@@ -164,7 +164,7 @@
                 						  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end three">
                 						  <c:choose>
 
-                							<c:when test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true && order.orderReturnedToWarehouse eq false) || (not empty agent.uid && order.orderReturnedToWarehouse eq false)}">
+                							<c:when test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true && order.orderReturnedToWarehouse eq false && order.orderStatus ne 'Canceled') || (not empty agent.uid && order.orderReturnedToWarehouse eq false && order.orderStatus ne 'Canceled')}">
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
@@ -172,6 +172,7 @@
                 								 <p class="my-2">${order.orderStatus}</p>
                 								 </c:if>
                 					  </c:when>
+
                            <c:otherwise>
                 					   <p class="my-2">${order.orderStatus}</p>
                 					 </c:otherwise>
