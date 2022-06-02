@@ -138,6 +138,9 @@ public class BlUpdateSerialService implements UpdateSerialService {
     packagingInfoModel.setNumberOfRepetitions(Objects.isNull(numberOfRepetition) ? 0 : numberOfRepetition + 1);
     packagingInfoModel.setPackageReturnedToWarehouse(Boolean.FALSE);
     packagingInfoModel.setIsScrapeScanCompleted(Boolean.TRUE);
+    if(Objects.nonNull(packagingInfoModel.getReturningDate())) {
+      packagingInfoModel.setReturningDate(trackDate);
+    }
     Calendar latePackageDate = Calendar.getInstance();
     latePackageDate.setTime(upsDeliveryDate);
     latePackageDate.add(Calendar.DAY_OF_MONTH ,2);
