@@ -133,11 +133,7 @@ public class BlUpdateSerialService implements UpdateSerialService {
   private void updateSerialStatus(final BlSerialProductModel blSerialProductModel,
       final PackagingInfoModel packagingInfoModel, final int numberOfRepetition, final Date upsDeliveryDate , final Date trackDate)
   {
-    /*blSerialProductModel.setSerialStatus(SerialStatusEnum.LATE);
-    BlUpdateStagedProductUtils
-        .changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),SerialStatusEnum.LATE);*/
     ConsignmentModel consignmentModel = packagingInfoModel.getConsignment();
-
     updateStockBasedOnUPSScrapeResponse(blSerialProductModel , consignmentModel , packagingInfoModel , trackDate);
     packagingInfoModel.setNumberOfRepetitions(Objects.isNull(numberOfRepetition) ? 0 : numberOfRepetition + 1);
     packagingInfoModel.setPackageReturnedToWarehouse(Boolean.FALSE);

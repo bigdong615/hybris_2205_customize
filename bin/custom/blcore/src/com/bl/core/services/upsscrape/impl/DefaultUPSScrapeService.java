@@ -59,14 +59,16 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
     final List<AbstractOrderModel> orderModelList = getOrderDao().getOrdersForUPSScrape();
     orderModelList.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel ->
         consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
-          final String carrierCode = getCarrierType(packagingInfoModel);
-          BlLogger.logMessage(LOG , Level.INFO , "Performing UPS Scrape job for carrier " ,carrierCode);
-          try {
-            performUPSScrapeService(packagingInfoModel , carrierCode , stringObjectMap , abstractOrderModel);
-          }
-          catch (final Exception e){
-            BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while fetching package{} from Order {} " , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
-            BlLogger.logMessage(LOG , Level.ERROR , "Error while performing UPS Scrape job" , e);
+          packagingInfoModel.isIsScrapeScanCompleted();
+          if(BooleanUtils.isFalse(packagingInfoModel.isIsScrapeScanCompleted())) {
+            final String carrierCode = getCarrierType(packagingInfoModel);
+            BlLogger.logMessage(LOG, Level.INFO, "Performing UPS Scrape job for carrier ", carrierCode);
+            try {
+              performUPSScrapeService(packagingInfoModel, carrierCode, stringObjectMap, abstractOrderModel);
+            } catch (final Exception e) {
+              BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error while fetching package{} from Order {} ", e.getMessage(), packagingInfoModel.getPk(), abstractOrderModel.getCode());
+              BlLogger.logMessage(LOG, Level.ERROR, "Error while performing UPS Scrape job", e);
+            }
           }
         })));
   }
