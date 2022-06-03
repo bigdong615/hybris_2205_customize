@@ -55,12 +55,14 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private static final String DELAY_VOID_TRANSACTION_BY_TIME = "delay.void.transaction.time";
 	private static final String IS_GIFT_CARD_ORDER = "isGiftCardOrder";
 	private static final String IS_NEW_GEAR_ORDER = "isNewGearOrder";
+	private static final String IS_AUTHORIZATION_ATTEMPTED = "isAuthorizationAttempted";
 
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} NOT IN "
 			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND {o:" + AbstractOrderModel.ISAUTHORISED
-			+ "} = ?isAuthorized ";
+			+ "} = ?isAuthorized AND ({o:" + AbstractOrderModel.ISAUTHORIZATIONATTEMPTED + "} = ?isAuthorizationAttempted OR {o:"
+			+ AbstractOrderModel.ISAUTHORIZATIONATTEMPTED + "} is null)" ;
 
 	private static final String GET_ORDERS_BY_CODE_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.CODE + "} = ?code ";
@@ -163,6 +165,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
 		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(endDate).getTime());
 		fQuery.addQueryParameter(BlCoreConstants.IS_AUTHORISED, Boolean.FALSE);
+		fQuery.addQueryParameter(IS_AUTHORIZATION_ATTEMPTED, Boolean.FALSE);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<AbstractOrderModel> ordersToAuthorizePayment = result.getResult();
 		if (CollectionUtils.isEmpty(ordersToAuthorizePayment))

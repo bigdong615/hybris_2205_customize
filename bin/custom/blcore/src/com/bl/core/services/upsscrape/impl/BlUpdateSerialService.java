@@ -150,7 +150,7 @@ public class BlUpdateSerialService implements UpdateSerialService {
     blSerialProductModel.setSerialStatus(SerialStatusEnum.STOLEN);
     BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.STOLEN);
     final AbstractOrderModel abstractOrderModel = packagingInfoModel.getConsignment().getOrder();
-    abstractOrderModel.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
+    abstractOrderModel.setStatus(OrderStatus.INCOMPLETE_MISSING_ITEMS);
     packagingInfoModel.setPackageReturnedToWarehouse(Boolean.FALSE);
     getModelService().save(packagingInfoModel);
     getModelService().refresh(packagingInfoModel);

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd 
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<context:annotation-config/> 
+	
+	
+	<!-- ################### Product Class Value Mapping ######################### -->	
+	
+	<bean id="productClassEnumValueConverterMapping"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+          p:mapping="CLASSPRODUCTENUMVALUE"
+          p:converter-ref="productClassEnumValueConverter"/>
+ 
+	<bean id="productClassEnumValueConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>
+			# Insert Product Classifications
+			#% impex.setLocale( Locale.ENGLISH );
+			$catalogVersion=catalogVersion(catalog(id[default='blProductCatalog']),version[default='Staged'])[unique=true,default='blProductCatalog:Staged']
+			$classCatalogVersion=catalogversion(catalog(id[default='blClassification']),version[default='1.0'])[unique=true,default='blClassification:1.0']
+			$classSystemVersion=systemVersion(catalog(id[default='blClassification']),version[default='1.0'])[unique=true]
+
+			INSERT_UPDATE ProductFeature ; product(code,$catalogVersion)[unique=true][forceWrite=true] ; classificationAttributeAssignment(classificationClass(code),classificationAttribute(code))[forceWrite=true] ; qualifier[unique=true] ; value[translator=de.hybris.platform.catalog.jalo.classification.impex.ProductFeatureValueTranslator] ; valueposition ; language(isocode)[forceWrite=true, unique=true];
+		</value>
+		</property>
+		<property name="impexRow">
+            <value>;{+0};{1}:{2};blClassification/1.0/{1}:{2};enum,blClassification,1.0,{3};0;en</value>
+        </property>
+	</bean>
+	
+</beans>
+
