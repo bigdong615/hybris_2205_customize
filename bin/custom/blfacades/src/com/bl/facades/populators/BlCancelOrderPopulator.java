@@ -31,8 +31,6 @@ public class BlCancelOrderPopulator implements Populator<OrderEntryData , OrderE
          orderEntryModel.setQuantity(0L);
          modelService.save(orderEntryModel);
          modelService.refresh(orderEntryModel);
-
-
     }
 
     public ModelService getModelService() {

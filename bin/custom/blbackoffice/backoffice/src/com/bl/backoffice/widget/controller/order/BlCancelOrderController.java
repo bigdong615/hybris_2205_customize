@@ -93,7 +93,6 @@ public class BlCancelOrderController extends DefaultWidgetController {
         this.getWidgetInstanceManager()
                 .setTitle(this.getWidgetInstanceManager().getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_TITLE)+ org.apache.commons.lang3.StringUtils.SPACE
                         + orderModel.getCode());
-
     }
 
     /**
@@ -120,9 +119,9 @@ public class BlCancelOrderController extends DefaultWidgetController {
             }
         }
     }
-
-
-
+    /**
+     * Validates order cancel reason is not empty.
+     */
     private boolean validateOrderCancelReason() {
         if(this.CancelReasons.getSelectedIndex() == -BlInventoryScanLoggingConstants.ONE) {
             Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON), this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON_HEADER), Messagebox.OK, Messagebox.ERROR);
@@ -130,7 +129,10 @@ public class BlCancelOrderController extends DefaultWidgetController {
         }
        return Boolean.FALSE;
     }
-
+    /**
+     * Updates stock for cancelled order.
+     * @param consignments and abstractOrderModel
+     */
     private void updateStockForCancelledOrder(final Set<ConsignmentModel> consignments, final AbstractOrderModel abstractOrderModel)
     {
         List<String> serialProductCodes = new ArrayList<>();
@@ -179,8 +181,10 @@ public class BlCancelOrderController extends DefaultWidgetController {
 
         }
 
-
-
+    /**
+     * It saves the cancellation history of the order
+     * @param orderModel the order
+     */
     void saveOrderCancellationHistoryLog(AbstractOrderModel orderModel)
     {
         final BlOrderCancellationHistoryModel blOrderCancellationHistoryModel = modelService.create(BlOrderCancellationHistoryModel.class);
@@ -193,11 +197,11 @@ public class BlCancelOrderController extends DefaultWidgetController {
         orderModel.setOrderCancellationHistoryLog(blOrderCancellationHistoryModel);
         modelService.save(orderModel);
         modelService.refresh(orderModel);
-
-
     }
 
-
+    /**
+     * Updates stock for cancelled order from BackOffice.
+     */
     public void updateStockForCancelledProductFromBackoffice(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
                                                              Date optimizedShippingEndDate, final List<String> serialProductCodes)
     {

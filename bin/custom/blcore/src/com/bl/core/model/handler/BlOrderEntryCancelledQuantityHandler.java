@@ -10,7 +10,7 @@ import de.hybris.platform.warehousing.cancellation.impl.OrderEntryCancelledQuant
 public class BlOrderEntryCancelledQuantityHandler extends OrderEntryCancelledQuantityHandler {
 
     @Override
-    public Long get(OrderEntryModel orderEntry) {
+    public Long get(final OrderEntryModel orderEntry) {
        return  orderEntry.getCancelledQuantity();
     }
 }
