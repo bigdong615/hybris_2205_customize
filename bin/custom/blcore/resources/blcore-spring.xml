@@ -1916,13 +1916,7 @@
 		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
 	</bean>
 
-
-	<alias name="blOrderCancelStateMappingStrategy" alias="orderCancelStateMappingStrategy"/>
-	<bean id="blOrderCancelStateMappingStrategy"
-		  class="com.bl.core.order.strategy.BlOrderCancelStateMappingStrategy" parent="warehousingOrderCancelStateMappingStrategy">
-	</bean>
-
-    <alias name="blOrderEntryCancelledQuantityHandler" alias="orderEntryCancelledQuantityHandler"/>
+	<alias name="blOrderEntryCancelledQuantityHandler" alias="orderEntryCancelledQuantityHandler"/>
 	<bean id="blOrderEntryCancelledQuantityHandler" class="com.bl.core.model.handler.BlOrderEntryCancelledQuantityHandler">
     </bean>
 

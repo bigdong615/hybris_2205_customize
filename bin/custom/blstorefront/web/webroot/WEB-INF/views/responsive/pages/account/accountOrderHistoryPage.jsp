@@ -172,8 +172,7 @@
                 								 <p class="my-2">${order.orderStatus}</p>
                 								 </c:if>
                 					  </c:when>
-
-                           <c:otherwise>
+                                     <c:otherwise>
                 					   <p class="my-2">${order.orderStatus}</p>
                 					 </c:otherwise>
                 					   </c:choose>

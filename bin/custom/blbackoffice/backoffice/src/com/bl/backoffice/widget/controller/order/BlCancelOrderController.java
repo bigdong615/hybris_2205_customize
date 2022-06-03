@@ -12,6 +12,7 @@ import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.populators.BlCancelOrderPopulator;
 import com.bl.logging.BlLogger;
+import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.hybris.backoffice.i18n.BackofficeLocaleService;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
@@ -66,6 +67,8 @@ public class BlCancelOrderController extends DefaultWidgetController {
     @Resource(name = "blEspEventService")
     private DefaultBlESPEventService blEspEventService;
 
+    @Resource
+    private BrainTreeTransactionService brainTreeTransactionService;
 
     @WireVariable
     private transient EnumerationService enumerationService;
@@ -161,7 +164,9 @@ public class BlCancelOrderController extends DefaultWidgetController {
                 consignmentModel.setStatus(ConsignmentStatus.CANCELLED);
                 modelService.save(consignmentModel);
                 modelService.refresh(consignmentModel);
+
             });
+            getBrainTreeTransactionService().voidAuthTransaction((OrderModel) abstractOrderModel);
 
             saveOrderCancellationHistoryLog(abstractOrderModel);
 
@@ -243,6 +248,14 @@ public class BlCancelOrderController extends DefaultWidgetController {
 
     private BackofficeLocaleService getCockpitLocaleService() {
         return this.cockpitLocaleService;
+    }
+
+    public BrainTreeTransactionService getBrainTreeTransactionService() {
+        return brainTreeTransactionService;
+    }
+
+    public void setBrainTreeTransactionService(BrainTreeTransactionService brainTreeTransactionService) {
+        this.brainTreeTransactionService = brainTreeTransactionService;
     }
 
 }
