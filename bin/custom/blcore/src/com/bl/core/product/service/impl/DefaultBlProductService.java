@@ -185,41 +185,6 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct.getCode());
 		}
 	}
-
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void updateStockForCancelledProductFromBackoffice(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
-                                                             Date optimizedShippingEndDate, final List<String> serialProductCodes)
-    {
-        if(null == optimizedShippingEndDate) {
-            optimizedShippingEndDate = BlDateTimeUtils.getNextYearsSameDay();
-        }
-        final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao
-                .findSerialStockLevelForDate(serialProduct.getCode(), optimizedShippingStartDate, optimizedShippingEndDate);
-        if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
-        {
-            findSerialStockLevelForDate.forEach(stockLevel -> {
-                stockLevel.setHardAssigned(false);
-                stockLevel.setReservedStatus(false);
-                stockLevel.setOrder(null);
-                ((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
-                getModelService().save(stockLevel);
-                getModelService().save(serialProduct);
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
-                        stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct.getCode());
-            });
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct.getCode());
-        }
-        else {
-        serialProductCodes.add(serialProduct.getCode());
-        }
-    }
-
-
     /**
  * @return the userService
  */

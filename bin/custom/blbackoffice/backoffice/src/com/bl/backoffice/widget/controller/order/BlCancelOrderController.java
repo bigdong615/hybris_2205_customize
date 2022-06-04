@@ -3,6 +3,7 @@ package com.bl.backoffice.widget.controller.order;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.enums.BlCancelReason;
 import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlOrderCancellationHistoryModel;
 import com.bl.core.model.BlProductModel;
@@ -30,6 +31,7 @@ import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -143,7 +145,7 @@ public class BlCancelOrderController extends DefaultWidgetController {
                             .forEach(serialProduct -> {
                                 if(!StringUtils.equalsIgnoreCase(serialProduct.getProductType().getCode(), ProductTypeEnum.SUBPARTS.getCode())){
                                     updateStockForCancelledProductFromBackoffice(serialProduct,
-                                            consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate() , serialProductCodes);
+                                            consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate() , serialProductCodes ,abstractOrderModel);
                                 }
                             } ));
         }
@@ -156,10 +158,9 @@ public class BlCancelOrderController extends DefaultWidgetController {
                 modelService.save(abstractOrderEntryModel);
                 modelService.refresh(abstractOrderEntryModel);
             });
-        }
 
             abstractOrderModel.setStatus(OrderStatus.CANCELLED);
-            BlLogger.logFormattedMessage(LOG , Level.INFO , "Order has been Cancelled {} " , abstractOrderModel.getCode());
+            BlLogger.logFormattedMessage(LOG, Level.INFO, "Order has been Cancelled {} ", abstractOrderModel.getCode());
             modelService.save(abstractOrderModel);
             modelService.refresh(abstractOrderModel);
             abstractOrderModel.getConsignments().forEach(consignmentModel -> {
@@ -174,11 +175,10 @@ public class BlCancelOrderController extends DefaultWidgetController {
 
             try {
                 blEspEventService.sendOrderCanceledEvent((OrderModel) abstractOrderModel);
-            }catch(final Exception e)
-            {
-                BlLogger.logMessage(LOG, Level.ERROR,"Failed to trigger order canceled event" , e);
+            } catch (final Exception e) {
+                BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger order canceled event", e);
             }
-
+        }
         }
 
     /**
@@ -194,6 +194,7 @@ public class BlCancelOrderController extends DefaultWidgetController {
         modelService.save(blOrderCancellationHistoryModel);
         modelService.refresh(blOrderCancellationHistoryModel);
 
+        orderModel.setIsCancelled(Boolean.TRUE);
         orderModel.setOrderCancellationHistoryLog(blOrderCancellationHistoryModel);
         modelService.save(orderModel);
         modelService.refresh(orderModel);
@@ -203,7 +204,7 @@ public class BlCancelOrderController extends DefaultWidgetController {
      * Updates stock for cancelled order from BackOffice.
      */
     public void updateStockForCancelledProductFromBackoffice(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
-                                                             Date optimizedShippingEndDate, final List<String> serialProductCodes)
+                                                             Date optimizedShippingEndDate, final List<String> serialProductCodes, final AbstractOrderModel abstractOrderModel)
     {
         if(null == optimizedShippingEndDate) {
             optimizedShippingEndDate = BlDateTimeUtils.getNextYearsSameDay();
@@ -216,6 +217,12 @@ public class BlCancelOrderController extends DefaultWidgetController {
                 stockLevel.setHardAssigned(false);
                 stockLevel.setReservedStatus(false);
                 stockLevel.setOrder(null);
+                stockLevel.setSerialStatus(SerialStatusEnum.ACTIVE);
+                if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalOrder())) {
+                    BlSerialProductModel blSerialProductModel = (BlSerialProductModel) serialProduct;
+                    blSerialProductModel.setDateOfSale(null);
+                    blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
+                }
                 ((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
                 modelService.save(stockLevel);
                 modelService.save(serialProduct);
@@ -228,8 +235,6 @@ public class BlCancelOrderController extends DefaultWidgetController {
             serialProductCodes.add(serialProduct.getCode());
         }
     }
-
-
     public OrderModel getOrderModel() {
         return orderModel;
     }
