@@ -504,8 +504,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		boolean isSuccess = false;
 		double payBillAmount = Double.parseDouble(billPayTotal);
 		AbstractOrderModel order = null;
-		if ((StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
-				StringUtils.isNotBlank(paymentMethodNonce)) || StringUtils.isNotBlank(poNumber) ) {
+		if ((StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId)) || StringUtils.isNotBlank(poNumber) ) {
 			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
 
 				isSuccess = payBillSuccess(model, paymentInfoId, paymentMethodNonce, payBillAmount, poNumber,
@@ -925,7 +924,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
     final String depositTotal = request.getParameter(BraintreeaddonControllerConstants.DEPOSIT_ORDER_TOTAL);
     try
     {      
-      if (isParametersEligible(paymentInfoId, paymentMethodNonce, orderCode, depositTotal))
+      if (isParametersEligible(paymentInfoId, orderCode, depositTotal))
       {
         boolean isSuccess = false;
         final double depositOrderTotal = Double.parseDouble(depositTotal);
@@ -961,7 +960,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
       BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
           "Error occurred while making deposit for order : {} with ammount : {} with PaymentID - {}", orderCode, depositTotal, paymentInfoId);
     }
-    return REDIRECT_PREFIX + MY_ACCOUNT_DEPOSIT_PAYMENT + orderCode;
+    return REDIRECT_PREFIX + orderCode + MY_ACCOUNT_DEPOSIT_PAYMENT;
   }
 
 	/**
@@ -982,14 +981,13 @@ public class BrainTreeAccountPageController extends AbstractPageController
    * Checks if is parameters eligible.
    *
    * @param paymentInfoId the payment info id
-   * @param paymentMethodNonce the payment method nonce
    * @param orderCode the order code
    * @param depositTotal the deposit total
    * @return true, if is parameters eligible
    */
-  private boolean isParametersEligible(String paymentInfoId, String paymentMethodNonce, String orderCode, String depositTotal)
+  private boolean isParametersEligible(String paymentInfoId, String orderCode, String depositTotal)
   {
-    return StringUtils.isNotBlank(depositTotal) && StringUtils.isNotBlank(paymentInfoId) && StringUtils.isNotBlank(paymentMethodNonce)
+    return StringUtils.isNotBlank(depositTotal) && StringUtils.isNotBlank(paymentInfoId)
         && StringUtils.isNotBlank(orderCode);
   }
   
@@ -1064,7 +1062,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
     final String modifiedOrderAmount = request.getParameter(BraintreeaddonControllerConstants.DEPOSIT_ORDER_TOTAL);
     try
     {      
-      if (isParametersEligible(paymentInfoId, paymentMethodNonce, orderCode, modifiedOrderAmount))
+      if (isParametersEligible(paymentInfoId, orderCode, modifiedOrderAmount))
       {
         boolean isSuccess = false;
         final double newAmount = Double.parseDouble(modifiedOrderAmount);
