@@ -185,7 +185,9 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct.getCode());
 		}
 	}
-    /**
+
+
+/**
  * @return the userService
  */
 public UserService getUserService()
