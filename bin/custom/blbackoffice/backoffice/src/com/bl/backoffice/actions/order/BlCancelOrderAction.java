@@ -33,7 +33,7 @@ public class BlCancelOrderAction extends CancelOrderAction {
     public boolean canPerform(ActionContext<OrderModel> actionContext) {
         OrderModel order = (OrderModel)actionContext.getData();
         return Objects.nonNull(order)
-                && BooleanUtils.isFalse(orderStatusAllowed(order));
+                && BooleanUtils.isTrue(orderStatusAllowed(order));
     }
 
 
@@ -53,9 +53,8 @@ public class BlCancelOrderAction extends CancelOrderAction {
     }
 
     private boolean orderStatusAllowed(final OrderModel order) {
-        return StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.CANCELLED.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_MANUAL_REVIEW.getCode())
-                || StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.COMPLETED.getCode());
+        return StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.PENDING.getCode()) ||
+                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.SHIPPED.getCode());
     }
 
 }

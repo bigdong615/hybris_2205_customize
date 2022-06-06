@@ -11,6 +11,6 @@ public class BlOrderEntryCancelledQuantityHandler extends OrderEntryCancelledQua
 
     @Override
     public Long get(final OrderEntryModel orderEntry) {
-       return  orderEntry.getCancelledQuantity();
+        return null == orderEntry.getCancelledQuantity() ? 0L: orderEntry.getCancelledQuantity();
     }
 }
