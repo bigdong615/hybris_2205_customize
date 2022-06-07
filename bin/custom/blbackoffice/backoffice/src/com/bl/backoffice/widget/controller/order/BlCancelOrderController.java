@@ -173,7 +173,11 @@ public class BlCancelOrderController extends DefaultWidgetController {
 
             });
             getBrainTreeTransactionService().voidAuthTransaction((OrderModel) abstractOrderModel);
-
+            if(BooleanUtils.isTrue(abstractOrderModel.getIsAuthorised()))
+            {
+                getBrainTreeTransactionService().voidAuthTransactionForTotalPrice((OrderModel) abstractOrderModel);
+            }
+            
             saveOrderCancellationHistoryLog(abstractOrderModel);
 
             try {

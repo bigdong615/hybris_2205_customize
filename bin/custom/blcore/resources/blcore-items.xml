@@ -3262,13 +3262,6 @@
                       <defaultvalue>Boolean.FALSE</defaultvalue>
                       <description>flag to identify whether the authorization has already been attempted or not on the order</description>
                     </attribute>
-                    <attribute qualifier="isCancelled" type="java.lang.Boolean">
-                        <persistence type="property" />
-                        <modifiers optional="true" read="true" write="true" />
-                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                        <description>flag to identify whether the order has been cancelled</description>
-                    </attribute>
-
                 </attributes>
             </itemtype>
 
