@@ -44,11 +44,21 @@ public class CapturePaymentAction extends AbstractComponentWidgetAdapterAware
     return checkConsignment(consignmentModel) && checkOrder(consignmentModel.getOrder());
   }
 
+  /**
+   * This method created to check consignment status
+   * @param consignmentModel consignmentModel
+   * @return boolean
+   */
   private boolean checkConsignment(final ConsignmentModel consignmentModel) {
     return Objects.nonNull(consignmentModel) && Objects.nonNull(consignmentModel.getOrder()) && Objects.nonNull(consignmentModel.getStatus())
             && (BooleanUtils.isFalse(StringUtils.equalsIgnoreCase(consignmentModel.getStatus().getCode(), ConsignmentStatus.CANCELLED.getCode())));
   }
 
+  /**
+   * This method created to check order status
+   * @param abstractOrderModel abstractOrderModel
+   * @return boolean
+   */
   private boolean checkOrder(final AbstractOrderModel abstractOrderModel) {
     return Objects.nonNull(abstractOrderModel.getStatus())
             && BooleanUtils.isFalse(StringUtils.equalsIgnoreCase(abstractOrderModel.getStatus().getCode(), OrderStatus.CANCELLED.getCode()));
