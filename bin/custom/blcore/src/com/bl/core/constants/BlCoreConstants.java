@@ -195,6 +195,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String RUSH_NYC_NEXT_DAY = "NEXT_DAY_RUSH_DELIVERY";
 
 	public static final String IS_AUTHORISED = "isAuthorized";
+	public static final String IS_CANCELLED = "isCancelled";
+
 	public static final String COUPON_ID = "couponId";
 
 	//Promotion Condition Translator

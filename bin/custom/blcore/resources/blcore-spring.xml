@@ -1916,4 +1916,8 @@
 		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
 	</bean>
 
+	<alias name="blOrderEntryCancelledQuantityHandler" alias="orderEntryCancelledQuantityHandler"/>
+	<bean id="blOrderEntryCancelledQuantityHandler" class="com.bl.core.model.handler.BlOrderEntryCancelledQuantityHandler">
+    </bean>
+
 </beans>

@@ -667,7 +667,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		}
 		return Boolean.FALSE;
 	}
-	
+
   public BlOrderNoteService getBlOrderNoteService() {
     return blOrderNoteService;
   }
