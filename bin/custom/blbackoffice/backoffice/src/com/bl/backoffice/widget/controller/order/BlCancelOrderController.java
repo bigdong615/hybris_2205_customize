@@ -177,7 +177,7 @@ public class BlCancelOrderController extends DefaultWidgetController {
             {
                 getBrainTreeTransactionService().voidAuthTransactionForTotalPrice((OrderModel) abstractOrderModel);
             }
-            
+
             saveOrderCancellationHistoryLog(abstractOrderModel);
 
             try {
@@ -201,7 +201,6 @@ public class BlCancelOrderController extends DefaultWidgetController {
         modelService.save(blOrderCancellationHistoryModel);
         modelService.refresh(blOrderCancellationHistoryModel);
 
-        orderModel.setIsCancelled(Boolean.TRUE);
         orderModel.setOrderCancellationHistoryLog(blOrderCancellationHistoryModel);
         modelService.save(orderModel);
         modelService.refresh(orderModel);
