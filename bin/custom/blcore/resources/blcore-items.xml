@@ -7667,6 +7667,7 @@ new Integer(0)
                 <attributes>
                     <attribute type="java.lang.Long" qualifier="cancelledQuantity" >
                         <modifiers read="true" write="true" />
+                        <description>It holds the information of cancelled quantity</description>
                         <persistence type="property" />
                     </attribute>
                 </attributes>

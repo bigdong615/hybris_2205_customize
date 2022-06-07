@@ -18,7 +18,6 @@ import com.hybris.backoffice.i18n.BackofficeLocaleService;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
-import de.hybris.platform.basecommerce.enums.CancelReason;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -43,16 +42,16 @@ import org.zkoss.zul.Messagebox;
 import javax.annotation.Resource;
 import java.util.*;
 
+/**
+ * This class created for cancel order
+ * @author Manikandan
+ */
 public class BlCancelOrderController extends DefaultWidgetController {
     private static final Logger LOG = Logger.getLogger(BlCancelOrderController.class);
     protected static final String OUT_CONFIRM = "confirmcancellation";
 
     @Resource(name = "orderDao")
     private BlOrderDao orderDao;
-
-    public void setCockpitLocaleService(BackofficeLocaleService cockpitLocaleService) {
-        this.cockpitLocaleService = cockpitLocaleService;
-    }
 
     @Resource(name = "modelService")
     private ModelService modelService;
@@ -82,8 +81,8 @@ public class BlCancelOrderController extends DefaultWidgetController {
     private transient BackofficeLocaleService cockpitLocaleService;
 
     /**
-     * Init cancellation order form.
-     * @param orderModel the input object
+     * This method created to Init cancellation order form.
+     * @param orderModel orderModel
      */
     @SocketEvent(socketId = BlCustomCancelRefundConstants.INPUT_OBJECT)
     public void initCancellationOrderForm(final OrderModel orderModel) {
@@ -91,14 +90,13 @@ public class BlCancelOrderController extends DefaultWidgetController {
         this.getEnumerationService().getEnumerationValues(BlCancelReason.class).forEach(reason ->
                 this.cancelReasons.add(this.getEnumerationService().getEnumerationName(reason, this.getLocale())));
         this.CancelReasons.setModel(new ListModelArray<>(this.cancelReasons));
-
         this.getWidgetInstanceManager()
                 .setTitle(this.getWidgetInstanceManager().getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_TITLE)+ org.apache.commons.lang3.StringUtils.SPACE
                         + orderModel.getCode());
     }
 
     /**
-     * This method is used to close the cancel Popup
+     * This method created to close the cancel Popup
      */
     @ViewEvent(componentID = "closePopup", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
     public void cancelPopup()
@@ -107,7 +105,7 @@ public class BlCancelOrderController extends DefaultWidgetController {
     }
 
     /**
-     * Confirm cancellation.
+     * This method created for confirm cancel action
      */
     @ViewEvent(componentID = BlCustomCancelRefundConstants.CONFIRM_CANCELLATION, eventName = BlCustomCancelRefundConstants.ON_CLICK)
     public void confirmCancellation() {
@@ -121,8 +119,10 @@ public class BlCancelOrderController extends DefaultWidgetController {
             }
         }
     }
+
+
     /**
-     * Validates order cancel reason is not empty.
+     * This method created to Validates order cancel reason is not empty from cancel order popup.
      */
     private boolean validateOrderCancelReason() {
         if(this.CancelReasons.getSelectedIndex() == -BlInventoryScanLoggingConstants.ONE) {
@@ -131,19 +131,22 @@ public class BlCancelOrderController extends DefaultWidgetController {
         }
        return Boolean.FALSE;
     }
+
     /**
-     * Updates stock for cancelled order.
-     * @param consignments and abstractOrderModel
+     * This method created to Updates stock for cancelled order.
+     * @param consignments consignments
+     * @param abstractOrderModel abstractOrderModel
      */
     private void updateStockForCancelledOrder(final Set<ConsignmentModel> consignments, final AbstractOrderModel abstractOrderModel)
     {
-        List<String> serialProductCodes = new ArrayList<>();
+        final List<String> serialProductCodes = new ArrayList<>();
         for (final ConsignmentModel consignment : consignments)
         {
             consignment.getConsignmentEntries()
                     .forEach(consignmentEntry -> consignmentEntry.getSerialProducts()
                             .forEach(serialProduct -> {
-                                if(!StringUtils.equalsIgnoreCase(serialProduct.getProductType().getCode(), ProductTypeEnum.SUBPARTS.getCode())){
+                                if(Objects.nonNull(serialProduct.getProductType())
+                                        && !StringUtils.equalsIgnoreCase(serialProduct.getProductType().getCode(), ProductTypeEnum.SUBPARTS.getCode())){
                                     updateStockForCancelledProductFromBackoffice(serialProduct,
                                             consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate() , serialProductCodes ,abstractOrderModel);
                                 }
@@ -152,7 +155,7 @@ public class BlCancelOrderController extends DefaultWidgetController {
 
         if(CollectionUtils.isEmpty(serialProductCodes)) {
             abstractOrderModel.getEntries().forEach(abstractOrderEntryModel -> {
-                OrderEntryData orderEntryData = new OrderEntryData();
+               final OrderEntryData orderEntryData = new OrderEntryData();
                 orderEntryData.setCancellableQty(abstractOrderEntryModel.getQuantity());
                 blOrderCancelPopulator.populate(orderEntryData, (OrderEntryModel) abstractOrderEntryModel);
                 modelService.save(abstractOrderEntryModel);
@@ -182,10 +185,10 @@ public class BlCancelOrderController extends DefaultWidgetController {
         }
 
     /**
-     * It saves the cancellation history of the order
-     * @param orderModel the order
+     * This method created to log the cancellation history of the order
+     * @param orderModel orderModel
      */
-    void saveOrderCancellationHistoryLog(AbstractOrderModel orderModel)
+    private void saveOrderCancellationHistoryLog(final AbstractOrderModel orderModel)
     {
         final BlOrderCancellationHistoryModel blOrderCancellationHistoryModel = modelService.create(BlOrderCancellationHistoryModel.class);
         blOrderCancellationHistoryModel.setCancelReason(this.CancelReasons.getValue());
@@ -201,7 +204,12 @@ public class BlCancelOrderController extends DefaultWidgetController {
     }
 
     /**
-     * Updates stock for cancelled order from BackOffice.
+     * This method created to Updates stock for cancelled order from BackOffice.
+     * @param serialProduct serialProduct
+     * @param optimizedShippingStartDate optimizedShippingStartDate
+     * @param optimizedShippingEndDate optimizedShippingEndDate
+     * @param serialProductCodes serialProductCodes
+     * @param abstractOrderModel abstractOrderModel
      */
     public void updateStockForCancelledProductFromBackoffice(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
                                                              Date optimizedShippingEndDate, final List<String> serialProductCodes, final AbstractOrderModel abstractOrderModel)
@@ -259,6 +267,10 @@ public class BlCancelOrderController extends DefaultWidgetController {
         return this.cockpitLocaleService;
     }
 
+    public void setCockpitLocaleService(BackofficeLocaleService cockpitLocaleService) {
+        this.cockpitLocaleService = cockpitLocaleService;
+    }
+
     public BrainTreeTransactionService getBrainTreeTransactionService() {
         return brainTreeTransactionService;
     }
@@ -266,5 +278,8 @@ public class BlCancelOrderController extends DefaultWidgetController {
     public void setBrainTreeTransactionService(BrainTreeTransactionService brainTreeTransactionService) {
         this.brainTreeTransactionService = brainTreeTransactionService;
     }
+
+
+
 
 }

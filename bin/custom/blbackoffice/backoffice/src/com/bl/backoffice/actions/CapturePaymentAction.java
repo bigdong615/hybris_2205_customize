@@ -10,9 +10,12 @@ import com.hybris.cockpitng.actions.CockpitAction;
 import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 /**
  * ###################### BL-749 ################
@@ -36,12 +39,19 @@ public class CapturePaymentAction extends AbstractComponentWidgetAdapterAware
    * @return the boolean
    */
   @Override
-  public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
-  {
+  public boolean canPerform(final ActionContext<ConsignmentModel> actionContext) {
     final ConsignmentModel consignmentModel = actionContext.getData();
-    return consignmentModel != null && consignmentModel.getOrder() != null
-        && (BooleanUtils.isFalse(StringUtils.equalsIgnoreCase(consignmentModel.getStatus().getCode() , ConsignmentStatus.CANCELLED.getCode())) &&
-            BooleanUtils.isFalse(StringUtils.equalsIgnoreCase(consignmentModel.getOrder().getStatus().getCode() , OrderStatus.CANCELLED.getCode())));
+    return checkConsignment(consignmentModel) && checkOrder(consignmentModel.getOrder());
+  }
+
+  private boolean checkConsignment(final ConsignmentModel consignmentModel) {
+    return Objects.nonNull(consignmentModel) && Objects.nonNull(consignmentModel.getOrder()) && Objects.nonNull(consignmentModel.getStatus())
+            && (BooleanUtils.isFalse(StringUtils.equalsIgnoreCase(consignmentModel.getStatus().getCode(), ConsignmentStatus.CANCELLED.getCode())));
+  }
+
+  private boolean checkOrder(final AbstractOrderModel abstractOrderModel) {
+    return Objects.nonNull(abstractOrderModel.getStatus())
+            && BooleanUtils.isFalse(StringUtils.equalsIgnoreCase(abstractOrderModel.getStatus().getCode(), OrderStatus.CANCELLED.getCode()));
   }
 
   /**

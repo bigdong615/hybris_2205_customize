@@ -20,6 +20,10 @@ import javax.annotation.Resource;
 
 import java.util.Objects;
 
+/**
+ * This class created for Cancel order action from cscockpit
+ * @author Manikandan
+ */
 public class BlCancelOrderAction extends CancelOrderAction {
 
     @Resource
@@ -28,15 +32,24 @@ public class BlCancelOrderAction extends CancelOrderAction {
     private static final String SOCKET_OUTPUT_CTX = "customBlCancelOrderContext";
 
 
-    // return false to disable action button .
+    /**
+     * This method created to disable and enable action based on condition
+     * @param actionContext actionContext
+     * @return boolean
+     */
     @Override
-    public boolean canPerform(ActionContext<OrderModel> actionContext) {
-        OrderModel order = (OrderModel)actionContext.getData();
-        return Objects.nonNull(order)
+    public boolean canPerform(final ActionContext<OrderModel> actionContext) {
+        final OrderModel order = (OrderModel)actionContext.getData();
+        return Objects.nonNull(order) && Objects.nonNull(order.getStatus())
                 && BooleanUtils.isTrue(orderStatusAllowed(order));
     }
 
 
+    /**
+     * This method created to perform the action
+     * @param actionContext actionContext
+     * @return ActionResult<OrderModel>
+     */
     @Override
     public ActionResult<OrderModel> perform(final ActionContext<OrderModel> actionContext) {
         final OrderModel orderModel = actionContext.getData();
@@ -52,6 +65,11 @@ public class BlCancelOrderAction extends CancelOrderAction {
 
     }
 
+    /**
+     * This method created check order status
+     * @param order order
+     * @return boolean
+     */
     private boolean orderStatusAllowed(final OrderModel order) {
         return StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.PENDING.getCode()) ||
                 StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.SHIPPED.getCode());
