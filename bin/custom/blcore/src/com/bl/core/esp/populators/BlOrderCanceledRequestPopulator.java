@@ -4,6 +4,8 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.jalo.BlOrderCancellationHistory;
+import com.bl.core.model.BlOrderCancellationHistoryModel;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.ordercanceled.data.OrderCanceledData;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -11,6 +13,8 @@ import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -74,7 +78,13 @@ public class BlOrderCanceledRequestPopulator extends ESPEventCommonPopulator<Ord
 		data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
 		data.setDateplaced(formatter.format(orderModel.getDate()));
 		data.setTotalcost(formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
-		data.setReason(getRequestValue("test")); // TODO Setting dummy value, once we got the actual value then set actual value one
+		final BlOrderCancellationHistoryModel blOrderHistory=orderModel.getOrderCancellationHistoryLog();
+		final AtomicReference<String> atomicReference=new AtomicReference<>(StringUtils.EMPTY);
+		if(Objects.nonNull(blOrderHistory))
+		{
+		  atomicReference.set(blOrderHistory.getCancelReason());
+		}
+		data.setReason(getRequestValue(atomicReference.get()));
 		orderConfirmationEventRequest.setData(data);
 	}
 
