@@ -13,6 +13,8 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
@@ -101,8 +103,11 @@ public class BlOrderShippedRequestPopulator extends
       data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
       data.setRentalDuration((int) getRentalDuration(orderModel));
     }
-    data.setTrackingString(
-        "test");// TODO Setting dummy value, once we got the actual value then set actual value one
+   final List<String> trackingNumber = new ArrayList<>();
+	orderModel.getConsignments().forEach(consignment -> consignment.getPackaginginfos()
+			.forEach(packagingInfo -> trackingNumber.add(packagingInfo.getOutBoundTrackingNumber())));
+	final String allTrackingId = String.join(BlCoreConstants.TRACK_STRING_SEPARATOR, trackingNumber);
+	data.setTrackingString(allTrackingId);
     populateShippingInfoInXML(orderModel, data);
     orderShippedEventRequest.setData(data);
   }

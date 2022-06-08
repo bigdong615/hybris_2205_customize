@@ -6,7 +6,6 @@
 <!-- Begin Talkable integration code -->
 <spring:eval expression="T(de.hybris.platform.util.Config).getParameter('talkable.account.id')"
 					var="accountId" scope="page" />
-<script async src="https://d2jjzw81hqbuqv.cloudfront.net/integration/clients/${accountId}.js"></script>
 <script>
   window._talkableq = window._talkableq || [];
   window._talkableq.unshift(['init', { site_id: '${accountId}' }]);
