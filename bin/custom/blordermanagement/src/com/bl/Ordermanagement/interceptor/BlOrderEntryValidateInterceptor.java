@@ -2,6 +2,7 @@ package com.bl.Ordermanagement.interceptor;
 
 import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
+import com.bl.Ordermanagement.reshuffler.service.BlOptimizeShippingFromWHService;
 import com.bl.Ordermanagement.services.impl.DefaultBlAllocationService;
 import com.bl.Ordermanagement.services.impl.DefaultBlOrderModificationService;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
@@ -16,6 +17,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
@@ -23,6 +25,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
+import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.warehousing.allocation.AllocationService;
@@ -30,6 +33,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -38,10 +42,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -86,6 +90,9 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	@Resource(name="blOrderModificationService")
 	private DefaultBlOrderModificationService blOrderModificationService;
 
+	@Resource
+	private BlOptimizeShippingFromWHService blOptimizeShippingFromWHService;
+
 	/**
 	 * method will validate order entry for modified order
 	 */
@@ -100,10 +107,37 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			if(((BlProductModel)orderEntryModel.getProduct()).isBundleProduct()){
 				orderEntryModel.setBundleMainEntry(Boolean.TRUE);
 			}
-			if (orderEntryModel.getOrder().getIsRentalOrder() && CollectionUtils.isNotEmpty(serialProduct) && warehouse != null)
+			if (orderEntryModel.getOrder().getIsRentalOrder())
 			{
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Modifiy order {} ", orderEntryModel.getOrder().getCode());
-				checkForOrderModification(orderEntryModel, interceptorContext, serialProduct, warehouse);
+				if(CollectionUtils.isNotEmpty(serialProduct) && warehouse != null) {
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Modifiy order {} ",
+							orderEntryModel.getOrder().getCode());
+					checkForOrderModification(orderEntryModel, interceptorContext, serialProduct, warehouse);
+				} else if(interceptorContext.isModified(orderEntryModel, AbstractOrderEntryModel.SERIALPRODUCTS)) {
+					final OrderModel order = orderEntryModel.getOrder();
+					final List serialProducts = getInitialValue(orderEntryModel,
+							AbstractOrderEntryModel.SERIALPRODUCTS);
+					if (null != serialProducts) {
+						final List<BlProductModel> currentProducts = orderEntryModel.getSerialProducts();
+						final List previousProducts = new ArrayList<>(serialProducts);
+						previousProducts.removeAll(currentProducts);
+						final List<BlSerialProductModel> blSerialProducts = (List<BlSerialProductModel>) previousProducts
+								.stream().filter(blSerialProduct ->
+										blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList());
+						final List<ConsignmentEntryModel> consignmentEntriesToRemove = new ArrayList<>();
+						final List<ConsignmentModel> consignmentToRemove = new ArrayList<>();
+						blSerialProducts.forEach(serialProd -> {
+							blOrderModificationService.removeConsignmentEntries(order, serialProd,
+									consignmentEntriesToRemove);
+						});
+						modelService.removeAll(consignmentEntriesToRemove);
+						blOrderModificationService.removeConsignment(order, consignmentToRemove);
+						modelService.removeAll(consignmentToRemove);
+						order.setOrderModifiedDate(new Date());
+						order.setUpdatedTime(new Date());
+						modelService.save(order);
+					}
+				}
 			}
 			else if(CollectionUtils.isEmpty(serialProduct) && warehouse == null)
 			{
@@ -111,6 +145,19 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			}
 
 		}
+	}
+
+	/**
+	 * It gets the initial value of the attribute before update
+	 *
+	 * @param orderEntryModel
+	 *           the bl serial product
+	 * @return
+	 */
+	private List<Object> getInitialValue(final OrderEntryModel orderEntryModel, final String serialProducts) {
+		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) orderEntryModel
+				.getItemModelContext();
+		return itemModelCtx.exists() ? itemModelCtx.getOriginalValue(serialProducts) : null;
 	}
 
 	/**
@@ -219,14 +266,26 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		{
 			serialCodes.add(orderEntryModel.getProduct().getCode());
 		}
-		final ConsignmentEntryModel createConsignmentEntry = defaultBlAllocationService
-				.createConsignmentEntry(orderEntryModel, orderEntryModel.getQuantity(), consignment, sourceResult);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment enrty created for order {}",consignment.getOrder().getCode());
+		final Optional<ConsignmentEntryModel> consignmentEnt = orderEntryModel.getConsignmentEntries().stream().
+				filter(consignmentEntryModel -> consignmentEntryModel.getConsignment()
+		   .equals(consignment)).findFirst();
+		if(consignmentEnt.isPresent()) {
+//			final ConsignmentEntryModel updatedConsignmentEntry = defaultBlAllocationService.updateConsignmentEntry(orderEntryModel, consignment,
+//					sourceResult, consignmentEnt.get());
+//			modelService.save(updatedConsignmentEntry);
+			blOptimizeShippingFromWHService.updateConsignmentEntry(consignmentEnt.get(), sourceResult, orderEntryModel);
+		} else {
+			final ConsignmentEntryModel createConsignmentEntry = defaultBlAllocationService
+					.createConsignmentEntry(orderEntryModel, Long.valueOf(1), consignment,
+							sourceResult);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment enrty created for order {}",
+					consignment.getOrder().getCode());
 
-		final Set<ConsignmentEntryModel> entries = new HashSet<>(consignmentEntries);
-		entries.add(createConsignmentEntry);
+			final Set<ConsignmentEntryModel> entries = new HashSet<>(consignmentEntries);
+			entries.add(createConsignmentEntry);
 
-		consignment.setConsignmentEntries(entries);
+			consignment.setConsignmentEntries(entries);
+		}
 
 		if (consignment.getOrder().getIsRentalOrder()) {
 
@@ -244,6 +303,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			}
 		}
 		modelService.save(consignment);
+	//	modelService.save(orderEntryModel);
 		modelService.refresh(consignment);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry created for consignment {} and order {}.", consignment.getCode(),consignment.getOrder().getCode());
 		getBlOrderModificationService().recalculateOrder(orderEntryModel.getOrder());

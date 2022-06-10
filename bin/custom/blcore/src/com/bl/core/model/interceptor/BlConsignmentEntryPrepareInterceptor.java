@@ -2,6 +2,7 @@ package com.bl.core.model.interceptor;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import com.bl.core.enums.ProductTypeEnum;
 import de.hybris.platform.core.model.user.CustomerModel;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
@@ -435,7 +436,8 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		{
 			final Map<String, List<BlItemsBillingChargeModel>> billingCharges = Maps.newHashMap();
 			consignmentEntryModel.getSerialProducts().forEach(serial -> {
-				if (!billingCharges.containsKey(serial.getCode()))
+				if (!billingCharges.containsKey(serial.getCode()) && Objects.nonNull(serial.getProductType())
+				   && !(serial.getProductType().equals(ProductTypeEnum.SUBPARTS)))
 				{
 					billingCharges.put(serial.getCode(), new ArrayList<BlItemsBillingChargeModel>());
 				}
