@@ -35,7 +35,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
 
     public static final String ON_LATER_CUSTOM_CHANGE = "onLaterCustomChange";
 
-    public static final String CANCELLING_THE_ORDER_FOR_CODE = "Cancelling the order for code : {}";
+    public static final String REFUNDING_THE_ORDER_FOR_CODE = "Cancelling the order for code : {}";
     public static final String CANCEL_CONFIRM_PICKUP = "customersupportbackoffice.cancelorder.pickup";
     public static final String OMS_WIDGET_CANCELORDER_CONFIRM_ICON = "oms-widget-cancelorder-confirm-icon";
     public static final String CANCEL_CONFIRM_TITLE = "customersupportbackoffice.cancelorder.confirm.title";
@@ -71,8 +71,8 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_AUTHORIZATION_MSG = "Failed to cancel order as error occurred during authorization";
     public static final String FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_CANCELLATION_MSG = "Failed to cancel order as error occurred during authorization";
     public static final String PLEASE_CREATE_GIFT_CARD_WITH = "!! Please create gift card with: ";
-    public static final String CANCEL_AND_REFUND_TXN_HAS_BEEN_INITIATED_SUCCESSFULLY = "Cancel and Refund Txn has been initiated successfully for order: {}";
-    public static final String ORDER_CANCELLED_AND_REFUND_AMOUNT_HAS_BEEN_INITIATED_SUCCESSFULLY = "Order cancelled and Refund Amount has been initiated successfully";
+    public static final String CANCEL_AND_REFUND_TXN_HAS_BEEN_INITIATED_SUCCESSFULLY = "Refund Txn has been initiated successfully for order: {}";
+    public static final String ORDER_CANCELLED_AND_REFUND_AMOUNT_HAS_BEEN_INITIATED_SUCCESSFULLY = "Refund Amount has been initiated successfully";
     public static final String ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_INITIATE_REFUND = "Order can not be cancel as failed to initiate refund for order: {}";
     public static final String ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_INITIATE_REFUND_MSG = "Order can not be cancel as failed to initiate refund";
     public static final String REFUND_NOTES_WHILE_FULL_REFUND = "Refund Notes while full refund";
