@@ -1738,6 +1738,7 @@
 		<property name="customerAccountService" ref="customerAccountService" />
 		<property name="userService" ref="userService"/>
 		<property name="orderDao" ref="orderDao"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 	</bean>
 
 	<!--BL-803 UPS Scrape Ends-->

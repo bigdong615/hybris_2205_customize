@@ -16,6 +16,9 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -56,14 +59,15 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
     final List<AbstractOrderModel> orderModelList = getOrderDao().getOrdersForUPSScrape();
     orderModelList.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel ->
         consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
-          final String carrierCode = getCarrierType(packagingInfoModel);
-          BlLogger.logMessage(LOG , Level.INFO , "Performing UPS Scrape job for carrier " ,carrierCode);
-          try {
-            performUPSScrapeService(packagingInfoModel , carrierCode , stringObjectMap , abstractOrderModel);
-          }
-          catch (final Exception e){
-            BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while fetching package{} from Order {} " , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
-            BlLogger.logMessage(LOG , Level.ERROR , "Error while performing UPS Scrape job" , e);
+          if(BooleanUtils.isFalse(packagingInfoModel.isIsScrapeScanCompleted())) {
+            final String carrierCode = getCarrierType(packagingInfoModel);
+            BlLogger.logMessage(LOG, Level.INFO, "Performing UPS Scrape job for carrier ", carrierCode);
+            try {
+              performUPSScrapeService(packagingInfoModel, carrierCode, stringObjectMap, abstractOrderModel);
+            } catch (final Exception e) {
+              BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error while fetching package{} from Order {} ", e.getMessage(), packagingInfoModel.getPk(), abstractOrderModel.getCode());
+              BlLogger.logMessage(LOG, Level.ERROR, "Error while performing UPS Scrape job", e);
+            }
           }
         })));
   }
@@ -211,6 +215,8 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
       final Map<String, Object>  stringObjectMap){
     if (MapUtils.isNotEmpty(stringObjectMap)) {
       if (Objects.nonNull(stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP))) {
+
+
         updatePackagesDetailsForEstimatedDelivery(stringObjectMap , abstractOrderModel , packagingInfoModel);
       } else if (StringUtils.equalsIgnoreCase(BlintegrationConstants.DELIVERED,
           String.valueOf(stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION)))) {
@@ -242,7 +248,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
         abstractOrderModel.getCode(), Objects.isNull(stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP))
             ? new Date(): (Date)stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP),
         Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) ? 0 : packagingInfoModel.getNumberOfRepetitions(),
-        packagingInfoModel);
+        packagingInfoModel,(Date)stringObjectMap.get(BlintegrationConstants.ACTIVITY_TIME_STAMP));
   }
 
   /**
@@ -254,6 +260,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
   private void updatePackagesDetailsForEstimatedDelivery(final Map<String, Object> stringObjectMap, final AbstractOrderModel abstractOrderModel,
       final PackagingInfoModel packagingInfoModel) {
     final Date estimatedDeliveryTimestamp = (Date) stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP);
+    packagingInfoModel.setReturningDate(estimatedDeliveryTimestamp);
     if (estimatedDeliveryTimestamp.before(new Date()) || DateUtils.isSameDay(new Date(), estimatedDeliveryTimestamp)) {
       updatePackageDetails(abstractOrderModel, String.valueOf(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER)), packagingInfoModel);
     }
