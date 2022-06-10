@@ -182,6 +182,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final int STATUS_CODE_200 = 200;
 	public static final int STATUS_CODE_201 = 201;
 	public static final int STATUS_CODE_400 = 400;
+	public static final String UPS_DATE_FORMAT = "yyyyMMdd";
 
 
 	private BlintegrationConstants()

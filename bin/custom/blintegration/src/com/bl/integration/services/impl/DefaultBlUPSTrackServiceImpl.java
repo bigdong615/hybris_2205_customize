@@ -389,10 +389,10 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     return found;
   }
 
-  private Date convertIntoDate(String value){
+  private Date convertIntoDate(final String value){
     if(Objects.nonNull(value))
     { try {
-      SimpleDateFormat formatter= new SimpleDateFormat("yyyyMMdd");
+      SimpleDateFormat formatter= new SimpleDateFormat(BlintegrationConstants.UPS_DATE_FORMAT);
       final String activityDate = String.valueOf(value);
       return formatter.parse(activityDate.split(" ")[0]);
     } catch (ParseException e) {
