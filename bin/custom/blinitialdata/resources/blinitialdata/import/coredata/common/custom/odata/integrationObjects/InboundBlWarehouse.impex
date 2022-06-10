@@ -12,3 +12,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLWarehouse:Warehouse	; code        	; Warehouse:code        	;                    	; true	;  
 ; InboundBLWarehouse:Warehouse	; name        	; Warehouse:name        	;                    	; 	;  
 ; InboundBLWarehouse:Warehouse	; active      	; Warehouse:active      	;                    	; 	;  
+; InboundBLWarehouse:Warehouse  ; modifiedtime  ; Warehouse:modifiedtime   	;                       ; 	;  

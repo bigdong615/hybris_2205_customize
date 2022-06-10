@@ -16,5 +16,6 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLPricingLogic:BlPricingLogic 	; productType 	; BlPricingLogic:productType 	; InboundBLPricingLogic:ProductTypeEnum	; true	;  
 ; InboundBLPricingLogic:BlPricingLogic 	; lessThan    	; BlPricingLogic:lessThan    	;                                      	; 	;  
 ; InboundBLPricingLogic:BlPricingLogic 	; tier        	; BlPricingLogic:tier        	; InboundBLPricingLogic:PricingTierEnum	; true	;  
+; InboundBLPricingLogic:BlPricingLogic  ; modifiedtime  ; BlPricingLogic:modifiedtime  	;         		                       	; 	;  
 ; InboundBLPricingLogic:PricingTierEnum	; code        	; PricingTierEnum:code       	;                                      	; true	;  
 ; InboundBLPricingLogic:ProductTypeEnum	; code        	; ProductTypeEnum:code       	;                                      	; true	;  

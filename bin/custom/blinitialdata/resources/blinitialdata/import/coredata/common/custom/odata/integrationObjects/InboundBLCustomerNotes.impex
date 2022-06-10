@@ -18,6 +18,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLCustomerNotes:CustomerNotes    	; order           	; CustomerNotes:order           	; InboundBLCustomerNotes:AbstractOrder    	; true	;  
 ; InboundBLCustomerNotes:CustomerNotes    	; customerNoteType	; CustomerNotes:customerNoteType	; InboundBLCustomerNotes:CustomerNotesEnum	; true	;  
 ; InboundBLCustomerNotes:CustomerNotes    	; type            	; CustomerNotes:type            	; InboundBLCustomerNotes:NotesEnum        	; true	;  
+; InboundBLCustomerNotes:CustomerNotes     	; modifiedtime   	; CustomerNotes:modifiedtime    	;                                	   		; 	;  
 ; InboundBLCustomerNotes:AbstractOrder    	; code            	; AbstractOrder:code            	;                                         	; true	;  
 ; InboundBLCustomerNotes:CustomerNotesEnum	; code            	; CustomerNotesEnum:code        	;                                         	; true	;  
 ; InboundBLCustomerNotes:NotesEnum        	; code            	; NotesEnum:code                	;                                         	; true	;  

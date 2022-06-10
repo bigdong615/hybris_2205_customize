@@ -63,6 +63,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLCustomer:Customer            	; averageGearOrderValue 	; Customer:averageGearOrderValue 	;                                       	; 	;  
 ; InboundBLCustomer:Customer            	; defaultShipmentAddress	; Customer:defaultShipmentAddress	; InboundBLCustomer:Address             	; 	;  
 ; InboundBLCustomer:Customer            	; coiExpirationDate     	; Customer:coiExpirationDate     	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; modifiedtime          	; Customer:modifiedtime         	;                                       	; 	;  
 ; InboundBLCustomer:Address             	; shippingAddress       	; Address:shippingAddress        	;                                       	; true	;  
 ; InboundBLCustomer:Address             	; billingAddress        	; Address:billingAddress         	;                                       	; true	;  
 ; InboundBLCustomer:Address             	; addressID             	; Address:addressID              	;                                       	; true	;  

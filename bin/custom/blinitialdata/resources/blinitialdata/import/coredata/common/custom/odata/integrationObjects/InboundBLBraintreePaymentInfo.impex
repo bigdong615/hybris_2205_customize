@@ -31,6 +31,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; nonce                	; BrainTreePaymentInfo:nonce                	;                                                	; 	;  
 ; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; code                 	; BrainTreePaymentInfo:code                 	;                                                	; true	;  
 ; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; paymentInfo          	; BrainTreePaymentInfo:paymentInfo          	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; modifiedtime          ; BrainTreePaymentInfo:modifiedtime          	;                                                	; 	;  
 ; InboundBLBraintreePaymentInfo:Address             	; addressID            	; Address:addressID                         	;                                                	; true	;  
 ; InboundBLBraintreePaymentInfo:BrainTreeCardType   	; code                 	; BrainTreeCardType:code                    	;                                                	; true	;  
 ; InboundBLBraintreePaymentInfo:User                	; uid                  	; User:uid                                  	;                                                	; true	;  

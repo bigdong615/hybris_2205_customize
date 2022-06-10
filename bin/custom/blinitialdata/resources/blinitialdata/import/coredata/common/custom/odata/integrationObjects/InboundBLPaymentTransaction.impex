@@ -20,5 +20,6 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLPaymentTransaction:PaymentTransaction        	; code           	; PaymentTransaction:code           	;                                                       	; true	;  
 ; InboundBLPaymentTransaction:PaymentTransaction        	; requestToken   	; PaymentTransaction:requestToken   	;                                                       	; 	;  
 ; InboundBLPaymentTransaction:PaymentTransaction        	; paymentProvider	; PaymentTransaction:paymentProvider	;                                                       	; 	;  
+; InboundBLPaymentTransaction:PaymentTransaction     		; modifiedtime   	; PaymentTransaction:modifiedtime   	;               						                 	; 	;  
 ; InboundBLPaymentTransaction:AbstractOrder             	; code           	; AbstractOrder:code                	;                                                       	; true	;  
 ; InboundBLPaymentTransaction:PaymentTransactionTypeEnum	; code           	; PaymentTransactionTypeEnum:code   	;                                                       	; true	;  

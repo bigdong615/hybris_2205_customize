@@ -17,4 +17,5 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLKeywords:Keyword       	; language      	; Keyword:language      	; InboundBLKeywords:Language      	; true	;  
 ; InboundBLKeywords:Keyword       	; catalogVersion	; Keyword:catalogVersion	; InboundBLKeywords:CatalogVersion	; true	;  
 ; InboundBLKeywords:Keyword       	; keyword       	; Keyword:keyword       	;                                 	; true	;  
+; InboundBLKeywords:Keyword     	; modifiedtime   	; Keyword:modifiedtime   	;                                	; 	;  
 ; InboundBLKeywords:Catalog       	; id            	; Catalog:id            	;                                 	; true	;  

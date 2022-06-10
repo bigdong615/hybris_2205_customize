@@ -45,6 +45,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLProductFeature:ProductFeature                 	; featurePosition                  	; ProductFeature:featurePosition                      	;                                                        	; 	;  
 ; InboundBLProductFeature:ProductFeature                 	; qualifier                        	; ProductFeature:qualifier                            	;                                                        	; true	;  
 ; InboundBLProductFeature:ProductFeature                 	; value                            	; ProductFeature:value                                	;                                                        	; 	;  
+; InboundBLProductFeature:ProductFeature     				; modifiedtime   					; ProductFeature:modifiedtime  						 	;                                	; 	;  
 ; InboundBLProductFeature:ClassificationAttributeValue   	; code                             	; ClassificationAttributeValue:code                   	;                                                        	; true	;  
 ; InboundBLProductFeature:ClassificationAttributeValue   	; systemVersion                    	; ClassificationAttributeValue:systemVersion          	; InboundBLProductFeature:ClassificationSystemVersion    	; true	;  
 ; InboundBLProductFeature:Product                        	; catalogVersion                   	; Product:catalogVersion                              	; InboundBLProductFeature:CatalogVersion                 	; true	;  

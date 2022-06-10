@@ -26,6 +26,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLCategory:Category      	; facetedCategory   	; Category:facetedCategory   	;                                 	; 	;  
 ; InboundBLCategory:Category      	; categories        	; Category:categories        	; InboundBLCategory:Category      	; 	;  
 ; InboundBLCategory:Category      	; rentalCategory    	; Category:rentalCategory    	;                                 	; 	;  
+; InboundBLCategory:Category      	; modifiedtime        	; Category:modifiedtime      	;                                 	; 	;  
 ; InboundBLCategory:Catalog       	; id                	; Catalog:id                 	;                                 	; true	;  
 ; InboundBLCategory:CatalogVersion	; catalog           	; CatalogVersion:catalog     	; InboundBLCategory:Catalog       	; true	;  
 ; InboundBLCategory:CatalogVersion	; version           	; CatalogVersion:version     	;                                 	; true	;  

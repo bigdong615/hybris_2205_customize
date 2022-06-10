@@ -15,3 +15,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLBlackoutDate:BlBlackoutDate                	; blackoutDateType     	; BlBlackoutDate:blackoutDateType     	; InboundBLBlackoutDate:BlackoutDateTypeEnum          	; true	;  
 ; InboundBLBlackoutDate:BlBlackoutDate                	; blockedShippingMethod	; BlBlackoutDate:blockedShippingMethod	; InboundBLBlackoutDate:BlackoutDateShippingMethodEnum	; 	;  
 ; InboundBLBlackoutDate:BlBlackoutDate                	; blackoutDate         	; BlBlackoutDate:blackoutDate         	;                                                     	; true	;  
+; InboundBLBlackoutDate:BlBlackoutDate                	; modifiedtime         	; BlBlackoutDate:modifiedtime         	;                                                     	; true	;  

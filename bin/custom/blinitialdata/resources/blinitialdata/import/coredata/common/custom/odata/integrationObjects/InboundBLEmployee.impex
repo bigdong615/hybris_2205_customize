@@ -18,3 +18,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLEmployee:Employee	; sessionCurrency	; Employee:sessionCurrency	; InboundBLEmployee:Currency	; 	;  
 ; InboundBLEmployee:Employee	; creationtime   	; Employee:creationtime   	;                           	; 	;  
 ; InboundBLEmployee:Employee	; name           	; Employee:name           	;                           	; 	;  
+; InboundBLEmployee:Employee    ; modifiedtime   	; Employee:modifiedtime   	;                               ; 	;  

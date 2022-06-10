@@ -31,3 +31,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLConsignmentEntry:ConsignmentEntry  	; quantity        	; ConsignmentEntry:quantity        	;                                             	; 	;  
 ; InboundBLConsignmentEntry:ConsignmentEntry  	; orderEntry      	; ConsignmentEntry:orderEntry      	; InboundBLConsignmentEntry:AbstractOrderEntry	; 	;  
 ; InboundBLConsignmentEntry:ConsignmentEntry  	; options         	; ConsignmentEntry:options         	; InboundBLConsignmentEntry:BlOptions         	; 	;  
+; InboundBLConsignmentEntry:ConsignmentEntry   	; modifiedtime   	; ConsignmentEntry:modifiedtime    	;                                            	; 	;  

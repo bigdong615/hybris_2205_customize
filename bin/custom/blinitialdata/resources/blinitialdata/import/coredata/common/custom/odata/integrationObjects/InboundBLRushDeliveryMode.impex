@@ -14,3 +14,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLRushDeliveryMode:BlRushDeliveryMode	; radius      	; BlRushDeliveryMode:radius      	;                                           	; 	;  
 ; InboundBLRushDeliveryMode:BlRushDeliveryMode	; code        	; BlRushDeliveryMode:code        	;                                           	; true	;  
 ; InboundBLRushDeliveryMode:BlRushDeliveryMode	; shippingArea	; BlRushDeliveryMode:shippingArea	;                                           	; 	;  
+; InboundBLRushDeliveryMode:BlRushDeliveryMode  ; modifiedtime  ; BlRushDeliveryMode:modifiedtime   ;                                				; 	;  

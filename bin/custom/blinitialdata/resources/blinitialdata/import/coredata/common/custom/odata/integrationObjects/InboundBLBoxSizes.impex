@@ -15,3 +15,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLBoxSizes:BoxSizes	; height       	; BoxSizes:height       	;                   	; true	;  
 ; InboundBLBoxSizes:BoxSizes	; creationtime 	; BoxSizes:creationtime 	;                   	; 	;  
 ; InboundBLBoxSizes:BoxSizes	; dimensionUnit	; BoxSizes:dimensionUnit	;                   	; 	;  
+; InboundBLBoxSizes:BoxSizes	; modifiedtime	; BoxSizes:modifiedtime	;                   	; 	;  

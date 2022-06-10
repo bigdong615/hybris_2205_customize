@@ -25,6 +25,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLProductReference:ProductReference        	; quantity      	; ProductReference:quantity     	;                                                   	; 	;  
 ; InboundBLProductReference:ProductReference        	; qualifier     	; ProductReference:qualifier    	;                                                   	; 	;  
 ; InboundBLProductReference:ProductReference        	; preselected   	; ProductReference:preselected  	;                                                   	; 	;  
+; InboundBLProductReference:ProductReference     		; modifiedtime   	; ProductReference:modifiedtime   	;                               					 	; 	;  
 ; InboundBLProductReference:Product                 	; code          	; Product:code                  	;                                                   	; true	;  
 ; InboundBLProductReference:Product                 	; catalogVersion	; Product:catalogVersion        	; InboundBLProductReference:CatalogVersion          	; true	;  
 ; InboundBLProductReference:Catalog                 	; id            	; Catalog:id                    	;                                                   	; true	;  

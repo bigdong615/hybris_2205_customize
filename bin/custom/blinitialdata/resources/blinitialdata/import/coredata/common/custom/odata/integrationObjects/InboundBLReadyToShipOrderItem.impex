@@ -25,3 +25,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; parentLocation 	; ReadyToShipOrderItem:parentLocation 	;                                        	; 	;  
 ; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; productName    	; ReadyToShipOrderItem:productName    	;                                        	; 	;  
 ; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; employeeName   	; ReadyToShipOrderItem:employeeName   	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem    ; modifiedtime   	; ReadyToShipOrderItem:modifiedtime   	;           		                     	; 	;  
