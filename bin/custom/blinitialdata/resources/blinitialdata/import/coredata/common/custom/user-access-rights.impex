@@ -134,6 +134,8 @@ UserGroup ; customersupportagentgroup ;                ;          ;             
           ;                           ;                ;          ; Notes.note                     ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Notes.order                    ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; NotesEnum                      ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; BlOrderCancellationHistory     ; +    ; +      ; +      ; +      ; +
+
 #Access Rights of Agent on gift card purchase
           ;                           ;                ;          ; GiftCard                       ; +    ; +      ; +      ; -      ; -
           ;                           ;                ;          ; Order.giftCardCost             ; +    ; +      ; +      ; -      ; -

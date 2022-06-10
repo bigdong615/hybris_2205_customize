@@ -60,7 +60,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} NOT IN "
-			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND {o:" + AbstractOrderModel.ISAUTHORISED
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW' OR {os:code} = 'CANCELLED'}}) AND {o:" + AbstractOrderModel.ISAUTHORISED
 			+ "} = ?isAuthorized AND ({o:" + AbstractOrderModel.ISAUTHORIZATIONATTEMPTED + "} = ?isAuthorizationAttempted OR {o:"
 			+ AbstractOrderModel.ISAUTHORIZATIONATTEMPTED + "} is null)" ;
 

@@ -123,6 +123,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLOrder:Order                     	; rentalStartDate           	; Order:rentalStartDate             	;                                          	; 	;  
 ; InboundBLOrder:Order                     	; totalTax                  	; Order:totalTax                    	;                                          	; 	;  
 ; InboundBLOrder:Order                     	; grandTotal                	; Order:grandTotal                  	;                                          	; 	;  
+; InboundBLOrder:Order  				   	; modifiedtime   				; Order:modifiedtime   					;                 			               	; 	;  
 ; InboundBLOrder:Address                   	; shippingAddress           	; Address:shippingAddress           	;                                          	; 	;  
 ; InboundBLOrder:Address                   	; streetname                	; Address:streetname                	;                                          	; 	;  
 ; InboundBLOrder:Address                   	; streetnumber              	; Address:streetnumber              	;                                          	; 	;  

@@ -1251,6 +1251,8 @@
 					property="currentObject"/>
 				<y:action action-id="com.bl.blbackoffice.actions.order.customCancelOrderAction"
 					property="currentObject"/>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.cancel.order.blcancelorderaction"
+						  property="currentObject"/>
 				<!--<y:action action-id="com.bl.blbackoffice.actions.order.customOrderRefundAction"
 					property="currentObject"/>-->
 				<y:action
@@ -1264,6 +1266,7 @@
 					property="currentObject"/>
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.orderdepositrequiredaction"
 					property="currentObject"/>
+
 			</y:group>
 		</y:actions>
 	</context>

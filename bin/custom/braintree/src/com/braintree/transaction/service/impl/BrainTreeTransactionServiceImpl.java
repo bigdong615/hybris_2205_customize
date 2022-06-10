@@ -1861,7 +1861,36 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
     return Boolean.FALSE;
   }
 
-  /**
+	/**
+	 * {@inheritDoc}
+	 */
+	public void voidAuthTransactionForTotalPrice(final OrderModel order) {
+		try {
+			final String merchantTransactionCode = order.getUser().getUid();
+			final List<PaymentTransactionModel> transactions = order.getPaymentTransactions();
+			if (CollectionUtils.isNotEmpty(transactions) && null != merchantTransactionCode) {
+				final List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
+				final Optional<PaymentTransactionEntryModel> authEntry = transactionEntries.stream()
+						.filter(transactionEntry ->
+								transactionEntry.getType().equals(PaymentTransactionType.AUTHORIZATION) && transactionEntry
+										.getAmount().intValue() == BigDecimal.valueOf(order.getTotalPrice()).intValue())
+						.findAny();
+				if (authEntry.isPresent()) {
+					final VoidRequest voidRequest = new VoidRequest(merchantTransactionCode,
+							authEntry.get().getRequestId(), StringUtils.EMPTY,
+							StringUtils.EMPTY);
+					final BrainTreeVoidResult voidResult = brainTreePaymentService
+							.voidTransaction(voidRequest);
+					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), order, authEntry.get());
+				}
+			}
+		} catch (final Exception ex) {
+			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction for order {} ",
+					order.getCode(), ex);
+		}
+	}
+
+	/**
    * @return the braintreePartialRefundService
    */
   public BraintreePartialRefundService getBraintreePartialRefundService()

@@ -31,6 +31,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLBasestore:BaseStore 	; disableSaturdays                  	; BaseStore:disableSaturdays                  	;                              	; 	;  
 ; InboundBLBasestore:BaseStore 	; bundleDiscount                    	; BaseStore:bundleDiscount                    	;                              	; 	;  
 ; InboundBLBasestore:BaseStore 	; name                              	; BaseStore:name                              	;                              	; 	;  
+; InboundBLBasestore:BaseStore  ; modifiedtime   	                    ; BaseStore:modifiedtime                 	    ;                         	    ;  	;  
 ; InboundBLBasestore:Catalog   	; id                                	; Catalog:id                                  	;                              	; true	;  
 ; InboundBLBasestore:BaseSite  	; uid                               	; BaseSite:uid                                	;                              	; true	;  
 ; InboundBLBasestore:AtpFormula	; code                              	; AtpFormula:code                             	;                              	; true	;  

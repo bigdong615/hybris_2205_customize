@@ -439,6 +439,34 @@
                 </widget>
 
 
+                <widget id="blCustomOrderCancelPopup"
+                        widgetDefinitionId="custom.bl.widgets.blCustomCancelOrder"
+                        slotId="cockpitWidgetChildrenInvisible"
+                        title="Cancel Order" template="true">
+
+                    <instance-settings
+                            socketEventRoutingMode="LAST_USED">
+                        <create onInit="false" reuseExisting="true">
+                            <all-incoming-events />
+                        </create>
+                        <close>
+                            <all-outgoing-events />
+                        </close>
+                        <select onInit="false">
+                            <all-incoming-events />
+                        </select>
+                    </instance-settings>
+
+                    <setting key="widgetStyleClass" type="String"></setting>
+                    <setting key="__externalLocationPath" type="String">extension://blbackoffice
+                    </setting>
+                    <setting key="widgetStyleAttribute" type="String"></setting>
+                    <setting key="_width" type="String">1140px</setting>
+                    <setting key="_height" type="String">650px</setting>
+                    <virtual-sockets />
+                </widget>
+
+
                 <widget id="blDepositRequiredPopup"
                   widgetDefinitionId="custom.bl.widgets.blOrderDepositRequired"
                   slotId="cockpitWidgetChildrenInvisible"
@@ -465,7 +493,7 @@
                     <setting key="_height" type="String">650px</setting>
                     <virtual-sockets />
                 </widget>
-				
+
                 <widget id="omsCancelOrderPopup" widgetDefinitionId="de.hybris.ordermanagementbackoffice.widgets.cancelorder" slotId="cockpitWidgetChildrenInvisible"
                         title="Cancel an Order" template="true">
 
@@ -488,7 +516,7 @@
                     <setting key="_height" type="String">650px</setting>
                     <virtual-sockets />
                 </widget>
-                
+
                 <widget id="omsCreateReturnRequestPopup" widgetDefinitionId="de.hybris.ordermanagementbackoffice.widgets.createreturnrequest" slotId="cockpitWidgetChildrenInvisible"
                         title="Create Return Request" template="true">
 
@@ -620,7 +648,7 @@
     <widget-connection sourceWidgetId="csSessionContext" outputId="viewData" targetWidgetId="csBackofficeSpaceManagement" inputId="searchData"/>
 
     <widget-connection sourceWidgetId="csSavedQueries" outputId="advancedSearchInitContext" targetWidgetId="csAdvancedSearch" inputId="initContext"/>
-    
+
     <widget-connection sourceWidgetId="configurableFlow" outputId="wizardResult" targetWidgetId="csSessionContext" inputId="itemCreated"/>
 
     <widget-connection sourceWidgetId="STUB_com.hybris.cockpitng.editor.asmdeeplinklisteditor" outputId="referenceEditorOutput" targetWidgetId="configurableFlow" inputId="context"/>
@@ -680,5 +708,6 @@
 	 <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.coirequiredaction" outputId="blCoiRequiredContext" targetWidgetId="blCoiRequiredPopup" inputId="inputObject" />
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.moreinforequiredaction" outputId="blMoreInfoRequiredContext" targetWidgetId="blMoreInfoRequiredPopup" inputId="inputObject" />
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.orderdepositrequiredaction" outputId="blOrderDepositRequiredContext" targetWidgetId="blDepositRequiredPopup" inputId="inputObject" />
+    <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.cancel.order.blcancelorderaction" outputId="customBlCancelOrderContext" targetWidgetId="blCustomOrderCancelPopup" inputId="inputObject" />
 
 </widgets>

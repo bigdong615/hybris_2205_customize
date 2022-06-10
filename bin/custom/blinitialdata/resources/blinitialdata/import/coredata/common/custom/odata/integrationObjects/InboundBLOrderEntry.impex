@@ -45,6 +45,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLOrderEntry:OrderEntry      	; basePrice                     	; OrderEntry:basePrice                     	;                                     	; 	;  
 ; InboundBLOrderEntry:OrderEntry      	; noDamageWaiverSelected        	; OrderEntry:noDamageWaiverSelected        	;                                     	; 	;  
 ; InboundBLOrderEntry:OrderEntry      	; entryNumber                   	; OrderEntry:entryNumber                   	;                                     	; true	;  
+; InboundBLOrderEntry:OrderEntry     	; modifiedtime   					; OrderEntry:modifiedtime   				;                      		          	; 	;  
 ; InboundBLOrderEntry:Order           	; code                          	; Order:code                               	;                                     	; true	;  
 ; InboundBLOrderEntry:Unit            	; code                          	; Unit:code                                	;                                     	; true	;  
 ; InboundBLOrderEntry:CatalogVersion  	; version                       	; CatalogVersion:version                   	;                                     	; true	;  

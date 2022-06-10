@@ -17,3 +17,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLDeliveryMode:DeliveryMode	; name        	; DeliveryMode:name        	;                                	; 	;  
 ; InboundBLDeliveryMode:DeliveryMode	; description 	; DeliveryMode:description 	;                                	; 	;  
 ; InboundBLDeliveryMode:DeliveryMode	; active      	; DeliveryMode:active      	;                                	; 	;  
+; InboundBLDeliveryMode:DeliveryMode    ; modifiedtime  ; DeliveryMode:modifiedtime ;                                	; 	;  

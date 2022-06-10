@@ -82,7 +82,7 @@
      </div>
 
      <%-- This section will be covered in BL-462 --%>
-     <c:if test="${fn:containsIgnoreCase(entry.product.manufacturerAID, '9') == false}">
+     <c:if test="${fn:equalsIgnoreCase(entry.product.manufacturerAID, '9') == false}">
      <div id="damageOptions" class="row mt-3">
          <div class="col-md-10 offset-md-2">
              <p class="body14 mb-1"><spring:theme code="text.cart.damage.waiver"/><a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></p>

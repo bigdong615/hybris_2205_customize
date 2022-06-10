@@ -31,5 +31,6 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLAddress:Address	; billingAddress      	; Address:billingAddress      	;                         	; 	;  
 ; InboundBLAddress:Address	; original            	; Address:original            	; InboundBLAddress:Address	; 	;  
 ; InboundBLAddress:Address	; upsStoreAddress     	; Address:upsStoreAddress     	;                         	; true	;  
+; InboundBLAddress:Address  ; modifiedtime   	    ; Address:modifiedtime   	    ;                         	;  	;  
 ; InboundBLAddress:Region 	; isocode             	; Region:isocode              	;                         	; true	;  
 ; InboundBLAddress:Region 	; country             	; Region:country              	; InboundBLAddress:Country	; true	;  

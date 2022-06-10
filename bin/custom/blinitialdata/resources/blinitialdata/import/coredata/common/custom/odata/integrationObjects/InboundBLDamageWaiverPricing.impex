@@ -14,3 +14,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLDamageWaiverPricing:BlDamageWaiverPricing	; damageWaiverGearType	; BlDamageWaiverPricing:damageWaiverGearType	; InboundBLDamageWaiverPricing:RentalGearType	; true	;  
 ; InboundBLDamageWaiverPricing:BlDamageWaiverPricing	; waiverPercentage    	; BlDamageWaiverPricing:waiverPercentage    	;                                            	; true	;  
 ; InboundBLDamageWaiverPricing:BlDamageWaiverPricing	; creationtime        	; BlDamageWaiverPricing:creationtime        	;                                            	; 	;  
+; InboundBLDamageWaiverPricing:BlDamageWaiverPricing    ; modifiedtime   		; BlDamageWaiverPricing:modifiedtime   			;                                	; 	;  

@@ -138,6 +138,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLProduct:BlProduct                  	; retailGearPrice      	; BlProduct:retailGearPrice          	;                                             	; 	;  
 ; InboundBLProduct:BlProduct                  	; primaryCategoryID    	; BlProduct:primaryCategoryID        	;                                             	; 	;  
 ; InboundBLProduct:BlProduct                  	; alternativeProduct   	; BlProduct:alternativeProduct       	;                                             	; 	;  
+; InboundBLProduct:BlProduct			     	; modifiedtime   		; BlProduct:modifiedtime   				;                            			    	; 	;  
 ; InboundBLProduct:BatteryMaterialEnum        	; code                 	; BatteryMaterialEnum:code           	;                                             	; true	;  
 ; InboundBLProduct:Currency                   	; isocode              	; Currency:isocode                   	;                                             	; true	;  
 ; InboundBLProduct:Category                   	; code                 	; Category:code                      	;                                             	; true	;  

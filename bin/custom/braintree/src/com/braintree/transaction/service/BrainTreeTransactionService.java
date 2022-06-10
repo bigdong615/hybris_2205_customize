@@ -243,4 +243,10 @@ public interface BrainTreeTransactionService
 	 * @return braintree address id
 	 */
 	public String getBraintreeAddressIDForLegacyPaymentMethods(final String paymentMethodToken);
+
+	/**
+	 * It voids the auth transaction for the total price of the order
+	 * @param order the order
+	 */
+	public void voidAuthTransactionForTotalPrice(final OrderModel order);
 }

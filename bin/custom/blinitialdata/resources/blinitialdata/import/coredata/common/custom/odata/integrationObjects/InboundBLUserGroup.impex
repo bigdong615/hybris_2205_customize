@@ -21,6 +21,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLUserGroup:UserGroup        	; name              	; UserGroup:name                  	;                                     	; 	;  
 ; InboundBLUserGroup:UserGroup        	; searchRestrictions	; UserGroup:searchRestrictions    	; InboundBLUserGroup:SearchRestriction	; 	;  
 ; InboundBLUserGroup:UserGroup        	; displayName       	; UserGroup:displayName           	;                                     	; 	;  
+; InboundBLUserGroup:UserGroup	     	; modifiedtime   		; UserGroup:modifiedtime   			;                               	 	; 	;  
 ; InboundBLUserGroup:Principal        	; uid               	; Principal:uid                   	;                                     	; true	;  
 ; InboundBLUserGroup:SearchRestriction	; code              	; SearchRestriction:code          	;                                     	; true	;  
 ; InboundBLUserGroup:SearchRestriction	; restrictedType    	; SearchRestriction:restrictedType	; InboundBLUserGroup:ComposedType     	; true	;  

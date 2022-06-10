@@ -1472,8 +1472,7 @@ public class AccountPageController extends AbstractSearchPageController
 		final String poNotes = request.getParameter(BlControllerConstants.PO_NOTES);
 
 		boolean isSuccess = false;
-		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
-				StringUtils.isNotBlank(paymentMethodNonce) || StringUtils.isNotBlank(poNumber)) {
+		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) || StringUtils.isNotBlank(poNumber)) {
 
 			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
 
