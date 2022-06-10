@@ -1,5 +1,10 @@
 package com.bl.Ordermanagement.services.impl;
 
+import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.jalo.BlItemsBillingCharge;
+import com.bl.core.jalo.BlSubparts;
+import com.bl.core.model.BlItemsBillingChargeModel;
+import com.bl.core.model.BlSubpartsModel;
 import java.util.*;
 
 import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
@@ -30,6 +35,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
@@ -187,7 +193,7 @@ public class DefaultBlOrderModificationService
 	 * @param orderModel
 	 * @param consignmentToRemove
 	 */
-	private void removeConsignment(final OrderModel orderModel, final List<ConsignmentModel> consignmentToRemove)
+	public void removeConsignment(final OrderModel orderModel, final List<ConsignmentModel> consignmentToRemove)
 	{
 		for (final ConsignmentModel consignment : orderModel.getConsignments())
 		{
@@ -323,6 +329,58 @@ public class DefaultBlOrderModificationService
 			BlLogger.logMessage(LOG, Level.ERROR, "Exception occur while trying to save order {} ",
 					order.getCode(), e);
 		}
+	}
+
+	public List<ConsignmentEntryModel> removeConsignmentEntries(final OrderModel orderModel, final BlSerialProductModel serialProduct,
+			final List<ConsignmentEntryModel> consignmentEntriesToRemove) {
+		for(final ConsignmentModel consignmentModel : orderModel.getConsignments()) {
+			for(final ConsignmentEntryModel consignmentEntry : consignmentModel.getConsignmentEntries()) {
+				if(consignmentEntry.getSerialProducts().contains(serialProduct)) {
+					if(consignmentEntry.getSerialProducts().stream().filter(blSerialProduct ->
+							blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList()).size() > 1) {
+						final List<BlProductModel> products = new ArrayList<>(consignmentEntry.getSerialProducts());
+						final Map<String, ItemStatusEnum> itemMap = new HashMap<>(consignmentEntry.getItems());
+						final Map<String, List<BlItemsBillingChargeModel>> billingCharges = new HashMap<>(consignmentEntry.getBillingCharges());
+						billingCharges.entrySet().removeIf(code -> code.getKey().equals(serialProduct.getCode()));
+						consignmentEntry.setBillingCharges(billingCharges);
+						products.remove(serialProduct);
+						consignmentEntry.setQuantity(consignmentEntry.getQuantity()-1);
+						updateConsignmentEntry(serialProduct, consignmentEntry, products, itemMap);
+						updateStockForSerial(consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(),
+								serialProduct, false);
+					} else {
+						consignmentEntriesToRemove.add(consignmentEntry);
+					}
+					break;
+				}
+			}
+			break;
+		}
+		return consignmentEntriesToRemove;
+	}
+
+	private void updateConsignmentEntry(final BlSerialProductModel serialProduct,
+			final ConsignmentEntryModel consignmentEntry, final List<BlProductModel> products, final Map<String, ItemStatusEnum> itemMap) {
+		itemMap.entrySet().removeIf(item -> item.getKey().contains(serialProduct.getCode()));
+		final BlProductModel skuProduct = serialProduct.getBlProduct();
+		final Collection<BlSubpartsModel> subpartProducts = skuProduct.getSubpartProducts();
+		subpartProducts.forEach(subpartProduct -> {
+			final BlProductModel subpart = subpartProduct.getSubpartProduct();
+			for(int count = subpartProduct.getQuantity(); count > 0; count--) {
+				products.remove(subpart);
+				Iterator<String> subpartsToRemove = itemMap.keySet().iterator();
+				while(subpartsToRemove.hasNext()) {
+					final String subpartCode = subpartsToRemove.next();
+					if(subpartCode.contains(subpart.getName())) {
+						subpartsToRemove.remove();
+						break;
+					}
+				}
+			}
+		});
+		consignmentEntry.setSerialProducts(products);
+		consignmentEntry.setItems(itemMap);
+		getModelService().save(consignmentEntry);
 	}
 
 	/**
