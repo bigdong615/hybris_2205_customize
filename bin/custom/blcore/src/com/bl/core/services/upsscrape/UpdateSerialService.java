@@ -18,7 +18,7 @@ public interface UpdateSerialService {
    * @param packagingInfoModel package to be updated
    */
    void updateSerialProducts(final String packageCode , final String orderCode , final Date upsDeliveryDate , final int numberOfRepetition , final
-   PackagingInfoModel packagingInfoModel);
+   PackagingInfoModel packagingInfoModel , final Date trackDate);
 
 
   }

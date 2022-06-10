@@ -25,11 +25,9 @@ import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -230,23 +228,23 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     final ActivityType delivered = findActivityType(pkg.getActivity(), BlintegrationConstants.PACAKAGE_ACTIVITY_D);
     if (delivered != null) {
       stringObjectMap.put(BlintegrationConstants.A_PACKAGE_WAS_DELIVERED, BlintegrationConstants.REQUEST_OPTION_NUMBER);
-      stringObjectMap.put(BlintegrationConstants.A_PACKAGE_WAS_DELIVERED_ON, convertUPSDateTime(delivered.getDate(), delivered
-          .getTime()));
+      stringObjectMap.put(BlintegrationConstants.A_PACKAGE_WAS_DELIVERED_ON, convertIntoDate(convertUPSDateTime(delivered.getDate(), delivered
+          .getTime())));
     }
-    if (StringUtils.isBlank((String) stringObjectMap.get(BlintegrationConstants.SHIP_TIME_STAMP))) {
+    if (Objects.nonNull(stringObjectMap.get(BlintegrationConstants.SHIP_TIME_STAMP))) {
       final ActivityType pickedUp = findActivityType(pkg.getActivity(), BlintegrationConstants.PACAKAGE_ACTIVITY_P);
       if (pickedUp != null) {
-        stringObjectMap.put(BlintegrationConstants.SHIP_TIME_STAMP, convertUPSDateTime(pickedUp.getDate(), pickedUp.getTime()));
+        stringObjectMap.put(BlintegrationConstants.SHIP_TIME_STAMP, convertIntoDate(convertUPSDateTime(pickedUp.getDate(), pickedUp.getTime())));
       }
     }
-    if (StringUtils.isBlank((String) stringObjectMap.get(BlintegrationConstants.SHIP_TIME_STAMP))) {
+    if (Objects.nonNull((stringObjectMap.get(BlintegrationConstants.SHIP_TIME_STAMP)))) {
        ActivityType inTransit = null;
       if(CollectionUtils.isNotEmpty(pkg.getActivity())) {
         inTransit = findFirstActivity(pkg.getActivity());
       }
         if (inTransit != null) {
           stringObjectMap.put(BlintegrationConstants.SHIP_TIME_STAMP,
-              convertUPSDateTime(inTransit.getDate(), inTransit.getTime()));
+                  convertIntoDate(convertUPSDateTime(inTransit.getDate(), inTransit.getTime())));
 
       }
     }
@@ -261,17 +259,17 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
      final  Map<String, Object> stringObjectMap) {
     final String type = deliveryDetail.getType().getCode();
     if (BlintegrationConstants.DELIVERY_DETAIL_ONE.equals(type)) {
-      stringObjectMap.put(BlintegrationConstants.DELIVERY_TIME_STAMP ,  convertUPSDateTime(deliveryDetail.getDate(),
-          deliveryDetail.getTime()));
+      stringObjectMap.put(BlintegrationConstants.DELIVERY_TIME_STAMP ,  convertIntoDate(convertUPSDateTime(deliveryDetail.getDate(),
+          deliveryDetail.getTime())));
     } else if (BlintegrationConstants.DELIVERY_DETAIL_TWO.equals(type)) {
-      stringObjectMap.put(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP, convertUPSDateTime(deliveryDetail.getDate(),
-          deliveryDetail.getTime()));
+      stringObjectMap.put(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP, convertIntoDate(convertUPSDateTime(deliveryDetail.getDate(),
+          deliveryDetail.getTime())));
     } else if (BlintegrationConstants.DELIVERY_DETAIL_THREE.equals(type)) {
-      stringObjectMap.put(BlintegrationConstants.SCHEDULED_DELIVERY_TIME_STAMP, convertUPSDateTime(deliveryDetail.getDate(),
-          deliveryDetail.getTime()));
+      stringObjectMap.put(BlintegrationConstants.SCHEDULED_DELIVERY_TIME_STAMP, convertIntoDate(convertUPSDateTime(deliveryDetail.getDate(),
+          deliveryDetail.getTime())));
     } else if (BlintegrationConstants.DELIVERY_DETAIL_FOUR.equals(type)) {
       stringObjectMap.put(BlintegrationConstants.RESCHEDULED_DELIVERY_TIME_STAMP ,
-          convertUPSDateTime(deliveryDetail.getDate(), deliveryDetail.getTime()));
+              convertIntoDate(convertUPSDateTime(deliveryDetail.getDate(), deliveryDetail.getTime())));
     }
   }
 
@@ -285,7 +283,7 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     if (Objects.nonNull(shipmentType.getShipmentWeight())) {
       stringObjectMap.put(BlintegrationConstants.SHIPMENT_WEIGHT, shipmentType.getShipmentWeight().getWeight());
     }
-    stringObjectMap.put(BlintegrationConstants.SHIP_TIME_STAMP, convertUPSDateTime(shipmentType.getPickupDate(), null));
+    stringObjectMap.put(BlintegrationConstants.SHIP_TIME_STAMP, convertIntoDate(convertUPSDateTime(shipmentType.getPickupDate(), null)));
     stringObjectMap.put(BlintegrationConstants.A_PACKAGE_WAS_DELIVERED, BlintegrationConstants.ZERO);
     stringObjectMap.put(BlintegrationConstants.A_PACKAGE_WAS_DELIVERED_ON, StringUtils.EMPTY);
   }
@@ -300,8 +298,8 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     stringObjectMap.put(BlintegrationConstants.STATUS_TYPE, lastActivity.getStatus().getType());
     stringObjectMap.put(BlintegrationConstants.STATUS_DESCRIPTION, lastActivity.getStatus().getDescription());
     stringObjectMap.put(BlintegrationConstants.STATUS_CODE, lastActivity.getStatus().getCode());
-    stringObjectMap.put(BlintegrationConstants.ACTIVITY_TIME_STAMP ,  convertUPSDateTime(lastActivity.getDate(), lastActivity
-        .getTime()));
+    stringObjectMap.put(BlintegrationConstants.ACTIVITY_TIME_STAMP ,  convertIntoDate(convertUPSDateTime(lastActivity.getDate(), lastActivity
+        .getTime())));
   }
 
   /**
@@ -389,5 +387,18 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     }
 
     return found;
+  }
+
+  private Date convertIntoDate(final String value){
+    if(Objects.nonNull(value))
+    { try {
+      SimpleDateFormat formatter= new SimpleDateFormat(BlintegrationConstants.UPS_DATE_FORMAT);
+      final String activityDate = String.valueOf(value);
+      return formatter.parse(activityDate.split(" ")[0]);
+    } catch (ParseException e) {
+      BlLogger.logMessage(LOG , Level.ERROR , "Error while converting date" , e);
+    }
+    }
+  return null;
   }
 }
