@@ -23,5 +23,6 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; billPaid       	; BlItemsBillingCharge:billPaid       	;                                                      	; 	;  
 ; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; billChargeType 	; BlItemsBillingCharge:billChargeType 	; InboundBLItemsBillingCharge:ItemBillingChargeTypeEnum	; 	;  
 ; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; chargedAmount  	; BlItemsBillingCharge:chargedAmount  	;                                                      	; 	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; modifiedtime  	; BlItemsBillingCharge:modifiedtime  	;                                                      	; 	;  
 ; InboundBLItemsBillingCharge:BillInfoStatus           	; code           	; BillInfoStatus:code                 	;                                                      	; true	;  
 ; InboundBLItemsBillingCharge:ItemBillingChargeTypeEnum	; code           	; ItemBillingChargeTypeEnum:code      	;                                                      	; true	;  

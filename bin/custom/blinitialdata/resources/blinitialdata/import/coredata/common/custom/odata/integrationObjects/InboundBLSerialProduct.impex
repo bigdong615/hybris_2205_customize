@@ -73,6 +73,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLSerialProduct:BlSerialProduct                	; code                       	; BlSerialProduct:code                       	;                                                       	; true	;  
 ; InboundBLSerialProduct:BlSerialProduct                	; isBufferedInventory        	; BlSerialProduct:isBufferedInventory        	;                                                       	; 	;  
 ; InboundBLSerialProduct:BlSerialProduct                	; inventoryLocationID        	; BlSerialProduct:inventoryLocationID        	;                                                       	; 	;  
+; InboundBLSerialProduct:BlSerialProduct			     	; modifiedtime   				; BlSerialProduct:modifiedtime   				;                                	; 	;  
 ; InboundBLSerialProduct:Catalog                        	; id                         	; Catalog:id                                 	;                                                       	; true	;  
 ; InboundBLSerialProduct:BlInventoryLocation            	; serialHomeLocation         	; BlInventoryLocation:inventoryLocationID    	;                                                       	; true	;  
 ; InboundBLSerialProduct:BlInventoryLocation            	; active                     	; BlInventoryLocation:active                 	;                                                       	; 	;  

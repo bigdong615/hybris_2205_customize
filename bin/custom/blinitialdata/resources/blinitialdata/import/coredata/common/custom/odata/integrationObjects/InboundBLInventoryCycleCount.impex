@@ -19,3 +19,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; inventoryCycleCountProducts	; BlInventoryCycleCount:inventoryCycleCountProducts   	; InboundBLInventoryCycleCount:BlInventoryCycleCountDetails	; 	;  
 ; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; inventoryCycleCountStatus  	; BlInventoryCycleCount:inventoryCycleCountStatus     	; InboundBLInventoryCycleCount:InventoryCycleCountStatus   	; 	;  
 ; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; inventoryCycleCountCode    	; BlInventoryCycleCount:inventoryCycleCountCode       	;                                                          	; true	;  
+; InboundBLInventoryCycleCount:BlInventoryCycleCount     	; modifiedtime   	            ; BlInventoryCycleCount:modifiedtime   	                ;                                							; 	;  

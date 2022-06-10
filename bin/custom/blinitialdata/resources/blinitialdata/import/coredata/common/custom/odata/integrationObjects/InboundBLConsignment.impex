@@ -52,6 +52,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLConsignment:Consignment              	; deliveryMode                      	; Consignment:deliveryMode                      	; InboundBLConsignment:DeliveryMode             	; 	;  
 ; InboundBLConsignment:Consignment              	; threeDayGroundAvailability        	; Consignment:threeDayGroundAvailability        	;                                               	; 	;  
 ; InboundBLConsignment:Consignment              	; internalTransferConsignment       	; Consignment:internalTransferConsignment       	;                                               	; 	;  
+; InboundBLConsignment:Consignment              	; modifiedtime                      	; Consignment:modifiedtime                      	;                                               	; 	;  
 ; InboundBLConsignment:ConsignmentProcess       	; code                              	; ConsignmentProcess:code                       	;                                               	; true	;  
 ; InboundBLConsignment:ConsignmentStatus        	; code                              	; ConsignmentStatus:code                        	;                                               	; true	;  
 ; InboundBLConsignment:AbstractOrderEntry       	; entryNumber                       	; AbstractOrderEntry:entryNumber                	;                                               	; true	;  

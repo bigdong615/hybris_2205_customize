@@ -18,4 +18,5 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; externalStores      	; BlPickUpZoneDeliveryMode:externalStores      	;                                        	; 	;  
 ; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; code                	; BlPickUpZoneDeliveryMode:code                	;                                        	; true	;  
 ; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; externalStoreUrl    	; BlPickUpZoneDeliveryMode:externalStoreUrl    	;                                        	; 	;  
+; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode  ; modifiedtime   		; BlPickUpZoneDeliveryMode:modifiedtime 	  	;                                	; 	;  
 ; InboundBLPickUpZoneDeliveryMode:Address                 	; addressID           	; Address:addressID                            	;                                        	; true	;  

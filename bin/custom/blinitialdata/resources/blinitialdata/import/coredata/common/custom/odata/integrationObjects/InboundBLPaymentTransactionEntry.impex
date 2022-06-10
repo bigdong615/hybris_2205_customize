@@ -25,6 +25,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; type                        	; PaymentTransactionEntry:type                        	; InboundBLPaymentTransactionEntry:PaymentTransactionType	; 	;  
 ; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; paymentTransaction          	; PaymentTransactionEntry:paymentTransaction          	; InboundBLPaymentTransactionEntry:PaymentTransaction    	; true	;  
 ; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; consignment                 	; PaymentTransactionEntry:consignment                 	; InboundBLPaymentTransactionEntry:Consignment           	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry 	; modifiedtime   				; PaymentTransactionEntry:modifiedtime   				;                                	; 	;  
 ; InboundBLPaymentTransactionEntry:PaymentTransaction     	; code                        	; PaymentTransaction:code                             	;                                                        	; true	;  
 ; InboundBLPaymentTransactionEntry:Currency               	; isocode                     	; Currency:isocode                                    	;                                                        	; true	;  
 ; InboundBLPaymentTransactionEntry:PaymentTransactionType 	; code                        	; PaymentTransactionType:code                         	;                                                        	; true	;  
