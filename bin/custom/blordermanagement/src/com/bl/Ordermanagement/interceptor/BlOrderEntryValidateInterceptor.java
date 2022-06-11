@@ -36,6 +36,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -117,26 +118,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 					final OrderModel order = orderEntryModel.getOrder();
 					final List serialProducts = getInitialValue(orderEntryModel,
 							AbstractOrderEntryModel.SERIALPRODUCTS);
-					if (null != serialProducts) {
-						final List<BlProductModel> currentProducts = orderEntryModel.getSerialProducts();
-						final List previousProducts = new ArrayList<>(serialProducts);
-						previousProducts.removeAll(currentProducts);
-						final List<BlSerialProductModel> blSerialProducts = (List<BlSerialProductModel>) previousProducts
-								.stream().filter(blSerialProduct ->
-										blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList());
-						final List<ConsignmentEntryModel> consignmentEntriesToRemove = new ArrayList<>();
-						final List<ConsignmentModel> consignmentToRemove = new ArrayList<>();
-						blSerialProducts.forEach(serialProd -> {
-							blOrderModificationService.removeConsignmentEntries(order, serialProd,
-									consignmentEntriesToRemove);
-						});
-						modelService.removeAll(consignmentEntriesToRemove);
-						blOrderModificationService.removeConsignment(order, consignmentToRemove);
-						modelService.removeAll(consignmentToRemove);
-						order.setOrderModifiedDate(new Date());
-						order.setUpdatedTime(new Date());
-						modelService.save(order);
-					}
+					updateConsignmentEntry(serialProducts, orderEntryModel, order);
 				}
 			}
 			else if(CollectionUtils.isEmpty(serialProduct) && warehouse == null)
@@ -144,6 +126,35 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 				modifyUsedGearOrder(orderEntryModel,interceptorContext);
 			}
 
+		}
+	}
+
+	/**
+	 * It updates the consignment entry as the serial products are removed in order entry
+	 * @param serialProducts the serial products
+	 * @param orderEntryModel the order entry model
+	 * @param order the order
+	 */
+	private void updateConsignmentEntry(final List serialProducts,
+			final OrderEntryModel orderEntryModel, final OrderModel order) {
+		if (null != serialProducts) {
+			final List<BlProductModel> currentProducts = orderEntryModel.getSerialProducts();
+			final List previousProducts = new ArrayList<>(serialProducts);
+			previousProducts.removeAll(currentProducts);
+			final List<BlSerialProductModel> blSerialProducts = (List<BlSerialProductModel>) previousProducts
+					.stream().filter(blSerialProduct ->
+							blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList());
+			final List<ConsignmentEntryModel> consignmentEntriesToRemove = new ArrayList<>();
+			final List<ConsignmentModel> consignmentToRemove = new ArrayList<>();
+			blSerialProducts.forEach(serialProd ->
+				blOrderModificationService.removeConsignmentEntries(order, serialProd,
+						consignmentEntriesToRemove));
+			modelService.removeAll(consignmentEntriesToRemove);
+			blOrderModificationService.removeConsignment(order, consignmentToRemove);
+			modelService.removeAll(consignmentToRemove);
+			order.setOrderModifiedDate(new Date());
+			order.setUpdatedTime(new Date());
+			modelService.save(order);
 		}
 	}
 
@@ -201,6 +212,9 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		{
 			isOrderModified(orderEntryModel, serialProduct, warehouse);
 			orderEntryModel.setUpdatedTime(new Date());
+			orderEntryModel.setWarehouse(null);
+			orderEntryModel.setIsModifiedOrder(Boolean.FALSE);
+			orderEntryModel.setModifiedSerialProductList(Collections.emptyList());
 			final AbstractOrderModel abstractOrderModel = orderEntryModel.getOrder();
 			abstractOrderModel.setOrderModifiedDate(new Date());
 			abstractOrderModel.setUpdatedTime(new Date());
@@ -270,9 +284,6 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 				filter(consignmentEntryModel -> consignmentEntryModel.getConsignment()
 		   .equals(consignment)).findFirst();
 		if(consignmentEnt.isPresent()) {
-//			final ConsignmentEntryModel updatedConsignmentEntry = defaultBlAllocationService.updateConsignmentEntry(orderEntryModel, consignment,
-//					sourceResult, consignmentEnt.get());
-//			modelService.save(updatedConsignmentEntry);
 			blOptimizeShippingFromWHService.updateConsignmentEntry(consignmentEnt.get(), sourceResult, orderEntryModel);
 		} else {
 			final ConsignmentEntryModel createConsignmentEntry = defaultBlAllocationService
@@ -285,6 +296,10 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			entries.add(createConsignmentEntry);
 
 			consignment.setConsignmentEntries(entries);
+			final List<BlProductModel> assignedSerialProducts = new ArrayList<>(
+					orderEntryModel.getSerialProducts());
+			assignedSerialProducts.addAll(orderEntryModel.getModifiedSerialProductList());
+			orderEntryModel.setSerialProducts(assignedSerialProducts);
 		}
 
 		if (consignment.getOrder().getIsRentalOrder()) {
@@ -303,7 +318,6 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			}
 		}
 		modelService.save(consignment);
-	//	modelService.save(orderEntryModel);
 		modelService.refresh(consignment);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry created for consignment {} and order {}.", consignment.getCode(),consignment.getOrder().getCode());
 		getBlOrderModificationService().recalculateOrder(orderEntryModel.getOrder());

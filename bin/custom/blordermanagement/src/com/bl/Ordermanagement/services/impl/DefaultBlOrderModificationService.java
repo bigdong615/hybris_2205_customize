@@ -1,25 +1,19 @@
 package com.bl.Ordermanagement.services.impl;
 
-import com.bl.core.enums.ItemStatusEnum;
-import com.bl.core.jalo.BlItemsBillingCharge;
-import com.bl.core.jalo.BlSubparts;
-import com.bl.core.model.BlItemsBillingChargeModel;
-import com.bl.core.model.BlSubpartsModel;
-import java.util.*;
-
 import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.Ordermanagement.services.BlSourcingService;
-
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.BlSubpartsModel;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
-import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.collect.Lists;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -35,9 +29,20 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -190,8 +195,8 @@ public class DefaultBlOrderModificationService
 	/**
 	 * method is used to remove consignment if all the consignment entries has been removed
 	 *
-	 * @param orderModel
-	 * @param consignmentToRemove
+	 * @param orderModel the order model
+	 * @param consignmentToRemove the consignment to remove
 	 */
 	public void removeConsignment(final OrderModel orderModel, final List<ConsignmentModel> consignmentToRemove)
 	{
@@ -227,7 +232,6 @@ public class DefaultBlOrderModificationService
 	/**
 	 * method is used to update stock from removed entry
 	 *
-	 * @param consignment
 	 * @param serial
 	 */
 	private void updateStockForSerial(final Date optimizedShippingStartDate, final Date optimizedShippingEndDate, final BlProductModel serial,final boolean isUsedGearOrder)
@@ -294,6 +298,21 @@ public class DefaultBlOrderModificationService
 				BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + orderEntryModel.getOrder().getCode(), sourcingResults);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment created for order {}",orderEntryModel.getOrder().getCode());
 
+		if(orderEntryModel.getOrder().getIsRentalOrder()) {
+			if (CollectionUtils.isNotEmpty(consignment)) {
+				final ConsignmentModel consignmentModel = consignment.iterator().next();
+				if (CollectionUtils.isNotEmpty(consignmentModel.getConsignmentEntries())) {
+					final ConsignmentEntryModel consEntry = consignmentModel.getConsignmentEntries()
+							.iterator().next();
+					consEntry.setQuantity(Long.valueOf(1));
+					getModelService().save(consEntry);
+				}
+			}
+			final List<BlProductModel> assignedSerialProducts = new ArrayList<>(
+					orderEntryModel.getSerialProducts());
+			assignedSerialProducts.addAll(orderEntryModel.getModifiedSerialProductList());
+			orderEntryModel.setSerialProducts(assignedSerialProducts);
+		}
 		orderEntryModel.getOrder().getOrderProcess().forEach(orderProcess -> {
 			if(BlOrdermanagementConstants.ORDER_PROCESS.equals(orderProcess.getProcessDefinitionName()))
 			{
@@ -331,6 +350,13 @@ public class DefaultBlOrderModificationService
 		}
 	}
 
+	/**
+	 * It removes the serial products and associated subpart products as serial products are removed in order entry
+	 * @param orderModel the order model
+	 * @param serialProduct the serial product
+	 * @param consignmentEntriesToRemove the consignment entries to remove
+	 * @return the list of consignment entry to remove
+	 */
 	public List<ConsignmentEntryModel> removeConsignmentEntries(final OrderModel orderModel, final BlSerialProductModel serialProduct,
 			final List<ConsignmentEntryModel> consignmentEntriesToRemove) {
 		for(final ConsignmentModel consignmentModel : orderModel.getConsignments()) {
@@ -354,11 +380,17 @@ public class DefaultBlOrderModificationService
 					break;
 				}
 			}
-			break;
 		}
 		return consignmentEntriesToRemove;
 	}
 
+	/**
+	 * It removes the serial products and associated subpart products as serial products are removed in order entry
+	 * @param serialProduct the serial product
+	 * @param consignmentEntry the consignment entry
+	 * @param products the products
+	 * @param itemMap the item map
+	 */
 	private void updateConsignmentEntry(final BlSerialProductModel serialProduct,
 			final ConsignmentEntryModel consignmentEntry, final List<BlProductModel> products, final Map<String, ItemStatusEnum> itemMap) {
 		itemMap.entrySet().removeIf(item -> item.getKey().contains(serialProduct.getCode()));
