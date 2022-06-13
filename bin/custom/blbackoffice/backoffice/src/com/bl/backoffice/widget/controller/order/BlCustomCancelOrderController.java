@@ -1077,7 +1077,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
     {
         if (refundSuccessful)
         {
-            this.cancelRefundProcess(amount, gcAmount);
+            this.cancelRefundProcess(amount, gcAmount); // Create map .
             //resetDateOfSaleAttributeOnSerial();
         }
         else

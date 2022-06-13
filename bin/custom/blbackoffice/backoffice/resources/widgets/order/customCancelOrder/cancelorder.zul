@@ -93,11 +93,11 @@
                         <label value="${labels.customersupportbackoffice.cancelorder.orderRefundedAmount}" width="100%"/>
                     </column>
                     <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
-                        <label value="${labels.customersupportbackoffice.cancelorder.qtycancellable}" width="100%"
+                        <label value="${labels.customersupportbackoffice.cancelorder.qtyRefundable}" width="100%"
                                class="oms-widget-cancelorder--qty-label__centered"/>
                     </column>
                     <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
-                        <label value="${labels.customersupportbackoffice.cancelorder.qtycancelled}" width="100%"/>
+                        <label value="${labels.customersupportbackoffice.cancelorder.qtyRefunded}" width="100%"/>
                     </column>
                     <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
                         <textbox id="globalTotalRefundAmount" value="${globalTotalRefundAmount.rawValue}" width="100%"
