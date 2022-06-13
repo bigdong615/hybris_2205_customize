@@ -3,6 +3,7 @@ package com.bl.backoffice.widget.controller.order;
 import static org.apache.log4j.Level.DEBUG;
 import static org.apache.log4j.Level.ERROR;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.basecommerce.enums.RefundReason;
 import de.hybris.platform.basecommerce.enums.ReturnAction;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -208,6 +209,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
 
     @Resource(name = "blOrderService")
     private BlOrderService blOrderService;
+
+    final Map<Integer, Long> integerLongMap  = new HashMap<>();
+    final AtomicDouble totalDamageWaiverRefunded   = new AtomicDouble(0.0);
 
     /**
      * Init cancellation order form.
@@ -1125,6 +1129,10 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             grandSubTotal = grandSubTotal + gcAmount;
             gcString = BlCoreConstants.GC_TYPE;
         }
+
+        setRefundedQuantityToOrderEntry();
+
+
         // trigger Esp Refund event for  GC or cc/paypal
         if (this.getOrderModel().getPaymentInfo() instanceof BrainTreePaymentInfoModel && getDefaultBlUserService().isCsUser())
         {
@@ -1160,6 +1168,28 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                     this.getOrderModel().getCode());
             this.successMessageBox(BlCustomCancelRefundConstants.ORDER_CANCELLED_AND_REFUND_AMOUNT_HAS_BEEN_INITIATED_SUCCESSFULLY);
         }
+    }
+
+    /**
+     * This method created to set the refunded quantity to entry model
+     */
+    private void setRefundedQuantityToOrderEntry() {
+        try {
+            final OrderModel orderModel = this.orderModel;
+            orderModel.getEntries().forEach(abstractOrderEntryModel -> {
+                final OrderEntryModel orderEntryModel = (OrderEntryModel) abstractOrderEntryModel;
+                orderEntryModel.setFullyRefunded(Boolean.TRUE);
+                final Long qtyToRefund = orderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode())
+                        ? orderEntryModel.getCancelledQuantity() : orderEntryModel.getQuantity();
+                orderEntryModel.setRefundedQuantity(qtyToRefund - (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity()));
+                modelService.save(orderEntryModel);
+                modelService.refresh(orderEntryModel);
+            });
+        }
+        catch (Exception e) {
+            BlLogger.logMessage(LOGGER , ERROR , "Error While set refund quantity to entry" , e);
+        }
+
     }
 
     /**
@@ -1219,20 +1249,45 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             for (final BlOrderEntryToCancelDto orderEntryToCancelDto : orderEntryToCancelDtos)
             {
                 final AbstractOrderEntryModel orderEntryModel = orderEntryToCancelDto.getOrderEntry();
-                final double waiver = Boolean.TRUE.equals(orderEntryModel.getGearGuardProFullWaiverSelected())
-                        ? orderEntryModel.getGearGuardProFullWaiverPrice()
-                        : BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL;
+                integerLongMap.put(orderEntryModel.getEntryNumber() , orderEntryToCancelDto.getQuantityToCancel());
+                final double waiver = getDamageWaiverPriceFromEntry(orderEntryModel);
+                totalDamageWaiverRefunded.getAndAdd(waiver);
                 totAmount += blCustomCancelRefundService.getTotalAmountPerEntry(
                         Math.toIntExact(orderEntryToCancelDto.getQuantityToCancel()),
                         (Math.toIntExact(orderEntryToCancelDto.getQuantityAvailableToCancel())), orderEntryModel.getBasePrice(),
                         (orderEntryModel.getAvalaraLineTax() / (Math.toIntExact(orderEntryToCancelDto.getQuantityAvailableToCancel()))),
-                        (Boolean.TRUE.equals(orderEntryModel.getGearGuardWaiverSelected()) ? orderEntryModel.getGearGuardWaiverPrice()
-                                : waiver));
+                        waiver);
                 enteredAmount += orderEntryToCancelDto.getAmount();
             }
             this.doPartRefundCalculation(Math.min(enteredAmount, totAmount), captureEntry);
         }
     }
+
+    /**
+     * This method is to get the damage waiver price  from order  entry model
+     * @param abstractOrderEntryModel AbstractOrderEntryModel
+     * @return values to set on request
+     */
+    protected Double getDamageWaiverPriceFromEntry(final AbstractOrderEntryModel abstractOrderEntryModel) {
+        final AtomicDouble damageWaiverPrice = new AtomicDouble(0.0);
+        if(org.apache.commons.lang3.BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardWaiverSelected())) {
+            if(abstractOrderEntryModel.getGearGuardWaiverPrice()!=null) {
+                damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            }
+        }
+        else if(org.apache.commons.lang3.BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardProFullWaiverSelected())){
+            if(abstractOrderEntryModel.getGearGuardWaiverPrice()!=null) {
+                damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            }
+        }
+        else if(org.apache.commons.lang3.BooleanUtils.isTrue(abstractOrderEntryModel.getNoDamageWaiverSelected())){
+            damageWaiverPrice.set(0.0);
+        }
+        return damageWaiverPrice.get();
+    }
+
+
+
 
     /**
      * This method will do partial refund by taking how much amount need to be refunded
@@ -1368,6 +1423,25 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 this.getOrderModel().getCode());
         this.successMessageBox(stringSuccess.toString());
         grandSubTotal = grandSubTotal + totalAmt;
+
+        try {
+            orderModel.getEntries().forEach(abstractOrderEntryModel -> {
+                if(MapUtils.isNotEmpty(integerLongMap) && integerLongMap.containsKey(abstractOrderEntryModel.getEntryNumber())) {
+                    final OrderEntryModel orderEntryModel = (OrderEntryModel)abstractOrderEntryModel;
+                    orderEntryModel.setRefundedQuantity(integerLongMap.get(abstractOrderEntryModel.getEntryNumber()));
+                    final Long qty = orderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode()) ? orderEntryModel.getCancelledQuantity()
+                            :orderEntryModel.getQuantity() ;
+                    if(orderEntryModel.getRefundedQuantity() == qty ) {
+                        orderEntryModel.setFullyRefunded(Boolean.TRUE);
+                    }
+                    modelService.save(orderEntryModel);
+                    modelService.refresh(orderEntryModel);
+                }
+            });
+        }
+        catch (Exception e) {
+            BlLogger.logMessage(LOGGER , Level.ERROR  , "Error while setting the refundable quantity" , e);
+        }
 
         // trigger Esp Refund event for  GC or cc/paypal
         if (this.getOrderModel().getPaymentInfo() instanceof BrainTreePaymentInfoModel && getDefaultBlUserService().isCsUser())
@@ -1548,6 +1622,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         order.setRefundTaxTotalAmount(order.getRefundTaxTotalAmount() == null ? taxValue
                 : this.getTwoDecimalDoubleValue((order.getRefundTaxTotalAmount() + taxValue)));
         BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Adding Tax Amount : {}", taxValue);
+        final Double totalDamageWaiverRefundedAmt = this.globalCancelEntriesSelection.isChecked() && this.globalWaiverSelection.isChecked()
+                ? order.getTotalDamageWaiverCost() : this.totalDamageWaiverRefunded.get();
+        order.setRefundTotalDamageWaiverAmount(Objects.nonNull(order.getRefundTotalDamageWaiverAmount())
+                ? order.getRefundTotalDamageWaiverAmount() + totalDamageWaiverRefundedAmt : totalDamageWaiverRefundedAmt);
+        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Adding Total Damage Waiver Amount Refunded : {}", totalDamageWaiverRefundedAmt);
+        this.totalDamageWaiverRefunded.set(0.0);
         getModelService().save(order);
         getModelService().refresh(order);
     }
@@ -1778,14 +1858,14 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                     return Boolean.TRUE;
                 }
 
-                if (((Combobox) row.getChildren().get(BlloggingConstants.TWELVE))
+                /*if (((Combobox) row.getChildren().get(BlloggingConstants.TWELVE))
                         .getSelectedIndex() == -BlInventoryScanLoggingConstants.ONE
                         && cancellableQty != BlCustomCancelRefundConstants.ZERO)
                 {
                     this.errorMessageBox(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON),
                             this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON_HEADER));
                     return Boolean.TRUE;
-                }
+                }*/
             }
         }
         return Boolean.FALSE;
