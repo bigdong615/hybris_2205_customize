@@ -20,6 +20,7 @@ import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -146,12 +147,15 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 							blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList());
 			final List<ConsignmentEntryModel> consignmentEntriesToRemove = new ArrayList<>();
 			final List<ConsignmentModel> consignmentToRemove = new ArrayList<>();
+			final Set<ConsignmentProcessModel> consignmentProcessesToRemove = new HashSet<>();
 			blSerialProducts.forEach(serialProd ->
 				blOrderModificationService.removeConsignmentEntries(order, serialProd,
 						consignmentEntriesToRemove));
 			modelService.removeAll(consignmentEntriesToRemove);
-			blOrderModificationService.removeConsignment(order, consignmentToRemove);
+			blOrderModificationService.removeConsignment(order, consignmentToRemove,
+					consignmentProcessesToRemove);
 			modelService.removeAll(consignmentToRemove);
+			modelService.removeAll(consignmentProcessesToRemove);
 			order.setOrderModifiedDate(new Date());
 			order.setUpdatedTime(new Date());
 			modelService.save(order);
