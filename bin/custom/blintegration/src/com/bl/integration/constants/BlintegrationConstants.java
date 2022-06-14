@@ -64,6 +64,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String CATEGORY_CODE = "CONSUMER_GOODS";
 	public static final String RECIPIENT_TYPE = "RECIPIENT";
 	public static final String SUCCESS = "success";
+	public static final String POPUP_TEXT = "Message:";
 	public static final String UPS_SHIPMENT_MSG = "Shipment Call Started.....";
 	public static final String RETURN_SHIPMENT_MSG = "Return Shipment Call Started.....";
 	public static final String DEFAULT_WAREHOUSE_CODE = "OPTIMISED";
