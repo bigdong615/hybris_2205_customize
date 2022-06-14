@@ -77,16 +77,16 @@ public class DefaultBlPaymentService implements BlPaymentService
 			final PaymentTransactionEntryModel authEntry = getAUthEntry(order);
 			if(CollectionUtils.isNotEmpty(order.getGiftCard()) && Double.compare(order.getTotalPrice(), 0.0) == 0) {
 				BlLogger.logMessage(LOG, Level.INFO, "The total amount is 0 on this order {} as gift card has been applied", order.getCode());
-				return checkCapturePaymentSuccess(order, Boolean.TRUE);
+				return Boolean.TRUE;
 			}
 			else if(authEntry != null && authEntry.getAmount().intValue() > BlInventoryScanLoggingConstants.ONE) {
-				return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().captureAuthorizationTransaction(
-						order, authEntry.getAmount(), authEntry.getRequestId()));
+				return  getBrainTreeTransactionService().captureAuthorizationTransaction(
+						order, authEntry.getAmount(), authEntry.getRequestId());
 			}
 			else {
 				if(order.getTotalPrice() > BlInventoryScanLoggingConstants.ZERO) {
-					return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
-							order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null));
+					return getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
+							order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null);
 				}
 			}
 		} catch(final BraintreeErrorException ex) {
@@ -109,50 +109,6 @@ public class DefaultBlPaymentService implements BlPaymentService
 		final List<OrderModel> orders = getOrderDao().getOrdersToVoidTransactions();
 		orders.stream().forEach(order ->
 				getBrainTreeTransactionService().voidAuthTransaction(order));
-	}
-
-	/**
-	 * This method will return true is auth and capture success!!
-	 *
-	 * @param order order
-	 * @param isSuccessCapture status for auth/capture
-	 * @return true if success in capture
-	 */
-	private boolean checkCapturePaymentSuccess(final OrderModel order, final boolean isSuccessCapture) {
-		if(isSuccessCapture) {
-			order.getConsignments().forEach(consignment -> consignment.getConsignmentEntries()
-					.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serialProduct -> {
-						if (serialProduct instanceof BlSerialProductModel)
-						{
-							final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serialProduct);
-							serialProductModel.setSerialStatus(SerialStatusEnum.SHIPPED);
-							getModelService().save(serialProductModel);
-							getModelService().refresh(serialProductModel);
-							BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for serial {}",serialProductModel.getSerialStatus(),serialProductModel.getCode());
-						}
-					})));
-			order.getConsignments().forEach(consignment -> {
-				consignment.setStatus(ConsignmentStatus.BL_SHIPPED);
-				getModelService().save(consignment);
-				getModelService().refresh(consignment);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for consignment {}",consignment.getStatus(),consignment.getCode());
-
-			});
-			order.setStatus(OrderStatus.SHIPPED);
-			order.setIsCaptured(Boolean.TRUE);
-			order.setIsAuthorised(Boolean.TRUE);
-			getModelService().save(order);
-			getModelService().refresh(order);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for order {}",order.getStatus(),order.getCode());
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
-			return true;
-		} else {
-			order.setStatus(OrderStatus.RECEIVED_PAYMENT_DECLINED);
-			getModelService().save(order);
-			getModelService().refresh(order);
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is not successful for the order {}", order.getCode());
-		}
-		return false;
 	}
 
 	/**

@@ -355,7 +355,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
         final WarehouseModel warehouses = consignmentModel.getWarehouse();
         final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
         if(consignmentModel.getStatus().equals(ConsignmentStatus.BL_SHIPPED) && Objects.nonNull(warehouses) && (StringUtils.isNotBlank(deliveryMode)
-            && (!StringUtils.containsIgnoreCase(BlCoreConstants.BL_WALTHAM , deliveryMode) ||
+            && (!StringUtils.containsIgnoreCase(BlCoreConstants.BL_WALTHAM , deliveryMode) &&
             !StringUtils.containsIgnoreCase(BlCoreConstants.BL_SAN_CARLOS , deliveryMode)))){
           isEligibleToTrigger.set(Boolean.TRUE);
         }
