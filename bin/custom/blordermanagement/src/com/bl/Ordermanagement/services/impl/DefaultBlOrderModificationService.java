@@ -23,6 +23,7 @@ import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -147,8 +148,10 @@ public class DefaultBlOrderModificationService
 			removeConsignmentEntry(orderEntrySkuPk, consignmentEntryToRemove, consignment);
 		}
 		getModelService().removeAll(consignmentEntryToRemove);
-		removeConsignment(orderModel, consignmentToRemove);
+		final Set<ConsignmentProcessModel> consignmentProcessesToRemove = new HashSet<>();
+		removeConsignment(orderModel, consignmentToRemove, consignmentProcessesToRemove);
 		getModelService().removeAll(consignmentToRemove);
+		getModelService().removeAll(consignmentProcessesToRemove);
 		orderModel.setOrderModifiedDate(new Date());
 		orderModel.setUpdatedTime(new Date());
 	}
@@ -173,9 +176,9 @@ public class DefaultBlOrderModificationService
 				}
 				else 
 				{
-					final boolean isUsedGearOrder = consignment.getOrder().getIsRentalOrder();
+					final boolean isRentalOrder = consignment.getOrder().getIsRentalOrder();
 					updateStockForSerial(consignment.getOptimizedShippingStartDate(),
-							isUsedGearOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial,isUsedGearOrder);
+							isRentalOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial, !isRentalOrder);
 				}
 			});
 			if (CollectionUtils.isEmpty(updatedSerialList))
@@ -194,11 +197,12 @@ public class DefaultBlOrderModificationService
 
 	/**
 	 * method is used to remove consignment if all the consignment entries has been removed
-	 *
-	 * @param orderModel the order model
+	 *  @param orderModel the order model
 	 * @param consignmentToRemove the consignment to remove
+	 * @param consignmentProcessesToRemove list of consignment process to remove
 	 */
-	public void removeConsignment(final OrderModel orderModel, final List<ConsignmentModel> consignmentToRemove)
+	public void removeConsignment(final OrderModel orderModel,
+			final List<ConsignmentModel> consignmentToRemove, final Set<ConsignmentProcessModel> consignmentProcessesToRemove)
 	{
 		for (final ConsignmentModel consignment : orderModel.getConsignments())
 		{
@@ -207,6 +211,7 @@ public class DefaultBlOrderModificationService
 			{
 				consignmentToRemove.add(consignment);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment {} removed for order {}", consignment.getCode(),consignment.getOrder());
+				consignmentProcessesToRemove.addAll(consignment.getConsignmentProcesses());
 			}
 		}
 	}
@@ -247,14 +252,14 @@ public class DefaultBlOrderModificationService
 					stockLevel.setHardAssigned(false);
 					stockLevel.setReservedStatus(false);
 					stockLevel.setOrder(null);
-					serialProductModel.setHardAssigned(false);
-					if(isUsedGearOrder)
-					{
-						serialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
-					}
 					getModelService().save(stockLevel);
-					getModelService().save(serial);
 				});
+				if(isUsedGearOrder)
+				{
+					((BlSerialProductModel) serial).setSerialStatus(SerialStatusEnum.ACTIVE);
+				}
+				((BlSerialProductModel) serial).setHardAssigned(false);
+				getModelService().save(serial);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serial);
 			}
 		}
@@ -298,21 +303,33 @@ public class DefaultBlOrderModificationService
 				BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + orderEntryModel.getOrder().getCode(), sourcingResults);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment created for order {}",orderEntryModel.getOrder().getCode());
 
-		if(orderEntryModel.getOrder().getIsRentalOrder()) {
-			if (CollectionUtils.isNotEmpty(consignment)) {
-				final ConsignmentModel consignmentModel = consignment.iterator().next();
+		if(CollectionUtils.isNotEmpty(consignment)) {
+			final ConsignmentModel consignmentModel = consignment.iterator().next();
+			if (orderEntryModel.getOrder().getIsRentalOrder()) {
 				if (CollectionUtils.isNotEmpty(consignmentModel.getConsignmentEntries())) {
 					final ConsignmentEntryModel consEntry = consignmentModel.getConsignmentEntries()
 							.iterator().next();
 					consEntry.setQuantity(Long.valueOf(1));
 					getModelService().save(consEntry);
 				}
+				final List<BlProductModel> assignedSerialProducts = new ArrayList<>(
+						orderEntryModel.getSerialProducts());
+				assignedSerialProducts.addAll(orderEntryModel.getModifiedSerialProductList());
+				orderEntryModel.setSerialProducts(assignedSerialProducts);
 			}
-			final List<BlProductModel> assignedSerialProducts = new ArrayList<>(
-					orderEntryModel.getSerialProducts());
-			assignedSerialProducts.addAll(orderEntryModel.getModifiedSerialProductList());
-			orderEntryModel.setSerialProducts(assignedSerialProducts);
+			final Optional<ConsignmentModel> consignmentCodeExists = orderEntryModel.getOrder().getConsignments().stream()
+					.filter(consignmentToCheck -> consignmentModel.getCode().equals(consignmentToCheck.getCode())).findFirst();
+			if(consignmentCodeExists.isPresent()) {
+				final String[] codeToSplit = consignmentModel.getCode().split("_");
+				if (codeToSplit[1].equals("1")) {
+					consignmentModel.setCode(codeToSplit[0] + "_" + "0");
+				} else {
+					consignmentModel.setCode(codeToSplit[0] + "_" + "1");
+				}
+				getModelService().save(consignmentModel);
+			}
 		}
+
 		orderEntryModel.getOrder().getOrderProcess().forEach(orderProcess -> {
 			if(BlOrdermanagementConstants.ORDER_PROCESS.equals(orderProcess.getProcessDefinitionName()))
 			{
@@ -376,6 +393,8 @@ public class DefaultBlOrderModificationService
 								serialProduct, false);
 					} else {
 						consignmentEntriesToRemove.add(consignmentEntry);
+						updateStockForSerial(consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(),
+								serialProduct, false);
 					}
 					break;
 				}
