@@ -29,6 +29,7 @@ import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
@@ -148,14 +149,16 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			final List<ConsignmentEntryModel> consignmentEntriesToRemove = new ArrayList<>();
 			final List<ConsignmentModel> consignmentToRemove = new ArrayList<>();
 			final Set<ConsignmentProcessModel> consignmentProcessesToRemove = new HashSet<>();
+			final Set<TaskConditionModel> taskConditions = new HashSet<>();
 			blSerialProducts.forEach(serialProd ->
 				blOrderModificationService.removeConsignmentEntries(order, serialProd,
 						consignmentEntriesToRemove));
 			modelService.removeAll(consignmentEntriesToRemove);
 			blOrderModificationService.removeConsignment(order, consignmentToRemove,
-					consignmentProcessesToRemove);
+					consignmentProcessesToRemove, taskConditions);
 			modelService.removeAll(consignmentToRemove);
 			modelService.removeAll(consignmentProcessesToRemove);
+			modelService.removeAll(taskConditions);
 			order.setOrderModifiedDate(new Date());
 			order.setUpdatedTime(new Date());
 			modelService.save(order);

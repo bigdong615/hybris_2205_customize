@@ -5,6 +5,8 @@ import de.hybris.platform.core.model.order.CartEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.OrderDao;
+import de.hybris.platform.task.TaskCondition;
+import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.util.Date;
 import java.util.List;
@@ -131,5 +133,12 @@ public interface BlOrderDao extends OrderDao
 	 * @return the all legacy orders
 	 */
 	List<OrderModel> getAllLegacyOrders();
+
+	/**
+	 * It gets the associated task conditions
+	 * @param code the consignment code
+	 * @return list of TaskConditionModel
+	 */
+	List<TaskConditionModel> getTaskCondition(final String code);
 
 }

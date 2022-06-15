@@ -121,9 +121,9 @@
         <property name="blSourceOrderAction" ref="blSourceOrderAction"/>
         <property name="modelService" ref="modelService"/>
         <property name="blStockLevelDao" ref="blStockLevelDao"/>
-        <property name="allocationService" ref="allocationService"/>
         <property name="calculationService" ref="calculationService"/>
-
+		<property name="blAllocationService" ref="allocationService"/>
+		<property name="blOrderDao" ref="orderDao"/>
     </bean>
     
     <alias name="defaultBlSourcingLocationService" alias="blSourcingLocationService" />
