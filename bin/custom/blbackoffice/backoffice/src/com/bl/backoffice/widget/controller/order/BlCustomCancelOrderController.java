@@ -499,6 +499,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                                     : BlInventoryScanLoggingConstants.ZERO),
                             refundAmount, this.getTwoDecimalDoubleValue((totalAmountToRefund - refundAmount)));
                     // trigger Esp Refund event for GC
+
+
+                    setRefundedQuantityToOrderEntry();
                     final AbstractOrderModel order = this.getOrderModel();
                     if (order instanceof OrderModel && getDefaultBlUserService().isCsUser())
                     {
@@ -525,6 +528,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 this.setRefundDetailsOnOrder((this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost()
                         : BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue(totalAmountToRefund));
                 resultBuilder.append(BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH).append(totalAmountToRefund);
+                setRefundedQuantityToOrderEntry();
                 // trigger Esp Refund event for GC
                 final AbstractOrderModel order = this.getOrderModel();
                 if (order instanceof OrderModel && getDefaultBlUserService().isCsUser())
@@ -657,6 +661,28 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(),
                     totalAmountToRefund);
             // trigger Esp Refund event for GC
+
+            try {
+                orderModel.getEntries().forEach(abstractOrderEntryModel -> {
+                    if(MapUtils.isNotEmpty(integerLongMap) && integerLongMap.containsKey(abstractOrderEntryModel.getEntryNumber())) {
+                        final OrderEntryModel orderEntryModel = (OrderEntryModel)abstractOrderEntryModel;
+
+                        final Long qtyToRefund = orderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode())
+                                ? orderEntryModel.getCancelledQuantity() : orderEntryModel.getQuantity();
+                        orderEntryModel.setRefundedQuantity(integerLongMap.get(abstractOrderEntryModel.getEntryNumber()) + (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity()));
+                        if(orderEntryModel.getRefundedQuantity() == qtyToRefund ) {
+                            orderEntryModel.setFullyRefunded(Boolean.TRUE);
+                        }
+                        modelService.save(orderEntryModel);
+                        modelService.refresh(orderEntryModel);
+                    }
+                });
+            }
+            catch (Exception e) {
+                BlLogger.logMessage(LOGGER , Level.ERROR  , "Error while setting the refundable quantity" , e);
+            }
+
+
             final AbstractOrderModel order = this.getOrderModel();
             if (order instanceof OrderModel && getDefaultBlUserService().isCsUser())
             {
@@ -699,6 +725,29 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 refundAmount, this.getTwoDecimalDoubleValue((totalAmountToRefund - refundAmount)));
         this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(),
                 totalAmountToRefund - refundAmount);
+
+        try {
+            orderModel.getEntries().forEach(abstractOrderEntryModel -> {
+                if(MapUtils.isNotEmpty(integerLongMap) && integerLongMap.containsKey(abstractOrderEntryModel.getEntryNumber())) {
+                    final OrderEntryModel orderEntryModel = (OrderEntryModel)abstractOrderEntryModel;
+
+                    final Long qtyToRefund = orderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode())
+                            ? orderEntryModel.getCancelledQuantity() : orderEntryModel.getQuantity();
+                    final long remainingQty = qtyToRefund - (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity());
+                    orderEntryModel.setRefundedQuantity(remainingQty + (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity()));
+                    if(orderEntryModel.getRefundedQuantity() == qtyToRefund ) {
+                        orderEntryModel.setFullyRefunded(Boolean.TRUE);
+                    }
+                    modelService.save(orderEntryModel);
+                    modelService.refresh(orderEntryModel);
+                }
+            });
+        }
+        catch (Exception e) {
+            BlLogger.logMessage(LOGGER , Level.ERROR  , "Error while setting the refundable quantity" , e);
+        }
+
+
         // trigger Esp Refund event for GC
         final AbstractOrderModel order = this.getOrderModel();
         if (order instanceof OrderModel && getDefaultBlUserService().isCsUser())
@@ -838,6 +887,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 this.logAmountForGiftCardTransactions(totalRefundAmount);
                 this.setRefundDetailsOnOrder((this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost() :
                         BlInventoryScanLoggingConstants.ZERO), totalRefundAmount);
+                setRefundedQuantityToOrderEntry();
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(), totalRefundAmount);
                 this.successMessageBox(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED +
                         BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH_AMOUNT + this.getTwoDecimalDoubleValue(totalRefundAmount));
@@ -1181,7 +1231,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 orderEntryModel.setFullyRefunded(Boolean.TRUE);
                 final Long qtyToRefund = orderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode())
                         ? orderEntryModel.getCancelledQuantity() : orderEntryModel.getQuantity();
-                orderEntryModel.setRefundedQuantity(qtyToRefund - (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity()));
+                final long remainingQty = qtyToRefund - (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity());
+                orderEntryModel.setRefundedQuantity(remainingQty + (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity()));
                 modelService.save(orderEntryModel);
                 modelService.refresh(orderEntryModel);
             });
@@ -1321,6 +1372,27 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             this.logAmountForGiftCardTransactions(totalAmt);
             this.setRefundDetailsOnOrder((this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost()
                     : BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue((totalAmt)));
+            try {
+                orderModel.getEntries().forEach(abstractOrderEntryModel -> {
+                    if(MapUtils.isNotEmpty(integerLongMap) && integerLongMap.containsKey(abstractOrderEntryModel.getEntryNumber())) {
+                        final OrderEntryModel orderEntryModel = (OrderEntryModel)abstractOrderEntryModel;
+
+                        final Long qtyToRefund = orderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode())
+                                ? orderEntryModel.getCancelledQuantity() : orderEntryModel.getQuantity();
+                        final long remainingQty = qtyToRefund - (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity());
+                        orderEntryModel.setRefundedQuantity(remainingQty + (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity()));
+                        if(orderEntryModel.getRefundedQuantity() == qtyToRefund ) {
+                            orderEntryModel.setFullyRefunded(Boolean.TRUE);
+                        }
+                        modelService.save(orderEntryModel);
+                        modelService.refresh(orderEntryModel);
+                    }
+                });
+            }
+            catch (Exception e) {
+                BlLogger.logMessage(LOGGER , Level.ERROR  , "Error while setting the refundable quantity" , e);
+            }
+
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(),
                     totalAmt);
             this.successMessageBox(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED_AND_INITIATED_REFUND_FOR_ORDER
@@ -1428,10 +1500,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             orderModel.getEntries().forEach(abstractOrderEntryModel -> {
                 if(MapUtils.isNotEmpty(integerLongMap) && integerLongMap.containsKey(abstractOrderEntryModel.getEntryNumber())) {
                     final OrderEntryModel orderEntryModel = (OrderEntryModel)abstractOrderEntryModel;
-                    orderEntryModel.setRefundedQuantity(integerLongMap.get(abstractOrderEntryModel.getEntryNumber()));
-                    final Long qty = orderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode()) ? orderEntryModel.getCancelledQuantity()
-                            :orderEntryModel.getQuantity() ;
-                    if(orderEntryModel.getRefundedQuantity() == qty ) {
+                     Long qtyToRefund = orderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode())
+                            ? orderEntryModel.getCancelledQuantity() : orderEntryModel.getQuantity();
+                    final long remainingQty = (qtyToRefund - integerLongMap.get(abstractOrderEntryModel.getEntryNumber())) - (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity());
+                    orderEntryModel.setRefundedQuantity(remainingQty + (null == orderEntryModel.getRefundedQuantity() ? 0L : orderEntryModel.getRefundedQuantity()));
+                    if(orderEntryModel.getRefundedQuantity() == qtyToRefund ) {
                         orderEntryModel.setFullyRefunded(Boolean.TRUE);
                     }
                     modelService.save(orderEntryModel);
@@ -1793,6 +1866,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 orderEntryToCancel.getQuantityToCancel(), orderEntryToCancel.getCancelOrderEntryComment(),
                 orderEntryToCancel.getSelectedReason());
         orderCancelEntries.add(orderCancelEntry);
+        integerLongMap.put(orderEntryToCancel.getOrderEntry().getEntryNumber() , orderEntryToCancel.getQuantityToCancel());
     }
 
     /**

@@ -60,7 +60,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String FAILED = "FAILED";
     public static final String FAILED_TO_CANCEL_DUE_TO_PAYMENT_GATEWAY_ERROR = "Failed to cancel due to payment gateway error while voiding transaction for order: {}";
     public static final String FAILED_TO_CANCEL_DUE_TO_PAYMENT_GATEWAY_ERROR_MSG = "Failed to cancel due to payment gateway error while voiding transaction!!";
-    public static final String SUCCESSFULLY_CANCELLED = "Successfully cancelled";
+    public static final String SUCCESSFULLY_CANCELLED = "Successfully Refunded";
     public static final String FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER = "Failed to cancel order, please try again later for order: {}";
     public static final String FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG = "Failed to cancel order, please try again later";
     public static final String AND_CAPTURED_PAYMENT_WITH_REMAINING_AMOUNT = " and authorize payment with remaining amount for order: {}";
