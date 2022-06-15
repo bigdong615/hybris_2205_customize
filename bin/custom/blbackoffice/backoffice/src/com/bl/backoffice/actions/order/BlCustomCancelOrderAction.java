@@ -29,8 +29,8 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
     @Override
     public boolean canPerform(final ActionContext<OrderModel> actionContext) {
         final OrderModel order = (OrderModel)actionContext.getData();
-        return Objects.nonNull(order) && Objects.nonNull(order.getStatus()) && checkIsOrderFullyPlacedWithGiftCard(order);
-               /* && BooleanUtils.isTrue(orderStatusAllowed(order)*/
+        return Objects.nonNull(order) && Objects.nonNull(order.getStatus()) && (checkIsOrderFullyPlacedWithGiftCard(order)
+                || BooleanUtils.isTrue(orderStatusAllowed(order)));
     }
 
 
