@@ -23,6 +23,7 @@ import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -559,5 +560,24 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		}
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Number of Legacy rental orders found : {}", orders.size());
 		return orders;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<TaskConditionModel> getTaskCondition(String code) {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT {tm:pk} ");
+		sql.append("FROM {").append(TaskConditionModel._TYPECODE).append(" AS tm} ");
+		sql.append("WHERE {tm:uniqueID} LIKE '%").append(code).append("%'");
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(sql.toString());
+		final SearchResult result = getFlexibleSearchService().search(query);
+		final List<TaskConditionModel> taskConditions = result.getResult();
+		if (CollectionUtils.isEmpty(taskConditions)) {
+			BlLogger.logMessage(LOG , Level.INFO , "No associated task conditions found");
+			return Collections.emptyList();
+		}
+		return taskConditions;
 	}
 }

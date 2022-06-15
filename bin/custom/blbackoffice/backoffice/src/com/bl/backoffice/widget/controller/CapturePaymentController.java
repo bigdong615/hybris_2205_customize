@@ -12,6 +12,7 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.localization.Localization;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
@@ -53,6 +54,9 @@ public class CapturePaymentController extends DefaultWidgetController {
 
     @Resource
     private BlPaymentService blPaymentService;
+    
+  	@Resource(name = "modelService")
+  	private ModelService modelService;
 
     private OrderModel orderModel;
     private ConsignmentModel consignmentModel;
@@ -93,15 +97,24 @@ public class CapturePaymentController extends DefaultWidgetController {
             return;
         }
         if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
-            if(Double.compare(getOrderModel().getTotalPrice(), 0.0) == 0 && CollectionUtils.isNotEmpty(getOrderModel().getGiftCard())) {
-                showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED_GIFT_CARD));
-            } else {
-                showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
-            }
-        } else {
-            BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while capturing the payment");
-            showMessageBox(Localization.getLocalizedString(ERR_MSG_FOR_PAYMENT_CAPTURED), true);
-        }
+           if(Double.compare(getOrderModel().getTotalPrice(), 0.0) == 0 && CollectionUtils.isNotEmpty(getOrderModel().getGiftCard())) {
+               showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED_GIFT_CARD));
+           } else {
+               showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
+           }
+           getOrderModel().setIsCaptured(Boolean.TRUE);
+           getOrderModel().setIsAuthorised(Boolean.TRUE);
+           getModelService().save(getOrderModel());
+  			getModelService().refresh(getOrderModel());
+  			
+       } else {
+     	getOrderModel().setStatus(OrderStatus.RECEIVED_PAYMENT_DECLINED);
+     	getModelService().save(getOrderModel());
+			getModelService().refresh(getOrderModel());
+ 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is not successful for the order {}", getOrderModel().getCode());
+           BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while capturing the payment");
+           showMessageBox(Localization.getLocalizedString(ERR_MSG_FOR_PAYMENT_CAPTURED), true);
+       }
     }
 
     @ViewEvent(componentID = CANCEL_BUTTON, eventName = Events.ON_CLICK)
@@ -151,4 +164,20 @@ public class CapturePaymentController extends DefaultWidgetController {
         final ConsignmentModel consignmentModel) {
         this.consignmentModel = consignmentModel;
     }
+
+	/**
+	 * @return the modelService
+	 */
+	public ModelService getModelService()
+	{
+		return modelService;
+	}
+
+	/**
+	 * @param modelService the modelService to set
+	 */
+	public void setModelService(ModelService modelService)
+	{
+		this.modelService = modelService;
+	}
 }

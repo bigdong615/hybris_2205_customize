@@ -1577,6 +1577,7 @@
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.shippingscanaction" property="currentObject" />
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.packagescanaction" property="currentObject" />
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.capturepaymentaction" property="currentObject" />
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.changeshipmentstatusaction" property="currentObject" />
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.clearpackageaction" property="currentObject" />
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.createshipmentaction" property="currentObject" />
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.createreturnlabelaction" property="currentObject" />
