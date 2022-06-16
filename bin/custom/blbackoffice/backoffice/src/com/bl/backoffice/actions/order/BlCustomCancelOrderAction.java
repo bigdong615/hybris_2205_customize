@@ -42,13 +42,16 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
 
     @Override
     public ActionResult<OrderModel> perform(final ActionContext<OrderModel> actionContext) {
-        final OrderModel orderModel = actionContext.getData();abels_en.properties
+        final OrderModel orderModel = actionContext.getData();
 
         if(StringUtils.equalsIgnoreCase(OrderStatus.PENDING.getCode() , orderModel.getStatus().getCode())
                 || StringUtils.equalsIgnoreCase(OrderStatus.COMPLETED.getCode() , orderModel.getStatus().getCode()))
         {
             notificationService.notifyUser(notificationService.getWidgetNotificationSource(actionContext),
-                    ApiregistrybackofficeConstants.NOTIFICATION_TYPE, NotificationEvent.Level.FAILURE, actionContext.getLabel(BlCustomCancelRefundConstants.FAILED_TO_REFUND_ORDER_FOR_PENDING_ORDER_ERROR));
+                    ApiregistrybackofficeConstants.NOTIFICATION_TYPE, NotificationEvent.Level.FAILURE,
+                    actionContext.getLabel(StringUtils.equalsIgnoreCase(OrderStatus.COMPLETED.getCode() ,
+                            orderModel.getStatus().getCode()) ? BlCustomCancelRefundConstants.FAILED_TO_REFUND_ORDER_FOR_COMPLETED_ORDER_ERROR
+                            : BlCustomCancelRefundConstants.FAILED_TO_REFUND_ORDER_FOR_PENDING_ORDER_ERROR));
 
         }
         else if(orderModel.getOriginalVersion() == null && orderModel.getVersionID() == null && CollectionUtils.isNotEmpty(
