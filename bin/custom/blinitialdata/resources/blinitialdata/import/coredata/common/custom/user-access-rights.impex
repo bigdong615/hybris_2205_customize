@@ -211,8 +211,8 @@ Usergroup ; frondeskusergroup ;                ;                            ;   
           ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
           ;                   ;                ; IncompleteOrdersQueue      ; +    ; +      ; -      ; -
           ;                   ;                ; CleanCompleteOrderQueue    ; +    ; +      ; -      ; -
-          ;                   ;                ; OrdersAwaitingQueue        ; +    ; +      ; -      ; -
-          ;                   ;                ; PulledOrdersQueue          ; +    ; +      ; -      ; -
+          ;                   ;                ; BlPulledOrdersAwaitingQueue        ; +    ; +      ; -      ; -
+          ;                   ;                ; BlPullOrdersQueue          ; +    ; +      ; -      ; -
           ;                   ;                ; Order                      ; +    ; +      ; -      ; -
           ;                   ;                ; Order.code                  ; +    ; -      ; -      ; -
           ;                   ;                ; Order.rentalStartDate       ; +    ; -      ; -      ; -
@@ -263,8 +263,8 @@ Usergroup ; shippingteamuserrole ;                ;                            ;
 ;                   ;                ; Warehouse                  ; +    ; -      ; -      ; -
 ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
 ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
-;                   ;                ; OrdersAwaitingQueue      ; +    ; +      ; -      ; -
-;                   ;                ; PulledOrdersQueue    ; +    ; +      ; -      ; -
+;                   ;                ; BlPulledOrdersAwaitingQueue      ; +    ; +      ; -      ; -
+;                   ;                ; BlPullOrdersQueue    ; +    ; +      ; -      ; -
 
 $END_USERRIGHTS; ; ; ;
 
