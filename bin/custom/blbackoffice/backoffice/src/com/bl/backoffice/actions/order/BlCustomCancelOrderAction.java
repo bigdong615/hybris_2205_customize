@@ -35,7 +35,7 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
     @Override
     public boolean canPerform(final ActionContext<OrderModel> actionContext) {
         final OrderModel order = (OrderModel)actionContext.getData();
-        return Objects.nonNull(order) && Objects.nonNull(order.getStatus()) && BooleanUtils.isTrue(orderStatusAllowed(order));
+        return Objects.nonNull(order) && Objects.nonNull(order.getStatus()) && BooleanUtils.isFalse(orderStatusAllowed(order));
     }
 
 
@@ -69,18 +69,7 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
      * @return boolean
      */
     private boolean orderStatusAllowed(final OrderModel order) {
-        return StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.UNBOXED_PARTIALLY.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.UNBOXED_COMPLETELY.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.LATE.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.INCOMPLETE.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.INCOMPLETE_BALANCE_DUE.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.INCOMPLETE_LOST_IN_TRANSIT.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.INCOMPLETE_MISSING_ITEMS.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.INCOMPLETE_RECOVERED.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.INCOMPLETE_STOLEN.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.SHIPPED.getCode());
+        return StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_MANUAL_REVIEW.getCode());
     }
 
 
