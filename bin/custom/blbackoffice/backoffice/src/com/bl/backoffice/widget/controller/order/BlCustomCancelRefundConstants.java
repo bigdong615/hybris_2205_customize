@@ -57,7 +57,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String ZERO_ORDER_AMOUNT = "customersupportbackoffice.cancelorder.zero.amount";
     public static final String INVALID_ORDER_AMOUNT = "customersupportbackoffice.cancelorder.higheramount";
     public static final String FAILED_TO_REFUND_ORDER_FOR_PENDING_ORDER_ERROR = "customersupportbackoffice.refundorder.pending.order.error";
-    public static final String FAILED_TO_REFUND_ORDER_FOR_COMPLETED_ORDER_ERROR = "customersupportbackoffice.completed.order.error";
+    public static final String FAILED_TO_REFUND_ORDER_FOR_CAPTURED_ORDER_ERROR = "customersupportbackoffice.captured.order.error";
 
 
     public static final String FAILED = "FAILED";

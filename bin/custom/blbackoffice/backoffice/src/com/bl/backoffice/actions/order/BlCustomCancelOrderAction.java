@@ -10,12 +10,9 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.omsbackoffice.actions.order.cancel.CancelOrderAction;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -35,7 +32,7 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
     @Override
     public boolean canPerform(final ActionContext<OrderModel> actionContext) {
         final OrderModel order = (OrderModel)actionContext.getData();
-        return Objects.nonNull(order) && Objects.nonNull(order.getStatus()) && BooleanUtils.isFalse(orderStatusAllowed(order));
+        return Objects.nonNull(order) && Objects.nonNull(order.getStatus());
     }
 
 
@@ -44,13 +41,11 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
     public ActionResult<OrderModel> perform(final ActionContext<OrderModel> actionContext) {
         final OrderModel orderModel = actionContext.getData();
 
-        if(StringUtils.equalsIgnoreCase(OrderStatus.PENDING.getCode() , orderModel.getStatus().getCode())
-                || StringUtils.equalsIgnoreCase(OrderStatus.COMPLETED.getCode() , orderModel.getStatus().getCode()))
+        if(isOrderPaymentCaptured(orderModel) || orderStatusAllowed(orderModel))
         {
             notificationService.notifyUser(notificationService.getWidgetNotificationSource(actionContext),
                     ApiregistrybackofficeConstants.NOTIFICATION_TYPE, NotificationEvent.Level.FAILURE,
-                    actionContext.getLabel(StringUtils.equalsIgnoreCase(OrderStatus.COMPLETED.getCode() ,
-                            orderModel.getStatus().getCode()) ? BlCustomCancelRefundConstants.FAILED_TO_REFUND_ORDER_FOR_COMPLETED_ORDER_ERROR
+                    actionContext.getLabel(isOrderPaymentCaptured(orderModel) ? BlCustomCancelRefundConstants.FAILED_TO_REFUND_ORDER_FOR_CAPTURED_ORDER_ERROR
                             : BlCustomCancelRefundConstants.FAILED_TO_REFUND_ORDER_FOR_PENDING_ORDER_ERROR));
 
         }
@@ -62,19 +57,28 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
         return new ActionResult<>(ActionResult.ERROR);
     }
 
-    private boolean checkIsOrderFullyPlacedWithGiftCard(final OrderModel order) {
-        return Double.compare(order.getTotalPrice(), 0.0) == 0 && Double.compare(order.getGiftCardAmount() , 0.0) >0;
-    }
-
     /**
      * This method created check order status
      * @param order order
      * @return boolean
      */
     private boolean orderStatusAllowed(final OrderModel order) {
-        return StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_MANUAL_REVIEW.getCode());
+        return StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.PENDING.getCode()) ||
+                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_MANUAL_REVIEW.getCode()) ||
+                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_PAYMENT_DECLINED.getCode()) ||
+                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.CANCELLED.getCode()) ||
+                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR.getCode());
     }
 
+
+    /**
+     * This method created check order status
+     * @param order order
+     * @return boolean
+     */
+    private boolean isOrderPaymentCaptured(final OrderModel order) {
+        return StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.PAYMENT_CAPTURED.getCode());
+    }
 
 
 }
