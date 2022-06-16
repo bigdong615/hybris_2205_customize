@@ -1,7 +1,11 @@
 package com.bl.backoffice.actions.order;
 
+import com.bl.backoffice.widget.controller.order.BlCustomCancelRefundConstants;
+import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
+import com.hybris.cockpitng.util.notifications.NotificationService;
+import de.hybris.platform.apiregistrybackoffice.constants.ApiregistrybackofficeConstants;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.omsbackoffice.actions.order.cancel.CancelOrderAction;
@@ -9,6 +13,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
@@ -24,7 +29,8 @@ import java.util.Objects;
 public class BlCustomCancelOrderAction extends CancelOrderAction {
 
     private static final String SOCKET_OUTPUT_CTX = "customCancelOrderContext";
-    private static ArrayList<String> arrayList = new ArrayList<String>(Collections.singleton(OrderStatus.CANCELLED.getCode()));
+    @Resource
+    protected transient NotificationService notificationService;
 
     @Override
     public boolean canPerform(final ActionContext<OrderModel> actionContext) {
@@ -37,8 +43,16 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
     @Override
     public ActionResult<OrderModel> perform(final ActionContext<OrderModel> actionContext) {
         final OrderModel orderModel = actionContext.getData();
-        if (orderModel.getOriginalVersion() == null && orderModel.getVersionID() == null && CollectionUtils.isNotEmpty(
-                orderModel.getConsignments())) {
+
+        if(StringUtils.equalsIgnoreCase(OrderStatus.PENDING.getCode() , orderModel.getStatus().getCode())
+                || StringUtils.equalsIgnoreCase(OrderStatus.COMPLETED.getCode() , orderModel.getStatus().getCode()))
+        {
+            notificationService.notifyUser(notificationService.getWidgetNotificationSource(actionContext),
+                    ApiregistrybackofficeConstants.NOTIFICATION_TYPE, NotificationEvent.Level.FAILURE, actionContext.getLabel(BlCustomCancelRefundConstants.FAILED_TO_REFUND_ORDER_FOR_PENDING_ORDER_ERROR));
+
+        }
+        else if(orderModel.getOriginalVersion() == null && orderModel.getVersionID() == null && CollectionUtils.isNotEmpty(
+                orderModel.getConsignments()) ) {
             this.sendOutput(SOCKET_OUTPUT_CTX, orderModel);
             return new ActionResult<>(ActionResult.SUCCESS);
         }

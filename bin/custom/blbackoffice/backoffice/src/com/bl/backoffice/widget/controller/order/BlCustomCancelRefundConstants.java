@@ -56,6 +56,8 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String EMPTY_AMOUNT = "customersupportbackoffice.cancelorder.empty.amount";
     public static final String ZERO_ORDER_AMOUNT = "customersupportbackoffice.cancelorder.zero.amount";
     public static final String INVALID_ORDER_AMOUNT = "customersupportbackoffice.cancelorder.higheramount";
+    public static final String FAILED_TO_REFUND_ORDER_FOR_PENDING_ORDER_ERROR = "customersupportbackoffice.refundorder.pending.order.error";
+
 
     public static final String FAILED = "FAILED";
     public static final String FAILED_TO_CANCEL_DUE_TO_PAYMENT_GATEWAY_ERROR = "Failed to refund due to payment gateway error while voiding transaction for order: {}";
