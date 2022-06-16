@@ -33,6 +33,8 @@ public class BlPullOrdersAwaitingQueueJob extends AbstractJobPerformable<CronJob
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlPullOrdersAwaitingQueueJob...");
 		try
 		{
+			final List<BlPulledOrdersAwaitingQueueModel> lisofAllAwaitingQueue = getPulledQueriesDao().ordersAwaitingQueue();
+			getModelService().removeAll(lisofAllAwaitingQueue);
 			final List<ConsignmentModel> consignments = getPulledQueriesDao().pullOrdersAwaitingQueue();
 
 			for (final ConsignmentModel consignment : consignments)

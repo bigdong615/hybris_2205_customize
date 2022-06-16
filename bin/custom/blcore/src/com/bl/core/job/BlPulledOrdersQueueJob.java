@@ -33,6 +33,8 @@ public class BlPulledOrdersQueueJob extends AbstractJobPerformable<CronJobModel>
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlPulledOrdersQueueJob...");
 		try
 		{
+			final List<BlPullOrdersQueueModel> lisofAllOrdersQueue = getPulledQueriesDao().ordersQueue();
+			getModelService().removeAll(lisofAllOrdersQueue);
 			final List<ConsignmentModel> consignments = getPulledQueriesDao().pulledOrdersQueue();
 
 			for (final ConsignmentModel consignment : consignments)
