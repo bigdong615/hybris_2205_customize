@@ -4659,11 +4659,71 @@
         </typegroup>
 
 <typegroup name="BlReportDefinition">
+<itemtype code="BlPulledOrdersAwaitingQueue" generate="true" autocreate="true">
+<deployment table="BlOrdersAwaitingQueue" typecode="12260"/>
+	<attributes>
+		<attribute qualifier="code" type="java.lang.String" >
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="ocLocation" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="optimizedShippingStartDate" type="java.util.Date">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="serialProducts" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="status" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="warehouse" type="Warehouse">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+	</attributes>
+</itemtype>
+
+<itemtype code="BlPullOrdersQueue" generate="true" autocreate="true">
+<deployment table="BlPullOrdersQueue" typecode="12261"/>
+	<attributes>
+		<attribute qualifier="code" type="java.lang.String" >
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="ocLocation" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="optimizedShippingStartDate" type="java.util.Date">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="serialProducts" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="status" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="warehouse" type="Warehouse">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+	</attributes>
+</itemtype>
+
 <itemtype code="PulledOrdersQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
 	<custom-properties>
 		<property name="query">
 			<value>
-				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status FROM  {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as bsp}, {ConsignmentStatus as cs},{AbstractOrder as order} WHERE {ce:consignment} = {c.pk} AND  {c.status} = {cs.pk} AND  {cs.code} = 'RECEIVED_READY_TO_SHIP' AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%')) AND  {c:order} = {order:pk} AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) AND {c.warehouse} =?warehouse"
+				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status from {Order as order join Consignment as c on {c.order}={order.pk} join ConsignmentEntry as ce on {ce:consignment} = {c.pk} join ConsignmentStatus as cs on {c.status} = {cs.pk} join BlSerialProduct as bsp on {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%'))} where {cs.code} = 'RECEIVED_READY_TO_SHIP' and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) AND {c.warehouse} =?warehouse"
 			</value>
 		</property>
 	</custom-properties>
@@ -4770,7 +4830,7 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status FROM  {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as bsp}, {ConsignmentStatus as cs},{AbstractOrder as order} WHERE {ce:consignment} = {c.pk} AND  {c.status} = {cs.pk} AND  {cs.code} != 'RECEIVED_READY_TO_SHIP' AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%')) AND  {c:order} = {order:pk} AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) AND {c.warehouse} =?warehouse"
+				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status from {Order as order join Consignment as c on {c.order}={order.pk} join ConsignmentEntry as ce on {ce:consignment} = {c.pk} join ConsignmentStatus as cs on {c.status} = {cs.pk} join BlSerialProduct as bsp on {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%'))} where {cs.code} != 'RECEIVED_READY_TO_SHIP' and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) AND {c.warehouse} =?warehouse"
 			</value>
 		</property>
 	</custom-properties>

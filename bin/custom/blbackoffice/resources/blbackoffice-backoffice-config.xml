@@ -1713,8 +1713,8 @@
 	<context component="explorer-tree" principal="shippingteamuserrole">
 			<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
 				<n:type-node code="Consignment" id="Shipment"/>
-				<n:type-node code="PulledOrdersQueue" id="CleanCompleteOrderQueue"/>
-				<n:type-node code="OrdersAwaitingQueue" id="IncompleteOrdersQueue"/>
+				<n:type-node code="BlPullOrdersQueue" id="CleanCompleteOrderQueue"/>
+				<n:type-node code="BlPulledOrdersAwaitingQueue" id="IncompleteOrdersQueue"/>
 				<n:type-node code="ShippingCompleteOrderQueue" id="ShippingCompleteOrderQueue"/>
 				<n:navigation-node id="blinventoryscan_name">
 					<n:navigation-node id="WebScanTool"/>
@@ -1745,8 +1745,8 @@
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
-
-	<context merge-by="type" type="OrdersAwaitingQueue" component="advanced-search"
+	
+	<context merge-by="type" type="BlPulledOrdersAwaitingQueue" component="advanced-search"
 		parent="GenericItem" principal="shippingteamuserrole">
 		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
 			<advanced-search:field-list>
@@ -1756,8 +1756,8 @@
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
-
-	<context merge-by="type" type="PulledOrdersQueue" component="advanced-search"
+	
+	<context merge-by="type" type="BlPullOrdersQueue" component="advanced-search"
 		parent="GenericItem" principal="shippingteamuserrole">
 		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
 			<advanced-search:field-list>
@@ -2059,7 +2059,7 @@
 		</list-view:list-view>
 	</context>
 	
-	<context type="PulledOrdersQueue" component="listview" merge-by="replace">
+	<context type="BlPullOrdersQueue" component="listview" merge-by="replace">
 		<list-view:list-view>
 			<list-view:column qualifier="code"/>
 			<list-view:column qualifier="serialProducts"/>           
@@ -2068,7 +2068,7 @@
 		</list-view:list-view>
 	</context>
 	
-	<context type="OrdersAwaitingQueue" component="listview" merge-by="replace">
+	<context type="BlPulledOrdersAwaitingQueue" component="listview" merge-by="replace">
 		<list-view:list-view>
 			<list-view:column qualifier="code"/>
 			<list-view:column qualifier="serialProducts"/>
