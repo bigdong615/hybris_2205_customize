@@ -2,6 +2,7 @@ package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
+import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
@@ -11,6 +12,7 @@ import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.BlSubpartsModel;
+import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
@@ -23,10 +25,11 @@ import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.warehousing.allocation.AllocationService;
+import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,9 +62,10 @@ public class DefaultBlOrderModificationService
 	private BlSourceOrderAction blSourceOrderAction;
 	private ModelService modelService;
 	private BlStockLevelDao blStockLevelDao;
-	private AllocationService allocationService;
 	private CalculationService calculationService;
-	
+	private BlAllocationService blAllocationService;
+	private BlOrderDao blOrderDao;
+
 	/**
 	 * This method will be used to get sourcing result for used gear orders
 	 * @param entry as orderEntry
@@ -147,8 +152,12 @@ public class DefaultBlOrderModificationService
 			removeConsignmentEntry(orderEntrySkuPk, consignmentEntryToRemove, consignment);
 		}
 		getModelService().removeAll(consignmentEntryToRemove);
-		removeConsignment(orderModel, consignmentToRemove);
+		final Set<ConsignmentProcessModel> consignmentProcessesToRemove = new HashSet<>();
+		final Set<TaskConditionModel> taskConditions = new HashSet<>();
+		removeConsignment(orderModel, consignmentToRemove, consignmentProcessesToRemove, taskConditions);
 		getModelService().removeAll(consignmentToRemove);
+		getModelService().removeAll(consignmentProcessesToRemove);
+		getModelService().removeAll(taskConditions);
 		orderModel.setOrderModifiedDate(new Date());
 		orderModel.setUpdatedTime(new Date());
 	}
@@ -173,9 +182,9 @@ public class DefaultBlOrderModificationService
 				}
 				else 
 				{
-					final boolean isUsedGearOrder = consignment.getOrder().getIsRentalOrder();
+					final boolean isRentalOrder = consignment.getOrder().getIsRentalOrder();
 					updateStockForSerial(consignment.getOptimizedShippingStartDate(),
-							isUsedGearOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial,isUsedGearOrder);
+							isRentalOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial, !isRentalOrder);
 				}
 			});
 			if (CollectionUtils.isEmpty(updatedSerialList))
@@ -194,11 +203,13 @@ public class DefaultBlOrderModificationService
 
 	/**
 	 * method is used to remove consignment if all the consignment entries has been removed
-	 *
 	 * @param orderModel the order model
 	 * @param consignmentToRemove the consignment to remove
+	 * @param consignmentProcessesToRemove list of consignment process to remove
+	 * @param taskConditions list of associated task conditions
 	 */
-	public void removeConsignment(final OrderModel orderModel, final List<ConsignmentModel> consignmentToRemove)
+	public void removeConsignment(final OrderModel orderModel, final List<ConsignmentModel> consignmentToRemove,
+			final Set<ConsignmentProcessModel> consignmentProcessesToRemove, final Set<TaskConditionModel> taskConditions)
 	{
 		for (final ConsignmentModel consignment : orderModel.getConsignments())
 		{
@@ -207,6 +218,10 @@ public class DefaultBlOrderModificationService
 			{
 				consignmentToRemove.add(consignment);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment {} removed for order {}", consignment.getCode(),consignment.getOrder());
+				consignmentProcessesToRemove.addAll(consignment.getConsignmentProcesses());
+				consignmentProcessesToRemove.forEach(consignmentProcessModel -> {
+						taskConditions.addAll(getBlOrderDao().getTaskCondition(consignment.getCode()));
+				});
 			}
 		}
 	}
@@ -247,14 +262,14 @@ public class DefaultBlOrderModificationService
 					stockLevel.setHardAssigned(false);
 					stockLevel.setReservedStatus(false);
 					stockLevel.setOrder(null);
-					serialProductModel.setHardAssigned(false);
-					if(isUsedGearOrder)
-					{
-						serialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
-					}
 					getModelService().save(stockLevel);
-					getModelService().save(serial);
 				});
+				if(isUsedGearOrder)
+				{
+					((BlSerialProductModel) serial).setSerialStatus(SerialStatusEnum.ACTIVE);
+				}
+				((BlSerialProductModel) serial).setHardAssigned(false);
+				getModelService().save(serial);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serial);
 			}
 		}
@@ -293,34 +308,43 @@ public class DefaultBlOrderModificationService
 	 */
 	public void createConsignmentForModifiedOrder(final OrderEntryModel orderEntryModel,final SourcingResults sourcingResults )
 	{
-		Collection<ConsignmentModel> consignment = getAllocationService().createConsignments(
-				orderEntryModel.getOrder(),
-				BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + orderEntryModel.getOrder().getCode(), sourcingResults);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment created for order {}",orderEntryModel.getOrder().getCode());
+		final OrderModel order = orderEntryModel.getOrder();
+		final SourcingResult result =
+				CollectionUtils.isNotEmpty(sourcingResults.getResults()) ? sourcingResults.getResults().iterator().next() :
+						new SourcingResult();
+		int size = order.getConsignments().size();
+		if(CollectionUtils.isNotEmpty(order.getConsignments()) && order.getConsignments().iterator().next().getCode().contains("_1")) {
+				size = 0;
+		}
+		final ConsignmentModel consignment = getBlAllocationService().createConsignment(order,
+				BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + order.getCode()
+						+ BlOrdermanagementConstants.UNDER_SCORE
+						+ size, result);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment created for order {}",order.getCode());
 
-		if(orderEntryModel.getOrder().getIsRentalOrder()) {
-			if (CollectionUtils.isNotEmpty(consignment)) {
-				final ConsignmentModel consignmentModel = consignment.iterator().next();
-				if (CollectionUtils.isNotEmpty(consignmentModel.getConsignmentEntries())) {
-					final ConsignmentEntryModel consEntry = consignmentModel.getConsignmentEntries()
+		if(Objects.nonNull(consignment) && order.getIsRentalOrder()) {
+				if (CollectionUtils.isNotEmpty(consignment.getConsignmentEntries())) {
+					final ConsignmentEntryModel consEntry = consignment.getConsignmentEntries()
 							.iterator().next();
 					consEntry.setQuantity(Long.valueOf(1));
 					getModelService().save(consEntry);
 				}
-			}
-			final List<BlProductModel> assignedSerialProducts = new ArrayList<>(
-					orderEntryModel.getSerialProducts());
-			assignedSerialProducts.addAll(orderEntryModel.getModifiedSerialProductList());
-			orderEntryModel.setSerialProducts(assignedSerialProducts);
+				final List<BlProductModel> assignedSerialProducts = new ArrayList<>(
+						orderEntryModel.getSerialProducts());
+				assignedSerialProducts.addAll(orderEntryModel.getModifiedSerialProductList());
+				orderEntryModel.setSerialProducts(assignedSerialProducts);
 		}
-		orderEntryModel.getOrder().getOrderProcess().forEach(orderProcess -> {
+
+		order.getOrderProcess().forEach(orderProcess -> {
 			if(BlOrdermanagementConstants.ORDER_PROCESS.equals(orderProcess.getProcessDefinitionName()))
 			{
-				getBlSourceOrderAction().startConsignmentSubProcess(consignment, orderProcess);
+				getBlSourceOrderAction().startConsignmentSubProcess(Collections.singletonList(consignment), orderProcess);
 			}
 
 		});
-		recalculateOrder(orderEntryModel.getOrder());
+		getModelService().refresh(consignment);
+		getModelService().refresh(order);
+		recalculateOrder(order);
 	}
 
 
@@ -376,6 +400,8 @@ public class DefaultBlOrderModificationService
 								serialProduct, false);
 					} else {
 						consignmentEntriesToRemove.add(consignmentEntry);
+						updateStockForSerial(consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(),
+								serialProduct, false);
 					}
 					break;
 				}
@@ -487,20 +513,21 @@ public class DefaultBlOrderModificationService
 		this.blStockLevelDao = blStockLevelDao;
 	}
 
-	/**
-	 * @return the allocationService
-	 */
-	public AllocationService getAllocationService()
-	{
-		return allocationService;
+	public BlAllocationService getBlAllocationService() {
+		return blAllocationService;
 	}
 
-	/**
-	 * @param allocationService the allocationService to set
-	 */
-	public void setAllocationService(AllocationService allocationService)
-	{
-		this.allocationService = allocationService;
+	public void setBlAllocationService(
+			BlAllocationService blAllocationService) {
+		this.blAllocationService = blAllocationService;
+	}
+
+	public BlOrderDao getBlOrderDao() {
+		return blOrderDao;
+	}
+
+	public void setBlOrderDao(BlOrderDao blOrderDao) {
+		this.blOrderDao = blOrderDao;
 	}
 
 }

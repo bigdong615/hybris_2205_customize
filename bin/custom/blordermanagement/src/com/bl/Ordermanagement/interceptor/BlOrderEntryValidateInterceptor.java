@@ -20,6 +20,7 @@ import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -28,6 +29,7 @@ import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
@@ -146,12 +148,17 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 							blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList());
 			final List<ConsignmentEntryModel> consignmentEntriesToRemove = new ArrayList<>();
 			final List<ConsignmentModel> consignmentToRemove = new ArrayList<>();
+			final Set<ConsignmentProcessModel> consignmentProcessesToRemove = new HashSet<>();
+			final Set<TaskConditionModel> taskConditions = new HashSet<>();
 			blSerialProducts.forEach(serialProd ->
 				blOrderModificationService.removeConsignmentEntries(order, serialProd,
 						consignmentEntriesToRemove));
 			modelService.removeAll(consignmentEntriesToRemove);
-			blOrderModificationService.removeConsignment(order, consignmentToRemove);
+			blOrderModificationService.removeConsignment(order, consignmentToRemove,
+					consignmentProcessesToRemove, taskConditions);
 			modelService.removeAll(consignmentToRemove);
+			modelService.removeAll(consignmentProcessesToRemove);
+			modelService.removeAll(taskConditions);
 			order.setOrderModifiedDate(new Date());
 			order.setUpdatedTime(new Date());
 			modelService.save(order);
