@@ -4659,6 +4659,66 @@
         </typegroup>
 
 <typegroup name="BlReportDefinition">
+<itemtype code="BlPulledOrdersAwaitingQueue" generate="true" autocreate="true">
+<deployment table="BlOrdersAwaitingQueue" typecode="12260"/>
+	<attributes>
+		<attribute qualifier="code" type="java.lang.String" >
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="ocLocation" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="optimizedShippingStartDate" type="java.util.Date">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="serialProducts" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="status" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="warehouse" type="Warehouse">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+	</attributes>
+</itemtype>
+
+<itemtype code="BlPullOrdersQueue" generate="true" autocreate="true">
+<deployment table="BlPullOrdersQueue" typecode="12261"/>
+	<attributes>
+		<attribute qualifier="code" type="java.lang.String" >
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="ocLocation" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="optimizedShippingStartDate" type="java.util.Date">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="serialProducts" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="status" type="java.lang.String">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+		<attribute generate="true" autocreate="true" qualifier="warehouse" type="Warehouse">
+			<persistence type="property" />
+			<modifiers read="true" write="true" search="true"/>
+		</attribute>
+	</attributes>
+</itemtype>
+
 <itemtype code="PulledOrdersQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
 	<custom-properties>
 		<property name="query">
