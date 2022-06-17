@@ -1920,5 +1920,19 @@
 	<alias name="blOrderEntryCancelledQuantityHandler" alias="orderEntryCancelledQuantityHandler"/>
 	<bean id="blOrderEntryCancelledQuantityHandler" class="com.bl.core.model.handler.BlOrderEntryCancelledQuantityHandler">
     </bean>
+    
+    <bean id="pulledQueriesDao" class="com.bl.core.services.queries.dao.impl.BlPulledQueriesDaoImpl">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+    
+    <bean id="pullOrdersAwaitingQueueJob" class="com.bl.core.job.BlPullOrdersAwaitingQueueJob">
+		<property name="pulledQueriesDao" ref="pulledQueriesDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
+	<bean id="pulledOrdersQueueJob" class="com.bl.core.job.BlPulledOrdersQueueJob">
+		<property name="pulledQueriesDao" ref="pulledQueriesDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
 
 </beans>

@@ -38,3 +38,13 @@ INSERT_UPDATE Trigger ; cronJob(code)[unique=true]             ; second[default=
                       ; ticketsRetentionCronJob                ;                   
 # Run the CloseStagnantServiceTicketsJob at 12:05 AM every day
                       ; ticketsStagnationJob                   ;                   ;                   ; 12              ; 0               ;                   ;                  ;                         ; true                  ;                                
+
+#Cronjob to pull queue 
+INSERT_UPDATE CronJob ; code[unique=true]          ; job(code)                  ; sessionLanguage(isoCode)[default=en]
+                      ; pullOrdersAwaitingQueueJob ; pullOrdersAwaitingQueueJob ;                                     
+                      ; pulledOrdersQueueJob       ; pulledOrdersQueueJob       ;
+                                                         
+INSERT_UPDATE Trigger ; cronjob(code)[unique=true] ; active ; cronExpression
+                      ; pullOrdersAwaitingQueueJob ; true   ; 0 0/10 * * * ?
+                      ; pulledOrdersQueueJob       ; true   ; 0 0/10 * * * ? 
+                      
