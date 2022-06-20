@@ -93,19 +93,17 @@
                         <label value="${labels.customersupportbackoffice.cancelorder.orderRefundedAmount}" width="100%"/>
                     </column>
                     <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
-                        <label value="${labels.customersupportbackoffice.cancelorder.qtycancellable}" width="100%"
+                        <label value="${labels.customersupportbackoffice.cancelorder.qtyRefundable}" width="100%"
                                class="oms-widget-cancelorder--qty-label__centered"/>
                     </column>
                     <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
-                        <label value="${labels.customersupportbackoffice.cancelorder.qtycancelled}" width="100%"/>
+                        <label value="${labels.customersupportbackoffice.cancelorder.qtyRefunded}" width="100%"/>
                     </column>
                     <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
                         <textbox id="globalTotalRefundAmount" value="${globalTotalRefundAmount.rawValue}" width="100%"
                                 constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
                     </column>
-                    <column width="180px" sclass="oms-widget-cancelorder-listbox-header">
-                        <combobox id="globalCancelReasons" placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}"/>
-                    </column>
+
                     <column width="200px" sclass="oms-widget-cancelorder-listbox-header oms-widget-cancelorder-listbox-header__comment">
                         <textbox class="oms-widget-cancelorder-listbox-header__comment" id="globalCancelComment" maxlength="255"
                                  placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}"/>
@@ -151,16 +149,7 @@
                             <doublebox width="152px" style="text-align:center;" name="amount_${each.orderEntry.product.code}" id="amount_${each.orderEntry.product.code}"
                                     value="${each.amount}" constraint="no empty,no negative: Quantity Must be Greater Than Zero"
                                     disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
-                            <combobox   xmlns:w="client" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)" width="172px"
-                                        model="${each.cancelReasonsModel}" readonly="true" sclass="oms-widget-cancelorder__template-reason"
-                                        placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}"
-                                        style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray' : ''}"
-                                        name="cancelReasonsModel_${each.orderEntry.product.code}" id="cancelReasonsModel_${each.orderEntry.product.code}"
-                                        disabled="${each.quantityAvailableToCancel eq 0 ? true : false}">
-                                <template name="model">
-                                    <comboitem label="${each}"/>
-                                </template>
-                            </combobox>
+
                             <textbox value="${each.cancelOrderEntryComment}" maxlength="255" sclass="oms-widget-cancelorder__template-comment"
                                      placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}" width="194px"
                                      style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray' : ''}"
