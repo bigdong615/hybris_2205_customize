@@ -1887,10 +1887,10 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
      */
     private double getTotalRefundAmount()
     {
-        final double orderAmount = BlCustomCancelRefundConstants.ZERO;
-        final double globalTax = BlInventoryScanLoggingConstants.ZERO;
-        final double globalWaiver = BlInventoryScanLoggingConstants.ZERO;
-        final double globalShipping = BlInventoryScanLoggingConstants.ZERO;
+        double orderAmount = BlCustomCancelRefundConstants.ZERO;
+        double globalTax = BlInventoryScanLoggingConstants.ZERO;
+        double globalWaiver = BlInventoryScanLoggingConstants.ZERO;
+        double globalShipping = BlInventoryScanLoggingConstants.ZERO;
         if (Double.parseDouble(this.totalRefundedAmount.getValue()) <= BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL)
         {
             return blCustomCancelRefundService.calculateAmountOnCheckboxStatusFull(this.getOrderModel().getSubtotal(),
@@ -1903,6 +1903,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         }
         else
         {
+      	  globalShipping = BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
+                 : BlInventoryScanLoggingConstants.ZERO;
             return this.calculateAmount(orderAmount, globalTax, globalWaiver, globalShipping);
         }
     }
@@ -2033,7 +2035,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             orderAmount += orderEntry.getBasePrice() * entry.getValue();
             if (this.globalTaxSelection.isChecked())
             {
-                globalTax += (orderEntry.getAvalaraLineTax() / orderEntry.getQuantity()) * entry.getValue();
+                globalTax += (orderEntry.getAvalaraLineTax() / this.getOriginalQtyFromEntry(orderEntry)) * entry.getValue();
             }
             if (this.globalWaiverSelection.isChecked())
             {

@@ -58,6 +58,37 @@
 
     <hlayout width="100%" sclass="oms-widget-cancelorder-list">
         <div sclass="oms-widget-cancelorder-list-container">
+            <grid id="orderEntries1" sclass="oms-widget-cancelorder-body">
+                <columns>
+                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
+                        <label value="Refund Shipping Cost" width="100%"/>
+                    </column>
+                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
+                        <label value="Shipping Cost To Refund" width="100%"/>
+                    </column>
+                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
+                        <label value="Refunded Shipping Cost" width="100%"/>
+                    </column>
+                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
+                        <label value="Remaining Shipping Cost" width="100%"/>
+                    </column>
+                </columns>
+                <rows>
+
+                    <row>
+                        <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
+                                  name="globalShippingSelectionChk" id="globalShippingSelection" visible="true"/>
+                        <doublebox width="152px" style="text-align:center;" name="shippingCostToRefundDouble" id="shippingCostToRefund"
+                         constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
+                        <textbox width="152px" style="text-align:center;" name="refundedShippingCostTxt" id="refundedShippingCost"
+                                   disabled="true"/>
+                        <textbox width="152px" style="text-align:center;" name="remainingShippingCostTxtBox" id="remainingShippingCost"
+                                   disabled="true"/>
+                    </row>
+                </rows>
+            </grid>
+        </div>
+        <div sclass="oms-widget-cancelorder-list-container">
             <grid id="orderEntries" mold="paging" sclass="table-scroll-cancel-popup-orderEntries" pageSize="5">
                 <custom-attributes org.zkoss.zul.grid.autoSort="true" />
                 <columns>
@@ -78,7 +109,7 @@
                         <label value="${labels.customersupportbackoffice.cancelorder.productprice}" width="100%"/>
                     </column>
                     <column width="140px" sclass="oms-widget-cancelorder-listbox-header" visible = "false">
-                        <checkbox id="globalShippingSelection" class="oms-widget-cancelorder-list-container__checkbox"
+                        <checkbox id="globalShippingSelection_bak" class="oms-widget-cancelorder-list-container__checkbox"
                                   label="${labels.customersupportbackoffice.cancelorder.totalShippingCost}" name="globalShipping"/>
                     </column>
                     <column width="140px" sclass="oms-widget-cancelorder-listbox-header">
