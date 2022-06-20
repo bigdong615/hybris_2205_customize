@@ -368,12 +368,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		if(unboxStatus) {
 			blSerialProduct.setSerialStatus(SerialStatusEnum.UNBOXED);
 		}
+		String warehouseCode = null;
 		try
 		{
 			//As we don't have warehouse attribute in inventory, splitting from location code
 			if (blInventoryLocationLocal.getCode() != null)
 			{
-				final String warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE
+				warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE
 						+ blInventoryLocationLocal.getCode().substring(0, 2).toLowerCase();
 				final WarehouseModel wareHouse = warehouseService.getWarehouseForCode(warehouseCode);
 
@@ -383,9 +384,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				}
 			}
 		}
-		catch (final Exception e)
+		catch (final Exception exception)
 		{
-			e.printStackTrace();
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception, "Unable to find the warehouse - {}",
+					warehouseCode);
+
 		}
 
 
