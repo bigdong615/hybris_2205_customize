@@ -58,7 +58,7 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
     }
 
     /**
-     * This method created check order status
+     * This method is created to check the order status
      * @param order order
      * @return boolean
      */
@@ -72,7 +72,7 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
 
 
     /**
-     * This method created check order status
+     * This method is created to check the PAYMENT_CAPTURED order status
      * @param order order
      * @return boolean
      */
