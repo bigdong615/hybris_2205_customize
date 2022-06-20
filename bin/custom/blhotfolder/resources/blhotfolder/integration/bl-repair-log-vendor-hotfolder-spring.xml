@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [y] hybris Platform Copyright (c) 2020 SAP SE or an SAP affiliate company. 
+	All rights reserved. This software is the confidential and proprietary information 
+	of SAP ("Confidential Information"). You shall not disclose such Confidential 
+	Information and shall use it only in accordance with the terms of the license 
+	agreement you entered into with SAP. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:annotation-config />
+
+	<bean id="batchRepairLogVendorConverterMapping"
+		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+		p:mapping="REPAIRLOGVENDOR" p:converter-ref="batchRepairLogVendorConverter" />
+
+	<!-- Transformer converters mappings -->
+	<bean id="batchRepairLogVendorConverter"
+		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>
+				# Insert repair log vendor
+				$productCatalog=blProductCatalog
+				$productCatalogName=Bl Product Catalog
+				$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Online'])[unique=true,default=$productCatalog:Online]
+				INSERT_UPDATE VendorRepairLog;serialCode[unique=true];itemBarcode;repairLogStatus[translator=com.bl.batch.imports.translator.BlRepairLogStatusEnumTranslator];repairTechsForClaim[translator=com.bl.batch.imports.translator.BlRepairTechClaimEnumTranslator];order(code);selectedGearGaurd[translator=com.bl.batch.imports.translator.BlGearGaurdEnumTranslator];recommendToRepair;customerResponsible[translator=com.bl.batch.imports.translator.BlCustomerResponsibleEnumTranslator];lastRepairReturnDay[dateformat=dd.MM.yyyy HH:mm:ss];costForParts;labourHours;labourRate;customerCharged[translator=com.bl.batch.imports.translator.BlCustomerChargedEnumTranslator];customerCollectionStatus[translator=com.bl.batch.imports.translator.BlCustomerCollectionStatusEnumTranslator];otherDocument;repairReasons[translator=com.bl.batch.imports.translator.BlRepairReasonsEnumTranslator];otherRepairsReason;frequency[translator=com.bl.batch.imports.translator.BlIssueFrequencyEnumTranslator];cause;issueLocation;userId;lastUserChangedConditionRating;assessmentNotes(note[lang=en]);repairVendor[translator=com.bl.batch.imports.translator.BlVendorsEnumTranslator];dateSent[dateformat=dd.MM.yyyy HH:mm:ss];estimateCostApproved;estimateCostDeclined;estimateNote;trackingNumber;dateReturned[dateformat=dd.MM.yyyy HH:mm:ss];
+				
+			</value>
+		</property>
+		<property name="impexRow">
+			<value>;{+0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};{14};{16};{17};{18};{19};{20};{21};{22};{23};{24};{25};{26};{27};{28};{29};{32};</value>
+		</property>
+	</bean>
+	
+	
+</beans>
