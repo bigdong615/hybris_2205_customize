@@ -41,7 +41,7 @@ public class BlCancelOrderAction extends CancelOrderAction {
     public boolean canPerform(final ActionContext<OrderModel> actionContext) {
         final OrderModel order = (OrderModel)actionContext.getData();
         return Objects.nonNull(order) && Objects.nonNull(order.getStatus())
-                && BooleanUtils.isTrue(orderStatusAllowed(order));
+                && (BooleanUtils.isTrue(orderStatusAllowed(order) || StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.SHIPPED.getCode())));
     }
 
 
@@ -53,7 +53,7 @@ public class BlCancelOrderAction extends CancelOrderAction {
     @Override
     public ActionResult<OrderModel> perform(final ActionContext<OrderModel> actionContext) {
         final OrderModel orderModel = actionContext.getData();
-        if(StringUtils.equalsIgnoreCase(orderModel.getStatus().getCode() , OrderStatus.PENDING.getCode()))
+        if(BooleanUtils.isTrue(orderStatusAllowed(orderModel)))
         {
             this.sendOutput(SOCKET_OUTPUT_CTX, orderModel);
             return new ActionResult<>(ActionResult.SUCCESS);
@@ -72,7 +72,9 @@ public class BlCancelOrderAction extends CancelOrderAction {
      */
     private boolean orderStatusAllowed(final OrderModel order) {
         return StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.PENDING.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.SHIPPED.getCode());
+                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_READY_FOR_PICKUP.getCode()) ||
+                        StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_PAYMENT_DECLINED.getCode());
     }
+
 
 }
