@@ -67,7 +67,9 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
                 StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_MANUAL_REVIEW.getCode()) ||
                 StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_PAYMENT_DECLINED.getCode()) ||
                 StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.CANCELLED.getCode()) ||
-                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR.getCode());
+                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_SHIPPING_MANUAL_REVIEW.getCode()) ||
+                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.RECEIVED_READY_FOR_PICKUP.getCode()) ||
+                StringUtils.equalsIgnoreCase(order.getStatus().getCode() , OrderStatus.FRAUD_CHECKED.getCode());
     }
 
 
