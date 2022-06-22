@@ -55,15 +55,15 @@ public class BraintreeSubmitForSettlementServiceImpl implements BraintreeSubmitF
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Payment capture is successful for the order {}", orderModel.getCode());
 			createTransaction(orderModel, brainTreeSubmitForSettlementTransactionResult);
-			if (getBrainTreePaymentTransactionService().isOrderFullyCaptured(orderModel))
-			{
+				/*if (getBrainTreePaymentTransactionService().isOrderFullyCaptured(orderModel))
+				{*/
 				getBrainTreePaymentTransactionService().setOrderStatus(orderModel, OrderStatus.PAYMENT_CAPTURED);
 				//getBrainTreePaymentTransactionService().continueOrderProcess(orderModel);
-			}
+			/*}
 			else
 			{
 				getBrainTreePaymentTransactionService().setOrderStatus(orderModel, OrderStatus.PARTIAL_CAPTURE);
-			}
+			}*/
 			return Boolean.TRUE;
 		}
 		throw new BraintreeErrorException(brainTreeSubmitForSettlementTransactionResult.getErrorMessage(),
