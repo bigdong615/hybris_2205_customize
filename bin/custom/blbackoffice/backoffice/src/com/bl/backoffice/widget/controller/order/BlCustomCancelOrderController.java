@@ -1,8 +1,5 @@
 package com.bl.backoffice.widget.controller.order;
 
-import static org.apache.log4j.Level.DEBUG;
-import static org.apache.log4j.Level.ERROR;
-
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.basecommerce.enums.RefundReason;
 import de.hybris.platform.basecommerce.enums.ReturnAction;
@@ -42,6 +39,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -109,6 +107,8 @@ import com.hybris.cockpitng.core.events.CockpitEventQueue;
 import com.hybris.cockpitng.core.events.impl.DefaultCockpitEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 import com.hybris.cockpitng.util.notifications.NotificationService;
+
+import static org.apache.log4j.Level.*;
 
 
 /**
@@ -433,6 +433,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
     private void initateToRefundOnlyShippingAmount()
     {
         final Double enteredShippingAmountToRefund = this.shippingCostToRefund.getValue();
+        BlLogger.logFormatMessageInfo(LOGGER , INFO , "Enterted shipping amount to refund {}" , enteredShippingAmountToRefund.doubleValue());
         if (isGiftCardAppliedOnOrder()) // check if gift card is applied on order
         {
             //orderTotalSubtractingGCAmount = getting total by subtracting original order total with applied gift card amount
@@ -444,6 +445,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         {
             final Optional<PaymentTransactionEntryModel> captureEntry = blCustomCancelRefundService
                     .getCapturedPaymentTransaction(this.getOrderModel());
+
 
             if (captureEntry.isPresent())
             {
@@ -673,6 +675,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 .getCapturedPaymentTransaction(this.getOrderModel());
         if (captureEntry.isPresent() && BooleanUtils.isTrue(this.getOrderModel().getIsCaptured()))
         {
+            BlLogger.logFormatMessageInfo(LOGGER , DEBUG , "Request id {} for transaction" , captureEntry.get().getRequestId());
             this.initiateRefund(this.globalCancelEntriesSelection.isChecked(), captureEntry.get());
         }
         else
