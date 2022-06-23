@@ -3262,6 +3262,22 @@
                       <defaultvalue>Boolean.FALSE</defaultvalue>
                       <description>flag to identify whether the authorization has already been attempted or not on the order</description>
                     </attribute>
+                <attribute qualifier="refundTotalDamageWaiverAmount" type="java.lang.Double">
+                    <modifiers optional="true" read="true" write="true" search="false"/>
+                    <description>Total damage waiver refund amount</description>
+                    <persistence type="property"/>
+                    <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                </attribute>
+                <attribute qualifier="refundedTotalGiftCardAmount" type="java.lang.Double">
+                        <description>Refunded Total Gift Card Amount</description>
+                        <persistence type="property">
+                            <columntype>
+                                <value>java.math.BigDecimal</value>
+                            </columntype>
+                        </persistence>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <defaultvalue>Double.valueOf(0.0d)</defaultvalue>
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -7722,6 +7738,19 @@ new Integer(0)
                         <modifiers read="true" write="true" />
                         <description>It holds the information of cancelled quantity</description>
                         <persistence type="property" />
+                    </attribute>
+
+                    <attribute type="java.lang.Long" qualifier="refundedQuantity" >
+                        <modifiers read="true" write="true" />
+                        <description>It holds the information of refunded quantity</description>
+                        <persistence type="property" />
+                    </attribute>
+
+                    <attribute qualifier="fullyRefunded" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                        <description>Identify whether the entry is fully refunded or not.</description>
                     </attribute>
                 </attributes>
             </itemtype>
