@@ -305,7 +305,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         else if(BooleanUtils.isFalse(this.globalCancelEntriesSelection.isDisabled())
                 && BooleanUtils.isTrue(this.globalCancelEntriesSelection.isChecked()))
         {
-            double totalAmountToRefund = this.getTotalRefundAmount(true);
+            final double totalAmountToRefund = this.getTotalRefundAmount(true);
             this.globalTotalRefundAmount.setValue(String.valueOf(this.getTwoDecimalDoubleValue(totalAmountToRefund)));
         }
         else
