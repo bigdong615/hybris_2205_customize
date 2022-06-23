@@ -102,6 +102,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String SHIPPING_ZERO_ERROR = "Entered Shipping Amount Must Be Greater Than Zero";
     public static final String SHIPPING_GREATER_THAN_REMAINING_SHIPPING_ERROR = "Entered Shipping Amount is Greater then Remaining Shipping Amount";
     public static final String SHIPPING_GREATER_THAN_REMAINING_REFUND_ERROR = "Entered Shipping Amount is Greater then Remaining Refund Amount on Order";
+    public static final String REFUND_BUTTON_MESSAGE = "Click on \"Get Total Amount To Refund\" Button first";
 
     private BlCustomCancelRefundConstants() {}
 }

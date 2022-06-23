@@ -131,8 +131,7 @@
                         <label value="${labels.customersupportbackoffice.cancelorder.qtyRefunded}" width="100%"/>
                     </column>
                     <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
-                        <textbox id="globalTotalRefundAmount" value="${globalTotalRefundAmount.rawValue}" width="100%"
-                                constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
+                        <label value="Totals" width="100%"/>
                     </column>
 
                     <column width="200px" sclass="oms-widget-cancelorder-listbox-header oms-widget-cancelorder-listbox-header__comment">
@@ -173,13 +172,13 @@
                                     name="quantityAvailableToCancel_${each.orderEntry.product.code}" readonly="true"
                                     id="quantityAvailableToCancel_${each.orderEntry.product.code}"/>
                             <intbox value="${each.quantityToCancel}" width="152px"
-                                    constraint="no empty,no negative, no zero: Quantity Must be Greater Than Zero"
+                                    constraint="no empty,no negative: Quantity Must be Greater Than Zero"
                                     style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray;text-align:center;'
                                     : 'text-align:center;'}" disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"
                                     name="quantityToCancel_${each.orderEntry.product.code}" id="quantityToCancel_${each.orderEntry.product.code}"/>
                             <doublebox width="152px" style="text-align:center;" name="amount_${each.orderEntry.product.code}" id="amount_${each.orderEntry.product.code}"
                                     value="${each.amount}" constraint="no empty,no negative: Quantity Must be Greater Than Zero"
-                                    disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
+                                    disabled="true"/>
 
                             <textbox value="${each.cancelOrderEntryComment}" maxlength="255" sclass="oms-widget-cancelorder__template-comment"
                                      placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}" width="194px"
@@ -194,14 +193,22 @@
     </hlayout>
 
     <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer">
+    <textbox id="globalTotalRefundAmount" value="${globalTotalRefundAmount.rawValue}" width="10%"
+                                constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
+<button id="setAmountToRefund" label="Get Total Amount To Refund"
+                sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button" />
+<button id="confirmcancellation" label="${labels.customersupportbackoffice.cancelorder.button.confirm}"
+                sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button" />
      <button id="closePopup"
-				label="${labels.customersupportbackoffice.cancelorder.button.cancel}" 
+				label="${labels.customersupportbackoffice.cancelorder.button.cancel}"
 				sclass="oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-revert-button" />
         <!-- <button id="undocancellation" label="${labels.customersupportbackoffice.cancelorder.button.undo}"
                 sclass="oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-revert-button" /> -->
-        <button id="confirmcancellation" label="${labels.customersupportbackoffice.cancelorder.button.confirm}"
-                sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button" />
+
+
+
     </div>
+
 
     <html><![CDATA[
 		<script type="text/javascript">
