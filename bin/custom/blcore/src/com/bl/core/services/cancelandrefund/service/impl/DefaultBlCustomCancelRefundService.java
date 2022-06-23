@@ -187,9 +187,9 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
      */
     @Override
     public double calculateAmountOnCheckboxStatusFull(final double subTotal, final double tax, final double waiver, final double shipping,
-                                                      final double amount) {
+                                                      final double amount, final boolean isForGetRefundAmountClick) {
         final double totalSelectionAmount = (subTotal + shipping + tax + waiver);
-        return Math.min(totalSelectionAmount, amount);
+        return isForGetRefundAmountClick ? totalSelectionAmount : Math.min(totalSelectionAmount, amount);
     }
 
     /**
@@ -223,7 +223,7 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
      */
     @Override
     public Map<String, Object> collectSelectionCheckboxAndCreateMap(final boolean tax, final boolean waiver, final Boolean shipping,
-                                                                     final Double amount) {
+                                                                    final Double amount) {
         final Map<String, Object> selectionAttributeMap = new HashMap<>();
         selectionAttributeMap.put(TAX, tax);
         selectionAttributeMap.put(WAIVER, waiver);

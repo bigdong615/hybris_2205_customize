@@ -112,7 +112,7 @@ public interface BlCustomCancelRefundService {
      * @return amount on checkbox status
      */
     double calculateAmountOnCheckboxStatusFull(final double subTotal, final double tax, final double waiver, final double shipping,
-                                               final double amount);
+                                               final double amount, final boolean isForGetRefundAmountClick);
 
     /**
      * This method will calculate amount on checkbox status on popup on entry
