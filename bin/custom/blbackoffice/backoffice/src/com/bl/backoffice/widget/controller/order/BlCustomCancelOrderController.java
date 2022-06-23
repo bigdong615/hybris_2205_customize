@@ -52,6 +52,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -294,11 +295,37 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         }
     }
 
+    @ViewEvent(componentID = "setAmountToRefund", eventName = BlCustomCancelRefundConstants.ON_CLICK)
+    public void setAmountToRefund()
+    {
+        if(this.isOnlyRefundShippingAmount())
+        {
+            this.globalTotalRefundAmount.setValue(String.valueOf(this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel()))));
+        }
+        else if(BooleanUtils.isFalse(this.globalCancelEntriesSelection.isDisabled())
+                && BooleanUtils.isTrue(this.globalCancelEntriesSelection.isChecked()))
+        {
+            double totalAmountToRefund = this.getTotalRefundAmount(true);
+            this.globalTotalRefundAmount.setValue(String.valueOf(this.getTwoDecimalDoubleValue(totalAmountToRefund)));
+        }
+        else
+        {
+            this.globalTotalRefundAmount.setValue(String.valueOf(this.calculateLineItemTotals()));
+        }
+    }
+
     /**
      * This method will validate input events of cancel and refund popup
      */
     private boolean validateOrderEnteredQuantityAmountReason()
     {
+        if(StringUtils.isBlank(this.globalTotalRefundAmount.getValue()) || !NumberUtils.isCreatable(this.globalTotalRefundAmount.getValue())
+                || Double.valueOf(this.globalTotalRefundAmount.getValue()).compareTo(Double.valueOf(0.0d)) <= 0)
+        {
+            this.errorMessageBox("Click on \"Get Total Amount To Refund\" Button first",
+                    this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER));
+            return Boolean.TRUE;
+        }
         if (this.isOnlyRefundShippingAmount())
         {
             return this.validateShippingAmount();
@@ -1267,7 +1294,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             final double refundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue());
             final double orderTotalSubtractingGCAmount = this.getTwoDecimalDoubleValue(this.getOrderModel().getOriginalOrderTotalAmount()
                     - this.getOrderModel().getGiftCardAmount());
-            final double totalRefundAmount = this.getTwoDecimalDoubleValue(this.getTotalRefundAmount());
+            final double totalRefundAmount = this.getTwoDecimalDoubleValue(this.getTotalRefundAmount(false));
             if (refundedAmount < orderTotalSubtractingGCAmount) {
                 this.doFullRefundCalculations(captureEntry, totalRefundAmount, refundedAmount, orderTotalSubtractingGCAmount);
             } else {
@@ -1283,8 +1310,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 if(order instanceof OrderModel && getDefaultBlUserService().isCsUser()) {
                     try {
                         BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
-                                this.getTotalRefundAmount());
-                        getBlEspEventService().sendOrderRefundEvent((OrderModel) order,this.getTotalRefundAmount(),BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
+                                this.getTotalRefundAmount(false));
+                        getBlEspEventService().sendOrderRefundEvent((OrderModel) order,this.getTotalRefundAmount(false),BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
                         this.setOrderCancelEntries(null);
                     }
                     catch (final Exception e){
@@ -1885,7 +1912,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
      *
      * @return amt
      */
-    private double getTotalRefundAmount()
+    private double getTotalRefundAmount(final boolean isForGetRefundAmountClick)
     {
         double orderAmount = BlCustomCancelRefundConstants.ZERO;
         double globalTax = BlInventoryScanLoggingConstants.ZERO;
@@ -1899,13 +1926,13 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                             : BlInventoryScanLoggingConstants.ZERO),
                     (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
                             : BlInventoryScanLoggingConstants.ZERO),
-                    Double.parseDouble(this.globalTotalRefundAmount.getValue()));
+                    Double.parseDouble(this.globalTotalRefundAmount.getValue()), isForGetRefundAmountClick);
         }
         else
         {
-      	  globalShipping = BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
-                 : BlInventoryScanLoggingConstants.ZERO;
-            return this.calculateAmount(orderAmount, globalTax, globalWaiver, globalShipping);
+            globalShipping = BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
+                    : BlInventoryScanLoggingConstants.ZERO;
+            return this.calculateAmount(orderAmount, globalTax, globalWaiver, globalShipping, isForGetRefundAmountClick);
         }
     }
 
@@ -2027,7 +2054,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
      *           shipping
      * @return amt
      */
-    private double calculateAmount(double orderAmount, double globalTax, double globalWaiver, final double globalShipping)
+    private double calculateAmount(double orderAmount, double globalTax, double globalWaiver, final double globalShipping, final boolean isForGetRefundAmountClick)
     {
         for (final Map.Entry<AbstractOrderEntryModel, Long> entry : this.orderRefundableEntries.entrySet())
         {
@@ -2047,7 +2074,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             }
         }
         return blCustomCancelRefundService.calculateAmountOnCheckboxStatusFull(orderAmount, globalTax, globalWaiver, globalShipping,
-                Double.parseDouble(this.globalTotalRefundAmount.getValue()));
+                Double.parseDouble(this.globalTotalRefundAmount.getValue()), isForGetRefundAmountClick);
     }
 
     /**
@@ -2248,7 +2275,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                     this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER));
             return Boolean.TRUE;
         }
-        this.entryLevelTotals.addAndGet(entryLevelTotals.get() + amount);
+        this.entryLevelTotals.addAndGet(amount);
         return Boolean.FALSE;
     }
 
@@ -2272,7 +2299,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         final Checkbox waiver = ((Checkbox) row.getChildren().get(BlloggingConstants.SEVEN));
         return blCustomCancelRefundService.getTotalAmountPerEntry(cancelQty, cancellableQty,
                 Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.FOUR)).getRawValue())),
-                (Double.parseDouble(tax.getLabel()) / orgQty), Double.parseDouble(waiver.getLabel()));
+                tax.isChecked() ? (Double.parseDouble(tax.getLabel()) / orgQty) : Double.valueOf(0.0d),
+                waiver.isChecked() ? Double.parseDouble(waiver.getLabel()) : Double.valueOf(0.0d));
     }
 
     /**
@@ -2293,6 +2321,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 else if (myComponent instanceof Intbox)
                 {
                     myComponent.addEventListener(BlCustomCancelRefundConstants.ON_CHANGING, event -> {
+                        this.globalTotalRefundAmount.setValue(String.valueOf(0.0d));
                         this.autoSelect(event);
                         this.inputBoxCustomization(event);
                     });
@@ -2308,6 +2337,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 else if (myComponent instanceof Doublebox)
                 {
                     myComponent.addEventListener(BlCustomCancelRefundConstants.ON_CHANGE, event -> {
+                        this.globalTotalRefundAmount.setValue(String.valueOf(0.0d));
                         this.autoSelect(event);
                         ((BlOrderEntryToCancelDto) ((Row) event.getTarget().getParent()).getValue())
                                 .setAmount(Double.parseDouble(((InputEvent) event).getValue()));
@@ -2326,6 +2356,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
 
     private void updateTotalOnShippingAmountChange(final Event event)
     {
+        this.globalTotalRefundAmount.setValue(String.valueOf(0.0d));
         if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
         {
             calculateOrderRefundAmount(event);
@@ -2340,6 +2371,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
      */
     private void inputBoxCustomization(final Event event)
     {
+        this.globalTotalRefundAmount.setValue(String.valueOf(0.0d));
         if (StringUtils.isNotEmpty(((InputEvent) event).getValue()))
         {
             ((BlOrderEntryToCancelDto) ((Row) event.getTarget().getParent()).getValue())
@@ -2350,21 +2382,22 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
 
     private void processShippingSelectionEvent(final Event event)
     {
+        this.globalTotalRefundAmount.setValue(String.valueOf(0.0d));
         if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
         {
             final OrderModel order = this.getOrderModel();
             final String remainingShippingAmount = formatAmount(order.getDeliveryCost().doubleValue()
                     - (order.getRefundShippingTotalAmount() != null ? order.getRefundShippingTotalAmount().doubleValue() : 0.0d));
             this.shippingCostToRefund.setValue(Double.valueOf(remainingShippingAmount).compareTo(0.0d) < 0 ? 0.0d : Double.valueOf(remainingShippingAmount));
-            this.globalTotalRefundAmount.setValue(
-                    String.valueOf(this.getTwoDecimalDoubleValue(Double.valueOf(this.globalTotalRefundAmount.getValue()) + this.shippingCostToRefund.getValue())));
+            /*this.globalTotalRefundAmount.setValue(
+                    String.valueOf(this.getTwoDecimalDoubleValue(Double.valueOf(this.globalTotalRefundAmount.getValue()) + this.shippingCostToRefund.getValue())));*/
         }
         else
         {
             Double oldValue = this.shippingCostToRefund.getValue();
             this.shippingCostToRefund.setValue(0.0d);
-            this.globalTotalRefundAmount.setValue(
-                    String.valueOf(this.getTwoDecimalDoubleValue(Double.valueOf(this.globalTotalRefundAmount.getValue()) - oldValue)));
+            /*this.globalTotalRefundAmount.setValue(
+                    String.valueOf(this.getTwoDecimalDoubleValue(Double.valueOf(this.globalTotalRefundAmount.getValue()) - oldValue)));*/
         }
 
 
@@ -2379,6 +2412,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
      */
     private void calculateOrderRefundAmount(final Event event)
     {
+        this.globalTotalRefundAmount.setValue(String.valueOf(0.0d));
         double orderAmount = BlCustomCancelRefundConstants.ZERO;
         orderAmount = Double.valueOf(getBaseAmount()).doubleValue();
         if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
@@ -2393,8 +2427,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         {
             orderAmount += getRemainingDamageWaiverAmount();
         }
-        this.globalTotalRefundAmount.setValue(String.valueOf(
-                BigDecimal.valueOf(orderAmount).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue()));
+        /*this.globalTotalRefundAmount.setValue(String.valueOf(
+                BigDecimal.valueOf(orderAmount).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue()));*/
     }
 
     private Double getRemainingTaxAmount()
@@ -2508,6 +2542,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
      */
     private void handleRow(final Row row)
     {
+        this.globalTotalRefundAmount.setValue(String.valueOf(0.0d));
         try
         {
             final BlOrderEntryToCancelDto myEntry = row.getValue();
@@ -2661,11 +2696,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         this.totalRefundedAmount.setValue(
                 String.valueOf(this.getOrderModel().getTotalRefundedAmount() == null ? BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL
                         : this.getOrderModel().getTotalRefundedAmount()));
-
+        this.globalTotalRefundAmount.setValue(String.valueOf(Double.valueOf(0.0d)));
         if (this.getOrderModel().getTotalRefundedAmount() == null
                 || this.getOrderModel().getTotalRefundedAmount() == BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL)
         {
-            this.globalTotalRefundAmount.setValue(String.valueOf(order.getSubtotal()));
+            /*this.globalTotalRefundAmount.setValue(String.valueOf(order.getSubtotal()));*/
 
         }
         else
@@ -2675,7 +2710,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             {
                 orderAmount += entry.getKey().getBasePrice() * entry.getValue();
             }
-            this.globalTotalRefundAmount.setValue(String.valueOf(this.getTwoDecimalDoubleValue(orderAmount)));
+            /*this.globalTotalRefundAmount.setValue(String.valueOf(this.getTwoDecimalDoubleValue(orderAmount)));*/
 
         }
 
@@ -2747,6 +2782,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
      */
     private void selectAllEntries()
     {
+        this.globalTotalRefundAmount.setValue(String.valueOf(0.0d));
         final OrderModel order = this.getOrderModel();
 
         if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && !this.globalShippingSelection.isChecked())
@@ -2756,23 +2792,69 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                     - (order.getRefundShippingTotalAmount() != null ? order.getRefundShippingTotalAmount().doubleValue() : 0.0d));
             this.shippingCostToRefund.setValue(Double.valueOf(remainingShippingAmount).compareTo(0.0d) < 0 ? 0.0d : Double.valueOf(remainingShippingAmount));
         }
-        double orderAmount = BlCustomCancelRefundConstants.ZERO;
-        this.applyToGrid(Boolean.TRUE, BlCustomCancelRefundConstants.ZERO);
+        /*double orderAmount = BlCustomCancelRefundConstants.ZERO;
+        this.applyToGrid(Boolean.TRUE, BlCustomCancelRefundConstants.ZERO);*/
         for (final Component row : this.getOrderEntriesGridRows())
         {
-            final Component firstComponent = row.getChildren().iterator().next();
+            final Component firstComponent = row.getChildren().get(0);
+            final Component taxCheckbox = row.getChildren().get(6);
+            final Component waiverCheckbox = row.getChildren().get(7);
+            final Component qtyToRefundTextBox = row.getChildren().get(10);
+            final Component totalTextBox = row.getChildren().get(11);
+            final Component commentBox = row.getChildren().get(12);
+
+
             if (firstComponent instanceof Checkbox)
             {
-                ((Checkbox) firstComponent).setChecked(this.globalCancelEntriesSelection.isChecked());
+                ((Checkbox) firstComponent).setDisabled(this.globalCancelEntriesSelection.isChecked());
+                ((Checkbox) firstComponent).setChecked(Boolean.FALSE);
             }
-            this.handleRow((Row) row);
-            if (this.globalCancelEntriesSelection.isChecked())
+            if (taxCheckbox instanceof Checkbox)
+            {
+                ((Checkbox) taxCheckbox).setDisabled(this.globalCancelEntriesSelection.isChecked());
+                ((Checkbox) taxCheckbox).setChecked(Boolean.FALSE);
+            }
+            if (waiverCheckbox instanceof Checkbox)
+            {
+                ((Checkbox) waiverCheckbox).setDisabled(this.globalCancelEntriesSelection.isChecked());
+                ((Checkbox) waiverCheckbox).setChecked(Boolean.FALSE);
+            }
+            if (commentBox instanceof Textbox)
+            {
+                ((Textbox) commentBox).setDisabled(this.globalCancelEntriesSelection.isChecked());
+                if(this.globalCancelEntriesSelection.isChecked()) {
+                    ((Textbox) commentBox).setValue(null);
+                }
+            }
+            if (qtyToRefundTextBox instanceof Intbox)
+            {
+                ((Intbox) qtyToRefundTextBox).setDisabled(this.globalCancelEntriesSelection.isChecked());
+               if(this.globalCancelEntriesSelection.isChecked()) {
+                    ((Intbox) qtyToRefundTextBox).setValue(0);
+                }
+            }
+
+            if (totalTextBox instanceof Doublebox)
+            {
+                if(this.globalCancelEntriesSelection.isChecked()) {
+                    ((Doublebox) totalTextBox).setValue(0);
+                }
+            }
+            //this.handleRow((Row) row);
+            /*if (this.globalCancelEntriesSelection.isChecked())
             {
                 final InputElement cancellableQty = (InputElement) row.getChildren().get(BlloggingConstants.NINE);
                 this.applyToRow(Integer.parseInt(String.valueOf(cancellableQty.getRawValue())), BlloggingConstants.NINE, row);
-            }
+            }*/
         }
-        if (this.globalCancelEntriesSelection.isChecked())
+        if(BooleanUtils.isFalse(this.globalCancelEntriesSelection.isChecked()))
+        {
+            this.globalShippingSelection.setChecked(false);
+            this.globalTaxSelection.setChecked(false);
+            this.globalWaiverSelection.setChecked(false);
+            this.shippingCostToRefund.setValue(Double.valueOf(0.0d));
+        }
+        /*if (this.globalCancelEntriesSelection.isChecked())
         {
             this.orderEntriesToRefund
                     .forEach(entry -> entry.setQuantityToCancel(this.orderRefundableEntries.get(entry.getOrderEntry())));
@@ -2785,9 +2867,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             this.globalTaxSelection.setChecked(false);
             this.globalWaiverSelection.setChecked(false);
             this.shippingCostToRefund.setValue(Double.valueOf(0.0d));
-        }
-        this.globalTotalRefundAmount.setValue(String.valueOf(
-                BigDecimal.valueOf(orderAmount).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue()));
+        }*/
+        /*this.globalTotalRefundAmount.setValue(String.valueOf(
+                BigDecimal.valueOf(orderAmount).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue()));*/
     }
 
     private String getBaseAmount()
@@ -3054,4 +3136,25 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         this.blOrderService = blOrderService;
     }
 
+    private Double calculateLineItemTotals()
+    {
+        final AtomicDouble lineItemTotals = new AtomicDouble(0.0d);
+        for (final Component row : this.getOrderEntriesGridRows())
+        {
+            if (((Checkbox) row.getChildren().iterator().next()).isChecked())
+            {
+                final int cancelQty = Integer
+                        .parseInt(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.TEN)).getRawValue()));
+                final int cancellableQty = Integer
+                        .parseInt(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.NINE)).getRawValue()));
+                final double entryTotal = this.getTotalProductPriceForCancelQuantity(row, cancelQty, cancellableQty);
+                lineItemTotals.addAndGet(this.getTwoDecimalDoubleValue(entryTotal));
+            }
+        }
+        if(BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
+        {
+            lineItemTotals.addAndGet(this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel())));
+        }
+        return this.getTwoDecimalDoubleValue(lineItemTotals.get());
+    }
 }
