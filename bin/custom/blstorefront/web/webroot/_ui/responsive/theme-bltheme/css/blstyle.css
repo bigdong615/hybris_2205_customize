@@ -190,7 +190,7 @@ body:not(.home) .embed-responsive { position: relative; padding-bottom: 56.25%; 
 body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
 /* Buttons */
-.btn { text-decoration: none; padding: 10px 16px; letter-spacing: 1px; width: 100%;}
+.btn { text-decoration: none; padding: 10px 16px; letter-spacing: 1px; }
 @media screen and (max-width: 490px) { #gear-slider .card .btn { padding: 10px 0px; }}
 .btn-sm { padding: 6px 8px; }
 .btn-block, button.btn-block { display: block; width: 100%; }
@@ -263,7 +263,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 }
 
 /* Cards */
-.card { padding: 5px; background-color: white; transition: .2s; border-radius: 6px; }
+.card { padding: 30px; background-color: white; transition: .2s; border-radius: 6px; }
 /* BL-536 */
 @media screen and (max-width: 490px) { #gear-slider .card {padding: 10px}}
 .single-product #gear-slider .card, .single-product #gear-slider-cart .card { padding: 15px; }
