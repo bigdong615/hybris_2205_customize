@@ -1915,7 +1915,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
      *
      * @return amt
      */
-    private double getTotalRefundAmount(final boolean isForGetRefundAmountClick)
+    private double getTotalRefundAmount(final boolean getRefundAmountOnClick)
     {
         double orderAmount = BlCustomCancelRefundConstants.ZERO;
         double globalTax = BlInventoryScanLoggingConstants.ZERO;
@@ -1929,13 +1929,13 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                             : BlInventoryScanLoggingConstants.ZERO),
                     (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
                             : BlInventoryScanLoggingConstants.ZERO),
-                    Double.parseDouble(this.globalTotalRefundAmount.getValue()), isForGetRefundAmountClick);
+                    Double.parseDouble(this.globalTotalRefundAmount.getValue()), getRefundAmountOnClick);
         }
         else
         {
             globalShipping = BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
                     : BlInventoryScanLoggingConstants.ZERO;
-            return this.calculateAmount(orderAmount, globalTax, globalWaiver, globalShipping, isForGetRefundAmountClick);
+            return this.calculateAmount(orderAmount, globalTax, globalWaiver, globalShipping, getRefundAmountOnClick);
         }
     }
 
@@ -3147,9 +3147,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             if (((Checkbox) row.getChildren().iterator().next()).isChecked())
             {
                 final int cancelQty = Integer
-                        .parseInt(String.valueOf(ObjectUtils.defaultIfNull(((InputElement) row.getChildren().get(BlloggingConstants.TEN)).getRawValue(), "0")));
+                        .parseInt(String.valueOf(ObjectUtils.defaultIfNull(((InputElement) row.getChildren().get(BlloggingConstants.TEN)).getRawValue(), BlCustomCancelRefundConstants.ZERO)));
                 final int cancellableQty = Integer
-                        .parseInt(String.valueOf(ObjectUtils.defaultIfNull(((InputElement) row.getChildren().get(BlloggingConstants.NINE)).getRawValue() , "0")));
+                        .parseInt(String.valueOf(ObjectUtils.defaultIfNull(((InputElement) row.getChildren().get(BlloggingConstants.NINE)).getRawValue() , BlCustomCancelRefundConstants.ZERO)));
                 final double entryTotal = this.getTotalProductPriceForCancelQuantity(row, cancelQty, cancellableQty);
                 lineItemTotals.addAndGet(this.getTwoDecimalDoubleValue(entryTotal));
             }
