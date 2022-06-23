@@ -187,9 +187,9 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
      */
     @Override
     public double calculateAmountOnCheckboxStatusFull(final double subTotal, final double tax, final double waiver, final double shipping,
-                                                      final double amount, final boolean isForGetRefundAmountClick) {
+                                                      final double amount, final boolean getRefundAmountOnClick) {
         final double totalSelectionAmount = (subTotal + shipping + tax + waiver);
-        return isForGetRefundAmountClick ? totalSelectionAmount : Math.min(totalSelectionAmount, amount);
+        return getRefundAmountOnClick ? totalSelectionAmount : Math.min(totalSelectionAmount, amount);
     }
 
     /**

@@ -322,7 +322,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         if(StringUtils.isBlank(this.globalTotalRefundAmount.getValue()) || !NumberUtils.isCreatable(this.globalTotalRefundAmount.getValue())
                 || Double.valueOf(this.globalTotalRefundAmount.getValue()).compareTo(Double.valueOf(0.0d)) <= 0)
         {
-            this.errorMessageBox("Click on \"Get Total Amount To Refund\" Button first",
+            this.errorMessageBox(BlCustomCancelRefundConstants.REFUND_BUTTON_MESSAGE,
                     this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER));
             return Boolean.TRUE;
         }
@@ -2054,7 +2054,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
      *           shipping
      * @return amt
      */
-    private double calculateAmount(double orderAmount, double globalTax, double globalWaiver, final double globalShipping, final boolean isForGetRefundAmountClick)
+    private double calculateAmount(double orderAmount, double globalTax, double globalWaiver, final double globalShipping, final boolean getRefundAmountOnClick)
     {
         for (final Map.Entry<AbstractOrderEntryModel, Long> entry : this.orderRefundableEntries.entrySet())
         {
@@ -2074,7 +2074,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             }
         }
         return blCustomCancelRefundService.calculateAmountOnCheckboxStatusFull(orderAmount, globalTax, globalWaiver, globalShipping,
-                Double.parseDouble(this.globalTotalRefundAmount.getValue()), isForGetRefundAmountClick);
+                Double.parseDouble(this.globalTotalRefundAmount.getValue()), getRefundAmountOnClick);
     }
 
     /**
@@ -2294,12 +2294,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
     {
         final BlOrderEntryToCancelDto blOrderEntryToCancelDto = ((Row) row).getValue();
         final OrderEntryModel orderEntryModel = (OrderEntryModel) blOrderEntryToCancelDto.getOrderEntry();
-        int orgQty = this.getOriginalQtyFromEntry(orderEntryModel).intValue();
+        int originalQuantity = this.getOriginalQtyFromEntry(orderEntryModel).intValue();
         final Checkbox tax = ((Checkbox) row.getChildren().get(BlloggingConstants.SIX));
         final Checkbox waiver = ((Checkbox) row.getChildren().get(BlloggingConstants.SEVEN));
         return blCustomCancelRefundService.getTotalAmountPerEntry(cancelQty, cancellableQty,
                 Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.FOUR)).getRawValue())),
-                tax.isChecked() ? (Double.parseDouble(tax.getLabel()) / orgQty) : Double.valueOf(0.0d),
+                tax.isChecked() ? (Double.parseDouble(tax.getLabel()) / originalQuantity) : Double.valueOf(0.0d),
                 waiver.isChecked() ? Double.parseDouble(waiver.getLabel()) : Double.valueOf(0.0d));
     }
 
@@ -3144,9 +3144,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             if (((Checkbox) row.getChildren().iterator().next()).isChecked())
             {
                 final int cancelQty = Integer
-                        .parseInt(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.TEN)).getRawValue()));
+                        .parseInt(String.valueOf(ObjectUtils.defaultIfNull(((InputElement) row.getChildren().get(BlloggingConstants.TEN)).getRawValue(), "0")));
                 final int cancellableQty = Integer
-                        .parseInt(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.NINE)).getRawValue()));
+                        .parseInt(String.valueOf(ObjectUtils.defaultIfNull(((InputElement) row.getChildren().get(BlloggingConstants.NINE)).getRawValue() , "0")));
                 final double entryTotal = this.getTotalProductPriceForCancelQuantity(row, cancelQty, cancellableQty);
                 lineItemTotals.addAndGet(this.getTwoDecimalDoubleValue(entryTotal));
             }
@@ -3155,6 +3155,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         {
             lineItemTotals.addAndGet(this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel())));
         }
+        BlLogger.logFormatMessageInfo(LOGGER , Level.INFO , "Calculating total line items cost {} for order code {} :- " , lineItemTotals.get() , this.getOrderModel().getCode());
         return this.getTwoDecimalDoubleValue(lineItemTotals.get());
     }
 }
