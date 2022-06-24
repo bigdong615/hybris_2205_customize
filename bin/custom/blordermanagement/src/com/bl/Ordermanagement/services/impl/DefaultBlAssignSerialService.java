@@ -376,29 +376,24 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     }
   }
 
-  private Set<BlSerialProductModel> getFilteredSerialsOnLocation(Set<BlSerialProductModel> serials)
-  {
-    Map<BlSerialProductModel, Integer> prioritySerialMap = new HashedMap();
-    for (BlSerialProductModel serialProduct: serials) {
-      if(Objects.nonNull(serialProduct.getOcLocationDetails()) && Objects.nonNull(serialProduct.getOcLocationDetails().getLocationPriority()) && serialProduct.getOcLocationDetails().getLocationPriority() == 0)
-      {
-        prioritySerialMap.put(serialProduct,serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority());
-      }
-      else {
-        prioritySerialMap.put(serialProduct,serialProduct.getOcLocationDetails().getLocationPriority());
-      }
+    private Set<BlSerialProductModel> getFilteredSerialsOnLocation(Set<BlSerialProductModel> serials) {
+        Map<BlSerialProductModel, Integer> prioritySerialMap = new HashedMap();
+        for (BlSerialProductModel serialProduct : serials) {
+            if (Objects.nonNull(serialProduct.getOcLocationDetails()) && Objects.nonNull(serialProduct.getOcLocationDetails().getLocationPriority()) && serialProduct.getOcLocationDetails().getLocationPriority() == 0) {
+                prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority());
+            } else {
+                prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getLocationPriority());
+            }
+        }
+        for (int i = 0; i < prioritySerialMap.size(); i++) {
+            int finalI = i;
+            Set<BlSerialProductModel> serialProductModelSet = prioritySerialMap.entrySet().stream().filter(e -> e.getValue() == finalI).map(Map.Entry::getKey).collect(Collectors.toSet());
+            if (!serialProductModelSet.isEmpty()) {
+                return serialProductModelSet;
+            }
+        }
+        return serials;
     }
-   for(int i=0;i<prioritySerialMap.size();i++)
-   {
-     int finalI = i;
-     Set<BlSerialProductModel> serialProductModelSet = prioritySerialMap.entrySet().stream().filter(e -> e.getValue() == finalI).map(Map.Entry::getKey).collect(Collectors.toSet());
-     if(!serialProductModelSet.isEmpty())
-     {
-       return serialProductModelSet;
-     }
-   }
-    return serials;
-  }
 
   /**
    * It filters the non buffer products
