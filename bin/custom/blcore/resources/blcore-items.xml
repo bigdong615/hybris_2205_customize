@@ -1978,7 +1978,7 @@
                     </attribute>
                     <attribute qualifier="locationPriority" type="java.lang.Integer">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
+                        <modifiers read="true" write="true" optional="true"/>
                         <description>BL Inventory location priority</description>
                     </attribute>
                 </attributes>
