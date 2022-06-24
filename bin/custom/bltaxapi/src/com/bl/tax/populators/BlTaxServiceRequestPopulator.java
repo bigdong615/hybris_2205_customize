@@ -41,6 +41,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.assertj.core.util.Lists;
 
 /**
  * This populator created for preparing avalara tax request
@@ -75,11 +76,14 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       BlLogger.logMessage(LOG , Level.ERROR , "Error while setting request for tax commit " , e);
     }
     taxRequest.setAddresses(createAddressesForOrderTax(abstractOrder));
-    taxRequest.setLines(createdTaxLineForRequest(abstractOrder));
-    if(BooleanUtils.isFalse(abstractOrder.isUnPaidBillPresent())) {
-      setShippingAndDiscountLineForRequest(taxRequest, abstractOrder);
+    taxRequest.setLines(BooleanUtils.isTrue(taxRequest.getIsShippingTax()) ? Lists.newArrayList()
+            : createdTaxLineForRequest(abstractOrder));
+    if(BooleanUtils.isTrue(taxRequest.getIsShippingTax()) || BooleanUtils.isFalse(abstractOrder.isUnPaidBillPresent())) {
+      setShippingAndDiscountLineForRequest(taxRequest, abstractOrder, taxRequest.getShippingAmount());
     }
     taxRequest.setCurrencyCode(abstractOrder.getCurrency().getIsocode());
+    taxRequest.setIsShippingTax(null);
+    taxRequest.setShippingAmount(null);
   }
 
   /**
@@ -253,15 +257,23 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   /**
    * this method created to prepare shipping and discount tax for orders
    */
-  private void setShippingAndDiscountLineForRequest(final TaxRequestData taxRequest , final AbstractOrderModel abstractOrder) {
+  private void setShippingAndDiscountLineForRequest(final TaxRequestData taxRequest , final AbstractOrderModel abstractOrder,
+                                                    final Double shippingAmount) {
     final List<TaxLine> taxLines = taxRequest.getLines();
     final TaxLine shippingTaxLine =  new TaxLine();
     final TaxLine discountTaxLine =  new TaxLine();
     if(null != abstractOrder.getDeliveryMode()) {
       shippingTaxLine.setQuantity(BltaxapiConstants.QTY);
-      shippingTaxLine.setNumber(taxRequest.getLines().get(taxRequest.getLines().size() -1).getNumber() + 1);
+      if(BooleanUtils.isTrue(taxRequest.getIsShippingTax()))
+      {
+      	shippingTaxLine.setNumber(0);
+      }
+      else
+      {
+      	shippingTaxLine.setNumber(taxRequest.getLines().get(taxRequest.getLines().size() -1).getNumber() + 1);
+      }
       shippingTaxLine.setItemCode(BltaxapiConstants.SHIPPING);
-      shippingTaxLine.setAmount(abstractOrder.getDeliveryCost());
+      shippingTaxLine.setAmount(BooleanUtils.isTrue(taxRequest.getIsShippingTax()) ? shippingAmount : abstractOrder.getDeliveryCost());
       shippingTaxLine.setTaxCode( abstractOrder.getEntries().stream()
           .anyMatch(abstractOrderEntryModel ->
               abstractOrderEntryModel.getProduct() instanceof BlSerialProductModel)
@@ -269,7 +281,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       shippingTaxLine.setDescription(BltaxapiConstants.SHIPPING);
       taxLines.add(shippingTaxLine);
     }
-    if(Double.compare(abstractOrder.getTotalDiscounts(), 0.0) > 0)
+    if(BooleanUtils.isFalse(taxRequest.getIsShippingTax()) && Double.compare(abstractOrder.getTotalDiscounts(), 0.0) > 0)
     {
       discountTaxLine.setQuantity(BltaxapiConstants.QTY);
       discountTaxLine.setNumber(null != shippingTaxLine.getNumber() ? shippingTaxLine.getNumber() + 1 : 1);
