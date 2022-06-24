@@ -336,7 +336,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             try {
                 final OrderModel order = this.getOrderModel();
                 final Double totalShippingTaxAmountOnOrder = getTotalShippingTaxAmountOnOrder();
-                BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "SHipping Tax Amount on order : {} for Order: {}",
+                BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Shipping Tax Amount on order : {} for Order: {}",
                         totalShippingTaxAmountOnOrder.doubleValue(), order.getCode());
                 if(this.getOrderModel().getDeliveryCost().compareTo(Double.valueOf(this.getEnteredShippingAmount(order))) == 0)
                 {
@@ -348,11 +348,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 {
                     final Double avalaraShippingTax = this.defaultBlAvalaraTaxService.processShippingTax(this.getOrderModel(),
                             this.getEnteredShippingAmount(this.getOrderModel()));
-                    BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "SHipping Tax for Shipping Amount : {} is {} for Order: {}",
+                    BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Shipping Tax for Shipping Amount : {} is {} for Order: {}",
                             this.getEnteredShippingAmount(this.getOrderModel()), avalaraShippingTax, order.getCode());
                     final Double refundedShippingTax = Objects.nonNull(this.getOrderModel().getRefundedShippingTaxAmount())
                             ? this.getOrderModel().getRefundedShippingTaxAmount() : Double.valueOf(0.0d);
-                    BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Total SHipping Tax Refunded on order is : {} for Order: {}",
+                    BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Total Shipping Tax Refunded on order is : {} for Order: {}",
                             refundedShippingTax.doubleValue(), order.getCode());
                     final Double shippingAmountTaxToRefund = getTotalShippingTaxToRefundAmount(avalaraShippingTax, refundedShippingTax, totalShippingTaxAmountOnOrder);
                     BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Calculated Shipping tax to refund is : {} for Order: {}",
@@ -370,6 +370,14 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         }
     }
 
+    /**
+     * Gets the total shipping tax to refund amount.
+     *
+     * @param avalaraShippingTax the avalara shipping tax
+     * @param refunedShippingTax the refuned shipping tax
+     * @param totalShippingTaxAmountOnOrder the total shipping tax amount on order
+     * @return the total shipping tax to refund amount
+     */
     private Double getTotalShippingTaxToRefundAmount(final Double avalaraShippingTax, final Double refunedShippingTax,
                                                      final Double totalShippingTaxAmountOnOrder)
     {
@@ -381,6 +389,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         return avalaraShippingTax;
     }
 
+    /**
+     * Gets the total shipping tax amount on order.
+     *
+     * @return the total shipping tax amount on order
+     */
     private Double getTotalShippingTaxAmountOnOrder()
     {
         List<TaxValue> taxValues = Lists.newArrayList(CollectionUtils.emptyIfNull(this.getOrderModel().getTotalTaxValues()));
@@ -388,13 +401,15 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         listOfShippingTaxCodes.add(getValuesFromProperty(BltaxapiConstants.SHIPPING_SALES_TAX_CODE));
         listOfShippingTaxCodes.add(getValuesFromProperty(BltaxapiConstants.RENTAL_TAX_CODE));
         Optional<TaxValue> shippingTaxValue = taxValues.stream().filter(taxValue -> listOfShippingTaxCodes.contains(taxValue.getCode())).findFirst();
-        if(shippingTaxValue.isPresent())
-        {
-            return shippingTaxValue.get().getValue();
-        }
-        return Double.valueOf(0.0d);
+        return shippingTaxValue.isPresent() ? shippingTaxValue.get().getValue() : Double.valueOf(0.0d);
     }
 
+    /**
+     * Gets the values from property.
+     *
+     * @param key the key
+     * @return the values from property
+     */
     private String getValuesFromProperty(final String key) {
         final AtomicReference<String> value = new AtomicReference<>(StringUtils.EMPTY);
         if(StringUtils.isNotBlank(Config.getParameter(key))) {
@@ -452,6 +467,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         return Boolean.FALSE;
     }
 
+    /**
+     * Validate shipping amount.
+     *
+     * @return true, if successful
+     */
     private boolean validateShippingAmount()
     {
         final Double totalShippingAmount = Double.valueOf(formatAmount(this.getOrderModel().getDeliveryCost()));
@@ -3290,6 +3310,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         this.defaultBlAvalaraTaxService = defaultBlAvalaraTaxService;
     }
 
+    /**
+     * Gets the calculated shipping tax value.
+     *
+     * @return the calculated shipping tax value
+     */
     private Double getCalculatedShippingTaxValue()
     {
         if(BooleanUtils.isFalse(this.globalShippingSelection.isDisabled())
@@ -3302,6 +3327,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         return Double.valueOf(0.0d);
     }
 
+    /**
+     * Gets the total tax excluding shipping tax.
+     *
+     * @return the total tax excluding shipping tax
+     */
     private Double getTotalTaxExcludingShippingTax()
     {
         if(Objects.nonNull(this.getOrderModel().getTotalTax()) && this.getOrderModel().getTotalTax().compareTo(Double.valueOf(0.0d)) > 0)
@@ -3311,6 +3341,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         return Double.valueOf(0.0d);
     }
 
+    /**
+     * Sets the refunded shipping tax amount on order.
+     */
     private void setRefundedShippingTaxAmountOnOrder()
     {
         final OrderModel order = this.getOrderModel();
@@ -3330,8 +3363,13 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         this.getModelService().refresh(this.getOrderModel());
     }
 
+    /**
+     * Gets the shipping amount including shipping tax.
+     *
+     * @return the shipping amount including shipping tax
+     */
     private Double getShippingAmountIncludingShippingTax()
     {
-        return this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel()) +  + this.getCalculatedShippingTaxValue());
+        return this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel()) + this.getCalculatedShippingTaxValue());
     }
 }
