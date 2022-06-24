@@ -26,16 +26,8 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
@@ -388,7 +380,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
   {
     Map<BlSerialProductModel, Integer> prioritySerialMap = new HashedMap();
     for (BlSerialProductModel serialProduct: serials) {
-      if(serialProduct.getOcLocationDetails().getLocationPriority() == 0)
+      if(Objects.nonNull(serialProduct.getOcLocationDetails()) && Objects.nonNull(serialProduct.getOcLocationDetails().getLocationPriority()) && serialProduct.getOcLocationDetails().getLocationPriority() == 0)
       {
         prioritySerialMap.put(serialProduct,serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority());
       }
