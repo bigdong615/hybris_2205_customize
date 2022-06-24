@@ -72,6 +72,9 @@
                     <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="Remaining Shipping Cost" width="100%"/>
                     </column>
+                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
+                        <label value="Shipping Tax To Refund" width="100%"/>
+                    </column>
                 </columns>
                 <rows>
 
@@ -84,6 +87,8 @@
                                    disabled="true"/>
                         <textbox width="152px" style="text-align:center;" name="remainingShippingCostTxtBox" id="remainingShippingCost"
                                    disabled="true"/>
+                        <doublebox width="152px" style="text-align:center;" name="shippingTaxToRefundDouble" id="shippingTaxToRefund"
+                         constraint="no empty,no negative: Quantity Must be Greater Than Zero" disabled="true"/>
                     </row>
                 </rows>
             </grid>
@@ -196,6 +201,8 @@
     <textbox id="globalTotalRefundAmount" value="${globalTotalRefundAmount.rawValue}" width="10%"
                                 constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
 <button id="setAmountToRefund" label="Get Total Amount To Refund"
+                sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button" />
+<button id="calculateShippingTax" label="Calculate Shipping Tax"
                 sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button" />
 <button id="confirmcancellation" label="${labels.customersupportbackoffice.cancelorder.button.confirm}"
                 sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button" />

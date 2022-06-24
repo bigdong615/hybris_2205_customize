@@ -13,4 +13,6 @@ public interface BlTaxService<REQUEST, RESPONSE> {
    * This method created for Process the request
    */
   public RESPONSE process(final REQUEST pRequest) throws RestClientException , URISyntaxException;
+
+  public Double processShippingTax(final REQUEST pRequest, final Double amount) throws RestClientException , URISyntaxException;
 }
