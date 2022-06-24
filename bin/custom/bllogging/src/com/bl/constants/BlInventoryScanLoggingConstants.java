@@ -132,7 +132,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String FETCH_INVENTORY_LOC = "Fetching InventoryLocation for input locationId: {}";
     public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: {}";
     public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: {}";
-    
+
     //public static final String FETCH_INVENTORY_LOC = "Fetching InventoryLocation for input locationId: ";
     //public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: ";
     //public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: ";
@@ -191,7 +191,7 @@ public class BlInventoryScanLoggingConstants {
 	public static final String PACKAGE_CANCEL_ORDER_FAILURE = "blbackoffice.order.cancel.order.error.messge";
 	public static final String PACKAGE_SCAN_CANCEL_ORDER_FAILURE = "blbackoffice.order.cancel.package.scan.error.messge";
 	public static final String LAST_LOCATION_VALID_TRACKING_FAILURE = "blbackoffice.order.last.location.tracking.id.error.messge";
-	
+
  	public static final String SHIPPING_NO_ITEM_SCAN_KEY = "blbackoffice.shipping.scan.tool.noitem.scan.error";
  	public static final String SHIPPING_INVALID_SCAN_ERROR = "blbackoffice.shipping.scan.invalid.scan.error";
  	public static final String SHIPPING_TWO_BARCODE_SCAN_ERROR_KEY = "blbackoffice.shipping.scan.item.error";
@@ -206,7 +206,7 @@ public class BlInventoryScanLoggingConstants {
 	public static final String SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY = "blbackoffice.shipping.serial.missing.error.messge";
 	public static final String SHIPPING_SERIAL_MISSING_ON_SCAN_KEY = "blbackoffice.shipping.scan.missing.error.messge";
 	public static final String SHIPPING_FIRST_SCAN_EMPTY_ERROR_FAILURE_KEY = "blbackoffice.shipping.scan.first.location.error";
- 	
+
 	public static final String FRONT_DESK_MANUAL_REVIEW_FAILURE_MSG = "Can not scan order which is in SHIPPIN MANUAL REVIEW state";
 	public static final String FRONT_DESK_CANCEL_ORDER_FAILURE_MSG = "Can not scan cancelled order";
 
@@ -251,7 +251,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String FETCH_OUT_ORDER_DETAILS = "Fetching OUT orders for today. Found {} orders";
     public static final String FETCH_OUT_ORDER_SERIAL = "Fetching OUT orders for serial: {} and found {} orders";
     public static final String FETCH_OUT_TODAYS_ORDER_SERIAL = "Fetching OUT todays orders for serial: {} and found {} orders";
-    
+
     public static final String UNBOXING_WORKSTATION = "UNBOXING_WORKSTATION";
     public static final String UNBOXING_WORKSTATION_LOCATION = "VIP_WORKSTATION_UNBOX";
     public static final String DIRTY_PRIORITY_GEAR = "DIRTY_PRIORITY_GEAR";
@@ -270,9 +270,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String ERROR_EXIST = "ERROR_EXIST";
     public static final String ALLOW_SCAN = "ALLOW_SCAN";
     public static final String REPAIR_CLEAN_MOBILE_CART = "REPAIR_CLEAN_MOBILE_CART";
-    public static final String REPAIR = "REPAIR";                   
-    public static final String REPAIR_CABINET = "REPAIR_CABINET";           
-    public static final String REPAIR_MOBILE_SHELF = "REPAIR_MOBILE_SHELF";      
+    public static final String REPAIR = "REPAIR";
+    public static final String REPAIR_CABINET = "REPAIR_CABINET";
+    public static final String REPAIR_MOBILE_SHELF = "REPAIR_MOBILE_SHELF";
     public static final String REPAIR_MOBILE_LAUNDRY_BIN = "REPAIR_MOBILE_LAUNDRY_BIN";
 
     public static final String SERIAL_HARD_ASSIGN = "Serial {} is hard assigned to true ";
@@ -336,7 +336,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String FIRST_SCAN_LOCATION_ERROR_FAILURE = "firstScanLocationErrorFailure";
     public static final String FIRST_SCAN_LOCATION_BIN_ERROR_FAILURE = "firstScanLocationBinErrorFailure";
     public static final String UNBOX_SAN_TOOL_DC_FROM_DPC_FAILURE = "unboxInvalidDCLocationFromDPErrorFailure";
-    
+
     public static final String MUST_TWO_BARCODE_ERROR_FAILURE_MSG_FOR_BIN = "If the first scan is a BIN, only 2 scans are allowed and the second must be a location";
     public static final String BIN_TYPE_ERROR = "binTypeError";
     public static final String TECH_ENG_BIN_TYPE_ERROR = "techEngbinTypeError";
@@ -358,7 +358,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String REGEX_N = "\n";
     public static final String ONLINE = "Online";
     public static final String FOR_PRODUCT_MESSAGE = " for product: ";
-    
+
     public static final String CART_CLEAN_AND_READY_TO_SHIP = "CART_CLEAN_AND_READY_TO_SHIP";
     public static final String CART_DIRTY_PRIORITY = "CART_DIRTY_PRIORITY";
     public static final String CART_HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION = "CART_HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION";
@@ -372,6 +372,8 @@ public class BlInventoryScanLoggingConstants {
     public static final String INVENTORY_WORKSTATION = "INVENTORY_WORKSTATION";
     public static final String SCRAPPED = "SCRAPPED";
 
+	 public static final String WAREHOUSE = "warehouse_";
+
     private BlInventoryScanLoggingConstants() { }
 
     /**
@@ -379,7 +381,7 @@ public class BlInventoryScanLoggingConstants {
      * @return List<String> for default locations
      */
     public static List<String> getDefaultInventoryLocation() {
-        List<String> defaultLocations = new ArrayList<>();
+        final List<String> defaultLocations = new ArrayList<>();
         defaultLocations.add(MA);
         defaultLocations.add(CA);
         defaultLocations.add(FEDEX);
