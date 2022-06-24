@@ -369,15 +369,29 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			blSerialProduct.setSerialStatus(SerialStatusEnum.UNBOXED);
 		}
 		String warehouseCode = null;
+		WarehouseModel wareHouse = null;
+		String locationCode = null;
 		try
 		{
 			//As we don't have warehouse attribute in inventory, splitting from location code
 			if (blInventoryLocationLocal.getCode() != null)
 			{
+				if (blInventoryLocationLocal.getCode().startsWith(BlInventoryScanLoggingConstants.BIN)
+						&& blInventoryLocationLocal.getInventoryType().getCode().equals(BlInventoryScanLoggingConstants.BIN))
+				{
+					locationCode = blInventoryLocationLocal.getParentInventoryLocation() != null
+							? blInventoryLocationLocal.getParentInventoryLocation().getCode().substring(0, 2).toLowerCase()
+							: StringUtils.EMPTY;
+
+					warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE + locationCode;
+				}
+				else
+				{
 				warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE
 						+ blInventoryLocationLocal.getCode().substring(0, 2).toLowerCase();
-				final WarehouseModel wareHouse = warehouseService.getWarehouseForCode(warehouseCode);
+				}
 
+				wareHouse = !locationCode.equals(StringUtils.EMPTY) ? warehouseService.getWarehouseForCode(warehouseCode) : null;
 				if (wareHouse != null && !blSerialProduct.getWarehouseLocation().getCode().equals(wareHouse))
 				{
 					blSerialProduct.setWarehouseLocation(wareHouse);
@@ -388,9 +402,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception, "Unable to find the warehouse - {}",
 					warehouseCode);
-
 		}
-
 
 		blSerialProduct.setOcLocation(blInventoryLocationLocal.getCode());
 		blSerialProduct.setLastLocationScanParent(blInventoryLocationLocal.getParentInventoryLocation() != null
