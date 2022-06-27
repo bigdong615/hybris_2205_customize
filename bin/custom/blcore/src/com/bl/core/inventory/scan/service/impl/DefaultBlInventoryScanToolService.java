@@ -391,7 +391,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						+ blInventoryLocationLocal.getCode().substring(0, 2).toLowerCase();
 				}
 
-				wareHouse = !locationCode.equals(StringUtils.EMPTY) ? warehouseService.getWarehouseForCode(warehouseCode) : null;
+				wareHouse = !warehouseCode.equals(StringUtils.EMPTY) ? warehouseService.getWarehouseForCode(warehouseCode) : null;
 				if (wareHouse != null && !blSerialProduct.getWarehouseLocation().getCode().equals(wareHouse))
 				{
 					blSerialProduct.setWarehouseLocation(wareHouse);
