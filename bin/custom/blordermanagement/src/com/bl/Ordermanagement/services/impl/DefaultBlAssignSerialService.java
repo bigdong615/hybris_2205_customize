@@ -11,6 +11,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
+import com.bl.integration.fedex.shipment.pojo.Location;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -25,20 +26,13 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -297,8 +291,9 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
         final Set<BlSerialProductModel> forSaleFalseSerials = getAllForSaleSerials(
             blConsignerSerials, false);
+        final Set<BlSerialProductModel> filterSerialsOnLocation = getFilteredSerialsOnLocation(forSaleFalseSerials);
         final Set<BlSerialProductModel> unAssignedForSaleFalseSerials = new HashSet<>(
-            getUnAssignedSerials(forSaleFalseSerials, assignedSerials));
+            getUnAssignedSerials(filterSerialsOnLocation, assignedSerials));
 
         BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Unassigned forSale False Serials found {}",
             unAssignedForSaleFalseSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
@@ -319,8 +314,9 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
           final Set<BlSerialProductModel> forSaleTrueSerials = getAllForSaleSerials(
               blConsignerSerials, true);
+          final Set<BlSerialProductModel> filterSerialsOnLocationForTrueSerials = getFilteredSerialsOnLocation(forSaleTrueSerials);
           final Set<BlSerialProductModel> unAssignedForSaleTrueSerials = new HashSet<>(
-              getUnAssignedSerials(forSaleTrueSerials, assignedSerials));
+              getUnAssignedSerials(filterSerialsOnLocationForTrueSerials, assignedSerials));
 
           BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Unassigned forSale True Serials found {}",
               unAssignedForSaleTrueSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
@@ -379,6 +375,25 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       }
     }
   }
+
+    private Set<BlSerialProductModel> getFilteredSerialsOnLocation(Set<BlSerialProductModel> serials) {
+        Map<BlSerialProductModel, Integer> prioritySerialMap = new HashedMap();
+        for (BlSerialProductModel serialProduct : serials) {
+            if (Objects.nonNull(serialProduct.getOcLocationDetails()) && Objects.nonNull(serialProduct.getOcLocationDetails().getLocationPriority()) && serialProduct.getOcLocationDetails().getLocationPriority() == 0) {
+                prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority());
+            } else {
+                prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getLocationPriority());
+            }
+        }
+        for (int i = 0; i < prioritySerialMap.size(); i++) {
+            int finalI = i;
+            Set<BlSerialProductModel> serialProductModelSet = prioritySerialMap.entrySet().stream().filter(e -> e.getValue() == finalI).map(Map.Entry::getKey).collect(Collectors.toSet());
+            if (!serialProductModelSet.isEmpty()) {
+                return serialProductModelSet;
+            }
+        }
+        return serials;
+    }
 
   /**
    * It filters the non buffer products

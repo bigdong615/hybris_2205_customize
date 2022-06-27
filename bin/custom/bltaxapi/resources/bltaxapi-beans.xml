@@ -73,6 +73,12 @@
 		<property name="commit" type="java.lang.Boolean" equals="true">
 			<annotations>@JsonProperty("commit")</annotations>
 		</property>
+		<property name="shippingAmount" type="java.lang.Double">
+			<annotations>@JsonProperty("shippingAmount")</annotations>
+		</property>
+		<property name="isShippingTax" type="java.lang.Boolean">
+			<annotations>@JsonProperty("isShippingTax")</annotations>
+		</property>
 	</bean>
 
 	<!-- Avalara Tax Addresses Data for request -->

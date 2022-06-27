@@ -1,5 +1,6 @@
 package com.bl.backoffice.widget.controller.order;
 
+import com.bl.tax.constants.BltaxapiConstants;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.basecommerce.enums.RefundReason;
 import de.hybris.platform.basecommerce.enums.ReturnAction;
@@ -9,6 +10,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.enumeration.EnumerationService;
+import de.hybris.platform.externaltax.ExternalTaxDocument;
 import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.ordercancel.OrderCancelService;
@@ -41,10 +43,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import de.hybris.platform.util.Config;
+import de.hybris.platform.util.TaxValue;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -87,6 +92,7 @@ import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import com.bl.tax.service.BlTaxService;
 import com.braintree.command.request.BrainTreeRefundTransactionRequest;
 import com.braintree.command.result.BrainTreeRefundTransactionResult;
 import com.braintree.exceptions.BraintreeErrorException;
@@ -173,6 +179,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
     private Doublebox shippingCostToRefund;
 
     @Wire
+    private Doublebox shippingTaxToRefund;
+
+    @Wire
     private Textbox refundedShippingCost;
 
     @Wire
@@ -224,6 +233,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
 
     @Resource(name = "blOrderService")
     private BlOrderService blOrderService;
+    
+    @Resource(name = "defaultBlAvalaraTaxService")
+    private BlTaxService<AbstractOrderModel, ExternalTaxDocument> defaultBlAvalaraTaxService;
 
     final Map<Integer, Long> integerLongMap  = new HashMap<>();
     final AtomicDouble totalDamageWaiverRefunded   = new AtomicDouble(0.0);
@@ -300,7 +312,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
     {
         if(this.isOnlyRefundShippingAmount())
         {
-            this.globalTotalRefundAmount.setValue(String.valueOf(this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel()))));
+            this.globalTotalRefundAmount.setValue(String.valueOf(this.getShippingAmountIncludingShippingTax()));
         }
         else if(BooleanUtils.isFalse(this.globalCancelEntriesSelection.isDisabled())
                 && BooleanUtils.isTrue(this.globalCancelEntriesSelection.isChecked()))
@@ -312,6 +324,98 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         {
             this.globalTotalRefundAmount.setValue(String.valueOf(this.calculateLineItemTotals()));
         }
+    }
+
+    @ViewEvent(componentID = "calculateShippingTax", eventName = BlCustomCancelRefundConstants.ON_CLICK)
+    public void calculateShippingTax()
+    {
+        if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled())
+                && this.globalShippingSelection.isChecked() && this.getEnteredShippingAmount(this.getOrderModel()) > 0.0d)
+        {
+            this.globalTotalRefundAmount.setValue(String.valueOf(Double.valueOf(0.0d)));
+            try {
+                final OrderModel order = this.getOrderModel();
+                final Double totalShippingTaxAmountOnOrder = getTotalShippingTaxAmountOnOrder();
+                BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Shipping Tax Amount on order : {} for Order: {}",
+                        totalShippingTaxAmountOnOrder.doubleValue(), order.getCode());
+                if(this.getOrderModel().getDeliveryCost().compareTo(Double.valueOf(this.getEnteredShippingAmount(order))) == 0)
+                {
+                    BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Calculated Shipping tax to refund is : {} for Order: {}",
+                            totalShippingTaxAmountOnOrder.doubleValue(), order.getCode());
+                    this.shippingTaxToRefund.setValue(totalShippingTaxAmountOnOrder);
+                }
+                else
+                {
+                    final Double avalaraShippingTax = this.defaultBlAvalaraTaxService.processShippingTax(this.getOrderModel(),
+                            this.getEnteredShippingAmount(this.getOrderModel()));
+                    BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Shipping Tax for Shipping Amount : {} is {} for Order: {}",
+                            this.getEnteredShippingAmount(this.getOrderModel()), avalaraShippingTax, order.getCode());
+                    final Double refundedShippingTax = Objects.nonNull(this.getOrderModel().getRefundedShippingTaxAmount())
+                            ? this.getOrderModel().getRefundedShippingTaxAmount() : Double.valueOf(0.0d);
+                    BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Total Shipping Tax Refunded on order is : {} for Order: {}",
+                            refundedShippingTax.doubleValue(), order.getCode());
+                    final Double shippingAmountTaxToRefund = getTotalShippingTaxToRefundAmount(avalaraShippingTax, refundedShippingTax, totalShippingTaxAmountOnOrder);
+                    BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Calculated Shipping tax to refund is : {} for Order: {}",
+                            shippingAmountTaxToRefund.doubleValue(), order.getCode());
+                    this.shippingTaxToRefund.setValue(shippingAmountTaxToRefund);
+                }
+            }
+            catch (Exception e)
+            {
+                BlLogger.logMessage(LOGGER, ERROR, "Error while calculating shipping tax for refund tool", e);
+                this.errorMessageBox("Error while calculating Shipping Tax",
+                        "Shipping Tax Calculation");
+            }
+
+        }
+    }
+
+    /**
+     * Gets the total shipping tax to refund amount.
+     *
+     * @param avalaraShippingTax the avalara shipping tax
+     * @param refunedShippingTax the refuned shipping tax
+     * @param totalShippingTaxAmountOnOrder the total shipping tax amount on order
+     * @return the total shipping tax to refund amount
+     */
+    private Double getTotalShippingTaxToRefundAmount(final Double avalaraShippingTax, final Double refunedShippingTax,
+                                                     final Double totalShippingTaxAmountOnOrder)
+    {
+        Double avalaraShipTaxPlusRefundedShipTax = avalaraShippingTax + refunedShippingTax;
+        if(avalaraShipTaxPlusRefundedShipTax.compareTo(totalShippingTaxAmountOnOrder) >= 1)
+        {
+            return this.getTwoDecimalDoubleValue(totalShippingTaxAmountOnOrder - refunedShippingTax);
+        }
+        return avalaraShippingTax;
+    }
+
+    /**
+     * Gets the total shipping tax amount on order.
+     *
+     * @return the total shipping tax amount on order
+     */
+    private Double getTotalShippingTaxAmountOnOrder()
+    {
+        List<TaxValue> taxValues = Lists.newArrayList(CollectionUtils.emptyIfNull(this.getOrderModel().getTotalTaxValues()));
+        List<String> listOfShippingTaxCodes = Lists.newArrayList();
+        listOfShippingTaxCodes.add(getValuesFromProperty(BltaxapiConstants.SHIPPING_SALES_TAX_CODE));
+        listOfShippingTaxCodes.add(getValuesFromProperty(BltaxapiConstants.RENTAL_TAX_CODE));
+        Optional<TaxValue> shippingTaxValue = taxValues.stream().filter(taxValue -> listOfShippingTaxCodes.contains(taxValue.getCode())).findFirst();
+        return shippingTaxValue.isPresent() ? shippingTaxValue.get().getValue() : Double.valueOf(0.0d);
+    }
+
+    /**
+     * Gets the values from property.
+     *
+     * @param key the key
+     * @return the values from property
+     */
+    private String getValuesFromProperty(final String key) {
+        final AtomicReference<String> value = new AtomicReference<>(StringUtils.EMPTY);
+        if(StringUtils.isNotBlank(Config.getParameter(key))) {
+            value.set(Config.getParameter(key));
+        }
+        return value.get();
     }
 
     /**
@@ -363,6 +467,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         return Boolean.FALSE;
     }
 
+    /**
+     * Validate shipping amount.
+     *
+     * @return true, if successful
+     */
     private boolean validateShippingAmount()
     {
         final Double totalShippingAmount = Double.valueOf(formatAmount(this.getOrderModel().getDeliveryCost()));
@@ -373,6 +482,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         final Double remianingOrderAmountToRefund = Objects.nonNull(this.getOrderModel().getTotalRefundedAmount())
                 ? this.getOrderModel().getOriginalOrderTotalAmount() - this.getOrderModel().getTotalRefundedAmount()
                 : this.getOrderModel().getOriginalOrderTotalAmount();
+        final Double shippingPlusShippingTax = this.getTwoDecimalDoubleValue(enteredShippingAmountToRefund + this.getCalculatedShippingTaxValue());
         if (enteredShippingAmountToRefund.compareTo(Double.valueOf(0.0d)) <= 0)
         {
             this.errorMessageBox(BlCustomCancelRefundConstants.SHIPPING_ZERO_ERROR,
@@ -386,6 +496,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             return Boolean.TRUE;
         }
         if (enteredShippingAmountToRefund.compareTo(remianingOrderAmountToRefund) > 0)
+        {
+            this.errorMessageBox(BlCustomCancelRefundConstants.SHIPPING_GREATER_THAN_REMAINING_REFUND_ERROR,
+                    this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER));
+            return Boolean.TRUE;
+        }
+        if (shippingPlusShippingTax.compareTo(remianingOrderAmountToRefund) > 0)
         {
             this.errorMessageBox(BlCustomCancelRefundConstants.SHIPPING_GREATER_THAN_REMAINING_REFUND_ERROR,
                     this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER));
@@ -432,8 +548,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
 
     private void initateToRefundOnlyShippingAmount()
     {
-        final Double enteredShippingAmountToRefund = this.shippingCostToRefund.getValue();
-        BlLogger.logFormatMessageInfo(LOGGER , INFO , "Enterted shipping amount to refund {}" , enteredShippingAmountToRefund.doubleValue());
+        final Double enteredShippingAmountToRefund = this.getShippingAmountIncludingShippingTax();
+        BlLogger.logFormatMessageInfo(LOGGER , INFO , "Enterted shipping amount with shipping tax to refund {}" , enteredShippingAmountToRefund.doubleValue());
         if (isGiftCardAppliedOnOrder()) // check if gift card is applied on order
         {
             //orderTotalSubtractingGCAmount = getting total by subtracting original order total with applied gift card amount
@@ -554,7 +670,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                                 BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
                     }
                 }
-                this.setRefundedShippingAmountOnOrder(enteredShippingAmountToRefund);
+                this.setRefundedShippingAmountOnOrder(this.getEnteredShippingAmount(this.getOrderModel()));
             }
             else
             {
@@ -603,7 +719,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         if (refundSuccessful)
         {
             this.doUpdateRefundDetailsOnOrder(finalAmountToRefund, 0.0d, true);
-            this.setRefundedShippingAmountOnOrder(enteredShippingAmountToRefund);
+            this.setRefundedShippingAmountOnOrder(this.getEnteredShippingAmount(this.getOrderModel()));
         }
         else
         {
@@ -623,7 +739,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
     private void doOnlyShippingRefundOnFullyGCAppliedOrder(final Double enteredShippingAmountToRefund)
     {
         this.logAmountForGiftCardTransactions(enteredShippingAmountToRefund); //log amount for gift card transaction on order
-        this.setRefundedShippingAmountOnOrder(enteredShippingAmountToRefund);
+        this.setRefundedShippingAmountOnOrder(this.getEnteredShippingAmount(this.getOrderModel()));
+        this.setRefundedShippingTaxAmountOnOrder();
         this.successMessageBox(BlCustomCancelRefundConstants.SUCCESSFULLY_REFUNDED
                 + BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH_AMOUNT
                 + this.getTwoDecimalDoubleValue(enteredShippingAmountToRefund));
@@ -804,6 +921,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                         (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
                                 : BlInventoryScanLoggingConstants.ZERO),
                         refundAmount, this.getTwoDecimalDoubleValue((totalAmountToRefund - refundAmount)));
+                this.setRefundedShippingTaxAmountOnOrder();
                 final StringBuilder resultBuilder = new StringBuilder(BlCustomCancelRefundConstants.SUCCESSFULLY_REFUNDED);
                 resultBuilder.append(BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH)
                         .append(this.getTwoDecimalDoubleValue(totalAmountToRefund - refundAmount));
@@ -886,6 +1004,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                             (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
                                     : BlInventoryScanLoggingConstants.ZERO),
                             refundAmount, this.getTwoDecimalDoubleValue((totalAmountToRefund - refundAmount)));
+                    this.setRefundedShippingTaxAmountOnOrder();
                     // trigger Esp Refund event for GC
 
 
@@ -915,6 +1034,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 this.logAmountForGiftCardTransactions(totalAmountToRefund);
                 this.setRefundDetailsOnOrder((BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel()))
                         : BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue(totalAmountToRefund));
+                this.setRefundedShippingTaxAmountOnOrder();
                 resultBuilder.append(BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH).append(totalAmountToRefund);
                 setRefundedQuantityToOrderEntry();
                 // trigger Esp Refund event for GC
@@ -968,16 +1088,16 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 }
                 if(BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && BooleanUtils.isTrue(this.globalShippingSelection.isChecked()))
                 {
-                    totalAmountToRefund = this.getTwoDecimalDoubleValue(totalAmountToRefund + this.getEnteredShippingAmount(this.getOrderModel()));
+                    totalAmountToRefund = this.getTwoDecimalDoubleValue(totalAmountToRefund + this.getShippingAmountIncludingShippingTax());
                 }
                 return totalAmountToRefund;
             }
 
-            final double tax = this.globalTaxSelection.isChecked() ? this.getOrderModel().getTotalTax()
+            final double tax = this.globalTaxSelection.isChecked() ? this.getTotalTaxExcludingShippingTax()
                     : BlInventoryScanLoggingConstants.ZERO;
             final double waiver = this.globalWaiverSelection.isChecked() ? this.getOrderModel().getTotalDamageWaiverCost()
                     : BlInventoryScanLoggingConstants.ZERO;
-            final double shipping = this.getEnteredShippingAmount(this.getOrderModel());
+            final double shipping = this.getShippingAmountIncludingShippingTax();
             final double subTotal = this.getOrderModel().getSubtotal();
             final double totalAmountToRefund = subTotal + shipping + tax + waiver;
             return totalAmountToRefund;
@@ -1010,7 +1130,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         }
         if(BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && BooleanUtils.isTrue(this.globalShippingSelection.isChecked()))
         {
-            totalAmountToRefund = this.getTwoDecimalDoubleValue(totalAmountToRefund + this.getEnteredShippingAmount(this.getOrderModel()));
+            totalAmountToRefund = this.getTwoDecimalDoubleValue(totalAmountToRefund + this.getShippingAmountIncludingShippingTax());
         }
         return totalAmountToRefund;
     }
@@ -1072,6 +1192,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             this.logAmountForGiftCardTransactions(totalAmountToRefund);
             this.setRefundDetailsOnOrder((BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel()))
                     : BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue(totalAmountToRefund));
+            this.setRefundedShippingTaxAmountOnOrder();
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(),
                     totalAmountToRefund);
             // trigger Esp Refund event for GC
@@ -1137,6 +1258,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
                         : BlInventoryScanLoggingConstants.ZERO),
                 refundAmount, this.getTwoDecimalDoubleValue((totalAmountToRefund - refundAmount)));
+        this.setRefundedShippingTaxAmountOnOrder();
         this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(),
                 totalAmountToRefund - refundAmount);
 
@@ -1202,6 +1324,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
                 Boolean.FALSE, null))
         {
             this.setRefundAmountOnOrder(this.getTwoDecimalDoubleValue(totalAmountToRefund));
+            this.setRefundedShippingTaxAmountOnOrder();
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESSFULLY_REFUNDED
                     + BlCustomCancelRefundConstants.AND_CAPTURED_PAYMENT_WITH_REMAINING_AMOUNT, this.getOrderModel().getCode());
             this.successMessageBox(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND);
@@ -1481,6 +1604,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             this.setRefundDetailsOnOrder((BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel()))
                     : BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue((amount.doubleValue() + gcAmount)));
         }
+        this.setRefundedShippingTaxAmountOnOrder();
         double grandSubTotal = 0.0d;
         final StringBuilder paymentType = new StringBuilder();
         String gcString = StringUtils.EMPTY;
@@ -1623,7 +1747,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             }
             if(BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
             {
-                double enteredShippingAmount = this.getEnteredShippingAmount(orderModel);
+                double enteredShippingAmount = this.getShippingAmountIncludingShippingTax();
                 totAmount = this.getTwoDecimalDoubleValue(totAmount + enteredShippingAmount);
                 enteredAmount = this.getTwoDecimalDoubleValue(enteredAmount + enteredShippingAmount);
             }
@@ -1689,6 +1813,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             this.logAmountForGiftCardTransactions(totalAmt);
             this.setRefundDetailsOnOrder((BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel()))
                     : BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue((totalAmt)));
+            this.setRefundedShippingTaxAmountOnOrder();
             try {
                 orderModel.getEntries().forEach(abstractOrderEntryModel -> {
                     if(MapUtils.isNotEmpty(integerLongMap) && integerLongMap.containsKey(abstractOrderEntryModel.getEntryNumber())) {
@@ -1798,6 +1923,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         this.setRefundAmountOnOrder(this.getTwoDecimalDoubleValue(totalAmt));
         this.setRefundDetailsOnOrder((BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
                 : BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue((totalAmt + gcAmount)));
+        this.setRefundedShippingTaxAmountOnOrder();
         if (gcAmount > BlInventoryScanLoggingConstants.ZERO)
         {
             grandSubTotal = grandSubTotal + gcAmount;
@@ -1924,16 +2050,16 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         if (Double.parseDouble(this.totalRefundedAmount.getValue()) <= BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL)
         {
             return blCustomCancelRefundService.calculateAmountOnCheckboxStatusFull(this.getOrderModel().getSubtotal(),
-                    (this.globalTaxSelection.isChecked() ? this.getOrderModel().getTotalTax() : BlInventoryScanLoggingConstants.ZERO),
+                    (this.globalTaxSelection.isChecked() ? this.getTotalTaxExcludingShippingTax() : BlInventoryScanLoggingConstants.ZERO),
                     (this.globalWaiverSelection.isChecked() ? this.getOrderModel().getTotalDamageWaiverCost()
                             : BlInventoryScanLoggingConstants.ZERO),
-                    (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
+                    (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getShippingAmountIncludingShippingTax()
                             : BlInventoryScanLoggingConstants.ZERO),
                     Double.parseDouble(this.globalTotalRefundAmount.getValue()), getRefundAmountOnClick);
         }
         else
         {
-            globalShipping = BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getEnteredShippingAmount(this.getOrderModel())
+            globalShipping = BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked() ? this.getShippingAmountIncludingShippingTax()
                     : BlInventoryScanLoggingConstants.ZERO;
             return this.calculateAmount(orderAmount, globalTax, globalWaiver, globalShipping, getRefundAmountOnClick);
         }
@@ -2013,8 +2139,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         {
             if (this.globalTaxSelection.isChecked())
             {
-                taxValue = this.getOrderModel().getRefundTaxTotalAmount() != null ? this.getOrderModel().getTotalTax()
-                        - this.getOrderModel().getRefundTaxTotalAmount() : this.getOrderModel().getTotalTax();
+                taxValue = this.getOrderModel().getRefundTaxTotalAmount() != null ? this.getTotalTaxExcludingShippingTax()
+                        - this.getOrderModel().getRefundTaxTotalAmount() : this.getTotalTaxExcludingShippingTax();
             }
         }
         else
@@ -2217,7 +2343,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         }
         if(BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
         {
-            double totalWithShipping = this.entryLevelTotals.get() + this.getEnteredShippingAmount(this.getOrderModel());
+            double totalWithShipping = this.entryLevelTotals.get() + this.getShippingAmountIncludingShippingTax();
             double remainingAmountToRefund = this.getOrderModel().getOriginalOrderTotalAmount() - (Objects.nonNull(this.getOrderModel().getTotalRefundedAmount()) ? this.getOrderModel().getTotalRefundedAmount() : 0.0d);
             if(totalWithShipping > remainingAmountToRefund)
             {
@@ -2360,6 +2486,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
     private void updateTotalOnShippingAmountChange(final Event event)
     {
         this.globalTotalRefundAmount.setValue(String.valueOf(0.0d));
+        this.shippingTaxToRefund.setValue(Double.valueOf(0.0d));
         if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
         {
             calculateOrderRefundAmount(event);
@@ -2388,6 +2515,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         this.globalTotalRefundAmount.setValue(String.valueOf(0.0d));
         if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
         {
+            this.shippingTaxToRefund.setValue(Double.valueOf(0.0d));
             final OrderModel order = this.getOrderModel();
             final String remainingShippingAmount = formatAmount(order.getDeliveryCost().doubleValue()
                     - (order.getRefundShippingTotalAmount() != null ? order.getRefundShippingTotalAmount().doubleValue() : 0.0d));
@@ -2397,7 +2525,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         }
         else
         {
-            Double oldValue = this.shippingCostToRefund.getValue();
+            this.shippingTaxToRefund.setValue(Double.valueOf(0.0d));
             this.shippingCostToRefund.setValue(0.0d);
             /*this.globalTotalRefundAmount.setValue(
                     String.valueOf(this.getTwoDecimalDoubleValue(Double.valueOf(this.globalTotalRefundAmount.getValue()) - oldValue)));*/
@@ -2420,7 +2548,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         orderAmount = Double.valueOf(getBaseAmount()).doubleValue();
         if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
         {
-            orderAmount += this.getEnteredShippingAmount(orderModel);
+            orderAmount += this.getShippingAmountIncludingShippingTax();
         }
         if (this.globalTaxSelection.isChecked())
         {
@@ -2437,8 +2565,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
     private Double getRemainingTaxAmount()
     {
         final OrderModel order = this.getOrderModel();
-        return Objects.nonNull(order.getRefundTaxTotalAmount()) ? order.getTotalTax() - order.getRefundTaxTotalAmount()
-                : order.getTotalTax();
+        return Objects.nonNull(order.getRefundTaxTotalAmount()) ? this.getTotalTaxExcludingShippingTax() - order.getRefundTaxTotalAmount()
+                : this.getTotalTaxExcludingShippingTax();
     }
 
     private Double getRemainingDamageWaiverAmount()
@@ -2478,7 +2606,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         }
         if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
         {
-            orderAmount += this.getEnteredShippingAmount(orderModel);
+            orderAmount += this.getShippingAmountIncludingShippingTax();
         }
         if (tax > BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL)
         {
@@ -2679,6 +2807,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
      */
     private void setFieldValuesInTextBox(final OrderModel order)
     {
+        this.shippingTaxToRefund.setValue(Double.valueOf(0.0d));
         this.globalCancelEntriesSelection.setChecked(false);
         this.globalWaiverSelection.setChecked(false);
         this.globalTaxSelection.setChecked(false);
@@ -2790,6 +2919,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
 
         if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && !this.globalShippingSelection.isChecked())
         {
+            this.shippingTaxToRefund.setValue(Double.valueOf(0.0d));
             this.globalShippingSelection.setChecked(this.globalCancelEntriesSelection.isChecked());
             final String remainingShippingAmount = formatAmount(order.getDeliveryCost().doubleValue()
                     - (order.getRefundShippingTotalAmount() != null ? order.getRefundShippingTotalAmount().doubleValue() : 0.0d));
@@ -2852,6 +2982,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         }
         if(BooleanUtils.isFalse(this.globalCancelEntriesSelection.isChecked()))
         {
+            this.shippingTaxToRefund.setValue(Double.valueOf(0.0d));
             this.globalShippingSelection.setChecked(false);
             this.globalTaxSelection.setChecked(false);
             this.globalWaiverSelection.setChecked(false);
@@ -2900,10 +3031,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
     {
         if (BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
         {
-            return this.shippingCostToRefund.getValue();
+            return this.getTwoDecimalDoubleValue(this.shippingCostToRefund.getValue());
         }
         return 0.0d;
     }
+
     /**
      * Apply to grid.
      *
@@ -3156,9 +3288,88 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
         }
         if(BooleanUtils.isFalse(this.globalShippingSelection.isDisabled()) && this.globalShippingSelection.isChecked())
         {
-            lineItemTotals.addAndGet(this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel())));
+            lineItemTotals.addAndGet(this.getTwoDecimalDoubleValue(this.getShippingAmountIncludingShippingTax()));
         }
         BlLogger.logFormatMessageInfo(LOGGER , Level.INFO , "Calculating total line items cost {} for order code {} :- " , lineItemTotals.get() , this.getOrderModel().getCode());
         return this.getTwoDecimalDoubleValue(lineItemTotals.get());
+    }
+
+    /**
+     * @return the defaultBlAvalaraTaxService
+     */
+    public BlTaxService<AbstractOrderModel, ExternalTaxDocument> getDefaultBlAvalaraTaxService()
+    {
+        return defaultBlAvalaraTaxService;
+    }
+
+    /**
+     * @param defaultBlAvalaraTaxService the defaultBlAvalaraTaxService to set
+     */
+    public void setDefaultBlAvalaraTaxService(BlTaxService<AbstractOrderModel, ExternalTaxDocument> defaultBlAvalaraTaxService)
+    {
+        this.defaultBlAvalaraTaxService = defaultBlAvalaraTaxService;
+    }
+
+    /**
+     * Gets the calculated shipping tax value.
+     *
+     * @return the calculated shipping tax value
+     */
+    private Double getCalculatedShippingTaxValue()
+    {
+        if(BooleanUtils.isFalse(this.globalShippingSelection.isDisabled())
+                && BooleanUtils.isTrue(this.globalShippingSelection.isChecked())
+                && Objects.nonNull(this.shippingTaxToRefund.getValue())
+                && BooleanUtils.isTrue(this.shippingTaxToRefund.getValue() > 0))
+        {
+            return this.getTwoDecimalDoubleValue(this.shippingTaxToRefund.getValue());
+        }
+        return Double.valueOf(0.0d);
+    }
+
+    /**
+     * Gets the total tax excluding shipping tax.
+     *
+     * @return the total tax excluding shipping tax
+     */
+    private Double getTotalTaxExcludingShippingTax()
+    {
+        if(Objects.nonNull(this.getOrderModel().getTotalTax()) && this.getOrderModel().getTotalTax().compareTo(Double.valueOf(0.0d)) > 0)
+        {
+            return this.getOrderModel().getTotalTax().doubleValue() - this.getTotalShippingTaxAmountOnOrder().doubleValue();
+        }
+        return Double.valueOf(0.0d);
+    }
+
+    /**
+     * Sets the refunded shipping tax amount on order.
+     */
+    private void setRefundedShippingTaxAmountOnOrder()
+    {
+        final OrderModel order = this.getOrderModel();
+        this.getModelService().refresh(order);
+        final Double shippingTax = this.getCalculatedShippingTaxValue();
+        BlLogger.logFormatMessageInfo(LOGGER, INFO, "Setting refunded shipping tax : {} on order : {}", shippingTax, order.getCode());
+        if(Objects.nonNull(order.getRefundedShippingTaxAmount()))
+        {
+            order.setRefundedShippingTaxAmount(this.getTwoDecimalDoubleValue(order.getRefundedShippingTaxAmount() + shippingTax));
+        }
+        else
+        {
+            order.setRefundedShippingTaxAmount(shippingTax);
+        }
+        this.getModelService().save(order);
+        BlLogger.logFormatMessageInfo(LOGGER, INFO, "Total refunded shipping tax : {} on order : {}", order.getRefundedShippingTaxAmount(), order.getCode());
+        this.getModelService().refresh(this.getOrderModel());
+    }
+
+    /**
+     * Gets the shipping amount including shipping tax.
+     *
+     * @return the shipping amount including shipping tax
+     */
+    private Double getShippingAmountIncludingShippingTax()
+    {
+        return this.getTwoDecimalDoubleValue(this.getEnteredShippingAmount(this.getOrderModel()) + this.getCalculatedShippingTaxValue());
     }
 }
