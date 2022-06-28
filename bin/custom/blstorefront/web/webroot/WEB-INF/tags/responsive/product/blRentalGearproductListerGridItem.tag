@@ -119,7 +119,7 @@
 							</c:when>
 							<c:otherwise>
 								<span class="period">${rentalDate.numberOfDays}&nbsp;<spring:theme
-										code="pdp.rental.product.recommendation.section.days.rental.text" /></span>
+										code="pdp.rental.product.recommendation.section.day.rental.text" /></span>
 							</c:otherwise>
 						</c:choose>
 					</c:otherwise>
