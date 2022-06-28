@@ -1,13 +1,14 @@
 package com.bl.core.stock;
 
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.exceptions.BusinessException;
+
+import java.util.Date;
+import java.util.List;
+
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
-import de.hybris.platform.ordersplitting.model.WarehouseModel;
-import de.hybris.platform.servicelayer.exceptions.BusinessException;
-import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
-import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -100,4 +101,15 @@ public interface BlStockService
 	 * @param interceptorContext interceptor context
 	 */
 	void reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel);
+
+
+	/**
+	 * It finds the stock level from present date to all the future dates and updates the serial code
+	 *
+	 * @param blSerialProduct
+	 *           the serial product
+	 * @param reservedStatus
+	 *           the status of of the serial product
+	 */
+	public void findAndUpdateStockRecordsForSerialCode(final BlSerialProductModel blSerialProduct, String intialCode);
 }

@@ -1,14 +1,5 @@
 package com.bl.core.stock.impl;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.product.dao.BlProductDao;
-import com.bl.core.stock.BlStockLevelDao;
-import com.bl.core.stock.BlStockService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -16,6 +7,9 @@ import de.hybris.platform.servicelayer.exceptions.BusinessException;
 import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -25,10 +19,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.dao.BlProductDao;
+import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -176,6 +181,23 @@ public class DefaultBlStockService implements BlStockService
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void findAndUpdateStockRecordsForSerialCode(final BlSerialProductModel blSerialProduct, final String intialCode)
+	{
+			final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(
+					blSerialProduct, intialCode);
+			stockLevels.forEach(stockLevel -> {
+				stockLevel.setSerialProductCode(blSerialProduct.getCode());
+				if(Objects.nonNull(stockLevel.getOrder())) {
+					stockLevel.setOrder(null);
+				}
+				saveStockRecord(stockLevel);
+			});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean isActiveStatus(final SerialStatusEnum currentStatus) {
 		switch (currentStatus.getCode()) {
 			case "ACTIVE":
@@ -272,6 +294,26 @@ public class DefaultBlStockService implements BlStockService
 	}
 
 	/**
+	 * It saves the stock record after updates
+	 * @param stockLevel
+	 * @param reservedStatus
+	 */
+	private void saveStockRecord(final StockLevelModel stockLevel)
+	{
+		//stockLevel.setReservedStatus(reservedStatus);
+		try {
+			getModelService().save(stockLevel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock {} updated for serial product {} for the date {} ",
+					stockLevel.getPk(), stockLevel.getSerialProductCode(), stockLevel.getDate());
+		}
+		catch(final ModelSavingException ex) {
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
+					"Exception occurred while saving the stock record {} of the serial product {} for the date {} ",
+					stockLevel.getPk(), stockLevel.getSerialProductCode(), stockLevel.getDate());
+		}
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -302,6 +344,34 @@ public class DefaultBlStockService implements BlStockService
 		return getBlStockLevelDao()
 				.findSerialStockLevelForDate(blSerialProduct.getCode(),
 						currentDate, futureDate);
+	}
+
+	/**
+	 * It fetches the stock records from current date to last future date
+	 *
+	 * @param blSerialProduct
+	 *           the serial product
+	 * @return Collection<StockLevelModel>
+	 */
+	private Collection<StockLevelModel> getStockLevelModelsBasedOnDates(final BlSerialProductModel blSerialProduct,
+			final String initialCode)
+	{
+		//final Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+		//As part of requirement, we need to consider startDate as May 10, 2022 to update stock
+		final String sDate = "10/05/2022";
+		Date startDate = null;
+		try
+		{
+			startDate = new SimpleDateFormat("dd/MM/yyyy").parse(sDate);
+		}
+		catch (final ParseException ex)
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
+					"Exception occured while parsing date  ", initialCode, "", blSerialProduct.getCode());
+		}
+
+		final Date futureDate = BlDateTimeUtils.getNextYearsSameDay();
+		return getBlStockLevelDao().findSerialStockLevelForDate(initialCode, startDate, futureDate);
 	}
 
 	/**
