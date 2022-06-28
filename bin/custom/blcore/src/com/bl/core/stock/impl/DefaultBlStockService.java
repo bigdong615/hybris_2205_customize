@@ -364,9 +364,10 @@ public class DefaultBlStockService implements BlStockService
 		{
 			startDate = new SimpleDateFormat("dd/MM/yyyy").parse(sDate);
 		}
-		catch (final ParseException e)
+		catch (final ParseException ex)
 		{
-			e.printStackTrace();
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
+					"Exception occured while parsing date  ", initialCode, "", blSerialProduct.getCode());
 		}
 
 		final Date futureDate = BlDateTimeUtils.getNextYearsSameDay();
