@@ -137,7 +137,7 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 		  if (productEntry instanceof BlSerialProductModel)
 		  {
 			  final BlSerialProductModel serialProduct = (BlSerialProductModel) productEntry;
-			  if (serial != null & serialProduct.getBlProduct().equals(serial.getBlProduct()))
+			  if (serial != null && serialProduct.getBlProduct().equals(serial.getBlProduct()))
 			  {
 				  orderEntry.setProduct(serial);
 				  productEntries.remove(productEntry);
