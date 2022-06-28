@@ -31,6 +31,6 @@
         <keyword>OMS</keyword>
     </keywords>
     
-    <controller class="com.bl.backoffice.action.consignment.reassignserial.BlReassignSerialController" />
+    <controller class="com.bl.backoffice.widget.controller.consignment.reassignserial.BlReassignSerialController" />
     
 </widget-definition>
