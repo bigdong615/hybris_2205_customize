@@ -233,7 +233,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
 
     @Resource(name = "blOrderService")
     private BlOrderService blOrderService;
-    
+
     @Resource(name = "defaultBlAvalaraTaxService")
     private BlTaxService<AbstractOrderModel, ExternalTaxDocument> defaultBlAvalaraTaxService;
 
@@ -1500,11 +1500,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController
             try
             {
                 boolean refundSuccessful = false;
-                final BigDecimal amount = (BigDecimal
-                        .valueOf(this.deductGiftCartAmount(totalRefundAmount) < BlCustomCancelRefundConstants.ZERO
-                                ? -this.deductGiftCartAmount(totalRefundAmount)
-                                : this.deductGiftCartAmount(totalRefundAmount))).setScale(BlInventoryScanLoggingConstants.TWO,
-                        RoundingMode.HALF_EVEN);
+                final BigDecimal amount = BigDecimal
+                        .valueOf(totalRefundAmount).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN);
                 if (captureEntry.getPaymentTransaction().isLegacyTransaction())
                 {
                     final Result<Transaction> result = brainTreeTransactionService.issueBlindCredit(captureEntry, amount);
