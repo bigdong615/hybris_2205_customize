@@ -1,13 +1,15 @@
 package com.bl.backoffice.widget.controller.consignment.reassignserial;
 
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -22,6 +24,7 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Textbox;
 
 import com.bl.Ordermanagement.reallocation.BlReallocationService;
+import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.impl.DefaultBlProductDao;
@@ -45,8 +48,6 @@ public class BlReassignSerialController  extends DefaultWidgetController {
   private Textbox consignmentCode;
   @Wire
   private Textbox customerName;
-  @Wire
-  private Textbox barCode;
   @Wire
   private Grid consignmentEntries;
   @Wire
@@ -113,7 +114,7 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 			{
 				if (consign.getOrderEntry().getProduct().getCode().equals(productCode))
 				{
-					applyToRow(consign, ((Textbox) row.getChildren().get(3)).getValue(), consign.getOrderEntry(), row);
+					applyToRow(consign, ((Textbox) row.getChildren().get(3)).getValue(), row);
 				}
 			}
       }
@@ -126,12 +127,13 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 	this.sendOutput(OUT_CONFIRM, COMPLETED);
   }
 
-  protected void applyToRow(final ConsignmentEntryModel entry, final String barCode, final AbstractOrderEntryModel orderEntry,
-		  final Component row)
+  protected void applyToRow(final ConsignmentEntryModel entry, final String barCode, final Component row)
   {
 	  final BlSerialProductModel serial = this.getDefaultBlProductDao().getSerialByBarcode(barCode);
 	  final List<BlProductModel> productEntries = new ArrayList<BlProductModel>();
 	  productEntries.addAll(entry.getSerialProducts());
+	  final Map<String, ItemStatusEnum> newItems = new HashMap<>();
+	  newItems.putAll(entry.getItems());
 	  for (final BlProductModel productEntry : entry.getSerialProducts())
 	  {
 		  if (productEntry instanceof BlSerialProductModel)
@@ -139,7 +141,15 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 			  final BlSerialProductModel serialProduct = (BlSerialProductModel) productEntry;
 			  if (serial != null && serialProduct.getBlProduct().equals(serial.getBlProduct()))
 			  {
-				  orderEntry.setProduct(serial);
+
+				  for (final Entry<String, ItemStatusEnum> mapEntry : newItems.entrySet())
+				  {
+					  if (mapEntry.getKey().equals(serialProduct.getCode()))
+					  {
+						  newItems.remove(mapEntry.getKey());
+						  newItems.put(serial.getCode(), entry.getItems().get(mapEntry.getKey()));
+					  }
+				  }
 				  productEntries.remove(productEntry);
 				  productEntries.add(serial);
 			  }
@@ -151,7 +161,7 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 		  }
 	  }
 	  entry.setSerialProducts(productEntries);
-	  getModelService().save(orderEntry);
+	  entry.setItems(newItems);
 	  getModelService().save(entry);
   }
 

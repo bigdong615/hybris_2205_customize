@@ -61,7 +61,7 @@
                             <checkbox class="oms-widget-reassignserial-list-container__checkbox"/>
                             <label value="${each.orderEntry.product.code}" width="100%"/>
                             <label value="${each.orderEntry.product.name}" width="100%"/>
-                            <textbox id="barCode"/>
+                            <textbox/>
                         </row>
                     </template>
                 </rows>
