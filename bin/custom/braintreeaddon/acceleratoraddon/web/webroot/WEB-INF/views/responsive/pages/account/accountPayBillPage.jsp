@@ -201,7 +201,7 @@
 									</div>
 								
 								<!-- Paypal section -->
-								<div class="accordion-item payProduct">
+								<%-- <div class="accordion-item payProduct">
 									<c:if test="${not empty userSelectedPayPalPaymentInfo}">
 										<input type="hidden" id="isPayPalPresent" name="isPayPalPresent" value="true"/>
 									</c:if>
@@ -240,7 +240,7 @@
 											</div>
 										</div>
 									</div>
-								</div>
+								</div> --%>
                             <c:if test="${orderData.isPOEnabled}">
                 	<div class="accordion-item payProduct">
                 	  <c:if test="${not empty selectedPoNumber}">
