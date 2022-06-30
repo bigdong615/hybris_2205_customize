@@ -3699,7 +3699,7 @@
           </attribute>
           <attribute qualifier="serialNumber" type="java.lang.String">
             <persistence type="property"/>
-            <modifiers read="true" write="true" search="true" unique="true" optional="true"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
             <description>The serial number of the serial product in the order.</description>
           </attribute>
           <attribute qualifier="parentLocation" type="java.lang.String">

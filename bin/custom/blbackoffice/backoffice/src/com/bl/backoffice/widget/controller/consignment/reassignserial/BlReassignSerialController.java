@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -132,7 +131,7 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 	  final BlSerialProductModel serial = this.getDefaultBlProductDao().getSerialByBarcode(barCode);
 	  final List<BlProductModel> productEntries = new ArrayList<BlProductModel>();
 	  productEntries.addAll(entry.getSerialProducts());
-	  final Map<String, ItemStatusEnum> newItems = new HashMap<>();
+	  final Map<String, ItemStatusEnum> newItems = new HashMap<String, ItemStatusEnum>();
 	  newItems.putAll(entry.getItems());
 	  for (final BlProductModel productEntry : entry.getSerialProducts())
 	  {
@@ -141,14 +140,10 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 			  final BlSerialProductModel serialProduct = (BlSerialProductModel) productEntry;
 			  if (serial != null && serialProduct.getBlProduct().equals(serial.getBlProduct()))
 			  {
-
-				  for (final Entry<String, ItemStatusEnum> mapEntry : newItems.entrySet())
+				  if (entry.getItems().containsKey(serialProduct.getCode()))
 				  {
-					  if (mapEntry.getKey().equals(serialProduct.getCode()))
-					  {
-						  newItems.remove(mapEntry.getKey());
-						  newItems.put(serial.getCode(), entry.getItems().get(mapEntry.getKey()));
-					  }
+					  newItems.remove(serialProduct.getCode());
+					  newItems.put(serial.getCode(), entry.getItems().get(serialProduct.getCode()));
 				  }
 				  productEntries.remove(productEntry);
 				  productEntries.add(serial);
