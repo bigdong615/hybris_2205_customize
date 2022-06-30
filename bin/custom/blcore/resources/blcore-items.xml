@@ -3283,6 +3283,16 @@
                         <modifiers read="true" write="true" optional="true"/>
                         <defaultvalue>Double.valueOf(0.0d)</defaultvalue>
                     </attribute>
+                    <attribute qualifier="refundedShippingTaxAmount" type="java.lang.Double">
+                        <description>Refunded Shipping Tax Amount</description>
+                        <persistence type="property">
+                            <columntype>
+                                <value>java.math.BigDecimal</value>
+                            </columntype>
+                        </persistence>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <defaultvalue>Double.valueOf(0.0d)</defaultvalue>
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -3689,7 +3699,7 @@
           </attribute>
           <attribute qualifier="serialNumber" type="java.lang.String">
             <persistence type="property"/>
-            <modifiers read="true" write="true" search="true" unique="true" optional="true"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
             <description>The serial number of the serial product in the order.</description>
           </attribute>
           <attribute qualifier="parentLocation" type="java.lang.String">

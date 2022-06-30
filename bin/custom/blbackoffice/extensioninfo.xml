@@ -21,6 +21,7 @@
         <requires-extension name="blfacades"/>
          <requires-extension name="blintegration"/>
          <requires-extension name="blordermanagement"/>
+         <requires-extension name="bltaxapi"/>
 
       <coremodule generated="true" manager="com.bl.blbackoffice.jalo.BLbackofficeManager" packageroot="com.bl.blbackoffice"/>
                 		

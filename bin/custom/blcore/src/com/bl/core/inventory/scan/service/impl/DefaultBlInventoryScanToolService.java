@@ -345,9 +345,30 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final Collection<BlSerialProductModel> serialProductModels = getBlInventoryScanToolDao()
 				.getAllSerialsByBinLocation(blBINInventoryLocationModel.getCode());
 
-		if (CollectionUtils.isNotEmpty(serialProductModels)) {
+		if (CollectionUtils.isNotEmpty(serialProductModels))
+		{
 			serialProductModels.stream().forEach(serial -> {
 				serial.setLastLocationScanParent(blLocalInventoryLocation.getCode());
+
+				String warehouseCode = null;
+				try
+				{
+					if (blBINInventoryLocationModel.getCode().startsWith(BlInventoryScanLoggingConstants.BIN)
+							&& blBINInventoryLocationModel.getInventoryType().getCode().equals(BlInventoryScanLoggingConstants.BIN))
+					{
+						WarehouseModel wareHouse = null;
+						warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE
+								+ blLocalInventoryLocation.getCode().substring(0, 2).toLowerCase();
+						wareHouse = warehouseService.getWarehouseForCode(warehouseCode);
+						serial.setWarehouseLocation(wareHouse);
+					}
+				}
+				catch (final Exception ex)
+				{
+					BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, ex, "Unable to find the warehouse - {}",
+							warehouseCode);
+				}
+
 				modelService.save(serial);
 				modelService.refresh(serial);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
@@ -370,29 +391,21 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 		String warehouseCode = null;
 		WarehouseModel wareHouse = null;
-		String locationCode = null;
+		final String locationCode = null;
 		try
 		{
 			//As we don't have warehouse attribute in inventory, splitting from location code
 			if (blInventoryLocationLocal.getCode() != null)
 			{
-				if (blInventoryLocationLocal.getCode().startsWith(BlInventoryScanLoggingConstants.BIN)
-						&& blInventoryLocationLocal.getInventoryType().getCode().equals(BlInventoryScanLoggingConstants.BIN))
+				if (!(blInventoryLocationLocal.getCode().startsWith(BlInventoryScanLoggingConstants.BIN)
+						&& blInventoryLocationLocal.getInventoryType().getCode().equals(BlInventoryScanLoggingConstants.BIN)))
 				{
-					locationCode = blInventoryLocationLocal.getParentInventoryLocation() != null
-							? blInventoryLocationLocal.getParentInventoryLocation().getCode().substring(0, 2).toLowerCase()
-							: StringUtils.EMPTY;
-
-					warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE + locationCode;
-				}
-				else
-				{
-				warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE
-						+ blInventoryLocationLocal.getCode().substring(0, 2).toLowerCase();
+					warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE
+							+ blInventoryLocationLocal.getCode().substring(0, 2).toLowerCase();
+					wareHouse = warehouseService.getWarehouseForCode(warehouseCode);
 				}
 
-				wareHouse = !locationCode.equals(StringUtils.EMPTY) ? warehouseService.getWarehouseForCode(warehouseCode) : null;
-				if (wareHouse != null && !blSerialProduct.getWarehouseLocation().getCode().equals(wareHouse))
+				if (wareHouse != null && !blSerialProduct.getWarehouseLocation().getCode().equals(wareHouse.getCode()))
 				{
 					blSerialProduct.setWarehouseLocation(wareHouse);
 				}
