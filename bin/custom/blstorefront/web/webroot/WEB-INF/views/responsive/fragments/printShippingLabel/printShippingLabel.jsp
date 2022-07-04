@@ -9,7 +9,7 @@
  <br />
 	
 	<form id="printLabel-${loop.index}"
-		action="https://localhost:9002/blstorefront/printLabel/printLabelValue"
+		action="https://localhost:9002/blstorefront/shipment/printLabelValue"
 		method="post">
 		<input type="hidden" name="${CSRFToken.parameterName }"
 			value="${CSRFToken.token }"> <input type="hidden"
@@ -24,7 +24,7 @@
 				<tr>
 					<td style="padding:10px">
 					Outbound Label
-						<%-- <a href="https://localhost:9002/blstorefront/printLabel/printLabelValue?label=${entry.outBoundShippingLabel }">Outbound Label</a> --%>
+						<%-- <a href="https://localhost:9002/blstorefront/shipment/printLabelValue?label=${entry.outBoundShippingLabel }">Outbound Label</a> --%>
 					</td>
 					<td style="padding:10px">
 						<input type="submit" name="Out Bound Label"	value="Print Outbound Label">
@@ -35,7 +35,7 @@
 	
 	
 	<form id="printLabel-${loop.index + 1}"
-		action="https://localhost:9002/blstorefront/printLabel/printLabelValue"
+		action="https://localhost:9002/blstorefront/shipment/printLabelValue"
 		method="post">
 		<input type="hidden" name="${CSRFToken.parameterName }"
 			value="${CSRFToken.token }"> <input type="hidden"

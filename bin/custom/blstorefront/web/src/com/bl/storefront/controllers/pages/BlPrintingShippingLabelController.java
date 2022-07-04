@@ -11,7 +11,12 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Resource;
-import javax.print.*;
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.SimpleDoc;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
@@ -30,13 +35,13 @@ import com.bl.storefront.controllers.ControllerConstants;
  */
 
 @Controller
-@RequestMapping(value = "/printLabel")
+@RequestMapping(value = "/shipment")
 public class BlPrintingShippingLabelController
 {
 	@Resource(name = "defaultBlPrintShippingLabelFacade")
 	private DefaultBlPrintShippingLabelFacade defaultBlPrintShippingLabelFacade;
 
-	@GetMapping
+	@GetMapping(value = "/printLabel")
 	public String printShippingLabel(@RequestParam("code")
 	final String code, final HttpServletRequest request, final Model model)
 	{
@@ -46,23 +51,25 @@ public class BlPrintingShippingLabelController
 	}
 
 	@PostMapping(value = "/printLabelValue")
-	public String printShippingPackageLabel(final HttpServletRequest request, final Model model) throws PrintException {
-		final String s = request.getParameter("label");
+	public String printShippingPackageLabel(final HttpServletRequest request, final Model model) throws PrintException
+	{
+		final String shipmentLabelURL = request.getParameter("label");
 		final PrintService[] printServices = PrinterJob.lookupPrintServices();
-		final PrintService print = null;
-      final List<PrintService> lp = Arrays.asList(printServices);
-      final Optional<PrintService> op = lp.stream().filter(pp -> pp.getName().equalsIgnoreCase("Microsoft Print to PDF")).findFirst();
-      if(op.isPresent())
-      {
-		for (PrintService printService : printServices) {
-			DocPrintJob job = printService.createPrintJob();
-			final String zplCode = s;
-			DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-			Doc doc = new SimpleDoc(zplCode.getBytes(), flavor, null);
-			job.print(doc, null);
+		final List<PrintService> availablePrinterList = Arrays.asList(printServices);
+		final Optional<PrintService> printerToUse = availablePrinterList.stream()
+				.filter(printer -> printer.getName().equalsIgnoreCase("Zebra ZP 450-200 dpi")).findFirst();
+		if (printerToUse.isPresent())
+		{
+			for (final PrintService printService : printServices)
+			{
+				final DocPrintJob job = printService.createPrintJob();
+				final String zplCode = shipmentLabelURL;
+				final DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+				final Doc doc = new SimpleDoc(zplCode.getBytes(), flavor, null);
+				job.print(doc, null);
+			}
 		}
-      }
-		model.addAttribute("label", s);
+		model.addAttribute("label", shipmentLabelURL);
 
 		return ControllerConstants.Views.Fragments.PrintShippingLabel.PrintShippingPackageLabel;
 	}

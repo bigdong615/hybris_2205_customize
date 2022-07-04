@@ -75,7 +75,7 @@ public class PrintLabelAction extends AbstractComponentWidgetAdapterAware
 		{
 		final ConsignmentModel consignment = actionContext.getData();
 		final String pk = consignment.getPk().toString();
-		Executions.getCurrent().sendRedirect(configurationService.getConfiguration().getString(SITE_URL).concat("/printLabel?code=").concat(pk), "_blank");
+		Executions.getCurrent().sendRedirect(configurationService.getConfiguration().getString(SITE_URL).concat("/shipment/printLabel?code=").concat(pk), "_blank");
 		Messagebox.show("Printing of shipment label is done for consignment " + consignment.getCode(), "Info", Messagebox.OK, "icon");
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
 		}
@@ -85,34 +85,4 @@ public class PrintLabelAction extends AbstractComponentWidgetAdapterAware
 		}
 		return new ActionResult(BlintegrationConstants.CLIENT_SIDE_ERROR);
 	}
-
-	protected void showMessageBox()
-	{
-		Messagebox.show("Details Updated Successfully");
-		this.sendOutput(OUT_CONFIRM, COMPLETE);
-	}
-
-	/**
-	 * Gets the object from PK.
-	 *
-	 * @param pk
-	 *           the pk
-	 * @return the object from PK
-	 */
-	private Object getObjectFromPK(final PK pk)
-	{
-		if (Objects.nonNull(pk))
-		{
-			try
-			{
-				return modelService.get(pk);
-			}
-			catch (final ModelLoadingException exception)
-			{
-				BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception, "No item found for given pk: {}", pk);
-			}
-		}
-		return null;
-	}
-
 }
