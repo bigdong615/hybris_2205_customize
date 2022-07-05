@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 
 import java.awt.print.PrinterJob;
@@ -27,8 +28,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.bl.backoffice.actions.PrintLabelAction;
 import com.bl.integration.facades.impl.DefaultBlPrintShippingLabelFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
@@ -43,8 +42,14 @@ import com.bl.storefront.controllers.ControllerConstants;
 public class BlPrintingShippingLabelController
 {
 	private static final Logger LOG = Logger.getLogger(BlPrintingShippingLabelController.class);
+	
+	private static final String ZPL_PRINTER_NAME = "bl.zpl.printer.name";
+	
 	@Resource(name = "defaultBlPrintShippingLabelFacade")
 	private DefaultBlPrintShippingLabelFacade defaultBlPrintShippingLabelFacade;
+	
+	@Resource(name = "configurationService")
+	private ConfigurationService configurationService;
 
 	@GetMapping(value = "/printLabel")
 	public String printShippingLabel(@RequestParam("code")
@@ -64,7 +69,7 @@ public class BlPrintingShippingLabelController
 		final List<PrintService> availablePrinterList = Arrays.asList(printServices);
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Available printer list ", availablePrinterList);
 		final Optional<PrintService> printerToUse = availablePrinterList.stream()
-				.filter(printer -> printer.getName().equalsIgnoreCase("Zebra ZP 450-200 dpi")).findFirst();
+				.filter(printer -> printer.getName().equalsIgnoreCase(getConfigurationService().getConfiguration().getString(ZPL_PRINTER_NAME))).findFirst();
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Is ZPL Printer found ", printerToUse.isPresent());
 		if (printerToUse.isPresent())
 		{
@@ -97,5 +102,21 @@ public class BlPrintingShippingLabelController
 	public void setDefaultBlPrintShippingLabelFacade(final DefaultBlPrintShippingLabelFacade defaultBlPrintShippingLabelFacade)
 	{
 		this.defaultBlPrintShippingLabelFacade = defaultBlPrintShippingLabelFacade;
+	}
+
+	/**
+	 * @return the configurationService
+	 */
+	public ConfigurationService getConfigurationService()
+	{
+		return configurationService;
+	}
+
+	/**
+	 * @param configurationService the configurationService to set
+	 */
+	public void setConfigurationService(ConfigurationService configurationService)
+	{
+		this.configurationService = configurationService;
 	}
 }

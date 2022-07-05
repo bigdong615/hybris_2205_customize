@@ -1,11 +1,13 @@
 package com.bl.backoffice.actions;
 
+import de.hybris.platform.acceleratorservices.urlresolver.SiteBaseUrlResolutionService;
 import de.hybris.platform.core.PK;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.ModelLoadingException;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.site.BaseSiteService;
 
+import java.net.URLEncoder;
 import java.util.Objects;
 
 import javax.annotation.Resource;
@@ -16,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zul.Messagebox;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.actions.ActionContext;
@@ -37,8 +40,11 @@ public class PrintLabelAction extends AbstractComponentWidgetAdapterAware
 	@Resource(name = "modelService")
 	private ModelService modelService;
 
-	@Resource(name = "configurationService")
-	private ConfigurationService configurationService;
+	@Resource(name="siteBaseUrlResolutionService")
+	private SiteBaseUrlResolutionService siteBaseUrlResolutionService;
+	
+	@Resource(name="baseSiteService")
+	private BaseSiteService baseSiteService;
 
 	protected static final String SOCKET_OUT_CONTEXT = "blPrintLabelContext";
 	protected static final String OUT_CONFIRM = "confirmOutput";
@@ -76,7 +82,10 @@ public class PrintLabelAction extends AbstractComponentWidgetAdapterAware
 		final ConsignmentModel consignment = actionContext.getData();
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Printing os shipment label started for consignment {}", consignment.getCode());
 		final String pk = consignment.getPk().toString();
-		Executions.getCurrent().sendRedirect(configurationService.getConfiguration().getString(SITE_URL).concat("/shipment/printLabel?code=").concat(pk), "_blank");
+		Executions.getCurrent().sendRedirect( getSiteBaseUrlResolutionService()
+            .getWebsiteUrlForSite(getBaseSiteService().getBaseSiteForUID(BlCoreConstants.BASE_STORE_ID),
+                  StringUtils.EMPTY, Boolean.TRUE, "/shipment/printLabel",
+                  "code=".concat(pk)), "_blank");
 		Messagebox.show("Printing of shipment label is done for consignment " + consignment.getCode(), "Info", Messagebox.OK, "icon");
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
 		}
@@ -85,5 +94,37 @@ public class PrintLabelAction extends AbstractComponentWidgetAdapterAware
 			return new ActionResult(BlintegrationConstants.SUCCESS);
 		}
 		return new ActionResult(BlintegrationConstants.CLIENT_SIDE_ERROR);
+	}
+
+	/**
+	 * @return the siteBaseUrlResolutionService
+	 */
+	public SiteBaseUrlResolutionService getSiteBaseUrlResolutionService()
+	{
+		return siteBaseUrlResolutionService;
+	}
+
+	/**
+	 * @param siteBaseUrlResolutionService the siteBaseUrlResolutionService to set
+	 */
+	public void setSiteBaseUrlResolutionService(SiteBaseUrlResolutionService siteBaseUrlResolutionService)
+	{
+		this.siteBaseUrlResolutionService = siteBaseUrlResolutionService;
+	}
+
+	/**
+	 * @return the baseSiteService
+	 */
+	public BaseSiteService getBaseSiteService()
+	{
+		return baseSiteService;
+	}
+
+	/**
+	 * @param baseSiteService the baseSiteService to set
+	 */
+	public void setBaseSiteService(BaseSiteService baseSiteService)
+	{
+		this.baseSiteService = baseSiteService;
 	}
 }
