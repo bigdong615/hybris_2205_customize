@@ -11,8 +11,12 @@ import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.integration.dao.impl.DefaultBlPrintingShippingLabelDao;
 import com.bl.integration.facades.BlPrintShippingLabelFacade;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -21,6 +25,7 @@ import com.bl.integration.facades.BlPrintShippingLabelFacade;
  */
 public class DefaultBlPrintShippingLabelFacade implements BlPrintShippingLabelFacade
 {
+	private static final Logger LOG = Logger.getLogger(DefaultBlPrintShippingLabelFacade.class);
 	private DefaultBlPrintingShippingLabelDao blPrintingShippingLabelDao;
 	private Converter<PackagingInfoModel, PackagingInfoData> defaultBlPrintShippingLabelConverter;
 
@@ -28,6 +33,7 @@ public class DefaultBlPrintShippingLabelFacade implements BlPrintShippingLabelFa
 	public List<PackagingInfoData> getConsignmentByPk(final String code)
 	{
 		final ConsignmentModel consignmentByPk = getBlPrintingShippingLabelDao().getConsignmentByPk(code);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Printing started for consignment {}:", consignmentByPk.getCode());
 		final List<PackagingInfoModel> packagingInfoModel = consignmentByPk.getPackaginginfos();
 		final List<PackagingInfoData> packagingInfoData = new ArrayList<>();
 		for (final PackagingInfoModel packageInfo : packagingInfoModel)

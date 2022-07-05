@@ -19,6 +19,8 @@ import javax.print.PrintService;
 import javax.print.SimpleDoc;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +28,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.bl.backoffice.actions.PrintLabelAction;
 import com.bl.integration.facades.impl.DefaultBlPrintShippingLabelFacade;
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 
 
@@ -38,6 +42,7 @@ import com.bl.storefront.controllers.ControllerConstants;
 @RequestMapping(value = "/shipment")
 public class BlPrintingShippingLabelController
 {
+	private static final Logger LOG = Logger.getLogger(BlPrintingShippingLabelController.class);
 	@Resource(name = "defaultBlPrintShippingLabelFacade")
 	private DefaultBlPrintShippingLabelFacade defaultBlPrintShippingLabelFacade;
 
@@ -54,10 +59,13 @@ public class BlPrintingShippingLabelController
 	public String printShippingPackageLabel(final HttpServletRequest request, final Model model) throws PrintException
 	{
 		final String shipmentLabelURL = request.getParameter("label");
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "shipment label URL {} in ZPL format ", shipmentLabelURL);
 		final PrintService[] printServices = PrinterJob.lookupPrintServices();
 		final List<PrintService> availablePrinterList = Arrays.asList(printServices);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Available printer list ", availablePrinterList);
 		final Optional<PrintService> printerToUse = availablePrinterList.stream()
 				.filter(printer -> printer.getName().equalsIgnoreCase("Zebra ZP 450-200 dpi")).findFirst();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Is ZPL Printer found ", printerToUse.isPresent());
 		if (printerToUse.isPresent())
 		{
 			for (final PrintService printService : printServices)

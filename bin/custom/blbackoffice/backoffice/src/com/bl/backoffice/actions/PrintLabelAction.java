@@ -74,6 +74,7 @@ public class PrintLabelAction extends AbstractComponentWidgetAdapterAware
 		try
 		{
 		final ConsignmentModel consignment = actionContext.getData();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Printing os shipment label started for consignment {}", consignment.getCode());
 		final String pk = consignment.getPk().toString();
 		Executions.getCurrent().sendRedirect(configurationService.getConfiguration().getString(SITE_URL).concat("/shipment/printLabel?code=").concat(pk), "_blank");
 		Messagebox.show("Printing of shipment label is done for consignment " + consignment.getCode(), "Info", Messagebox.OK, "icon");
