@@ -8,8 +8,9 @@
 <c:forEach var="entry" items="${packageData}" varStatus="loop">
  <br />
 	
+	<c:url var="printingURL" value="/shipment/printLabelValue"/>
 	<form id="printLabel-${loop.index}"
-		action="https://localhost:9002/blstorefront/shipment/printLabelValue"
+		action="${printingURL}"
 		method="post">
 		<input type="hidden" name="${CSRFToken.parameterName }"
 			value="${CSRFToken.token }"> <input type="hidden"
@@ -35,7 +36,7 @@
 	
 	
 	<form id="printLabel-${loop.index + 1}"
-		action="https://localhost:9002/blstorefront/shipment/printLabelValue"
+		action="${printingURL}"
 		method="post">
 		<input type="hidden" name="${CSRFToken.parameterName }"
 			value="${CSRFToken.token }"> <input type="hidden"
