@@ -5,11 +5,17 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -230,8 +236,11 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 */
 	private void saveResponseOnInBoundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo)
 	{
-		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo);
+		final StringBuilder buffer = new StringBuilder();
+		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo, buffer);
+		packagingInfo.setInBoundShippingLabel(buffer.toString());
 		packagingInfo.setInBoundTrackingNumber(shipmentPackage.getTrackingNumber());
+		packagingInfo.setInBoundGraphicImage(shipmentPackage.getGraphicImage());
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Inbound Shipment generated for Package with tracking number : {}",
@@ -246,8 +255,11 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 */
 	private void saveResponseOnOutboundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo)
 	{
-		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo);
+		final StringBuilder buffer = new StringBuilder();
+		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo, buffer);
+		packagingInfo.setOutBoundShippingLabel(buffer.toString());
 		packagingInfo.setOutBoundTrackingNumber(shipmentPackage.getTrackingNumber());
+		packagingInfo.setOutBoundGraphicImage(shipmentPackage.getGraphicImage());
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Outbound Shipment generated for Package with tracking number : {}",
@@ -262,7 +274,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @return
 	 */
 	private UPSShipmentPackageResult saveResponseOnPackage(final UPSShipmentCreateResponse upsResponse,
-			final PackagingInfoModel packagingInfo)
+			final PackagingInfoModel packagingInfo, final StringBuilder buffer)
 	{
 		final UPSShipmentPackageResult shipmentPackage = upsResponse.getPackages().get(0);
 
@@ -272,9 +284,45 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		packagingInfo.setShipmentIdentificationNumber(upsResponse.getShipmentIdentificationNumber());
 		packagingInfo.setTotalShippingPrice(upsResponse.getTotalCharges());
 		packagingInfo.setHTMLImage(shipmentPackage.getHTMLImage());
-		packagingInfo.setGraphicImage(shipmentPackage.getGraphicImage());
 		packagingInfo.setLabelURL(upsShipmentURL + shipmentPackage.getTrackingNumber());
+		try
+		{
+			convertImage(shipmentPackage.getGraphicImage(), packagingInfo, buffer);
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred when converting the graphic image for the package {} ",
+					packagingInfo.getPk().toString(), exception);
+		}
 		return shipmentPackage;
+	}
+
+	/**
+	 * It converts the graphic image to ZPL data
+	 *
+	 * @param graphicImage
+	 *           the graphic image
+	 * @param packagingInfo
+	 *           the packaging info
+	 */
+	private void convertImage(final String graphicImage, final PackagingInfoModel packagingInfo, final StringBuilder buffer)
+	{
+		final byte[] image = Base64.decodeBase64(graphicImage);
+		final InputStream is = new ByteArrayInputStream(image);
+		String st = null;
+		try
+		{
+			final BufferedReader br = new BufferedReader(new InputStreamReader(is));
+			while ((st = br.readLine()) != null)
+			{
+				buffer.append(st);
+			}
+		}
+		catch (final IOException e)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred when converting the graphic image for the package {} ",
+					packagingInfo.getPk().toString(), e);
+		}
 	}
 
 	/**

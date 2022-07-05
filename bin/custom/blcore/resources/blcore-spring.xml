@@ -1935,4 +1935,6 @@
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
+		<bean id="blPrintingShippingLabelDao" name="blPrintingShippingLabelDao"
+		  class="com.bl.integration.dao.impl.DefaultBlPrintingShippingLabelDao"/>
 </beans>
