@@ -1,26 +1,25 @@
 package com.bl.backoffice.actions;
 
-import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.order.CalculationService;
-import de.hybris.platform.order.exceptions.CalculationException;
-
-import javax.annotation.Resource;
-
-import de.hybris.platform.promotions.PromotionsService;
-import de.hybris.platform.promotions.jalo.PromotionsManager;
-import de.hybris.platform.servicelayer.time.TimeService;
-import de.hybris.platform.site.BaseSiteService;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.order.CalculationService;
+import de.hybris.platform.order.exceptions.CalculationException;
+import de.hybris.platform.promotions.PromotionsService;
+import de.hybris.platform.promotions.jalo.PromotionsManager;
+import de.hybris.platform.promotions.model.PromotionGroupModel;
+import de.hybris.platform.servicelayer.time.TimeService;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
+import javax.annotation.Resource;
 import java.util.Collection;
-import static java.util.Collections.singletonList;
+import java.util.Collections;
+import java.util.Objects;
+
+import static java.util.Collections.emptyList;
 
 
 /**
@@ -56,7 +55,7 @@ public class BlRecalculateOrderTotalsAction implements CockpitAction<OrderModel,
 		try
 		{
 			getCalculationService().recalculate(orderModel);
-			getPromotionsService().updatePromotions(singletonList(orderModel.getSite().getDefaultPromotionGroup()), orderModel, true, PromotionsManager.AutoApplyMode.APPLY_ALL,
+			getPromotionsService().updatePromotions(getPromotionGroupFromBaseSite(orderModel), orderModel, true, PromotionsManager.AutoApplyMode.APPLY_ALL,
 							PromotionsManager.AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Recalculation done for order {}", orderModel.getCode());
 
@@ -68,6 +67,17 @@ public class BlRecalculateOrderTotalsAction implements CockpitAction<OrderModel,
 		}
 		return new ActionResult("success");
 
+	}
+
+
+	/**
+	 * This method created to get the promotion group from base site
+	 * @param orderModel orderModel
+	 * @return Collection<PromotionGroupModel>
+	 */
+	private Collection<PromotionGroupModel> getPromotionGroupFromBaseSite(final OrderModel orderModel) {
+			return Objects.nonNull(orderModel.getSite()) && Objects.nonNull(orderModel.getSite().getDefaultPromotionGroup())
+					? Collections.singleton(orderModel.getSite().getDefaultPromotionGroup()) : Collections.emptyList();
 	}
 
 	/**
