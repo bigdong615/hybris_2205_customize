@@ -70,9 +70,10 @@ public class BlPrintingShippingLabelController
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Available printer list ", availablePrinterList);
 		final Optional<PrintService> printerToUse = availablePrinterList.stream()
 				.filter(printer -> printer.getName().equalsIgnoreCase(getConfigurationService().getConfiguration().getString(ZPL_PRINTER_NAME))).findFirst();
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Is ZPL Printer found ", printerToUse.isPresent());
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Is ZPL Printer found {}", printerToUse.isPresent());
 		if (printerToUse.isPresent())
 		{
+			BlLogger.logMessage(LOG,Level.INFO,"ZPL Printer found");
 			for (final PrintService printService : printServices)
 			{
 				final DocPrintJob job = printService.createPrintJob();
@@ -80,6 +81,7 @@ public class BlPrintingShippingLabelController
 				final DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
 				final Doc doc = new SimpleDoc(zplCode.getBytes(), flavor, null);
 				job.print(doc, null);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Printing is done for shipment label {} ", zplCode);
 			}
 		}
 		model.addAttribute("label", shipmentLabelURL);
