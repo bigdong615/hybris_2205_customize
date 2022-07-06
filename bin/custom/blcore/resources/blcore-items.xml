@@ -223,6 +223,7 @@
         <value code="NOT_INCLUDED"/>
         <value code="IN_HOUSE" />
         <value code="RECEIVED_OR_RETURNED" />
+        <value code="MISSING" />
       </enumtype>
 
 
