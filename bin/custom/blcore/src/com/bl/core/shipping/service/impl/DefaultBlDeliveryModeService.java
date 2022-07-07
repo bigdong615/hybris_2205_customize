@@ -824,7 +824,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 .toLocalDate();
 				final LocalDate todayLocalDate1 = new Date().toInstant().atZone(ZoneId.of(ZoneId.SHORT_IDS.get("PST"))).toLocalDate();
 
-				LOG.info("******Rental startDate is : " + rentalStartDate + "Today Local Date is : " + todayLocalDate
+				LOG.info("******Rental startDate is : " + rentalStartDate + "--" + rentalStartLocalDate + "Today Local Date is : "
+						+ todayLocalDate
 						+ "Today formated PST zone date is " + todayLocalDate1 + "Delivery mode: " + deliveryModeModel.getCode()
 						+ " cutoff time - " + deliveryModeModel.getCutOffTime());
 
@@ -832,6 +833,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 rentalStartLocalDate.isAfter(todayLocalDate) || (
                 rentalStartLocalDate.isEqual(todayLocalDate) && BlDateTimeUtils
                         .compareTimeWithCutOff(deliveryModeModel.getCutOffTime())))) {
+						 LOG.info("******Rental startDate is Inside : " + rentalStartLocalDate + "Today Local Date is : "
+								 + todayLocalDate + "Today formated PST zone date is " + todayLocalDate1 + "Delivery mode: "
+								 + deliveryModeModel.getCode() + " cutoff time - " + deliveryModeModel.getCutOffTime());
 
             if (isEligibleDeliveryModeForOrderTransfer(deliveryModeModel)) {
 
