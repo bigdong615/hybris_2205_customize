@@ -10,6 +10,7 @@ import java.awt.print.PrinterJob;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.print.Doc;
@@ -67,7 +68,8 @@ public class BlPrintingShippingLabelController
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "shipment label URL {} in ZPL format ", shipmentLabelURL);
 		final PrintService[] printServices = PrinterJob.lookupPrintServices();
 		final List<PrintService> availablePrinterList = Arrays.asList(printServices);
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Available printer list ", availablePrinterList);
+		final List<String> printerNameList = availablePrinterList.stream().map(printer->printer.getName()).collect(Collectors.toList());
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Available printer list {} ", printerNameList);
 		final Optional<PrintService> printerToUse = availablePrinterList.stream()
 				.filter(printer -> printer.getName().equalsIgnoreCase(getConfigurationService().getConfiguration().getString(ZPL_PRINTER_NAME))).findFirst();
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Is ZPL Printer found {}", printerToUse.isPresent());
