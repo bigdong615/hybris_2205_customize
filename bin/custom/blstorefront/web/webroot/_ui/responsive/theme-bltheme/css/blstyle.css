@@ -829,3 +829,9 @@ input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!im
   text-decoration: none;
 }
 #signIn a.popup-reset-password  { color: #e64b4f; }
+
+.printShippingLabel {
+  margin-left: auto;
+  margin-right: auto;
+}
+

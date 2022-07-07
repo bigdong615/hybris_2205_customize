@@ -37,8 +37,8 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   private FlexibleSearchService flexibleSearchService;
 
   private static final String DATE_PARAM = "} BETWEEN ?startDate AND ?endDate ";
-  private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE = "SELECT {pk} FROM {Consignment as con} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = ?status1 OR {cs:CODE} = ?status2}})" +
-      " AND {con:optimizedShippingStartDate"+ DATE_PARAM;
+  private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE = "SELECT {pk} FROM {Consignment as con},{Order as o} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = ?status1 OR {cs:CODE} = ?status2}})" +
+			" AND {con:optimizedShippingStartDate"+ DATE_PARAM + "AND {o.pk} = {con.order} AND {o:versionID} IS NULL";
   
   private static final String CONSIGNMENT_FOR_RETURN_DATE_QUERY = "SELECT {con:" + ItemModel.PK + "} FROM {" 
 		  + ConsignmentModel._TYPECODE + " as con} WHERE {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE +"} = ?returnDate";
@@ -61,7 +61,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 
     final List<ConsignmentStatus> statusList = new ArrayList<>();
     statusList.add(ConsignmentStatus.CANCELLED);
-    statusList.add(ConsignmentStatus.SHIPPED);
+    statusList.add(ConsignmentStatus.BL_SHIPPED);
 
     addQueryParameter(shipDate, statusList, fQuery);
 

@@ -332,6 +332,17 @@ public interface BlDeliveryModeService {
      */
     OptimizedShippingMethodModel getOptimizedShippingMethod(final String code);
     
+    
+    /**
+     * javadoc
+     * this method will return zone delivery mode model from dao
+     *
+     * @param code value
+     * @return model
+     */
+    ZoneDeliveryModeModel getZoneDeliveryMode(final String code);
+    
+    
     /**
      * Check shipping blackout.
      *

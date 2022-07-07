@@ -183,5 +183,25 @@
   <bean id="defaultBlUPSTrackServiceImpl" class="com.bl.integration.services.impl.DefaultBlUPSTrackServiceImpl">
   </bean>
 
+<bean id="blPrintingShippingLabelDao" name="blPrintingShippingLabelDao"
+		  class="com.bl.integration.dao.impl.DefaultBlPrintingShippingLabelDao"/>
+		  
+  <bean id="defaultBlPrintShippingLabelFacade"
+    class="com.bl.integration.facades.impl.DefaultBlPrintShippingLabelFacade">
+    <property name="blPrintingShippingLabelDao" ref="blPrintingShippingLabelDao"/>
+    <property name="defaultBlPrintShippingLabelConverter" ref="defaultBlPrintShippingLabelConverter" />
+  </bean>  
+  
+   <bean id="blPrintShippingLabelPopulator"
+    class="com.bl.integration.populators.BlPrintShippingLabelPopulator"/>
+
+  <bean id="defaultBlPrintShippingLabelConverter" parent="defaultPopulatingConverter">
+    <property name="targetClass" value="de.hybris.platform.warehousingfacades.order.data.PackagingInfoData"/>
+    <property name="populators">
+      <list>
+        <ref bean="blPrintShippingLabelPopulator"/>
+      </list>
+    </property>
+  </bean>
 
 </beans>

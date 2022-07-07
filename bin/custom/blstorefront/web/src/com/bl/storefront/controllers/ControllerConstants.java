@@ -206,7 +206,8 @@ public interface ControllerConstants
 				String ForgotPasswordValidationMessage = "fragments/password/forgotPasswordValidationMessage"; // NOSONAR
 			}
 
-			interface Login {
+			interface Login
+			{
 
 				String LoginPopup = "fragments/login/loginPopup";
 				String CreateAccountPopup = "fragments/login/createAccountPopup";
@@ -219,6 +220,12 @@ public interface ControllerConstants
 				String ZoomImagesPopup = "fragments/product/zoomImagesPopup"; // NOSONAR
 				String ReviewsTab = "fragments/product/reviewsTab"; // NOSONAR
 				String StorePickupSearchResults = "fragments/product/storePickupSearchResults"; // NOSONAR
+			}
+
+			interface PrintShippingLabel // NOSONAR
+			{
+				String PrintShippingLabel = "fragments/printShippingLabel/printShippingLabel"; // NOSONAR
+				String PrintShippingPackageLabel = "fragments/printShippingLabel/printShippingPackageLabel"; // NOSONAR
 			}
 		}
 	}

@@ -1,5 +1,48 @@
 package com.bl.core.shipping.service.impl;
 
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
+import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeValueModel;
+import de.hybris.platform.order.impl.DefaultZoneDeliveryModeService;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.store.services.BaseStoreService;
+import de.hybris.platform.storelocator.model.PointOfServiceModel;
+
+import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
@@ -8,6 +51,7 @@ import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.CarrierEnum;
+import com.bl.core.enums.ShippingCostEnum;
 import com.bl.core.model.BlBlackoutDateModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
@@ -31,45 +75,6 @@ import com.bl.integration.services.BlFedExSameDayService;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.CartModel;
-import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
-import de.hybris.platform.core.model.user.AddressModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeValueModel;
-import de.hybris.platform.order.impl.DefaultZoneDeliveryModeService;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.ordersplitting.model.WarehouseModel;
-import de.hybris.platform.servicelayer.user.UserService;
-import de.hybris.platform.store.services.BaseStoreService;
-import de.hybris.platform.storelocator.model.PointOfServiceModel;
-import java.math.BigDecimal;
-import java.net.URISyntaxException;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 
 
 /**
@@ -95,18 +100,20 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     private BlCartService blCartService;
 
     private BaseStoreService baseStoreService;
-    
+
     private BlBlackoutDatesDao blBlackoutDatesDao;
 
-    @Value("${shipping.sf.zip.code}")
+	 @Value("${shipping.sf.zip.code}")
     private String sf;
 
     @Value("${shipping.nyc.zip.code}")
     private String nyc;
-    
+
     private BlDatePickerService blDatePickerService;
 
     private BlProductService productService;
+
+	 private BlDeliveryModeService blDeliveryModeService;
 
     /**
      * {@inheritDoc}
@@ -117,7 +124,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public Collection<ShippingGroupModel> getAllShippingGroups() {
         return getBlZoneDeliveryModeDao().getAllShippingGroups();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -203,13 +210,25 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                                                                        final String carrier,
                                                                                        final boolean payByCustomer) {
         final String pstCutOffTime = BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST);
-        final int result = checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
+		  int result = checkDateForRental(
+				  BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
                 rentalStart);
+		  final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST,
+				  new Date().toString());
+
+		  final ZoneDeliveryModeModel zoneDeliveryMode = blDeliveryModeService
+				  .getZoneDeliveryMode(ShippingCostEnum.UPS_OVERNIGHT_ROUND_TRIP.getCode());
+		  if (result == 2 && zoneDeliveryMode != null ? !BlDateTimeUtils.compareTimeWithCutOff(zoneDeliveryMode.getCutOffTime())
+				  : Boolean.FALSE)
+		  {
+			  result = 1;
+		  }
+
         if (result >= BlInventoryScanLoggingConstants.TWO) {
             return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
                     null, payByCustomer);
         } else if (result == BlInventoryScanLoggingConstants.ONE) {
-            final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST, new Date().toString());
+			  // final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST, new Date().toString());
             if (currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)) {
                 return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
                         null, payByCustomer);
@@ -340,7 +359,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             final Collection<BlPickUpZoneDeliveryModeModel> newBlPickUpZoneDeliveryModeModels = new ArrayList<>(blPickUpZoneDeliveryModeModels);
             final int result = checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date())
                     , rentalStart);
-            for (BlPickUpZoneDeliveryModeModel pickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
+            for (final BlPickUpZoneDeliveryModeModel pickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
                 checkDeliveryModeValidityOfTypePartner(newBlPickUpZoneDeliveryModeModels, result, pickUpZoneDeliveryModeModel);
             }
             return CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels.stream()
@@ -506,12 +525,12 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                     final Double shippingCostModel = getShippingAmount(order, zoneDeliveryModeModel, calculatedValueMap);
                     return shippingCostModel != null ? Math.max(shippingCostModel, valueModel.getMinimum()) :
                             valueModel.getMinimum();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     BlLogger.logMessage(LOG, Level.ERROR, "Exception while calculating delivery cost");
                 }
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "ShippingCostModel is null, Shipping amount: {} ",
                         BlInventoryScanLoggingConstants.ZERO);
-                return (double) BlInventoryScanLoggingConstants.ZERO;
+                return BlInventoryScanLoggingConstants.ZERO;
             } else {
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping fixed amount: {} ", valueModel.getValue());
                 return valueModel.getValue();
@@ -568,11 +587,11 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             } else {
                 abstractOrderEntryModels = order.getEntries();
             }
-            for (Iterator<AbstractOrderEntryModel> iterator = abstractOrderEntryModels.iterator(); iterator.hasNext();)
+            for (final Iterator<AbstractOrderEntryModel> iterator = abstractOrderEntryModels.iterator(); iterator.hasNext();)
 				{
 					final AbstractOrderEntryModel entry = iterator.next();
 					final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
-                
+
                     totalWeight = getBigDecimal(totalWeight, entry);
                     if(blSerialProduct instanceof BlSerialProductModel) {
                         final BlProductModel blProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
@@ -584,7 +603,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                         maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
                         maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
                     }
-                
+
 				}
             final double dimensionalWeight = ((double) (maxHeight * sumWidth * maxLength) /
                     getBlZoneDeliveryModeDao().getDimensionalFactorForDeliveryFromStore(BlDeliveryModeLoggingConstants.STORE));
@@ -593,7 +612,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
             valueMap.put(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT, totalWeight.doubleValue());
             valueMap.put(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT, dimensionalWeight);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             BlLogger.logMessage(LOG, Level.ERROR, "Exception while calculating delivery cost");
         }
         return valueMap;
@@ -612,7 +631,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         double weight = BlInventoryScanLoggingConstants.ZERO;
 
         if(blSerialProduct instanceof BlSerialProductModel) {
-            BlProductModel serialProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
+            final BlProductModel serialProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
             if(null != serialProduct.getWeight()) {
                 weight = serialProduct.getWeight().doubleValue() * entry.getQuantity();
                 weight = totalWeight.doubleValue() + weight;
@@ -708,7 +727,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     private boolean getResultForDayToSkip(final DayOfWeek currentDayOfWeek, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
         final Collection<de.hybris.platform.cronjob.enums.DayOfWeek> dayOfWeeks = zoneDeliveryModeModel.getDaysToSkip();
-        for (de.hybris.platform.cronjob.enums.DayOfWeek day : dayOfWeeks) {
+        for (final de.hybris.platform.cronjob.enums.DayOfWeek day : dayOfWeeks) {
             if (day.getCode().equals(currentDayOfWeek.toString())) {
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current day is present in days to skip: {} ", currentDayOfWeek);
                 return false;
@@ -728,7 +747,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                         BlDeliveryModeLoggingConstants.SF.equals(deliveryType) ? sf : nyc));
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Checking same day fedex integration pinCode validity");
                 return sameDayCityResData.getServiceApplicable() != null ? sameDayCityResData.getServiceApplicable() : Boolean.FALSE;
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception in Checking same day fedex integration pinCode validity", e);
                 return false;
             }
@@ -744,7 +763,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     private String getPOSAddress(final Collection<PointOfServiceModel> pos) {
         if (CollectionUtils.isNotEmpty(pos)) {
-            for (PointOfServiceModel model : pos) {
+            for (final PointOfServiceModel model : pos) {
                 final AddressModel addressModel = model.getAddress();
                 if (addressModel != null) {
                     return addressModel.getPostalcode();
@@ -999,6 +1018,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     }
 
 
+	 /**
+	  * {@inheritDoc}
+	  */
+	 @Override
+	 public ZoneDeliveryModeModel getZoneDeliveryMode(final String code)
+	 {
+		 return getBlZoneDeliveryModeDao().getZoneDeliveryMode(code);
+	 }
+
+
     /**
      * {@inheritDoc}
      */
@@ -1017,7 +1046,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes() {
         return getBlZoneDeliveryModeDao().getAllBlDeliveryModes();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1052,7 +1081,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 				 if (isShippingIsBlocked.get())
 				 {
 					 break;
-				 } 
+				 }
 			 }
 		 }
 		 return isShippingIsBlocked.get();
@@ -1235,7 +1264,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 	/**
 	 * @param blBlackoutDatesDao the blBlackoutDatesDao to set
 	 */
-	public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao)
+	public void setBlBlackoutDatesDao(final BlBlackoutDatesDao blBlackoutDatesDao)
 	{
 		this.blBlackoutDatesDao = blBlackoutDatesDao;
 	}
@@ -1251,7 +1280,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 	/**
 	 * @param blDatePickerService the blDatePickerService to set
 	 */
-	public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+	public void setBlDatePickerService(final BlDatePickerService blDatePickerService)
 	{
 		this.blDatePickerService = blDatePickerService;
 	}
@@ -1260,7 +1289,24 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         return productService;
     }
 
-    public void setProductService(BlProductService productService) {
+    public void setProductService(final BlProductService productService) {
         this.productService = productService;
     }
+
+	 /**
+	  * @return the blDeliveryModeService
+	  */
+	 public BlDeliveryModeService getBlDeliveryModeService()
+	 {
+		 return blDeliveryModeService;
+	 }
+
+	 /**
+	  * @param blDeliveryModeService
+	  *           the blDeliveryModeService to set
+	  */
+	 public void setBlDeliveryModeService(final BlDeliveryModeService blDeliveryModeService)
+	 {
+		 this.blDeliveryModeService = blDeliveryModeService;
+	 }
 }

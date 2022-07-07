@@ -35,7 +35,7 @@
 	<div class="notification notification-tip cc">
 		<p>
 			Active and upcoming orders will charge the card used when you placed
-			your rental. To change the card used, please <a href="#">contact
+			your rental. To change the card used, pleaseï¿½<a href="#">contact
 				us</a>.
 		</p>
 	</div>
@@ -100,7 +100,7 @@
 			<c:otherwise>
 			</c:otherwise>
 		</c:choose>
-		<div class="col-md-6 saved-card">
+		<%--<div class="col-md-6 saved-card" >
 			<div class="card mb-4">
 				<div class="row">
 					<div class="col-9">
@@ -114,7 +114,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> --%>
 		<div class="col-12">
 			<!-- <button class="btn btn-primary">Add Credit Card</button> -->
 			<a class="btn btn-primary" href="add-payment-method"> Add Credit

@@ -819,6 +819,7 @@
 		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 		<property name="blDatePickerService" ref="blDatePickerService"/>
 		<property name="productService" ref="productService"/>
+		<property name="blDeliveryModeService" ref="blDeliveryModeService"/>
 	</bean>
 
 	<!--BL-461 - This is to override the OOB add to cart and show cart functionality.-->
@@ -1935,4 +1936,6 @@
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
+		<bean id="blPrintingShippingLabelDao" name="blPrintingShippingLabelDao"
+		  class="com.bl.integration.dao.impl.DefaultBlPrintingShippingLabelDao"/>
 </beans>

@@ -1529,7 +1529,10 @@
                     <editorArea:attribute qualifier="shipmentIdentificationNumber"/>
                     <editorArea:attribute qualifier="outBoundTrackingNumber"/>
                     <editorArea:attribute qualifier="inBoundTrackingNumber"/>
-                    <editorArea:attribute qualifier="graphicImage"/>
+                    <editorArea:attribute qualifier="inBoundGraphicImage"/>
+                   	<editorArea:attribute qualifier="outBoundGraphicImage"/>
+                   	<editorArea:attribute qualifier="inBoundShippingLabel"/>
+                   	<editorArea:attribute qualifier="outBoundShippingLabel"/>
                     <editorArea:attribute qualifier="hTMLImage"/>
                     <editorArea:attribute qualifier="consignmentPOS"/>
                     <editorArea:attribute qualifier="consignment"/>

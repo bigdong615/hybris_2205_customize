@@ -223,6 +223,7 @@
         <value code="NOT_INCLUDED"/>
         <value code="IN_HOUSE" />
         <value code="RECEIVED_OR_RETURNED" />
+        <value code="MISSING" />
       </enumtype>
 
 
@@ -3699,7 +3700,7 @@
           </attribute>
           <attribute qualifier="serialNumber" type="java.lang.String">
             <persistence type="property"/>
-            <modifiers read="true" write="true" search="true" unique="true" optional="true"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
             <description>The serial number of the serial product in the order.</description>
           </attribute>
           <attribute qualifier="parentLocation" type="java.lang.String">
@@ -4067,7 +4068,28 @@
 					<persistence type="property" />
 				</attribute>
 
-				<attribute qualifier="graphicImage" type="java.lang.String">
+				<attribute qualifier="inBoundGraphicImage" type="java.lang.String">
+					<description>Graphic Image</description>
+					<persistence type="property">
+						<columntype database="oracle">
+							<value>CLOB</value>
+						</columntype>
+						<columntype database="sap">
+							<value>NCLOB</value>
+						</columntype>
+						<columntype database="mysql">
+							<value>TEXT</value>
+						</columntype>
+						<columntype database="sqlserver">
+							<value>TEXT</value>
+						</columntype>
+						<columntype>
+							<value>HYBRIS.LONG_STRING</value>
+						</columntype>
+					</persistence>
+				</attribute>
+				
+				<attribute qualifier="outBoundGraphicImage" type="java.lang.String">
 					<description>Graphic Image</description>
 					<persistence type="property">
 						<columntype database="oracle">
@@ -4172,8 +4194,36 @@
             <modifiers read="true" write="true" optional="true"/>
             <description>if package entry contains non barcoded subpart then we will require subpart name in this attribute</description>
           </attribute>
-
-
+		  <attribute qualifier="inBoundShippingLabel" type="java.lang.String">
+            <description>It saves the shipping level once graphic image is converted into ZPL code</description>
+            <modifiers read="true" write="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
+          </attribute>
+          <attribute qualifier="outBoundShippingLabel" type="java.lang.String">
+            <description>It saves the shipping level once graphic image is converted into ZPL code</description>
+            <modifiers read="true" write="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
+          </attribute>
         </attributes>
 			</itemtype>
 		</typegroup>

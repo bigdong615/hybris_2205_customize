@@ -1,10 +1,17 @@
 package com.bl.core.shipping.dao;
 
-import com.bl.core.model.*;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 import java.util.Collection;
+
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.BlRushDeliveryModeModel;
+import com.bl.core.model.OptimizedShippingMethodModel;
+import com.bl.core.model.PartnerPickUpStoreModel;
+import com.bl.core.model.ShippingCostModel;
+import com.bl.core.model.ShippingGroupModel;
+import com.bl.core.model.ShippingOptimizationModel;
 
 /**
  * {javadoc}
@@ -29,12 +36,12 @@ public interface BlDeliveryModeDao {
      */
     Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModes(final String carrier, final String mode, final String pstCutOffTime,
                                                                  final boolean payByCustomer);
-    
+
     /**
      * This method will return all the delivery modes after selecting Ship to Home, Hotel or Business shipping group
      * depending on the selected carrier.
      * @param carrier ie., UPS or FedEx
-     * @param mode i.e., standard 
+     * @param mode i.e., standard
      * @return Collection of ZoneDeliveryModeModel
      */
     Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode, final boolean payByCustomer);
@@ -86,7 +93,7 @@ public interface BlDeliveryModeDao {
      * @return Collection of BlPickUpZoneDeliveryModeModel
      */
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode, final boolean payByCustomer);
-                                                                                  
+
 
     /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group for the UPS Store not
@@ -98,7 +105,7 @@ public interface BlDeliveryModeDao {
      */
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLike(final String mode, final String pstCutOffTime,
                                                                                          final boolean payByCustomer);
-    
+
     /**
      * This method will fetch all time windows for RushDelivery depending on deliveryType attribute
      * @param deliveryMode to specify SF or NYC Shipping group
@@ -106,8 +113,8 @@ public interface BlDeliveryModeDao {
      * @return Collection of BlRushDeliveryModeModel
      */
     Collection<BlRushDeliveryModeModel> getBlRushDeliveryModes(final String deliveryMode, final String pstCutOffTime, final boolean payByCustomer);
-    
-    
+
+
     /**
      * This method will fetch all time windows for RushDelivery depending on deliveryType attribute
      * @param deliveryMode to specify SF or NYC Shipping group
@@ -180,4 +187,14 @@ public interface BlDeliveryModeDao {
      * @return model
      */
     OptimizedShippingMethodModel getOptimizedShippingMethod(final String code);
+
+
+	 /**
+	  * javadoc this method will return zone delivery mode model from item
+	  *
+	  * @param code
+	  *           value
+	  * @return model
+	  */
+	 ZoneDeliveryModeModel getZoneDeliveryMode(final String code);
 }
