@@ -44,6 +44,7 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -76,6 +77,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
@@ -233,25 +235,27 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
       final Date extendRentalEndDate,
       final AtomicReference<Date> optimizedRentalEndDateForExtendOrder,
       final Map<String, Date> stringStringMap) {
-    for (final ConsignmentModel consignmentModel : orderModel.getConsignments()) {
-      for (final ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
-        for (final BlProductModel blProductModel : consignmentEntryModel
-            .getSerialProducts()) {
-          final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(
-              BlackoutDateTypeEnum.HOLIDAY);
-          final int numberOfDaysToAdd = getNumberOfDaysForDeliveryMethod().get(consignmentModel.getOptimizedShippingType().getCode());
-          final Calendar cal = Calendar.getInstance();
-          cal.setTime(extendRentalEndDate);
-          final LocalDate localDate = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
-          optimizedRentalEndDateForExtendOrder.set(BlDateTimeUtils.addDaysInRentalDates(numberOfDaysToAdd , localDate, blackOutDates));
-          checkProductForAvailablity(blProductModel , getNewStockStartDate(orderModel , consignmentModel) , optimizedRentalEndDateForExtendOrder.get() , stockResults , orderData);
-          if(CollectionUtils.isEmpty(stockResults)){
-            stringStringMap.put(consignmentModel.getCode() , optimizedRentalEndDateForExtendOrder.get());
-          }
-        }
+      if(CollectionUtils.isNotEmpty(orderModel.getConsignments())) {
+          for (final ConsignmentModel consignmentModel : orderModel.getConsignments()) {
+              for (final ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
+                  for (final BlProductModel blProductModel : consignmentEntryModel
+                          .getSerialProducts()) {
+                      final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(
+                              BlackoutDateTypeEnum.HOLIDAY);
+                      final int numberOfDaysToAdd = getNumberOfDaysToAdd(orderModel, consignmentModel);
+                      final Calendar cal = Calendar.getInstance();
+                      cal.setTime(extendRentalEndDate);
+                      final LocalDate localDate = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
+                      optimizedRentalEndDateForExtendOrder.set(BlDateTimeUtils.addDaysInRentalDates(numberOfDaysToAdd, localDate, blackOutDates));
+                      checkProductForAvailablity(blProductModel, getNewStockStartDate(orderModel, consignmentModel), optimizedRentalEndDateForExtendOrder.get(), stockResults, orderData);
+                      if (CollectionUtils.isEmpty(stockResults)) {
+                          stringStringMap.put(consignmentModel.getCode(), optimizedRentalEndDateForExtendOrder.get());
+                      }
+                  }
 
+              }
+          }
       }
-    }
     if(CollectionUtils.isEmpty(orderModel.getConsignments())){
       orderData.setIsAllProductExtendabe(false);
       final StockResult stockResult = new StockResult();
@@ -737,6 +741,33 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     calendar.add(Calendar.DAY_OF_MONTH ,1);
     return calendar.getTime();
   }
+
+    /**
+     * Gets the number of days to add.
+     *
+     * @param order the order
+     * @param consignment the consignment
+     * @return the number of days to add
+     */
+    private int getNumberOfDaysToAdd(final OrderModel order, final ConsignmentModel consignment)
+    {
+        if (Objects.nonNull(consignment) && Objects.nonNull(consignment.getOptimizedShippingType()))
+        {
+            final String optimizedShippingType = consignment.getOptimizedShippingType().getCode();
+            return getNumberOfDaysForDeliveryMethod().containsKey(optimizedShippingType)
+                    ? getNumberOfDaysForDeliveryMethod().get(optimizedShippingType)
+                    : 0;
+        }
+        if (Objects.nonNull(order) && order.getDeliveryMode() instanceof ZoneDeliveryModeModel)
+        {
+            final ZoneDeliveryModeModel deliveryMode = ((ZoneDeliveryModeModel) order.getDeliveryMode());
+            final String postReservedDays = deliveryMode.getPostReservedDays();
+            return StringUtils.isNotBlank(postReservedDays) && NumberUtils.isCreatable(postReservedDays)
+                    ? Integer.parseInt(postReservedDays)
+                    : 0;
+        }
+        return 0;
+    }
 
   public BlCartService getBlCartService() {
     return blCartService;
