@@ -822,6 +822,11 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 .atZone(ZoneId.systemDefault()).toLocalDate();
             final LocalDate todayLocalDate = new Date().toInstant().atZone(ZoneId.systemDefault())
                 .toLocalDate();
+				final LocalDate todayLocalDate1 = new Date().toInstant().atZone(ZoneId.of(ZoneId.SHORT_IDS.get("PST"))).toLocalDate();
+
+				LOG.info("******Rental startDate is : " + rentalStartDate + "Today Local Date is : " + todayLocalDate
+						+ "Today formated PST zone date is " + todayLocalDate1 + "Delivery mode: " + deliveryModeModel.getCode()
+						+ " cutoff time - " + deliveryModeModel.getCutOffTime());
 
             if (!isRentalStartDateBlackoutDate(rentalStartDate, holidayBlackoutDates) && (
                 rentalStartLocalDate.isAfter(todayLocalDate) || (
