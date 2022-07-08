@@ -830,8 +830,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 						+ " cutoff time - " + deliveryModeModel.getCutOffTime());
 
             if (!isRentalStartDateBlackoutDate(rentalStartDate, holidayBlackoutDates) && (
-                rentalStartLocalDate.isAfter(todayLocalDate) || (
-                rentalStartLocalDate.isEqual(todayLocalDate) && BlDateTimeUtils
+				rentalStartLocalDate.isAfter(todayLocalDate1) || (rentalStartLocalDate.isEqual(todayLocalDate1)
+						&& BlDateTimeUtils
                         .compareTimeWithCutOff(deliveryModeModel.getCutOffTime())))) {
 						 LOG.info("******Rental startDate is Inside : " + rentalStartLocalDate + "Today Local Date is : "
 								 + todayLocalDate + "Today formated PST zone date is " + todayLocalDate1 + "Delivery mode: "
