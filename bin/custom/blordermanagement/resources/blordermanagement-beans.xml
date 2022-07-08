@@ -33,5 +33,12 @@
 		<property name="orderTransferConsignment" type="boolean"/>
 		<property name="aquatechProductMap" type="java.util.Map&lt;Integer, java.util.List&lt;com.bl.core.model.BlProductModel>>"/>
 	</bean>
+	
+	<bean class="de.hybris.platform.warehousing.data.ConsignmentEntriesData">
+		<property name="productCode" type="java.lang.String" />
+		<property name="productName" type="java.lang.String" />
+		<property name="currentSerial" type="java.lang.String" />
+		<property name="entryNumber" type="java.lang.Integer" />
+	</bean>
 
 </beans>

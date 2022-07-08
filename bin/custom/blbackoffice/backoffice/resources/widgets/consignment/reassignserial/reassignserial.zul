@@ -42,16 +42,19 @@
             <grid id="consignmentEntries" mold="paging"
                   pageSize="5" width="100%" height="100%">
                 <columns>
-                	<column width="10px" sclass="oms-widget-reassignserial-listbox-header">
+                	<column width="6px" sclass="oms-widget-reassignserial-listbox-header">
                         <checkbox id="globalDeclineEntriesSelection" class="oms-widget-reassignserial-list-container__checkbox"/>
                     </column>
-                    <column width="30%" sclass="oms-widget-reassignserial-listbox-header">
+                    <column width="25%" sclass="oms-widget-reassignserial-listbox-header">
                         <label value="${labels.warehousingbackoffice.reassignserial.productcode}" width="100%"/>
                     </column>
-                    <column width="30%" sclass="oms-widget-reassignserial-listbox-header">
+                    <column width="25%" sclass="oms-widget-reassignserial-listbox-header">
                         <label value="${labels.warehousingbackoffice.reassignserial.productname}" width="100%"/>
                     </column>
-                    <column width="30%" sclass="oms-widget-reassignserial-listbox-header">
+                    <column width="20%" sclass="oms-widget-reassignserial-listbox-header">
+                         <label value="${labels.warehousingbackoffice.reassignserial.currentserial}" width="100%"/>
+                    </column>
+                    <column width="20%" sclass="oms-widget-reassignserial-listbox-header">
                          <label value="${labels.warehousingbackoffice.reassignserial.barcode}" width="100%"/>
                     </column>
                 </columns>
@@ -59,8 +62,9 @@
                     <template name="model">
                         <row>
                             <checkbox class="oms-widget-reassignserial-list-container__checkbox"/>
-                            <label value="${each.orderEntry.product.code}" width="100%"/>
-                            <label value="${each.orderEntry.product.name}" width="100%"/>
+                            <label value="${each.productCode}" width="100%"/>
+                            <label value="${each.productName}" width="100%"/>
+                            <label value="${each.currentSerial}" width="100%"/>
                             <textbox/>
                         </row>
                     </template>
