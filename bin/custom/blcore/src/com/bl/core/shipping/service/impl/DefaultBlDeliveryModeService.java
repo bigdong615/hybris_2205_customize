@@ -830,8 +830,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 						+ " cutoff time - " + deliveryModeModel.getCutOffTime());
 
             if (!isRentalStartDateBlackoutDate(rentalStartDate, holidayBlackoutDates) && (
-				rentalStartLocalDate.isAfter(todayLocalDate1) || (rentalStartLocalDate.isEqual(todayLocalDate1)
-						&& BlDateTimeUtils
+                rentalStartLocalDate.isAfter(todayLocalDate1) || (
+                rentalStartLocalDate.isEqual(todayLocalDate1) && BlDateTimeUtils
                         .compareTimeWithCutOff(deliveryModeModel.getCutOffTime())))) {
 						 LOG.info("******Rental startDate is Inside : " + rentalStartLocalDate + "Today Local Date is : "
 								 + todayLocalDate + "Today formated PST zone date is " + todayLocalDate1 + "Delivery mode: "
@@ -839,11 +839,15 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
             if (isEligibleDeliveryModeForOrderTransfer(deliveryModeModel)) {
 
+					LOG.info("******Rental 001 : ");
                 isAvailable.set(
                     checkAvailabilityForPossibleOrderTransferOrders(deliveryModeModel,
                             rentalStartDate, rentalEndDate, holidayBlackoutDates));
 
             } else {
+
+					LOG.info("******Rental 002 : ");
+
                 final Set<WarehouseModel> lWareHouses =
                     Objects.nonNull(deliveryModeModel.getWarehouse())
                         ? Sets.newHashSet(deliveryModeModel.getWarehouse())
@@ -865,6 +869,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                     if (!productService.isAquatechProduct(cartEntry.getProduct())
                             && stockForEntireDuration.getAvailableCount() < cartEntry
                             .getQuantity()) {
+
+							 LOG.info("******Rental 003 : ");
 
                             BlLogger.logFormatMessageInfo(LOG, Level.INFO,
                                 "Stock not sufficient for Actual rental start date : {} and actual rental end date : {} for product : {} for delivery mode : {}",
@@ -952,6 +958,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 if (!productService.isAquatechProduct(cartEntry.getProduct())
                     && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
 
+						LOG.info("******Rental 004 : ");
                     //here not available, so check in other warehouse  with +1 start date
                     final Date newStartDate = BlDateTimeUtils
                         .getDateWithSubtractedDays(1, rentalStartDate, holidayBlackoutDates);
@@ -961,9 +968,15 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                     final LocalDate todayLocalDate = new Date().toInstant()
                         .atZone(ZoneId.systemDefault()).toLocalDate();
 
+						LOG.info("******Rental Today Local Date is : " + newStartLocalDate + "Today formated PST zone date is "
+								+ todayLocalDate + "Delivery mode: " + deliveryModeModel.getCode() + " cutoff time - "
+								+ deliveryModeModel.getCutOffTime());
+
                     if (newStartLocalDate.isAfter(todayLocalDate) || (
                         newStartLocalDate.isEqual(todayLocalDate) && BlDateTimeUtils
                             .compareTimeWithCutOff(deliveryModeModel.getCutOffTime()))) {
+
+							LOG.info("******Rental 005 : ");
 
                         final StockResult stockForEntireDurationOtherWarehouse = getBlCommerceStockService()
                             .getStockForEntireDuration(
@@ -983,6 +996,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                         }
                     } else {
 
+							LOG.info("******Rental 006 : ");
                         BlLogger.logFormatMessageInfo(LOG, Level.INFO,
                             "New Actual rental start date : {} become past date than : {} for delivery mode : {}",
                             newStartDate, new Date(), deliveryModeModel.getCode());
