@@ -3,6 +3,7 @@ package com.bl.backoffice.widget.controller.consignment.reassignserial;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.warehousing.data.ConsignmentEntriesData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +81,23 @@ public class BlReassignSerialController  extends DefaultWidgetController {
         .getConsignment().getCode());
     this.consignmentCode.setValue(this.getConsignment().getCode());
     this.customerName.setValue(this.getConsignment().getOrder().getUser().getDisplayName());
-	 this.getConsignmentEntries().setModel(new ListModelList<>(inputObject.getConsignmentEntries()));
+	 final List<ConsignmentEntriesData> entriesList = new ArrayList<ConsignmentEntriesData>();
+	 for (final ConsignmentEntryModel entry : inputObject.getConsignmentEntries())
+	 {
+		 for (final BlProductModel product : entry.getSerialProducts())
+		 {
+			 if (product instanceof BlSerialProductModel)
+			 {
+				 final ConsignmentEntriesData dataEntry = new ConsignmentEntriesData();
+				 dataEntry.setCurrentSerial(product.getCode());
+				 dataEntry.setEntryNumber(entry.getOrderEntry().getEntryNumber());
+				 dataEntry.setProductCode(entry.getOrderEntry().getProduct().getCode());
+				 dataEntry.setProductName(entry.getOrderEntry().getProduct().getName());
+				 entriesList.add(dataEntry);
+			 }
+		 }
+	 }
+	 this.getConsignmentEntries().setModel(new ListModelList<>(entriesList));
     this.getConsignmentEntries().renderAll();
   }
 
@@ -103,17 +120,18 @@ public class BlReassignSerialController  extends DefaultWidgetController {
       final Component firstComponent = row.getChildren().iterator().next();
       if (firstComponent instanceof Checkbox && ((Checkbox) firstComponent).isChecked()) {
 			checkedEntries = true;
-			if (((Textbox) row.getChildren().get(3)).getValue() == null || ((Textbox) row.getChildren().get(3)).getValue().isBlank())
+			if (((Textbox) row.getChildren().get(4)).getValue() == null || ((Textbox) row.getChildren().get(4)).getValue().isBlank())
 			{
-				throw new WrongValueException((row.getChildren().get(3)),
+				throw new WrongValueException((row.getChildren().get(4)),
 						this.getLabel("warehousingbackoffice.reassignserial.validation.missing.barcode"));
 			}
       	final String productCode = ((Label) row.getChildren().get(1)).getValue();
+			final String oldSerialCode = ((Label) row.getChildren().get(3)).getValue();
 			for (final ConsignmentEntryModel consign : consignment.getConsignmentEntries())
 			{
 				if (consign.getOrderEntry().getProduct().getCode().equals(productCode))
 				{
-					applyToRow(consign, ((Textbox) row.getChildren().get(3)).getValue(), row);
+					applyToRow(consign, ((Textbox) row.getChildren().get(4)).getValue(), oldSerialCode, row);
 				}
 			}
       }
@@ -126,7 +144,8 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 	this.sendOutput(OUT_CONFIRM, COMPLETED);
   }
 
-  protected void applyToRow(final ConsignmentEntryModel entry, final String barCode, final Component row)
+  protected void applyToRow(final ConsignmentEntryModel entry, final String barCode, final String oldSerialCode,
+		  final Component row)
   {
 	  final BlSerialProductModel serial = this.getDefaultBlProductDao().getSerialByBarcode(barCode);
 	  final List<BlProductModel> productEntries = new ArrayList<BlProductModel>();
@@ -135,7 +154,7 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 	  newItems.putAll(entry.getItems());
 	  for (final BlProductModel productEntry : entry.getSerialProducts())
 	  {
-		  if (productEntry instanceof BlSerialProductModel)
+		  if (productEntry instanceof BlSerialProductModel && productEntry.getCode().equals(oldSerialCode))
 		  {
 			  final BlSerialProductModel serialProduct = (BlSerialProductModel) productEntry;
 			  if (serial != null && serialProduct.getBlProduct().equals(serial.getBlProduct()))
@@ -150,13 +169,15 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 			  }
 			  else
 			  {
-				  throw new WrongValueException((row.getChildren().get(3)),
+				  throw new WrongValueException((row.getChildren().get(4)),
 						  this.getLabel("warehousingbackoffice.reassignserial.validation.incorrect.barcode"));
 			  }
 		  }
 	  }
+	  entry.getOrderEntry().setSerialProducts(productEntries);
 	  entry.setSerialProducts(productEntries);
 	  entry.setItems(newItems);
+	  getModelService().save(entry.getOrderEntry());
 	  getModelService().save(entry);
   }
 
