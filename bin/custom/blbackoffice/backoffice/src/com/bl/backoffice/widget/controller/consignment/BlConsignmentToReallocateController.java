@@ -232,7 +232,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
     blReallocationService.createConsignment(orderModel, context, selectedWH);
 
-    updateCurrentConsignmentStatus(this.consignment, allEntryAllQuantityReallocated);
+    updateCurrentConsignmentStatus(this.consignment, allEntryAllQuantityReallocated, orderEntries);
 
     this.sendOutput(OUT_CONFIRM, COMPLETED);
   }
@@ -244,15 +244,40 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
    * @param consignment     the consignment
    * @param allEntryAllQuantityReallocated the boolean values for each entry
    */
-  private void updateCurrentConsignmentStatus(final ConsignmentModel consignment,
-      final List<AtomicBoolean> allEntryAllQuantityReallocated) {
-
-    if (allEntryAllQuantityReallocated.stream().allMatch(AtomicBoolean::get)) {
-      consignment.setStatus(ConsignmentStatus.CANCELLED);
-      modelService.save(consignment);
-      modelService.refresh(consignment);
-    }
-  }
+   private void updateCurrentConsignmentStatus(final ConsignmentModel consignment,
+   		  final List<AtomicBoolean> allEntryAllQuantityReallocated, final List<AbstractOrderEntryModel> orderEntries)
+     {
+       if (allEntryAllQuantityReallocated.stream().allMatch(AtomicBoolean::get)) {
+   		  if (consignment.getConsignmentEntries().size() > 1 && consignment.getConsignmentEntries().size() != orderEntries.size())
+   		  {
+   			  Set<ConsignmentEntryModel> entriesList = new HashSet<ConsignmentEntryModel>();
+      			entriesList.addAll(consignment.getConsignmentEntries());
+   			  for (final ConsignmentEntryModel consign : consignment.getConsignmentEntries())
+   			  {
+   				  for (final AbstractOrderEntryModel entry : orderEntries)
+   				  {
+   					  if (consign.getOrderEntry().equals(entry))
+   					  {
+   						  entriesList.remove(consign);
+   					  }
+   				  }
+   			  }
+   			  if (entriesList.isEmpty())
+   			  {
+   				  consignment.setStatus(ConsignmentStatus.CANCELLED);
+   			  }
+   			  consignment.setConsignmentEntries(entriesList);
+   			  modelService.save(consignment);
+   			  modelService.refresh(consignment);
+   		  }
+   		  else
+   		  {
+   			  consignment.setStatus(ConsignmentStatus.CANCELLED);
+   			  modelService.save(consignment);
+   			  modelService.refresh(consignment);
+   		  }
+       }
+     }
 
   /**
    * Show message box.
