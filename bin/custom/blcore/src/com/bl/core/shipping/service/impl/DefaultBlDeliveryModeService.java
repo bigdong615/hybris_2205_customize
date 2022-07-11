@@ -225,9 +225,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 		  //		  }
 
         if (result >= BlInventoryScanLoggingConstants.TWO) {
-			  if (result == BlInventoryScanLoggingConstants.TWO && zoneDeliveryMode != null
+			  if (result == BlInventoryScanLoggingConstants.TWO && (zoneDeliveryMode != null
 					  ? !BlDateTimeUtils.compareTimeWithCutOff(zoneDeliveryMode.getCutOffTime())
-					  : Boolean.FALSE)
+					  : Boolean.FALSE) && !(currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)))
 			  {
 				  return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT, null,
 						  payByCustomer);
