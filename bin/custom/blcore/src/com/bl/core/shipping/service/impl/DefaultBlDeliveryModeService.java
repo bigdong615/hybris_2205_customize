@@ -210,7 +210,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                                                                        final String carrier,
                                                                                        final boolean payByCustomer) {
         final String pstCutOffTime = BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST);
-		  int result = checkDateForRental(
+		  final int result = checkDateForRental(
 				  BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
                 rentalStart);
 		  final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST,
@@ -218,15 +218,26 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
 		  final ZoneDeliveryModeModel zoneDeliveryMode = blDeliveryModeService
 				  .getZoneDeliveryMode(ShippingCostEnum.UPS_OVERNIGHT_ROUND_TRIP.getCode());
-		  if (result == 2 && zoneDeliveryMode != null ? !BlDateTimeUtils.compareTimeWithCutOff(zoneDeliveryMode.getCutOffTime())
-				  : Boolean.FALSE)
-		  {
-			  result = 1;
-		  }
+		  //		  if (result == 2 && zoneDeliveryMode != null ? !BlDateTimeUtils.compareTimeWithCutOff(zoneDeliveryMode.getCutOffTime())
+		  //				  : Boolean.FALSE)
+		  //		  {
+		  //			  result = 1;
+		  //		  }
 
         if (result >= BlInventoryScanLoggingConstants.TWO) {
-            return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
+			  if (result == BlInventoryScanLoggingConstants.TWO && zoneDeliveryMode != null
+					  ? !BlDateTimeUtils.compareTimeWithCutOff(zoneDeliveryMode.getCutOffTime())
+					  : Boolean.FALSE)
+			  {
+				  return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT, null,
+						  payByCustomer);
+			  }
+			  else
+			  {
+				  return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
                     null, payByCustomer);
+			  }
+
         } else if (result == BlInventoryScanLoggingConstants.ONE) {
 			  // final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST, new Date().toString());
             if (currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)) {
@@ -803,7 +814,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                                 final ZoneDeliveryModeModel deliveryModeModel) {
         final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
 
-        if (Objects.nonNull(deliveryModeModel)) {
+		  if (Objects.nonNull(deliveryModeModel))
+		  {
 
             final int preDaysToDeduct = Integer.parseInt(deliveryModeModel.getPreReservedDays());
 
