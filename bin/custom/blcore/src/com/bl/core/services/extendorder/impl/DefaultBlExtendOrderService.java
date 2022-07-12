@@ -6,6 +6,7 @@ import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.NotesModel;
 import com.bl.core.services.extendorder.BlExtendOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -69,7 +70,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
   private OrderModel getExtendOrder(final OrderModel originalOrder ,final long defaultAddedTimeForExtendRental)
   {
       final OrderModel extendOrderModel = getModelService().clone(originalOrder);
-
+      extendOrderModel.setOrderNotes(Collections.EMPTY_LIST);
       // Set default values once order is cloned
       setDefaultValuesForExtendOrder(extendOrderModel ,defaultAddedTimeForExtendRental);
       saveAndRefreshModel(extendOrderModel);
@@ -78,12 +79,10 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       // clone consignment and consignment entries for extend order
       cloneConsignmentForExtendOrder(originalOrder , clonedList);
       extendOrderModel.setConsignments(clonedList);
-    extendOrderModel.setOrderModifiedDate(null);
+      extendOrderModel.setOrderModifiedDate(null);
       saveAndRefreshModel(extendOrderModel);
       getModelService().saveAll(clonedList);
-      if(CollectionUtils.isNotEmpty(originalOrder.getOrderNotes())) {
-        extendOrderModel.setOrderNotes(originalOrder.getOrderNotes());
-      }
+      clonedOrderNotesForExtendOrder(originalOrder , extendOrderModel);
       saveAndRefreshModel(extendOrderModel);
       originalOrder.setExtendedOrderCopy(extendOrderModel);
       saveAndRefreshModel(originalOrder);
@@ -121,6 +120,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
   {
     for(final ConsignmentModel consignmentModel : originalOrder.getConsignments()) {
       final ConsignmentModel clonedConsignment = getModelService().clone(consignmentModel);
+      clonedConsignment.setOrderNotes(Collections.emptyList());
       final Set<ConsignmentEntryModel> consignmentEntryModellist = new HashSet<>();
       for(final ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
         final ConsignmentEntryModel consignmentEntryModel1 = getModelService().clone(consignmentEntryModel);
@@ -353,6 +353,28 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       }
     }
     return isPaymentCaptured.get();
+  }
+
+  /**
+   * Cloning the order Notes For Extend Order
+   *
+   * @param originalOrder
+   * @param extendOrderModel
+   */
+  private void clonedOrderNotesForExtendOrder(final OrderModel originalOrder, final OrderModel extendOrderModel) {
+    if(CollectionUtils.isNotEmpty(originalOrder.getOrderNotes())) {
+      List<NotesModel> notesModels = new ArrayList<>();
+      originalOrder.getOrderNotes().forEach(notesModel -> {
+        final NotesModel clonedNotes  = getModelService().clone(notesModel);
+        clonedNotes.setConsignment(Collections.EMPTY_SET);
+        clonedNotes.setConsignment(extendOrderModel.getConsignments());
+        clonedNotes.setOrder(extendOrderModel);
+        notesModels.add(clonedNotes);
+        getModelService().save(clonedNotes);
+        getModelService().refresh(clonedNotes);
+      });
+      extendOrderModel.setOrderNotes(notesModels);
+    }
   }
 
   public ModelService getModelService() {
