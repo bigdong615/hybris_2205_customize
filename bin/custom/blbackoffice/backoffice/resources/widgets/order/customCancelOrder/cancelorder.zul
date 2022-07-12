@@ -94,7 +94,7 @@
             </grid>
         </div>
         <div sclass="oms-widget-cancelorder-list-container">
-            <grid id="orderEntries" mold="paging" sclass="table-scroll-cancel-popup-orderEntries" pageSize="5">
+            <grid id="orderEntries" mold="paging" sclass="table-scroll-cancel-popup-orderEntries" pageSize="4">
                 <custom-attributes org.zkoss.zul.grid.autoSort="true" />
                 <columns>
                     <column width="40px" sclass="oms-widget-cancelorder-listbox-header">
