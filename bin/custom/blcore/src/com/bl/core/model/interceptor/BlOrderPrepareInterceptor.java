@@ -111,7 +111,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		
      final Set<ConsignmentModel> consignmentModels = abstractOrderModel.getConsignments();
     if (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.ORDERNOTES)) {
-		if (CollectionUtils.isNotEmpty(consignmentModels) && BooleanUtils.isFalse(abstractOrderModel.getIsExtendedOrder())) {
+		if (CollectionUtils.isNotEmpty(consignmentModels)) {
         //set order notes
         setConsignmentsInNotes(abstractOrderModel, consignmentModels, interceptorContext);
       }
