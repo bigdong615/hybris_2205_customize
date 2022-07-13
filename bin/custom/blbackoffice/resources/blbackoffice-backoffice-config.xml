@@ -1533,6 +1533,8 @@
                    	<editorArea:attribute qualifier="outBoundGraphicImage"/>
                    	<editorArea:attribute qualifier="inBoundShippingLabel"/>
                    	<editorArea:attribute qualifier="outBoundShippingLabel"/>
+                   	<editorArea:attribute qualifier="inBoundShippingMedia"/>
+                   	<editorArea:attribute qualifier="outBoundShippingMedia"/>
                     <editorArea:attribute qualifier="hTMLImage"/>
                     <editorArea:attribute qualifier="consignmentPOS"/>
                     <editorArea:attribute qualifier="consignment"/>

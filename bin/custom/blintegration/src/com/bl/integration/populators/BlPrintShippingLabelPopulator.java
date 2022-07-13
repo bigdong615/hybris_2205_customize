@@ -9,6 +9,7 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 
+import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.data.UserData;
 
 /**
@@ -23,9 +24,9 @@ public class BlPrintShippingLabelPopulator implements Populator<PackagingInfoMod
 	{
 		if(source !=null && target !=null)
 		{
-   		target.setOutBoundShippingLabel(source.getOutBoundShippingLabel());	
+   		target.setOutBoundShippingLabel(source.getOutBoundShippingMedia()!=null ? source.getOutBoundShippingMedia().getDownloadURL() : BlintegrationConstants.EMPTY_STRING);	
    		target.setOutBoundGraphicImage(source.getOutBoundGraphicImage());
-   		target.setInBoundShippingLabel(source.getInBoundShippingLabel());	
+   		target.setInBoundShippingLabel(source.getInBoundShippingMedia()!=null ? source.getInBoundShippingMedia().getDownloadURL() : BlintegrationConstants.EMPTY_STRING);	
    		target.setInBoundGraphicImage(source.getInBoundGraphicImage());
    	}
 	}

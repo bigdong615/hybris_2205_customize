@@ -4224,6 +4224,16 @@
                 </columntype>
               </persistence>
           </attribute>
+          <attribute qualifier="inBoundShippingMedia" type="CatalogUnawareMedia">
+            <description>It saves the inbound shipping label ZPL code in text format</description>
+            <modifiers read="true" write="true" optional="true"/>
+              <persistence type="property"/>
+          </attribute>
+          <attribute qualifier="outBoundShippingMedia" type="CatalogUnawareMedia">
+            <description>It saves the outbound shipping label ZPL code in text format</description>
+            <modifiers read="true" write="true" optional="true"/>
+              <persistence type="property"/>
+          </attribute>
         </attributes>
 			</itemtype>
 		</typegroup>
