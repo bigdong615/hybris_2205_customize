@@ -152,7 +152,6 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 	  productEntries.addAll(entry.getSerialProducts());
 	  final Map<String, ItemStatusEnum> newItems = new HashMap<String, ItemStatusEnum>();
 	  newItems.putAll(entry.getItems());
-	  final long reassignedSerialQuantity = entry.getQuantity();
 	  for (final BlProductModel productEntry : entry.getSerialProducts())
 	  {
 		  if (productEntry instanceof BlSerialProductModel && productEntry.getCode().equals(oldSerialCode))
@@ -177,7 +176,6 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 			  entry.setSerialProducts(productEntries);
 			  entry.setItems(newItems);
 			  getModelService().save(entry.getOrderEntry());
-			  entry.setQuantity(reassignedSerialQuantity);
 			  getModelService().save(entry);
 		  }
 	  }
