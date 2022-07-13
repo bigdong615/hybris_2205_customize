@@ -17,7 +17,8 @@ import com.bl.integration.dao.BlPrintingShippingLabelDao;
 
 
 /**
- * @author Admin
+ * @author Aditi Sharma
+ * This class is responsible to fetch the consignment for which trying to print the shipping label.
  *
  */
 public class DefaultBlPrintingShippingLabelDao implements BlPrintingShippingLabelDao
@@ -27,6 +28,9 @@ public class DefaultBlPrintingShippingLabelDao implements BlPrintingShippingLabe
 	@Autowired
 	private FlexibleSearchService flexibleSearchService;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ConsignmentModel getConsignmentByPk(final String code)
 	{

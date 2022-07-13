@@ -155,6 +155,8 @@
     <property name="blUPSShipmentCreateResponsePopulator" ref="blUPSShipmentCreateResponsePopulator"/>
     <property name="blFedExShipmentCreateRequestPopulator" ref="blFedExShipmentCreateRequestPopulator"/>
     <property name="blUPSSecurityPopulator" ref="blUPSSecurityPopulator"/>
+    <property name="modelService" ref="modelService" />
+    <property name="mediaService" ref="mediaService"/>
   </bean>
   
   <bean id="blUPSSecurityPopulator"

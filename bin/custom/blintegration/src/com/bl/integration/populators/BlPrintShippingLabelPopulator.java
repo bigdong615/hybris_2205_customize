@@ -23,9 +23,9 @@ public class BlPrintShippingLabelPopulator implements Populator<PackagingInfoMod
 	{
 		if(source !=null && target !=null)
 		{
-   		target.setOutBoundShippingLabel(source.getOutBoundShippingLabel());	
+   		target.setOutBoundShippingLabel(source.getOutBoundShippingMedia()!=null ? source.getOutBoundShippingMedia().getDownloadURL() : "");	
    		target.setOutBoundGraphicImage(source.getOutBoundGraphicImage());
-   		target.setInBoundShippingLabel(source.getInBoundShippingLabel());	
+   		target.setInBoundShippingLabel(source.getInBoundShippingMedia()!=null ? source.getInBoundShippingMedia().getDownloadURL() : "");	
    		target.setInBoundGraphicImage(source.getInBoundGraphicImage());
    	}
 	}

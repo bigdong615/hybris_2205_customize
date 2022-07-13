@@ -5,6 +5,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -88,9 +89,10 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 	/**
 	 * this method will be used to generate return shipment
+	 * @throws IOException 
 	 */
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.GENERATE_INBOUND_LABEL, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
-	public void generateInboundLabel()
+	public void generateInboundLabel() throws IOException
 	{
 		final List<PackagingInfoModel> packages = selectedConsignment.getPackaginginfos();
 
@@ -122,8 +124,9 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 * this method will be used to create shipment for optimized warehouse
 	 *
 	 * @param packages
+	 * @throws IOException 
 	 */
-	private void createShipmentForOptimizedWarehouse(final List<PackagingInfoModel> packages)
+	private void createShipmentForOptimizedWarehouse(final List<PackagingInfoModel> packages) throws IOException
 	{
 		final WarehouseModel stateWarehouse = getBlDeliveryStateSourcingLocationFilter()
 				.applyFilter(selectedConsignment.getOrder());
@@ -150,7 +153,15 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		activeWarehouseList.forEach(warehouse -> {
 			if (this.warehouseCombobox.getSelectedItem().getValue().equals(warehouse.getCode()))
 			{
-				startShipmentCreationProcess(packages, warehouse);
+				try
+				{
+					startShipmentCreationProcess(packages, warehouse);
+				}
+				catch (IOException ioException)
+				{
+					BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Creating shipment package for {}", ioException.getMessage());
+
+				}
 			}
 		});
 	}
@@ -160,8 +171,9 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 *
 	 * @param packages
 	 * @param stateWarehouse
+	 * @throws IOException 
 	 */
-	private void startShipmentCreationProcess(final List<PackagingInfoModel> packages, final WarehouseModel stateWarehouse)
+	private void startShipmentCreationProcess(final List<PackagingInfoModel> packages, final WarehouseModel stateWarehouse) throws IOException
 	{
 		final Map<String, Integer> sequenceMap = new HashedMap();
 		final int packageCount = packages.size();

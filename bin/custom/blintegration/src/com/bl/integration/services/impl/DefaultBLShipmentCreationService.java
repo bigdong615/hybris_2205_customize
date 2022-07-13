@@ -1,15 +1,23 @@
 package com.bl.integration.services.impl;
 
+import de.hybris.platform.catalog.model.CatalogUnawareMediaModel;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.media.MediaService;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +72,10 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 {
 	private static final Logger LOG = Logger.getLogger(DefaultBLShipmentCreationService.class);
 
+	private ModelService modelService;
+
+	private MediaService mediaService;
+	
 	private BLUPSShipmentCreateRequestPopulator blUPSShipmentCreateRequestPopulator;
 
 	private BLUPSShipmentCreateResponsePopulator blUPSShipmentCreateResponsePopulator;
@@ -358,6 +370,47 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		}
 		return false;
 	}
+	
+	/**
+	 * This method is used to create media model for printing shipping label
+	 * @param zplCode
+	 * @param trackingNumber
+	 * @param packageInfo
+	 * @return
+	 * @throws IOException
+	 */
+	public CatalogUnawareMediaModel createCatalogUnawareMediaModel(final String zplCode, final String trackingNumber,
+																   final String packageInfo) throws IOException
+	{
+		final File file = getFile(trackingNumber, packageInfo);
+		Files.writeString(Paths.get(file.getAbsolutePath()), zplCode);
+		final CatalogUnawareMediaModel media = getModelService().create(CatalogUnawareMediaModel.class);
+		media.setCode(file.getName());
+		getModelService().save(media);
+
+		try (InputStream pritingLabelInputStream = new FileInputStream(file))
+		{
+			getMediaService().setStreamForMedia(media, pritingLabelInputStream, file.getName(), BlintegrationConstants.MIME_TYPE);
+		}
+		catch (final IOException io)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, io.getMessage());
+		}
+		return media;
+	}
+
+	/**
+	 * This method is used to create the file
+	 * @param trackingNumber
+	 * @param packageInfo
+	 * @return
+	 * @throws IOException
+	 */
+	private File getFile(final String trackingNumber, final String packageInfo) throws IOException
+	{
+		return File.createTempFile(packageInfo.concat(BlintegrationConstants.UNDERSCORE).concat(trackingNumber), BlintegrationConstants.FILE_FORMAT);
+
+	}
 
 	/**
 	 * @return the blUPSShipmentCreateRequestPopulator
@@ -428,6 +481,38 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			final BLFedExShipmentCreateRequestPopulator blFedExShipmentCreateRequestPopulator)
 	{
 		this.blFedExShipmentCreateRequestPopulator = blFedExShipmentCreateRequestPopulator;
+	}
+
+	/**
+	 * @return the modelService
+	 */
+	public ModelService getModelService()
+	{
+		return modelService;
+	}
+
+	/**
+	 * @param modelService the modelService to set
+	 */
+	public void setModelService(ModelService modelService)
+	{
+		this.modelService = modelService;
+	}
+
+	/**
+	 * @return the mediaService
+	 */
+	public MediaService getMediaService()
+	{
+		return mediaService;
+	}
+
+	/**
+	 * @param mediaService the mediaService to set
+	 */
+	public void setMediaService(MediaService mediaService)
+	{
+		this.mediaService = mediaService;
 	}
 
 }
