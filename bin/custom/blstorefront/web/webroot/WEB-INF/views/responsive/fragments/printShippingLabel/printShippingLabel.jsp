@@ -18,7 +18,7 @@
 			</tr>
 				<tr>
 					<td style="padding:10px">
-						<a href="${entry.outBoundShippingLabel }" title="Download Outboud Label">Download Outboud Label</a>
+						<a href="${entry.outBoundShippingLabel }" title="Download Outbound Label">Download Outbound Label</a>
 					</td>
 					<td style="padding:10px">
 						<a href="${entry.inBoundShippingLabel }" title="Download Inbound Label">Download Inbound Label</a>
