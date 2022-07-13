@@ -275,9 +275,9 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			BlLogger.logMessage(LOG, Level.DEBUG, uriException.getMessage());
 		}
 
-		catch (final IOException io)
+		catch (final IOException ioException)
 		{
-			BlLogger.logMessage(LOG, Level.DEBUG, io.getMessage());
+			BlLogger.logMessage(LOG, Level.ERROR, "An exception occurred while creating fedEx shipment response", ioException);
 		}
 
 		return null;
@@ -393,9 +393,9 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Creating shippingMedia for {}", media.getCode());
 			getMediaService().setStreamForMedia(media, pritingLabelInputStream, file.getName(), BlintegrationConstants.MIME_TYPE);
 		}
-		catch (final IOException io)
+		catch (final IOException ioException)
 		{
-			BlLogger.logMessage(LOG, Level.ERROR, "An exception occure while creating media model for printing label", io.getMessage());
+			BlLogger.logMessage(LOG, Level.ERROR, "An exception occurred while creating media model for printing label", ioException);
 		}
 		return media;
 	}
