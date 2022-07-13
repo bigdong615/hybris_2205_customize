@@ -1732,8 +1732,6 @@
 				<as:field editor="hybris.bin.custom.blbackoffice.blcustom.customdateeditor"
 					name="optimizedShippingStartDate" selected="true" operator="greaterOrEquals"/>
 				<as:field name="warehouse" editor="com.bl.backoffice.editor.blwarehouseeditor" selected="true"/>
-				<as:field name="pickUpPersonFirstName" selected="true" mandatory="true"/>
-				<as:field name="pickUpPersonLastName" selected="true" mandatory="true"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
