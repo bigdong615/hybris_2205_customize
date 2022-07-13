@@ -89,7 +89,7 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 			}
 			catch (final ParseException | IOException exception)
 			{
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception occure at {}", exception.getMessage());
+				BlLogger.logMessage(LOG, Level.DEBUG, "Exception occure while generating shipment label", exception.getMessage());
 			}
 		}
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());

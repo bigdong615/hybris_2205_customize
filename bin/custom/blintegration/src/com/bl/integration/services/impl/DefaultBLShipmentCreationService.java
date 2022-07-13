@@ -390,11 +390,12 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 
 		try (InputStream pritingLabelInputStream = new FileInputStream(file))
 		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Creating shippingMedia for {}", media.getCode());
 			getMediaService().setStreamForMedia(media, pritingLabelInputStream, file.getName(), BlintegrationConstants.MIME_TYPE);
 		}
 		catch (final IOException io)
 		{
-			BlLogger.logMessage(LOG, Level.ERROR, io.getMessage());
+			BlLogger.logMessage(LOG, Level.ERROR, "An exception occure while creating media model for printing label", io.getMessage());
 		}
 		return media;
 	}

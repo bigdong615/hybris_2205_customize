@@ -159,8 +159,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 				}
 				catch (IOException ioException)
 				{
-					BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Creating shipment package for {}", ioException.getMessage());
-
+					BlLogger.logMessage(LOG, Level.ERROR, "An exception occure while generating return label", ioException.getMessage());
 				}
 			}
 		});

@@ -78,6 +78,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String MIME_TYPE = "plain/text";
 	public static final String FILE_FORMAT = ".txt";
 	public static final String UNDERSCORE = "_";
+	public static final String EMPTY_STRING = "";
 
 
 	public static final String FEDEX_ACCOUNT_NUMBER = "ups.scrape.fedex.acount.number";
