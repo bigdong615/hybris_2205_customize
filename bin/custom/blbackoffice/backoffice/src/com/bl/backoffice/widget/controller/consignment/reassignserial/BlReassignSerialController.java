@@ -149,10 +149,10 @@ public class BlReassignSerialController  extends DefaultWidgetController {
   {
 	  final BlSerialProductModel serial = this.getDefaultBlProductDao().getSerialByBarcode(barCode);
 	  final List<BlProductModel> productEntries = new ArrayList<BlProductModel>();
+	  final long reassignedSerialQuantity = getConsignmentQuantities(entry);
 	  productEntries.addAll(entry.getSerialProducts());
 	  final Map<String, ItemStatusEnum> newItems = new HashMap<String, ItemStatusEnum>();
 	  newItems.putAll(entry.getItems());
-	  final long reassignedSerialQuantity = entry.getQuantity();
 	  for (final BlProductModel productEntry : entry.getSerialProducts())
 	  {
 		  if (productEntry instanceof BlSerialProductModel && productEntry.getCode().equals(oldSerialCode))
@@ -182,6 +182,23 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 		  }
 	  }
   }
+
+/**
+ * @param entry
+ * @return quantity
+ */
+private long getConsignmentQuantities(final ConsignmentEntryModel entry)
+{
+	long reassignedSerialQuantity = 0L;
+	  for (final BlProductModel prodEntry : entry.getSerialProducts())
+	  {
+		  if (prodEntry instanceof BlSerialProductModel)
+		  {
+			  reassignedSerialQuantity++;
+		  }
+	  }
+	return reassignedSerialQuantity;
+}
 
   protected void selectAllEntries()
   {
