@@ -149,10 +149,10 @@ public class BlReassignSerialController  extends DefaultWidgetController {
   {
 	  final BlSerialProductModel serial = this.getDefaultBlProductDao().getSerialByBarcode(barCode);
 	  final List<BlProductModel> productEntries = new ArrayList<BlProductModel>();
-	  final long reassignedSerialQuantity = getConsignmentQuantities(entry);
 	  productEntries.addAll(entry.getSerialProducts());
 	  final Map<String, ItemStatusEnum> newItems = new HashMap<String, ItemStatusEnum>();
 	  newItems.putAll(entry.getItems());
+	  final long reassignedSerialQuantity = entry.getQuantity();
 	  for (final BlProductModel productEntry : entry.getSerialProducts())
 	  {
 		  if (productEntry instanceof BlSerialProductModel && productEntry.getCode().equals(oldSerialCode))
@@ -173,32 +173,15 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 				  throw new WrongValueException((row.getChildren().get(4)),
 						  this.getLabel("warehousingbackoffice.reassignserial.validation.incorrect.barcode"));
 			  }
-			  entry.setQuantity(reassignedSerialQuantity);
 			  entry.getOrderEntry().setSerialProducts(productEntries);
 			  entry.setSerialProducts(productEntries);
 			  entry.setItems(newItems);
 			  getModelService().save(entry.getOrderEntry());
+			  entry.setQuantity(reassignedSerialQuantity);
 			  getModelService().save(entry);
 		  }
 	  }
   }
-
-/**
- * @param entry
- * @return quantity
- */
-private long getConsignmentQuantities(final ConsignmentEntryModel entry)
-{
-	long reassignedSerialQuantity = 0L;
-	  for (final BlProductModel prodEntry : entry.getSerialProducts())
-	  {
-		  if (prodEntry instanceof BlSerialProductModel)
-		  {
-			  reassignedSerialQuantity++;
-		  }
-	  }
-	return reassignedSerialQuantity;
-}
 
   protected void selectAllEntries()
   {
