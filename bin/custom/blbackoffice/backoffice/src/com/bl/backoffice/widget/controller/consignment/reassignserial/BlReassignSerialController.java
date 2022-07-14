@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -172,13 +173,14 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 				  throw new WrongValueException((row.getChildren().get(4)),
 						  this.getLabel("warehousingbackoffice.reassignserial.validation.incorrect.barcode"));
 			  }
-			  entry.getOrderEntry().setSerialProducts(productEntries);
-			  entry.setSerialProducts(productEntries);
-			  entry.setItems(newItems);
-			  getModelService().save(entry.getOrderEntry());
-			  getModelService().save(entry);
 		  }
 	  }
+	  entry.getOrderEntry().setSerialProducts(productEntries.stream()
+			  .filter(blSerialProduct -> blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList()));
+	  entry.setSerialProducts(productEntries);
+	  entry.setItems(newItems);
+	  getModelService().save(entry.getOrderEntry());
+	  getModelService().save(entry);
   }
 
   protected void selectAllEntries()
