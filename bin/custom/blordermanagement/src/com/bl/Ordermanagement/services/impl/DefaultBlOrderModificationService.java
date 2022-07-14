@@ -394,7 +394,7 @@ public class DefaultBlOrderModificationService
 						billingCharges.entrySet().removeIf(code -> code.getKey().equals(serialProduct.getCode()));
 						consignmentEntry.setBillingCharges(billingCharges);
 						products.remove(serialProduct);
-						consignmentEntry.setQuantity(Long.valueOf(consignmentEntry.getSerialProducts().stream().filter(blSerialProduct ->
+						consignmentEntry.setQuantity(Long.valueOf(products.stream().filter(blSerialProduct ->
 						blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList()).size()));
 						updateConsignmentEntry(serialProduct, consignmentEntry, products, itemMap);
 						updateStockForSerial(consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(),
