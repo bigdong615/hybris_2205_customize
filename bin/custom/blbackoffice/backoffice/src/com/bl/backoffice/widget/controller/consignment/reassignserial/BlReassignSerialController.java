@@ -179,8 +179,8 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 			  .filter(blSerialProduct -> blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList()));
 	  entry.setSerialProducts(productEntries);
 	  entry.setItems(newItems);
-	  getModelService().save(entry.getOrderEntry());
 	  getModelService().save(entry);
+	  getModelService().save(entry.getOrderEntry());
   }
 
   protected void selectAllEntries()
