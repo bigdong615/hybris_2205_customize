@@ -175,8 +175,8 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 			  entry.getOrderEntry().setSerialProducts(productEntries);
 			  entry.setSerialProducts(productEntries);
 			  entry.setItems(newItems);
-			  getModelService().save(entry.getOrderEntry());
 			  getModelService().save(entry);
+			  getModelService().save(entry.getOrderEntry());
 		  }
 	  }
   }
