@@ -75,8 +75,8 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String SIMPLE_DATE_FORMAT = "hh";
 	public static final String INBOUND_PACKAGE = "InboundPackage";
 	public static final String OUTBOUND_PACKAGE = "OutboundPackage";
-	public static final String MIME_TYPE = "plain/text";
-	public static final String FILE_FORMAT = ".txt";
+	public static final String MIME_TYPE = "x-application/zpl";
+	public static final String FILE_FORMAT = ".zpl";
 	public static final String UNDERSCORE = "_";
 	public static final String EMPTY_STRING = "";
 
