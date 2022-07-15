@@ -35,16 +35,8 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections.map.HashedMap;
@@ -109,6 +101,12 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		{
 			if(((BlProductModel)orderEntryModel.getProduct()).isBundleProduct()){
 				orderEntryModel.setBundleMainEntry(Boolean.TRUE);
+			}
+			for (BlSerialProductModel serial : serialProduct) {
+				if(Objects.nonNull(serial.getBlProduct()) && Objects.nonNull(orderEntryModel.getProduct()) && !serial.getBlProduct().equals(orderEntryModel.getProduct()))
+				{
+					throw new InterceptorException("Wrong Serial");
+				}
 			}
 			if (orderEntryModel.getOrder().getIsRentalOrder())
 			{
