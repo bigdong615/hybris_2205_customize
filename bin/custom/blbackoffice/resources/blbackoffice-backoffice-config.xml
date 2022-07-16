@@ -1863,6 +1863,9 @@
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:as="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:lv="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config" xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<editorArea:tab name="blbackoffice.consignmententry.tab.serialproducts.name" position="2">
 				<editorArea:section columns="1" name="blbackoffice.consignmententry.section.general.name">
+					<editorArea:attribute qualifier="testingStatus"/>
+					<editorArea:attribute qualifier="gearRated"/>
+					<editorArea:attribute qualifier="consignmentEntryStatus" readonly="false"/>
 					<editorArea:attribute qualifier="items" readonly="false"/>
 					<editorArea:attribute qualifier="serialProducts" readonly="false"/>
 				</editorArea:section>
