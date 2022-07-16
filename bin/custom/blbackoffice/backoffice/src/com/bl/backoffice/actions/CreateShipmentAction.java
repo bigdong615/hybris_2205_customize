@@ -4,6 +4,7 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -86,9 +87,9 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 			{
 				getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel, packageCount, sequenceNumber);
 			}
-			catch (final ParseException exception)
+			catch (final ParseException | IOException exception)
 			{
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception occure at {}", exception.getMessage());
+				BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while generating shipment label", exception);
 			}
 		}
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());

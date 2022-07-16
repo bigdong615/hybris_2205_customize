@@ -11,5 +11,10 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
  */
 public interface BlPrintingShippingLabelDao
 {
+	/**
+	 * This method is used to get the consignment by PK
+	 * @param code
+	 * @return
+	 */
 	ConsignmentModel getConsignmentByPk(final String code);
 }

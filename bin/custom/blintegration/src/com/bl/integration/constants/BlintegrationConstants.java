@@ -38,7 +38,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String CONTENT_TYPE = "Content-Type";
 	public static final String AUTHORIZATION = "Authorization";
 	public static final String Q_NAME_CODE = "ShipService";
-	public static final String Q_NAME_TRACK_CODE ="TrackService";
+	public static final String Q_NAME_TRACK_CODE = "TrackService";
 
 	public static final String INTERNAL_SERVER_ERROR_CODE = "500";
 	public static final String FAILURE_STRING = "Failure";
@@ -73,6 +73,12 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String WEIGHT_UNIT = "LB";
 	public static final String DIMENSION_UNIT = "IN";
 	public static final String SIMPLE_DATE_FORMAT = "hh";
+	public static final String INBOUND_PACKAGE = "InboundPackage";
+	public static final String OUTBOUND_PACKAGE = "OutboundPackage";
+	public static final String MIME_TYPE = "x-application/zpl";
+	public static final String FILE_FORMAT = ".zpl";
+	public static final String UNDERSCORE = "_";
+	public static final String EMPTY_STRING = "";
 
 
 	public static final String FEDEX_ACCOUNT_NUMBER = "ups.scrape.fedex.acount.number";

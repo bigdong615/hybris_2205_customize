@@ -1,5 +1,6 @@
 package com.bl.integration.facades.impl;
 
+import de.hybris.platform.catalog.model.CatalogUnawareMediaModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -68,11 +69,12 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 *
 	 * @param packagingInfo
 	 *           as Package Info
+	 * @throws IOException 
 	 * @throws ParseException
 	 */
 	@Override
 	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
-			final Map<String, Integer> sequenceMap)
+			final Map<String, Integer> sequenceMap) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.UPS_SHIPMENT_MSG);
 
@@ -99,11 +101,12 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 *
 	 * @param packagingInfo
 	 *           as Package Info
+	 * @throws IOException 
 	 * @throws ParseException
 	 */
 	@Override
 	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,
-			final int packageCount, final Map<String, Integer> sequenceMap)
+			final int packageCount, final Map<String, Integer> sequenceMap) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.RETURN_SHIPMENT_MSG);
 
@@ -233,14 +236,22 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 *
 	 * @param upsResponse
 	 * @param packagingInfo
+	 * @throws IOException 
 	 */
-	private void saveResponseOnInBoundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo)
+	private void saveResponseOnInBoundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo) throws IOException
 	{
 		final StringBuilder buffer = new StringBuilder();
 		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo, buffer);
 		packagingInfo.setInBoundShippingLabel(buffer.toString());
 		packagingInfo.setInBoundTrackingNumber(shipmentPackage.getTrackingNumber());
 		packagingInfo.setInBoundGraphicImage(shipmentPackage.getGraphicImage());
+		final CatalogUnawareMediaModel createCatalogUnawareMediaModel = getBlShipmentCreationService().createCatalogUnawareMediaModel(buffer.toString(),
+				shipmentPackage.getTrackingNumber(), BlintegrationConstants.INBOUND_PACKAGE);
+		if (packagingInfo.getInBoundShippingMedia() != null)
+		{
+			getModelService().remove(packagingInfo.getInBoundShippingMedia());
+		}
+		packagingInfo.setInBoundShippingMedia(createCatalogUnawareMediaModel);
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Inbound Shipment generated for Package with tracking number : {}",
@@ -252,14 +263,22 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 *
 	 * @param upsResponse
 	 * @param packagingInfo
+	 * @throws IOException 
 	 */
-	private void saveResponseOnOutboundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo)
+	private void saveResponseOnOutboundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo) throws IOException
 	{
 		final StringBuilder buffer = new StringBuilder();
 		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo, buffer);
 		packagingInfo.setOutBoundShippingLabel(buffer.toString());
 		packagingInfo.setOutBoundTrackingNumber(shipmentPackage.getTrackingNumber());
 		packagingInfo.setOutBoundGraphicImage(shipmentPackage.getGraphicImage());
+		final CatalogUnawareMediaModel createCatalogUnawareMediaModel = getBlShipmentCreationService().createCatalogUnawareMediaModel(buffer.toString(),
+				shipmentPackage.getTrackingNumber(), BlintegrationConstants.OUTBOUND_PACKAGE);
+		if (packagingInfo.getOutBoundShippingMedia() != null)
+		{
+			getModelService().remove(packagingInfo.getOutBoundShippingMedia());
+		}
+		packagingInfo.setOutBoundShippingMedia(createCatalogUnawareMediaModel);
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Outbound Shipment generated for Package with tracking number : {}",

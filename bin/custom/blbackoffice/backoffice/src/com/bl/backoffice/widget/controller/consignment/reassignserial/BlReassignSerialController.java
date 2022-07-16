@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -174,11 +175,25 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 			  }
 		  }
 	  }
-	  entry.getOrderEntry().setSerialProducts(productEntries);
+	  entry.getOrderEntry().setSerialProducts(productEntries.stream()
+			  .filter(blSerialProduct -> blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList()));
 	  entry.setSerialProducts(productEntries);
 	  entry.setItems(newItems);
 	  getModelService().save(entry.getOrderEntry());
 	  getModelService().save(entry);
+	  updateConsignmentEntryQuantity(entry);
+  }
+
+  /**
+   * @param entry
+   */
+  private void updateConsignmentEntryQuantity(final ConsignmentEntryModel entry)
+  {
+	  final long quantity = entry.getSerialProducts().stream()
+			  .filter(blSerialProduct -> blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList()).size();
+	  entry.setQuantity(quantity);
+	  getModelService().save(entry);
+
   }
 
   protected void selectAllEntries()
