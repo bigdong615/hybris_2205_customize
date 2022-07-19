@@ -7,7 +7,6 @@ import de.hybris.platform.ordersplitting.WarehouseService;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
-import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -36,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.ConsignmentEntryStatusEnum;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.PackagingInfoStatus;
 import com.bl.core.enums.ProductTypeEnum;
@@ -387,6 +387,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 									  final boolean unboxStatus) {
 		if(unboxStatus) {
 			blSerialProduct.setSerialStatus(SerialStatusEnum.UNBOXED);
+
+			final Map<String, com.bl.core.enums.ConsignmentEntryStatusEnum> consEntryStatus = blSerialProduct.getConsignmentEntry()
+					.getConsignmentEntryStatus();
+			consEntryStatus.put(blSerialProduct.getCode(), ConsignmentEntryStatusEnum.UNBOXED);
+			blSerialProduct.getConsignmentEntry().setConsignmentEntryStatus(consEntryStatus);
+
+			//blSerialProduct.getConsignmentEntry().getConsignmentEntryStatus().put(blSerialProduct.getCode(), ConsignmentEntryStatusEnum.UNBOXED);
 		}
 //		String warehouseCode = null;
 //		WarehouseModel wareHouse = null;

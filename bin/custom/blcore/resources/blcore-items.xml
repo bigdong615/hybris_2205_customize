@@ -231,6 +231,7 @@
         <value code="SHIPPED"/>
         <value code="RETURNED" />
         <value code="MISSING" />
+        <value code="UNBOXED" />
       </enumtype>
 
 
