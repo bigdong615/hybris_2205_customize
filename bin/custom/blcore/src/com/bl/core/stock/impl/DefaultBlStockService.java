@@ -8,8 +8,6 @@ import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -198,8 +196,10 @@ public class DefaultBlStockService implements BlStockService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isActiveStatus(final SerialStatusEnum currentStatus) {
-		switch (currentStatus.getCode()) {
+	public boolean isActiveStatus(final SerialStatusEnum currentStatus)
+	{
+		switch (currentStatus.getCode())
+		{
 			case "ACTIVE":
 			case "PARTIALLY_UNBOXED":
 			case "UNBOXED":
@@ -208,7 +208,7 @@ public class DefaultBlStockService implements BlStockService
 			case "SHIPPED":
 			case "IN_HOUSE":
 				return Boolean.TRUE;
-			default :
+			default:
 		}
 		return Boolean.FALSE;
 	}
@@ -217,8 +217,10 @@ public class DefaultBlStockService implements BlStockService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isInactiveStatus(final SerialStatusEnum currentStatus) {
-		switch (currentStatus.getCode()) {
+	public boolean isInactiveStatus(final SerialStatusEnum currentStatus)
+	{
+		switch (currentStatus.getCode())
+		{
 			case "REPAIR":
 			case "REPAIR_IN_HOUSE":
 			case "REPAIR_SEND_TO_VENDOR":
@@ -356,22 +358,22 @@ public class DefaultBlStockService implements BlStockService
 	private Collection<StockLevelModel> getStockLevelModelsBasedOnDates(final BlSerialProductModel blSerialProduct,
 			final String initialCode)
 	{
-		//final Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+		final Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
 		//As part of requirement, we need to consider startDate as May 10, 2022 to update stock
-		final String sDate = "10/05/2022";
-		Date startDate = null;
-		try
-		{
-			startDate = new SimpleDateFormat("dd/MM/yyyy").parse(sDate);
-		}
-		catch (final ParseException ex)
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
-					"Exception occured while parsing date  ", initialCode, "", blSerialProduct.getCode());
-		}
+		//		final String sDate = "10/05/2022";
+		//		Date startDate = null;
+		//		try
+		//		{
+		//			startDate = new SimpleDateFormat("dd/MM/yyyy").parse(sDate);
+		//		}
+		//		catch (final ParseException ex)
+		//		{
+		//			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
+		//					"Exception occured while parsing date  ", initialCode, "", blSerialProduct.getCode());
+		//		}
 
 		final Date futureDate = BlDateTimeUtils.getNextYearsSameDay();
-		return getBlStockLevelDao().findSerialStockLevelForDate(initialCode, startDate, futureDate);
+		return getBlStockLevelDao().findSerialStockLevelForDate(initialCode, currentDate, futureDate);
 	}
 
 	/**
