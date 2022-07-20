@@ -81,4 +81,7 @@ public interface BlReallocationService {
 
   void removeReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus,
 		WarehouseModel warehouse);
+  
+  boolean reAssignSerialReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus,
+			WarehouseModel warehouse, String orderCode);
 }

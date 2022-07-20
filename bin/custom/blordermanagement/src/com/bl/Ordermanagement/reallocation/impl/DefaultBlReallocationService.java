@@ -9,6 +9,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -27,6 +28,9 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -267,6 +271,35 @@ public class DefaultBlReallocationService implements BlReallocationService {
 	      this.getModelService().saveAll(serialStocks);
 	    }
 	  }
+  
+  @Override
+  public boolean reAssignSerialReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus, WarehouseModel warehouse, String orderCode) {
+	    final Collection<StockLevelModel> serialStocks = blStockLevelDao
+	        .findSerialStockLevelsForDateAndCodesForWarehouse(serialProductCodes, startDay,
+	      		  endDay, reservedStatus, warehouse);
+	    boolean isSerialHasStock = false;
+	    final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(startDay);
+		 final LocalDateTime rentalEndDate = BlDateTimeUtils.getFormattedDateTime(endDay);
+		 final long stayDuration = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1));
+		 if(serialStocks.size() == stayDuration) {
+			 isSerialHasStock =true;
+			 if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
+			        .allMatch(stock -> serialProductCodes.contains(stock.getSerialProductCode()))) {
+			      serialStocks.forEach(stock -> {
+			        stock.setReservedStatus(true);
+			        stock.setOrder(orderCode);
+			        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+			            "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
+			            stock.getSerialProductCode());
+			      });
+			      this.getModelService().saveAll(serialStocks);
+			    }
+			 }
+		 else {
+			 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No stock found for serial product : {} and date between : {} and {}", serialProductCodes, startDay, endDay);
+		 }
+	return isSerialHasStock;
+	}
 
   /**
    * {@inheritDoc}
