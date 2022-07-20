@@ -3,6 +3,9 @@
  */
 package com.bl.backoffice.widget.controller;
 
+import com.bl.backoffice.consignment.service.BlConsignmentService;
+import com.bl.backoffice.widget.controller.order.BlCustomCancelRefundConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.annotations.SocketEvent;
@@ -14,16 +17,21 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.localization.Localization;
+
+import java.util.List;
+
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Messagebox.Button;
 
 
 /**
@@ -63,61 +71,111 @@ public class CapturePaymentController extends DefaultWidgetController {
 
     @Wire
     private Combobox paymentTransactions;
+    
+    @Resource(name = "defaultBlConsignmentService")
+    private BlConsignmentService defaultBlConsignmentService;
 
     @SocketEvent(socketId = INPUT_OBJECT)
-    public void init(final ConsignmentModel inputObject) {
-        this.getWidgetInstanceManager()
-                .setTitle(new StringBuilder(TITLE_MESSG).append(CONNECTOR).append(inputObject.getOrder()
-                        .getCode()).toString());
-        if (inputObject.getOrder() instanceof OrderModel) {
-            this.setOrderModel((OrderModel) inputObject.getOrder());
-        }
+	 public void init(final ConsignmentModel inputObject)
+	 {
+   	 this.setConsignmentModel(inputObject);
+		 if (getDefaultBlConsignmentService().isMainItemScanRemaining(inputObject))
+		 {
+			 showMessageBox(BlCoreConstants.MAIN_ITEM_SCAN_REMAINING_ERROR_MSG, true);
+		 }
+		 else
+		 {
+			 renderPopup();
+		 }
+	 }
 
-        this.setConsignmentModel(inputObject);
-
-        if (CollectionUtils.isNotEmpty(inputObject.getOrder().getPaymentTransactions())) {
-            final ListModelList<PaymentTransactionModel> listModelList = new ListModelList<>();
-            listModelList.addAll(inputObject.getOrder().getPaymentTransactions());
-            listModelList.forEach(listModelList::addToSelection);
-            paymentTransactions.setModel(listModelList);
-        }
-    }
+	/**
+	 * Render capture payment popup.
+	 */
+	private void renderPopup()
+	{
+		final ConsignmentModel inputObject = this.getConsignmentModel();
+		 this.getWidgetInstanceManager()
+				 .setTitle(new StringBuilder(TITLE_MESSG).append(CONNECTOR).append(inputObject.getOrder().getCode()).toString());
+		 if (inputObject.getOrder() instanceof OrderModel)
+		 {
+			 this.setOrderModel((OrderModel) inputObject.getOrder());
+		 }
+		 if (CollectionUtils.isNotEmpty(inputObject.getOrder().getPaymentTransactions()))
+		 {
+			 final ListModelList<PaymentTransactionModel> listModelList = new ListModelList<>();
+			 listModelList.addAll(inputObject.getOrder().getPaymentTransactions());
+			 listModelList.forEach(listModelList::addToSelection);
+			 paymentTransactions.setModel(listModelList);
+		 }
+	}
 
     @ViewEvent(componentID = CAPTURE_BUTTON, eventName = Events.ON_CLICK)
     public void capturePayment() {
         BlLogger.logMessage(LOG, Level.DEBUG, "Payment Capturing starts");
-        if (getConsignmentModel().isOrderTransferConsignment() || getConsignmentModel()
-            .isInternalTransferConsignment()) {
-            showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ORDER_TRANSFER), true);
-            return;
+		  if (getDefaultBlConsignmentService().isSubpartScanRemaining(getConsignmentModel()))
+		  {
+			  final List<String> remainingScanSubpartNames = getDefaultBlConsignmentService()
+					  .getRemainingScanSubpartNames(this.getConsignmentModel());
+			  Messagebox.show(BlCoreConstants.SUBPART_SCAN_REMAINING_ERROR_MSG_1
+					  + String.join(BlCoreConstants.COMMA_SEPRATOR, remainingScanSubpartNames)
+					  + BlCoreConstants.SUBPART_SCAN_REMAINING_ERROR_MSG_2, BlCoreConstants.ERROR_TITLE, new Button[]
+			  { Button.NO, Button.YES }, BlCustomCancelRefundConstants.OMS_WIDGET_CANCELORDER_CONFIRM_ICON,
+					  this::capturePaymentOnEvent);
+		  }
+		  else
+		  {
+			  processCapturePayment();
+		  }        
+    }
+    
+    /**
+     * Capture payment on click event.
+     *
+     * @param obj the obj
+     */
+    private void capturePaymentOnEvent(final Event obj)
+	 {
+		 if (Button.YES.event.equals(obj.getName()))
+		 {
+			 processCapturePayment();
+		 }
+	 }
+    
+    private void processCapturePayment()
+    {
+   	 if (getConsignmentModel().isOrderTransferConsignment() || getConsignmentModel()
+             .isInternalTransferConsignment()) {
+             showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ORDER_TRANSFER), true);
+             return;
+         }
+         if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode()) || getOrderModel().getIsCaptured()
+             || OrderStatus.CANCELLING.equals(getOrderModel().getStatus())) {
+             showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER), true);
+             return;
+         }
+         if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
+            if(Double.compare(getOrderModel().getTotalPrice(), 0.0) == 0 && CollectionUtils.isNotEmpty(getOrderModel().getGiftCard())) {
+          	  getOrderModel().setStatus(OrderStatus.PAYMENT_CAPTURED);
+          	  getModelService().save(getOrderModel());
+      			  getModelService().refresh(getOrderModel());
+          	  showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED_GIFT_CARD));
+            } else {
+                showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
+            }
+            getOrderModel().setIsCaptured(Boolean.TRUE);
+            getOrderModel().setIsAuthorised(Boolean.TRUE);
+            getModelService().save(getOrderModel());
+   			getModelService().refresh(getOrderModel());
+   			
+        } else {
+      	getOrderModel().setStatus(OrderStatus.RECEIVED_PAYMENT_DECLINED);
+      	getModelService().save(getOrderModel());
+ 			getModelService().refresh(getOrderModel());
+  			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is not successful for the order {}", getOrderModel().getCode());
+            BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while capturing the payment");
+            showMessageBox(Localization.getLocalizedString(ERR_MSG_FOR_PAYMENT_CAPTURED), true);
         }
-        if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode()) || getOrderModel().getIsCaptured()
-            || OrderStatus.CANCELLING.equals(getOrderModel().getStatus())) {
-            showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER), true);
-            return;
-        }
-        if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
-           if(Double.compare(getOrderModel().getTotalPrice(), 0.0) == 0 && CollectionUtils.isNotEmpty(getOrderModel().getGiftCard())) {
-         	  getOrderModel().setStatus(OrderStatus.PAYMENT_CAPTURED);
-         	  getModelService().save(getOrderModel());
-     			  getModelService().refresh(getOrderModel());
-         	  showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED_GIFT_CARD));
-           } else {
-               showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
-           }
-           getOrderModel().setIsCaptured(Boolean.TRUE);
-           getOrderModel().setIsAuthorised(Boolean.TRUE);
-           getModelService().save(getOrderModel());
-  			getModelService().refresh(getOrderModel());
-  			
-       } else {
-     	getOrderModel().setStatus(OrderStatus.RECEIVED_PAYMENT_DECLINED);
-     	getModelService().save(getOrderModel());
-			getModelService().refresh(getOrderModel());
- 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is not successful for the order {}", getOrderModel().getCode());
-           BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while capturing the payment");
-           showMessageBox(Localization.getLocalizedString(ERR_MSG_FOR_PAYMENT_CAPTURED), true);
-       }
     }
 
     @ViewEvent(componentID = CANCEL_BUTTON, eventName = Events.ON_CLICK)
@@ -182,5 +240,21 @@ public class CapturePaymentController extends DefaultWidgetController {
 	public void setModelService(ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	/**
+	 * @return the defaultBlConsignmentService
+	 */
+	public BlConsignmentService getDefaultBlConsignmentService()
+	{
+		return defaultBlConsignmentService;
+	}
+
+	/**
+	 * @param defaultBlConsignmentService the defaultBlConsignmentService to set
+	 */
+	public void setDefaultBlConsignmentService(final BlConsignmentService defaultBlConsignmentService)
+	{
+		this.defaultBlConsignmentService = defaultBlConsignmentService;
 	}
 }
