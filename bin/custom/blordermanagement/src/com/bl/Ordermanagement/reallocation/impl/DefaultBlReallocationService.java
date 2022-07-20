@@ -29,6 +29,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -247,6 +249,24 @@ public class DefaultBlReallocationService implements BlReallocationService {
       this.getModelService().saveAll(serialStocks);
     }
   }
+  
+  @Override
+  public void removeReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus, WarehouseModel warehouse) {
+	    final Collection<StockLevelModel> serialStocks = blStockLevelDao
+	        .findSerialStockLevelsForDateAndCodesForWarehouse(serialProductCodes, startDay,
+	      		  endDay, reservedStatus, warehouse);
+	    if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
+	        .allMatch(stock -> serialProductCodes.contains(stock.getSerialProductCode()))) {
+	      serialStocks.forEach(stock -> {
+	        stock.setReservedStatus(false);
+	        stock.setOrder(StringUtils.EMPTY);
+	        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+	            "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
+	            stock.getSerialProductCode());
+	      });
+	      this.getModelService().saveAll(serialStocks);
+	    }
+	  }
 
   /**
    * {@inheritDoc}
