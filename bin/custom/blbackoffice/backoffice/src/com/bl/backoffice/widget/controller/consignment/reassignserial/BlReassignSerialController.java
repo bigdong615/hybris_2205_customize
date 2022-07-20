@@ -7,6 +7,7 @@ import de.hybris.platform.warehousing.data.ConsignmentEntriesData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -149,6 +150,8 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 		  final Component row)
   {
 	  final BlSerialProductModel serial = this.getDefaultBlProductDao().getSerialByBarcode(barCode);
+	  final List<String> serialsCodesToRemove = new ArrayList<String>();
+	  final List<String> serialsCodesToAdd = new ArrayList<String>();
 	  final List<BlProductModel> productEntries = new ArrayList<BlProductModel>();
 	  productEntries.addAll(entry.getSerialProducts());
 	  final Map<String, ItemStatusEnum> newItems = new HashMap<String, ItemStatusEnum>();
@@ -167,6 +170,21 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 				  }
 				  productEntries.remove(productEntry);
 				  productEntries.add(serial);
+				  serialsCodesToRemove.add(oldSerialCode);
+				  serialsCodesToAdd.add(serial.getCode());
+				  if (blReallocationService.reAssignSerialReserveStocksForSerialProducts(new HashSet<>(serialsCodesToAdd),
+						  consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.FALSE,
+						  consignment.getWarehouse(), consignment.getOrder().getCode()))
+				  {
+					  blReallocationService.removeReserveStocksForSerialProducts(new HashSet<>(serialsCodesToRemove),
+							  consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.TRUE,
+							  consignment.getWarehouse());
+				  }
+				  else
+				  {
+					  throw new WrongValueException((row.getChildren().get(4)),
+							  this.getLabel("warehousingbackoffice.reassignserial.validation.rentaldate.notavailable"));
+				  }
 			  }
 			  else
 			  {
