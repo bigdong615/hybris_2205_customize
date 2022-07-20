@@ -1,14 +1,5 @@
 package com.bl.backoffice.widget.controller.consignment;
 
-import com.bl.Ordermanagement.reallocation.BlReallocationService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.google.common.collect.Sets;
-import com.hybris.backoffice.i18n.BackofficeLocaleService;
-import com.hybris.cockpitng.annotations.SocketEvent;
-import com.hybris.cockpitng.annotations.ViewEvent;
-import com.hybris.cockpitng.core.events.CockpitEventQueue;
-import com.hybris.cockpitng.util.DefaultWidgetController;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -28,10 +19,12 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.enums.DeclineReason;
 import de.hybris.platform.warehousing.process.WarehousingBusinessProcessService;
 import de.hybris.platform.warehousingbackoffice.dtos.ConsignmentEntryToReallocateDto;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +34,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -63,6 +57,19 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.impl.InputElement;
+
+import com.bl.Ordermanagement.reallocation.BlReallocationService;
+import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.google.common.collect.Sets;
+import com.hybris.backoffice.i18n.BackofficeLocaleService;
+import com.hybris.cockpitng.annotations.SocketEvent;
+import com.hybris.cockpitng.annotations.ViewEvent;
+import com.hybris.cockpitng.core.events.CockpitEventQueue;
+import com.hybris.cockpitng.util.DefaultWidgetController;
 
 public class BlConsignmentToReallocateController  extends DefaultWidgetController {
 
@@ -121,14 +128,15 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
   @WireVariable
   private transient BlCommerceStockService blCommerceStockService;
 
-  public BlConsignmentToReallocateController() {
+  public BlConsignmentToReallocateController()
+  {
     // constructor
   }
 
   @SocketEvent(
       socketId = "consignmentInput"
   )
-  public void initReallocationConsignmentForm(ConsignmentModel inputObject) {
+  public void initReallocationConsignmentForm(final ConsignmentModel inputObject) {
 
     this.declineReasons.clear();
     this.locations.clear();
@@ -139,7 +147,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
         .getConsignment().getCode());
     this.consignmentCode.setValue(this.getConsignment().getCode());
     this.customerName.setValue(this.getConsignment().getOrder().getUser().getDisplayName());
-    Locale locale = this.getCockpitLocaleService().getCurrentLocale();
+    final Locale locale = this.getCockpitLocaleService().getCurrentLocale();
     this.getEnumerationService().getEnumerationValues(DeclineReason.class).stream()
         .filter(reason -> !reason.equals(DeclineReason.ASNCANCELLATION)).forEach(reason ->
         this.declineReasons.add(this.getEnumerationService().getEnumerationName(reason, locale))
@@ -194,7 +202,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
     final List<AtomicBoolean> allEntryAllQuantityReallocated = new ArrayList<>();
 
-    for (ConsignmentEntryToReallocateDto entryDto : allModelList) {
+    for (final ConsignmentEntryToReallocateDto entryDto : allModelList) {
       if (entryDto.getQuantityToReallocate() > 0L) {
 
         final AbstractOrderEntryModel orderEntryModel = entryDto.getConsignmentEntry().getOrderEntry();
@@ -250,7 +258,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
        if (allEntryAllQuantityReallocated.stream().allMatch(AtomicBoolean::get)) {
    		  if (consignment.getConsignmentEntries().size() > 1 && consignment.getConsignmentEntries().size() != orderEntries.size())
    		  {
-   			  Set<ConsignmentEntryModel> entriesList = new HashSet<ConsignmentEntryModel>();
+   			  final Set<ConsignmentEntryModel> entriesList = new HashSet<ConsignmentEntryModel>();
       			entriesList.addAll(consignment.getConsignmentEntries());
    			  for (final ConsignmentEntryModel consign : consignment.getConsignmentEntries())
    			  {
@@ -277,6 +285,49 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
    			  modelService.refresh(consignment);
    		  }
        }
+		 if (!orderEntries.isEmpty())
+		 {
+			 final List<String> serialsCodesToRemove = new ArrayList<String>();
+			 final List<BlProductModel> serials = new ArrayList<BlProductModel>();
+			 final Map<String, ItemStatusEnum> items = new HashMap<String, ItemStatusEnum>();
+			 for (final ConsignmentEntryModel consign : consignment.getConsignmentEntries())
+			 {
+				 serials.addAll(consign.getSerialProducts());
+				 items.putAll(consign.getItems());
+				 for (final AbstractOrderEntryModel orderEntry : orderEntries)
+				 {
+					 if (consign.getOrderEntry().equals(orderEntry))
+					 {
+						 consign.setQuantity(consign.getQuantity() - orderEntry.getQuantity());
+						 int counter = 0;
+						 for (final BlProductModel serial : consign.getSerialProducts())
+						 {
+							 if (serial instanceof BlSerialProductModel)
+							 {
+								 items.remove(serial.getCode());
+								 serialsCodesToRemove.add(serial.getCode());
+								 serials.remove(serial);
+								 counter++;
+								 if (counter == orderEntry.getQuantity().intValue())
+								 {
+									 break;
+								 }
+							 }
+						 }
+
+					 }
+
+				 }
+				 consign.setItems(items);
+				 consign.setSerialProducts(serials);
+				 modelService.save(consign);
+				 modelService.refresh(consign);
+
+			 }
+			 blReallocationService.removeReserveStocksForSerialProducts(new HashSet<>(serialsCodesToRemove),
+					 consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.TRUE,
+					 consignment.getWarehouse());
+		 }
      }
 
   /**
@@ -298,12 +349,12 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     this.sendOutput(OUT_CONFIRM, COMPLETE);
   }
 
-  protected void createDeclineEntry(Collection<DeclineEntry> entriesToReallocate, Component component) {
-    ConsignmentEntryToReallocateDto consignmentEntryToReallocate = (ConsignmentEntryToReallocateDto)((Row)component).getValue();
-    Long qtyToReallocate = consignmentEntryToReallocate.getQuantityToReallocate();
-    Long qtyAvailableForReallocation = consignmentEntryToReallocate.getConsignmentEntry().getQuantityPending();
+  protected void createDeclineEntry(final Collection<DeclineEntry> entriesToReallocate, final Component component) {
+    final ConsignmentEntryToReallocateDto consignmentEntryToReallocate = (ConsignmentEntryToReallocateDto)((Row)component).getValue();
+    final Long qtyToReallocate = consignmentEntryToReallocate.getQuantityToReallocate();
+    final Long qtyAvailableForReallocation = consignmentEntryToReallocate.getConsignmentEntry().getQuantityPending();
     if (qtyToReallocate > 0L && qtyToReallocate <= qtyAvailableForReallocation) {
-      DeclineEntry newEntry = new DeclineEntry();
+      final DeclineEntry newEntry = new DeclineEntry();
       newEntry.setQuantity(qtyToReallocate);
       newEntry.setConsignmentEntry(consignmentEntryToReallocate.getConsignmentEntry());
       newEntry.setNotes(consignmentEntryToReallocate.getDeclineConsignmentEntryComment());
@@ -326,15 +377,15 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
   }
 
   protected void addListeners() {
-    List<Component> rows = this.consignmentEntries.getRows().getChildren();
-    Iterator<Component> var3 = rows.iterator();
+    final List<Component> rows = this.consignmentEntries.getRows().getChildren();
+    final Iterator<Component> var3 = rows.iterator();
 
     while(var3.hasNext()) {
-      Component row = var3.next();
-      Iterator<Component> var5 = row.getChildren().iterator();
+      final Component row = var3.next();
+      final Iterator<Component> var5 = row.getChildren().iterator();
 
       while(var5.hasNext()) {
-        Component myComponent = var5.next();
+        final Component myComponent = var5.next();
         if (myComponent instanceof Checkbox) {
           myComponent.addEventListener("onCheck", event ->
               this.handleRow((Row) event.getTarget().getParent()));
@@ -368,17 +419,17 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
         .addEventListener("onCheck", event -> this.selectAllEntries());
   }
 
-  protected void applyToGrid(Object data, int childrenIndex) {
+  protected void applyToGrid(final Object data, final int childrenIndex) {
     this.consignmentEntries.getRows().getChildren().stream().filter(entry ->
         ((Checkbox) entry.getChildren().iterator().next()).isChecked()).forEach(entry ->
         this.applyToRow(data, childrenIndex, entry));
   }
 
-  protected void applyToRow(Object data, int childrenIndex, Component row) {
+  protected void applyToRow(final Object data, final int childrenIndex, final Component row) {
     int index = 0;
 
-    for(Iterator<Component> var6 = row.getChildren().iterator(); var6.hasNext(); ++index) {
-      Component myComponent = var6.next();
+    for(final Iterator<Component> var6 = row.getChildren().iterator(); var6.hasNext(); ++index) {
+      final Component myComponent = var6.next();
       if (index == childrenIndex) {
         this.applyToCheckboxRow(data, myComponent);
         this.applyToComboboxRow(data, myComponent);
@@ -392,7 +443,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   }
 
-  protected void applyToComboboxRow(Object data, Component component) {
+  protected void applyToComboboxRow(final Object data, final Component component) {
     if (component instanceof Combobox) {
       if (data == null) {
         ((Combobox)component).setSelectedItem((Comboitem)null);
@@ -403,7 +454,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   }
 
-  protected void applyToCheckboxRow(Object data, Component component) {
+  protected void applyToCheckboxRow(final Object data, final Component component) {
     if (component instanceof Checkbox) {
       if (data == null) {
         ((Checkbox)component).setChecked(Boolean.FALSE);
@@ -414,17 +465,17 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   }
 
-  protected void autoSelect(Event event) {
+  protected void autoSelect(final Event event) {
     ((Checkbox)event.getTarget().getParent().getChildren().iterator().next()).setChecked(true);
   }
 
-  protected void buildDeclineParam(ConsignmentProcessModel processModel, Collection<DeclineEntry> entriesToReallocate) {
+  protected void buildDeclineParam(final ConsignmentProcessModel processModel, final Collection<DeclineEntry> entriesToReallocate) {
     this.cleanDeclineParam(processModel);
-    Collection<BusinessProcessParameterModel> contextParams = new ArrayList<>();
+    final Collection<BusinessProcessParameterModel> contextParams = new ArrayList<>();
     contextParams.addAll(processModel.getContextParameters());
-    DeclineEntries declinedEntries = new DeclineEntries();
+    final DeclineEntries declinedEntries = new DeclineEntries();
     declinedEntries.setEntries(entriesToReallocate);
-    BusinessProcessParameterModel declineParam = new BusinessProcessParameterModel();
+    final BusinessProcessParameterModel declineParam = new BusinessProcessParameterModel();
     declineParam.setName(DECLINE_ENTRIES);
     declineParam.setValue(declinedEntries);
     declineParam.setProcess(processModel);
@@ -433,14 +484,14 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     this.getModelService().save(processModel);
   }
 
-  protected void cleanDeclineParam(ConsignmentProcessModel processModel) {
-    Collection<BusinessProcessParameterModel> contextParams = new ArrayList<>();
+  protected void cleanDeclineParam(final ConsignmentProcessModel processModel) {
+    final Collection<BusinessProcessParameterModel> contextParams = new ArrayList<>();
     contextParams.addAll(processModel.getContextParameters());
     if (CollectionUtils.isNotEmpty(contextParams)) {
-      Optional<BusinessProcessParameterModel> declineEntriesParamOptional = contextParams.stream()
+      final Optional<BusinessProcessParameterModel> declineEntriesParamOptional = contextParams.stream()
           .filter(param -> param.getName().equals(DECLINE_ENTRIES)).findFirst();
       if (declineEntriesParamOptional.isPresent()) {
-        BusinessProcessParameterModel declineEntriesParam = declineEntriesParamOptional.get();
+        final BusinessProcessParameterModel declineEntriesParam = declineEntriesParamOptional.get();
         contextParams.remove(declineEntriesParam);
         this.getModelService().remove(declineEntriesParam);
         processModel.setContextParameters(contextParams);
@@ -450,11 +501,11 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   }
 
-  protected int getLocationIndex(WarehouseModel location) {
+  protected int getLocationIndex(final WarehouseModel location) {
     int index = 0;
 
-    for(Iterator<WarehouseModel> var4 = this.locations.iterator(); var4.hasNext(); ++index) {
-      WarehouseModel warehouseModel = var4.next();
+    for(final Iterator<WarehouseModel> var4 = this.locations.iterator(); var4.hasNext(); ++index) {
+      final WarehouseModel warehouseModel = var4.next();
       if (location.getCode().equals(warehouseModel.getCode())) {
         break;
       }
@@ -463,12 +514,12 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     return index;
   }
 
-  protected int getReasonIndex(DeclineReason declineReason) {
+  protected int getReasonIndex(final DeclineReason declineReason) {
     int index = 0;
-    String myReason = this.getEnumerationService().getEnumerationName(declineReason, this.getCockpitLocaleService().getCurrentLocale());
+    final String myReason = this.getEnumerationService().getEnumerationName(declineReason, this.getCockpitLocaleService().getCurrentLocale());
 
-    for(Iterator<String> var5 = this.declineReasons.iterator(); var5.hasNext(); ++index) {
-      String reason = var5.next();
+    for(final Iterator<String> var5 = this.declineReasons.iterator(); var5.hasNext(); ++index) {
+      final String reason = var5.next();
       if (myReason.equals(reason)) {
         break;
       }
@@ -477,27 +528,27 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     return index;
   }
 
-  protected Optional<DeclineReason> getSelectedDeclineReason(Event event) {
+  protected Optional<DeclineReason> getSelectedDeclineReason(final Event event) {
     Optional<DeclineReason> result = Optional.empty();
     if (!((SelectEvent)event).getSelectedItems().isEmpty()) {
-      Object selectedValue = ((Comboitem)((SelectEvent)event).getSelectedItems().iterator().next()).getValue();
+      final Object selectedValue = ((Comboitem)((SelectEvent)event).getSelectedItems().iterator().next()).getValue();
       result = this.matchingComboboxDeclineReason(selectedValue.toString());
     }
 
     return result;
   }
 
-  protected Optional<DeclineReason> getCustomSelectedDeclineReason(Event event) {
+  protected Optional<DeclineReason> getCustomSelectedDeclineReason(final Event event) {
     Optional<DeclineReason> reason = Optional.empty();
     if (event.getTarget() instanceof Combobox) {
-      Object selectedValue = event.getData();
+      final Object selectedValue = event.getData();
       reason = this.matchingComboboxDeclineReason(selectedValue.toString());
     }
 
     return reason;
   }
 
-  protected WarehouseModel getSelectedLocation(Event event) {
+  protected WarehouseModel getSelectedLocation(final Event event) {
     WarehouseModel result = null;
     if (!((SelectEvent)event).getSelectedItems().isEmpty()) {
       result = (WarehouseModel)((Comboitem)((SelectEvent)event).getSelectedItems().iterator().next()).getValue();
@@ -506,7 +557,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     return result;
   }
 
-  protected void handleGlobalComment(Event event) {
+  protected void handleGlobalComment(final Event event) {
     this.applyToGrid(((InputEvent)event).getValue(), 7);
     this.consignmentEntries.getRows().getChildren().stream().filter(entry ->
         ((Checkbox) entry.getChildren().iterator().next()).isChecked()).forEach(entry ->
@@ -514,8 +565,8 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
             .setDeclineConsignmentEntryComment(((InputEvent) event).getValue()));
   }
 
-  protected void handleGlobalLocation(Event event) {
-    WarehouseModel selectedLocation = this.getSelectedLocation(event);
+  protected void handleGlobalLocation(final Event event) {
+    final WarehouseModel selectedLocation = this.getSelectedLocation(event);
     if (selectedLocation != null) {
       this.applyToGrid(this.getLocationIndex(selectedLocation), 6);
       this.consignmentEntries.getRows().getChildren().stream().filter(entry ->
@@ -526,8 +577,8 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   }
 
-  protected void handleGlobalReason(Event event) {
-    Optional<DeclineReason> declineReason = this.getSelectedDeclineReason(event);
+  protected void handleGlobalReason(final Event event) {
+    final Optional<DeclineReason> declineReason = this.getSelectedDeclineReason(event);
     if (declineReason.isPresent()) {
       this.applyToGrid(this.getReasonIndex(declineReason.get()), 5);
       this.consignmentEntries.getRows().getChildren().stream().filter(entry ->
@@ -538,8 +589,8 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   }
 
-  protected void handleIndividualReason(Event event) {
-    Optional<DeclineReason> declineReason = this.getCustomSelectedDeclineReason(event);
+  protected void handleIndividualReason(final Event event) {
+    final Optional<DeclineReason> declineReason = this.getCustomSelectedDeclineReason(event);
     if (declineReason.isPresent()) {
       this.autoSelect(event);
       ((ConsignmentEntryToReallocateDto)((Row)event.getTarget().getParent()).getValue()).setSelectedReason(declineReason.get());
@@ -547,10 +598,10 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   }
 
-  protected void handleIndividualLocation(Event event) {
+  protected void handleIndividualLocation(final Event event) {
     if (!((SelectEvent) event).getSelectedItems().isEmpty()) {
       this.autoSelect(event);
-      Object selectedValue = ((Comboitem) ((SelectEvent) event).getSelectedItems().iterator()
+      final Object selectedValue = ((Comboitem) ((SelectEvent) event).getSelectedItems().iterator()
           .next()).getValue();
       if (selectedValue instanceof WarehouseModel) {
         ((ConsignmentEntryToReallocateDto) ((Row) event.getTarget().getParent()).getValue())
@@ -560,8 +611,8 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   }
 
-  protected void handleRow(Row row) {
-    ConsignmentEntryToReallocateDto myEntry = (ConsignmentEntryToReallocateDto) row.getValue();
+  protected void handleRow(final Row row) {
+    final ConsignmentEntryToReallocateDto myEntry = (ConsignmentEntryToReallocateDto) row.getValue();
     if (row.getChildren().iterator().next() instanceof Checkbox) {
       if (!((Checkbox) row.getChildren().iterator().next()).isChecked()) {
         this.applyToRow(0, 4, row);
@@ -576,7 +627,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
         this.applyToRow(this.globalDeclineReasons.getSelectedIndex(), 5, row);
         this.applyToRow(this.globalPossibleLocations.getSelectedIndex(), 6, row);
         this.applyToRow(this.globalDeclineComment.getValue(), 7, row);
-        Optional<DeclineReason> reason = this.matchingComboboxDeclineReason(
+        final Optional<DeclineReason> reason = this.matchingComboboxDeclineReason(
             this.globalDeclineReasons.getSelectedItem() != null ? this.globalDeclineReasons
                 .getSelectedItem().getLabel() : null);
         myEntry.setSelectedReason(reason.orElse(null));
@@ -588,22 +639,22 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   }
 
-  protected boolean isDeclineProcessDone(ConsignmentModel latestConsignmentModel,
-      Collection<DeclineEntry> entriesToReallocate) {
+  protected boolean isDeclineProcessDone(final ConsignmentModel latestConsignmentModel,
+      final Collection<DeclineEntry> entriesToReallocate) {
     return entriesToReallocate.stream().allMatch(entry ->
         this.isDeclinedQuantityCorrect(latestConsignmentModel, entry));
   }
 
-  protected boolean isDeclinedQuantityCorrect(ConsignmentModel latestConsignmentModel,
-      DeclineEntry declineEntry) {
-    Long expectedDeclinedQuantity =
+  protected boolean isDeclinedQuantityCorrect(final ConsignmentModel latestConsignmentModel,
+      final DeclineEntry declineEntry) {
+    final Long expectedDeclinedQuantity =
         declineEntry.getConsignmentEntry().getQuantityDeclined() + declineEntry.getQuantity();
     return latestConsignmentModel.getConsignmentEntries().stream().anyMatch(entry ->
         entry.getPk().equals(declineEntry.getConsignmentEntry().getPk())
             && expectedDeclinedQuantity.equals(entry.getQuantityDeclined()));
   }
 
-  protected Optional<DeclineReason> matchingComboboxDeclineReason(String declineReasonLabel) {
+  protected Optional<DeclineReason> matchingComboboxDeclineReason(final String declineReasonLabel) {
     return this.getEnumerationService().getEnumerationValues(DeclineReason.class).stream()
         .filter(reason -> this.getEnumerationService()
             .getEnumerationName(reason, this.getCockpitLocaleService().getCurrentLocale())
@@ -612,18 +663,18 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   protected void selectAllEntries() {
     this.applyToGrid(Boolean.TRUE, 0);
-    Iterator<Component> var2 = this.consignmentEntries.getRows().getChildren().iterator();
+    final Iterator<Component> var2 = this.consignmentEntries.getRows().getChildren().iterator();
 
     while (var2.hasNext()) {
-      Component row = var2.next();
-      Component firstComponent = row.getChildren().iterator().next();
+      final Component row = var2.next();
+      final Component firstComponent = row.getChildren().iterator().next();
       if (firstComponent instanceof Checkbox) {
         ((Checkbox) firstComponent).setChecked(this.globalDeclineEntriesSelection.isChecked());
       }
 
       this.handleRow((Row) row);
       if (this.globalDeclineEntriesSelection.isChecked()) {
-        int reallocatableQuantity = Integer.parseInt(((Label) row.getChildren().get(3)).getValue());
+        final int reallocatableQuantity = Integer.parseInt(((Label) row.getChildren().get(3)).getValue());
         this.applyToRow(reallocatableQuantity, 4, row);
       }
     }
@@ -635,13 +686,13 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   }
 
-  protected Component targetFieldToApplyValidation(String stringToValidate, int indexLabelToCheck,
-      int indexTargetComponent) {
-    Iterator<Component> var5 = this.consignmentEntries.getRows().getChildren().iterator();
+  protected Component targetFieldToApplyValidation(final String stringToValidate, final int indexLabelToCheck,
+      final int indexTargetComponent) {
+    final Iterator<Component> var5 = this.consignmentEntries.getRows().getChildren().iterator();
 
     while (var5.hasNext()) {
-      Component component = var5.next();
-      Label label = (Label) component.getChildren().get(indexLabelToCheck);
+      final Component component = var5.next();
+      final Label label = (Label) component.getChildren().get(indexLabelToCheck);
       if (label.getValue().equals(stringToValidate)) {
         return component.getChildren().get(indexTargetComponent);
       }
@@ -654,7 +705,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
    * It validate consignment entry which needs to be re-allocated
    * @param entry the ConsignmentEntryToReallocateDto
    */
-  protected void validateConsignmentEntry(ConsignmentEntryToReallocateDto entry) {
+  protected void validateConsignmentEntry(final ConsignmentEntryToReallocateDto entry) {
 
     InputElement quantity;
     if (entry.getQuantityToReallocate() > entry.getConsignmentEntry().getQuantityPending()) {
@@ -736,13 +787,13 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
   }
 
   protected void validateRequest() {
-    Iterator<Component> var2 = this.getConsignmentEntries().getRows().getChildren().iterator();
+    final Iterator<Component> var2 = this.getConsignmentEntries().getRows().getChildren().iterator();
 
     while (var2.hasNext()) {
-      Component row = var2.next();
-      Component firstComponent = row.getChildren().iterator().next();
+      final Component row = var2.next();
+      final Component firstComponent = row.getChildren().iterator().next();
       if (firstComponent instanceof Checkbox && ((Checkbox) firstComponent).isChecked()) {
-        InputElement returnQty = (InputElement) row.getChildren().get(4);
+        final InputElement returnQty = (InputElement) row.getChildren().get(4);
         if (returnQty.getRawValue().equals(0)) {
           throw new WrongValueException(returnQty, this.getLabel(
               "warehousingbackoffice.reallocationconsignment.decline.validation.missing.quantity"));
@@ -750,7 +801,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
       }
     }
 
-    ListModelList<ConsignmentEntryToReallocateDto> modelList = (ListModelList) this
+    final ListModelList<ConsignmentEntryToReallocateDto> modelList = (ListModelList) this
         .getConsignmentEntries().getModel();
     if (modelList.stream().allMatch(entry ->
        entry.getQuantityToReallocate() == 0L)) {
@@ -765,7 +816,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     return this.consignment;
   }
 
-  public void setConsignment(ConsignmentModel consignment) {
+  public void setConsignment(final ConsignmentModel consignment) {
     this.consignment = consignment;
   }
 

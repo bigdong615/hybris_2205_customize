@@ -2,6 +2,7 @@ package com.bl.core.stock;
 
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -158,4 +159,15 @@ public interface BlStockLevelDao {
 	 * @return list of stock level model
 	 */
 	public List<StockLevelModel> getStocksOfSoftAssignedSerialsOfOrders(final Set<String> orderCodes);
+
+	/**
+	 * @param serialProductCodes
+	 * @param startDay
+	 * @param endDay
+	 * @param reservedStatus
+	 * @return
+	 */
+	public Collection<StockLevelModel> findSerialStockLevelsForDateAndCodesForWarehouse(Set<String> serialProductCodes,
+			Date startDay,
+			Date endDay, Boolean reservedStatus, WarehouseModel warehouseModel);
 }

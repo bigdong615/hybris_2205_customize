@@ -78,7 +78,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE
 			+ DATE_PARAM + AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode " + AND
 			+ StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus";
-	
+
 	private static final String STOCK_LEVELS_FOR_PRODUCTS_AND_DATE_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
 			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
 			+ StockLevelModel.WAREHOUSE + "} IN (?warehouses) " + AND
@@ -98,6 +98,11 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 
 	private static final String STOCKS_FOR_SOFT_ASSIGNED_SERIALS_OF_ORDERS_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
 			+ WHERE + StockLevelModel.ORDER + "} IN (?orderCodes)" + AND + StockLevelModel.HARDASSIGNED + "} =?hardAssigned";
+
+	private static final String STOCK_LEVELS_FOR_SERIAL_PRODUCTS_DATE_QUERY = SELECT + ItemModel.PK + FROM
+			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.SERIALPRODUCTCODE + "} IN (?serialProductCodes) " + AND
+			+ StockLevelModel.DATE + DATE_PARAM + AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses) " + AND
+			+ StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus ";
 
 	/**
 	 * {@inheritDoc}
@@ -294,7 +299,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		}
 		return Boolean.FALSE;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -383,6 +388,30 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
     }
     return stockLevels;
   }
+
+  @Override
+  public Collection<StockLevelModel> findSerialStockLevelsForDateAndCodesForWarehouse(final Set<String> serialProductCodes,
+		  final Date startDay, final Date endDay, final Boolean reservedStatus, final WarehouseModel warehouse)
+  {
+
+	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVELS_FOR_SERIAL_PRODUCTS_DATE_QUERY);
+	  fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODES, serialProductCodes);
+	  addQueryParameter(startDay, endDay, fQuery);
+	  fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, reservedStatus);
+	  fQuery.addQueryParameter(BlCoreConstants.WAREHOUSES, warehouse);
+
+	  final SearchResult<StockLevelModel> result = getFlexibleSearchService().search(fQuery);
+	  final List<StockLevelModel> stockLevels = result.getResult();
+	  if (CollectionUtils.isEmpty(stockLevels))
+	  {
+		  BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				  "No Stock Levels found for serial products {} with date between : {} and {}", serialProductCodes, startDay, endDay);
+		  return Collections.emptyList();
+	  }
+	  return stockLevels;
+  }
+
+
 	/**
 	 * It finds all the stocks for the given serials and serial from start date to end date
 	 *
