@@ -7,6 +7,7 @@ import de.hybris.platform.ordersplitting.WarehouseService;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -391,12 +392,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		if(unboxStatus) {
 			blSerialProduct.setSerialStatus(SerialStatusEnum.UNBOXED);
 
-			final Map<String, com.bl.core.enums.ConsignmentEntryStatusEnum> consEntryStatus = blSerialProduct.getConsignmentEntry()
+			//updating the consignment entry status
+			final Map<String, ConsignmentEntryStatusEnum> consEntryStatus = blSerialProduct.getConsignmentEntry()
 					.getConsignmentEntryStatus();
 			consEntryStatus.put(blSerialProduct.getCode(), ConsignmentEntryStatusEnum.UNBOXED);
-			blSerialProduct.getConsignmentEntry().setConsignmentEntryStatus(consEntryStatus);
-
-			//blSerialProduct.getConsignmentEntry().getConsignmentEntryStatus().put(blSerialProduct.getCode(), ConsignmentEntryStatusEnum.UNBOXED);
+			if (!consEntryStatus.isEmpty())
+			{
+				blSerialProduct.getConsignmentEntry().setConsignmentEntryStatus(consEntryStatus);
+			}
 		}
 
 		if (!blSerialProduct.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode()))
