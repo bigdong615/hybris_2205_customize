@@ -392,6 +392,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		if(unboxStatus) {
 			blSerialProduct.setSerialStatus(SerialStatusEnum.UNBOXED);
 
+			try
+			{
 			//updating the consignment entry status
 			final Map<String, ConsignmentEntryStatusEnum> consEntryStatus = blSerialProduct.getConsignmentEntry()
 					.getConsignmentEntryStatus();
@@ -400,6 +402,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			{
 				blSerialProduct.getConsignmentEntry().setConsignmentEntryStatus(consEntryStatus);
 			}
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+					"Unable to update consignment entry status to Unboxed for - - {}", blSerialProduct.getCode());
+		}
 		}
 
 		if (!blSerialProduct.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode()))
