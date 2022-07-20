@@ -63,7 +63,6 @@ import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.google.common.collect.Sets;
 import com.hybris.backoffice.i18n.BackofficeLocaleService;
@@ -128,26 +127,6 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
   @WireVariable
   private transient BlCommerceStockService blCommerceStockService;
-
-  @WireVariable
-  private BlStockLevelDao blStockLevelDao;
-
-  /**
-   * @return the blStockLevelDao
-   */
-  public BlStockLevelDao getBlStockLevelDao()
-  {
-	  return blStockLevelDao;
-  }
-
-  /**
-   * @param blStockLevelDao
-   *           the blStockLevelDao to set
-   */
-  public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao)
-  {
-	  this.blStockLevelDao = blStockLevelDao;
-  }
 
   public BlConsignmentToReallocateController()
   {
