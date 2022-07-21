@@ -46,6 +46,36 @@ import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.session.SessionExecutionBody;
+import de.hybris.platform.servicelayer.session.SessionService;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 
 
 /**
@@ -600,6 +630,89 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	public void setSearchRestrictionService(final SearchRestrictionService searchRestrictionService)
 	{
 		this.searchRestrictionService = searchRestrictionService;
+	}
+
+	@Override
+	public List<String> getRemainingScanSubpartNames(final ConsignmentEntryModel consignmentEntry)
+	{
+		final Set<String> remainingScanSubpartsName = Sets.newHashSet();
+		final List<String> subpartItemsList = getSubpartItemsList(consignmentEntry);
+		if (CollectionUtils.isNotEmpty(subpartItemsList))
+		{
+			subpartItemsList.forEach(itemName -> {
+				if (itemName.contains(BlCoreConstants.DOUBLE_HYPHEN))
+				{
+					final String[] nameSplit = itemName.split(BlCoreConstants.DOUBLE_HYPHEN);
+					remainingScanSubpartsName.add(nameSplit[BlCoreConstants.INT_ZERO]);
+				}
+				else
+				{
+					remainingScanSubpartsName.add(itemName);
+				}
+			});
+		}
+		return Lists.newArrayList(remainingScanSubpartsName);
+	}
+
+	@Override
+	public List<String> getSubpartItemsList(final ConsignmentEntryModel entry)
+	{
+		if (CollectionUtils.isEmpty(entry.getSerialProducts()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"DefaultBlConsignmentEntryService :: getSubpartItemsList :: Serial Products is Empty for ConsignmentEntry : {}", entry.getPk());
+			return Lists.newArrayList();
+		}
+		final List<String> subPartItemsList = Lists.newArrayList();
+		final Map<String, Integer> subNameMap = Maps.newHashMap();
+		entry.getSerialProducts().forEach(product -> {
+			if (isProductASubpart(product))
+			{
+				if (subNameMap.containsKey(product.getName()))
+				{
+					final Integer incCount = subNameMap.get(product.getName()) + BlCoreConstants.INT_ONE;
+					subNameMap.put(product.getName(), incCount);
+				}
+				else
+				{
+					subNameMap.put(product.getName(), Integer.valueOf(BlCoreConstants.INT_ONE));
+				}
+			}
+		});
+		if (MapUtils.isEmpty(subNameMap))
+		{
+			return subPartItemsList;
+		}
+		subNameMap.forEach((productName, count) -> {
+			if (count == BlCoreConstants.INT_ONE)
+			{
+				subPartItemsList.add(productName);
+			}
+			else
+			{
+				for (int i = BlCoreConstants.INT_ONE; i <= count; i++)
+				{
+					final String subProductName = productName + BlCoreConstants.DOUBLE_HYPHEN + i;
+					subPartItemsList.add(subProductName);
+				}
+			}
+		});
+		return subPartItemsList;
+	}
+
+	/**
+	 * Checks if is product a subpart.
+	 *
+	 * @param product
+	 *           the product
+	 * @return true, if is product A subpart
+	 */
+	private boolean isProductASubpart(final BlProductModel product)
+	{
+		return BooleanUtils.isFalse(product instanceof BlSerialProductModel)
+				&& BooleanUtils.isTrue(product instanceof BlProductModel) && CollectionUtils.isNotEmpty(product.getSerialProducts())
+				&& Objects.nonNull(product.getProductType())
+				&& BooleanUtils.isTrue(product.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode()));
 	}
 
 }

@@ -1019,8 +1019,8 @@
                               label="warehousingbackoffice.consignmentEntry.orderEntry.product.name"
                               spring-bean="nullSafeListCellRenderer"/>
             <list-view:column qualifier="quantity" label="warehousingbackoffice.consignmentEntry.quantity"/>
-            <list-view:column qualifier="quantityDeclined"/>
-            <list-view:column qualifier="quantityShipped"/>
+            <list-view:column qualifier="mainItemNotScannedCount"/>
+            <list-view:column qualifier="subpartsNotScannedCount"/>
         </list-view:list-view>
     </context>
 

@@ -3629,8 +3629,19 @@
             <modifiers read="true" write="true" optional="true"/>
             <persistence type="property"/>
         </attribute>
-        
-        <attribute qualifier="testingStatus" type="ItemTestingStatusEnum">
+
+        <attribute autocreate="true" qualifier="mainItemNotScannedCount" type="java.lang.Integer">
+        	<modifiers read="true" write="false" optional="true" />
+			<description>Gets the count of the main items in consignment entry which are not scanned</description>
+			<persistence type="dynamic" attributeHandler="blMainItemNotScannedCountHandler" />
+        </attribute>
+        <attribute autocreate="true" qualifier="subpartsNotScannedCount" type="java.lang.Integer">
+        	<modifiers read="true" write="false" optional="true" />
+			<description>Gets the count of the subparts in consignment entry which are not scanned</description>
+			<persistence type="dynamic" attributeHandler="blSubpartsNotScannedCountHandler" />
+        </attribute>
+
+                <attribute qualifier="testingStatus" type="ItemTestingStatusEnum">
 		<persistence type="property" />
 		<modifiers read="true" write="true" optional="true" />
 		<defaultvalue>em().getEnumerationValue("ItemTestingStatusEnum", "NONE")</defaultvalue>

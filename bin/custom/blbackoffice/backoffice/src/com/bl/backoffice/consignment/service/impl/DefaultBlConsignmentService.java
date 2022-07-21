@@ -11,19 +11,26 @@ import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bl.backoffice.consignment.service.BlConsignmentService;
 import com.bl.backoffice.widget.controller.order.BlOrderEntryToCancelDto;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
-import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.service.BlProductService;
+import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -34,6 +41,8 @@ import com.bl.core.stock.BlStockLevelDao;
  */
 public class DefaultBlConsignmentService implements BlConsignmentService
 {
+	private static final Logger LOG = Logger.getLogger(DefaultBlConsignmentService.class);
+	
 	@Autowired
 	private transient ModelService modelService;
 
@@ -45,6 +54,9 @@ public class DefaultBlConsignmentService implements BlConsignmentService
 
 	@Resource(name = "blConsignmentDao")
 	private BlConsignmentDao blConsignmentDao;
+	
+	@Resource(name = "blConsignmentEntryService")
+	private BlConsignmentEntryService blConsignmentEntryService;
 
 
 	@Override
@@ -158,6 +170,96 @@ public class DefaultBlConsignmentService implements BlConsignmentService
 	public void setBlProductService(final BlProductService blProductService)
 	{
 		this.blProductService = blProductService;
+	}
+
+	@Override
+	public boolean isMainItemScanRemaining(final ConsignmentModel consignment)
+	{
+		if (Objects.isNull(consignment))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"DefaultBlConsignmentService :: isMainItemScanRemaining :: Consignment is null", StringUtils.EMPTY);
+			return true;
+		}
+		if (CollectionUtils.isEmpty(consignment.getConsignmentEntries()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"DefaultBlConsignmentService :: isMainItemScanRemaining :: Consignment Entries is empty on Consignment : {}",
+					consignment.getCode());
+			return true;
+		}
+		for (final ConsignmentEntryModel consignmentEntry : consignment.getConsignmentEntries())
+		{
+			if (consignmentEntry.getMainItemNotScannedCount().intValue() >= 1)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isSubpartScanRemaining(final ConsignmentModel consignment)
+	{
+		if (Objects.isNull(consignment))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"DefaultBlConsignmentService :: isSubpartScanRemaining :: Consignment is null", StringUtils.EMPTY);
+			return true;
+		}
+		if (CollectionUtils.isEmpty(consignment.getConsignmentEntries()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"DefaultBlConsignmentService :: isSubpartScanRemaining :: Consignment Entries is empty on Consignment : {}",
+					consignment.getCode());
+			return true;
+		}
+		for (final ConsignmentEntryModel consignmentEntry : consignment.getConsignmentEntries())
+		{
+			if (consignmentEntry.getSubpartsNotScannedCount().intValue() >= 1)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public List<String> getRemainingScanSubpartNames(final ConsignmentModel consignment)
+	{
+		if (Objects.isNull(consignment))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"DefaultBlConsignmentService :: getRemainingScanSubpartNames :: Consignment is null", StringUtils.EMPTY);
+			return Lists.newArrayList();
+		}
+		if (CollectionUtils.isEmpty(consignment.getConsignmentEntries()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"DefaultBlConsignmentService :: getRemainingScanSubpartNames :: Consignment Entries is empty on Consignment : {}",
+					consignment.getCode());
+			return Lists.newArrayList();
+		}
+		final List<String> subPartsName = Lists.newArrayList();
+		consignment.getConsignmentEntries().forEach(entry -> subPartsName.addAll(getBlConsignmentEntryService().getRemainingScanSubpartNames(entry)));
+		return subPartsName;
+	}
+
+	/**
+	 * @return the blConsignmentEntryService
+	 */
+	public BlConsignmentEntryService getBlConsignmentEntryService()
+	{
+		return blConsignmentEntryService;
+	}
+
+	/**
+	 * @param blConsignmentEntryService
+	 *           the blConsignmentEntryService to set
+	 */
+	public void setBlConsignmentEntryService(final BlConsignmentEntryService blConsignmentEntryService)
+	{
+		this.blConsignmentEntryService = blConsignmentEntryService;
 	}
 
 }

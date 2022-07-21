@@ -1938,4 +1938,7 @@
 
 		<bean id="blPrintingShippingLabelDao" name="blPrintingShippingLabelDao"
 		  class="com.bl.integration.dao.impl.DefaultBlPrintingShippingLabelDao"/>
+		  
+	<bean id="blMainItemNotScannedCountHandler" class="com.bl.core.model.handler.BLMainItemNotScannedCountHandler"/>
+	<bean id="blSubpartsNotScannedCountHandler" class="com.bl.core.model.handler.BLSubpartsNotScannedCountHandler"/>
 </beans>

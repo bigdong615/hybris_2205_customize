@@ -3,7 +3,9 @@ package com.bl.core.services.consignment.entry;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
+import java.util.List;
 import java.util.Set;
 
 import com.bl.core.model.BlSerialProductModel;
@@ -67,4 +69,20 @@ public interface BlConsignmentEntryService
 	 * @return the consignment entry from order for serial
 	 */
 	ConsignmentEntryModel getConsignmentEntryFromOrderForSerial(final OrderModel order, final String serialCode);
+	
+	/**
+	 * Gets the remaining scan subpart names.
+	 *
+	 * @param consignmentEntry the consignment entry
+	 * @return the remaining scan subpart names
+	 */
+	public List<String> getRemainingScanSubpartNames(final ConsignmentEntryModel consignmentEntry);
+	
+	/**
+	 * Gets the subpart items name list.
+	 *
+	 * @param consignmentEntry the consignment entry
+	 * @return the subpart items list
+	 */
+	public List<String> getSubpartItemsList(final ConsignmentEntryModel consignmentEntry);
 }

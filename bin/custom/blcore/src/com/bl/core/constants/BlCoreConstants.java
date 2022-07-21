@@ -640,6 +640,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String ESP_GEAR_GUARD = "GEAR GUARD"; // BL-2130
 	public static final String ESP_GEAR_GUARD_PRO = "GEAR GUARD PRO"; // BL-2130
+	
+	public static final String MAIN_ITEM_SCAN_REMAINING_ERROR_MSG = "Order cannot be shipped. One or more items has not been included.";
+	public static final String SUBPART_SCAN_REMAINING_ERROR_MSG_1 = "Do you want to proceed. The subparts ";
+	public static final String SUBPART_SCAN_REMAINING_ERROR_MSG_2 = " are not included.";
+	public static final String ERROR_TITLE = "Error: ";	
+	public static final String COMMA_SEPRATOR = " ,";	
 
 	private BlCoreConstants()
 	{
