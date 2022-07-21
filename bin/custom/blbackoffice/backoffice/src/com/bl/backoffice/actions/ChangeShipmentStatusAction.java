@@ -129,7 +129,12 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 	 */
 	private ActionResult<ConsignmentModel> processStatusChange(final ConsignmentModel consignmentModel)
 	{
-		if (OrderStatus.PAYMENT_CAPTURED.equals(consignmentModel.getOrder().getStatus()) && !ConsignmentStatus.BL_SHIPPED.equals(consignmentModel.getStatus()))
+		if(OrderStatus.RECEIVED_MANUAL_REVIEW.equals(consignmentModel.getOrder().getStatus()))
+		{
+			Messagebox.show("Order not mark to BL Shipped due to order being in manual review status (non-allocated items).", BlintegrationConstants.ERROR_TEXT,
+					Messagebox.OK, "icon");
+		}		
+		else if (OrderStatus.PAYMENT_CAPTURED.equals(consignmentModel.getOrder().getStatus()) && !ConsignmentStatus.BL_SHIPPED.equals(consignmentModel.getStatus()))
 		{
 			consignmentModel.getConsignmentEntries()
 					.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serialProduct -> {
