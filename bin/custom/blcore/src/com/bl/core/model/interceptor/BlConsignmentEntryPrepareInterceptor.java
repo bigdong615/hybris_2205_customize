@@ -2,10 +2,39 @@ package com.bl.core.model.interceptor;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
-import com.bl.core.enums.ProductTypeEnum;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
+import de.hybris.platform.servicelayer.interceptor.InterceptorException;
+import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.ConsignmentEntryStatusEnum;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
+import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlItemsBillingChargeModel;
@@ -17,30 +46,6 @@ import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
-import de.hybris.platform.servicelayer.interceptor.InterceptorException;
-import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
-
-import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import javax.annotation.Resource;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 
 /**
@@ -58,7 +63,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 
 	@Resource(name = "defaultBlUserService")
 	private DefaultBlUserService defaultBlUserService;
-	
+
 	private BlConsignmentEntryService blConsignmentEntryService;
 
 	@Override
@@ -72,6 +77,38 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		triggerExceptionBrokenOrMissingEvent(consignmentEntryModel, interceptorContext);
 		doChangePriorityStatus(consignmentEntryModel, interceptorContext); //BL-822 AC.2
 		addSerialAndOrderCodeOnItemBillingCharge(consignmentEntryModel, interceptorContext);
+
+		updateConsignmentEntryStatus(consignmentEntryModel, interceptorContext);
+	}
+
+	/**
+	 * @param consignmentEntryModel
+	 * @param interceptorContext
+	 */
+	private void updateConsignmentEntryStatus(final ConsignmentEntryModel consignmentEntryModel,
+			final InterceptorContext interceptorContext)
+	{
+		final Map<String, ConsignmentEntryStatusEnum> consEntryStatus = new HashMap<String, ConsignmentEntryStatusEnum>();
+		for (final Map.Entry<String, ItemStatusEnum> item : consignmentEntryModel.getItems().entrySet())
+		{
+			if (item.getValue().equals(ItemStatusEnum.MISSING))
+			{
+				consEntryStatus.put(item.getKey(), ConsignmentEntryStatusEnum.MISSING);
+			}
+			else if (item.getValue().equals(ItemStatusEnum.IN_HOUSE) || item.getValue().equals(ItemStatusEnum.NOT_INCLUDED))
+			{
+				consEntryStatus.put(item.getKey(), ConsignmentEntryStatusEnum.NOT_SHIPPED);
+			}
+			else if (item.getValue().equals(ItemStatusEnum.INCLUDED))
+			{
+				consEntryStatus.put(item.getKey(), ConsignmentEntryStatusEnum.SHIPPED);
+			}
+			else if (item.getValue().equals(ItemStatusEnum.RECEIVED_OR_RETURNED))
+			{
+				consEntryStatus.put(item.getKey(), ConsignmentEntryStatusEnum.RETURNED);
+			}
+		}
+		consignmentEntryModel.setConsignmentEntryStatus(consEntryStatus);
 	}
 
 	/**
@@ -205,7 +242,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				if (previousChangedBillingChargesList.containsKey(serialCode)) {
 					final List<BlItemsBillingChargeModel> previousCharges = previousChangedBillingChargesList
 							.get(serialCode);
-					List<BlItemsBillingChargeModel> updatedCharges = Lists
+					final List<BlItemsBillingChargeModel> updatedCharges = Lists
 							.newArrayList(modifiedBillingCharges.get(serialCode));
 					updatedCharges.removeIf(previousCharges::contains);
 					newModifiedBillingCharges.put(serialCode, updatedCharges);
@@ -294,16 +331,16 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		if (CollectionUtils.isNotEmpty(repairChargeList) && CollectionUtils
 				.isNotEmpty(missingChargeList)) {
 			BigDecimal chargedAmount = BigDecimal.ZERO;
-			StringBuilder unPaidBillNotes = new StringBuilder();
+			final StringBuilder unPaidBillNotes = new StringBuilder();
 
 			//consolidated data for repair charge.
-			for (BlItemsBillingChargeModel blItemsBillingChargeModel : repairChargeList) {
+			for (final BlItemsBillingChargeModel blItemsBillingChargeModel : repairChargeList) {
 				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
 				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes()).append(StringUtils.SPACE);
 			}
 
 			//consolidated data for missing charge.
-			for (BlItemsBillingChargeModel blItemsBillingChargeModel : missingChargeList) {
+			for (final BlItemsBillingChargeModel blItemsBillingChargeModel : missingChargeList) {
 				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
 				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes()).append(StringUtils.SPACE);
 			}
@@ -368,7 +405,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
     BigDecimal chargedAmount = BigDecimal.ZERO;
     final StringBuilder unPaidBillNotes = new StringBuilder();
     //consolidated data for billing charge.
-    for (BlItemsBillingChargeModel blItemsBillingChargeModel : billingChargeList) {
+    for (final BlItemsBillingChargeModel blItemsBillingChargeModel : billingChargeList) {
       chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
       unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes()).append(
 					StringUtils.SPACE);
@@ -524,7 +561,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds the serial and order code on item billing charge.
 	 *
@@ -554,7 +591,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		return blEspEventService;
 	}
 
-	public void setBlEspEventService(DefaultBlESPEventService blEspEventService) {
+	public void setBlEspEventService(final DefaultBlESPEventService blEspEventService) {
 		this.blEspEventService = blEspEventService;
 	}
 
@@ -569,7 +606,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 	/**
 	 * @param blConsignmentEntryService the blConsignmentEntryService to set
 	 */
-	public void setBlConsignmentEntryService(BlConsignmentEntryService blConsignmentEntryService)
+	public void setBlConsignmentEntryService(final BlConsignmentEntryService blConsignmentEntryService)
 	{
 		this.blConsignmentEntryService = blConsignmentEntryService;
 	}

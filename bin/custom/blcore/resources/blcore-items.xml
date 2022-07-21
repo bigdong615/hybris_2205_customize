@@ -225,6 +225,14 @@
         <value code="RECEIVED_OR_RETURNED" />
         <value code="MISSING" />
       </enumtype>
+      
+       <enumtype generate="true" code="ConsignmentEntryStatusEnum" autocreate="true" dynamic="true">
+        <value code="NOT_SHIPPED"/>
+        <value code="SHIPPED"/>
+        <value code="RETURNED" />
+        <value code="MISSING" />
+        <value code="UNBOXED" />
+      </enumtype>
 
 
       <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
@@ -510,6 +518,7 @@
     <maptypes>
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
         <maptype code="ItemStatusMap" argumenttype="java.lang.String" returntype="ItemStatusEnum" />
+        <maptype code="ConsignmentEntryStatusMap" argumenttype="java.lang.String" returntype="ConsignmentEntryStatusEnum" />
         <maptype code="BillingChargesMap" argumenttype="java.lang.String" returntype="BlItemCharges" />
         <maptype code="InventoryCycleCountScanSKUDetails" argumenttype="BlProduct" returntype="ModifiedSerialProduct" />
     </maptypes>
@@ -3586,6 +3595,8 @@
               <defaultvalue>Boolean.FALSE</defaultvalue>
               <description>It tells whether the consignments optimized rental end date is changes due to cronjob.</description>
           </attribute>
+
+	
         </attributes>
       </itemtype>
 
@@ -3601,6 +3612,13 @@
             <modifiers read="true" write="true"/>
             <persistence type="property"/>
         </attribute>
+        
+          <attribute type="ConsignmentEntryStatusMap" qualifier="consignmentEntryStatus">
+            <description>Created Map to display Shipper what all items are attached to the consignment. So that agent can verify and scan the serial</description>
+            <modifiers read="true" write="true"/>
+            <persistence type="property"/>
+        </attribute>
+        
         <attribute qualifier="options" type="optionsList">
           <persistence type="property"/>
           <modifiers read="true" write="true" optional="true"/>
@@ -3611,6 +3629,7 @@
             <modifiers read="true" write="true" optional="true"/>
             <persistence type="property"/>
         </attribute>
+
         <attribute autocreate="true" qualifier="mainItemNotScannedCount" type="java.lang.Integer">
         	<modifiers read="true" write="false" optional="true" />
 			<description>Gets the count of the main items in consignment entry which are not scanned</description>
@@ -3621,6 +3640,20 @@
 			<description>Gets the count of the subparts in consignment entry which are not scanned</description>
 			<persistence type="dynamic" attributeHandler="blSubpartsNotScannedCountHandler" />
         </attribute>
+
+                <attribute qualifier="testingStatus" type="ItemTestingStatusEnum">
+		<persistence type="property" />
+		<modifiers read="true" write="true" optional="true" />
+		<defaultvalue>em().getEnumerationValue("ItemTestingStatusEnum", "NONE")</defaultvalue>
+		<description>Determines the testing status of the item</description>
+	</attribute>
+
+	<attribute qualifier="gearRated" type="boolean">
+		<persistence type="property" />
+		<modifiers read="true" write="true" optional="true" />
+		<defaultvalue>Boolean.FALSE</defaultvalue>
+		<description>To determine if the Gear is Rated by Tech. Eng. Member</description>
+	</attribute>
 			</attributes>
 		  </itemtype>
   <!--  BL-766 start -->

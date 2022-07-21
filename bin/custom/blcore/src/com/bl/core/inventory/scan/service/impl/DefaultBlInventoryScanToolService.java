@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.ConsignmentEntryStatusEnum;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.PackagingInfoStatus;
 import com.bl.core.enums.ProductTypeEnum;
@@ -390,6 +391,23 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 									  final boolean unboxStatus) {
 		if(unboxStatus) {
 			blSerialProduct.setSerialStatus(SerialStatusEnum.UNBOXED);
+
+			try
+			{
+			//updating the consignment entry status
+			final Map<String, ConsignmentEntryStatusEnum> consEntryStatus = blSerialProduct.getConsignmentEntry()
+					.getConsignmentEntryStatus();
+			consEntryStatus.put(blSerialProduct.getCode(), ConsignmentEntryStatusEnum.UNBOXED);
+			if (!consEntryStatus.isEmpty())
+			{
+				blSerialProduct.getConsignmentEntry().setConsignmentEntryStatus(consEntryStatus);
+			}
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+					"Unable to update consignment entry status to Unboxed for - - {}", blSerialProduct.getCode());
+		}
 		}
 
 		if (!blSerialProduct.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode()))

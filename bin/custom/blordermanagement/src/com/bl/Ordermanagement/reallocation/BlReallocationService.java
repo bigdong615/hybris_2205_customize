@@ -12,6 +12,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,4 +78,10 @@ public interface BlReallocationService {
    */
   void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
       final OrderProcessModel process);
+
+  void removeReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus,
+		WarehouseModel warehouse);
+  
+  boolean reAssignSerialReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus,
+			WarehouseModel warehouse, String orderCode);
 }
