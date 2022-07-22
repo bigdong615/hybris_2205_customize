@@ -102,10 +102,12 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			if(((BlProductModel)orderEntryModel.getProduct()).isBundleProduct()){
 				orderEntryModel.setBundleMainEntry(Boolean.TRUE);
 			}
-			for (BlSerialProductModel serial : serialProduct) {
-				if(Objects.nonNull(serial.getBlProduct()) && Objects.nonNull(orderEntryModel.getProduct()) && !serial.getBlProduct().equals(orderEntryModel.getProduct()))
-				{
-					throw new InterceptorException("Wrong Serial");
+			if(CollectionUtils.isNotEmpty(serialProduct){
+				for (BlSerialProductModel serial : serialProduct) {
+					if(Objects.nonNull(serial.getBlProduct()) && Objects.nonNull(orderEntryModel.getProduct()) && !serial.getBlProduct().equals(orderEntryModel.getProduct()))
+					{
+						throw new InterceptorException("Wrong Serial");
+					}
 				}
 			}
 			if (orderEntryModel.getOrder().getIsRentalOrder())
