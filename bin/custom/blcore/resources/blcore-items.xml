@@ -3303,7 +3303,14 @@
                         <modifiers read="true" write="true" optional="true"/>
                         <defaultvalue>Double.valueOf(0.0d)</defaultvalue>
                     </attribute>
+                    <attribute qualifier="taxRate" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true" search="false"/>
+                        <description>Total tax rate</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
                 </attributes>
+
             </itemtype>
 
           <!--Added New attribute to identify the order for replacement in Return Request . -->
