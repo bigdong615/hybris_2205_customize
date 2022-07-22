@@ -94,13 +94,13 @@
 							<cms:component component="${feature}" />
 						</cms:pageSlot>
 					</h5>
-					<ul class="brand-logos pt-4 d-none d-md-flex">
+					<ul class="brand-logos pt-4 d-md-flex">
 						<cms:pageSlot position="HomePageBrandSectionSlot" var="feature">
 							<cms:component component="${feature}" />
 						</cms:pageSlot>
 					</ul>
 					<!-- BL-351 : Homepage Mobile Device Brands Section --> 
-					<div class="logo-slider splide mt-4 d-block d-md-none">
+					<div class="logo-slider splide mt-4 d-none d-md-none">
 						<div class="splide__track">
 							<ul class="splide__list">
 								<cms:pageSlot position="MobileHomePageBrandSectionSlot"
