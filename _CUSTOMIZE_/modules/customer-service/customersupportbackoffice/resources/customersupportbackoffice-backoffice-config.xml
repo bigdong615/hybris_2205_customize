@@ -1576,6 +1576,12 @@
 							<editorArea:value>##0.00</editorArea:value>
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
+					<editorArea:attribute qualifier="taxRate" label="customersupportbackoffice.order.details.taxes.rate" readonly="true">
+						<editorArea:editor-parameter>
+							<editorArea:name>numberFormat</editorArea:name>
+							<editorArea:value>##0.00</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
 				</editorArea:section>
             </editorArea:tab>
             <editorArea:tab name="customersupportbackoffice.order.tab.consignments">
