@@ -255,18 +255,26 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
    private void updateCurrentConsignmentStatus(final ConsignmentModel consignment,
    		  final List<AtomicBoolean> allEntryAllQuantityReallocated, final List<AbstractOrderEntryModel> orderEntries)
      {
+		  final List<String> serialsCodesToRemove = new ArrayList<String>();
        if (allEntryAllQuantityReallocated.stream().allMatch(AtomicBoolean::get)) {
    		  if (consignment.getConsignmentEntries().size() > 1 && consignment.getConsignmentEntries().size() != orderEntries.size())
    		  {
    			  final Set<ConsignmentEntryModel> entriesList = new HashSet<ConsignmentEntryModel>();
       			entriesList.addAll(consignment.getConsignmentEntries());
-   			  for (final ConsignmentEntryModel consign : consignment.getConsignmentEntries())
+					for (final ConsignmentEntryModel consignmentEntry : consignment.getConsignmentEntries())
    			  {
    				  for (final AbstractOrderEntryModel entry : orderEntries)
    				  {
-   					  if (consign.getOrderEntry().equals(entry))
+						  if (consignmentEntry.getOrderEntry().equals(entry))
    					  {
-   						  entriesList.remove(consign);
+							  entriesList.remove(consignmentEntry);
+							  for (final BlProductModel product : consignmentEntry.getSerialProducts())
+							  {
+								  if (product instanceof BlSerialProductModel)
+								  {
+									  serialsCodesToRemove.add(product.getCode());
+								  }
+							  }
    					  }
    				  }
    			  }
@@ -280,27 +288,50 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
    		  }
    		  else
    		  {
+				  final Set<ConsignmentEntryModel> entriesList = new HashSet<ConsignmentEntryModel>();
+				  entriesList.addAll(consignment.getConsignmentEntries());
+				  for (final ConsignmentEntryModel consignmentEntry : consignment.getConsignmentEntries())
+				  {
+					  final List<BlProductModel> serialProducts = new ArrayList<BlProductModel>();
+					  serialProducts.addAll(consignmentEntry.getSerialProducts());
+					  for (final BlProductModel product : consignmentEntry.getSerialProducts())
+					  {
+						  if (product instanceof BlSerialProductModel)
+						  {
+							  serialProducts.remove(product);
+							  serialsCodesToRemove.add(product.getCode());
+						  }
+					  }
+					  consignmentEntry.setSerialProducts(serialProducts);
+					  if (serialProducts.isEmpty()
+							  || !serialProducts.stream().anyMatch(serialProduct -> serialProduct instanceof BlSerialProductModel))
+					  {
+						  entriesList.remove(consignmentEntry);
+						  consignmentEntry.setQuantity(0l);
+					  }
+					  modelService.save(consignmentEntry);
+				  }
    			  consignment.setStatus(ConsignmentStatus.CANCELLED);
+				  consignment.setConsignmentEntries(entriesList);
    			  modelService.save(consignment);
    			  modelService.refresh(consignment);
    		  }
        }
-		 if (!orderEntries.isEmpty())
+		 else if (!orderEntries.isEmpty())
 		 {
-			 final List<String> serialsCodesToRemove = new ArrayList<String>();
 			 final List<BlProductModel> serials = new ArrayList<BlProductModel>();
 			 final Map<String, ItemStatusEnum> items = new HashMap<String, ItemStatusEnum>();
-			 for (final ConsignmentEntryModel consign : consignment.getConsignmentEntries())
+			 for (final ConsignmentEntryModel consignmentEntry : consignment.getConsignmentEntries())
 			 {
-				 serials.addAll(consign.getSerialProducts());
-				 items.putAll(consign.getItems());
+				 serials.addAll(consignmentEntry.getSerialProducts());
+				 items.putAll(consignmentEntry.getItems());
 				 for (final AbstractOrderEntryModel orderEntry : orderEntries)
 				 {
-					 if (consign.getOrderEntry().equals(orderEntry))
+					 if (consignmentEntry.getOrderEntry().equals(orderEntry))
 					 {
-						 consign.setQuantity(consign.getQuantity() - orderEntry.getQuantity());
+						 consignmentEntry.setQuantity(consignmentEntry.getQuantity() - orderEntry.getQuantity());
 						 int counter = 0;
-						 for (final BlProductModel serial : consign.getSerialProducts())
+						 for (final BlProductModel serial : consignmentEntry.getSerialProducts())
 						 {
 							 if (serial instanceof BlSerialProductModel)
 							 {
@@ -310,24 +341,21 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 								 counter++;
 								 if (counter == orderEntry.getQuantity().intValue())
 								 {
+									 consignmentEntry.setItems(items);
+									 consignmentEntry.setSerialProducts(serials);
+									 modelService.save(consignmentEntry);
+									 modelService.refresh(consignmentEntry);
 									 break;
 								 }
 							 }
 						 }
-
 					 }
-
 				 }
-				 consign.setItems(items);
-				 consign.setSerialProducts(serials);
-				 modelService.save(consign);
-				 modelService.refresh(consign);
-
 			 }
-			 blReallocationService.removeReserveStocksForSerialProducts(new HashSet<>(serialsCodesToRemove),
-					 consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.TRUE,
-					 consignment.getWarehouse());
 		 }
+		 blReallocationService.removeReserveStocksForSerialProducts(new HashSet<>(serialsCodesToRemove),
+				 consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.TRUE,
+				 consignment.getWarehouse());
      }
 
   /**
