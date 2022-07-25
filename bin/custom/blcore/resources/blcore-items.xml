@@ -801,7 +801,11 @@
           <defaultvalue>Boolean.FALSE</defaultvalue>
           <description>Defines Flag for Non-Refundable Deposit Amount</description>
         </attribute>
-
+		<attribute qualifier="orderShippedStatusDate" type="java.util.Date">
+            <persistence type="property" />
+            <modifiers read="true" write="true" optional="true" />
+            <description>Date on which the Order status changes to SHIPPED</description>
+        </attribute>
       </attributes>
       </itemtype>
 
@@ -3602,7 +3606,11 @@
               <defaultvalue>Boolean.FALSE</defaultvalue>
               <description>It tells whether the consignments optimized rental end date is changes due to cronjob.</description>
           </attribute>
-
+			<attribute qualifier="shipmentBlShippedStatusDate" type="java.util.Date">
+            <persistence type="property" />
+            <modifiers read="true" write="true" optional="true" />
+            <description>Date on which the Shipment status changes to BL_SHIPPED</description>
+        </attribute>
 	
         </attributes>
       </itemtype>

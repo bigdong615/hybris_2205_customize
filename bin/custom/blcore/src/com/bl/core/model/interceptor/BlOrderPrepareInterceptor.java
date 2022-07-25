@@ -91,7 +91,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   @Override
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
-
+	  setOrderShippedStatusDate(abstractOrderModel, interceptorContext);
   	if(abstractOrderModel instanceof OrderModel) {
 			final OrderModel orderModel = (OrderModel) abstractOrderModel;
 			if (BooleanUtils.isTrue(orderModel.getIsExtendedOrder())) {
@@ -719,5 +719,23 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	public void setBlShippingOptimizationStrategy(DefaultBlShippingOptimizationStrategy blShippingOptimizationStrategy)
 	{
 		this.blShippingOptimizationStrategy = blShippingOptimizationStrategy;
+	}
+	
+	/**
+	 * Sets the order shipped status date.
+	 *
+	 * @param order
+	 *           the order
+	 * @param interceptorContext
+	 *           the interceptor context
+	 */
+	private void setOrderShippedStatusDate(final AbstractOrderModel order, final InterceptorContext interceptorContext)
+	{
+		if (order instanceof OrderModel && interceptorContext.isModified(order, AbstractOrderModel.STATUS)
+				&& order.getStatus().getCode().equals(OrderStatus.SHIPPED.getCode()))
+		{
+			final OrderModel orderModel = (OrderModel) order;
+			orderModel.setOrderShippedStatusDate(new Date());
+		}
 	}
 }
