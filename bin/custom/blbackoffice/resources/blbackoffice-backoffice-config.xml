@@ -2054,11 +2054,7 @@
 	<context type="FrontDeskQueue" component="listview" merge-by="replace">
 		<list-view:list-view>
 			<list-view:column qualifier="orderNumber"/>
-            <list-view:column qualifier="consignmentCode"/>
-            <list-view:column qualifier="serialProductCode"/>
-            <list-view:column qualifier="ocLocation"/>
-            <list-view:column qualifier="consignmentStatus"/>
-            <list-view:column qualifier="orderNote"/>
+			<list-view:column qualifier="consignmentStatus"/>
             <list-view:column qualifier="rentalEndDate"/>
             <list-view:column qualifier="FirstNameOfPickUpPerson"/> 
             <list-view:column qualifier="LastNameOfPickUpPerson"/>
