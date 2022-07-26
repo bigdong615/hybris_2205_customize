@@ -12,6 +12,8 @@ import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
+
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -166,6 +168,7 @@ public class DefaultBlReallocationService implements BlReallocationService {
       });
       entries.addAll(consignment.getConsignmentEntries());
       consignment.setConsignmentEntries(entries);
+      consignment.setStatus(ConsignmentStatus.READY);
       getModelService().save(consignment);
     }
   }

@@ -41,7 +41,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
   @Override
   public void onPrepare(final ConsignmentModel consignmentModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
-
+	  setShipmentBlShippedStatusDate(consignmentModel, interceptorContext);
     final AbstractOrderModel abstractOrderModel = consignmentModel.getOrder();
 
     if (null != abstractOrderModel) {
@@ -213,6 +213,23 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 
     this.blEspEventService = blEspEventService;
 
+  }
+  
+  /**
+   * Sets the shipment bl shipped status date.
+   *
+   * @param consignment
+   *           the consignment
+   * @param interceptorContext
+   *           the interceptor context
+   */
+  private void setShipmentBlShippedStatusDate(final ConsignmentModel consignment, final InterceptorContext interceptorContext)
+  {
+	  if (interceptorContext.isModified(consignment, ConsignmentModel.STATUS)
+			  && consignment.getStatus().getCode().equals(ConsignmentStatus.BL_SHIPPED.getCode()))
+	  {
+		  consignment.setShipmentBlShippedStatusDate(new Date());
+	  }
   }
 
 }

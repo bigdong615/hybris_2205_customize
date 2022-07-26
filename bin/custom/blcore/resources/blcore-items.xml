@@ -801,7 +801,11 @@
           <defaultvalue>Boolean.FALSE</defaultvalue>
           <description>Defines Flag for Non-Refundable Deposit Amount</description>
         </attribute>
-
+		<attribute qualifier="orderShippedStatusDate" type="java.util.Date">
+            <persistence type="property" />
+            <modifiers read="true" write="true" optional="true" />
+            <description>Date on which the Order status changes to SHIPPED</description>
+        </attribute>
       </attributes>
       </itemtype>
 
@@ -3303,7 +3307,14 @@
                         <modifiers read="true" write="true" optional="true"/>
                         <defaultvalue>Double.valueOf(0.0d)</defaultvalue>
                     </attribute>
+                    <attribute qualifier="taxRate" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true" search="false"/>
+                        <description>Total tax rate</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
                 </attributes>
+
             </itemtype>
 
           <!--Added New attribute to identify the order for replacement in Return Request . -->
@@ -3595,7 +3606,11 @@
               <defaultvalue>Boolean.FALSE</defaultvalue>
               <description>It tells whether the consignments optimized rental end date is changes due to cronjob.</description>
           </attribute>
-
+			<attribute qualifier="shipmentBlShippedStatusDate" type="java.util.Date">
+            <persistence type="property" />
+            <modifiers read="true" write="true" optional="true" />
+            <description>Date on which the Shipment status changes to BL_SHIPPED</description>
+        </attribute>
 	
         </attributes>
       </itemtype>
@@ -3629,8 +3644,19 @@
             <modifiers read="true" write="true" optional="true"/>
             <persistence type="property"/>
         </attribute>
-        
-        <attribute qualifier="testingStatus" type="ItemTestingStatusEnum">
+
+        <attribute autocreate="true" qualifier="mainItemNotScannedCount" type="java.lang.Integer">
+        	<modifiers read="true" write="false" optional="true" />
+			<description>Gets the count of the main items in consignment entry which are not scanned</description>
+			<persistence type="dynamic" attributeHandler="blMainItemNotScannedCountHandler" />
+        </attribute>
+        <attribute autocreate="true" qualifier="subpartsNotScannedCount" type="java.lang.Integer">
+        	<modifiers read="true" write="false" optional="true" />
+			<description>Gets the count of the subparts in consignment entry which are not scanned</description>
+			<persistence type="dynamic" attributeHandler="blSubpartsNotScannedCountHandler" />
+        </attribute>
+
+                <attribute qualifier="testingStatus" type="ItemTestingStatusEnum">
 		<persistence type="property" />
 		<modifiers read="true" write="true" optional="true" />
 		<defaultvalue>em().getEnumerationValue("ItemTestingStatusEnum", "NONE")</defaultvalue>

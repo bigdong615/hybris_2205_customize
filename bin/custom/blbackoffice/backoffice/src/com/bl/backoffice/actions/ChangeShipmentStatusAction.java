@@ -3,16 +3,22 @@ package com.bl.backoffice.actions;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Messagebox.Button;
 
+import com.bl.backoffice.consignment.service.BlConsignmentService;
+import com.bl.backoffice.widget.controller.order.BlCustomCancelRefundConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.integration.constants.BlintegrationConstants;
@@ -46,6 +52,11 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 	private DefaultBLShipmentCreationService blShipmentCreationService;
 
 	protected static final String SOCKET_OUT_CONTEXT = "blChangeShipmentStatusContext";
+	
+	@Resource(name = "defaultBlConsignmentService")
+	private BlConsignmentService defaultBlConsignmentService;
+
+	private ConsignmentModel consignment;
 
 	/**
 	 * This method is responsible for fetch the consignment which are not in CANCELLED, CHECKED_INVALID,
@@ -72,10 +83,60 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 	 */
 	public ActionResult<ConsignmentModel> perform(final ActionContext<ConsignmentModel> actionContext)
 	{
-		final ConsignmentModel consignment = actionContext.getData();
-		if (OrderStatus.PAYMENT_CAPTURED.equals(consignment.getOrder().getStatus()) && !ConsignmentStatus.BL_SHIPPED.equals(consignment.getStatus()))
+		this.setConsignment(actionContext.getData());
+		if (getDefaultBlConsignmentService().isMainItemScanRemaining(actionContext.getData()))
 		{
-			consignment.getConsignmentEntries()
+			Messagebox.show(BlCoreConstants.MAIN_ITEM_SCAN_REMAINING_ERROR_MSG, BlCoreConstants.ERROR_TITLE, Messagebox.OK,
+					Messagebox.ERROR);
+			return new ActionResult<>(BlintegrationConstants.SUCCESS);
+		}
+		else if (getDefaultBlConsignmentService().isSubpartScanRemaining(actionContext.getData()))
+		{
+			final List<String> remainingScanSubpartNames = getDefaultBlConsignmentService()
+					.getRemainingScanSubpartNames(this.getConsignment());
+			Messagebox.show(BlCoreConstants.SUBPART_SCAN_REMAINING_ERROR_MSG_1
+					+ String.join(BlCoreConstants.COMMA_SEPRATOR, remainingScanSubpartNames)
+					+ BlCoreConstants.SUBPART_SCAN_REMAINING_ERROR_MSG_2, BlCoreConstants.ERROR_TITLE, new Button[]
+			{ Button.NO, Button.YES }, BlCustomCancelRefundConstants.OMS_WIDGET_CANCELORDER_CONFIRM_ICON,
+					this::processStatusChangeOnEvent);
+			return new ActionResult<>(BlintegrationConstants.SUCCESS);
+		}
+		else
+		{
+			return processStatusChange(this.getConsignment());
+		}
+	}
+	
+	/**
+	 * Process status change on consignment on click event.
+	 *
+	 * @param event
+	 *           the event
+	 */
+	private void processStatusChangeOnEvent(final Event event)
+	{
+		if (Button.YES.event.equals(event.getName()))
+		{
+			processStatusChange(this.getConsignment());
+		}
+	}
+	
+	/**
+	 * Process status change on consignment.
+	 *
+	 * @param consignmentModel the consignment model
+	 * @return the action result
+	 */
+	private ActionResult<ConsignmentModel> processStatusChange(final ConsignmentModel consignmentModel)
+	{
+		if(OrderStatus.RECEIVED_MANUAL_REVIEW.equals(consignmentModel.getOrder().getStatus()))
+		{
+			Messagebox.show("Order not mark to BL Shipped due to order being in manual review status (non-allocated items).", BlintegrationConstants.ERROR_TEXT,
+					Messagebox.OK, "icon");
+		}		
+		else if (OrderStatus.PAYMENT_CAPTURED.equals(consignmentModel.getOrder().getStatus()) && !ConsignmentStatus.BL_SHIPPED.equals(consignmentModel.getStatus()))
+		{
+			consignmentModel.getConsignmentEntries()
 					.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serialProduct -> {
 						if (serialProduct instanceof BlSerialProductModel)
 						{
@@ -88,12 +149,12 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 						}
 					}));
 
-			consignment.setStatus(ConsignmentStatus.BL_SHIPPED);
-			getModelService().save(consignment);
-			getModelService().refresh(consignment);
-			AbstractOrderModel order = consignment.getOrder();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for consignment {}", consignment.getStatus(),
-					consignment.getCode());
+			consignmentModel.setStatus(ConsignmentStatus.BL_SHIPPED);
+			getModelService().save(consignmentModel);
+			getModelService().refresh(consignmentModel);
+			AbstractOrderModel order = consignmentModel.getOrder();
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for consignment {}", consignmentModel.getStatus(),
+					consignmentModel.getCode());
 
 			if (order.getConsignments().stream()
 					.allMatch(con -> ConsignmentStatus.BL_SHIPPED.equals(con.getStatus())))
@@ -106,7 +167,7 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 			this.sendOutput(OUT_CONFIRM, COMPLETE);
 			Messagebox.show("Shipment changed to BL_SHIPPED status", BlintegrationConstants.POPUP_TEXT, Messagebox.OK, "icon");			
 		}
-		else if(ConsignmentStatus.BL_SHIPPED.equals(consignment.getStatus()))
+		else if(ConsignmentStatus.BL_SHIPPED.equals(consignmentModel.getStatus()))
 		{
 			this.sendOutput(OUT_CONFIRM, COMPLETE);
 			Messagebox.show("Shipment is already shipped", BlintegrationConstants.POPUP_TEXT,
@@ -118,8 +179,8 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 			Messagebox.show("Shipment is not changed to BL_SHIPPED status as Payment is not Captured for the Order.", BlintegrationConstants.POPUP_TEXT,
 					Messagebox.OK, "icon");
 		}
-		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
-		return new ActionResult(BlintegrationConstants.SUCCESS);
+		this.sendOutput(SOCKET_OUT_CONTEXT, consignmentModel);
+		return new ActionResult<>(BlintegrationConstants.SUCCESS);
 	}
 
 	/**
@@ -154,6 +215,38 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	/**
+	 * @return the defaultBlConsignmentService
+	 */
+	public BlConsignmentService getDefaultBlConsignmentService()
+	{
+		return defaultBlConsignmentService;
+	}
+
+	/**
+	 * @param defaultBlConsignmentService the defaultBlConsignmentService to set
+	 */
+	public void setDefaultBlConsignmentService(BlConsignmentService defaultBlConsignmentService)
+	{
+		this.defaultBlConsignmentService = defaultBlConsignmentService;
+	}
+
+	/**
+	 * @return the consignment
+	 */
+	public ConsignmentModel getConsignment()
+	{
+		return consignment;
+	}
+
+	/**
+	 * @param consignment the consignment to set
+	 */
+	public void setConsignment(ConsignmentModel consignment)
+	{
+		this.consignment = consignment;
 	}
 
 }

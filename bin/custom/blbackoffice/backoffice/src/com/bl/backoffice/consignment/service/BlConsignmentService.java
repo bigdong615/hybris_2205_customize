@@ -36,5 +36,29 @@ public interface BlConsignmentService
 	 *           as Consignment
 	 */
 	public void updateStockForCancelledOrder(final Set<ConsignmentModel> consignments);
+	
+	/**
+	 * Checks if main item scan remaining in the consignment.
+	 *
+	 * @param consignment the consignment
+	 * @return true, if is main item scan remaining
+	 */
+	public boolean isMainItemScanRemaining(final ConsignmentModel consignment);
+	
+	/**
+	 * Checks if is subpart scan remaining in the consignment.
+	 *
+	 * @param consignment the consignment
+	 * @return true, if is subpart scan remaining
+	 */
+	public boolean isSubpartScanRemaining(final ConsignmentModel consignment);
+	
+	/**
+	 * Gets the remaining scan subpart names list.
+	 *
+	 * @param consignment the consignment
+	 * @return the remaining scan subpart names
+	 */
+	public List<String> getRemainingScanSubpartNames(final ConsignmentModel consignment);
 
 }
