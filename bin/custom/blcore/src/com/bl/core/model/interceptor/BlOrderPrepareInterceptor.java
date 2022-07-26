@@ -732,7 +732,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	private void setOrderShippedStatusDate(final AbstractOrderModel order, final InterceptorContext interceptorContext)
 	{
 		if (order instanceof OrderModel && interceptorContext.isModified(order, AbstractOrderModel.STATUS)
-				&& order.getStatus().getCode().equals(OrderStatus.SHIPPED.getCode()))
+				&& Objects.nonNull(order.getStatus()) && order.getStatus().getCode().equals(OrderStatus.SHIPPED.getCode()))
 		{
 			final OrderModel orderModel = (OrderModel) order;
 			orderModel.setOrderShippedStatusDate(new Date());
