@@ -294,7 +294,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 	public void setPaymentMethodNonce(final CCPaymentInfoData paymentInfoData)
 	{
 		final String token = paymentInfoData.getPaymentMethodToken();
-		if (token != null)
+		if (!StringUtils.isBlank(token))
 		{
 			final String nonce = getBrainTreePaymentService().createPaymentMethodNonce(token);
 			paymentInfoData.setPaymentMethodNonce(nonce);
