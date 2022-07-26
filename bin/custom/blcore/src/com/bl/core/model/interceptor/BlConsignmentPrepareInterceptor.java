@@ -226,7 +226,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
   private void setShipmentBlShippedStatusDate(final ConsignmentModel consignment, final InterceptorContext interceptorContext)
   {
 	  if (interceptorContext.isModified(consignment, ConsignmentModel.STATUS)
-			  && consignment.getStatus().getCode().equals(ConsignmentStatus.BL_SHIPPED.getCode()))
+			  && Objects.nonNull(consignment.getStatus()) && consignment.getStatus().getCode().equals(ConsignmentStatus.BL_SHIPPED.getCode()))
 	  {
 		  consignment.setShipmentBlShippedStatusDate(new Date());
 	  }
