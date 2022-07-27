@@ -103,7 +103,7 @@ function reverseTraverseOnShipping() {
  });
 
  // MainContinueMethod
- function shippingMethodContinue() {
+ function shippingMethodContinue(mainContinue) {
  	$("#validationMessage").empty();
  	$('#showErrorForInputValidation').empty();
     var shippingCategory = $('input[name="shipProduct"]:checked').attr('id');
@@ -111,12 +111,12 @@ function reverseTraverseOnShipping() {
         $('#ship-it-notification').html("");
         var shippingMethod = $('#ship-it-select-box').val();
         if(shippingMethod == 'SHIP_HOME_HOTEL_BUSINESS') {
-            shipToHomeShippingContinue(shippingMethod);
+            shipToHomeShippingContinue(shippingMethod,mainContinue);
         } else {
-            shipToUPSStoreLocationContinue(shippingMethod);
+            shipToUPSStoreLocationContinue(shippingMethod,mainContinue);
         }
     } else if(shippingCategory == 'pickup') {
-        pickUpPartnerLocationContinue();
+        pickUpPartnerLocationContinue(null,mainContinue);
     } else {
         SFOrNYCShippingSectionContinue();
     }
@@ -183,7 +183,7 @@ function reverseTraverseOnShipping() {
                        shippingModes += '<option value="' + data[i].code + '" businesstype="' + data[i].businessTypeDelivery + '" data-subtext="' + data[i].deliveryCost.formattedValue + '">' + data[i].name;
                        shippingModes += '</option>';
                        if(i == 0) {
-                          $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+                          $('#cart-shipping-cost').text("-");
                           calculateCartTotal();
                           if(data[i].businessTypeDelivery == true) {
                              let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
@@ -218,7 +218,7 @@ function reverseTraverseOnShipping() {
      });
   }
 
- function shipToHomeShippingContinue(shippingMethod) {
+ function shipToHomeShippingContinue(shippingMethod,mainContinue) {
       hideErrorForInputValidation();
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
@@ -363,7 +363,7 @@ function reverseTraverseOnShipping() {
     });
  }
 
- function shipToUPSStoreLocationContinue(shippingMethod) {
+ function shipToUPSStoreLocationContinue(shippingMethod, mainContinue) {
 	 hideErrorForInputValidation();
      if($('#changeUPSStoreButton').is(":visible")) {
          utag.link({
@@ -377,7 +377,7 @@ function reverseTraverseOnShipping() {
         	 var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
         	 $('#validationMessage').append(validationDiv);
          }
-         else
+         else if (mainContinue)
          {
         	 var firstName = $("#ship-it-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
         	 var lastName = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
@@ -386,12 +386,28 @@ function reverseTraverseOnShipping() {
         	 if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "UPS")) {
         		 if($('#showErrorForInvalidEmailInputValidation').css('display') == "none" && $('#showErrorForInvalidPhoneInputValidation').css('display') == "none"){
         			 savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
-                          $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
+                          $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress(),mainContinue);
         		 }
         	 } else {
         		 showErrorForInputValidationPick('Ship');
         	 }
-         }         
+         }  else {
+         
+             savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null),
+                          $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress(),mainContinue);
+         
+         
+         $.ajax({
+         		url: ACC.config.encodedContextPath + '/cart/deliverycost',
+         		type: "GET",
+         		success: function (data) {
+         		 $('#cart-shipping-cost').text(data.deliveryCost.formattedValue);
+                            calculateCartTotal();
+         		}
+         });
+         					
+         
+         }       
      	} else {
         showErrorForUPSOrPickAddressError();
      	}
@@ -470,6 +486,7 @@ function reverseTraverseOnShipping() {
                  }
              },
              complete: function() {
+             
                  $('.page-loader-new-layout').hide();
              },
              error: function (data) {
@@ -534,6 +551,7 @@ function reverseTraverseOnShipping() {
                     upsStores += '</div>' +
                              '</div>';
                 $('#ship-it-SHIP_UPS_OFFICE').html(upsStores);
+                
                 $('#changeUPSStoreButton').show();
               // $('#ship-it-pickup-gear').show();
                 $('#ship-it-pickup-person').show();
@@ -541,6 +559,7 @@ function reverseTraverseOnShipping() {
                 $('#checkZipForUPSPickup').hide();
                 $('.on-select-hide').hide();
                 showErrorNotificationForPickUpId('They must show ID at time of pickup');
+                shippingMethodContinue(false);
              }
          }
      }
@@ -608,9 +627,9 @@ function reverseTraverseOnShipping() {
      $('#pick-up-notification').val('');
  });
 
- function pickUpPartnerLocationContinue(shippingMethod) {
+ function pickUpPartnerLocationContinue(shippingMethod,mainContinue) {
 	 hideErrorForInputValidation();
-     if($('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id') != undefined) {
+     if($('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id') != undefined || !mainContinue) {
         // track Tealium event on continue shipping.
         utag.link({
          "tealium_event"    : "continue_shipping_click",
@@ -623,7 +642,7 @@ function reverseTraverseOnShipping() {
         	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
         	$('#validationMessage').append(validationDiv);
         }
-        else {
+        else if (mainContinue){
         	var firstName = $("#store-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
         	var lastName = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
         	var email = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
@@ -631,8 +650,8 @@ function reverseTraverseOnShipping() {
         	if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "Pick")) {
         		if($('#showErrorForInvalidEmailInputValidation').css('display') == "none" && $('#showErrorForInvalidPhoneInputValidation').css('display') == "none"){
         			savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
-                    $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
-        			saveDeliveryMode(deliveryMode, true)
+                    $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null,true);
+        			saveDeliveryMode(deliveryMode, true,true)
         			.then((data) => {
         				$('.page-loader-new-layout').hide();
         				window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
@@ -644,6 +663,22 @@ function reverseTraverseOnShipping() {
         	} else {
         		showErrorForInputValidationPick('Pick');
         	}
+        } else {
+        		
+        		
+        		         $.ajax({
+         		url: ACC.config.encodedContextPath + '/cart/deliverycost',
+         		type: "GET",
+         		success: function (data) {
+         		if (data.deliveryCost != null) {
+         			$('#cart-shipping-cost').text(data.deliveryCost.formattedValue);
+         			calculateCartTotal();
+         		} 
+                 
+         		}
+         		
+         });
+        	$('.page-loader-new-layout').hide();	
         }
      } else {
         showErrorForUPSOrPickAddressError();
@@ -716,9 +751,9 @@ function reverseTraverseOnShipping() {
                     }
                     partnerDelivery += '<div id="pickup-nyc" class="row store-location mb-3">' +
                                             '<div class="col-1">' +
-                                                '<input type="radio" id="' +
+                                                '<input type="radio" value="' + data[i].code + '" id="' +
                                                 data[i].code +
-                                                '" name="pickup-locations"><label for="' + data[i].code + '" onClick="onSelectOfPartnerAddress(' + data[i].code + ')"></label>';
+                                                '" name="pickup-locations"><label for="' + data[i].code + '"  onClick="onSelectOfPartnerAddress(' + data[i].code + ')"></label>';
                          partnerDelivery += '</div>' +
                                             '<div class="col-11">' +
                                                 '<p>' + data[i].name + '- <span id="' + data[i].code + '-pickUpCost">' ;
@@ -755,6 +790,7 @@ function reverseTraverseOnShipping() {
                 $('#store-pickup-person').show();
                 if(data.length == 1) {
                     $('#partnerPickUpShippingMethods #pickup-nyc').first().find('input[name="pickup-locations"]').prop("checked", true);
+                    shippingMethodContinue(false);
                 }
                 showErrorNotificationForPickUpId('They must show ID at time of pickup');
             } else {
@@ -821,7 +857,23 @@ function reverseTraverseOnShipping() {
         $('#same-day-notification').val('');
         $('#same-day-notification').hide();
     }
-    hideErrorForInputValidation();
+    hideErrorForInputValidation();    
+    var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
+    saveDeliveryMode(deliveryMode, false,false)
+    
+    $.ajax({
+         		url: ACC.config.encodedContextPath + '/cart/deliverycost',
+         		type: "GET",
+         		success: function (data) {
+         		if (data.deliveryCost != null) {
+         			$('#cart-shipping-cost').text(data.deliveryCost.formattedValue);
+         			calculateCartTotal();
+         		} 
+                 
+         		}
+         		
+         });
+        	$('.page-loader-new-layout').hide();	
  }
 
  function pickUpBySomeoneForm() {
@@ -852,6 +904,13 @@ function reverseTraverseOnShipping() {
      showPartnerPickUpDeliveryModes(event.value);
      $('#showErrorForUPSOrPickAddressError').html('');
      $('#showErrorForUPSOrPickAddressError').hide();
+  }
+  
+  function resetPickUpPrices () {
+  	$('#validationMessage').empty();
+  	$('#cart-shipping-cost').text("-");
+  	calculateCartTotal();
+  
   }
 
   // SF Or NYC
@@ -1584,7 +1643,7 @@ function reverseTraverseOnShipping() {
                      addNewAddress(addressForm, deliveryMode)
                          .then((data) => {
                              sessionStorage.removeItem("enteredAddressForm");
-                             saveDeliveryMode(deliveryMode, false)
+                             saveDeliveryMode(deliveryMode, false,true)
                                  .then((data) => {
                                      $('.page-loader-new-layout').hide();
                                      window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
@@ -1637,7 +1696,7 @@ function reverseTraverseOnShipping() {
                   sessionStorage.removeItem("avsFlowDeliveryMode");
                   sessionStorage.removeItem("businessType");
                   sessionStorage.removeItem("rushStatus");
-                  saveDeliveryMode(deliveryMode, false)
+                  saveDeliveryMode(deliveryMode, false,true)
                        .then((data) => {
                            $('.page-loader-new-layout').hide();
                            $('#avsCheck').modal('hide');
@@ -1678,7 +1737,7 @@ function reverseTraverseOnShipping() {
               sessionStorage.removeItem("enteredAddressForm");
               sessionStorage.removeItem("avsFlowDeliveryMode");
               sessionStorage.removeItem("rushStatus");
-              saveDeliveryMode(deliveryMode, false)
+              saveDeliveryMode(deliveryMode, false,true)
                  .then((data) => {
                      $('.page-loader-new-layout').hide();
                      $('#avsCheck').modal('hide');
@@ -1722,7 +1781,7 @@ function reverseTraverseOnShipping() {
          },
          success: function (data) {
              if(data == 'SUCCESS') {
-                saveDeliveryMode(deliveryMode, false)
+                saveDeliveryMode(deliveryMode, false,true)
                     .then((data) => {
                         $('.page-loader-new-layout').hide();
                         window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
@@ -1768,7 +1827,7 @@ function reverseTraverseOnShipping() {
     });
  }
 
- async function saveDeliveryMode(deliveryMode, internalAddressIndicator) {
+ async function saveDeliveryMode(deliveryMode, internalAddressIndicator,forwardTpPaymentPage) {
     return new Promise((resolve, reject) => {
          $.ajax({
              url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/select',
@@ -1785,7 +1844,9 @@ function reverseTraverseOnShipping() {
                 if(data == 'success') {
                     resolve(data);
                     // TODO: Handle for payment method for checkout
-                    window.location = ACC.config.encodedContextPath + '/checkout/multi/payment-method/add';
+                    if (forwardTpPaymentPage) {
+                        window.location = ACC.config.encodedContextPath + '/checkout/multi/payment-method/add';
+                    }
                 } else {
                     reject(data);
                 }
@@ -1797,14 +1858,14 @@ function reverseTraverseOnShipping() {
     });
  }
 
- function savePickUpByFormOnCart(blPickUpByForm, deliveryMethod, status, upsStoreAddress) {
+ function savePickUpByFormOnCart(blPickUpByForm, deliveryMethod, status, upsStoreAddress,mainContinue) {
  var deliveryMode = $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id');
  if(checkShippingBlackout(deliveryMode))
 	  {
 	  	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
 		$('#validationMessage').append(validationDiv);
 	  }
-     else if(checkAvailability(deliveryMethod))
+     else if(checkAvailability(deliveryMethod) || !mainContinue)
      {
          $.ajax({
              url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/addPickUpDetails',
@@ -1828,10 +1889,10 @@ function reverseTraverseOnShipping() {
                         ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
                         addNewAddress(upsStoreAddress, deliveryMethod)
                             .then((data) => {
-                                saveDeliveryMode(deliveryMethod, status)
+                                saveDeliveryMode(deliveryMethod, status,mainContinue)
                                     .then((data) => {
                                         $('.page-loader-new-layout').hide();
-                                        window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
+                                        
                                     })
                                     .catch((error) => {
                                       console.log(error)
@@ -1848,7 +1909,7 @@ function reverseTraverseOnShipping() {
                          "shipping_method_not_available"     : "0"
                                   });
                         ACC.track.trackShippingSelection('PickUP','','Item In Stock');
-                        saveDeliveryMode(deliveryMethod, status)
+                        saveDeliveryMode(deliveryMethod, status,mainContinue)
                             .then((data) => {
                                 $('.page-loader-new-layout').hide();
                                 window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
@@ -1911,6 +1972,9 @@ function reverseTraverseOnShipping() {
   	 $("#validationMessage").empty();
      $('#cart-shipping-cost').text($ ($("#shipToUPSShippingMethods .selected").find(".text-muted")).html());
      calculateCartTotal();
+     let selectedDeliveryMode = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').val();
+     saveDeliveryMode(selectedDeliveryMode, true,true);
+     
      if($('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').attr('businesstype') == "true") {
         let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
         $('#ship-it-am-notification').html(notification);
@@ -1922,9 +1986,9 @@ function reverseTraverseOnShipping() {
   }
 
   function onSelectOfPartnerAddress(event) {
-  	$("#validationMessage").empty();
-    $('#cart-shipping-cost').text($('#'+event.getAttribute('id')+'-pickUpCost').text().trim());
-    calculateCartTotal();
+  	 $("#validationMessage").empty();
+  	 $('#cart-shipping-cost').text($('#'+event.getAttribute('id')+'-pickUpCost').text().trim());
+  	 calculateCartTotal();
   }
 
   function onChangeOfSameDayShippingMethodForCost() {
