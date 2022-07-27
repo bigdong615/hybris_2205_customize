@@ -53,6 +53,7 @@ import de.hybris.platform.commercefacades.order.data.CommerceSaveCartParameterDa
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.quote.data.QuoteData;
 import de.hybris.platform.commercefacades.voucher.VoucherFacade;
@@ -1206,6 +1207,16 @@ public class CartPageController extends AbstractCartPageController
 			return REDIRECT_CART_URL;
 		}
 			return StringUtils.EMPTY;
+	}
+	
+	@GetMapping(value = "/deliverycost", produces = "application/json")
+	@SuppressWarnings("boxing")
+	@ResponseBody
+	public CartData getCartDeliveryCost()
+
+	{
+		blCartFacade.recalculateCartIfRequired();
+		return getCartFacade().getSessionCart();
 	}
 	
 	@GetMapping(value = "/reviewPrint")

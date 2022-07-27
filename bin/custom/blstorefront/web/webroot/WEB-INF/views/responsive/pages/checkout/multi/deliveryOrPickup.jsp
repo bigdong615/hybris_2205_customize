@@ -108,7 +108,7 @@
                                    <checkout:blReplacementOrder/>
                               </c:when>
                               <c:otherwise>
-                              <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
+                              <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue(true)">
                                                                   <spring:theme code="text.checkout.multi.order.delivery.continue"/>
                                                               </button>
                               </c:otherwise>
