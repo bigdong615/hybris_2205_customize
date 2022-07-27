@@ -1941,4 +1941,91 @@
 		  
 	<bean id="blMainItemNotScannedCountHandler" class="com.bl.core.model.handler.BLMainItemNotScannedCountHandler"/>
 	<bean id="blSubpartsNotScannedCountHandler" class="com.bl.core.model.handler.BLSubpartsNotScannedCountHandler"/>
+
+
+	<alias name="blSiteMapMediaJob" alias="siteMapMediaJob" />
+	<bean id="blSiteMapMediaJob" class="com.bl.core.job.BlSiteMapMediaJob" parent="abstractJobPerformable">
+	<property name="generators">
+			<list>
+				<ref bean="blPointOfServicePageSiteMapGenerator"/>
+				<ref bean="blProductPageSiteMapGenerator"/>
+				<ref bean="blCategoryPageSiteMapGenerator"/>
+				<ref bean="blHomePageSiteMapGenerator"/>
+				<ref bean="blContentPageModelSiteMapGenerator"/>
+				<ref bean="blCategoryLandingPageSiteMapGenerator"/>
+				<ref bean="blCustomPageSiteMapGenerator"/>
+			</list>
+		</property>
+		<property name="mediaService" ref="mediaService"/>
+		<property name="activateBaseSiteInSession" ref="activateBaseSiteInSessionStrategy"/>
+		<property name="cmsSiteService" ref="cmsSiteService"/>
+	 </bean>
+	<!--  <alias name="blAbstractSiteMapGenerator" alias="abstractSiteMapGenerator" /> -->
+	 <bean id="blAbstractSiteMapGenerator" class="com.bl.core.sitemap.generator.BlAbstractSiteMapGenerator" abstract="true">
+		<property name="impersonationService" ref="impersonationService"/>
+		<property name="rendererService" ref="rendererService"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
+	</bean>
+	
+	<alias name="blCategoryPageSiteMapGenerator" alias="blCategoryPageSiteMapGenerator"/>
+	<bean id="blCategoryPageSiteMapGenerator"
+	      class="com.bl.core.sitemap.generator.BlCategoryPageSiteMapGenerator"
+	      parent="blAbstractSiteMapGenerator">
+		<property name="siteMapUrlDataConverter" ref="categoryModelToSiteMapUrlDataConverter"/>
+		<property name="siteMapPageEnum" value="CATEGORY"/>
+	</bean>
+
+	<alias name="blProductPageSiteMapGenerator" alias="blProductPageSiteMapGenerator"/>
+	<bean id="blProductPageSiteMapGenerator"
+	      class="com.bl.core.sitemap.generator.BlProductPageSiteMapGenerator"
+	      parent="blAbstractSiteMapGenerator">
+		<property name="siteMapUrlDataConverter" ref="productModelToSiteMapUrlDataConverter"/>
+		<property name="siteMapPageEnum" value="PRODUCT"/>
+	</bean>
+
+	<alias name="blPointOfServicePageSiteMapGenerator" alias="blPointOfServicePageSiteMapGenerator"/>
+	<bean id="blPointOfServicePageSiteMapGenerator"
+	      class="com.bl.core.sitemap.generator.BlPointOfServicePageSiteMapGenerator"
+	      parent="blAbstractSiteMapGenerator">
+		<property name="siteMapUrlDataConverter" ref="pointOfServiceModelToSiteMapUrlDataConverter"/>
+		<property name="siteMapPageEnum" value="STORE"/>
+	</bean>
+
+	<alias name="blHomePageSiteMapGenerator" alias="blHomePageSiteMapGenerator"/>
+	<bean id="blHomePageSiteMapGenerator"
+	      class="com.bl.core.sitemap.generator.BlHomePageSiteMapGenerator"
+	      parent="blAbstractSiteMapGenerator">
+		<property name="siteMapUrlDataConverter" ref="homepageToSiteMapUrlDataConverter"/>
+		<property name="siteMapPageEnum" value="HOMEPAGE"/>
+		<property name="cmsPageService" ref="cmsPageService"/>
+	</bean>
+
+	<alias name="blContentPageModelSiteMapGenerator" alias="blContentPageModelSiteMapGenerator"/>
+	<bean id="blContentPageModelSiteMapGenerator"
+	      class="com.bl.core.sitemap.generator.BlContentPageModelSiteMapGenerator"
+	      parent="blAbstractSiteMapGenerator">
+		<property name="siteMapUrlDataConverter" ref="contentPageModelToSiteMapUrlDataConverter"/>
+		<property name="siteMapPageEnum" value="CONTENT"/>
+	</bean>
+
+	<alias name="blCategoryLandingPageSiteMapGenerator" alias="blCategoryLandingPageSiteMapGenerator"/>
+	<bean id="blCategoryLandingPageSiteMapGenerator"
+	      class="com.bl.core.sitemap.generator.BlCategoryLandingPageSiteMapGenerator"
+	      parent="blAbstractSiteMapGenerator">
+		<property name="siteMapUrlDataConverter" ref="categoryModelToSiteMapUrlDataConverter"/>
+		<property name="siteMapPageEnum" value="CATEGORYLANDING"/>
+
+
+	</bean>
+	<alias name="blCustomPageSiteMapGenerator" alias="blCustomPageSiteMapGenerator"/>
+	<bean id="blCustomPageSiteMapGenerator"
+	      class="com.bl.core.sitemap.generator.BlCustomPageSiteMapGenerator"
+	      parent="blAbstractSiteMapGenerator">
+		<property name="siteMapUrlDataConverter" ref="customPageToSiteMapUrlDataConverter"/>
+		<property name="siteMapPageEnum" value="CUSTOM"/>
+	</bean>
+
+
 </beans>

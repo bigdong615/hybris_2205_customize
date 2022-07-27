@@ -759,6 +759,81 @@
 	<bean id="blOrderCancelPopulator" class="com.bl.facades.populators.BlCancelOrderPopulator" >
  		<property name="modelService" ref="modelService"/>
 	</bean>
+	
 
+	<alias name="blProductSiteMapConverter" alias="productModelToSiteMapUrlDataConverter"/>
+	
+	<bean id="blProductSiteMapConverter" parent="defaultProductModelToSiteMapUrlDataConverter">
+	<property name="targetClass" value="de.hybris.platform.acceleratorservices.sitemap.data.SiteMapUrlData"/>
+		<property name="populators">
+			<list merge="true">
+				<ref bean="blSiteMapPopulator"/>
+			</list>
+		</property>
+	</bean>
+	
+	<alias name="blCustomSiteMapConverter" alias="customPageToSiteMapUrlDataConverter"/>
+	
+	<bean id="blCustomSiteMapConverter" parent="defaultCustomPageToSiteMapUrlDataConverter">
+	<property name="targetClass" value="de.hybris.platform.acceleratorservices.sitemap.data.SiteMapUrlData"/>
+		<property name="populators">
+			<list merge="true">
+				<ref bean="blSiteMapPopulator"/>
+			</list>
+		</property>
+	</bean>
+	<alias name="blHomepageSiteMapConverter" alias="homepageToSiteMapUrlDataConverter"/>
+	
+	<bean id="blHomepageSiteMapConverter" parent="defaultHomepageToSiteMapUrlDataConverter">
+	<property name="targetClass" value="de.hybris.platform.acceleratorservices.sitemap.data.SiteMapUrlData"/>
+		<property name="populators">
+			<list merge="true">
+				<ref bean="blSiteMapPopulator"/>
+			</list>
+		</property>
+	</bean>
+	<alias name="blContentSiteMapConverter" alias="contentPageModelToSiteMapUrlDataConverter"/>
+	
+	
+	<bean id="blContentSiteMapConverter" parent="defaultContentPageModelToSiteMapUrlDataConverter">
+	<property name="targetClass" value="de.hybris.platform.acceleratorservices.sitemap.data.SiteMapUrlData"/>
+		<property name="populators">
+			<list merge="true">
+				<ref bean="blSiteMapPopulator"/>
+			</list>
+		</property>
+	</bean>
+	<alias name="blPointOfServiceMapConverter" alias="pointOfServiceModelToSiteMapUrlDataConverter"/>
+	
+	<bean id="blPointOfServiceMapConverter" parent="defaultPointOfServiceModelToSiteMapUrlDataConverter">
+	<property name="targetClass" value="de.hybris.platform.acceleratorservices.sitemap.data.SiteMapUrlData"/>
+		<property name="populators">
+			<list merge="true">
+				<ref bean="blSiteMapPopulator"/>
+			</list>
+		</property>
+	</bean>
+	<alias name="blCategorySiteMapConverter" alias="categoryModelToSiteMapUrlDataConverter"/>
+	
+	<bean id="blCategorySiteMapConverter" parent="defaultCategoryModelToSiteMapUrlDataConverter">
+	<property name="targetClass" value="de.hybris.platform.acceleratorservices.sitemap.data.SiteMapUrlData"/>
+		<property name="populators">
+			<list merge="true">
+				<ref bean="blSiteMapPopulator"/>
+			</list>
+		</property>
+	</bean>
+	
+	<alias name="defaultBlSiteMapPopulator" alias="blSiteMapPopulator"/>
+	<bean id="defaultBlSiteMapPopulator" class="com.bl.facades.storefinder.populators.BlSiteMapPopulator">
+	</bean>
+	
+	<alias name="defaultBlSiteMapContext" alias="siteMapContext"/>
+	<bean id="defaultBlSiteMapContext" class="com.bl.facades.process.email.context.BlSiteMapContext" >
+	     <property name="baseSiteService" ref="baseSiteService"/>
+		<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
+		<property name="urlEncoderService" ref="urlEncoderService"/>
+	</bean>
 
+	
 </beans>

@@ -686,6 +686,11 @@
 		<property name="documentType" type="String"/>
 	</bean>
 
+
+	<bean class="de.hybris.platform.acceleratorservices.sitemap.data.SiteMapUrlData">
+		<property name="lastmod" type="String" />
+	</bean>
+
 </beans>
 
 
