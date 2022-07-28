@@ -79,6 +79,8 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		addSerialAndOrderCodeOnItemBillingCharge(consignmentEntryModel, interceptorContext);
 
 		updateConsignmentEntryStatus(consignmentEntryModel, interceptorContext);
+		//changing serial status, when consignment entry item status changed
+		doChangeSerialStatus(consignmentEntryModel, interceptorContext);
 	}
 
 	/**
@@ -94,6 +96,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			if (item.getValue().equals(ItemStatusEnum.MISSING))
 			{
 				consEntryStatus.put(item.getKey(), ConsignmentEntryStatusEnum.MISSING);
+
 			}
 			else if (item.getValue().equals(ItemStatusEnum.IN_HOUSE) || item.getValue().equals(ItemStatusEnum.NOT_INCLUDED))
 			{
@@ -509,6 +512,34 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 	}
 
 	/**
+	 * Do change serial status of serial.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @param interceptorContext
+	 *           the interceptor context
+	 */
+	private void doChangeSerialStatus(final ConsignmentEntryModel consignmentEntryModel,
+			final InterceptorContext interceptorContext)
+	{
+		if (!interceptorContext.isNew(consignmentEntryModel)
+				&& interceptorContext.isModified(consignmentEntryModel, ConsignmentEntryModel.ITEMS))
+		{
+			if (CollectionUtils.isNotEmpty(consignmentEntryModel.getSerialProducts()))
+			{
+				consignmentEntryModel.getSerialProducts().forEach(serial -> {
+					if (!(serial.getProductType().equals(ProductTypeEnum.SUBPARTS)))
+					{
+						final ItemStatusEnum itemStatusCode = consignmentEntryModel.getItems().get(serial.getCode());
+						checkAndChangeSerialStatusOnSerial(serial, interceptorContext, itemStatusCode);
+					}
+				});
+			}
+		}
+	}
+
+
+	/**
 	 * Checks if is eligible to change serial priority status.
 	 *
 	 * @param consignmentEntryModel
@@ -559,6 +590,47 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				interceptorContext.getModelService().save(serialItem);
 				interceptorContext.getModelService().refresh(serialItem);
 			}
+		}
+	}
+
+	/**
+	 * Check and change serial status on serial.
+	 *
+	 * @param entryItem
+	 *           the entry item
+	 * @param interceptorContext
+	 *           the interceptor context
+	 * @param itemStatusCode
+	 */
+	private void checkAndChangeSerialStatusOnSerial(final Object entryItem, final InterceptorContext interceptorContext,
+			final ItemStatusEnum itemStatusCode)
+	{
+		if (entryItem instanceof BlSerialProductModel)
+		{
+			final BlSerialProductModel serialItem = ((BlSerialProductModel) entryItem);
+			if (itemStatusCode.equals(ItemStatusEnum.MISSING))
+			{
+				serialItem.setSerialStatus(SerialStatusEnum.MISSING);
+			}
+			else if (itemStatusCode.equals(ItemStatusEnum.NOT_INCLUDED))
+			{
+				serialItem.setSerialStatus(SerialStatusEnum.NOT_INCLUDED);
+			}
+			else if (itemStatusCode.equals(ItemStatusEnum.IN_HOUSE))
+			{
+				serialItem.setSerialStatus(SerialStatusEnum.IN_HOUSE);
+			}
+			else if (itemStatusCode.equals(ItemStatusEnum.INCLUDED))
+			{
+				serialItem.setSerialStatus(SerialStatusEnum.SHIPPED);
+			}
+			else if (itemStatusCode.equals(ItemStatusEnum.RECEIVED_OR_RETURNED))
+			{
+				serialItem.setSerialStatus(SerialStatusEnum.RECEIVED_OR_RETURNED);
+			}
+
+			interceptorContext.getModelService().save(serialItem);
+			interceptorContext.getModelService().refresh(serialItem);
 		}
 	}
 

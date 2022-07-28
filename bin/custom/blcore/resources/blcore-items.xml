@@ -82,6 +82,8 @@
             <value code="SHIPPED" />
             <value code="LATE" />
           <value code="INACTIVE"/>
+           <value code="NOT_INCLUDED" />
+          <value code="MISSING"/>
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
