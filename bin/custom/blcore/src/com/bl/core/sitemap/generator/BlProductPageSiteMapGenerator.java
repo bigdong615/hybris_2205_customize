@@ -26,7 +26,7 @@ public class BlProductPageSiteMapGenerator extends BlAbstractSiteMapGenerator<Pr
 	@Override
 	protected List<ProductModel> getDataInternal(final CMSSiteModel siteModel)
 	{
-		final String query = "SELECT {p.pk} FROM {Product AS p JOIN CatalogVersion AS cv ON {p.catalogVersion}={cv.pk} "
+		final String query = "SELECT {p.pk} FROM {BlProduct! AS p JOIN CatalogVersion AS cv ON {p.catalogVersion}={cv.pk} "
 				+ " JOIN Catalog AS cat ON {cv.pk}={cat.activeCatalogVersion} "
 				+ " JOIN CMSSite AS site ON {cat.pk}={site.defaultCatalog}}  WHERE {site.pk} = ?site"
 				+ " AND {p.approvalStatus} = ?approvalStatus";
