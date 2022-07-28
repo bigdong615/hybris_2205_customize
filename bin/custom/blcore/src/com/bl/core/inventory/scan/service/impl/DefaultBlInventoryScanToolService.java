@@ -349,7 +349,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		if (CollectionUtils.isNotEmpty(serialProductModels)) {
 			serialProductModels.stream().forEach(serial -> {
 				serial.setLastLocationScanParent(blLocalInventoryLocation.getCode());
-				
+
 				if (!serial.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode()))
 				{
 					String warehouseCode = null;
@@ -426,6 +426,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 					{
 						warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE
 								+ blInventoryLocationLocal.getCode().substring(0, 2).toLowerCase();
+						wareHouse = warehouseService.getWarehouseForCode(warehouseCode);
+					}
+					else
+					{
+						warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE
+								+ blInventoryLocationLocal.getParentInventoryLocation() != null
+										? blInventoryLocationLocal.getParentInventoryLocation().getCode().substring(0, 2).toLowerCase()
+										: null;
 						wareHouse = warehouseService.getWarehouseForCode(warehouseCode);
 					}
 
