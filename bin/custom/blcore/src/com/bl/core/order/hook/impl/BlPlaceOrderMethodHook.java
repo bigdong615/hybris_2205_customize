@@ -5,16 +5,23 @@ import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParamete
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.order.InvalidCartException;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.order.BlOrderService;
+import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 
 
@@ -28,7 +35,8 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 {
 	private static final Logger LOG = Logger.getLogger(BlPlaceOrderMethodHook.class);
 	private ModelService modelService;
-	private BlOrderService blOrderService; 
+	private BlOrderService blOrderService;
+	private BlStockLevelDao blStockLevelDao;
 
 	@Override
 	public void afterPlaceOrder(final CommerceCheckoutParameter checkoutParameter, final CommerceOrderResult commerceOrderResult)
@@ -42,7 +50,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 			setDateOfSaleOnSerialForUsedGearOrder(order);
 		}
 	}
-	
+
 	/**
 	 * Sets the date of sale on serial for used gear order.
 	 *
@@ -50,15 +58,29 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	 */
 	private void setDateOfSaleOnSerialForUsedGearOrder(final OrderModel order)
 	{
-		if(getBlOrderService().isUsedOrderOnly(order) && CollectionUtils.isNotEmpty(order.getEntries()) 
+		if(getBlOrderService().isUsedOrderOnly(order) && CollectionUtils.isNotEmpty(order.getEntries())
 				&& Objects.nonNull(order.getCreationtime()))
 		{
 			order.getEntries().forEach(entry -> {
 				if(entry.getProduct() instanceof BlSerialProductModel)
 				{
+					final List<BlProductModel> serials = new ArrayList<BlProductModel>();
 					final BlSerialProductModel serial = (BlSerialProductModel) entry.getProduct();
 					serial.setDateOfSale(order.getCreationtime());
+					serials.add(serial);
+					entry.setSerialProducts(serials);
+					getModelService().save(entry);
 					getModelService().save(serial);
+
+					final Date currentDate = order.getCreationtime();
+					final Date futureDate = BlDateTimeUtils.getNextYearsSameDay();
+					final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findSerialStockLevelForDate(serial.getCode(),
+							currentDate, futureDate);
+					stockLevels.forEach(stockLevel -> {
+						stockLevel.setSerialStatus(serial.getSerialStatus());
+						stockLevel.setOrder(order.getCode());
+						getModelService().save(stockLevel);
+					});
 				}
 			});
 		}
@@ -85,7 +107,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 		else
 		{
 			order.setRunTot_daysRented(Integer.valueOf(0));
-		}		
+		}
 		getModelService().save(order);
 	}
 
@@ -104,7 +126,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 		}
 		return order.getGrandTotal();
 	}
-	
+
 	/**
 	 * Gets the default value if null.
 	 *
@@ -113,7 +135,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	 */
 	private Double getDefaultValueIfNull(final Double value)
 	{
-		return ObjectUtils.defaultIfNull(value, Double.valueOf(0.0d)); 
+		return ObjectUtils.defaultIfNull(value, Double.valueOf(0.0d));
 	}
 
 	@Override
@@ -159,9 +181,23 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	/**
 	 * @param blOrderService the blOrderService to set
 	 */
-	public void setBlOrderService(BlOrderService blOrderService)
+	public void setBlOrderService(final BlOrderService blOrderService)
 	{
 		this.blOrderService = blOrderService;
+	}
+
+	public BlStockLevelDao getBlStockLevelDao()
+	{
+		return blStockLevelDao;
+	}
+
+	/**
+	 * @param blStockLevelDao
+	 *           the blStockLevelDao to set
+	 */
+	public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao)
+	{
+		this.blStockLevelDao = blStockLevelDao;
 	}
 
 }
