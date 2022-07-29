@@ -1897,6 +1897,7 @@
     <bean id="defaultBlPlaceOrderMethodHook" class="com.bl.core.order.hook.impl.BlPlaceOrderMethodHook">
 		<property name="modelService" ref="modelService" />
 		<property name="blOrderService" ref="blOrderService"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 	</bean>
 
 	<bean id="commerceOrderMethodHookMergeDirective" depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
