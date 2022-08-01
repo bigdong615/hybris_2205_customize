@@ -85,4 +85,12 @@ public interface BlConsignmentEntryService
 	 * @return the subpart items list
 	 */
 	public List<String> getSubpartItemsList(final ConsignmentEntryModel consignmentEntry);
+	
+	/**
+	 * Gets the main items list from given Consignment Entry.
+	 *
+	 * @param entry the entry
+	 * @return the main items list
+	 */
+	public List<BlSerialProductModel> getMainItemsList(final ConsignmentEntryModel entry);
 }

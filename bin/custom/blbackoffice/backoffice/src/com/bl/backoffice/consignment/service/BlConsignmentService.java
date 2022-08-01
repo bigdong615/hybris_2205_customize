@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.bl.backoffice.widget.controller.order.BlOrderEntryToCancelDto;
+import com.bl.core.model.BlSerialProductModel;
 
 
 /**
@@ -60,5 +61,13 @@ public interface BlConsignmentService
 	 * @return the remaining scan subpart names
 	 */
 	public List<String> getRemainingScanSubpartNames(final ConsignmentModel consignment);
+	
+	/**
+	 * Gets the main items list from consignment.
+	 *
+	 * @param consignment the consignment
+	 * @return the main items list from consignment
+	 */
+	public List<BlSerialProductModel> getMainItemsListFromConsignment(final ConsignmentModel consignment);
 
 }
