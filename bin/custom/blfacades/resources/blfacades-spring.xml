@@ -826,6 +826,7 @@
 	
 	<alias name="defaultBlSiteMapPopulator" alias="blSiteMapPopulator"/>
 	<bean id="defaultBlSiteMapPopulator" class="com.bl.facades.storefinder.populators.BlSiteMapPopulator">
+		<property name="urlResolver" ref="productModelUrlResolver"/>
 	</bean>
 	
 	<alias name="defaultBlSiteMapContext" alias="siteMapContext"/>

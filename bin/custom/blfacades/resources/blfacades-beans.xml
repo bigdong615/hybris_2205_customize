@@ -686,9 +686,10 @@
 		<property name="documentType" type="String"/>
 	</bean>
 
-
 	<bean class="de.hybris.platform.acceleratorservices.sitemap.data.SiteMapUrlData">
 		<property name="lastmod" type="String" />
+		<property name="forRent" type="java.lang.Boolean" />
+		<property name="forBuy" type="java.lang.Boolean" />
 	</bean>
 
 </beans>

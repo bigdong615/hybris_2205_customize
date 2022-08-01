@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bl.core.job;
 
 import de.hybris.platform.acceleratorservices.enums.SiteMapPageEnum;
@@ -34,11 +31,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
-
-/**
- * @author srinivas
- *
- */
 public class BlSiteMapMediaJob extends AbstractJobPerformable<SiteMapMediaCronJobModel>
 {
 	private static final String SITE_MAP_MIME_TYPE = "text/plain";
