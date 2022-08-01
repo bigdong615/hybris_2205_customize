@@ -1966,6 +1966,25 @@ function reverseTraverseOnShipping() {
       }
       $('#ship-it-notification').html('');
       $('#ship-it-notification').hide();
+      
+    var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
+    saveDeliveryMode(deliveryMode, false,false)
+    
+    $.ajax({
+         		url: ACC.config.encodedContextPath + '/cart/deliverycost',
+         		type: "GET",
+         		success: function (data) {
+         		if (data.deliveryCost != null) {
+         			$('#cart-shipping-cost').text(data.deliveryCost.formattedValue);
+         			calculateCartTotal();
+         		} 
+                 
+         		}
+         		
+         });
+       $('.page-loader-new-layout').hide();	
+      
+      
   }
 
   function onChangeOfShipItShipToUPS() {
