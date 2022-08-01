@@ -107,7 +107,7 @@
 			<tr>
 				<td class="gray80">
 				    <c:choose>
-                        <c:when test="${pageType =='paymentPage'}">
+                        <c:when test="${pageType =='paymentPage' || pageType == 'shippingPage'}">
                             <spring:theme code="text.checkout.multi.order.summary.shipping.calculated" />
                         </c:when>
                         <c:otherwise>
@@ -132,6 +132,9 @@
 				    <c:choose>
                         <c:when test="${pageType =='paymentPage'}">
                             <spring:theme code="text.checkout.multi.order.summary.tax.calculated" />
+                        </c:when>
+                        <c:when test="${pageType =='CART'}">
+                            <spring:theme code="text.checkout.multi.order.summary.tax.message" />
                         </c:when>
                         <c:otherwise>
                             <spring:theme code="text.checkout.multi.order.summary.tax" />
@@ -208,10 +211,15 @@
 			</div>
 		</form:form>
 	</c:if>
-	<c:if test="${pageType =='CART' || pageType == 'shippingPage'}">
-	<small class="gray60"><spring:theme
-			code="text.checkout.multi.order.summary.msg" /></small>
-			</c:if>
+	<c:if test="${pageType =='CART'}">
+	<small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg" /></small>
+	<small class="gray60"><spring:theme code="text.checkout.multi.order.summary.tax.double.asterisk" /></small>
+	</c:if>
+
+	<c:if test="${pageType =='shippingPage'}">
+	<small class="gray60"><spring:theme code="text.checkout.multi.order.summary.tax.single.asterisk" /></small>
+	</c:if>
+	
 	<c:url value="/cart/voucher/remove" var="voucherRemoveUrl" />
 
       <c:forEach items="${cartData.appliedVouchers}" var="voucher"
