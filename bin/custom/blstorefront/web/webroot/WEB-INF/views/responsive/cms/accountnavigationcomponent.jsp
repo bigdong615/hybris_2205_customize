@@ -8,12 +8,37 @@
 <!-- Mobile device account section -->
 <c:if test="${positionAttribute == 'MobileHeaderLinkForAccountSlot'}">
 <c:url value="#" var="urlLink"/>
-<c:forEach items="${component.navigationNode.entries}"	var="entry">
+	
+	 <a href="#mm-8"><i class="icon-myaccount"></i> ${component.name}</a>  
+	 <ul>
+	<sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+		<c:url value="/login" var="loginUrl" />
+		<li><a class="dropdown-item js-signUp-popup"  data-link="<c:url value='/login/register'/>" href="#" data-bs-toggle="modal" data-bs-target="#signUp"><spring:theme code="text.header.account.create.account" /></a></li>
+		<li><a class="dropdown-item js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#" data-bs-toggle="modal" data-bs-target="#signIn"><spring:theme code="text.header.account.sign.in" /></a></li>
+		</sec:authorize>
+		<sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+		<c:forEach items="${component.navigationNode.entries}" var="entry">
+		<c:if test="${ not empty entry.item.linkName}">
+		  <c:url var="acountNavURL" value="${entry.item.url }"/>
+			<li><a class="dropdown-item" href="${acountNavURL}">${entry.item.linkName }</a></li>
+			</c:if>
+		</c:forEach>		
+		<!-- <li class="divider"></li> -->
+		<c:url value="/logout" var="signoutUrl" />
+		<li><a class="dropdown-item usedgear-signout" href="${signoutUrl}"><spring:theme code="text.header.account.sign.out" /></a></li>
+		</sec:authorize>		
+		</ul>
+		
+		
+		
+<%-- <c:forEach items="${component.navigationNode.entries}"	var="entry">
 		<c:if test="${entry.item.type  eq 'Link'}">
 			<c:url value="${entry.item.url}" var="urlLink"/>
 		</c:if>
-	</c:forEach>
-	<a href="${urlLink}"><i class="icon-myaccount"></i> ${component.name}</a>
+	</c:forEach> --%>
+	<%-- <a href="${urlLink}"><i class="icon-myaccount"></i> ${component.name}</a>  --%>
+	
+	
 </c:if>
 <c:if test="${positionAttribute == 'MyAccountSlot'}">
 <a class="nav-link dropdown-toggle" href="#" id="accountdropdown"

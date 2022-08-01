@@ -44,7 +44,19 @@
            	             data-bs-target="#signIn"><spring:theme code="text.header.account.sign.in" /></a></li>
                       </sec:authorize>
                       <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+                      
+                      <c:url var = "baseUrl" value="/my-account"/>
+              
                       <c:url value="/logout" var="signoutUrl" />
+                         <li><a class="dropdown-item" href="${baseUrl}/orders"><spring:theme code="text.orders" /></a></li>
+                         <li><a class="dropdown-item" href="${baseUrl}/address-book"><spring:theme code="text.address" /></a></li>
+                         <li><a class="dropdown-item" href="${baseUrl}/update-email"><spring:theme code="text.address.email" /></a></li>
+                         <li><a class="dropdown-item" href="${baseUrl}/update-password"><spring:theme code="text.update.password" /></a></li>
+                         <li><a class="dropdown-item" href="${baseUrl}/saved-carts"><spring:theme code="text.saved.cart" /></a></li>
+                         <li><a class="dropdown-item" href="${baseUrl}/bookmarks"><spring:theme code="text.bookmarks" /></a></li>
+                         <li><a class="dropdown-item" href="${baseUrl}/verificationImages"><spring:theme code="text.verification.documents" /></a></li>
+                         <li><a class="dropdown-item" href="${baseUrl}/payment-details"><spring:theme code="text.credit.cards" /></a></li>
+                         <li class="divider"></li>
                         <li><a class="dropdown-item" href="${signoutUrl}"><spring:theme code="text.header.account.sign.out" /></a></li>
                       </sec:authorize>
                       </ul>
