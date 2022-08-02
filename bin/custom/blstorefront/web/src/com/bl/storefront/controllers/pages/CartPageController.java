@@ -70,6 +70,7 @@ import de.hybris.platform.core.model.security.PrincipalModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.ProductService;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -200,6 +201,9 @@ public class CartPageController extends AbstractCartPageController
 	
 	@Resource(name = "blPromotionValidator")
 	private BlPromotionValidator blPromotionValidator;
+	
+	@Resource
+	private ModelService modelService;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -1215,6 +1219,9 @@ public class CartPageController extends AbstractCartPageController
 	public CartData getCartDeliveryCost()
 
 	{
+		CartModel cartModel = blCartService.getSessionCart();
+		cartModel.setCalculated(Boolean.FALSE);
+		modelService.save(cartModel);
 		blCartFacade.recalculateCartIfRequired();
 		return getCartFacade().getSessionCart();
 	}
