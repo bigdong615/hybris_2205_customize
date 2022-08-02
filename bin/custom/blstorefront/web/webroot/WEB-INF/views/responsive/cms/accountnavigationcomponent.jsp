@@ -9,7 +9,8 @@
 <c:if test="${positionAttribute == 'MobileHeaderLinkForAccountSlot'}">
 <c:url value="#" var="urlLink"/>
 	
-	 <a href="#mm-8"><i class="icon-myaccount"></i> ${component.name}</a>  
+	<!-- To display myaccount in hamberger menu in mobile view -->
+	 <a href="#mm-7"><i class="icon-myaccount"></i> ${component.name}</a>  
 	 <ul>
 	<sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
 		<c:url value="/login" var="loginUrl" />
