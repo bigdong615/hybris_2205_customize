@@ -350,27 +350,27 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			serialProductModels.stream().forEach(serial -> {
 				serial.setLastLocationScanParent(blLocalInventoryLocation.getCode());
 
-				if (!serial.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode()))
-				{
-					String warehouseCode = null;
-					try
-					{
-						if (blBINInventoryLocationModel.getCode().startsWith(BlInventoryScanLoggingConstants.BIN)
-								&& blBINInventoryLocationModel.getInventoryType().getCode().equals(BlInventoryScanLoggingConstants.BIN))
-						{
-							WarehouseModel wareHouse = null;
-							warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE
-									+ blLocalInventoryLocation.getCode().substring(0, 2).toLowerCase();
-							wareHouse = warehouseService.getWarehouseForCode(warehouseCode);
-							serial.setWarehouseLocation(wareHouse);
-						}
-					}
-					catch (final Exception ex)
-					{
-						BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, ex, "Unable to find the warehouse - {}",
-								warehouseCode);
-					}
-				}
+				//				if (!serial.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode()))
+				//				{
+				//					String warehouseCode = null;
+				//					try
+				//					{
+				//						if (blBINInventoryLocationModel.getCode().startsWith(BlInventoryScanLoggingConstants.BIN)
+				//								&& blBINInventoryLocationModel.getInventoryType().getCode().equals(BlInventoryScanLoggingConstants.BIN))
+				//						{
+				//							WarehouseModel wareHouse = null;
+				//							warehouseCode = BlInventoryScanLoggingConstants.WAREHOUSE
+				//									+ blLocalInventoryLocation.getCode().substring(0, 2).toLowerCase();
+				//							wareHouse = warehouseService.getWarehouseForCode(warehouseCode);
+				//							serial.setWarehouseLocation(wareHouse);
+				//						}
+				//					}
+				//					catch (final Exception ex)
+				//					{
+				//						BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, ex, "Unable to find the warehouse - {}",
+				//								warehouseCode);
+				//					}
+				//				}
 
 				modelService.save(serial);
 				modelService.refresh(serial);
