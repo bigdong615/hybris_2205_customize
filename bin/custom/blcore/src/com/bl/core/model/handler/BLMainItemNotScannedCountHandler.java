@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -18,6 +20,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 
@@ -29,6 +32,9 @@ import com.google.common.collect.Lists;
 public class BLMainItemNotScannedCountHandler implements DynamicAttributeHandler<Integer, ConsignmentEntryModel>
 {
 	private static final Logger LOG = Logger.getLogger(BLMainItemNotScannedCountHandler.class);
+	
+	@Resource(name = "blConsignmentEntryService")
+	private BlConsignmentEntryService blConsignmentEntryService;
 
 	@Override
 	public Integer get(final ConsignmentEntryModel consignmentEntryModel)
@@ -57,7 +63,7 @@ public class BLMainItemNotScannedCountHandler implements DynamicAttributeHandler
 	 */
 	private Integer getRemainingScanCount(final ConsignmentEntryModel entry)
 	{
-		final List<BlSerialProductModel> mainItemsList = getMainItemsList(entry);
+		final List<BlSerialProductModel> mainItemsList = getBlConsignmentEntryService().getMainItemsList(entry);
 		if (CollectionUtils.isEmpty(mainItemsList))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
@@ -75,39 +81,28 @@ public class BLMainItemNotScannedCountHandler implements DynamicAttributeHandler
 		return Integer.valueOf(count.get());
 	}
 
-	/**
-	 * Gets the main items list from consignment entry.
-	 *
-	 * @param entry
-	 *           the entry
-	 * @return the main items list
-	 */
-	private List<BlSerialProductModel> getMainItemsList(final ConsignmentEntryModel entry)
-	{
-		if (CollectionUtils.isEmpty(entry.getSerialProducts()))
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-					"BLMainItemNotScannedCountHandler :: getMainItemsList :: Serial Products is Empty for ConsignmentEntry : {}",
-					entry.getPk());
-			return Lists.newArrayList();
-		}
-		final List<BlSerialProductModel> mainItemsList = Lists.newArrayList();
-		entry.getSerialProducts().forEach(product -> {
-			if (product instanceof BlSerialProductModel && Objects.nonNull(product.getProductType())
-					&& BooleanUtils.isFalse(product.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode())))
-			{
-				mainItemsList.add(((BlSerialProductModel) product));
-			}
-		});
-		return mainItemsList;
-	}
-
 	@Override
 	public void set(final ConsignmentEntryModel consignmentEntryModel, final Integer value)
 	{
 		BlLogger.logMessage(LOG, Level.ERROR, "Setter for attribute ConsignmentEntry.mainItemNotScannedCount is not supported");
 		throw new UnsupportedOperationException();
 
+	}
+
+	/**
+	 * @return the blConsignmentEntryService
+	 */
+	public BlConsignmentEntryService getBlConsignmentEntryService()
+	{
+		return blConsignmentEntryService;
+	}
+
+	/**
+	 * @param blConsignmentEntryService the blConsignmentEntryService to set
+	 */
+	public void setBlConsignmentEntryService(BlConsignmentEntryService blConsignmentEntryService)
+	{
+		this.blConsignmentEntryService = blConsignmentEntryService;
 	}
 
 }

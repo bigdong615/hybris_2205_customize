@@ -715,4 +715,25 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				&& BooleanUtils.isTrue(product.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode()));
 	}
 
+	@Override
+	public List<BlSerialProductModel> getMainItemsList(final ConsignmentEntryModel entry)
+	{
+		if (CollectionUtils.isEmpty(entry.getSerialProducts()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"DefaultBlConsignmentEntryService :: getMainItemsList :: Serial Products is Empty for ConsignmentEntry : {}",
+					entry.getPk());
+			return Lists.newArrayList();
+		}
+		final List<BlSerialProductModel> mainItemsList = Lists.newArrayList();
+		entry.getSerialProducts().forEach(product -> {
+			if (product instanceof BlSerialProductModel && Objects.nonNull(product.getProductType())
+					&& BooleanUtils.isFalse(product.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode())))
+			{
+				mainItemsList.add(((BlSerialProductModel) product));
+			}
+		});
+		return mainItemsList;
+	}
+
 }

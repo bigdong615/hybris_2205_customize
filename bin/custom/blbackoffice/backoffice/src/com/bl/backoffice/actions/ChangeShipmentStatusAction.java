@@ -3,13 +3,19 @@ package com.bl.backoffice.actions;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
@@ -24,6 +30,8 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
@@ -129,7 +137,7 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 	 */
 	private ActionResult<ConsignmentModel> processStatusChange(final ConsignmentModel consignmentModel)
 	{
-		if(OrderStatus.RECEIVED_MANUAL_REVIEW.equals(consignmentModel.getOrder().getStatus()))
+		if(OrderStatus.RECEIVED_MANUAL_REVIEW.equals(consignmentModel.getOrder().getStatus()) || isProductAllocationRemaining(consignmentModel.getOrder()))
 		{
 			Messagebox.show("Order not mark to BL Shipped due to order being in manual review status (non-allocated items).", BlintegrationConstants.ERROR_TEXT,
 					Messagebox.OK, "icon");
@@ -247,6 +255,73 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 	public void setConsignment(ConsignmentModel consignment)
 	{
 		this.consignment = consignment;
+	}
+	
+	/**
+	 * Checks if is product allocation remaining.
+	 *
+	 * @param order the order
+	 * @return true, if is product allocation remaining
+	 */
+	private boolean isProductAllocationRemaining(final AbstractOrderModel order)
+	{
+		if (Objects.isNull(order))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"ChangeShipmentStatusAction :: isProductAllocationRemaining :: Order is null", StringUtils.EMPTY);
+			return true;
+		}
+		if (CollectionUtils.isEmpty(order.getEntries()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"ChangeShipmentStatusAction :: isProductAllocationRemaining :: Order Entries is empty on Order : {}",
+					order.getCode());
+			return true;
+		}
+		final Map<String, Integer> orderEntryProductQtyMap = Maps.newHashMap();
+		final Map<String, Integer> allocatedProductQtyMap = Maps.newHashMap();
+		final List<BlSerialProductModel> mainItemsList = Lists.newArrayList();
+
+		order.getEntries().forEach(
+				orderEntry -> orderEntryProductQtyMap.put(orderEntry.getProduct().getCode(), orderEntry.getQuantity().intValue()));
+		order.getConsignments().forEach(
+				consignmentModel -> mainItemsList.addAll(getDefaultBlConsignmentService().getMainItemsListFromConsignment(consignmentModel)));
+		mainItemsList.forEach(item -> {
+			if (Objects.isNull(item.getBlProduct()))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+						"ChangeShipmentStatusAction :: isProductAllocationRemaining :: SKU not assigned on Serial : {}",
+						item.getCode());
+			}
+			final String skuCode = item.getBlProduct().getCode();
+			if (allocatedProductQtyMap.containsKey(skuCode))
+			{
+				final Integer qtyCount = allocatedProductQtyMap.get(skuCode) + BlCoreConstants.INT_ONE;
+				allocatedProductQtyMap.put(skuCode, qtyCount);
+			}
+			else
+			{
+				allocatedProductQtyMap.put(skuCode, BlCoreConstants.INT_ONE);
+			}
+		});
+		for (final Map.Entry<String, Integer> productAndQty : orderEntryProductQtyMap.entrySet())
+		{
+			if (BooleanUtils.isFalse(allocatedProductQtyMap.containsKey(productAndQty.getKey())))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"ChangeShipmentStatusAction :: isProductAllocationRemaining :: SKU : {} is not allocated on order : {} ",
+						productAndQty.getKey(), order.getCode());
+				return true;
+			}
+			if (BooleanUtils.isFalse(allocatedProductQtyMap.get(productAndQty.getKey()).compareTo(productAndQty.getValue()) == 0))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"ChangeShipmentStatusAction :: isProductAllocationRemaining :: SKU : {} is not allocated with specified qty on order entry : {}",
+						productAndQty.getKey(), productAndQty.getValue());
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

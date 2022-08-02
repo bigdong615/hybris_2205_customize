@@ -262,4 +262,27 @@ public class DefaultBlConsignmentService implements BlConsignmentService
 		this.blConsignmentEntryService = blConsignmentEntryService;
 	}
 
+	@Override
+	public List<BlSerialProductModel> getMainItemsListFromConsignment(final ConsignmentModel consignment)
+	{
+		final List<BlSerialProductModel> mainItemsListFromConsignment = Lists.newArrayList();
+		if (Objects.isNull(consignment))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"DefaultBlConsignmentService :: getMainItemsListFromConsignment :: Consignment is null", StringUtils.EMPTY);
+			return mainItemsListFromConsignment;
+		}
+		if (CollectionUtils.isEmpty(consignment.getConsignmentEntries()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"DefaultBlConsignmentService :: getMainItemsListFromConsignment :: Consignment Entries is empty on Consignment : {}",
+					consignment.getCode());
+			return mainItemsListFromConsignment;
+		}
+		consignment.getConsignmentEntries()
+				.forEach(entry -> mainItemsListFromConsignment.addAll(getBlConsignmentEntryService().getMainItemsList(entry)));
+
+		return mainItemsListFromConsignment;
+	}
+
 }
