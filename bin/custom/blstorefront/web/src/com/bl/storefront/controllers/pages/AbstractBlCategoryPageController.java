@@ -360,7 +360,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
 
         if (searchQuery != null)
         {
-            model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
+            model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.INDEX_FOLLOW);
         }
         // If its rental gear
         if(category.isRentalCategory() && category.isFacetedCategory()) {
