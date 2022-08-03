@@ -479,6 +479,7 @@ function reverseTraverseOnShipping() {
                          $('#ship-it-SHIP_UPS_OFFICE').html(upsStores);
                          if(data.length == 1) {
                              $('#ship-it-SHIP_UPS_OFFICE #ups-location-1').first().find('input[name="ups-location"]').prop("checked", true);
+                             shippingMethodContinue(false);
                          }
                      }
                  } else {
@@ -665,6 +666,7 @@ function reverseTraverseOnShipping() {
         	}
         } else {
         		
+        		saveDeliveryMode(deliveryMode, true,false)
         		
         		         $.ajax({
          		url: ACC.config.encodedContextPath + '/cart/deliverycost',
