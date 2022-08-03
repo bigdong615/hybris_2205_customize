@@ -43,10 +43,10 @@
            	            <li><a class="dropdown-item js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#" data-bs-toggle="modal"
            	             data-bs-target="#signIn"><spring:theme code="text.header.account.sign.in" /></a></li>
                       </sec:authorize>
+
+                   <!--  To display myaccount dropdown in mobile view  -->                   
                       <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-                      
                       <c:url var = "baseUrl" value="/my-account"/>
-              
                       <c:url value="/logout" var="signoutUrl" />
                          <li><a class="dropdown-item" href="${baseUrl}/orders"><spring:theme code="text.orders" /></a></li>
                          <li><a class="dropdown-item" href="${baseUrl}/address-book"><spring:theme code="text.address" /></a></li>
