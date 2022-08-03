@@ -162,7 +162,7 @@ public class StoreLocatorPageController extends AbstractSearchPageController
 	// setup methods to populate the model
 	protected void setUpMetaData(final String locationQuery, final Model model)
 	{
-		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.INDEX_FOLLOW);
 		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(locationQuery);
 		final String metaDescription = MetaSanitizerUtil.sanitizeDescription(getSiteName()
 				+ " "
