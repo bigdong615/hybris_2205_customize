@@ -847,17 +847,7 @@ function reverseTraverseOnShipping() {
             $('#ship-it-notification').val('');
             $('#ship-it-notification').hide();
         }
-
-    } else {
-        $('#same-day-address-div #delivery-shippingAddressFormDiv').hide();
-        $('#same-day-save-address-div').hide();
-        $('#same-day-save-address-div #same-day-save-address').prop("checked", false);
-        $('#same-day-status-updates-div').hide();
-        emptySFOrNYCAddressForm();
-        $('#same-day-notification').val('');
-        $('#same-day-notification').hide();
-    }
-    hideErrorForInputValidation();    
+        
     var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
     saveDeliveryMode(deliveryMode, false,false)
     
@@ -873,7 +863,19 @@ function reverseTraverseOnShipping() {
          		}
          		
          });
-        	$('.page-loader-new-layout').hide();	
+       $('.page-loader-new-layout').hide();	
+     
+
+    } else {
+        $('#same-day-address-div #delivery-shippingAddressFormDiv').hide();
+        $('#same-day-save-address-div').hide();
+        $('#same-day-save-address-div #same-day-save-address').prop("checked", false);
+        $('#same-day-status-updates-div').hide();
+        emptySFOrNYCAddressForm();
+        $('#same-day-notification').val('');
+        $('#same-day-notification').hide();
+    }
+    hideErrorForInputValidation();    
  }
 
  function pickUpBySomeoneForm() {
@@ -1991,8 +1993,8 @@ function reverseTraverseOnShipping() {
   	 $("#validationMessage").empty();
      $('#cart-shipping-cost').text($ ($("#shipToUPSShippingMethods .selected").find(".text-muted")).html());
      calculateCartTotal();
-     let selectedDeliveryMode = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').val();
-     saveDeliveryMode(selectedDeliveryMode, true,true);
+     //let selectedDeliveryMode = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').val();
+     //saveDeliveryMode(selectedDeliveryMode, true,true);
      
      if($('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').attr('businesstype') == "true") {
         let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
