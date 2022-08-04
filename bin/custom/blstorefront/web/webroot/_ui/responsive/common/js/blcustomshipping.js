@@ -183,7 +183,7 @@ function reverseTraverseOnShipping() {
                        shippingModes += '<option value="' + data[i].code + '" businesstype="' + data[i].businessTypeDelivery + '" data-subtext="' + data[i].deliveryCost.formattedValue + '">' + data[i].name;
                        shippingModes += '</option>';
                        if(i == 0) {
-                          $('#cart-shipping-cost').text("-");
+                          $('#cart-shipping-cost').text("$0.00");
                           calculateCartTotal();
                           if(data[i].businessTypeDelivery == true) {
                              let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
@@ -1082,6 +1082,24 @@ function reverseTraverseOnShipping() {
     var savedAddress = null;
     var sameDayDeliveryNote = $('#sameDayDeliveryNote').val();
     var deliveryMode = $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]').val();
+    
+    saveDeliveryMode(deliveryMode, false,false)
+    
+    $.ajax({
+         		url: ACC.config.encodedContextPath + '/cart/deliverycost',
+         		type: "GET",
+         		success: function (data) {
+         		if (data.deliveryCost != null) {
+         			$('#cart-shipping-cost').text(data.deliveryCost.formattedValue);
+         			calculateCartTotal();
+         		} 
+                 
+         		}
+         		
+         });
+    $('.page-loader-new-layout').hide();	
+    
+    
     if(checkShippingBlackout(deliveryMode))
 	  {
 	  	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
