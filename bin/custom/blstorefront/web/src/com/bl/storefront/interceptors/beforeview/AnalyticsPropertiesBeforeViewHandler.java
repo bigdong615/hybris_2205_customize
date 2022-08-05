@@ -16,7 +16,10 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 
 
 public class AnalyticsPropertiesBeforeViewHandler implements BeforeViewHandler
@@ -70,16 +73,34 @@ public class AnalyticsPropertiesBeforeViewHandler implements BeforeViewHandler
 	}
 
 	protected void addHostProperty(final String serverName, final ModelAndView modelAndView)
-	{
-		/*
-		 * Changes made to cache the google analytics properties files in a HashMap. The first time the pages are accessed
-		 * the values are read from the properties file & written on to a cache and the next time onwards it is accessed
-		 * from the cache.
-		 */
+	{ /*
+	   * Changes made to cache the google analytics properties files in a HashMap. The first time the pages are accessed
+	   * the values are read from the properties file & written on to a cache and the next time onwards it is accessed
+	   * from the cache.
+	   */
 		final String fullConfigKey = ThirdPartyConstants.Google.ANALYTICS_TRACKING_ID + "." + serverName;
-		final String propertyForHost = analyticsPropertiesMapCache
-				.computeIfAbsent(fullConfigKey, k -> getHostConfigService().getProperty(ThirdPartyConstants.Google.ANALYTICS_TRACKING_ID, serverName));
-		modelAndView.addObject(AnalyticsPropertiesBeforeViewHandler.ANALYTICS_TRACKING_ID, propertyForHost);
+		final String fullGA4EnableKey = BlControllerConstants.ANALYTICS_TRACKING_ID_GA4_ENABLED + "." + serverName;
+
+		final String propertyForHost = analyticsPropertiesMapCache.computeIfAbsent(fullConfigKey,
+				k -> getHostConfigService().getProperty(ThirdPartyConstants.Google.ANALYTICS_TRACKING_ID, serverName));
+
+		final String ga4EnabledForHost = analyticsPropertiesMapCache.computeIfAbsent(fullGA4EnableKey,
+				k -> getHostConfigService().getProperty(BlControllerConstants.ANALYTICS_TRACKING_ID_GA4_ENABLED, serverName));
+
+
+		if (BooleanUtils.toBoolean(ga4EnabledForHost))
+		{
+			final String fullGA4Key = BlControllerConstants.ANALYTICS_TRACKING_ID_GA4 + "." + serverName;
+
+			final String propertyForGA4 = analyticsPropertiesMapCache.computeIfAbsent(fullGA4Key,
+					k -> getHostConfigService().getProperty(BlControllerConstants.ANALYTICS_TRACKING_ID_GA4, serverName));
+
+			modelAndView.addObject(AnalyticsPropertiesBeforeViewHandler.ANALYTICS_TRACKING_ID, propertyForGA4);
+		}
+		else
+		{
+			modelAndView.addObject(AnalyticsPropertiesBeforeViewHandler.ANALYTICS_TRACKING_ID, propertyForHost);
+		}
 	}
 
 	public void setHostConfigService(final HostConfigService hostConfigService)
