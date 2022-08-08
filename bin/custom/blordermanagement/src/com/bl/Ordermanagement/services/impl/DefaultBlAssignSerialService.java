@@ -383,7 +383,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
             {
                 if(serialProduct.getOcLocationDetails().getLocationPriority() == 0) {
                	 prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getParentInventoryLocation()!=null? 
-               		    serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority(): 0);
+               		    serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority(): BlCoreConstants.LAST_LOC_PRTY_FOR_BIN_WO_PARENT);
                 }
                 else {
                   prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getLocationPriority());
