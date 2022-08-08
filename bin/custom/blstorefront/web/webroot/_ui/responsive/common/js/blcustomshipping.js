@@ -183,7 +183,7 @@ function reverseTraverseOnShipping() {
                        shippingModes += '<option value="' + data[i].code + '" businesstype="' + data[i].businessTypeDelivery + '" data-subtext="' + data[i].deliveryCost.formattedValue + '">' + data[i].name;
                        shippingModes += '</option>';
                        if(i == 0) {
-                          $('#cart-shipping-cost').text("$0.00");
+                          $('#cart-shipping-cost').text("-");
                           calculateCartTotal();
                           if(data[i].businessTypeDelivery == true) {
                              let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
