@@ -368,6 +368,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHARE_A_SALE_ORDERS_NOT_EXIST = "No completed status rental orders exist";
 	public static final String SHARE_A_SALE_COMMA = ",";
 	public static final String BIN_LOCATION_ID = "binLocationId";
+	public static final int LAST_LOC_PRTY_FOR_BIN_WO_PARENT = 8;
 
 	public static final String ORDER_CONFIRMATION_EVENT_DEFINITION_KEY = "order.confirmation.event.definition.key";
 	public static final String ORDER_CONFIRMATION_EVENT_TEMPLATE = "order.confirmation.event.template";
