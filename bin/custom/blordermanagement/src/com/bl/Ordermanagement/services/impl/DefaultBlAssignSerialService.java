@@ -382,7 +382,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
             if (Objects.nonNull(serialProduct.getOcLocationDetails()) && Objects.nonNull(serialProduct.getOcLocationDetails().getLocationPriority()))
             {
                 if(serialProduct.getOcLocationDetails().getLocationPriority() == 0) {
-                  prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority());
+               	 prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getParentInventoryLocation()!=null? 
+               		    serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority(): 0);
                 }
                 else {
                   prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getLocationPriority());
