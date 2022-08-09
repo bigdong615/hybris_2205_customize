@@ -19,7 +19,6 @@
         <!-- <requires-extension name="cms"/> -->
 
         <requires-extension name="bllogging"/>
-        <requires-extension name="blcore"/>
         <requires-extension name="basecommerce"/>
         <requires-extension name="commercefacades"/>
 

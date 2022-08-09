@@ -3,10 +3,12 @@ package com.bl.tax.service.impl;
 import com.bl.tax.ResponseData;
 import com.bl.tax.TaxRequestData;
 import com.bl.tax.TaxResponse;
+import com.bl.tax.constants.BltaxapiConstants;
 import com.bl.tax.service.BlTaxService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.externaltax.ExternalTaxDocument;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -56,5 +58,15 @@ public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrde
     
     return Double.valueOf(0.0d);
   }
+
+  @Override
+	public ResponseData commitOrderToAvalara(final AbstractOrderModel orderModel) throws RestClientException, URISyntaxException
+	{
+		final TaxRequestData request = new TaxRequestData();
+		getRequestPopulator().populate(orderModel, request);
+		request.setType(BltaxapiConstants.SALESINVOICE);
+		request.setCommit(true);
+		return super.process(createHttpEntity(request), TaxResponse.class);
+	}
 
 }

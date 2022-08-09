@@ -3,6 +3,7 @@ package com.bl.core.services.order.impl;
 import com.bl.core.enums.CustomerCollectionStatusEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlRepairLogModel;
+import com.bl.core.model.OrderToAvalaraProcessModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.repair.log.dao.BlRepairLogDao;
 import com.bl.core.services.order.BlOrderService;
@@ -15,6 +16,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.order.AbstractOrderEntryService;
+import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
@@ -47,6 +49,8 @@ public class DefaultBlOrderService implements BlOrderService {
 	private AbstractOrderEntryService abstractOrderEntryService;
   private BlRepairLogDao blRepairLogDao;
 	private DefaultBlESPEventService defaultBlESPEventService;
+	
+	private BusinessProcessService businessProcessService;
 
   /**
    * {@inheritDoc}
@@ -184,6 +188,10 @@ public class DefaultBlOrderService implements BlOrderService {
 			// To call Order Unboxed ESP event service
 			if(OrderStatus.UNBOXED_COMPLETELY.equals(orderStatus)) {
 				getDefaultBlESPEventService().sendOrderUnboxed((OrderModel) order);
+			}
+
+			if(orderStatus.equals(OrderStatus.COMPLETED)) {
+				commitOrderToAvalara(order);
 			}
 		}
 		catch (final ModelSavingException exception)
@@ -350,6 +358,36 @@ public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
 	{
 		return BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder()) 
 				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
+	}
+
+	@Override
+	public void commitOrderToAvalara(AbstractOrderModel order)
+	{
+		if(order instanceof OrderModel && BooleanUtils.isFalse(order.getIsOrderCommittedToAvalara()))
+		  {
+			  final OrderToAvalaraProcessModel orderToAvalaraProcessModel = (OrderToAvalaraProcessModel) getBusinessProcessService()
+					  .createProcess("sendOrderToAvalaraProcess-" + order.getCode() + "-" + System.currentTimeMillis(),
+							  "order-commit-avalara-process");
+			  orderToAvalaraProcessModel.setOrder(((OrderModel)order));
+			  modelService.save(orderToAvalaraProcessModel);
+			  getBusinessProcessService().startProcess(orderToAvalaraProcessModel);
+		  }
+	}
+
+	/**
+	 * @return the businessProcessService
+	 */
+	public BusinessProcessService getBusinessProcessService()
+	{
+		return businessProcessService;
+	}
+
+	/**
+	 * @param businessProcessService the businessProcessService to set
+	 */
+	public void setBusinessProcessService(BusinessProcessService businessProcessService)
+	{
+		this.businessProcessService = businessProcessService;
 	}
 
 }

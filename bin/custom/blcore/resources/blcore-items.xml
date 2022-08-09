@@ -716,6 +716,17 @@
           <modifiers read="true" write="true" search="true" optional="true"/>
         </targetElement>
       </relation>
+      <relation generate="true" localized="false" code="OrderToAvalara2OrderProcess"
+			autocreate="true">
+			<sourceElement type="Order" cardinality="one"
+				qualifier="order">
+				<modifiers initial="true" optional="true" />
+			</sourceElement>
+			<targetElement type="OrderToAvalaraProcess" cardinality="many"
+				qualifier="orderToAvalaraProcess">
+				<modifiers initial="true" optional="true" />
+			</targetElement>
+		</relation>
     </relations>
 
 
@@ -3314,6 +3325,12 @@
                         <description>Total tax rate</description>
                         <persistence type="property"/>
                         <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="isOrderCommittedToAvalara" type="java.lang.Boolean">
+                    	<persistence type="property" />
+                    	<modifiers read="true" write="true" search="true" optional="true" />
+                    	<defaultvalue>Boolean.FALSE</defaultvalue>
+                    	<description>This flag will help to identify if order is committed to avalara</description>
                     </attribute>
                 </attributes>
 
@@ -7794,7 +7811,10 @@ new Integer(0)
                 </attributes>
             </itemtype>
         </typegroup>
-
+        
+	<typegroup name="orderBussinessProcess">
+		<itemtype code="OrderToAvalaraProcess" autocreate="true" generate="true" extends="BusinessProcess"/>
+	</typegroup>
 
     </itemtypes>
 </items>

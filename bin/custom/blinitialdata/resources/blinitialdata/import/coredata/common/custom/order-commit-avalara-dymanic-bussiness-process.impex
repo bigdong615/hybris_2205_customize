@@ -1,0 +1,17 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common order-commit-avalara-dymanic-bussiness-process.impex ========================="); 
+ 
+INSERT_UPDATE DynamicProcessDefinition                                                          ; code[unique=true]            ; active ; content                                                                         
+                                                                                                ; order-commit-avalara-process ; true   ; "<process xmlns='http://www.hybris.de/xsd/processdefinition' start='commitOrderToAvalara' 
+name='order-commit-avalara-process' processClass='com.bl.core.model.OrderToAvalaraProcessModel'> 
+                                                                                                
+<!-- Start Order commit to avalara -->                                                          
+<action id='commitOrderToAvalara' bean='commitOrderToAvalaraAction'>                            
+<transition name='OK' to='success'/>                                                            
+<transition name='NOK' to='error'/>                                                             
+</action>                                                                                       
+                                                                                                
+<end id='error' state='ERROR'>Order process error.</end>                                        
+<end id='failed' state='FAILED'>Order process failed.</end>                                     
+<end id='success' state='SUCCEEDED'>Order process completed.</end>                              
+                                                                                                
+</process>"                                                                                     

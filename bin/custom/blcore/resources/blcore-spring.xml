@@ -609,6 +609,7 @@
 		<property name="modelService" ref="modelService"/>
 		<property name="blRepairLogDao" ref="blRepairLogDao" />
 		<property name="defaultBlESPEventService" ref="blEspEventService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 
 	<!--Pricing Logic changes-->
@@ -2027,6 +2028,7 @@
 		<property name="siteMapUrlDataConverter" ref="customPageToSiteMapUrlDataConverter"/>
 		<property name="siteMapPageEnum" value="CUSTOM"/>
 	</bean>
-
-
+	
+	<bean id="commitOrderToAvalaraAction" class="com.bl.core.order.actions.CommitOrderToAvalaraAction" parent="abstractAction"/>
+	
 </beans>
