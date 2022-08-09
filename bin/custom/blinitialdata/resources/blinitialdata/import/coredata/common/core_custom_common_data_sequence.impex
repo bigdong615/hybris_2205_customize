@@ -30,6 +30,8 @@ $commonCustomPath = /blinitialdata/import/coredata/common/custom
 # OMS Labels Localization Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/oms-labels-content_en.impex"), "utf-8", 0, 0);
 
+# Order to avalara
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/order-commit-avalara-dymanic-bussiness-process.impex"), "utf-8", 0, 0);
 #OData
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/odata/integrationObjects/InboundBLAddress.impex "), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/odata/integrationObjects/InboundBLBasestore.impex "), "utf-8", 0, 0);

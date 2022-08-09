@@ -25,6 +25,7 @@
         <requires-extension name="couponservices"/>
         <requires-extension name="warehousing"/>
         <requires-extension name="blespintegration"/>
+        <requires-extension name="bltaxapi"/>
         <coremodule generated="true" manager="com.bl.core.jalo.BlCoreManager" packageroot="com.bl.core"/>
                 		
     

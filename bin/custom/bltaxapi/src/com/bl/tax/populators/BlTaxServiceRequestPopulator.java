@@ -1,11 +1,7 @@
 package com.bl.tax.populators;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.tax.Addresses;
@@ -27,9 +23,11 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.util.Config;
 import java.text.ParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -52,7 +50,6 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   private static final Logger LOG = Logger.getLogger(BlTaxServiceRequestPopulator.class);
 
   private ProductService productService;
-  private BlDatePickerService blDatePickerService;
   private DefaultWarehouseService defaultWarehouseService;
   private SessionService sessionService;
 
@@ -241,9 +238,9 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   }
 
   private Date getDateForRequest(final AbstractOrderModel abstractOrder) throws ParseException {
-    final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+    final RentalDateDto rentalDateDto = getRentalDatesFromSession();
     if (null != rentalDateDto && null != rentalDateDto.getSelectedToDate()) {
-      return BlDateTimeUtils.getDate(rentalDateDto.getSelectedToDate() , BltaxapiConstants.DATE_FORMAT);
+      return BlTaxAPIUtils.getDate(rentalDateDto.getSelectedToDate() , BltaxapiConstants.DATE_FORMAT);
       }
 
     if (abstractOrder.getEntries().stream()
@@ -375,18 +372,14 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * @return boolean value
    */
   private boolean isReplacementOrder() {
-    return BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && null != getSessionService().getAttribute(
-        BlCoreConstants.RETURN_REQUEST);
+    return BooleanUtils.isTrue(checkIsReplacementOrder()) && null != getSessionService().getAttribute(
+   		 BltaxapiConstants.RETURN_REQUEST);
   }
-
-  public BlDatePickerService getBlDatePickerService() {
-    return blDatePickerService;
-  }
-
-  public void setBlDatePickerService(BlDatePickerService blDatePickerService) {
-    this.blDatePickerService = blDatePickerService;
-  }
-
+  
+  private boolean checkIsReplacementOrder() {
+     return null != getSessionService().getAttribute(BltaxapiConstants.ACTING_USER_UID) &&
+       null != getSessionService().getAttribute(BltaxapiConstants.ASM_SESSION_PARAMETER);
+ }
 
   public ProductService getProductService(){
     return productService;
@@ -412,5 +405,31 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   public void setSessionService(SessionService sessionService) {
     this.sessionService = sessionService;
   }
+  
+  private RentalDateDto getRentalDatesFromSession()
+	{
+		final Map<String, String> rentalDate = getSessionService().getAttribute(BltaxapiConstants.SELECTED_DATE_MAP);
+		final Map<String, String> selectedDuration = getSessionService().getAttribute(BltaxapiConstants.SELECTED_DURATION_MAP);
+		if (null != rentalDate)
+		{
+			final RentalDateDto date = new RentalDateDto();
+			final String startDate = rentalDate.get(BltaxapiConstants.START_DATE);
+			final String endDate = rentalDate.get(BltaxapiConstants.END_DATE);
+			final String selectedDurationDays = selectedDuration.get(BltaxapiConstants.SELECTED_DURATION);
+			if (null != startDate && null != endDate)
+			{
+				date.setSelectedFromDate(startDate);
+				date.setSelectedToDate(endDate);
+				date.setNumberOfDays(String.valueOf(
+						ChronoUnit.DAYS.between(BlTaxAPIUtils.convertStringDateToLocalDate(startDate, BltaxapiConstants.DATE_FORMAT),
+								BlTaxAPIUtils.convertStringDateToLocalDate(endDate, BltaxapiConstants.DATE_FORMAT))));
+				if(org.apache.commons.lang.StringUtils.isNotBlank(selectedDurationDays)) {
+					date.setSelectedDays(selectedDurationDays);
+				}
+				return date;
+			}
+		}
+		return null;
+	}
 
 }

@@ -45,7 +45,6 @@
   <!--Added for creating request for avalar tax -->
   <bean id="blTaxServiceRequestPopulator" class="com.bl.tax.populators.BlTaxServiceRequestPopulator">
     <property name="productService" ref="productService"/>
-    <property name="blDatePickerService" ref="blDatePickerService"/>
     <property name="defaultWarehouseService" ref="warehouseService"/>
     <property name="sessionService" ref="sessionService"/>
   </bean>

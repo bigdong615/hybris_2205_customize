@@ -7,6 +7,7 @@ import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAddressRequest;
 import com.braintree.command.result.BrainTreeAddressResult;
@@ -56,6 +57,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -83,6 +87,8 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
 	private CustomFieldsService customFieldsService;
 	private BlOrderDao orderDao;
+	@Resource(name = "blOrderService")
+	private BlOrderService blOrderService;
 
 	/**
 	 * It sets intent to cart
@@ -589,6 +595,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 			order.setStatus(OrderStatus.COMPLETED);
 			order.setOrderCompletedDate(new Date());
 			getModelService().save(order);
+			getBlOrderService().commitOrderToAvalara(order);
 			order.getConsignments().forEach(consignmentModel -> {
 				consignmentModel.setStatus(ConsignmentStatus.COMPLETED);
 				getModelService().save(consignmentModel);
@@ -1003,6 +1010,20 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	public void setOrderDao(final BlOrderDao orderDao)
 	{
 		this.orderDao = orderDao;
+	}
+
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService() {
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService) {
+		this.blOrderService = blOrderService;
 	}
 	
 }

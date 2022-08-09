@@ -50,6 +50,15 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String PRODUCT_ID = "productID:";
 	public static final String MAX_CHARACTER = "tax.max.character";
 	public static final String JURIS_TYPE = "STA";
-
+	public static final String RETURN_REQUEST = "returnRequest";
+	public static final String ACTING_USER_UID = "ACTING_USER_UID";
+	public static final String ASM_SESSION_PARAMETER = "ASM";
+	public static final String SELECTED_DATE_MAP = "selectedDateMap";
+	public static final String SELECTED_DURATION_MAP = "selectedDurationMap";
+	public static final String START_DATE = "startDate";
+	public static final String END_DATE = "endDate";
+	public static final String SELECTED_DURATION = "selectedDuration";
+	
+	
 
 }

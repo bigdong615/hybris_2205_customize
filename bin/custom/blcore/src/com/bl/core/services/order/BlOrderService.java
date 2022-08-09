@@ -67,4 +67,11 @@ public interface BlOrderService {
    * @return true, if is used order only
    */
   boolean isUsedOrderOnly(final AbstractOrderModel order);
+  
+  /**
+   * Commit order to avalara.
+   *
+   * @param order the order
+   */
+  public void commitOrderToAvalara(final AbstractOrderModel order);
 }

@@ -3,6 +3,7 @@ package com.bl.blbackoffice.actions;
 import com.bl.core.event.BlGiftCardEmailEvent;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
@@ -45,6 +46,9 @@ public class BlGiftCardEmailAndMovementAction implements CockpitAction<GiftCardM
 
   @Resource
   private BaseSiteService baseSiteService;
+  
+  @Resource(name = "blOrderService")
+  private BlOrderService blOrderService;
 
   /**
    * It creates gift card movement and sends an email.
@@ -65,6 +69,7 @@ public class BlGiftCardEmailAndMovementAction implements CockpitAction<GiftCardM
           order.setOrderCompletedDate(new Date());
           modelService.save(order);
           modelService.refresh(order);
+          getBlOrderService().commitOrderToAvalara(order);
         }
       	}
       	return actionResultForEmail;
@@ -189,4 +194,20 @@ public class BlGiftCardEmailAndMovementAction implements CockpitAction<GiftCardM
       event.setLanguage(commonI18NService.getCurrentLanguage());
       return event;
   }
+
+/**
+ * @return the blOrderService
+ */
+public BlOrderService getBlOrderService()
+{
+	return blOrderService;
+}
+
+/**
+ * @param blOrderService the blOrderService to set
+ */
+public void setBlOrderService(BlOrderService blOrderService)
+{
+	this.blOrderService = blOrderService;
+}
 }
