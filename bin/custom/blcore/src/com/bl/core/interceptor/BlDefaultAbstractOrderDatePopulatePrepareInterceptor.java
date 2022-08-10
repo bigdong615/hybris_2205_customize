@@ -1,24 +1,28 @@
 package com.bl.core.interceptor;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.service.BlBackOfficePriceService;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.service.BlBackOfficePriceService;
+import com.bl.logging.BlLogger;
 
 /**
  * Prepare interceptor for AbstractOrder item type.
@@ -62,18 +66,24 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
       final List<AbstractOrderEntryModel> entryModelList = abstractOrderModel.getEntries().stream().filter(entry ->!entry.isBundleEntry()).collect(
           Collectors.toList());
       for (final AbstractOrderEntryModel orderEntry : entryModelList) {
-        //update rental date based on order dates
-        // calculating base price after updating effective dates
-        try {
-          final BigDecimal calculatedBasePrice = getBlBackOfficePriceService()
-              .getProductPrice(orderEntry.getProduct(), rentalStartDate,
-                  rentalReturnDate , BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()));
-          if (calculatedBasePrice != null) {
-            orderEntry.setBasePrice(calculatedBasePrice.doubleValue());
-          }
-        } catch (final ParseException e) {
-          BlLogger.logMessage(LOG, Level.ERROR, "Error while parsing the product price : ", e);
-        }
+			if (orderEntry.getProduct() != null)
+			{
+				//update rental date based on order dates
+				// calculating base price after updating effective dates
+				try
+				{
+					final BigDecimal calculatedBasePrice = getBlBackOfficePriceService().getProductPrice(orderEntry.getProduct(),
+							rentalStartDate, rentalReturnDate, BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()));
+					if (calculatedBasePrice != null)
+					{
+						orderEntry.setBasePrice(calculatedBasePrice.doubleValue());
+					}
+				}
+				catch (final ParseException e)
+				{
+					BlLogger.logMessage(LOG, Level.ERROR, "Error while parsing the product price : ", e);
+				}
+			}
       }
     } else if (BooleanUtils.isTrue(abstractOrderModel.getInternalTransferOrder())) {
       setBasePriceToZero(abstractOrderModel);
@@ -99,7 +109,7 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
     return blBackOfficePriceService;
   }
 
-  public void setBlBackOfficePriceService(BlBackOfficePriceService blBackOfficePriceService) {
+  public void setBlBackOfficePriceService(final BlBackOfficePriceService blBackOfficePriceService) {
     this.blBackOfficePriceService = blBackOfficePriceService;
   }
 }
