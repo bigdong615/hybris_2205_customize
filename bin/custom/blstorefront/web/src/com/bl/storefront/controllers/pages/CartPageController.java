@@ -25,6 +25,8 @@ import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.promotion.validate.BlPromotionValidator;
 import com.bl.storefront.security.cookie.BlRentalDurationCookieGenerator;
+import com.bl.tax.stratergy.BlCalculateExternalTaxesStratergy;
+
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
 import de.hybris.platform.acceleratorfacades.cart.action.exceptions.CartEntryActionException;
@@ -204,6 +206,9 @@ public class CartPageController extends AbstractCartPageController
 	
 	@Resource
 	private ModelService modelService;
+	
+	@Resource
+	private BlCalculateExternalTaxesStratergy blCalculateExternalTaxesStratergy;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -864,6 +869,7 @@ public class CartPageController extends AbstractCartPageController
 					if(blPromotionValidator.checkInvalidPromotions(form.getVoucherCode(), BlControllerConstants.ERROR_MSG_TYPE, null, redirectAttributes))
 					{
 						voucherFacade.applyVoucher(form.getVoucherCode());
+						blCalculateExternalTaxesStratergy.calculateExternalTaxes(blCartService.getSessionCart());
 						redirectAttributes.addFlashAttribute("successMsg",
 								getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
 								{ form.getVoucherCode() }, getI18nService().getCurrentLocale()));
