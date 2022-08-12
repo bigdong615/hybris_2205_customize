@@ -278,7 +278,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       shippingTaxLine.setDescription(BltaxapiConstants.SHIPPING);
       taxLines.add(shippingTaxLine);
     }
-    if(BooleanUtils.isFalse(taxRequest.getIsShippingTax()) && Double.compare(abstractOrder.getTotalDiscounts(), 0.0) > 0)
+    if((taxRequest.getIsShippingTax() == null || BooleanUtils.isFalse(taxRequest.getIsShippingTax())) && Double.compare(abstractOrder.getTotalDiscounts(), 0.0) > 0)
     {
       discountTaxLine.setQuantity(BltaxapiConstants.QTY);
       discountTaxLine.setNumber(null != shippingTaxLine.getNumber() ? shippingTaxLine.getNumber() + 1 : 1);
