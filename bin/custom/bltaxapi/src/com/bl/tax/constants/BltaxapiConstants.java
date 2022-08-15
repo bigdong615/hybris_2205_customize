@@ -35,7 +35,7 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String DISCOUNT_TAX_CODE = "tax.avalara.discount.code";
 	public static final String ORIGIN  = "Origin";
 	public static final String DESTINATION = "Dest";
-	public static final String COMPANY_CODE = "BL-TEST";
+	public static final String COMPANY_CODE = "bl.avalara.tax.company.code";
 	public static final String EMPTY_STRING = "";
 	public static final String SHIPPING = "shipping";
 	public static final int QTY  = 1;
