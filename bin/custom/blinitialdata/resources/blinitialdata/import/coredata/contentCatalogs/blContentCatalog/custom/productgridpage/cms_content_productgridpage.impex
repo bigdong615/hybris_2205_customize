@@ -78,7 +78,11 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
                              ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
-
+  							  ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                          
 
 INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid                                       ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
                                     ;                          ; SiteLogo-productGridPage                  ; SiteLogo                      ;                                                                                  ; SiteLogoSlot                               ; true
@@ -109,7 +113,11 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid            
                                     ;                         ; SocialMediaSectionSlot-productGrid         ; SocialMediaSectionSlot        ;                                                                                  ; SocialMediaSectionSlot                   ; true
                                     ;                         ; MyAccountSlot-productGrid                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
                                     ;                         ; MobileMiniCartSlot-productGrid             ; MobileMiniCartSlot            ;                                                                           ; MobileMiniCartSlot                             ; true
-
+									 ;                         ; MobileHeaderLinkForShipOrPickupSlot-productGrid ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MobileHeaderLinkForSupportSlot-productGrid      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
+                                     ;                         ; MobileHeaderLinkForAccountSlot-productGrid      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
+                                     ;                         ; MobileHeaderBottomInfo-productGrid              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
+                                 
 
 
 INSERT_UPDATE CategoryPage; $contentCV[unique = true]; uid[unique = true]; name         ; masterTemplate(uid, $contentCV); defaultPage; approvalStatus(code)[default = 'approved']

@@ -17,6 +17,10 @@ INSERT_UPDATE ContentSlotName; name[unique = true]      ; template(uid, $content
                              ; PromoBannerSlot          ;                                                                                       ;                          ; wide
                              ; SiteLogoHeaderSlot       ;                                                                                       ;                          ; logo
                              ; HeaderLinkForSupportSlot ;                                                                                       ;                          ; headerlink
+                             ; NavigationPromoSlot                ;                                                                       ;                           ; logo                
+                    #          ; NavigationBarSlot                  ;                                                                       ;                           ; navigation          
+                              ; NavigationBarMobileSlot            ;                                                                       ;                           ; navigation          
+                            
                              ; MiniCartSlot             ;                                                                                       ;                          ; minicart
                              ; FooterSlot               ;                                                                                       ;                          ; footer
                              ; FooterSubscriptionSlot   ;                                                                                       ;                          ; wide
@@ -24,6 +28,11 @@ INSERT_UPDATE ContentSlotName; name[unique = true]      ; template(uid, $content
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                              ; TopHeaderSlot           ;                                                                             ;                           ; wide
                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
+                                ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                          
                              ; MobileMiniCartSlot             ;                                                                                       ;                           ; minicart
 
 ###  Define ContentSlot For Template  ###
@@ -31,6 +40,10 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                          ; PromoBannerSlot-DeliveryOrPickupCartpage          ; PromoBannerSlot          ;                                                                                           ; PromoBannerSlot                            ; true
                                     ;                          ; SiteLogoHeaderSlot-DeliveryOrPickupCartpage       ; SiteLogoHeaderSlot       ;                                                                                           ; SiteLogoHeaderSlot                         ; true
                                     ;                          ; HeaderLinkForSupportSlot-DeliveryOrPickupCartpage ; HeaderLinkForSupportSlot ;                                                                                           ; HeaderLinkForSupportSlot                   ; true
+                                     ;                         ; NavigationPromoSlot-DeliveryOrPickupCartpage           ; NavigationPromoSlot           ;                                                                           ; NavigationPromoSlot                      ; true           
+                               #      ;                         ; NavigationBarSlot-DeliveryOrPickupCartpage             ; NavigationBarSlot             ;                                                                           ; NavigationBarSlot                        ; true           
+                                     ;                         ; NavigationBarMobileSlot-DeliveryOrPickupCartpage       ; NavigationBarMobileSlot       ;                                                                           ; NavigationBarMobileSlot                  ; true           
+                                    
                                     ;                          ; MiniCartSlot-DeliveryOrPickupCartpage             ; MiniCartSlot             ;                                                                                           ; MiniCartSlot                               ; true
                                     ;                          ; FooterSlot-DeliveryOrPickupCartpage               ; FooterSlot               ;                                                                                           ; FooterSlot                                 ; true
                                     ;                          ; FooterSubscriptionSlot-DeliveryOrPickupCartpage   ; FooterSubscriptionSlot   ;                                                                                           ; FooterSubscriptionSlot                     ; true
@@ -38,6 +51,11 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                         ; SocialMediaSectionSlot-DeliveryOrPickupCartpage    ; SocialMediaSectionSlot        ;                                                                                      ; SocialMediaSectionSlot                   ; true
                                     ;                         ; TopHeaderSlot-DeliveryOrPickupCartpage    ; TopHeaderSlot        ;                                                                                      ; TopHeaderSlot                   ; true
                                     ;                         ; MyAccountSlot-DeliveryOrPickupCartpage                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+                                    ;                         ; MobileHeaderLinkForShipOrPickupSlot-DeliveryOrPickupCartpage ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MobileHeaderLinkForSupportSlot-DeliveryOrPickupCartpage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
+                                     ;                         ; MobileHeaderLinkForAccountSlot-DeliveryOrPickupCartpage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true
+                                     ;                         ; MobileHeaderBottomInfo-DeliveryOrPickupCartpage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true
+                                     
                                    ;                          ; MobileMiniCartSlot-DeliveryOrPickupCartpage             ; MobileMiniCartSlot             ;                                                                                   ; MobileMiniCartSlot                         ; true
 
 

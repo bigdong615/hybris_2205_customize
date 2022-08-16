@@ -65,6 +65,11 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
                              ; MobileMiniCartSlot            ;                                                                                    ;                           ; minicart
+                             ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                             
 
 # Search Results Empty Page Template
 INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $contentCV)[unique = true][default = 'SearchResultsEmptyPageTemplate']; validComponentTypes(code); compTypeGroup(code)
@@ -90,7 +95,11 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
                             ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
-
+                            ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                          
 
 INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                       ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'SearchResultsGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
                                     ;                          ; SiteLogo-SearchResultsGrid               ; SiteLogo                      ;                                                                                        ; SiteLogoSlot                               ; true
@@ -119,7 +128,11 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                         ; SocialMediaSectionSlot-searchGrid         ; SocialMediaSectionSlot        ;                                                                                        ; SocialMediaSectionSlot                   ; true
                                     ;                         ; MyAccountSlot-searchGrid                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
                                     ;                         ; MobileMiniCartSlot-searchGrid             ; MobileMiniCartSlot            ;                                                                           ; MobileMiniCartSlot                             ; true
-
+  								    ;                         ; MobileHeaderLinkForShipOrPickupSlot-searchGrid ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MobileHeaderLinkForSupportSlot-searchGrid      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
+                                     ;                         ; MobileHeaderLinkForAccountSlot-searchGrid      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
+                                     ;                         ; MobileHeaderBottomInfo-searchGrid              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
+                                 
 
 
 
@@ -149,7 +162,11 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                         ; SocialMediaSectionSlot-searchempty         ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
                                     ;                         ; MyAccountSlot-searchempty                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
                                     ;                         ; MobileMiniCartSlot-searchempty             ; MobileMiniCartSlot            ;                                                                           ; MobileMiniCartSlot                             ; true
-
+   									 ;                         ; MobileHeaderLinkForShipOrPickupSlot-searchempty ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MobileHeaderLinkForSupportSlot-searchempty      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
+                                     ;                         ; MobileHeaderLinkForAccountSlot-searchempty      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
+                                     ;                         ; MobileHeaderBottomInfo-searchempty              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
+                                 
 
 
 INSERT_UPDATE ContentPage; $contentCV[unique = true]; uid[unique = true]; name                ; masterTemplate(uid, $contentCV); label; defaultPage[default = 'true']; approvalStatus(code)[default = 'approved']; homepage[default = 'false']
