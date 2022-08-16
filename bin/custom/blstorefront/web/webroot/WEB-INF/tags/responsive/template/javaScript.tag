@@ -117,7 +117,9 @@
 
 		<input type="hidden" id="enableSaturdays" value="${enableSaturdays}">
 		<script>
+		
 			$(document).ready(function(){
+
 				 if('${rentalDate.selectedFromDate}' != '' && '${rentalDate.selectedToDate}' != '')
 				 {
 					 $("#litepicker").val('');
@@ -1951,6 +1953,38 @@
           );
       </script>
   </c:if>
+  
+  
+  
+  
+  	<%-- Added JS for all myaccount pages & other pages --%>
+		<c:if test="${cmsPage.uid eq 'orderConfirmation' || cmsPage.uid eq 'address-book' || cmsPage.uid eq 'orders' || cmsPage.uid eq 'saved-carts' ||
+		               cmsPage.uid eq 'payment-details'   || cmsPage.uid eq 'update-email' || cmsPage.uid eq 'updatePassword' ||
+		               cmsPage.uid eq 'verificationImages'   || cmsPage.uid eq 'cart-rental' ||  cmsPage.uid eq 'multiStepCheckoutSummaryPage' ||
+		               cmsPage.uid eq 'multiStepCheckoutReviewPage'}">
+            <script>
+                // Mobile Menu styles - #my-menu is required for ALL pages
+                document.addEventListener(
+                    "DOMContentLoaded", () => {
+                        new Mmenu( "#my-menu", {
+                            extensions: ["fullscreen","position-front"],
+                            navbars		: [{
+                                position: "top",
+                                content : [ "close", "logo" ]
+                            }],
+                        } );
+                    }
+                );
+                // Initialize Mega menu rollover - required for ALL pages
+                $('.menu-large').hover(
+                    function(){ $('.screen').addClass('show') },
+                    function(){ $('.screen').removeClass('show') }
+                );
+
+            </script>
+        </c:if>
+        
+      
 
 	</c:otherwise>
 </c:choose>
