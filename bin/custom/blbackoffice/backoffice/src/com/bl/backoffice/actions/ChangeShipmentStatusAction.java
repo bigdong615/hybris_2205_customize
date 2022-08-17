@@ -2,8 +2,8 @@ package com.bl.backoffice.actions;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 
@@ -25,9 +25,7 @@ import org.zkoss.zul.Messagebox.Button;
 import com.bl.backoffice.consignment.service.BlConsignmentService;
 import com.bl.backoffice.widget.controller.order.BlCustomCancelRefundConstants;
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.NumberingSystemEnum;
 import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
@@ -79,9 +77,9 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 	@Override
 	public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
 	{
-		final ConsignmentModel consignmentmodel = actionContext.getData();
+		final ConsignmentModel consignment = actionContext.getData();
 
-		return (consignmentmodel != null && getBlShipmentCreationService().checkOrderStatus(consignmentmodel));
+		return (consignment != null && getBlShipmentCreationService().checkOrderStatus(consignment));
 	}
 
 	/**
@@ -273,20 +271,6 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 					"ChangeShipmentStatusAction :: isProductAllocationRemaining :: Order is null", StringUtils.EMPTY);
 			return true;
 		}
-		if(BooleanUtils.isTrue(order.isGiftCardOrder()))
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-					"ChangeShipmentStatusAction :: isProductAllocationRemaining :: Order : {} is a Gift Card Order",
-					order.getCode());
-			return false;
-		}
-		if(BooleanUtils.isTrue(order.getIsRetailGearOrder()))
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-					"ChangeShipmentStatusAction :: isProductAllocationRemaining :: Order : {} is a Retail Gear Order",
-					order.getCode());
-			return false;
-		}
 		if (CollectionUtils.isEmpty(order.getEntries()))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
@@ -294,21 +278,32 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 					order.getCode());
 			return true;
 		}
-		if(isUsedGearOrder(order))
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-					"ChangeShipmentStatusAction :: isProductAllocationRemaining :: Order : {} is a Used Gear Order",
-					order.getCode());
-			return checkAllocationForUsedGearOrder(order);
-		}
 		final Map<String, Integer> orderEntryProductQtyMap = Maps.newHashMap();
 		final Map<String, Integer> allocatedProductQtyMap = Maps.newHashMap();
 		final List<BlSerialProductModel> mainItemsList = Lists.newArrayList();
 
-		getSkuCodeWithQtyMapFromOrderEntry(order, orderEntryProductQtyMap);
+		order.getEntries().forEach(
+				orderEntry -> orderEntryProductQtyMap.put(orderEntry.getProduct().getCode(), orderEntry.getQuantity().intValue()));
 		order.getConsignments().forEach(
 				consignmentModel -> mainItemsList.addAll(getDefaultBlConsignmentService().getMainItemsListFromConsignment(consignmentModel)));
-		getAllocatedProductAndQtyMap(allocatedProductQtyMap, mainItemsList);
+		mainItemsList.forEach(item -> {
+			if (Objects.isNull(item.getBlProduct()))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+						"ChangeShipmentStatusAction :: isProductAllocationRemaining :: SKU not assigned on Serial : {}",
+						item.getCode());
+			}
+			final String skuCode = item.getBlProduct().getCode();
+			if (allocatedProductQtyMap.containsKey(skuCode))
+			{
+				final Integer qtyCount = allocatedProductQtyMap.get(skuCode) + BlCoreConstants.INT_ONE;
+				allocatedProductQtyMap.put(skuCode, qtyCount);
+			}
+			else
+			{
+				allocatedProductQtyMap.put(skuCode, BlCoreConstants.INT_ONE);
+			}
+		});
 		for (final Map.Entry<String, Integer> productAndQty : orderEntryProductQtyMap.entrySet())
 		{
 			if (BooleanUtils.isFalse(allocatedProductQtyMap.containsKey(productAndQty.getKey())))
@@ -327,185 +322,6 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 			}
 		}
 		return false;
-	}
-	
-	/**
-	 * Check allocation for used gear order.
-	 *
-	 * @param order
-	 *           the order
-	 * @return true, if successful
-	 */
-	private boolean checkAllocationForUsedGearOrder(final AbstractOrderModel order)
-	{
-		final Map<String, Integer> orderEntryProductQtyMap = Maps.newHashMap();
-		final Map<String, Integer> allocatedProductQtyMap = Maps.newHashMap();
-		final List<BlSerialProductModel> mainItemsList = Lists.newArrayList();
-
-		order.getEntries().forEach(orderEntry -> {
-			final String serialCode = orderEntry.getProduct().getCode();
-			if (orderEntryProductQtyMap.containsKey(serialCode))
-			{
-				final Integer qtyCount = orderEntryProductQtyMap.get(serialCode) + BlCoreConstants.INT_ONE;
-				orderEntryProductQtyMap.put(serialCode, qtyCount);
-			}
-			else
-			{
-				orderEntryProductQtyMap.put(serialCode, orderEntry.getQuantity().intValue());
-			}
-		});
-		order.getConsignments().forEach(consignmentModel -> mainItemsList
-				.addAll(getDefaultBlConsignmentService().getMainItemsListFromConsignment(consignmentModel)));
-		mainItemsList.forEach(mainItem -> {
-			if (allocatedProductQtyMap.containsKey(mainItem.getCode()))
-			{
-				final Integer qtyCount = allocatedProductQtyMap.get(mainItem.getCode()) + BlCoreConstants.INT_ONE;
-				allocatedProductQtyMap.put(mainItem.getCode(), qtyCount);
-			}
-			else
-			{
-				allocatedProductQtyMap.put(mainItem.getCode(), BlCoreConstants.INT_ONE);
-			}
-		});
-		for (final Map.Entry<String, Integer> productAndQty : orderEntryProductQtyMap.entrySet())
-		{
-			if (BooleanUtils.isFalse(allocatedProductQtyMap.containsKey(productAndQty.getKey())))
-			{
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-						"ChangeShipmentStatusAction :: checkAllocationForUsedGearOrder :: SERIAL : {} is not allocated on order : {} ",
-						productAndQty.getKey(), order.getCode());
-				return true;
-			}
-			if (BooleanUtils.isFalse(allocatedProductQtyMap.get(productAndQty.getKey()).compareTo(productAndQty.getValue()) == 0))
-			{
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-						"ChangeShipmentStatusAction :: checkAllocationForUsedGearOrder :: SERIAL : {} is not allocated with specified qty on order entry : {}",
-						productAndQty.getKey(), productAndQty.getValue());
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Checks if is used gear order.
-	 *
-	 * @param order the order
-	 * @return true, if is used gear order
-	 */
-	private boolean isUsedGearOrder(final AbstractOrderModel order)
-	{
-		return BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder()) 
-				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
-	}
-
-	/**
-	 * Gets the allocated product and qty map.
-	 *
-	 * @param allocatedProductQtyMap
-	 *           the allocated product qty map
-	 * @param mainItemsList
-	 *           the main items list
-	 * @return the allocated product and qty map
-	 */
-	private void getAllocatedProductAndQtyMap(final Map<String, Integer> allocatedProductQtyMap,
-			final List<BlSerialProductModel> mainItemsList)
-	{
-		mainItemsList.forEach(item -> {
-			if (Objects.isNull(item.getBlProduct()))
-			{
-				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-						"ChangeShipmentStatusAction :: isProductAllocationRemaining :: SKU not assigned on Serial : {}",
-						item.getCode());
-			}
-			else
-			{
-				final String skuCode = item.getBlProduct().getCode();
-				if (allocatedProductQtyMap.containsKey(skuCode))
-				{
-					final Integer qtyCount = allocatedProductQtyMap.get(skuCode) + BlCoreConstants.INT_ONE;
-					allocatedProductQtyMap.put(skuCode, qtyCount);
-				}
-				else
-				{
-					allocatedProductQtyMap.put(skuCode, BlCoreConstants.INT_ONE);
-				}
-			}
-		});
-	}
-
-	/**
-	 * Gets the sku code with qty map from order entry.
-	 *
-	 * @param order
-	 *           the order
-	 * @param orderEntryProductQtyMap
-	 *           the order entry product qty map
-	 * @return the sku code with qty map from order entry
-	 */
-	private void getSkuCodeWithQtyMapFromOrderEntry(final AbstractOrderModel order,
-			final Map<String, Integer> orderEntryProductQtyMap)
-	{
-		order.getEntries().forEach(orderEntry -> {
-			if (checkEligiblityForEntry(orderEntry))
-			{
-				final String skuCode = orderEntry.getProduct().getCode();
-				if (orderEntryProductQtyMap.containsKey(skuCode))
-				{
-					final Integer qtyCount = orderEntryProductQtyMap.get(skuCode) + BlCoreConstants.INT_ONE;
-					orderEntryProductQtyMap.put(skuCode, qtyCount);
-				}
-				else
-				{
-					orderEntryProductQtyMap.put(skuCode, orderEntry.getQuantity().intValue());
-				}
-			}
-		});
-	}
-
-	/**
-	 * Check eligiblity for entry.
-	 *
-	 * @param orderEntry
-	 *           the order entry
-	 * @return true, if successful
-	 */
-	private boolean checkEligiblityForEntry(final AbstractOrderEntryModel orderEntry)
-	{
-		final String orderCode = orderEntry.getOrder().getCode();
-		final String orderEntryPk = orderEntry.getPk().toString();
-		if (Objects.isNull(orderEntry.getProduct()))
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-					"ChangeShipmentStatusAction :: checkEligiblityForEntry :: Skipping check as No Product Present on OrderEntry : {} on order : {} ",
-					orderEntryPk, orderCode);
-			return false;
-		}
-		if (BooleanUtils.isTrue(orderEntry.isBundleMainEntry()))
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-					"ChangeShipmentStatusAction :: checkEligiblityForEntry :: Skipping check as Product : {} is a Bundle Product Entry on OrderEntry : {} on order : {} ",
-					orderEntry.getProduct().getCode(), orderEntryPk, orderCode);
-			return false;
-		}
-		if (BlCoreConstants.AQUATECH_BRAND_ID.equals(orderEntry.getProduct().getManufacturerAID()))
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-					"ChangeShipmentStatusAction :: checkEligiblityForEntry :: Skipping check as Product : {} is a Aqua Tech Product on OrderEntry : {} on order : {} ",
-					orderEntry.getProduct().getCode(), orderEntryPk, orderCode);
-			return false;
-		}
-		if (orderEntry.getProduct() instanceof BlProductModel
-				&& Objects.nonNull(((BlProductModel) (orderEntry.getProduct())).getNumberSystem())
-				&& BooleanUtils.isTrue(((BlProductModel) (orderEntry.getProduct())).getNumberSystem().getCode()
-						.equals(NumberingSystemEnum.NONE.getCode())))
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-					"ChangeShipmentStatusAction :: checkEligiblityForEntry :: Skipping check as Product : {} having Number System as NONE on OrderEntry : {} on order : {} ",
-					orderEntry.getProduct().getCode(), orderEntryPk, orderCode);
-			return false;
-		}
-		return true;
 	}
 
 }
