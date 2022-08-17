@@ -47,6 +47,7 @@
     <property name="productService" ref="productService"/>
     <property name="defaultWarehouseService" ref="warehouseService"/>
     <property name="sessionService" ref="sessionService"/>
+    <property name="configurationService" ref="configurationService"/>
   </bean>
 
   <!--Added for creating response for avalar tax -->
