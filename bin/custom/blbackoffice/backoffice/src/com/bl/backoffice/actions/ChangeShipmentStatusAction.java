@@ -137,7 +137,22 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 	 */
 	private ActionResult<ConsignmentModel> processStatusChange(final ConsignmentModel consignmentModel)
 	{
-		if(OrderStatus.RECEIVED_MANUAL_REVIEW.equals(consignmentModel.getOrder().getStatus()) || isProductAllocationRemaining(consignmentModel.getOrder()))
+		if(isUsedOrderOnly(consignmentModel.getOrder())){
+      	consignmentModel.setStatus(ConsignmentStatus.BL_SHIPPED);
+      	getModelService().save(consignmentModel);
+      	AbstractOrderModel order = consignmentModel.getOrder();
+      	BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for consignment {}", consignmentModel.getStatus(),
+      			consignmentModel.getCode());
+      	if (order.getConsignments().stream()
+      			.allMatch(con -> ConsignmentStatus.BL_SHIPPED.equals(con.getStatus())))
+      	{
+      		order.setStatus(OrderStatus.SOLD_SHIPPED);
+      		getModelService().save(order);
+      	}
+      	this.sendOutput(OUT_CONFIRM, COMPLETE);
+      	Messagebox.show("Shipment changed to BL_SHIPPED status", BlintegrationConstants.POPUP_TEXT, Messagebox.OK, "icon");	
+		}
+		else if(OrderStatus.RECEIVED_MANUAL_REVIEW.equals(consignmentModel.getOrder().getStatus()) || isProductAllocationRemaining(consignmentModel.getOrder()))
 		{
 			Messagebox.show("Order not mark to BL Shipped due to order being in manual review status (non-allocated items).", BlintegrationConstants.ERROR_TEXT,
 					Messagebox.OK, "icon");
@@ -189,6 +204,12 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 		}
 		this.sendOutput(SOCKET_OUT_CONTEXT, consignmentModel);
 		return new ActionResult<>(BlintegrationConstants.SUCCESS);
+	}
+	
+	public boolean isUsedOrderOnly(final AbstractOrderModel order)
+	{
+		return BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder()) 
+				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
 	}
 
 	/**
