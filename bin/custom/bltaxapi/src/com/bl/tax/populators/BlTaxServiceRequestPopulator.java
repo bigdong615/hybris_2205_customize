@@ -19,6 +19,7 @@ import de.hybris.platform.ordersplitting.impl.DefaultWarehouseService;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.product.ProductService;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.util.Config;
@@ -52,6 +53,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   private ProductService productService;
   private DefaultWarehouseService defaultWarehouseService;
   private SessionService sessionService;
+  private ConfigurationService configurationService;
 
   /*
    * this method created to prepare taxrequest from abstractOrderModel
@@ -59,7 +61,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   @Override
   public void populate(final AbstractOrderModel abstractOrder, final TaxRequestData taxRequest)
       throws ConversionException{
-    taxRequest.setCompanyCode(BltaxapiConstants.COMPANY_CODE);
+    taxRequest.setCompanyCode(getCompanyCode());
     taxRequest.setCode(abstractOrder.getCode());
     taxRequest.setType(BooleanUtils.isTrue(abstractOrder.getIsOrderSubmit()) ? BltaxapiConstants.SALESINVOICE : BltaxapiConstants.SALESORDER);
     setOrderDateToRequest(taxRequest);
@@ -81,6 +83,18 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     taxRequest.setCurrencyCode(abstractOrder.getCurrency().getIsocode());
     taxRequest.setIsShippingTax(null);
     taxRequest.setShippingAmount(null);
+  }
+  
+  /**
+   * Gets the company code.
+   *
+   * @return the company code
+   */
+  private String getCompanyCode()
+  {
+	  final String companyCode = getConfigurationService().getConfiguration().getString(BltaxapiConstants.COMPANY_CODE);
+	  BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Avalara Company code : {}", companyCode);
+	  return companyCode;
   }
 
   /**
@@ -431,5 +445,21 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
 		}
 		return null;
 	}
+
+/**
+ * @return the configurationService
+ */
+public ConfigurationService getConfigurationService()
+{
+	return configurationService;
+}
+
+/**
+ * @param configurationService the configurationService to set
+ */
+public void setConfigurationService(ConfigurationService configurationService)
+{
+	this.configurationService = configurationService;
+}
 
 }
