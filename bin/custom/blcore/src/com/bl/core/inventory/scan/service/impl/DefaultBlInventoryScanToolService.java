@@ -2109,6 +2109,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final AbstractOrderModel order = consignmentModel.getOrder();
 		if (Objects.nonNull(order)) {
 			order.setOrderReturnedToWarehouse(Boolean.TRUE);
+			if(Objects.isNull(order.getOrderUnboxingTimestamp()))
+			{
+				final Date unboxingTimestamp = new Date();
+				order.setOrderUnboxingTimestamp(unboxingTimestamp);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"Setting Order Unboxing Timestamp : {} for Order with code : {}", unboxingTimestamp, order.getCode());
+			}
 			modelService.save(order);
 			modelService.refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,

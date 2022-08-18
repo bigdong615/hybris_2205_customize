@@ -3332,6 +3332,11 @@
                     	<defaultvalue>Boolean.FALSE</defaultvalue>
                     	<description>This flag will help to identify if order is committed to avalara</description>
                     </attribute>
+                    <attribute qualifier="orderUnboxingTimestamp" type="java.util.Date">
+			            <persistence type="property" />
+			            <modifiers read="true" write="true" optional="true" />
+			            <description>Timestamp on which the the first item is unboxed on the order</description>
+			        </attribute>
                 </attributes>
 
             </itemtype>
