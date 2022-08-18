@@ -2,6 +2,7 @@ package com.bl.storefront.controllers.pages;
 
 import de.hybris.platform.ruledefinitions.AmountOperator;
 
+
 public class BlControllerConstants
 {
 
@@ -20,7 +21,7 @@ public class BlControllerConstants
 	public static final String RENTAL_PAGE_IDENTIFIER = "rent";
 	public static final String USED_PAGE_IDENTIFIER = "buy";
 	public static final String FORWARD_SLASH = "/";
-	public static final String PRODUCT_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH +"{productCode:.*}";
+	public static final String PRODUCT_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH + "{productCode:.*}";
 	public static final String IS_RENTAL_PAGE = "IsRentalPage";
 	public static final String HOME_CSS = "home ";
 	public static final String HOMEPAGE = "homepage";
@@ -54,12 +55,12 @@ public class BlControllerConstants
 	public static final int PAGE_SIZE = 100;
 	public static final String REGISTER_EMAIL_EMPTY = "register.email.empty";
 	public static final String PASSWORD_STRING = "pwd";
-  public static final String CONFIRM_PASSWORD_STRING = "checkPwd";
-  public static final String CHECK_NEW_PASSWORD="checkNewPassword";
-  public static final String NEW_PASSWORD = "newPassword";
-  public static final String CURRENT_PASSWORD="currentPassword";
-  public static final String REFERER= "Referer";
-  public static final String HOME_PAGE_URL = "/";
+	public static final String CONFIRM_PASSWORD_STRING = "checkPwd";
+	public static final String CHECK_NEW_PASSWORD = "checkNewPassword";
+	public static final String NEW_PASSWORD = "newPassword";
+	public static final String CURRENT_PASSWORD = "currentPassword";
+	public static final String REFERER = "Referer";
+	public static final String HOME_PAGE_URL = "/";
 	public static final String RENTAL_DATE_FAILURE_RESULT = "rentalDateNotSelected";
 	public static final String STOCK_FAILURE_RESULT = "stockNotAvailable";
 	public static final String BLACKOUT_DATE_FOUND = "blackoutDateFound";
@@ -69,13 +70,14 @@ public class BlControllerConstants
 	public static final String RESPONSE = "response";
 
 
-	public static final String CATEGORY_CODE_PATH_PATTERN = FORWARD_SLASH +"{categoryCode:.*}";
-	public static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH +"{parentcategory:.*}" + CATEGORY_CODE_PATH_PATTERN;
+	public static final String CATEGORY_CODE_PATH_PATTERN = FORWARD_SLASH + "{categoryCode:.*}";
+	public static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH + "{parentcategory:.*}"
+			+ CATEGORY_CODE_PATH_PATTERN;
 
 	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT = "login.error.account.not.found.title";
 	public static final String ACCOUNT_DEACTIVATED = "login.error.account.deactivate.title";
-	public static final String ACCOUNT_DEACTIVATED_MSG ="Account deactivated for user {}";
-	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT_MSG =  "Login email or password is invalid for user {}";
+	public static final String ACCOUNT_DEACTIVATED_MSG = "Account deactivated for user {}";
+	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT_MSG = "Login email or password is invalid for user {}";
 
 	public static final String ERROR_MESSAGE = "Error:";
 	public static final String RATIO = ":";
@@ -83,7 +85,7 @@ public class BlControllerConstants
 	public static final String LOG_IN = "login";
 	public static final String LOG_IN_ERROR = "loginError";
 	public static final String LOG_IN_URL = "/login";
-	
+
 	public static final String RENTAL_DATE_FORMAT = "MMM dd";
 	public static final String NEXT_AVAILABLE_DATE = "nextAvailabilityDate";
 	public static final String DISABLE_BUTTON = "disableButton";
@@ -123,7 +125,7 @@ public class BlControllerConstants
 	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
 	public static final String FORMATTED_RENTAL_START_DATE = "formattedRentalStartDate";
 	public static final String FORMATTED_RENTAL_END_DATE = "formattedRentalEndDate";
-	
+
 	public static final String USER_SELECTED_PAYPAL_PAYMENT_INFO = "userSelectedPayPalPaymentInfo";
 	public static final String PAYPAL_CHECKOUT = "BrainTreePayPalExpress";
 	public static final String REVIEW_PAGE = "Review";
@@ -133,7 +135,7 @@ public class BlControllerConstants
 
 	public static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
 	public static final String SAVE_CART_FORM = "saveCartForm";
-	
+
 	public static final String PAYPAL_ERROR_MESSAGE_KEY = "text.paypal.payment.error.message";
 	public static final String DISABLE_PAYMENT = "disablePayment";
 	public static final String BILL_TO_COUNTRY = "billTo_country";
@@ -153,17 +155,17 @@ public class BlControllerConstants
 	public static final String IS_USED_GEAR_CART_ACTIVE = "isUsedGearCartActive";
 	public static final String MY_ACCOUNT_ORDER = "/my-account/order/";
 	public static final String PAYMENT_ID = "paymentId";
-	public static final String PAYMENT_NONCE= "paymentNonce";
+	public static final String PAYMENT_NONCE = "paymentNonce";
 	public static final String EXTEND_ORDER_DATA = "extendOrderData";
 	public static final String MY_ACCOUNT_EXTEND_RENTAL = "/my-account/extendRent/";
-  public static final String CLIENT_TOKEN = "client_token";
-	public static final String SHIPPING_PAGE ="shippingPage";
-	public static final String BILLING_PAGE ="paymentPage";
-  public static final String EXTEND_ORDER = "extendOrderError";
-  public static final String COUPON_INVALID = "coupon.invalid.code.provided";
-   public static final String MULTIPLEGIFTCARD = "Only one gift card can be ordered at a time";
-   public static final String GIFTCARDNOTALLOWE = "Gift card can not be ordered with active rental or used gear products";
-   public static final String ADDTOCARTWARNING = "Rental and Used gear products are not allowed together";
+	public static final String CLIENT_TOKEN = "client_token";
+	public static final String SHIPPING_PAGE = "shippingPage";
+	public static final String BILLING_PAGE = "paymentPage";
+	public static final String EXTEND_ORDER = "extendOrderError";
+	public static final String COUPON_INVALID = "coupon.invalid.code.provided";
+	public static final String MULTIPLEGIFTCARD = "Only one gift card can be ordered at a time";
+	public static final String GIFTCARDNOTALLOWE = "Gift card can not be ordered with active rental or used gear products";
+	public static final String ADDTOCARTWARNING = "Rental and Used gear products are not allowed together";
 
 	public static final String PO_NUMBER = "extendPoNumber";
 	public static final String PO_NOTES = "extendPoNotes";
@@ -189,14 +191,14 @@ public class BlControllerConstants
 	public static final String EXTEND = "extendOrder";
 	public static final String EMPTY = "";
 	public static final String PAY_BILL = "payBill";
-	public static final String REDIRECT_TO_HOME_URL ="redirect:/";
-	public static final String IS_NEW_GEAR_CATEGORY ="isNewGearCategory";
-  public static final String USED_CATEGORY_CODE = "usedgear";
-  public static final String USED_CATEGORY_PREFIX_URL = "/buy/category/";
-  public static final String ENABLE_SATURDAYS = "enableSaturdays";
-  public static final String MODIFYPAYMENT = "modifyPayment";
+	public static final String REDIRECT_TO_HOME_URL = "redirect:/";
+	public static final String IS_NEW_GEAR_CATEGORY = "isNewGearCategory";
+	public static final String USED_CATEGORY_CODE = "usedgear";
+	public static final String USED_CATEGORY_PREFIX_URL = "/buy/category/";
+	public static final String ENABLE_SATURDAYS = "enableSaturdays";
+	public static final String MODIFYPAYMENT = "modifyPayment";
 
-  public static final String IS_AVALARA_EXCEPTION = "isAvalaraException";
+	public static final String IS_AVALARA_EXCEPTION = "isAvalaraException";
 
 	public static final String VERIFICATION_PAGE_IDENTIFIER = "verificationImages";
 
@@ -205,12 +207,12 @@ public class BlControllerConstants
 	public static final String ENABLE_DATE_PICKER = "enableDatePicker";
 	public static final String HAS_USER_RESTRICTION = "hasUserRestriction";
 	public static final String BL_GROUP = "BLGroup";
-	
+
 	public static final String MESSAGE_KEY = "messageKey";
 	public static final String GC_ERROR_MESSAGE_KEY = "giftcard.PurchaseForm.not.allow.addtocart.popup";
 	public static final String USED_CART_ERROR_MESSAGE_KEY = "text.addtocart.interception.popup";
 	public static final String USED_CART_LOG_ERROR_MESSAGE = "Used Cart Found";
-	
+
 	public static final String RENTAL_START_MESSAGE = "rentalStartMessageKey";
 	public static final String RENTAL_END_MESSAGE = "rentalEndMessageKey";
 	public static final String RENTAL_TO_DATE_ARGUMENT = "rentalErrorToDate";
@@ -222,7 +224,7 @@ public class BlControllerConstants
 	public static final String FILE_FORMAT_ERROR = "fileFormatError";
 	public static final String ENABLE_POPUP = "enablePopup";
 	public static final String SEARCHED_WORD = "searchedWord";
-	
+
 	public static final String PRODUCT_CODE_SPLITTER = "::";
 	public static final String PRODUCTS = "products";
 	public static final String PRODUCTS_OPERATOR = "products_operator";
@@ -244,6 +246,8 @@ public class BlControllerConstants
 	public static final String Y_RENTAL_CART_CONDITION = "y_rental_cart_condition";
 	public static final String OPERATOR = "operator";
 	public static final String LESS_THAN_OR_EQUAL = AmountOperator.LESS_THAN_OR_EQUAL.toString();
+	public static final String ANALYTICS_TRACKING_ID_GA4 = "google.analytics.tracking.id.ga4";
+	public static final String ANALYTICS_TRACKING_ID_GA4_ENABLED = "google.analytics.tracking.id.ga4.enabled";
 
 	private BlControllerConstants()
 	{
