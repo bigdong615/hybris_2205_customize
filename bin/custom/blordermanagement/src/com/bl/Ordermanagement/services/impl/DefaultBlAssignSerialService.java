@@ -379,16 +379,18 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     private Set<BlSerialProductModel> getFilteredSerialsOnLocation(Set<BlSerialProductModel> serials) {
         Map<BlSerialProductModel, Integer> prioritySerialMap = new HashedMap();
         for (BlSerialProductModel serialProduct : serials) {
-            if (Objects.nonNull(serialProduct.getOcLocationDetails()) && Objects.nonNull(serialProduct.getOcLocationDetails().getLocationPriority()))
-            {
-                if(serialProduct.getOcLocationDetails().getLocationPriority() == 0) {
-               	 prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getParentInventoryLocation()!=null? 
-               		    serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority(): BlCoreConstants.LAST_LOC_PRTY_FOR_BIN_WO_PARENT);
-                }
-                else {
-                  prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getLocationPriority());
-                }
-            }
+      	  if (Objects.nonNull(serialProduct.getOcLocationDetails()) && Objects.nonNull(serialProduct.getOcLocationDetails().getLocationPriority()))
+           {
+               if(serialProduct.getOcLocationDetails().getLocationPriority() == 0) {
+              	 prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getParentInventoryLocation()!=null? 
+              		    (serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority()!=null ? 
+              		   		 serialProduct.getOcLocationDetails().getParentInventoryLocation().getLocationPriority():BlCoreConstants.LAST_LOC_PRTY_FOR_BIN_WO_PARENT): 
+              		   			 BlCoreConstants.LAST_LOC_PRTY_FOR_BIN_WO_PARENT);
+               }
+               else {
+                 prioritySerialMap.put(serialProduct, serialProduct.getOcLocationDetails().getLocationPriority());
+               }
+           }
         }
         if(!prioritySerialMap.isEmpty()) {
           for (int i = 0; i < prioritySerialMap.size(); i++) {
