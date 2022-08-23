@@ -53,7 +53,6 @@ import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.logging.BlLogger;
 
-
 /**
  * {@inheritDoc}
  *
@@ -92,7 +91,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final AbstractOrderModel order = entry.getOrder();
 		final PriceValue pv = getPriceForSkuOrSerial(order, entry, product);
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
+		LOG.info("BasePrice before dynamic" + basePrice.getValue());
 		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct()? basePrice : getDynamicBasePriceForRentalSKU(basePrice, product, order);
+		LOG.info("dynamicBasePrice dynamic" + dynamicBasePrice.getValue());
 		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);
@@ -193,7 +194,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				final int digits = curr.getDigits().intValue();
 				// subtotal
 				final double subtotal = order.getSubtotal().doubleValue();
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total subtotal : {}", totalDamageWaiverCost);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total totalDamageWaiverCost : {}", totalDamageWaiverCost);
+				LOG.info("calculateTotals->subtotal" + subtotal);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total subtotal : {}", subtotal);
 				//totalDamageWaiverCost
 				if (BooleanUtils.isTrue(order.getIsRentalOrder())) {
 					totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
@@ -207,6 +210,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Option Cost : {}", totalOptionCost);
 
 				}
+				LOG.info("calculateTotals->subtotal2" + subtotal);
+				LOG.info("calculateTotals->totalOptionCost" + totalOptionCost);
+				LOG.info("totalDamageWaiverCost->subtotal2" + totalDamageWaiverCost);
 				calculateTotalsForCart(order , recalculate , digits , subtotal , totalDamageWaiverCost , totalOptionCost);
 			}
 		}
@@ -785,6 +791,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			{
 				calculateTotals(entry, recalculate);
 				final double entryTotal = entry.getTotalPrice().doubleValue();
+				LOG.info("calculateSubtotal->entryTotal" + entryTotal);
 				subtotal += entryTotal;
 				// use un-applied version of tax values!!!
 				final Collection<TaxValue> allTaxValues = entry.getTaxValues();
@@ -795,7 +802,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				}
 			}
 			// store subtotal
+			LOG.info("calculateSubtotal->subtotal->Before" + subtotal);
 			subtotal = commonI18NService.roundCurrency(subtotal, order.getCurrency().getDigits().intValue());
+			LOG.info("calculateSubtotal->subtotal->After" + subtotal);
 			order.setSubtotal(Double.valueOf(subtotal));
 			return taxValueMap;
 		}
