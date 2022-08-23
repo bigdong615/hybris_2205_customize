@@ -1826,6 +1826,10 @@
 					<editorArea:attribute qualifier="consignmentEntry" readonly="true"/>
 					<editorArea:attribute qualifier="testingStatus"/>
 				</editorArea:section>
+				<editorArea:section name="hmc.section.blSerial.used.order.info">
+					<editorArea:attribute qualifier="associatedUsedGearOrder" readonly="true"/>
+					<editorArea:attribute qualifier="associatedUsedGearConsignment" readonly="true"/>
+				</editorArea:section>
 			</editorArea:tab>
 			<editorArea:tab name="hmc.tab.blSerial.repair.log" position="2">
 				<editorArea:section name="hmc.section.blSerial.attributes">

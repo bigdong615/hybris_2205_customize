@@ -1769,6 +1769,16 @@
                        <modifiers read="true" write="true" optional="true" />
                        <description>Manufacturer name for the BL Product</description>
                      </attribute>
+                     <attribute qualifier="associatedUsedGearConsignment" type="Consignment">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store associated Used Gear consignment on serial</description>
+                     </attribute>
+                     <attribute qualifier="associatedUsedGearOrder" type="Order">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store associated Used Gear order on serial</description>
+                     </attribute>
                  </attributes>
              </itemtype>
 

@@ -26,6 +26,7 @@ import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -44,6 +45,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -225,11 +227,63 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         //this.optimizeShippingMethodForConsignment(consignment, result);   // need clarification
         this.getModelService().save(consignment);
         this.getModelService().refresh(consignment);	
+        setUsedGearOrderInformationOnAssignedSerial(entries, consignment.getOrder());
         return consignment;
       }
     } catch (final Exception ex) {
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
     }
+  }
+  
+  private void setUsedGearOrderInformationOnAssignedSerial(final Set<ConsignmentEntryModel> consignmentEntries,
+		  final AbstractOrderModel order)
+  {
+	  if (Objects.nonNull(order) && getBlOrderService().isUsedOrderOnly(order) && CollectionUtils.isNotEmpty(consignmentEntries))
+	  {
+		  consignmentEntries.forEach(consignmentEntry -> {
+			  if (CollectionUtils.isEmpty(consignmentEntry.getSerialProducts()))
+			  {
+				  BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+							"DefaultBlAllocationService :: setUsedGearOrderInformationOnAssignedSerial :: Serial Products is Empty for ConsignmentEntry : {}",
+							consignmentEntry.getPk());
+			  }
+			  else
+			  {
+				  processSerialsFromConsignmentEntry(order, consignmentEntry);
+			  }
+		  });
+	  }
+  }
+
+  private void processSerialsFromConsignmentEntry(final AbstractOrderModel order, ConsignmentEntryModel consignmentEntry)
+  {
+	  consignmentEntry.getSerialProducts().forEach(serial -> {
+		  final List<BlSerialProductModel> mainItemsList = getBlConsignmentEntryService().getMainItemsList(consignmentEntry);
+		  if (CollectionUtils.isEmpty(mainItemsList))
+		  {
+			  BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					  "DefaultBlAllocationService :: setUsedGearOrderInformationOnAssignedSerial :: Main Serial Products is Empty for ConsignmentEntry : {} on Order : {}",
+					  consignmentEntry.getPk(), order.getCode());
+		  }
+		  else
+		  {
+			  mainItemsList.forEach(mainSerial -> {
+				  try
+				  {
+					  mainSerial.setAssociatedUsedGearOrder(order instanceof OrderModel ? ((OrderModel) order) : null);
+					  mainSerial.setAssociatedUsedGearConsignment(consignmentEntry.getConsignment());
+					  getModelService().save(mainSerial);
+					  getModelService().refresh(mainSerial);
+				  }
+				  catch (final Exception exception)
+				  {
+					  BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+							  "DefaultBlAllocationService :: setUsedGearOrderInformationOnAssignedSerial :: Error while saving serial : {} with used gear order related information for order : {}",
+							  mainSerial.getCode(), order.getCode());
+				  }
+			  });
+		  }
+	  });
   }
 
   private boolean isInternalTransferOder(final AbstractOrderModel orderModel) {
