@@ -1,19 +1,5 @@
 package com.bl.core.order.impl;
 
-import com.bl.constants.BlCancelRefundLoggingConstants;
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.ProductTypeEnum;
-import com.bl.core.model.BlDamageWaiverPricingModel;
-import com.bl.core.model.BlOptionsModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.order.BlCalculationService;
-import com.bl.core.price.service.BlCommercePriceService;
-import com.bl.core.services.tax.DefaultBlExternalTaxesService;
-import com.bl.core.utils.BlExtendOrderUtils;
-import com.bl.core.utils.BlReplaceMentOrderUtils;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -28,6 +14,7 @@ import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.util.DiscountValue;
 import de.hybris.platform.util.PriceValue;
 import de.hybris.platform.util.TaxValue;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -42,12 +29,30 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.constants.BlCancelRefundLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.constants.GeneratedBlCoreConstants.Enumerations.ProductTypeEnum;
+import com.bl.core.model.BlDamageWaiverPricingModel;
+import com.bl.core.model.BlOptionsModel;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.order.BlCalculationService;
+import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.services.tax.DefaultBlExternalTaxesService;
+import com.bl.core.utils.BlExtendOrderUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
+import com.bl.logging.BlLogger;
+
 
 /**
  * {@inheritDoc}
@@ -141,7 +146,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}",
 						totalPriceWithDamageWaiverCostAndOption);
 			}
-			/* getDefaultBlExternalTaxesService().calculateExternalTaxes(order); */
+			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 		}
 	}
 	/**
@@ -188,17 +193,18 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				final int digits = curr.getDigits().intValue();
 				// subtotal
 				final double subtotal = order.getSubtotal().doubleValue();
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total subtotal : {}", totalDamageWaiverCost);
 				//totalDamageWaiverCost
 				if (BooleanUtils.isTrue(order.getIsRentalOrder())) {
 					totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
 							? order.getTotalDamageWaiverCost().doubleValue()
 							: 0.0d;
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}",
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Damage Waiver Cost : {}",
 							totalDamageWaiverCost);
 					totalOptionCost = Objects.nonNull(order.getTotalOptionsCost())
 							? order.getTotalOptionsCost().doubleValue()
 							: 0.0d;
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Option Cost : {}", totalOptionCost);
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Option Cost : {}", totalOptionCost);
 
 				}
 				calculateTotalsForCart(order , recalculate , digits , subtotal , totalDamageWaiverCost , totalOptionCost);
@@ -214,7 +220,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	private void calculateTotalsForCart(final AbstractOrderModel order, final boolean recalculate , final int digits ,
 										final double subtotal , final double totalDamageWaiverCost ,final double totalOptionCost){
 		final double totalDiscounts = calculateDiscountValues(order, recalculate);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "totalDiscounts Price : {}", totalDiscounts);
 		final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "roundedTotalDiscounts Price : {}", roundedTotalDiscounts);
 		order.setTotalDiscounts(roundedTotalDiscounts);
 
 		// Set Delivery Cost as 0 for Extend rental order based on flag -> isExtendedOrder
@@ -226,13 +234,16 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 		final double totalRoundedTaxes = getDefaultCommonI18NService().roundCurrency(order.getTotalTax(), digits);
 		order.setTotalTax(totalRoundedTaxes);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
-
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Tax Price : {}", totalRoundedTaxes);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "SubTotal Price before round : {}", subtotal);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "TotalOptionCost Price before round : {}", totalOptionCost);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "TotalDamageWaiverCost : {}", totalDamageWaiverCost);
 		// set total
-		double total = subtotal + totalDamageWaiverCost + totalOptionCost + order.getPaymentCost() + order.getDeliveryCost()
+		final double total = subtotal + totalDamageWaiverCost + totalOptionCost + order.getPaymentCost() + order.getDeliveryCost()
 				- roundedTotalDiscounts + order.getTotalTax();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Price before round : {}", total);
 		final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Rounded Price : {}", totalRounded);
 
 		if(order instanceof OrderModel) {
 			this.orderTotalCalculation(order, totalRounded);
@@ -262,6 +273,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			order.setTotalPrice(totalRounded);
 			order.setGrandTotal(0.0D);
 		}
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "orderTotalCalculation : {}", totalRounded);
 	}
 
 	/**
@@ -878,7 +890,8 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	}
 
 	public void setDefaultBlExternalTaxesService(
-			DefaultBlExternalTaxesService defaultBlExternalTaxesService) {
+			final DefaultBlExternalTaxesService defaultBlExternalTaxesService)
+	{
 		this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
 	}
 
