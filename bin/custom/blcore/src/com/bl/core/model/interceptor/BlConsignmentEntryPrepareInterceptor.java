@@ -79,8 +79,9 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		addSerialAndOrderCodeOnItemBillingCharge(consignmentEntryModel, interceptorContext);
 
 		updateConsignmentEntryStatus(consignmentEntryModel, interceptorContext);
-		//changing serial status, when consignment entry item status changed
-		doChangeSerialStatus(consignmentEntryModel, interceptorContext);
+		//changing serial status, when consignment entry item status changed Ticket ID - INC1456922
+		// The previous logic for updating serial statuses is restored Ticket ID - INC1493783
+		//doChangeSerialStatus(consignmentEntryModel, interceptorContext);
 	}
 
 	/**
