@@ -85,7 +85,8 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLOrder:Order                     	; pickUpPersonPhone         	; Order:pickUpPersonPhone           	;                                          	; 	;  
 ; InboundBLOrder:Order                     	; deliveryMode              	; Order:deliveryMode                	; InboundBLOrder:DeliveryMode              	; 	;  
 ; InboundBLOrder:Order                     	; user                      	; Order:user                        	; InboundBLOrder:User                      	; 	;  
-; InboundBLOrder:Order                     	; depositPaymentInfo        	; Order:depositPaymentInfo          	; InboundBLOrder:PaymentInfo               	; 	;  
+; InboundBLOrder:Order                     	; depositPaymentInfo        	; Order:depositPaymentInfo          	; InboundBLOrder:PaymentInfo               	; 	;
+; InboundBLOrder:Order                     	; orderUnboxingTimestamp    	; Order:orderUnboxingTimestamp      	;                                          	; 	;    
 ; InboundBLOrder:Order                     	; verificationLevel         	; Order:verificationLevel           	;                                          	; 	;  
 ; InboundBLOrder:Order                     	; giftCardOrder             	; Order:giftCardOrder               	;                                          	; 	;  
 ; InboundBLOrder:Order                     	; extendedOrderCopyList     	; Order:extendedOrderCopyList       	; InboundBLOrder:AbstractOrder             	; 	;  
