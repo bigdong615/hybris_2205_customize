@@ -98,6 +98,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);
 		setDamageWaiverPrices(entry, product);
+		getModelService().save(entry);
 	}
 
 	/**
@@ -194,7 +195,6 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				final int digits = curr.getDigits().intValue();
 				// subtotal
 				final double subtotal = order.getSubtotal().doubleValue();
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total totalDamageWaiverCost : {}", totalDamageWaiverCost);
 				LOG.info("calculateTotals->subtotal" + subtotal);
 				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total subtotal : {}", subtotal);
 				//totalDamageWaiverCost
@@ -394,19 +394,21 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				ProductTypeEnum.GIFTCARD.equals(((BlProductModel) product).getProductType())) && BooleanUtils.isFalse(
 				((BlProductModel) product).getRetailGear()))
 		{
+			LOG.info("Inside DynamicBasePriceForRentalSKU");
 			final BlProductModel blProductModel = (BlProductModel) product;
 			Long rentedDays = null;
 			if(order instanceof OrderModel)
 			{
 				rentedDays = getRentedDays(order.getRentalStartDate(), order.getRentalEndDate());
 			}
+			LOG.info("DynamicBasePriceForRentalSKU Constrained" + blProductModel.getConstrained());
 			final BigDecimal dynamicPriceDataForProduct = getCommercePriceService()
 					.getDynamicPriceDataForProductForOrder(blProductModel.getConstrained(), Double.valueOf(basePrice.getValue()), rentedDays);
+			LOG.info("dynamicPriceDataForProduct" + dynamicPriceDataForProduct);
 			return createNewPriceValue(basePrice.getCurrencyIso(), dynamicPriceDataForProduct.doubleValue(), basePrice.isNet());
 		}
+		LOG.info("return dynamicPriceDataForProduct" + basePrice);
 		return basePrice;
-
-
 	}
 
 	/**
@@ -664,7 +666,6 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);
 		setDamageWaiverPrices(entry, product);
-		getModelService().save(entry);
 	}
 
 	/**
