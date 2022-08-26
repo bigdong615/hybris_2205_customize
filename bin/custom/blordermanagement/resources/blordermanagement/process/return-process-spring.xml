@@ -58,6 +58,9 @@
         <property name="restockWarehouseSelectionStrategy" ref="restockWarehouseSelectionStrategy"/>
         <property name="timeService" ref="timeService"/>
         <property name="warehouseStockService" ref="warehouseStockService"/>
+        <property name="blStockLevelDao" ref="blStockLevelDao"/>
+        <property name="solrIndexerHotUpdateJob" ref="solrIndexerHotUpdateJob"/>
+        
     </bean>
 
     <bean id="completeReturnAction" class="com.bl.Ordermanagement.actions.returns.CompleteReturnAction" parent="abstractAction">

@@ -5,6 +5,7 @@ import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
+import de.hybris.platform.solrfacetsearch.model.config.SolrFacetSearchConfigModel;
 import de.hybris.platform.stock.impl.DefaultStockLevelDao;
 
 import java.util.Calendar;
@@ -103,6 +104,9 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.SERIALPRODUCTCODE + "} IN (?serialProductCodes) " + AND
 			+ StockLevelModel.DATE + DATE_PARAM + AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses) " + AND
 			+ StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus ";
+
+	private static final String SOLR_FACET_SEARCH_CONFIG_QUERY = SELECT  + ItemModel.PK + FROM
+			+ SolrFacetSearchConfigModel._TYPECODE + WHERE + SolrFacetSearchConfigModel.NAME + "} = ?blIndex";
 
 	/**
 	 * {@inheritDoc}
@@ -507,6 +511,16 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			return Collections.emptyList();
 		}
 		return stockLevels;
+	}
+
+	@Override
+	public SolrFacetSearchConfigModel getFacetConfigModel()
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(SOLR_FACET_SEARCH_CONFIG_QUERY);
+		fQuery.addQueryParameter("blIndex", "blIndex");
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<SolrFacetSearchConfigModel> facetCofig = result.getResult();
+		return facetCofig.get(0);
 	}
 
 }
