@@ -2,6 +2,7 @@ package com.bl.core.stock;
 
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.solrfacetsearch.model.config.SolrFacetSearchConfigModel;
 
 import java.util.Collection;
 import java.util.Date;
@@ -170,4 +171,6 @@ public interface BlStockLevelDao {
 	public Collection<StockLevelModel> findSerialStockLevelsForDateAndCodesForWarehouse(Set<String> serialProductCodes,
 			Date startDay,
 			Date endDay, Boolean reservedStatus, WarehouseModel warehouseModel);
+
+	public SolrFacetSearchConfigModel getFacetConfigModel();
 }
