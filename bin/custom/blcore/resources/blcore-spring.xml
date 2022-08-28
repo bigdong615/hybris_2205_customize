@@ -1899,6 +1899,7 @@
 		<property name="modelService" ref="modelService" />
 		<property name="blOrderService" ref="blOrderService"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="solrIndexerHotUpdateJob" ref="solrIndexerHotUpdateJob"/>
 	</bean>
 
 	<bean id="commerceOrderMethodHookMergeDirective" depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">

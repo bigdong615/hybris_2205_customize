@@ -3,10 +3,15 @@ package com.bl.core.order.hook.impl;
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
+import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.solrfacetsearch.enums.IndexerOperationValues;
+import de.hybris.platform.solrfacetsearch.indexer.cron.SolrIndexerHotUpdateJob;
+import de.hybris.platform.solrfacetsearch.model.config.SolrFacetSearchConfigModel;
+import de.hybris.platform.solrfacetsearch.model.indexer.cron.SolrIndexerHotUpdateCronJobModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +21,8 @@ import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -33,10 +39,11 @@ import com.bl.core.utils.BlDateTimeUtils;
  */
 public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 {
-	private static final Logger LOG = Logger.getLogger(BlPlaceOrderMethodHook.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BlPlaceOrderMethodHook.class);
 	private ModelService modelService;
 	private BlOrderService blOrderService;
 	private BlStockLevelDao blStockLevelDao;
+	private SolrIndexerHotUpdateJob solrIndexerHotUpdateJob;
 
 	@Override
 	public void afterPlaceOrder(final CommerceCheckoutParameter checkoutParameter, final CommerceOrderResult commerceOrderResult)
@@ -81,8 +88,33 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 						stockLevel.setOrder(order.getCode());
 						getModelService().save(stockLevel);
 					});
+					updateIndexForProduct(serial);
 				}
 			});
+		}
+	}
+
+	/**
+	 * @param serial
+	 */
+	private void updateIndexForProduct(final BlSerialProductModel serial)
+	{
+		try
+		{
+			final SolrIndexerHotUpdateCronJobModel cronJob = new SolrIndexerHotUpdateCronJobModel();
+			final List<ItemModel> products = new ArrayList<ItemModel>();
+			products.add(serial.getBlProduct());
+			cronJob.setItems(products);
+			final SolrFacetSearchConfigModel facetConfig = getBlStockLevelDao().getFacetConfigModel();
+			cronJob.setFacetSearchConfig(facetConfig);
+			cronJob.setIndexerOperation(IndexerOperationValues.UPDATE);
+			cronJob.setIndexTypeName("BlProduct");
+			getSolrIndexerHotUpdateJob().perform(cronJob);
+		}
+		catch (final Exception ex)
+		{
+			LOG.info("Error during running hot update index for product {} and exception is {} ", serial.getBlProduct().getCode(),
+					ex);
 		}
 	}
 
@@ -198,6 +230,16 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao)
 	{
 		this.blStockLevelDao = blStockLevelDao;
+	}
+
+	public SolrIndexerHotUpdateJob getSolrIndexerHotUpdateJob()
+	{
+		return solrIndexerHotUpdateJob;
+	}
+
+	public void setSolrIndexerHotUpdateJob(final SolrIndexerHotUpdateJob solrIndexerHotUpdateJob)
+	{
+		this.solrIndexerHotUpdateJob = solrIndexerHotUpdateJob;
 	}
 
 }

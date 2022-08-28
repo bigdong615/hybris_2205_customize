@@ -13,11 +13,17 @@
 
 package com.bl.Ordermanagement.actions.returns;
 
+import de.hybris.platform.core.model.ItemModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.processengine.action.AbstractProceduralAction;
 import de.hybris.platform.returns.model.ReturnProcessModel;
 import de.hybris.platform.returns.model.ReturnRequestModel;
 import de.hybris.platform.servicelayer.time.TimeService;
+import de.hybris.platform.solrfacetsearch.enums.IndexerOperationValues;
+import de.hybris.platform.solrfacetsearch.indexer.cron.SolrIndexerHotUpdateJob;
+import de.hybris.platform.solrfacetsearch.model.config.SolrFacetSearchConfigModel;
+import de.hybris.platform.solrfacetsearch.model.indexer.cron.SolrIndexerHotUpdateCronJobModel;
 import de.hybris.platform.task.RetryLaterException;
 import de.hybris.platform.warehousing.model.RestockConfigModel;
 import de.hybris.platform.warehousing.returns.RestockException;
@@ -25,12 +31,19 @@ import de.hybris.platform.warehousing.returns.service.RestockConfigService;
 import de.hybris.platform.warehousing.returns.strategy.RestockWarehouseSelectionStrategy;
 import de.hybris.platform.warehousing.stock.services.WarehouseStockService;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
+
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.stock.BlStockLevelDao;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
@@ -48,6 +61,8 @@ public class InventoryUpdateAction extends AbstractProceduralAction<ReturnProces
 	private TimeService timeService;
 	private RestockWarehouseSelectionStrategy restockWarehouseSelectionStrategy;
 	private WarehouseStockService warehouseStockService;
+	private BlStockLevelDao blStockLevelDao;
+	private SolrIndexerHotUpdateJob solrIndexerHotUpdateJob;
 
 	@Override
 	public void executeAction(final ReturnProcessModel process) throws RetryLaterException, Exception
@@ -84,6 +99,40 @@ public class InventoryUpdateAction extends AbstractProceduralAction<ReturnProces
 					}
 				});
 			}
+		}
+		updateIndexForProduct(returnRequest);
+	}
+
+	/**
+	 * @param returnRequest
+	 */
+	private void updateIndexForProduct(final ReturnRequestModel returnRequest)
+	{
+		OrderModel order = returnRequest.getOrder();
+		if(BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder()) 
+		&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder())) {
+			order.getEntries().forEach(entry -> {
+				if(entry.getProduct() instanceof BlSerialProductModel)
+				{
+					try
+					{
+						final SolrIndexerHotUpdateCronJobModel cronJob = new SolrIndexerHotUpdateCronJobModel();
+						final List<ItemModel> products = new ArrayList<ItemModel>();
+						products.add(entry.getProduct());
+						cronJob.setItems(products);
+						final SolrFacetSearchConfigModel facetConfig = getBlStockLevelDao().getFacetConfigModel();
+						cronJob.setFacetSearchConfig(facetConfig);
+						cronJob.setIndexerOperation(IndexerOperationValues.UPDATE);
+						cronJob.setIndexTypeName("BlProduct");
+						getSolrIndexerHotUpdateJob().perform(cronJob);
+					}
+					catch (final Exception ex)
+					{
+						LOG.info("Error during running hot update index for product {} and exception is {} ", ((BlSerialProductModel)entry.getProduct()).getBlProduct().getCode(),
+								ex);
+					}
+				}
+			});
 		}
 	}
 
@@ -166,5 +215,25 @@ public class InventoryUpdateAction extends AbstractProceduralAction<ReturnProces
 	public void setWarehouseStockService(WarehouseStockService warehouseStockService)
 	{
 		this.warehouseStockService = warehouseStockService;
+	}
+	
+	public BlStockLevelDao getBlStockLevelDao()
+	{
+		return blStockLevelDao;
+	}
+
+	public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao)
+	{
+		this.blStockLevelDao = blStockLevelDao;
+	}
+
+	public SolrIndexerHotUpdateJob getSolrIndexerHotUpdateJob()
+	{
+		return solrIndexerHotUpdateJob;
+	}
+
+	public void setSolrIndexerHotUpdateJob(final SolrIndexerHotUpdateJob solrIndexerHotUpdateJob)
+	{
+		this.solrIndexerHotUpdateJob = solrIndexerHotUpdateJob;
 	}
 }
