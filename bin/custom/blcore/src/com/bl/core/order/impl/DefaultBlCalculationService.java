@@ -98,7 +98,6 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);
 		setDamageWaiverPrices(entry, product);
-		getModelService().save(entry);
 	}
 
 	/**
@@ -148,7 +147,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}",
 						totalPriceWithDamageWaiverCostAndOption);
 			}
-			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+			/* getDefaultBlExternalTaxesService().calculateExternalTaxes(order); */
 		}
 	}
 	/**
