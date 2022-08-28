@@ -42,6 +42,7 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
   @Override
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
+	  LOG.info("BlDefaultAbstractOrderDatePopulatePrepareInterceptor Inside ");
     if (CollectionUtils.isEmpty(catalogVersionService.getSessionCatalogVersions())) {
       catalogVersionService.setSessionCatalogVersion(BlCoreConstants.CATALOG_VALUE,
           BlCoreConstants.CATALOG_VERSION_NAME);
