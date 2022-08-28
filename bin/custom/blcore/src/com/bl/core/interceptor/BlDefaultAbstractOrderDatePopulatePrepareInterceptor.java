@@ -59,6 +59,9 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
       rentalReturnDate = abstractOrderModel.getRentalEndDate();
     }
 
+	 LOG.info("BlDefaultAbstractOrderDatePopulatePrepareInterceptor rentalStartDate : " + rentalStartDate);
+	 LOG.info("BlDefaultAbstractOrderDatePopulatePrepareInterceptor rentalReturnDate : " + rentalReturnDate);
+
     if (BooleanUtils.isFalse(abstractOrderModel.getInternalTransferOrder()) && CollectionUtils
         .isNotEmpty(abstractOrderModel.getEntries()) && rentalStartDate != null
         && rentalReturnDate != null && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())
@@ -74,6 +77,7 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
 				{
 					final BigDecimal calculatedBasePrice = getBlBackOfficePriceService().getProductPrice(orderEntry.getProduct(),
 							rentalStartDate, rentalReturnDate, BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()));
+					LOG.info("BlDefaultAbstractOrderDatePopulatePrepareInterceptor calculatedBasePrice : " + calculatedBasePrice);
 					if (calculatedBasePrice != null)
 					{
 						orderEntry.setBasePrice(calculatedBasePrice.doubleValue());
