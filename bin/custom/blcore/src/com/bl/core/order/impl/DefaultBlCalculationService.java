@@ -91,9 +91,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final AbstractOrderModel order = entry.getOrder();
 		final PriceValue pv = getPriceForSkuOrSerial(order, entry, product);
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
-		LOG.info("BasePrice before dynamic" + basePrice.getValue());
+		LOG.info("BasePrice before dynamic : " + basePrice.getValue());
 		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct()? basePrice : getDynamicBasePriceForRentalSKU(basePrice, product, order);
-		LOG.info("dynamicBasePrice dynamic" + dynamicBasePrice.getValue());
+		LOG.info("dynamicBasePrice dynamic : " + dynamicBasePrice.getValue());
 		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);
@@ -195,7 +195,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				final int digits = curr.getDigits().intValue();
 				// subtotal
 				final double subtotal = order.getSubtotal().doubleValue();
-				LOG.info("calculateTotals->subtotal" + subtotal);
+				LOG.info("calculateTotals->subtotal before : " + subtotal);
 				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total subtotal : {}", subtotal);
 				//totalDamageWaiverCost
 				if (BooleanUtils.isTrue(order.getIsRentalOrder())) {
@@ -210,9 +210,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Option Cost : {}", totalOptionCost);
 
 				}
-				LOG.info("calculateTotals->subtotal2" + subtotal);
-				LOG.info("calculateTotals->totalOptionCost" + totalOptionCost);
-				LOG.info("totalDamageWaiverCost->subtotal2" + totalDamageWaiverCost);
+				LOG.info("calculateTotals->subtotal after : " + subtotal);
+				LOG.info("calculateTotals->totalOptionCost : " + totalOptionCost);
+				LOG.info("totalDamageWaiverCost->subtotal2 : " + totalDamageWaiverCost);
 				calculateTotalsForCart(order , recalculate , digits , subtotal , totalDamageWaiverCost , totalOptionCost);
 			}
 		}
@@ -401,13 +401,13 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			{
 				rentedDays = getRentedDays(order.getRentalStartDate(), order.getRentalEndDate());
 			}
-			LOG.info("DynamicBasePriceForRentalSKU Constrained" + blProductModel.getConstrained());
+			LOG.info("DynamicBasePriceForRentalSKU Constrained : " + blProductModel.getConstrained());
 			final BigDecimal dynamicPriceDataForProduct = getCommercePriceService()
 					.getDynamicPriceDataForProductForOrder(blProductModel.getConstrained(), Double.valueOf(basePrice.getValue()), rentedDays);
-			LOG.info("dynamicPriceDataForProduct" + dynamicPriceDataForProduct);
+			LOG.info("dynamicPriceDataForProduct : " + dynamicPriceDataForProduct);
 			return createNewPriceValue(basePrice.getCurrencyIso(), dynamicPriceDataForProduct.doubleValue(), basePrice.isNet());
 		}
-		LOG.info("return dynamicPriceDataForProduct" + basePrice);
+		LOG.info("return dynamicPriceDataForProduct : " + basePrice);
 		return basePrice;
 	}
 
@@ -793,7 +793,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			{
 				calculateTotals(entry, recalculate);
 				final double entryTotal = entry.getTotalPrice().doubleValue();
-				LOG.info("calculateSubtotal->entryTotal" + entryTotal);
+				LOG.info("calculateSubtotal->entryTotal : " + entryTotal);
 				subtotal += entryTotal;
 				// use un-applied version of tax values!!!
 				final Collection<TaxValue> allTaxValues = entry.getTaxValues();
@@ -804,9 +804,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				}
 			}
 			// store subtotal
-			LOG.info("calculateSubtotal->subtotal->Before" + subtotal);
+			LOG.info("calculateSubtotal->subtotal->Before : " + subtotal);
 			subtotal = commonI18NService.roundCurrency(subtotal, order.getCurrency().getDigits().intValue());
-			LOG.info("calculateSubtotal->subtotal->After" + subtotal);
+			LOG.info("calculateSubtotal->subtotal->After : " + subtotal);
 			order.setSubtotal(Double.valueOf(subtotal));
 			return taxValueMap;
 		}
