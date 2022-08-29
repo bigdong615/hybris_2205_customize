@@ -42,7 +42,9 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
   @Override
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
-	  LOG.info("BlDefaultAbstractOrderDatePopulatePrepareInterceptor Inside ");
+
+	  LOG.debug("BlDefaultAbstractOrderDatePopulatePrepareInterceptor Inside ");
+
     if (CollectionUtils.isEmpty(catalogVersionService.getSessionCatalogVersions())) {
       catalogVersionService.setSessionCatalogVersion(BlCoreConstants.CATALOG_VALUE,
           BlCoreConstants.CATALOG_VERSION_NAME);
@@ -60,8 +62,8 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
       rentalReturnDate = abstractOrderModel.getRentalEndDate();
     }
 
-	 LOG.info("BlDefaultAbstractOrderDatePopulatePrepareInterceptor rentalStartDate : " + rentalStartDate);
-	 LOG.info("BlDefaultAbstractOrderDatePopulatePrepareInterceptor rentalReturnDate : " + rentalReturnDate);
+	 LOG.debug("BlDefaultAbstractOrderDatePopulatePrepareInterceptor rentalStartDate : " + rentalStartDate);
+	 LOG.debug("BlDefaultAbstractOrderDatePopulatePrepareInterceptor rentalReturnDate : " + rentalReturnDate);
 
     if (BooleanUtils.isFalse(abstractOrderModel.getInternalTransferOrder()) && CollectionUtils
         .isNotEmpty(abstractOrderModel.getEntries()) && rentalStartDate != null
@@ -78,7 +80,7 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
 				{
 					final BigDecimal calculatedBasePrice = getBlBackOfficePriceService().getProductPrice(orderEntry.getProduct(),
 							rentalStartDate, rentalReturnDate, BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()));
-					LOG.info("BlDefaultAbstractOrderDatePopulatePrepareInterceptor calculatedBasePrice : " + calculatedBasePrice);
+					LOG.debug("BlDefaultAbstractOrderDatePopulatePrepareInterceptor calculatedBasePrice : " + calculatedBasePrice);
 					if (calculatedBasePrice != null)
 					{
 						orderEntry.setBasePrice(calculatedBasePrice.doubleValue());
