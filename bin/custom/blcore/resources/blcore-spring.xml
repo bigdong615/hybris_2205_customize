@@ -460,6 +460,7 @@
 	<bean id="defaultBLProductPriceRatioUtil" class="com.bl.core.util.BlPriceRatioUtil">
 		<property name="blStandardPricingRatioDao" ref="blStandardPricingRatioDao"/>
 		<property name="enumerationService" ref="enumerationService"/>
+		<property name="blPricingRatioService" ref="blPricingRatioService"/>
 	</bean>
 
 
