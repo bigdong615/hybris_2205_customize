@@ -468,7 +468,7 @@ window.mediator.subscribe('continueShippingClick', function(data) {
 function trackContinueShippingClick(shippingType,shippingOption,stockStatus){
   gtag('event', 'continueShippingClick', {
      'event_label': stockStatus,
-     'event_category': shippingType - shippingOption ,
+     'event_category': shippingType.toString() + "-" + shippingOption.toString() ,
      'non_interaction': true
    });
 }
