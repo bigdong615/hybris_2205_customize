@@ -95,6 +95,7 @@ gtag('config', googleAnalyticsTrackingId);
       <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
         <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
       </c:forEach>
+        if(window.document.referrer.indexOf('cart') == -1){
   		gtag('event', 'begin_checkout', {
         	    "event_category": "Cart Page",
             	"event_label": "View Cart",
@@ -115,6 +116,7 @@ gtag('config', googleAnalyticsTrackingId);
         			],
         			"coupon": "${ycommerce:encodeJavaScript(couponCodes)}"
         		});
+        }
   	</c:when>
 
   	<c:when test="${pageType == 'shippingPage'}">
@@ -336,9 +338,14 @@ window.mediator.subscribe('searchRentalDate', function(data) {
 function trackDatePickerClick(daysInAdvance,lengthOfRental) {
 	gtag('event', 'select_date', {
       'event_category': 'Search Rental Date',
-      'event_label': daysInAdvance,
-      'value' : lengthOfRental
+      'event_label': "[#] Days in Advance",
+      'value' : daysInAdvance
 	});
+    gtag('event', 'select_date', {
+        'event_category': 'Search Rental Date',
+        'event_label': "[#] Length of Rental",
+        'value' : lengthOfRental
+    });
 }
 
 window.mediator.subscribe('trackSearch', function(data) {
@@ -392,7 +399,7 @@ window.mediator.subscribe('applyPromo', function(data) {
 
  function trackPromoCLick(voucherError){
    gtag('event', 'Add Promo - Error', {
-     'event_label': voucherError,
+     'event_label': "Promo:" + voucherError,
      'event_category': 'Cart',
      'non_interaction': true
    });
