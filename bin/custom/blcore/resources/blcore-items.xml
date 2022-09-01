@@ -1464,7 +1464,7 @@
                      </attribute>
                      <attribute qualifier="warehouseLocation" type="Warehouse">
                          <persistence type="property"/>
-                         <modifiers read="true" write="true" unique="true" optional="true"/>
+                         <modifiers read="true" write="true" unique="false" optional="true"/>
                          <description>Determines the warehouse where the products are kept</description>
                      </attribute>
                      <attribute qualifier="isBufferedInventory" type="java.lang.Boolean">
