@@ -819,6 +819,11 @@
             <modifiers read="true" write="true" optional="true" />
             <description>Date on which the Order status changes to SHIPPED</description>
         </attribute>
+          <attribute qualifier="extendedCart" type="java.lang.String">
+              <persistence type="property" />
+              <modifiers read="true" write="true" optional="true" />
+              <description>Cart to store values for extended order</description>
+          </attribute>
       </attributes>
       </itemtype>
 
