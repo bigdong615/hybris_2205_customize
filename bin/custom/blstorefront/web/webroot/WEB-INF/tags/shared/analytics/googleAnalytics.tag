@@ -89,14 +89,14 @@ gtag('config', googleAnalyticsTrackingId);
 		</c:choose>
 
 	</c:when>
-
-  <c:when test="${pageType == 'CART'}">
+  <c:set var="_href" value="${not empty header.referer ? header.referer : 'javascript:window.history.back()'}" />
+  <c:when test="${pageType == 'CART' && !_href.contains('cart')}">
       <c:set var="couponCodes" value=""/>
       <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
         <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
       </c:forEach>
         if(window.document.referrer.indexOf('cart') == -1){
-  		gtag('event', 'begin_checkout', {
+  	    	gtag('event', 'begin_checkout', {
         	    "event_category": "Cart Page",
             	"event_label": "View Cart",
             	"checkout_step" : 1,
