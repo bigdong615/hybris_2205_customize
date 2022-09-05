@@ -47,6 +47,8 @@ gtag('config', googleAnalyticsTrackingId);
 	<c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
 		 <c:set var="listName" value="${pageType == 'CATEGORY' ? 'List' : 'Search'}"/>
      <c:set var="variantName" value="${ blPageType == 'rentalGear' ? 'Rental gear' : 'Used gear'}"/>
+     <c:set var="_href" value="${not empty header.referer ? header.referer : 'javascript:window.history.back()'}" />
+
 
 		<c:choose>
 			<c:when test="${searchPageData.pagination.totalNumberOfResults > 0}">
@@ -89,7 +91,6 @@ gtag('config', googleAnalyticsTrackingId);
 		</c:choose>
 
 	</c:when>
-  <c:set var="_href" value="${not empty header.referer ? header.referer : 'javascript:window.history.back()'}" />
   <c:when test="${pageType == 'CART' && !_href.contains('cart')}">
       <c:set var="couponCodes" value=""/>
       <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
