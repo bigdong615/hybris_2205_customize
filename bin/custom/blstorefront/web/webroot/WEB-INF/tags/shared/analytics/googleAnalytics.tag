@@ -338,12 +338,12 @@ window.mediator.subscribe('searchRentalDate', function(data) {
 
 function trackDatePickerClick(daysInAdvance,lengthOfRental) {
 	gtag('event', 'select_date', {
-      'event_category': 'Search Rental Date',
+      'event_category': 'Search Rental Dates',
       'event_label': "[#] Days in Advance",
       'value' : daysInAdvance
 	});
     gtag('event', 'select_date', {
-        'event_category': 'Search Rental Date',
+        'event_category': 'Search Rental Dates',
         'event_label': "[#] Length of Rental",
         'value' : lengthOfRental
     });
@@ -394,14 +394,20 @@ function trackRegisterClick(userId,pageType) {
 window.mediator.subscribe('applyPromo', function(data) {
 	if (data.voucherError)
 	{
-  trackPromoCLick(data.voucherError);
+  trackPromoCLick(data.voucherError, data.pageType);
 	}
 });
 
- function trackPromoCLick(voucherError){
+ function trackPromoCLick(voucherError,pageType){
+     var eventCategory = 'Cart';
+     if(pageType == 'shippingPage'){
+         eventCategory = 'Checkout [Delivery]';
+     }else if(pageType == 'paymentPage'){
+         eventCategory = 'Checkout [Billing]';
+     }
    gtag('event', 'Add Promo - Error', {
-     'event_label': "Promo:" + voucherError,
-     'event_category': 'Cart',
+     'event_label': 'Promo:' + voucherError,
+     'event_category': eventCategory,
      'non_interaction': true
    });
  }
@@ -414,7 +420,7 @@ window.mediator.subscribe('applyCreditCart', function(data) {
 });
 
  function trackCreditCart(paymentError){
-    gtag('event', 'cardPayment', {
+    gtag('event', 'Card Error', {
     'event_label': paymentError,
     'event_category': 'Checkout [Billing]',
     'non_interaction': true
@@ -429,7 +435,7 @@ window.mediator.subscribe('applyPayPal', function(data) {
 });
 
 function trackPayPalClick(paymentError) {
-  gtag('event', 'PayPalPayment', {
+  gtag('event', 'PayPal Error', {
    'event_label': paymentError,
    'event_category': 'Checkout [Billing]',
    'non_interaction': true
@@ -444,8 +450,8 @@ window.mediator.subscribe('applyPO', function(data) {
 });
 
 function trackPOClick(paymentError) {
-   gtag('event', 'POPayment', {
-   'event_label': paymentError,
+   gtag('event', 'PO Error', {
+   'event_label': 'Missing PO Details',
    'event_category': 'Checkout [Billing]',
    'non_interaction': true
  });
@@ -506,7 +512,7 @@ window.mediator.subscribe('placeOrderClick', function(data) {
  function trackPlaceOrderClick(reviewPageError){
    gtag('event', 'Place Order Error', {
      'event_label': reviewPageError,
-     'event_category': 'Checkout Review',
+     'event_category': 'Checkout [Review Order]',
      'non_interaction': true
    });
  }

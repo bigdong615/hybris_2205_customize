@@ -370,11 +370,16 @@ ACC.cart = {
     },
 
     bindApplyVoucher: function () {
+        var pageType=$('.js-page-type').val();
+        if(pageType == null || pageType == undefined){
+            pageType = '';
+        }
         var voucherError = $('.js-promo-error').html();
             if( voucherError!= undefined){
              voucherError = voucherError.trim();
               window.mediator.publish('applyPromo', {
-              				voucherError: voucherError
+              				voucherError: voucherError,
+                            pagetype: pageType
               			});
               }
         $(".js-voucher-apply-btn").on("click", function (e) {
