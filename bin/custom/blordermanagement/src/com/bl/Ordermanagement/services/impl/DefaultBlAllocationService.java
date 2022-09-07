@@ -215,14 +215,11 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
           return consignment;
         }
       } else{   // used gear cart
-      	final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) consignment.getDeliveryMode();
-   		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
-
-   		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
-   		{
-   			consignment.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+      	if(verifyCarrier(consignment))
+      	{
+            consignment.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
                   OptimizedShippingMethodEnum.TWO_DAY_AIR.getCode()));
-   		}
+      	}
         //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.HARD_ASSIGNED);
         //this.optimizeShippingMethodForConsignment(consignment, result);   // need clarification
         this.getModelService().save(consignment);
@@ -233,6 +230,14 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     } catch (final Exception ex) {
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
     }
+  }
+
+  private boolean verifyCarrier(final ConsignmentModel consignment)
+  {
+	  return consignment.getDeliveryMode() instanceof ZoneDeliveryModeModel
+			  && Objects.nonNull(((ZoneDeliveryModeModel) consignment.getDeliveryMode()).getCarrier())
+			  && StringUtils.equalsIgnoreCase(CarrierEnum.UPS.getCode(),
+					  ((ZoneDeliveryModeModel) consignment.getDeliveryMode()).getCarrier().getCode());
   }
   
   private void setUsedGearOrderInformationOnAssignedSerial(final Set<ConsignmentEntryModel> consignmentEntries,
