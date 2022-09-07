@@ -52,7 +52,7 @@ function trackDateSelection(date1, date2) {
 	var currentDate = new Date();
 	diffTime = Math.abs(currentDate - date1.dateInstance);
 	diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-	var daysInAdvance = diffDays + 1;
+	var daysInAdvance = diffDays + 2;
 // Track tealium event while selecting date.
 	utag.link({
       "tealium_event"    : "search_rental_date",
@@ -62,6 +62,7 @@ function trackDateSelection(date1, date2) {
 // Track GA event while selecting date.
 	window.mediator.publish('searchRentalDate', {
 		daysInAdvance: daysInAdvance,
-		lengthOfRental: lengthOfRental
+		lengthOfRental: lengthOfRental,
+		pageType: utag ? utag.data.pagetype : "productsearch"
 	});
 }
