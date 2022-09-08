@@ -336,6 +336,13 @@ function reverseTraverseOnShipping() {
                                 $('#ship-it-am-notification').html(notification);
                                 $('#ship-it-am-notification').show();
                             }
+                            
+                            //To make shipping cost zero bydefault, if rental cost is > 149 
+                             if(checkNaN(formatPrice($('#cart-shipping-subTotal').text().split('$')[1])) > 149 && 
+                                 data[i].code =='UPS_STORE_STANDARD_ROUND_TRIP'){
+		                            $('#cart-shipping-cost').text("$0.0");
+		                            calculateCartTotal();
+	                        }
                         }
                     }
                 }
@@ -2024,6 +2031,13 @@ function reverseTraverseOnShipping() {
         $('#ship-it-am-notification').html('');
         $('#ship-it-am-notification').hide();
      }
+     
+     //To make shipping cost zero bydefault, if rental cost is > 149 
+                             if(checkNaN(formatPrice($('#cart-shipping-subTotal').text().split('$')[1])) > 149 && 
+                                 $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').val() =='UPS_STORE_STANDARD_ROUND_TRIP'){
+		                            $('#cart-shipping-cost').text("$0.0");
+		                            calculateCartTotal();
+	                        }
   }
 
   function onSelectOfPartnerAddress(event) {
