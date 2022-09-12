@@ -26,14 +26,15 @@ public class BlProductPageSiteMapGenerator extends BlAbstractSiteMapGenerator<Pr
 	@Override
 	protected List<ProductModel> getDataInternal(final CMSSiteModel siteModel)
 	{
-		final String query = "SELECT {p.pk} FROM {BlProduct! AS p JOIN CatalogVersion AS cv ON {p.catalogVersion}={cv.pk} "
-				+ " JOIN Catalog AS cat ON {cv.pk}={cat.activeCatalogVersion} "
-				+ " JOIN CMSSite AS site ON {cat.pk}={site.defaultCatalog}}  WHERE {site.pk} = ?site"
-				+ " AND {p.approvalStatus} = ?approvalStatus";
+		final String query = "select {prd.pk},{prd.code} FROM {BlProduct! as prd "
+				+ "JOIN Catalog AS cat ON {prd.catalog}={cat.pk} " + "JOIN CatalogVersion as cv ON {prd.catalogVersion}={cv.pk}} "
+				+ "where {cat.id}='blProductCatalog' AND {cv.version}='Online'  and {prd.approvalStatus} = ?approvalStatus";
 
 		final Map<String, Object> params = new HashMap<String, Object>();
-		params.put("site", siteModel);
 		params.put("approvalStatus", ArticleApprovalStatus.APPROVED);
-		return doSearch(query, params, ProductModel.class);
+
+		final List<ProductModel> productList = doSearch(query, params, ProductModel.class);
+		System.out.println("BlProductPageSiteMapGenerator Product count : " + productList.size());
+		return productList;
 	}
 }
