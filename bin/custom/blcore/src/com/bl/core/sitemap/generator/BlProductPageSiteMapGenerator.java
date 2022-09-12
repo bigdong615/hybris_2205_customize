@@ -13,9 +13,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 
 public class BlProductPageSiteMapGenerator extends BlAbstractSiteMapGenerator<ProductModel>
 {
+	private static final Logger LOG = Logger.getLogger(BlProductPageSiteMapGenerator.class);
 
 	@Override
 	public List<SiteMapUrlData> getSiteMapUrlData(final List<ProductModel> models)
@@ -26,6 +29,9 @@ public class BlProductPageSiteMapGenerator extends BlAbstractSiteMapGenerator<Pr
 	@Override
 	protected List<ProductModel> getDataInternal(final CMSSiteModel siteModel)
 	{
+		LOG.info("BlProductPageSiteMapGenerator getDataInternal");
+		try
+		{
 		final String query = "select {prd.pk},{prd.code} FROM {BlProduct! as prd "
 				+ "JOIN Catalog AS cat ON {prd.catalog}={cat.pk} " + "JOIN CatalogVersion as cv ON {prd.catalogVersion}={cv.pk}} "
 				+ "where {cat.id}='blProductCatalog' AND {cv.version}='Online'  and {prd.approvalStatus} = ?approvalStatus";
@@ -35,6 +41,12 @@ public class BlProductPageSiteMapGenerator extends BlAbstractSiteMapGenerator<Pr
 
 		final List<ProductModel> productList = doSearch(query, params, ProductModel.class);
 		System.out.println("BlProductPageSiteMapGenerator Product count : " + productList.size());
-		return productList;
+		LOG.info("BlProductPageSiteMapGenerator ProductCount : " + productList.size());
+	}
+	catch (final Exception e)
+	{
+		LOG.error("BlProductPageSiteMapGenerator Exception : " + e.getStackTrace());
+	}
+	return null;
 	}
 }
