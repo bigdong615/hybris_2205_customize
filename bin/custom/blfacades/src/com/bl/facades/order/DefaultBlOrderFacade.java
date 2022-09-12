@@ -312,61 +312,71 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         orderData.setAddedTimeForExtendRental(
             (int) defaultAddedTimeForExtendRental); // Default value which added for extend order
         CartModificationData cartModificationData = null;
-          try {
-              for (AbstractOrderEntryModel orderEntryModel : orderModel.getEntries())
-              {
-                  cartModificationData = blCartFacade.addToCart(orderEntryModel.getProduct().getCode(), orderEntryModel.getQuantity(), null);
-              }
-          }
-          catch (final CommerceCartModificationException ex) {
-              LOG.debug(String.format("Add to cart failed", ex.getMessage()));
+        if(StringUtils.isNotEmpty(orderModel.getExtendedCart())) {
+            try {
+                for (AbstractOrderEntryModel orderEntryModel : orderModel.getEntries()) {
+                    cartModificationData = blCartFacade.addToCart(orderEntryModel.getProduct().getCode(), orderEntryModel.getQuantity(), null);
+                }
+            } catch (final CommerceCartModificationException ex) {
+                LOG.debug(String.format("Add to cart failed", ex.getMessage()));
+            } catch (final UnknownIdentifierException ex) {
+                LOG.debug(String.format("Product could not be added to cart - %s", ex.getMessage()));
             }
-          catch (final UnknownIdentifierException ex) {
-            LOG.debug(String.format("Product could not be added to cart - %s", ex.getMessage()));
-            }
+        }
       CartModel cartModel = null;
       if(Objects.nonNull(cartModificationData) && StringUtils.isNotEmpty(cartModificationData.getCartCode()))
       {
           cartModel = getCommerceCartService().getCartForCodeAndUser(cartModificationData.getCartCode(), getUserService().getCurrentUser());
-          cartModel.setRentalEndDate(endDate);
-          cartModel.setExtendRentalEndDate(endDate);
-          cartModel.setActualRentalEndDate(stockEndDate);
-          cartModel.setTotalExtendDays((int) defaultAddedTimeForExtendRental);
-          cartModel.setExtendRentalStartDate(startDate);
-          cartModel.setExtendRentalEndDate(endDate);
-          modelService.save(cartModel);
-          try {
-              getBlCartFacade().recalculateCartIfRequired();
-          }
-          catch (Exception e)
-          {
-              LOG.info("Cart Calculation failed");
-          }
-          //setOptimizedShippingEndDateForConsignment(stringStringMap , cartModel);
-          orderModel.setExtendedCart(cartModel.getCode());
-          modelService.save(orderModel);
       }
-      final PriceDataType priceType = PriceDataType.BUY;
-      orderData.setSubTotalTaxForExtendRental(
-              getPriceDataFactory()
-                      .create(priceType, BigDecimal.valueOf(cartModel.getSubtotal()),
-                              cartModel.getCurrency().getIsocode()));
-      orderData.setTotalDamageWaiverCostForExtendRental(getPriceDataFactory()
-              .create(priceType, BigDecimal.valueOf(cartModel.getTotalDamageWaiverCost()),
-                      cartModel.getCurrency().getIsocode()));
-      orderData.setTotalTaxForExtendRental(
-              getPriceDataFactory()
-                      .create(priceType, BigDecimal.valueOf(cartModel.getTotalTax()),
-                              cartModel.getCurrency().getIsocode()));
+      else if(StringUtils.isNotEmpty(orderModel.getExtendedCart()))
+      {
+          cartModel = getCommerceCartService().getCartForCodeAndUser(orderModel.getExtendedCart(), getUserService().getCurrentUser());
+      }
+      try {
+          if(Objects.nonNull(cartModel)) {
+              cartModel.setRentalEndDate(endDate);
+              cartModel.setExtendRentalEndDate(endDate);
+              cartModel.setActualRentalEndDate(stockEndDate);
+              cartModel.setTotalExtendDays((int) defaultAddedTimeForExtendRental);
+              cartModel.setExtendRentalStartDate(startDate);
+              cartModel.setExtendRentalEndDate(endDate);
+              modelService.save(cartModel);
+              getBlCartFacade().recalculateCartIfRequired();
+              if(StringUtils.isNotEmpty(orderModel.getExtendedCart()))
+              {
+                  orderModel.setExtendedCart(cartModel.getCode());
+                  modelService.save(orderModel);
+              }
+          }
+      }
+      catch (Exception e)
+      {
+          LOG.info("Cart Calculation failed");
+      }
+      //setOptimizedShippingEndDateForConsignment(stringStringMap , cartModel);
+      if(Objects.nonNull(cartModel)) {
+          final PriceDataType priceType = PriceDataType.BUY;
+          orderData.setSubTotalTaxForExtendRental(
+                  getPriceDataFactory()
+                          .create(priceType, BigDecimal.valueOf(cartModel.getSubtotal()),
+                                  cartModel.getCurrency().getIsocode()));
+          orderData.setTotalDamageWaiverCostForExtendRental(getPriceDataFactory()
+                  .create(priceType, BigDecimal.valueOf(cartModel.getTotalDamageWaiverCost()),
+                          cartModel.getCurrency().getIsocode()));
+          orderData.setTotalTaxForExtendRental(
+                  getPriceDataFactory()
+                          .create(priceType, BigDecimal.valueOf(cartModel.getTotalTax()),
+                                  cartModel.getCurrency().getIsocode()));
 
-      orderData.setExtendOrderDiscount( getPriceDataFactory()
-              .create(priceType, BigDecimal.valueOf(cartModel.getTotalDiscounts()),
-                      cartModel.getCurrency().getIsocode()));
+          orderData.setExtendOrderDiscount(getPriceDataFactory()
+                  .create(priceType, BigDecimal.valueOf(cartModel.getTotalDiscounts()),
+                          cartModel.getCurrency().getIsocode()));
 
-      orderData.setOrderTotalWithTaxForExtendRental(getPriceDataFactory()
-              .create(priceType, BigDecimal.valueOf(cartModel.getTotalPrice()), cartModel.getCurrency().getIsocode()));
+          orderData.setOrderTotalWithTaxForExtendRental(getPriceDataFactory()
+                  .create(priceType, BigDecimal.valueOf(cartModel.getTotalPrice()), cartModel.getCurrency().getIsocode()));
 
-      getBlOrderAppliedVouchersPopulator().populate(cartModel , orderData);
+          getBlOrderAppliedVouchersPopulator().populate(cartModel, orderData);
+      }
 
   }
 
