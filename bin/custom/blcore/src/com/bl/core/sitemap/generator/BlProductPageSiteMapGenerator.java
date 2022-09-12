@@ -32,21 +32,22 @@ public class BlProductPageSiteMapGenerator extends BlAbstractSiteMapGenerator<Pr
 		LOG.info("BlProductPageSiteMapGenerator getDataInternal");
 		try
 		{
-		final String query = "select {prd.pk},{prd.code} FROM {BlProduct! as prd "
-				+ "JOIN Catalog AS cat ON {prd.catalog}={cat.pk} " + "JOIN CatalogVersion as cv ON {prd.catalogVersion}={cv.pk}} "
-				+ "where {cat.id}='blProductCatalog' AND {cv.version}='Online'  and {prd.approvalStatus} = ?approvalStatus";
+			final String query = "select {prd.pk},{prd.code} FROM {BlProduct! as prd "
+					+ "JOIN Catalog AS cat ON {prd.catalog}={cat.pk} " + "JOIN CatalogVersion as cv ON {prd.catalogVersion}={cv.pk}} "
+					+ "where {cat.id}='blProductCatalog' AND {cv.version}='Online'  and {prd.approvalStatus} = ?approvalStatus";
 
-		final Map<String, Object> params = new HashMap<String, Object>();
-		params.put("approvalStatus", ArticleApprovalStatus.APPROVED);
+			final Map<String, Object> params = new HashMap<String, Object>();
+			params.put("approvalStatus", ArticleApprovalStatus.APPROVED);
 
-		final List<ProductModel> productList = doSearch(query, params, ProductModel.class);
-		System.out.println("BlProductPageSiteMapGenerator Product count : " + productList.size());
-		LOG.info("BlProductPageSiteMapGenerator ProductCount : " + productList.size());
-	}
-	catch (final Exception e)
-	{
-		LOG.error("BlProductPageSiteMapGenerator Exception : " + e.getStackTrace());
-	}
-	return null;
+			final List<ProductModel> productList = doSearch(query, params, ProductModel.class);
+			System.out.println("BlProductPageSiteMapGenerator Product count : " + productList.size());
+			LOG.info("BlProductPageSiteMapGenerator ProductCount : " + productList.size());
+			return productList;
+		}
+		catch (final Exception e)
+		{
+			LOG.error("BlProductPageSiteMapGenerator Exception : " + e.getStackTrace());
+		}
+		return null;
 	}
 }
