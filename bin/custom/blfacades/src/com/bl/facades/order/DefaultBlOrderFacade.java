@@ -312,7 +312,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         orderData.setAddedTimeForExtendRental(
             (int) defaultAddedTimeForExtendRental); // Default value which added for extend order
         CartModificationData cartModificationData = null;
-        try {
+        if(StringUtils.isNotEmpty(orderModel.getExtendedCart())) {
+            try {
                 for (AbstractOrderEntryModel orderEntryModel : orderModel.getEntries()) {
                     cartModificationData = blCartFacade.addToCart(orderEntryModel.getProduct().getCode(), orderEntryModel.getQuantity(), null);
                 }
@@ -320,6 +321,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
                 LOG.debug(String.format("Add to cart failed", ex.getMessage()));
             } catch (final UnknownIdentifierException ex) {
                 LOG.debug(String.format("Product could not be added to cart - %s", ex.getMessage()));
+            }
         }
       CartModel cartModel = null;
       if(Objects.nonNull(cartModificationData) && StringUtils.isNotEmpty(cartModificationData.getCartCode()))
