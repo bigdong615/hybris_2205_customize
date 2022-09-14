@@ -332,21 +332,17 @@ function trackProductClick(productCode, productName,brand,productType) {
 window.mediator.subscribe('searchRentalDate', function(data) {
 	if (data.lengthOfRental)
 	{
-		trackDatePickerClick(data.daysInAdvance,data.lengthOfRental, data.pageType);
+		trackDatePickerClick(data.daysInAdvance,data.lengthOfRental);
 	}
 });
 
-function trackDatePickerClick(daysInAdvance,lengthOfRental, pageType) {
-    gtag('event', pageType, {
-        'event_category': 'Search Rental Dates',
-        'event_label': "Open"
-    });
-	gtag('event', pageType, {
+function trackDatePickerClick(daysInAdvance,lengthOfRental) {
+	gtag('event', 'select_date', {
       'event_category': 'Search Rental Dates',
       'event_label': "[#] Days in Advance",
-      'value' : daysInAdvance + 1
+      'value' : daysInAdvance
 	});
-    gtag('event', pageType, {
+    gtag('event', 'select_date', {
         'event_category': 'Search Rental Dates',
         'event_label': "[#] Length of Rental",
         'value' : lengthOfRental
