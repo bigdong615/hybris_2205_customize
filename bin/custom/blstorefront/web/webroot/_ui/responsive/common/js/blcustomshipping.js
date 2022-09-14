@@ -340,7 +340,7 @@ function reverseTraverseOnShipping() {
                             //To make shipping cost zero bydefault, if rental cost is > 149 
                              if(checkNaN(formatPrice($('#cart-shipping-subTotal').text().split('$')[1])) > 149 && 
                                  data[i].code =='UPS_STORE_STANDARD_ROUND_TRIP'){
-		                            $('#cart-shipping-cost').text("$0.0");
+		                            $('#cart-shipping-cost').text("$0.00");
 		                            calculateCartTotal();
 	                        }
                         }
@@ -2035,7 +2035,7 @@ function reverseTraverseOnShipping() {
      //To make shipping cost zero bydefault, if rental cost is > 149 
                              if(checkNaN(formatPrice($('#cart-shipping-subTotal').text().split('$')[1])) > 149 && 
                                  $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').val() =='UPS_STORE_STANDARD_ROUND_TRIP'){
-		                            $('#cart-shipping-cost').text("$0.0");
+		                            $('#cart-shipping-cost').text("$0.00");
 		                            calculateCartTotal();
 	                        }
   }
