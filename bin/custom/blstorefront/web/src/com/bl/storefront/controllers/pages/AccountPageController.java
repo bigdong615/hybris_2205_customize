@@ -1471,7 +1471,7 @@ public class AccountPageController extends AbstractSearchPageController
 
 		final String poNumber = request.getParameter(BlControllerConstants.PO_NUMBER);
 		final String poNotes = request.getParameter(BlControllerConstants.PO_NOTES);
-		
+
 		final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
 		CartModel cartModel = commerceCartService.getCartForCodeAndUser(orderModel.getExtendedCart(), userService.getCurrentUser());
 		final OrderModel extendOrderModel = defaultBlExtendOrderService.cloneOrderModelForExtendRental(orderModel , cartModel.getTotalExtendDays());
@@ -1627,7 +1627,6 @@ public class AccountPageController extends AbstractSearchPageController
 		return REDIRECT_PREFIX + ROOT;
 	}
 
-<<<<<<< HEAD
 	private Collection<PromotionGroupModel> getPromotionGroups()
 	{
 		final Collection<PromotionGroupModel> promotionGroupModels = new ArrayList<>();
@@ -1654,8 +1653,6 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 	}
 
-=======
->>>>>>> origin/develop
 	/**
 	 * @return the blPasswordValidator
 	 */
