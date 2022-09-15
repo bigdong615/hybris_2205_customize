@@ -112,6 +112,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
@@ -1375,7 +1376,7 @@ public class AccountPageController extends AbstractSearchPageController
 		OrderData orderData = null;
 		try {
 			orderData = blOrderFacade
-					.setRentalExtendOrderDetails(orderCode, orderEndDate, selectedEndDate);
+					.setRentalExtendCartDetails(orderCode, orderEndDate, selectedEndDate);
 
 			model.addAttribute(BlControllerConstants.ORDER_DATA, orderData);
 
@@ -1490,32 +1491,32 @@ public class AccountPageController extends AbstractSearchPageController
 		final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
 		CartModel cartModel = commerceCartService.getCartForCodeAndUser(orderModel.getExtendedCart(), userService.getCurrentUser());
 		final OrderModel extendOrderModel = defaultBlExtendOrderService.cloneOrderModelForExtendRental(orderModel , cartModel.getTotalExtendDays());
+		OrderData orderData;
+		try {
+			orderData = blOrderFacade
+					.setRentalExtendOrderDetails(orderCode,cartModel);
 
-		 //Start Date will same as existing rental startDate
-		extendOrderModel.setTotalExtendDays((int) cartModel.getTotalExtendDays()); // To set total number of days extended
-		Calendar extendStartDate = Calendar.getInstance();
-		extendStartDate.setTime(cartModel.getExtendRentalStartDate());
-		extendStartDate.add(Calendar.DAY_OF_MONTH ,1);
-		extendOrderModel.setRentalEndDate(cartModel.getRentalEndDate());    // End Date will be stored based on customer selection
-		extendOrderModel.setActualRentalEndDate(cartModel.getActualRentalEndDate());
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderData);
 
-
-		// To set extend startDate and Extend end date on order model .
-    	extendOrderModel.setExtendRentalStartDate(cartModel.getExtendRentalStartDate());
-    	extendOrderModel.setExtendRentalEndDate(cartModel.getRentalEndDate());
-    	//setOptimizedShippingEndDateForConsignment(stringStringMap , extendOrderModel);
+			if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM)) {
+				model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			}
+			return Account.AccountOrderExtendSummaryPage;
+		}
+		catch (final Exception e) {
+			orderData = new OrderData();
+			orderData.setExtendErrorMessage("One or more of your items is unavailable to be extended. Please contact us"
+					+ "if you are unable to return your order by its scheduled return date.");
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderData);
+			if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM)) {
+				model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			}
+			BlLogger.logMessage(LOG , Level.ERROR , "Error While performing Extend order " , e);
+		}
 
     	BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
         "Order with code {} extended from extended rental start date {} to extended rental end date {}.", extendOrderModel.getCode() ,
         extendOrderModel.getExtendRentalStartDate() , extendOrderModel.getExtendRentalEndDate());
-		try {
-		  defaultBlCalculationService.recalculateForExtendOrder(extendOrderModel, (int) cartModel.getTotalExtendDays());
-		  promotionsService.updatePromotions(getPromotionGroups(), extendOrderModel, true, PromotionsManager.AutoApplyMode.APPLY_ALL, PromotionsManager.AutoApplyMode.APPLY_ALL,timeService.getCurrentTime());
-		} catch (final CalculationException e) {
-		  BlLogger.logFormatMessageInfo(LOG, Level.ERROR ,
-			  "Error while Calculating promotion for Order with code {} extended from extended rental start date {} to extended rental end date {}."
-			  , extendOrderModel.getCode() ,  extendOrderModel.getExtendRentalStartDate() , extendOrderModel.getExtendRentalEndDate());
-		}
 		modelService.remove(cartModel);
 
 		boolean isSuccess = false;
@@ -1649,6 +1650,21 @@ public class AccountPageController extends AbstractSearchPageController
 			promotionGroupModels.add(getBaseSiteService().getCurrentBaseSite().getDefaultPromotionGroup());
 		}
 		return promotionGroupModels;
+	}
+
+	private void setOptimizedShippingEndDateForConsignment(final Map<String, Date> stringStringMap,
+														   final OrderModel extendOrderModel) {
+		if(org.apache.commons.collections4.CollectionUtils.isNotEmpty(extendOrderModel.getConsignments()) && MapUtils.isNotEmpty(stringStringMap)){
+			extendOrderModel.getConsignments().forEach(consignmentModel -> {
+				if(Objects.nonNull(stringStringMap.get(consignmentModel.getCode()))){
+					consignmentModel.setOptimizedShippingEndDate(stringStringMap.get(consignmentModel.getCode()));
+					modelService.save(consignmentModel);
+					modelService.refresh(consignmentModel);
+					BlLogger.logFormattedMessage(LOG , Level.DEBUG , "New OptimizedShippingEndDate  as {} for extend order {}" ,
+							String.valueOf(consignmentModel.getOptimizedShippingEndDate()) , extendOrderModel.getCode());
+				}
+			});
+		}
 	}
 
 	/**
