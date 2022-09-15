@@ -3416,6 +3416,19 @@
 			  		</attribute>
                 </attributes>
             </itemtype>
+            
+            <itemtype code="BlGoogleMarketPlaceProductFeed" autocreate="true" generate="true">
+          	<description>Product feed XML for Google Market Place will be saved here</description>
+          	<deployment table="BlGoogleProductFeed" typecode="12247"/>
+          	<attributes>
+	            <attribute qualifier="name" type="java.lang.String">
+	                <persistence type="property" />
+	            </attribute>
+	            <attribute qualifier="productFeedFile" type="Media">
+	                <persistence type="property" />
+	            </attribute>
+          	</attributes>
+          </itemtype>
         </typegroup>
 
 		<typegroup name="StateWarehouseMapping">
