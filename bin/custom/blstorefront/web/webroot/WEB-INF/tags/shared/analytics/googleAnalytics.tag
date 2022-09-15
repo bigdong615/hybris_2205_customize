@@ -47,6 +47,8 @@ gtag('config', googleAnalyticsTrackingId);
 	<c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
 		 <c:set var="listName" value="${pageType == 'CATEGORY' ? 'List' : 'Search'}"/>
      <c:set var="variantName" value="${ blPageType == 'rentalGear' ? 'Rental gear' : 'Used gear'}"/>
+     <c:set var="_href" value="${not empty header.referer ? header.referer : 'javascript:window.history.back()'}" />
+
 
 		<c:choose>
 			<c:when test="${searchPageData.pagination.totalNumberOfResults > 0}">
@@ -89,13 +91,13 @@ gtag('config', googleAnalyticsTrackingId);
 		</c:choose>
 
 	</c:when>
-
-  <c:when test="${pageType == 'CART'}">
+  <c:when test="${pageType == 'CART' && !_href.contains('cart')}">
       <c:set var="couponCodes" value=""/>
       <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
         <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
       </c:forEach>
-  		gtag('event', 'begin_checkout', {
+        if(window.document.referrer.indexOf('cart') == -1){
+  	    	gtag('event', 'begin_checkout', {
         	    "event_category": "Cart Page",
             	"event_label": "View Cart",
             	"checkout_step" : 1,
@@ -115,6 +117,7 @@ gtag('config', googleAnalyticsTrackingId);
         			],
         			"coupon": "${ycommerce:encodeJavaScript(couponCodes)}"
         		});
+        }
   	</c:when>
 
   	<c:when test="${pageType == 'shippingPage'}">
@@ -335,10 +338,15 @@ window.mediator.subscribe('searchRentalDate', function(data) {
 
 function trackDatePickerClick(daysInAdvance,lengthOfRental) {
 	gtag('event', 'select_date', {
-      'event_category': 'Search Rental Date',
-      'event_label': daysInAdvance,
-      'value' : lengthOfRental
+      'event_category': 'Search Rental Dates',
+      'event_label': "[#] Days in Advance",
+      'value' : daysInAdvance
 	});
+    gtag('event', 'select_date', {
+        'event_category': 'Search Rental Dates',
+        'event_label': "[#] Length of Rental",
+        'value' : lengthOfRental
+    });
 }
 
 window.mediator.subscribe('trackSearch', function(data) {
@@ -386,14 +394,20 @@ function trackRegisterClick(userId,pageType) {
 window.mediator.subscribe('applyPromo', function(data) {
 	if (data.voucherError)
 	{
-  trackPromoCLick(data.voucherError);
+  trackPromoCLick(data.voucherError, data.pageType);
 	}
 });
 
- function trackPromoCLick(voucherError){
+ function trackPromoCLick(voucherError,pageType){
+     var eventCategory = 'Cart';
+     if(pageType == 'shippingPage'){
+         eventCategory = 'Checkout [Delivery]';
+     }else if(pageType == 'paymentPage'){
+         eventCategory = 'Checkout [Billing]';
+     }
    gtag('event', 'Add Promo - Error', {
-     'event_label': voucherError,
-     'event_category': 'Cart',
+     'event_label': 'Promo:' + voucherError,
+     'event_category': eventCategory,
      'non_interaction': true
    });
  }
@@ -406,7 +420,7 @@ window.mediator.subscribe('applyCreditCart', function(data) {
 });
 
  function trackCreditCart(paymentError){
-    gtag('event', 'cardPayment', {
+    gtag('event', 'Card Error', {
     'event_label': paymentError,
     'event_category': 'Checkout [Billing]',
     'non_interaction': true
@@ -421,7 +435,7 @@ window.mediator.subscribe('applyPayPal', function(data) {
 });
 
 function trackPayPalClick(paymentError) {
-  gtag('event', 'PayPalPayment', {
+  gtag('event', 'PayPal Error', {
    'event_label': paymentError,
    'event_category': 'Checkout [Billing]',
    'non_interaction': true
@@ -436,8 +450,8 @@ window.mediator.subscribe('applyPO', function(data) {
 });
 
 function trackPOClick(paymentError) {
-   gtag('event', 'POPayment', {
-   'event_label': paymentError,
+   gtag('event', 'PO Error', {
+   'event_label': 'Missing PO Details',
    'event_category': 'Checkout [Billing]',
    'non_interaction': true
  });
@@ -498,7 +512,7 @@ window.mediator.subscribe('placeOrderClick', function(data) {
  function trackPlaceOrderClick(reviewPageError){
    gtag('event', 'Place Order Error', {
      'event_label': reviewPageError,
-     'event_category': 'Checkout Review',
+     'event_category': 'Checkout [Review Order]',
      'non_interaction': true
    });
  }

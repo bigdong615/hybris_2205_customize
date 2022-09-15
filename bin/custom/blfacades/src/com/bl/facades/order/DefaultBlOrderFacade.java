@@ -52,7 +52,6 @@ import de.hybris.platform.promotions.PromotionsService;
 import de.hybris.platform.promotions.jalo.PromotionsManager.AutoApplyMode;
 import de.hybris.platform.promotions.model.PromotionGroupModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.time.TimeService;
@@ -307,22 +306,29 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private void populateExtendOrderDetails(final CartModel cartModel,
       final OrderModel orderModel, final OrderData orderData,
       final Map<String, Date> stringStringMap) {
+    long defaultAddedTimeForExtendRental = BlDateTimeUtils
+        .getDaysBetweenDates(startDate, endDate) + 1;
+    if (StringUtils.isEmpty(selectedDate)) {
+      defaultAddedTimeForExtendRental = 1;
+    }
+    orderData.setAddedTimeForExtendRental(
+        (int) defaultAddedTimeForExtendRental); // Default value which added for extend order
     final PriceDataType priceType = PriceDataType.BUY;
     final OrderModel extendOrderModel = getDefaultBlExtendOrderService()
-        .cloneOrderModelForExtendRental(orderModel , cartModel.getTotalExtendDays());
+        .cloneOrderModelForExtendRental(orderModel , defaultAddedTimeForExtendRental);
 
     // Start Date will same as existing rental startDate
-    extendOrderModel.setTotalExtendDays(cartModel.getTotalExtendDays()); // To set total number of days extended
+    extendOrderModel.setTotalExtendDays((int) defaultAddedTimeForExtendRental); // To set total number of days extended
     Calendar extendStartDate = Calendar.getInstance();
-    extendStartDate.setTime(cartModel.getExtendRentalStartDate());
+    extendStartDate.setTime(startDate);
     extendStartDate.add(Calendar.DAY_OF_MONTH ,1);
-    extendOrderModel.setRentalEndDate(cartModel.getExtendRentalEndDate());    // End Date will be stored based on customer selection
-    extendOrderModel.setActualRentalEndDate(cartModel.getActualRentalEndDate());
+    extendOrderModel.setRentalEndDate(endDate);    // End Date will be stored based on customer selection
+    extendOrderModel.setActualRentalEndDate(stockEndDate);
 
 
     // To set extend startDate and Extend end date on order model .
-    extendOrderModel.setExtendRentalStartDate(cartModel.getExtendRentalStartDate());
-    extendOrderModel.setExtendRentalEndDate(cartModel.getExtendRentalEndDate());
+    extendOrderModel.setExtendRentalStartDate(startDate);
+    extendOrderModel.setExtendRentalEndDate(endDate);
     setOptimizedShippingEndDateForConsignment(stringStringMap , extendOrderModel);
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
@@ -330,7 +336,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         extendOrderModel.getExtendRentalStartDate() , extendOrderModel.getExtendRentalEndDate());
     try {
       getDefaultBlCalculationService()
-          .recalculateForExtendOrder(extendOrderModel, (int) cartModel.getTotalExtendDays());
+          .recalculateForExtendOrder(extendOrderModel, (int) defaultAddedTimeForExtendRental);
       getPromotionsService()
           .updatePromotions(getPromotionGroups(), extendOrderModel, true, AutoApplyMode.APPLY_ALL,
               AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
@@ -364,112 +370,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     // To set current extendOrderModel to session
     BlExtendOrderUtils.setCurrentExtendOrderToSession(extendOrderModel);
   }
-
-    /**
-     * This method created to populate the extend cart details
-     */
-
-    private void populateExtendCartDetails(final Date startDate, final Date endDate,
-                                            final String selectedDate,
-                                            final OrderModel orderModel, final OrderData orderData, final Date stockEndDate) {
-        long defaultAddedTimeForExtendRental = BlDateTimeUtils
-                .getDaysBetweenDates(startDate, endDate) + 1;
-        if (StringUtils.isEmpty(selectedDate)) {
-            defaultAddedTimeForExtendRental = 1;
-        }
-        orderData.setAddedTimeForExtendRental(
-                (int) defaultAddedTimeForExtendRental); // Default value which added for extend order
-        CartModificationData cartModificationData = null;
-        if(StringUtils.isEmpty(orderModel.getExtendedCart())) {
-            try {
-                for (AbstractOrderEntryModel orderEntryModel : orderModel.getEntries()) {
-                    cartModificationData = blCartFacade.addToCart(orderEntryModel.getProduct().getCode(), orderEntryModel.getQuantity(), null);
-                }
-            } catch (final CommerceCartModificationException ex) {
-                LOG.debug(String.format("Add to cart failed", ex.getMessage()));
-            } catch (final UnknownIdentifierException ex) {
-                LOG.debug(String.format("Product could not be added to cart - %s", ex.getMessage()));
-            }
-        }
-        CartModel cartModel = null;
-        if(Objects.nonNull(cartModificationData) && StringUtils.isNotEmpty(cartModificationData.getCartCode()))
-        {
-            cartModel = getCommerceCartService().getCartForCodeAndUser(cartModificationData.getCartCode(), getUserService().getCurrentUser());
-        }
-        else if(StringUtils.isNotEmpty(orderModel.getExtendedCart()))
-        {
-            cartModel = getCommerceCartService().getCartForCodeAndUser(orderModel.getExtendedCart(), getUserService().getCurrentUser());
-        }
-        try {
-            if(Objects.nonNull(cartModel)) {
-                setDefaultValuesForExtendCart(cartModel,defaultAddedTimeForExtendRental);
-                cartModel.setRentalEndDate(endDate);
-                cartModel.setExtendRentalEndDate(endDate);
-                cartModel.setActualRentalEndDate(stockEndDate);
-                cartModel.setTotalExtendDays((int) defaultAddedTimeForExtendRental);
-                cartModel.setExtendRentalStartDate(startDate);
-                cartModel.setExtendRentalEndDate(endDate);
-                cartModel.setCalculated(Boolean.FALSE);
-                modelService.save(cartModel);
-
-                getBlCartFacade().recalculateCartIfRequired();
-                if(StringUtils.isNotEmpty(orderModel.getExtendedCart()))
-                {
-                    orderModel.setExtendedCart(cartModel.getCode());
-                    modelService.save(orderModel);
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            LOG.info("Cart Calculation failed");
-        }
-        if(Objects.nonNull(cartModel)) {
-            final PriceDataType priceType = PriceDataType.BUY;
-            orderData.setSubTotalTaxForExtendRental(
-                    getPriceDataFactory()
-                            .create(priceType, BigDecimal.valueOf(cartModel.getSubtotal()),
-                                    cartModel.getCurrency().getIsocode()));
-            orderData.setTotalDamageWaiverCostForExtendRental(getPriceDataFactory()
-                    .create(priceType, BigDecimal.valueOf(cartModel.getTotalDamageWaiverCost()),
-                            cartModel.getCurrency().getIsocode()));
-            orderData.setTotalTaxForExtendRental(
-                    getPriceDataFactory()
-                            .create(priceType, BigDecimal.valueOf(cartModel.getTotalTax()),
-                                    cartModel.getCurrency().getIsocode()));
-
-            orderData.setExtendOrderDiscount(getPriceDataFactory()
-                    .create(priceType, BigDecimal.valueOf(cartModel.getTotalDiscounts()),
-                            cartModel.getCurrency().getIsocode()));
-
-            orderData.setOrderTotalWithTaxForExtendRental(getPriceDataFactory()
-                    .create(priceType, BigDecimal.valueOf(cartModel.getTotalPrice()), cartModel.getCurrency().getIsocode()));
-
-            getBlOrderAppliedVouchersPopulator().populate(cartModel, orderData);
-        }
-
-    }
-
-
-    private void setDefaultValuesForExtendCart(final CartModel cartModel , final long defaultAddedTimeForExtendRental){
-        cartModel.setTotalDiscounts(0.0);
-        cartModel.setAppliedCouponCodes(Collections.emptyList());
-        cartModel.setDeliveryCost(0.0);
-        cartModel.setAllPromotionResults(Collections.emptySet());
-        cartModel.setTotalTax(0.0);
-        cartModel.setTotalTaxValues(Collections.emptyList());
-        cartModel.setDeliveryCost(0.0);
-        cartModel.setAvalaraTaxCalculated(false);
-        cartModel.setCalculated(false);
-        cartModel.setIsExtendedOrder(true);
-        cartModel.setExtendOrderStatus(ExtendOrderStatusEnum.PROCESSING);
-        cartModel.setTotalExtendDays((int) defaultAddedTimeForExtendRental);
-        cartModel.setExtendedOrderCopyList(Collections.emptyList());
-        cartModel.setIsLatestOrder(true);
-        cartModel.setIsSAPOrder(Boolean.TRUE);
-        cartModel.setGiftCardAmount(0.0);
-        cartModel.setGiftCard(Collections.emptyList());
-    }
 
 
 

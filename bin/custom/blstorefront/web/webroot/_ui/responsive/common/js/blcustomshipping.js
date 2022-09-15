@@ -336,6 +336,13 @@ function reverseTraverseOnShipping() {
                                 $('#ship-it-am-notification').html(notification);
                                 $('#ship-it-am-notification').show();
                             }
+                            
+                            //To make shipping cost zero bydefault, if rental cost is > 149 
+                             if(checkNaN(formatPrice($('#cart-shipping-subTotal').text().split('$')[1])) > 149 && 
+                                 data[i].code =='UPS_STORE_STANDARD_ROUND_TRIP'){
+		                            $('#cart-shipping-cost').text("$0.00");
+		                            calculateCartTotal();
+	                        }
                         }
                     }
                 }
@@ -2024,6 +2031,13 @@ function reverseTraverseOnShipping() {
         $('#ship-it-am-notification').html('');
         $('#ship-it-am-notification').hide();
      }
+     
+     //To make shipping cost zero bydefault, if rental cost is > 149 
+                             if(checkNaN(formatPrice($('#cart-shipping-subTotal').text().split('$')[1])) > 149 && 
+                                 $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').val() =='UPS_STORE_STANDARD_ROUND_TRIP'){
+		                            $('#cart-shipping-cost').text("$0.00");
+		                            calculateCartTotal();
+	                        }
   }
 
   function onSelectOfPartnerAddress(event) {
@@ -2039,14 +2053,26 @@ function reverseTraverseOnShipping() {
   }
 
   function calculateCartTotal() {
-    let total = checkNaN(parseFloat($('#cart-shipping-subTotal').text().split('$')[1])) +
-                checkNaN(parseFloat($('#cart-shipping-waiver').text().split('$')[1])) +
-                checkNaN(parseFloat($('#cart-shipping-options').text().split('$')[1])) +
-                checkNaN(parseFloat($('#cart-shipping-cost').text().split('$')[1])) +
-                checkNaN(parseFloat($('#cart-shipping-tax').text().split('$')[1])) -
-                checkNaN(parseFloat($('#cart-shipping-discount').text().split('$')[1]));
-    $('#cart-shipping-total').text('$' + total.toFixed(2));
+    let total = checkNaN(formatPrice($('#cart-shipping-subTotal').text().split('$')[1])) +
+                checkNaN(formatPrice($('#cart-shipping-waiver').text().split('$')[1])) +
+                checkNaN(formatPrice($('#cart-shipping-options').text().split('$')[1])) +
+                checkNaN(formatPrice($('#cart-shipping-cost').text().split('$')[1])) +
+                checkNaN(formatPrice($('#cart-shipping-tax').text().split('$')[1])) -
+                checkNaN(formatPrice($('#cart-shipping-discount').text().split('$')[1]));
+    $('#cart-shipping-total').text(parseFloat(total.toFixed(2)).toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
   }
+  
+  function formatPrice(price){
+	var formattedPrice;
+	if(price != undefined){
+		formattedPrice = price.replace(',','');
+		formattedPrice = parseFloat(formattedPrice);
+	}else{
+		formattedPrice = price;
+	}
+	
+	return formattedPrice;
+}
 
   function checkNaN(attribute) {
     if(isNaN(attribute)) {
