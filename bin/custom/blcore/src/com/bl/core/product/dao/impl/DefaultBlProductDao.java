@@ -3,6 +3,7 @@ package com.bl.core.product.dao.impl;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.catalog.model.CatalogModel;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.product.daos.impl.DefaultProductDao;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
@@ -71,6 +72,10 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 			+ " as c} WHERE {c:" + CatalogModel.ID + "} = ?catalog}})}})";
 
   private static final String GET_SUBPARTS_FOR_PRODUCT_MAPPING_QUERY = "select {sp.pk} from {BlSubparts as sp join blProduct as p on {sp.subpartProduct}={p.pk}} where {p.code}=?productCode and {sp.quantity} =?quantity";
+
+  private static final String GET_USED_PRODUCTS_ON_SALE_QUERY = "SELECT {p.pk} from {blProduct as p JOIN Catalogversion as cv ON {cv.pk}={p.catalogversion} and {cv.version} like ?version JOIN Catalog as c ON {c.pk}={cv.catalog} and {c.id} like ?catalogCode} where {p.forSale} = ?isForSale and {p.isNew} = ?isNew";
+
+  private static final String GET_STOCKLEVELS_FOR_SERIAL_QUERY = "SELECT {s.pk} from {stockLevel as s} where {s.serialProductCode} = ?serialCode";
   /**
    * @param typecode
    */
@@ -122,7 +127,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 
     return serialProducts;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -143,7 +148,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 	  }
 	  return serialProducts.get(0);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -176,5 +181,26 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 	  fQuery.addQueryParameter("quantity", quantity);
 	  final SearchResult<BlSubpartsModel> result = getFlexibleSearchService().search(fQuery);
 	  return result.getResult().get(0);
+  }
+
+  @Override
+  public List<BlProductModel> getUsedProductsOnSale()
+  {
+	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_USED_PRODUCTS_ON_SALE_QUERY);
+	  fQuery.addQueryParameter("isForSale", Boolean.TRUE);
+	  fQuery.addQueryParameter("isNew", Boolean.FALSE);
+	  fQuery.addQueryParameter("catalogCode", "blProductCatalog");
+	  fQuery.addQueryParameter("version", "Online");
+	  final SearchResult<BlProductModel> result = getFlexibleSearchService().search(fQuery);
+	  return result.getResult();
+  }
+
+  @Override
+  public List<StockLevelModel> getStockLevelsForSerial(final String serialCode)
+  {
+	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_STOCKLEVELS_FOR_SERIAL_QUERY);
+	  fQuery.addQueryParameter("serialCode", serialCode);
+	  final SearchResult<StockLevelModel> result = getFlexibleSearchService().search(fQuery);
+	  return result.getResult();
   }
 }
