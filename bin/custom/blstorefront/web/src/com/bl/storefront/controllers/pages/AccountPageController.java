@@ -6,7 +6,9 @@ package com.bl.storefront.controllers.pages;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.VerificationDocumentMediaModel;
+import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.services.cart.BlCartService;
+import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlRentalDateUtils;
@@ -78,30 +80,27 @@ import de.hybris.platform.commerceservices.consent.exceptions.CommerceConsentWit
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.commerceservices.enums.CountryType;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
+import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
+import de.hybris.platform.promotions.PromotionsService;
+import de.hybris.platform.promotions.model.PromotionGroupModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.time.TimeService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -305,6 +304,25 @@ public class AccountPageController extends AbstractSearchPageController
 	
 	@Resource(name = "blPasswordValidator")
 	private BlPasswordValidator blPasswordValidator;
+
+	@Resource(name = "defaultBlCalculationService")
+	private DefaultBlCalculationService defaultBlCalculationService;
+
+
+	@Resource(name = "promotionsService")
+	private PromotionsService promotionsService;
+
+
+	@Resource(name = "defaultBlExtendOrderService")
+	private DefaultBlExtendOrderService defaultBlExtendOrderService;
+
+
+	@Resource(name = "timeService")
+	private TimeService timeService;
+
+
+	@Resource(name = "commerceCartService")
+	private CommerceCartService commerceCartService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -1472,9 +1490,9 @@ public class AccountPageController extends AbstractSearchPageController
 		final String poNumber = request.getParameter(BlControllerConstants.PO_NUMBER);
 		final String poNotes = request.getParameter(BlControllerConstants.PO_NOTES);
 
+		final OrderModel extendedOrderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
 		final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
 		CartModel cartModel = commerceCartService.getCartForCodeAndUser(orderModel.getExtendedCart(), userService.getCurrentUser());
-		final OrderModel extendOrderModel = defaultBlExtendOrderService.cloneOrderModelForExtendRental(orderModel , cartModel.getTotalExtendDays());
 		OrderData orderData;
 		try {
 			orderData = blOrderFacade
@@ -1497,17 +1515,10 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			BlLogger.logMessage(LOG , Level.ERROR , "Error While performing Extend order " , e);
 		}
-
-    	BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-        "Order with code {} extended from extended rental start date {} to extended rental end date {}.", extendOrderModel.getCode() ,
-        extendOrderModel.getExtendRentalStartDate() , extendOrderModel.getExtendRentalEndDate());
 		modelService.remove(cartModel);
 		boolean isSuccess = false;
 		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) || StringUtils.isNotBlank(poNumber)) {
-
-			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
-
-			if(null != orderModel && BooleanUtils.isTrue(orderModel.getIsExtendedOrder())) {
+			if(BooleanUtils.isTrue(extendedOrderModel.getIsExtendedOrder())) {
 
 				if(StringUtils.isNotBlank(poNumber)) {
 						isSuccess = blOrderFacade.savePoPaymentForExtendOrder(poNumber , poNotes , orderCode);
@@ -1519,7 +1530,7 @@ public class AccountPageController extends AbstractSearchPageController
 				// It creates a cloned payment info from the original payment info
 				final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
 						.getClonedBrainTreePaymentInfoCode(
-								(CustomerModel) orderModel.getUser(), paymentInfoId, paymentMethodNonce);
+								(CustomerModel) extendedOrderModel.getUser(), paymentInfoId, paymentMethodNonce);
 				if(null != paymentInfo) {
 					paymentInfo.setBillPayment(Boolean.FALSE);
 					paymentInfo.setModifyPayment(Boolean.FALSE);
@@ -1527,8 +1538,8 @@ public class AccountPageController extends AbstractSearchPageController
 					paymentInfo.setCreateNewTransaction(Boolean.TRUE);
 					modelService.save(paymentInfo);
 					isSuccess = brainTreeTransactionService
-							.createAuthorizationTransactionOfOrder(orderModel,
-									BigDecimal.valueOf(orderModel.getTotalPrice()), true, paymentInfo);
+							.createAuthorizationTransactionOfOrder(extendedOrderModel,
+									BigDecimal.valueOf(extendedOrderModel.getTotalPrice()), true, paymentInfo);
 				}
 				if(BooleanUtils.isTrue(isSuccess)){
 					model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.CREDIT_CARD);}
@@ -1536,7 +1547,7 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 
 			if(isSuccess) {
-				blOrderFacade.updateOrderExtendDetails(orderModel); //to update extend order details to DB
+				blOrderFacade.updateOrderExtendDetails(extendedOrderModel); //to update extend order details to DB
 				final OrderData extendOrderData = blOrderFacade.getExtendedOrderDetailsFromOrderCode(orderCode);
 				model.addAttribute(BlControllerConstants.EXTEND_ORDER_DATA, extendOrderData);
 				final ContentPageModel extendOrderConfirmation = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_CONFIRMATION);
