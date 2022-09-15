@@ -45,10 +45,14 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 			item.setDescription(product.getDescription());
 			item.setCondition("Used");
 			item.setAvailability("in_stock");
-			item.setProduct_Type(product.getProductType().getCode());
-			item.setGoogle_Product_Category(product.getProductType().getCode());
+			if(product.getProductType()!=null) {
+				item.setProduct_Type(product.getProductType().getCode());
+				item.setGoogle_Product_Category(product.getProductType().getCode());
+			}
 			item.setBrand(product.getManufacturerName());
-			item.setImage_Link(product.getPicture().getURL());
+			if(product.getPicture()!=null) {
+				item.setImage_Link(product.getPicture().getURL());
+			}
 			item.setModel_Number(product.getCode());
 			item.setGtin(product.getSerialProducts().iterator().next().getUpc());
 			item.setPrice(getSerialPrice(product.getSerialProducts().iterator().next()));
