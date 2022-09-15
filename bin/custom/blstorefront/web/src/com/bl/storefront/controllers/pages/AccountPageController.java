@@ -90,6 +90,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.promotions.PromotionsService;
+import de.hybris.platform.promotions.model.PromotionGroupModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
@@ -99,15 +100,7 @@ import de.hybris.platform.servicelayer.time.TimeService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -1352,11 +1345,11 @@ public class AccountPageController extends AbstractSearchPageController
 	public String extendRent(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model model , final HttpServletRequest request)
 			throws CMSItemNotFoundException {
 
-//		// To remove seesion if current order and session order when mismatch
-//		if(null != BlExtendOrderUtils.getCurrentExtendOrderToSession() &&
-//				! StringUtils.containsIgnoreCase(orderCode , BlExtendOrderUtils.getCurrentExtendOrderToSession().getCode())){
-//			BlExtendOrderUtils.removeCurrentExtendOrderToSession();
-//		}
+		// To remove seesion if current order and session order when mismatch
+		if(null != BlExtendOrderUtils.getCurrentExtendOrderToSession() &&
+				! StringUtils.containsIgnoreCase(orderCode , BlExtendOrderUtils.getCurrentExtendOrderToSession().getCode())){
+			BlExtendOrderUtils.removeCurrentExtendOrderToSession();
+		}
 
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
 		orderDetails.setEntries(orderDetails.getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(

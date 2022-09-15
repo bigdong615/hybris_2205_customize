@@ -419,7 +419,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
                 {
                     orderModel.setExtendedCart(cartModel.getCode());
                     modelService.save(orderModel);
-                    modelService.refresh(orderModel);
                 }
             }
         }
