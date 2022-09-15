@@ -1784,6 +1784,12 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>To store associated Used Gear order on serial</description>
                      </attribute>
+                     <attribute qualifier="isSyncRequired" type="java.lang.Boolean">
+	                     <persistence type="property" />
+	                     <modifiers read="true" write="true" search="true" optional="true" />
+	                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>If the item is required to Sync</description>
+                   </attribute>
                  </attributes>
              </itemtype>
 

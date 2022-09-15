@@ -1771,6 +1771,8 @@
         <property name="catalogVersionDao" ref="catalogVersionDao"/>
         <property name="populator" ref="blSerialOnlineToStagedDataPopulator"/>
         <property name="sessionService" ref="sessionService"/>
+        <property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="solrIndexerHotUpdateJob" ref="solrIndexerHotUpdateJob"/>
     </bean>
 
 	<alias name="blItemsBillingChargePrepareInterceptor" alias="itemsBillingChargePrepareInterceptor"/>
