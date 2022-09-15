@@ -6,13 +6,9 @@ import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import org.springframework.ui.Model;
-
-import java.util.Date;
-import java.util.Map;
 
 /**
  * This Interface created to add custom logic for extend rental order and rent again
@@ -33,18 +29,13 @@ public interface BlOrderFacade extends OrderFacade {
   /**
    * This method created to add custom logic for extend order product price based on extend rental date
    */
-  OrderData calculatePriceForExtendOrders(final OrderModel orderModel, CartModel cartModel, final OrderData orderData) throws CommerceCartModificationException;
+  OrderData calculatePriceForExtendOrders(final OrderModel orderModel, OrderData orderData, final String orderEndDate, final String selectedDate) throws CommerceCartModificationException;
 
-  OrderData calculatePriceForExtendCart(final OrderModel orderModel , final OrderData orderData, final String orderEndDate,
-                                        final String selectedDate) throws CommerceCartModificationException;
   /**
    * This method created to set extend rental details
    */
-  OrderData setRentalExtendOrderDetails(final String orderCode , final CartModel cartModel)
+  OrderData setRentalExtendOrderDetails(final String orderCode , final String rentalEndDate , final String selectedDate)
       throws CommerceCartModificationException;
-
-  OrderData setRentalExtendCartDetails(final String orderCode , final String rentalEndDate ,final String selectedDate)
-          throws CommerceCartModificationException;
 
   /**
    * This method created to get extend order details  from order code
