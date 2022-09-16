@@ -82,6 +82,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 		if(Objects.nonNull(blSerialProduct))
 		{
+			blSerialProduct.setIsSyncRequired(false);
 			addDateFirstActiveOnSerial(blSerialProduct, ctx);
 			//Intercepting the change in serialStatus and changing the consignment status accordingly if available
 			doStatusChangeOnConsignment(blSerialProduct, ctx);
@@ -296,6 +297,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 
 				if(getBlStockService().isActiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
 						.isInactiveStatus((SerialStatusEnum) initialValue)){
+					blSerialProduct.setIsSyncRequired(true);
+					blSerialProduct.setHardAssigned(false);
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, false);
 				}
 				 else if(getBlStockService().isInactiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
@@ -311,7 +314,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					blSerialProduct.getCode());
 		}
 	}
-
 
 		/**
 		 * It updates the stock records when serial status of a serial product is changed
@@ -845,4 +847,5 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 		this.sessionService = sessionService;
 	}
+
 }

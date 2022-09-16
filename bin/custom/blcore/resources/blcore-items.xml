@@ -819,11 +819,6 @@
             <modifiers read="true" write="true" optional="true" />
             <description>Date on which the Order status changes to SHIPPED</description>
         </attribute>
-          <attribute qualifier="extendedCart" type="java.lang.String">
-              <persistence type="property" />
-              <modifiers read="true" write="true" optional="true" />
-              <description>Cart to store values for extended order</description>
-          </attribute>
       </attributes>
       </itemtype>
 
@@ -1784,6 +1779,12 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>To store associated Used Gear order on serial</description>
                      </attribute>
+                     <attribute qualifier="isSyncRequired" type="java.lang.Boolean">
+	                     <persistence type="property" />
+	                     <modifiers read="true" write="true" search="true" optional="true" />
+	                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>If the item is required to Sync</description>
+                   </attribute>
                  </attributes>
              </itemtype>
 
@@ -3421,6 +3422,19 @@
 			  		</attribute>
                 </attributes>
             </itemtype>
+            
+            <itemtype code="BlGoogleMarketPlaceProductFeed" autocreate="true" generate="true">
+          	<description>Product feed XML for Google Market Place will be saved here</description>
+          	<deployment table="BlGoogleProductFeed" typecode="12247"/>
+          	<attributes>
+	            <attribute qualifier="name" type="java.lang.String">
+	                <persistence type="property" />
+	            </attribute>
+	            <attribute qualifier="productFeedFile" type="Media">
+	                <persistence type="property" />
+	            </attribute>
+          	</attributes>
+          </itemtype>
         </typegroup>
 
 		<typegroup name="StateWarehouseMapping">

@@ -1,8 +1,10 @@
 package com.bl.core.product.dao;
 
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.product.daos.ProductDao;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import com.bl.core.model.BlProductModel;
@@ -32,7 +34,7 @@ public interface BlProductDao extends ProductDao {
    */
   public Collection<BlSerialProductModel> getBlSerialProductsForCodes(
       final Set<String> serialProductCodes);
-  
+
   /**
    * Gets the serial by barcode.
    *
@@ -40,7 +42,7 @@ public interface BlProductDao extends ProductDao {
    * @return the serial by barcode
    */
   public BlSerialProductModel getSerialByBarcode(final String serialBarcode);
-  
+
   /**
    * Gets the serial by serial code.
    *
@@ -50,5 +52,9 @@ public interface BlProductDao extends ProductDao {
   public BlSerialProductModel getSerialBySerialCode(final String serialCode);
 
   public BlSubpartsModel getBlSubPartsPk(final String code, Integer quantity);
+
+  public List<BlProductModel> getUsedProductsOnSale();
+
+  public List<StockLevelModel> getStockLevelsForSerial(String serialCode);
 
 }
