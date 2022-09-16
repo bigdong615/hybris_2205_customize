@@ -84,7 +84,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		if (StringUtils.isNotEmpty(delivertCarrier.getCode()) && CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService()
-					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo));
+					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo), packagingInfo);
 			if (upsResponse != null)
 			{
 				saveResponseOnOutboundPackage(upsResponse, packagingInfo);
@@ -116,7 +116,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService().createUPSShipment(
-					getBlUpsShippingDataPopulator().populateUPSReturnShipmentRequest(packagingInfo, warehouseModel));
+					getBlUpsShippingDataPopulator().populateUPSReturnShipmentRequest(packagingInfo, warehouseModel), packagingInfo);
 			if (upsResponse != null)
 			{
 				saveResponseOnInBoundPackage(upsResponse, packagingInfo);
