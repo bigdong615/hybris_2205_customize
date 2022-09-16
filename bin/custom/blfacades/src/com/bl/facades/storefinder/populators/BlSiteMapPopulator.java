@@ -37,6 +37,7 @@ public class BlSiteMapPopulator<T extends ItemModel> implements Populator<T, Sit
 			{
 				relUrl = StringEscapeUtils.escapeXml("/buy" + getUrlResolver().resolve(sourcePrd));
 			}
+			relUrl.replace("http", "https");
 			target.setForRent(sourcePrd.getForRent());
 			target.setImages(null);
 			target.setLoc(relUrl);
