@@ -29,7 +29,6 @@ public class BlProductPageSiteMapGenerator extends BlAbstractSiteMapGenerator<Pr
 	@Override
 	protected List<ProductModel> getDataInternal(final CMSSiteModel siteModel)
 	{
-		LOG.info("BlProductPageSiteMapGenerator getDataInternal");
 		try
 		{
 			final String query = "select {prd.pk},{prd.code} FROM {BlProduct! as prd "
@@ -40,7 +39,6 @@ public class BlProductPageSiteMapGenerator extends BlAbstractSiteMapGenerator<Pr
 			params.put("approvalStatus", ArticleApprovalStatus.APPROVED);
 
 			final List<ProductModel> productList = doSearch(query, params, ProductModel.class);
-			System.out.println("BlProductPageSiteMapGenerator Product count : " + productList.size());
 			LOG.info("BlProductPageSiteMapGenerator ProductCount : " + productList.size());
 			return productList;
 		}
