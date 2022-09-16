@@ -6,9 +6,7 @@ package com.bl.storefront.controllers.pages;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.VerificationDocumentMediaModel;
-import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.services.cart.BlCartService;
-import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlRentalDateUtils;
@@ -80,29 +78,30 @@ import de.hybris.platform.commerceservices.consent.exceptions.CommerceConsentWit
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.commerceservices.enums.CountryType;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
-import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
-import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.payment.AdapterException;
-import de.hybris.platform.promotions.PromotionsService;
-import de.hybris.platform.promotions.jalo.PromotionsManager;
-import de.hybris.platform.promotions.model.PromotionGroupModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.time.TimeService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -305,21 +304,6 @@ public class AccountPageController extends AbstractSearchPageController
 	
 	@Resource(name = "blPasswordValidator")
 	private BlPasswordValidator blPasswordValidator;
-
-	@Resource(name = "defaultBlCalculationService")
-	private DefaultBlCalculationService defaultBlCalculationService;
-
-	@Resource(name = "promotionsService")
-	private PromotionsService promotionsService;
-
-	@Resource(name = "defaultBlExtendOrderService")
-	private DefaultBlExtendOrderService defaultBlExtendOrderService;
-
-	@Resource(name = "timeService")
-	private TimeService timeService;
-
-	@Resource(name = "commerceCartService")
-	private CommerceCartService commerceCartService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -1487,41 +1471,13 @@ public class AccountPageController extends AbstractSearchPageController
 		final String poNumber = request.getParameter(BlControllerConstants.PO_NUMBER);
 		final String poNotes = request.getParameter(BlControllerConstants.PO_NOTES);
 
-		final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
-		CartModel cartModel = commerceCartService.getCartForCodeAndUser(orderModel.getExtendedCart(), userService.getCurrentUser());
-		final OrderModel extendOrderModel = defaultBlExtendOrderService.cloneOrderModelForExtendRental(orderModel , cartModel.getTotalExtendDays());
-
-		 //Start Date will same as existing rental startDate
-		extendOrderModel.setTotalExtendDays((int) cartModel.getTotalExtendDays()); // To set total number of days extended
-		Calendar extendStartDate = Calendar.getInstance();
-		extendStartDate.setTime(cartModel.getExtendRentalStartDate());
-		extendStartDate.add(Calendar.DAY_OF_MONTH ,1);
-		extendOrderModel.setRentalEndDate(cartModel.getRentalEndDate());    // End Date will be stored based on customer selection
-		extendOrderModel.setActualRentalEndDate(cartModel.getActualRentalEndDate());
-
-
-		// To set extend startDate and Extend end date on order model .
-    	extendOrderModel.setExtendRentalStartDate(cartModel.getExtendRentalStartDate());
-    	extendOrderModel.setExtendRentalEndDate(cartModel.getRentalEndDate());
-    	//setOptimizedShippingEndDateForConsignment(stringStringMap , extendOrderModel);
-
-    	BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-        "Order with code {} extended from extended rental start date {} to extended rental end date {}.", extendOrderModel.getCode() ,
-        extendOrderModel.getExtendRentalStartDate() , extendOrderModel.getExtendRentalEndDate());
-		try {
-		  defaultBlCalculationService.recalculateForExtendOrder(extendOrderModel, (int) cartModel.getTotalExtendDays());
-		  promotionsService.updatePromotions(getPromotionGroups(), extendOrderModel, true, PromotionsManager.AutoApplyMode.APPLY_ALL, PromotionsManager.AutoApplyMode.APPLY_ALL,timeService.getCurrentTime());
-		} catch (final CalculationException e) {
-		  BlLogger.logFormatMessageInfo(LOG, Level.ERROR ,
-			  "Error while Calculating promotion for Order with code {} extended from extended rental start date {} to extended rental end date {}."
-			  , extendOrderModel.getCode() ,  extendOrderModel.getExtendRentalStartDate() , extendOrderModel.getExtendRentalEndDate());
-		}
-		modelService.remove(cartModel);
-
 		boolean isSuccess = false;
 		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) || StringUtils.isNotBlank(poNumber)) {
 
-			if(BooleanUtils.isTrue(extendOrderModel.getIsExtendedOrder())) {
+			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
+
+			if(null != orderModel && BooleanUtils.isTrue(orderModel.getIsExtendedOrder())) {
+
 				if(StringUtils.isNotBlank(poNumber)) {
 						isSuccess = blOrderFacade.savePoPaymentForExtendOrder(poNumber , poNotes , orderCode);
 						if(BooleanUtils.isTrue(isSuccess)){
@@ -1540,7 +1496,7 @@ public class AccountPageController extends AbstractSearchPageController
 					paymentInfo.setCreateNewTransaction(Boolean.TRUE);
 					modelService.save(paymentInfo);
 					isSuccess = brainTreeTransactionService
-							.createAuthorizationTransactionOfOrder(extendOrderModel,
+							.createAuthorizationTransactionOfOrder(orderModel,
 									BigDecimal.valueOf(orderModel.getTotalPrice()), true, paymentInfo);
 				}
 				if(BooleanUtils.isTrue(isSuccess)){
@@ -1549,7 +1505,7 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 
 			if(isSuccess) {
-				blOrderFacade.updateOrderExtendDetails(extendOrderModel); //to update extend order details to DB
+				blOrderFacade.updateOrderExtendDetails(orderModel); //to update extend order details to DB
 				final OrderData extendOrderData = blOrderFacade.getExtendedOrderDetailsFromOrderCode(orderCode);
 				model.addAttribute(BlControllerConstants.EXTEND_ORDER_DATA, extendOrderData);
 				final ContentPageModel extendOrderConfirmation = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_CONFIRMATION);
@@ -1638,17 +1594,6 @@ public class AccountPageController extends AbstractSearchPageController
 		final OrderModel order = blOrderFacade.getOrderModelFromOrderCode(orderCode);
 		blReturnOrderFacade.createReturnRequest(order, productList);
 		return REDIRECT_PREFIX + ROOT;
-	}
-
-	private Collection<PromotionGroupModel> getPromotionGroups()
-	{
-		final Collection<PromotionGroupModel> promotionGroupModels = new ArrayList<>();
-		if (getBaseSiteService().getCurrentBaseSite() != null
-				&& getBaseSiteService().getCurrentBaseSite().getDefaultPromotionGroup() != null)
-		{
-			promotionGroupModels.add(getBaseSiteService().getCurrentBaseSite().getDefaultPromotionGroup());
-		}
-		return promotionGroupModels;
 	}
 
 	/**

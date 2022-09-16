@@ -124,7 +124,7 @@ INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]
 
 #Mobile device navigation link component for ship or pickup, support and Account nav link                                    
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url  ; target(code)[default='sameWindow'] 
-								;						; MobilePickUpAndDeliveryLink; Mobile PickUp And Delivery Link; "/shiporpickup";
+								;						; MobilePickUpAndDeliveryLink; Mobile PickUp And Delivery Link; "/ship-or-pickup";
 								;						; MobileSupportLink; Mobile Support Link; "/support";
 								;						; MobileAccountNavLink; Mobile My Account Link; "/myaccount";
 
