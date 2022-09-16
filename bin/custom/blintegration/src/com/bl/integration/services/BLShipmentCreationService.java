@@ -27,7 +27,7 @@ public interface BLShipmentCreationService
 	 * @param upsShipmentRequest for ups shipment
 	 * @return UPSShipmentCreateResponse
 	 */
-	UPSShipmentCreateResponse createUPSShipment(final UpsShippingRequestData upsShipmentRequest);
+	UPSShipmentCreateResponse createUPSShipment(final UpsShippingRequestData upsShipmentRequest, final PackagingInfoModel shipmentPackage);
 
 
 	/**
