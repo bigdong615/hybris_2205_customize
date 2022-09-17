@@ -96,7 +96,7 @@ public class BLUpsShippingDataPopulator
 		final UpsShippingRequestData upsRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
 
-		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, null);
+		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, null, false);
 		upsRequestData.setShipment(upsShipmentData);
 		return upsRequestData;
 
@@ -114,7 +114,7 @@ public class BLUpsShippingDataPopulator
 		final UpsShippingRequestData upsReturnRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
 
-		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel);
+		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel, true);
 
 		/** Creating return service Data **/
 
@@ -136,7 +136,7 @@ public class BLUpsShippingDataPopulator
 	 * @param shipmentData
 	 */
 	private ShipmentData populateUpsShipmentRequestData(final PackagingInfoModel packagingInfo, final ShipmentData shipmentData,
-			final WarehouseModel stateWarehouse)
+			final WarehouseModel stateWarehouse, final boolean isRSLabel)
 	{
 		/** Creating UPS Payment Data **/
 		final UpsPaymentInformation upsPaymentInformation = new UpsPaymentInformation();
@@ -159,7 +159,8 @@ public class BLUpsShippingDataPopulator
 			shipperData.setShipperNumber(stateWarehouse.getAccountNumber());
 			populatePaymentServiceData(stateWarehouse, upsPaymentInformation);
 		}
-		final AddressData addressData = addressConverter.convert(shipperAddress);
+		final AddressModel packageAddress = packagingInfo.getConsignment().getOrder().getDeliveryAddress();
+		final AddressData addressData = addressConverter.convert(isRSLabel ? packageAddress : shipperAddress);
 
 
 
@@ -167,21 +168,32 @@ public class BLUpsShippingDataPopulator
 		shipperPhone.setNumber(addressData.getPhone());
 
 		final AddressData shipperAddressData = new AddressData();
-		populateShipperAddressData(addressData, shipperAddressData);
-
-		shipperData.setName(shipperName);
-		shipperData.setAttentionName(shipperAttensionName);
+		populateShipperAddressData(addressData, shipperAddressData, isRSLabel);
+		if (isRSLabel)
+		{
+			shipperData.setName(trimNameOnRequest(
+					new AtomicReference<>(StringUtils.isNotBlank(addressData.getCompanyName()) ? addressData.getCompanyName()
+							: getEmptyIfNullOrBlank(addressData.getFirstName()).concat(StringUtils.SPACE)
+									.concat(getEmptyIfNullOrBlank(addressData.getLastName())))));
+			shipperData.setAttentionName(trimNameOnRequest(new AtomicReference<>(getEmptyIfNullOrBlank(addressData.getFirstName())
+					.concat(StringUtils.SPACE).concat(getEmptyIfNullOrBlank(addressData.getLastName())))));
+		}
+		else
+		{
+			shipperData.setName(shipperName);
+			shipperData.setAttentionName(shipperAttensionName);
+		}
 		shipperData.setPhone(shipperPhone);
 		shipperData.setAddress(shipperAddressData);
 
 		/** Creating ShipFrom Data **/
 		final ShipFromData shipFromData = new ShipFromData();
-		populateShipFromData(shipperPhone, shipperAddressData, shipFromData);
+		populateShipFromData(shipperPhone, shipperAddressData, shipFromData, isRSLabel);
 
 		/** Creating ShipTo Data **/
-		final AddressData shipToAddress = addressConverter.convert(packagingInfo.getConsignment().getOrder().getDeliveryAddress());
+		final AddressData shipToAddress = addressConverter.convert(isRSLabel ? shipperAddress : packageAddress);
 
-		final ShipToData shipToData = populateShipToData(shipToAddress);
+		final ShipToData shipToData = populateShipToData(shipToAddress, isRSLabel);
 
 		/** Creating UPS Shipment Service Data **/
 		final UpsShipmentServiceData upsShipmentServiceData = new UpsShipmentServiceData();
@@ -210,8 +222,14 @@ public class BLUpsShippingDataPopulator
 	 * @param shipperData
 	 * @param shipperAddressData
 	 */
-	private void populateShipperAddressData(final AddressData addressData, final AddressData shipperAddressData)
+	private void populateShipperAddressData(final AddressData addressData, final AddressData shipperAddressData, final boolean isRSLabel)
 	{
+		if(isRSLabel)
+		{
+			shipperAddressData.setFirstName(addressData.getFirstName());
+			shipperAddressData.setLastName(addressData.getLastName());
+			shipperAddressData.setCompanyName(addressData.getCompanyName());
+		}
 		shipperAddressData.setLine1(addressData.getLine1());
 		shipperAddressData.setLine2(addressData.getLine2());
 		shipperAddressData.setTown(addressData.getTown());
@@ -272,10 +290,23 @@ public class BLUpsShippingDataPopulator
 	 * @param shipFromData
 	 */
 	private void populateShipFromData(final ShipmentPhoneData shipperPhone, final AddressData shipperAddressData,
-			final ShipFromData shipFromData)
+			final ShipFromData shipFromData, final boolean isRSLabel)
 	{
-		shipFromData.setName(shipperName);
-		shipFromData.setAttentionName(shipperAttensionName);
+		if (isRSLabel)
+		{
+			shipFromData.setName(trimNameOnRequest(new AtomicReference<>(
+					StringUtils.isNotBlank(shipperAddressData.getCompanyName()) ? shipperAddressData.getCompanyName()
+							: getEmptyIfNullOrBlank(shipperAddressData.getFirstName()).concat(StringUtils.SPACE)
+									.concat(getEmptyIfNullOrBlank(shipperAddressData.getLastName())))));
+			shipFromData
+					.setAttentionName(trimNameOnRequest(new AtomicReference<>(getEmptyIfNullOrBlank(shipperAddressData.getFirstName())
+							.concat(StringUtils.SPACE).concat(getEmptyIfNullOrBlank(shipperAddressData.getLastName())))));
+		}
+		else
+		{
+			shipFromData.setName(shipperName);
+			shipFromData.setAttentionName(shipperAttensionName);
+		}
 		shipFromData.setPhone(shipperPhone);
 		shipFromData.setAddress(shipperAddressData);
 	}
@@ -286,7 +317,7 @@ public class BLUpsShippingDataPopulator
 	 * @param shipToAddress
 	 * @return
 	 */
-	private ShipToData populateShipToData(final AddressData shipToAddress)
+	private ShipToData populateShipToData(final AddressData shipToAddress, final boolean isRSLabel)
 	{
 		final AddressData shipToAddressData = new AddressData();
 		if (StringUtils.isNotEmpty(shipToAddress.getFirstName()))
@@ -325,13 +356,18 @@ public class BLUpsShippingDataPopulator
 		}
 		else
 		{
-			shipToData.setName(trimNameOnRequest(new AtomicReference<>(shipToAddressData.getFirstName().concat(StringUtils.SPACE).concat(shipToAddressData.getLastName()))));
+			shipToData.setName(trimNameOnRequest(new AtomicReference<>(getEmptyIfNullOrBlank(shipToAddressData.getFirstName()).concat(StringUtils.SPACE).concat(getEmptyIfNullOrBlank(shipToAddressData.getLastName())))));
 		}
 		shipToData
-				.setAttentionName(trimNameOnRequest(new AtomicReference<>(shipToAddressData.getFirstName().concat(StringUtils.SPACE).concat(shipToAddressData.getLastName()))));
+				.setAttentionName(isRSLabel ? shipperAttensionName : trimNameOnRequest(new AtomicReference<>(getEmptyIfNullOrBlank(shipToAddressData.getFirstName()).concat(StringUtils.SPACE).concat(getEmptyIfNullOrBlank(shipToAddressData.getLastName())))));
 		shipToData.setPhone(shipToPhone);
 		shipToData.setAddress(shipToAddressData);
 		return shipToData;
+	}
+	
+	private String getEmptyIfNullOrBlank(final String value)
+	{
+		return StringUtils.defaultIfBlank(value, StringUtils.EMPTY);
 	}
 
 

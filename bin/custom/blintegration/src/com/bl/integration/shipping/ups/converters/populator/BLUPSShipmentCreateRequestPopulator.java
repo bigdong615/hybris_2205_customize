@@ -3,8 +3,10 @@
  */
 package com.bl.integration.shipping.ups.converters.populator;
 
+import com.ups.xmlschema.xoltws.ship.v1.*;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -21,27 +23,6 @@ import com.bl.facades.shipment.data.UpsShippingRequestData;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.ups.xmlschema.xoltws.common.v1.RequestType;
 import com.ups.xmlschema.xoltws.common.v1.TransactionReferenceType;
-import com.ups.xmlschema.xoltws.ship.v1.BillShipperType;
-import com.ups.xmlschema.xoltws.ship.v1.DimensionsType;
-import com.ups.xmlschema.xoltws.ship.v1.LabelImageFormatType;
-import com.ups.xmlschema.xoltws.ship.v1.LabelSpecificationType;
-import com.ups.xmlschema.xoltws.ship.v1.LabelStockSizeType;
-import com.ups.xmlschema.xoltws.ship.v1.PackageType;
-import com.ups.xmlschema.xoltws.ship.v1.PackageWeightType;
-import com.ups.xmlschema.xoltws.ship.v1.PackagingType;
-import com.ups.xmlschema.xoltws.ship.v1.PaymentInfoType;
-import com.ups.xmlschema.xoltws.ship.v1.ReturnServiceType;
-import com.ups.xmlschema.xoltws.ship.v1.ServiceType;
-import com.ups.xmlschema.xoltws.ship.v1.ShipAddressType;
-import com.ups.xmlschema.xoltws.ship.v1.ShipFromType;
-import com.ups.xmlschema.xoltws.ship.v1.ShipPhoneType;
-import com.ups.xmlschema.xoltws.ship.v1.ShipToAddressType;
-import com.ups.xmlschema.xoltws.ship.v1.ShipToType;
-import com.ups.xmlschema.xoltws.ship.v1.ShipUnitOfMeasurementType;
-import com.ups.xmlschema.xoltws.ship.v1.ShipmentChargeType;
-import com.ups.xmlschema.xoltws.ship.v1.ShipmentRequest;
-import com.ups.xmlschema.xoltws.ship.v1.ShipmentType;
-import com.ups.xmlschema.xoltws.ship.v1.ShipperType;
 
 
 /**
@@ -65,7 +46,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	 * @param upsShipmentRequest
 	 * @return
 	 */
-	public ShipmentRequest convertToUPSShipmentRequest(final UpsShippingRequestData upsShipmentRequest)
+	public ShipmentRequest convertToUPSShipmentRequest(final UpsShippingRequestData upsShipmentRequest, final String referenceNumber)
 	{
 		final ShipmentRequest shipmentRequest = new ShipmentRequest();
 		final RequestType requestType = new RequestType();
@@ -158,6 +139,11 @@ public class BLUPSShipmentCreateRequestPopulator
 		pkgWeight.setWeight(packageType.getPackageWeight().getWeight());
 		pkg1.setPackageWeight(pkgWeight);
 		pkg1.setDescription(BlintegrationConstants.PACKAGE_DESCRIPTION);
+		List<ReferenceNumberType> lRefNum = new ArrayList<>();
+		final ReferenceNumberType refNumType = new ReferenceNumberType();
+		refNumType.setValue(referenceNumber);
+		lRefNum.add(refNumType);
+		pkg1.getReferenceNumber().addAll(lRefNum);
 		packageList.add(pkg1);
 
 		/** Creating LabelSpecification Data **/

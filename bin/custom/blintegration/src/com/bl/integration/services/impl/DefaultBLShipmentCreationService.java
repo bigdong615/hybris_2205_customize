@@ -20,11 +20,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.Handler;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -106,13 +109,14 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UPSShipmentCreateResponse createUPSShipment(final UpsShippingRequestData upsShipmentRequest)
+	public UPSShipmentCreateResponse createUPSShipment(final UpsShippingRequestData upsShipmentRequest, final PackagingInfoModel shipmentPackage)
 	{
 		final UPSShipmentCreateResponse upsShipmentResponseData = new UPSShipmentCreateResponse();
 		try
 		{
 			final ShipmentRequest shipmentRequest = getBlUPSShipmentCreateRequestPopulator()
-					.convertToUPSShipmentRequest(upsShipmentRequest);
+					.convertToUPSShipmentRequest(upsShipmentRequest, getReferenceNumberForPackage(shipmentPackage));
+
 			final UPSSecurity upsSecurity = getBlUPSSecurityPopulator().populateUPSSecurity();
 
 			final ShipmentResponse upsShipmentResponse = createUPSShipmentResponse(shipmentRequest, upsSecurity);
@@ -157,6 +161,16 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			}
 		}
 		return null;
+	}
+
+	private String getReferenceNumberForPackage(final PackagingInfoModel shipmentPackage)
+	{
+		if(Objects.nonNull(shipmentPackage.getConsignment()))
+		{
+			return Objects.nonNull(shipmentPackage.getConsignment().getOrder())
+					? shipmentPackage.getConsignment().getOrder().getCode() : shipmentPackage.getConsignment().getCode();
+		}
+		return StringUtils.EMPTY;
 	}
 
 	/**

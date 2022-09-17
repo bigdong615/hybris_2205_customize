@@ -285,7 +285,9 @@
             keyboard: false,
           } ).mount());
          }); 
-        document.addEventListener( 'DOMContentLoaded', function () {  
+        
+        
+       /*  document.addEventListener( 'DOMContentLoaded', function () {  
         document.querySelectorAll('.logo-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
             perPage: 3,
@@ -293,7 +295,82 @@
             //drag   : true,
             keyboard: false,
         } ).mount());
-        }); 
+        });  */
+        
+        //handled brands for mobile
+        document.addEventListener( 'DOMContentLoaded', function () {
+            new Splide( '#logo-slider', {
+                perPage: 4,
+                 arrows :false,
+                pagination:false,
+                breakpoints: {
+                    //'991': {
+                    //    perPage: 3,
+                    //},
+                    '640': {
+                        perPage: 2,
+                    },
+                   /* BL-536 - A.1. */
+                },
+                rewind : true,
+                gap: 30,
+                keyboard: false,
+            } ).mount();
+             
+                
+               var cat_slider_image_qty = document.getElementById("logo-slider-list").getElementsByTagName("li").length;
+               
+                if(cat_slider_image_qty<=4){
+                     new Splide( '#logo-slider', {
+                    perPage: 4,
+                    arrows :false,
+                    pagination:false,
+                    breakpoints: {
+                    '540': {
+                        perPage: 2, 
+                      pagination:true
+                    },
+                  }
+                   } ).mount();
+
+                }
+
+             if(cat_slider_image_qty>4){
+           
+              new Splide( '#logo-slider', {
+                perPage: 4,
+                arrows :true,
+                pagination:true,
+                breakpoints: {
+                    '991': {
+                        perPage: 3,
+                    },
+                    '640': {
+                        
+                        perPage: 3,
+                       
+                    },
+                    '540': {
+                        perPage: 2,
+                         
+                        
+                    },
+                },
+                rewind : true,
+                gap: 30,
+               } ).mount();
+             }
+
+            if(cat_slider_image_qty<=2 && screen.width<=540){
+               document.querySelector("#logo-slider .splide__pagination").classList.add("d-none");
+             }
+             }); 
+        
+        
+        
+        
+        
+        
         document.addEventListener( 'DOMContentLoaded', function () {
          new Splide( '#testimonials-slider', {
             perPage: 1,

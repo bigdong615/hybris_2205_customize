@@ -1,26 +1,34 @@
 package com.bl.backoffice.actions;
 
 import de.hybris.platform.acceleratorservices.urlresolver.SiteBaseUrlResolutionService;
-import de.hybris.platform.core.PK;
+import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.servicelayer.exceptions.ModelLoadingException;
+import de.hybris.platform.servicelayer.media.MediaService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.site.BaseSiteService;
 
-import java.net.URLEncoder;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.zkoss.zk.ui.Executions;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Messagebox;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
@@ -45,11 +53,9 @@ public class PrintLabelAction extends AbstractComponentWidgetAdapterAware
 	
 	@Resource(name="baseSiteService")
 	private BaseSiteService baseSiteService;
-
-	protected static final String SOCKET_OUT_CONTEXT = "blPrintLabelContext";
-	protected static final String OUT_CONFIRM = "confirmOutput";
-	protected static final String COMPLETE = "completed";
-	private static final String SITE_URL = "website.bl.https";
+	
+	@Resource(name="mediaService")
+	private MediaService mediaService;
 
 	/**
 	 * This method is responsible for fetch the consignment which are not in CANCELLED, CHECKED_INVALID,
@@ -79,21 +85,157 @@ public class PrintLabelAction extends AbstractComponentWidgetAdapterAware
 	{
 		try
 		{
-		final ConsignmentModel consignment = actionContext.getData();
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Printing os shipment label started for consignment {}", consignment.getCode());
-		final String pk = consignment.getPk().toString();
-		Executions.getCurrent().sendRedirect( getSiteBaseUrlResolutionService()
-            .getWebsiteUrlForSite(getBaseSiteService().getBaseSiteForUID(BlCoreConstants.BASE_STORE_ID),
-                  StringUtils.EMPTY, Boolean.TRUE, "/shipment/printLabel",
-                  "code=".concat(pk)), "_blank");
-		Messagebox.show("Printing of shipment label is done for consignment " + consignment.getCode(), "Info", Messagebox.OK, "icon");
-		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
+			final ConsignmentModel consignment = actionContext.getData();
+			if(isLabelsNotAvailable(consignment))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No labels found on consignment {}",
+						consignment.getCode());
+				Messagebox.show("No Labels found on consignment: " + consignment.getCode(),
+						"Info", Messagebox.OK, "icon");
+			}
+			else
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Downloading shipment label started for consignment {}",
+						consignment.getCode());
+				downloadAllFiles(consignment);
+			}			
+			this.sendOutput(BlCoreConstants.SOCKET_OUT_CONTEXT, actionContext.getData());
 		}
-		catch (final Exception e) {
-			Messagebox.show("Error occured while printing shipment label for consignment " + actionContext.getData().getCode(), "Info", Messagebox.OK, "icon");
-			return new ActionResult(BlintegrationConstants.SUCCESS);
+		catch (final Exception e)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, e,
+					"PrintLabelAction :: perform :: Error occured while downloading shipment label for consignment : {}",
+					actionContext.getData().getCode());
+			Messagebox.show("Error occured while printing shipment label for consignment " + actionContext.getData().getCode(),
+					"Info", Messagebox.OK, "icon");
+			return new ActionResult<>(BlintegrationConstants.SUCCESS);
 		}
-		return new ActionResult(BlintegrationConstants.CLIENT_SIDE_ERROR);
+		return new ActionResult<>(BlintegrationConstants.CLIENT_SIDE_ERROR);
+	}
+	
+	private boolean isLabelsNotAvailable(final ConsignmentModel consignment)
+	{
+		return Objects.isNull(consignment) || CollectionUtils.isEmpty(consignment.getPackaginginfos())
+				|| CollectionUtils.isEmpty(getAllLablesFromPackages(consignment));
+	}
+	
+	/**
+	 * Download all files.
+	 *
+	 * @param consignment the consignment
+	 */
+	private void downloadAllFiles(final ConsignmentModel consignment)
+	{
+		try
+		{
+			if (Objects.nonNull(consignment) && CollectionUtils.isNotEmpty(consignment.getPackaginginfos()))
+			{
+				final List<MediaModel> lPackageLables = getAllLablesFromPackages(consignment);				
+				if (CollectionUtils.isNotEmpty(lPackageLables))
+				{
+					final String zipFileName = consignment.getCode() + BlCoreConstants.PACKAGE_LABELS + System.currentTimeMillis();
+					final File zipFile = File.createTempFile(zipFileName, BlCoreConstants.ZIP_FILE_EXTENSION);
+					if (Objects.nonNull(zipFile))
+					{
+						final String tempZipFileAbsolutePath = zipFile.getAbsolutePath();
+						BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+								"PrintLabelAction :: downloadAllFiles :: Temp Zip File created at path: {}", tempZipFileAbsolutePath);
+						final FileOutputStream zipFileOutputStream = new FileOutputStream(tempZipFileAbsolutePath);
+						final ZipOutputStream zipOutputStream = new ZipOutputStream(zipFileOutputStream);
+						addAllLabelsToZipFile(consignment, lPackageLables, zipOutputStream);
+						zipOutputStream.close();
+						final String downloadZipFileName = BlCoreConstants.BL_INITIAL.concat(zipFileName)
+								.concat(BlCoreConstants.ZIP_FILE_EXTENSION);
+						Filedownload.save(new FileInputStream(tempZipFileAbsolutePath), BlCoreConstants.ZIP_MIME_TYPE,
+								downloadZipFileName);
+						BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+								"PrintLabelAction :: downloadAllFiles :: Zip file downloaded : {}", downloadZipFileName);
+					}
+				}
+			}
+		}
+		catch (final Exception e)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, e,
+					"PrintLabelAction :: downloadAllFiles :: Error occured while downloading shipment label for consignment : {}",
+					consignment.getCode());
+		}
+	}
+
+	/**
+	 * Adds the all labels to zip file.
+	 *
+	 * @param consignment
+	 *           the consignment
+	 * @param lPackageLables
+	 *           the l package lables
+	 * @param zipOutputStream
+	 *           the zip output stream
+	 */
+	private void addAllLabelsToZipFile(final ConsignmentModel consignment, final List<MediaModel> lPackageLables,
+			final ZipOutputStream zipOutputStream)
+	{
+		lPackageLables.forEach(media -> {
+			final String extractedFileName = this.extractFileName(media);
+			try
+			{
+				final InputStream streamFromMedia = this.getMediaService().getStreamFromMedia(media);
+				zipOutputStream.putNextEntry(new ZipEntry(extractedFileName));
+				int length;
+				final byte[] buffer = new byte[1024];
+				while ((length = streamFromMedia.read(buffer)) > 0)
+				{
+					zipOutputStream.write(buffer, 0, length);
+				}
+				zipOutputStream.closeEntry();
+				streamFromMedia.close();
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"PrintLabelAction :: addAllLabelsToZipFile :: File : {} added to Temp Zip File", extractedFileName);
+			}
+			catch (final Exception e)
+			{
+				BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, e,
+						"PrintLabelAction :: addAllLabelsToZipFile :: Error while adding file into zip for file : {} on consignment : {}",
+						extractedFileName, consignment.getCode());
+			}
+		});
+	}
+
+	/**
+	 * Gets the all lables from packages.
+	 *
+	 * @param consignment
+	 *           the consignment
+	 * @param lPackageLables
+	 *           the l package lables
+	 * @return the all lables from packages
+	 */
+	private List<MediaModel> getAllLablesFromPackages(final ConsignmentModel consignment)
+	{
+		final List<MediaModel> lPackageLables = Lists.newArrayList();
+		consignment.getPackaginginfos().forEach(pack -> {
+			final MediaModel outboubdMediaModel = pack.getOutBoundShippingMedia();
+			if (Objects.nonNull(outboubdMediaModel))
+			{
+				lPackageLables.add(outboubdMediaModel);
+			}
+			final MediaModel inboubdMediaModel = pack.getInBoundShippingMedia();
+			if (Objects.nonNull(inboubdMediaModel))
+			{
+				lPackageLables.add(inboubdMediaModel);
+			}
+		});
+		return lPackageLables;
+	}
+
+	private String extractFileName(final MediaModel mediaModel)
+	{
+		return StringUtils.defaultIfBlank(mediaModel.getRealFileName(), this.createFallbackFileName(mediaModel));
+	}
+
+	private String createFallbackFileName(final MediaModel mediaModel)
+	{
+		return Objects.nonNull(mediaModel.getPk()) ? mediaModel.getPk().toString() : String.valueOf(System.currentTimeMillis());
 	}
 
 	/**
@@ -126,5 +268,21 @@ public class PrintLabelAction extends AbstractComponentWidgetAdapterAware
 	public void setBaseSiteService(BaseSiteService baseSiteService)
 	{
 		this.baseSiteService = baseSiteService;
+	}
+
+	/**
+	 * @return the mediaService
+	 */
+	public MediaService getMediaService()
+	{
+		return mediaService;
+	}
+
+	/**
+	 * @param mediaService the mediaService to set
+	 */
+	public void setMediaService(MediaService mediaService)
+	{
+		this.mediaService = mediaService;
 	}
 }
