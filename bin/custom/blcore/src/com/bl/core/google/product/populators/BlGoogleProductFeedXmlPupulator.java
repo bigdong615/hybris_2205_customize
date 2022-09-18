@@ -54,7 +54,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 				item.setImage_Link(product.getPicture().getURL());
 			}
 			item.setModel_Number(product.getCode());
-			item.setGtin(product.getSerialProducts().iterator().next().getUpc());
+			item.setGtin(product.getUpc());
 			item.setPrice(getSerialPrice(product.getSerialProducts().iterator().next()));
 			shipping.setCountry("US");
 			item.setShipping(shipping);
