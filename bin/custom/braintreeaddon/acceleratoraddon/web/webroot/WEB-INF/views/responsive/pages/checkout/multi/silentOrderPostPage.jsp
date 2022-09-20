@@ -206,11 +206,9 @@
 																		<c:when test="${not empty paymentInfoBillingAddress and empty billingAddresses}">
 																			<b class="mt-4">Saved Billing Addresses</b>
 																			<div class="dropdown my-2">
-																				
 																					<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
 																						<%-- ${paymentInfoBillingAddress.formattedAddress } --%>
 																				     ${paymentInfoBillingAddress.line1}, ${paymentInfoBillingAddress.town}, ${paymentInfoBillingAddress.region.name}, ${paymentInfoBillingAddress.region.isocodeShort}, ${paymentInfoBillingAddress.postalCode}
-																						
 																					</a>
 																				
 																			</div>
@@ -219,12 +217,10 @@
 																		<c:when test="${not empty defaultBillingAddress and empty billingAddresses}">
 																			<b class="mt-4">Saved Billing Addresses</b>
 																			<div class="dropdown my-2">
-																				
 																					<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
 																						<%-- ${defaultBillingAddress.formattedAddress } --%>
 																						 ${defaultBillingAddress.line1}, ${defaultBillingAddress.town}, ${defaultBillingAddress.region.name}, ${defaultBillingAddress.region.isocodeShort}, ${defaultBillingAddress.postalCode}
 																					</a>
-																				
 																			</div>
 																			<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
 																		</c:when>
@@ -241,7 +237,6 @@
 																				<c:when test="${not empty defaultBillingAddress.formattedAddress }">
 																					<%-- ${defaultBillingAddress.formattedAddress } --%>
 																					 ${defaultBillingAddress.line1}, ${defaultBillingAddress.town}, ${defaultBillingAddress.region.name}, ${defaultBillingAddress.region.isocodeShort}, ${defaultBillingAddress.postalCode}
-																					
 																				</c:when>
 																				<c:otherwise>
 																					Select Saved Billing Address
@@ -254,7 +249,6 @@
 																			<li><a class="dropdown-item" href="#" data-id="${defaultBillingAddress.id }" data-address="${defaultBillingAddress.line1}, ${defaultBillingAddress.town}, ${defaultBillingAddress.region.name}, ${defaultBillingAddress.region.isocodeShort}, ${defaultBillingAddress.postalCode}">
 																			<%-- ${defaultBillingAddress.formattedAddress } --%>
 																			${defaultBillingAddress.line1}, ${defaultBillingAddress.town}, ${defaultBillingAddress.region.name}, ${defaultBillingAddress.region.isocodeShort}, ${defaultBillingAddress.postalCode}
-																			
 																			</a></li>
 																		</c:if>																		
 																			<c:forEach items="${billingAddresses}" var="billingAddress">
@@ -263,11 +257,9 @@
 																				<li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.line1}, ${billingAddress.town}, ${billingAddress.region.name}, ${billingAddress.region.isocodeShort}, ${billingAddress.postalCode}">
 																				<%-- ${billingAddress.formattedAddress } --%>
 																				 ${billingAddress.line1}, ${billingAddress.town}, ${billingAddress.region.name}, ${billingAddress.region.isocodeShort}, ${billingAddress.postalCode}
-																				
 																				</a></li>
 																			</c:if>
 																			</c:forEach>
-																		
 																		</ul>
 																	</div>
 																	<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
