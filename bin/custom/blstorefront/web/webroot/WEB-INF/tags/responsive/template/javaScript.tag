@@ -300,7 +300,7 @@
         //handled brands for mobile
         document.addEventListener( 'DOMContentLoaded', function () {
             new Splide( '#logo-slider', {
-                perPage: 4,
+                perPage: 5,
                  arrows :false,
                 pagination:false,
                 breakpoints: {
@@ -322,7 +322,7 @@
                
                 if(cat_slider_image_qty<=4){
                      new Splide( '#logo-slider', {
-                    perPage: 4,
+                    perPage: 5,
                     arrows :false,
                     pagination:false,
                     breakpoints: {
@@ -338,7 +338,7 @@
              if(cat_slider_image_qty>4){
            
               new Splide( '#logo-slider', {
-                perPage: 4,
+                perPage: 5,
                 arrows :true,
                 pagination:true,
                 breakpoints: {

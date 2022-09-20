@@ -51,7 +51,7 @@
                                 <c:otherwise><spring:theme code="text.checkout.multi.order.UsedGear"/></c:otherwise>
                             </c:choose>
                         </span>
-                    </a>
+                    </a>   
                     <c:choose>
                     <c:when test="${cartData.hasGiftCart}">
                      <span class="step2 complete"><i class="icon-check"></i> Delivery or Pickup</span>
@@ -208,7 +208,9 @@
 																			<div class="dropdown my-2">
 																				
 																					<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
-																						${paymentInfoBillingAddress.formattedAddress }
+																						<%-- ${paymentInfoBillingAddress.formattedAddress } --%>
+																				     ${paymentInfoBillingAddress.line1}, ${paymentInfoBillingAddress.town}, ${paymentInfoBillingAddress.region.name}, ${paymentInfoBillingAddress.region.isocodeShort}, ${paymentInfoBillingAddress.postalCode}
+																						
 																					</a>
 																				
 																			</div>
@@ -219,7 +221,8 @@
 																			<div class="dropdown my-2">
 																				
 																					<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
-																						${defaultBillingAddress.formattedAddress }
+																						<%-- ${defaultBillingAddress.formattedAddress } --%>
+																						 ${defaultBillingAddress.line1}, ${defaultBillingAddress.town}, ${defaultBillingAddress.region.name}, ${defaultBillingAddress.region.isocodeShort}, ${defaultBillingAddress.postalCode}
 																					</a>
 																				
 																			</div>
@@ -232,10 +235,13 @@
 																		<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
 																			<c:choose>
 																				<c:when test="${not empty paymentInfoBillingAddress.formattedAddress }">
-																					${paymentInfoBillingAddress.formattedAddress }
+																					<%-- ${paymentInfoBillingAddress.formattedAddress } --%>
+																					 ${paymentInfoBillingAddress.line1}, ${paymentInfoBillingAddress.town}, ${paymentInfoBillingAddress.region.name}, ${paymentInfoBillingAddress.region.isocodeShort}, ${paymentInfoBillingAddress.postalCode}
 																				</c:when>
 																				<c:when test="${not empty defaultBillingAddress.formattedAddress }">
-																					${defaultBillingAddress.formattedAddress }
+																					<%-- ${defaultBillingAddress.formattedAddress } --%>
+																					 ${defaultBillingAddress.line1}, ${defaultBillingAddress.town}, ${defaultBillingAddress.region.name}, ${defaultBillingAddress.region.isocodeShort}, ${defaultBillingAddress.postalCode}
+																					
 																				</c:when>
 																				<c:otherwise>
 																					Select Saved Billing Address
@@ -244,11 +250,21 @@
 																		</a>
 																		<ul class="dropdown-menu selectSavedBillingAddress" aria-labelledby="savedAddresses">
 																		<c:if test="${not empty defaultBillingAddress.formattedAddress }">
-																			<li><a class="dropdown-item" href="#" data-id="${defaultBillingAddress.id }" data-address="${defaultBillingAddress.formattedAddress }">${defaultBillingAddress.formattedAddress }</a></li>
+																			<%-- <li><a class="dropdown-item" href="#" data-id="${defaultBillingAddress.id }" data-address="${defaultBillingAddress.formattedAddress }"> --%>
+																			<li><a class="dropdown-item" href="#" data-id="${defaultBillingAddress.id }" data-address="${defaultBillingAddress.line1}, ${defaultBillingAddress.town}, ${defaultBillingAddress.region.name}, ${defaultBillingAddress.region.isocodeShort}, ${defaultBillingAddress.postalCode}">
+																			<%-- ${defaultBillingAddress.formattedAddress } --%>
+																			${defaultBillingAddress.line1}, ${defaultBillingAddress.town}, ${defaultBillingAddress.region.name}, ${defaultBillingAddress.region.isocodeShort}, ${defaultBillingAddress.postalCode}
+																			
+																			</a></li>
 																		</c:if>																		
 																			<c:forEach items="${billingAddresses}" var="billingAddress">
 																			<c:if test="${empty defaultBillingAddress or fn:containsIgnoreCase(billingAddress.id, defaultBillingAddress.id) == false}">
-																				<li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.formattedAddress }">${billingAddress.formattedAddress }</a></li>
+																				<%-- <li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.formattedAddress }"> --%>
+																				<li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.line1}, ${billingAddress.town}, ${billingAddress.region.name}, ${billingAddress.region.isocodeShort}, ${billingAddress.postalCode}">
+																				<%-- ${billingAddress.formattedAddress } --%>
+																				 ${billingAddress.line1}, ${billingAddress.town}, ${billingAddress.region.name}, ${billingAddress.region.isocodeShort}, ${billingAddress.postalCode}
+																				
+																				</a></li>
 																			</c:if>
 																			</c:forEach>
 																		

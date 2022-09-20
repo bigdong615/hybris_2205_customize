@@ -36,7 +36,7 @@ Designed by Veneer Studio
 #order .dropdown .dropdown-menu { width: 100%; }
 #order .dropdown .dropdown-menu li { border-bottom: 1px solid #d4d3d3; }
 #order .dropdown .dropdown-menu li:last-child { border-bottom: none; }
-#order .dropdown a, #order #productOptions .dropdown-menu a, #order .dropdown button, #order #productOptions .dropdown-menu button { padding: 15px 35px 15px 50px; letter-spacing: normal; font-size: 1rem; text-transform: none; }
+#order .dropdown a, #order #productOptions .dropdown-menu a, #order .dropdown button, #order #productOptions .dropdown-menu button { padding: 15px 35px 15px 50px; letter-spacing: normal; font-size: 1rem; text-transform: none; white-space: normal; }
 #order #productOptions .dropdown a, #order #productOptions .dropdown-menu a { padding-left: 8px; line-height: 35px; }
 #order #productOptions .dropdown a img, #order #productOptions .dropdown-menu a img { margin-right: 8px; height: 35px; width: auto; }
 #order .dropdown-toggle:after { position: absolute; top: 50%; right: 20px; margin-top: -2px;  }
