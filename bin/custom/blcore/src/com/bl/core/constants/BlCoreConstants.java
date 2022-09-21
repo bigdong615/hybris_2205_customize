@@ -647,6 +647,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SUBPART_SCAN_REMAINING_ERROR_MSG_2 = " are not included.";
 	public static final String ERROR_TITLE = "Error: ";	
 	public static final String COMMA_SEPRATOR = " ,";	
+	
+	public static final String SOCKET_OUT_CONTEXT = "blPrintLabelContext";
+	public static final String PACKAGE_LABELS = "_Package_Labels_";
+	public static final String ZIP_FILE_EXTENSION = ".zip";
+	public static final String BL_INITIAL = "BL_";
+	public static final String ZIP_MIME_TYPE = "application/zip, application/octet-stream";
 
 	private BlCoreConstants()
 	{
