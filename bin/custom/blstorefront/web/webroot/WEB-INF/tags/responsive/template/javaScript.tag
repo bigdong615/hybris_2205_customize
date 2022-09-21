@@ -313,7 +313,7 @@
                    /* BL-536 - A.1. */
                 },
                 rewind : true,
-                gap: 30,
+                gap: 20,
                 keyboard: false,
             } ).mount();
              
@@ -357,7 +357,7 @@
                     },
                 },
                 rewind : true,
-                gap: 30,
+                gap: 22,
                } ).mount();
              }
 
