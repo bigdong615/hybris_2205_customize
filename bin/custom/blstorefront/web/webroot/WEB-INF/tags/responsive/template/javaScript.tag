@@ -300,7 +300,7 @@
         //handled brands for mobile
         document.addEventListener( 'DOMContentLoaded', function () {
             new Splide( '#logo-slider', {
-                perPage: 4,
+                perPage: 5,
                  arrows :false,
                 pagination:false,
                 breakpoints: {
@@ -313,7 +313,7 @@
                    /* BL-536 - A.1. */
                 },
                 rewind : true,
-                gap: 30,
+                gap: 20,
                 keyboard: false,
             } ).mount();
              
@@ -322,7 +322,7 @@
                
                 if(cat_slider_image_qty<=4){
                      new Splide( '#logo-slider', {
-                    perPage: 4,
+                    perPage: 5,
                     arrows :false,
                     pagination:false,
                     breakpoints: {
@@ -338,7 +338,7 @@
              if(cat_slider_image_qty>4){
            
               new Splide( '#logo-slider', {
-                perPage: 4,
+                perPage: 5,
                 arrows :true,
                 pagination:true,
                 breakpoints: {
@@ -357,7 +357,7 @@
                     },
                 },
                 rewind : true,
-                gap: 30,
+                gap: 22,
                } ).mount();
              }
 
