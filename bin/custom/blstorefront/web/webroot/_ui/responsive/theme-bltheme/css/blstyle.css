@@ -438,18 +438,11 @@ ul.checklist li:before { opacity: .5; content: ''; display: block; position: abs
 #blog-slider .card.blog-card img { border-top-left-radius: 6px; border-top-right-radius: 6px; width: 100%; height: auto; }
 #blog-slider .card.blog-card .blog-content { padding: 30px; }
 
-/* @media screen and (min-width: 458px) and (max-width: 991px) {
-	
-	#testimonials-slider, .splide__track, .splide__list { height: 100%; margin: 0;}
-	
-	
-} */
 
 @media screen and (max-width: 768px) {
 	 .splide__slide img { max-width: 60%; height: auto; }
 	 .brand-logos li:last-child { margin-right: 0; padding-right:10px;}
 	}
-
 
 /* Checkboxes */
 .checkholder { display: block; position: relative; padding-left: 30px; margin-bottom: 12px; cursor: pointer; font-size: 16px; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
