@@ -413,8 +413,8 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		}
 		catch (final Exception exception)
 		{
-			LOG.error("[BT Payment Service] Errors during address[" + addressRequest.getAddressId() + "] update: " + exception
-					.getMessage(), exception);
+		    LOG.error("[BT Payment Service] Errors during address[" + addressRequest.getAddressId() + ", for Customer " + addressRequest.getCustomerId() + "] update: " + exception
+		            .getMessage(), exception);
 		}
 		return null;
 	}
