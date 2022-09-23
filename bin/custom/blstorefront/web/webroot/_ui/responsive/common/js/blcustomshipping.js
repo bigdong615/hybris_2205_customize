@@ -34,7 +34,7 @@ function reverseTraverseOnShipping() {
                     $(this).prop('selected', true).change();
                 }
             });
-        //    populateAddress();
+            populateAddress();
         }
     }
 }
