@@ -396,6 +396,15 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
     text-decoration: none;
   }
   
+  @media screen and (max-width: 768px) {
+	  .sub-option .bootstrap-select.btn-group .dropdown-menu li a span.text {
+       text-decoration: none;
+        width: 17em;
+        display: inline-block;
+    }
+  
+	}
+  
   .sub-option .bootstrap-select.btn-group .dropdown-menu li small {
     padding-left: 0.5em;
     float: right;
