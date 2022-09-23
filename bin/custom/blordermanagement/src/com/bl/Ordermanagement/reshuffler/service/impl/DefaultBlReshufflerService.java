@@ -84,6 +84,23 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     }
   }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void processSerialsInLateOrders() {
+        final Date currentDate = Date
+                .from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        final Date endDate = DateUtils.addDays(currentDate, 2);
+        for (Date startDate = currentDate; startDate.before(endDate); startDate = DateUtils.addDays(startDate, 1)) {
+            processOrdersSoonToBeTransitByDay(startDate, startDate.equals(currentDate));
+            if(startDate.equals(currentDate)) {
+                getBlOptimizeShippingFromWHService()
+                        .optimizeShipFormWHForOrders(startDate);
+            }
+        }
+    }
+
   /**
    * It processed the orders day wise
    * @param currentDate the date
@@ -121,6 +138,34 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
          processOrders(filteredOrders, warehouses);
     }
   }
+
+
+    public void processOrdersSoonToBeTransitByDay(final Date currentDate, final boolean isPresentDay) {
+        final List<AbstractOrderModel> ordersToBeProcessed = getOrderDao()
+                .getOrdersToBeShippedSoon(currentDate);
+        if(CollectionUtils.isNotEmpty(ordersToBeProcessed)) {
+            //Sorted by delivery mode
+            final Set<AbstractOrderModel> removeDuplicateOrders = new HashSet<>(ordersToBeProcessed);
+            final List<AbstractOrderModel> remainingOrders = new ArrayList<>(removeDuplicateOrders);
+            //Sort the orders by order total price
+            final List<AbstractOrderModel> ordersSortedByTotalPrice = remainingOrders.stream()
+                    .sorted(Comparator.comparing(AbstractOrderModel::getTotalPrice).reversed())
+                    .collect(Collectors.toList());
+          final List<AbstractOrderModel> finalSortedOrders = new ArrayList<>(ordersSortedByTotalPrice);
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                    "List of orders to fulfill {} for the day {} ", finalSortedOrders.toString(), currentDate);
+            final BaseStoreModel baseStoreModel = getBaseStoreService()
+                    .getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+            //Get all warehouses
+            final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
+            //It filters the orders which needs to be processed and ignore the orders which contains the SKU (when total number
+            // of sku needed for orders, will ship on same day, is not sufficient to fulfill from main and buffer inventory
+            final Map<AbstractOrderModel, Set<String>> filteredOrders = filterOrdersForProcessingLateSerials(
+                    finalSortedOrders,
+                    warehouses, currentDate, isPresentDay);
+            processOrders(filteredOrders, warehouses);
+        }
+    }
 
   /**
    * It processes the orders which can be fulfilled
@@ -517,8 +562,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 	 * @param isPresentDay
    * @return order with associated unallocated products
 	 */
-  private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessing(
-      final List<AbstractOrderModel> todayOrdersToBeProcessed,
+  private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessing(final List<AbstractOrderModel> todayOrdersToBeProcessed,
       final List<WarehouseModel> warehouses, final Date currentDate, final boolean isPresentDay) {
     //This map will contain order id with unallocated products
     final Map<AbstractOrderModel, Set<String>> ordersWithUnallocatedProducts = new LinkedHashMap<>();
@@ -602,6 +646,31 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 		//The orders which will not be considered in reshuffler job, will be in manual review only
     return ordersWithUnallocatedProducts;
   }
+
+
+    private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessingLateSerials(final List<AbstractOrderModel> todayOrdersToBeProcessed,
+                                                                           final List<WarehouseModel> warehouses, final Date currentDate, final boolean isPresentDay) {
+
+    Map<AbstractOrderModel, Set<String>> mapOfLateOrders = new HashMap<>();
+    Set<String> productSet = new HashSet<>();
+    for (AbstractOrderModel order: todayOrdersToBeProcessed) {
+            for(AbstractOrderEntryModel entryModel: order.getEntries())
+            {
+                if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
+                  for (BlProductModel serialProductModel : entryModel.getSerialProducts()) {
+                    if (serialProductModel instanceof BlSerialProductModel) {
+                      if (((BlSerialProductModel) serialProductModel).getAssociatedOrder().getStatus().equals(OrderStatus.LATE)) {
+                        entryModel.setSerialProducts(Collections.emptyList());
+                        modelService.save(entryModel);
+                        mapOfLateOrders.put(order, productSet);
+                      }
+                    }
+                  }
+                }
+            }
+        }
+    return mapOfLateOrders;
+    }
 
   public BlOrderDao getOrderDao() {
     return orderDao;

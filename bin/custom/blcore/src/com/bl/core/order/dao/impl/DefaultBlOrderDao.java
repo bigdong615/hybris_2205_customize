@@ -78,6 +78,11 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND ({o:" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER
 			+ "} =?manualReviewStatusByReshuffler OR {o:" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER + "}  is null)";
 
+	private static final String GET_ORDERS_SOON_TO_BE_TRANSIT_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE ({con:"
+			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
+			+ "} BETWEEN ?startDate AND ?endDate)";
+
 	private static final String GET_ORDERS_OF_UNAVAILABLE_SOFT_ASSIGNED_SERIALS = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o JOIN " + OrderEntryModel._TYPECODE + " AS oe ON {oe:order} = {o:pk} JOIN " + BlProductModel._TYPECODE
 			+ " AS p ON {oe:product}={p:pk} LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {p:"
@@ -223,6 +228,23 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
 		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
 		fQuery.addQueryParameter(MANUAL_REVIEW_STATUS_BY_RESHUFFLER, false);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		if (CollectionUtils.isEmpty(result.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"There are no orders to be processed via reshuffler job with manual review status for the day {} ", currentDate);
+		}
+		return result.getResult();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersToBeShippedSoon(final Date currentDate) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_SOON_TO_BE_TRANSIT_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
+		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		if (CollectionUtils.isEmpty(result.getResult()))
 		{
