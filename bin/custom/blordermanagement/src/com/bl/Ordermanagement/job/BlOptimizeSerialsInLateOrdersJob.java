@@ -1,4 +1,4 @@
-package com.bl.Ordermanagement.reshuffler.service.impl;
+package com.bl.Ordermanagement.job;
 
 import com.bl.Ordermanagement.reshuffler.service.BlReshufflerService;
 import com.bl.core.stock.BlStockService;
@@ -12,9 +12,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class BlOptimizeSerialsInLateOrders extends AbstractJobPerformable<CronJobModel> {
+public class BlOptimizeSerialsInLateOrdersJob extends AbstractJobPerformable<CronJobModel> {
 
-    private static final Logger LOG = Logger.getLogger(BlOptimizeSerialsInLateOrders.class);
+    private static final Logger LOG = Logger.getLogger(BlOptimizeSerialsInLateOrdersJob.class);
     private BlReshufflerService blReshufflerService;
 
 
