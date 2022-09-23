@@ -2,7 +2,9 @@ package com.bl.core.model.interceptor;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -113,6 +115,28 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			}
 		}
 		consignmentEntryModel.setConsignmentEntryStatus(consEntryStatus);
+		setUsedGearConsignment(consignmentEntryModel, interceptorContext);
+	}
+
+	/**
+	 * @param consignmentEntryModel
+	 * @param interceptorContext
+	 */
+	private void setUsedGearConsignment(final ConsignmentEntryModel consignmentEntryModel,
+			final InterceptorContext interceptorContext)
+	{
+		final AbstractOrderModel order = consignmentEntryModel.getConsignment().getOrder();
+		if (BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder())
+				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder()))
+		{
+			final ProductModel product = consignmentEntryModel.getOrderEntry().getProduct();
+			if (product instanceof BlSerialProductModel)
+			{
+				((BlSerialProductModel) product).setAssociatedUsedGearConsignment(consignmentEntryModel.getConsignment());
+				interceptorContext.getModelService().save(product);
+			}
+
+		}
 	}
 
 	/**

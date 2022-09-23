@@ -14,10 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "shipping")
 public class Shipping
 {
-	@XmlElement(name = "country")
+	@XmlElement(name = "g:country")
 	protected String country;
-
-	@XmlElement(name = "price")
+	@XmlElement(name = "g:price")
 	protected String price;
 
 	/**

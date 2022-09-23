@@ -2036,7 +2036,10 @@
 	
 	<bean id="commitOrderToAvalaraAction" class="com.bl.core.order.actions.CommitOrderToAvalaraAction" parent="abstractAction"/>
 	
-	<bean id="blGoogleProductFeedXmlPupulator" class="com.bl.core.google.product.populators.BlGoogleProductFeedXmlPupulator"/>
+	<bean id="blGoogleProductFeedXmlPupulator" class="com.bl.core.google.product.populators.BlGoogleProductFeedXmlPupulator">
+		<property name="modelService" ref="modelService"/>
+		<property name="blDeliveryModeService" ref="blDeliveryModeService"/>
+	</bean>
 	
 	<bean id="blGoogleMerchantJob" class="com.bl.core.job.BlGoogleMerchantCenterJob" parent="abstractJobPerformable">
 		<property name="productService" ref="productService"/>

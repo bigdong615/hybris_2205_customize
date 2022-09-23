@@ -73,6 +73,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 				{
 					final List<BlProductModel> serials = new ArrayList<BlProductModel>();
 					final BlSerialProductModel serial = (BlSerialProductModel) entry.getProduct();
+					serial.setAssociatedUsedGearOrder(order);
 					serial.setDateOfSale(order.getCreationtime());
 					serials.add(serial);
 					entry.setSerialProducts(serials);
