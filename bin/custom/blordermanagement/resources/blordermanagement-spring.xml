@@ -203,7 +203,7 @@
 		<property name="blReshufflerService" ref="blReshufflerService"/>
 	</bean>
 
-    <bean id="blOptimizeSerialsInLateOrders" class="com.bl.Ordermanagement.job.BlOptimizeSerialsInLateOrders" parent="abstractJobPerformable">
+    <bean id="blOptimizeSerialsInLateOrders" class="com.bl.Ordermanagement.job.BlOptimizeSerialsInLateOrdersJob" parent="abstractJobPerformable">
         <property name="blReshufflerService" ref="blReshufflerService"/>
     </bean>
 	
