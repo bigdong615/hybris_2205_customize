@@ -31,9 +31,9 @@ public class Item
 {
 	@XmlElement(name = "g:id")
 	protected String id;
-	@XmlElement(name = "g:title")
+	@XmlElement(name = "title")
 	protected String title;
-	@XmlElement(name = "g:link")
+	@XmlElement(name = "link")
 	protected String link;
 	@XmlElement(name = "g:description")
 	protected String description;
@@ -51,7 +51,7 @@ public class Item
 	protected String image_Link;
 	@XmlElement(name = "g:model_Number")
 	protected String model_Number;
-	@XmlElement(name = "g:gtin")
+	@XmlElement(name = "gtin")
 	protected String gtin;
 	@XmlElement(name = "g:price")
 	protected String price;
