@@ -36,8 +36,7 @@ public class Channel
 	}
 
 	/**
-	 * @param title
-	 *           the title to set
+	 * @param title the title to set
 	 */
 	public void setTitle(final String title)
 	{
