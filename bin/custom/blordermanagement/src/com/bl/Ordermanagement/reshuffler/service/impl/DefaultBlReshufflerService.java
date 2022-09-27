@@ -16,6 +16,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -659,7 +660,8 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                 if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
                   for (BlProductModel serialProductModel : entryModel.getSerialProducts()) {
                     if (serialProductModel instanceof BlSerialProductModel) {
-                      if (((BlSerialProductModel) serialProductModel).getAssociatedOrder().getStatus().equals(OrderStatus.LATE)) {
+                      OrderModel orderModel = ((BlSerialProductModel)serialProductModel).getAssociatedOrder();
+                      if (Objects.nonNull(orderModel) && OrderStatus.LATE.equals(orderModel.getStatus())) {v
                         entryModel.setSerialProducts(Collections.emptyList());
                         modelService.save(entryModel);
                         mapOfLateOrders.put(order, productSet);
