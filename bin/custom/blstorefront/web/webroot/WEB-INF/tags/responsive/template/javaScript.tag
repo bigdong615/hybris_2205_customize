@@ -180,10 +180,9 @@
                function(){ $('.screen').removeClass('show') }
         );
          var splide = new Splide( '#hero-slider', {
-            perPage: 1,
-            type: 'fade',
-            gap: 0,
-            keyboard: false,
+			 perPage: 1,
+			 type    : 'loop',
+			 autoplay: true,
         } ).mount();
 
         //  BL-450 adding removing pagination and arrow dynamically on homepage
