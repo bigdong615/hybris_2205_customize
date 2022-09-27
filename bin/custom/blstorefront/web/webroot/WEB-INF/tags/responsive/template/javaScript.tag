@@ -181,7 +181,7 @@
         );
          var splide = new Splide( '#hero-slider', {
 			 perPage: 1,
-			 type    : 'loop',
+			 type: 'loop',
 			 autoplay: true,
         } ).mount();
 
