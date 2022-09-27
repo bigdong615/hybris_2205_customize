@@ -255,6 +255,14 @@
 				"name":"mediaweb",
 				"contextPath":"/medias"
 			 },
+       {
+          "name": "hac",
+          "contextPath": "/hac"
+       },
+       {
+          "name": "commercewebservices",
+          "contextPath": "/occ"
+       },
 			 {
 				"name":"adaptivesearchwebservices",
 				"contextPath":"/adaptivesearchwebservices"

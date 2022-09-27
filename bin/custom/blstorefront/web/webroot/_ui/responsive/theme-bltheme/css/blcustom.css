@@ -371,6 +371,22 @@ margin: 0;
 #cat-slider .splide__arrows, #gear-slider > .splide__arrows, #blog-slider > .splide__arrows, #gear-slider-cart > .splide__arrows {
   z-index: 1;
 }
+
+
+
+#logo-slider .splide__arrow--prev, #overview-slider > .splide__arrows .splide__arrow--prev {
+  margin-left: -31px;
+}
+#logo-slider .splide__arrow--next, #overview-slider > .splide__arrows .splide__arrow--next {
+  margin-right: -31px;
+}
+#logo-slider .splide__arrows, #gear-slider > .splide__arrows, #blog-slider > .splide__arrows, #gear-slider-cart > .splide__arrows {
+  z-index: 1;
+}
+
+
+
+
 .litepicker .container__days .day-item{
   margin-bottom: 0;
 }

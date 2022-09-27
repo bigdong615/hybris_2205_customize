@@ -2,19 +2,26 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!-- BL-351 : Homepage Mobile Device Brands Section --> 
-<c:if test="${positionAttribute == 'MobileHomePageBrandSectionSlot'}">
+
+
+<!-- Commented, because its not working for mobile and MobileHomePageBrandSectionSlot not exist -->
+<%-- <c:if test="${positionAttribute == 'MobileHomePageBrandSectionSlot'}">
 	<li class="splide__slide my-auto ${fn:toLowerCase(feature.brandImageTitle)}">
 		<c:url value="${feature.urlLink}" var="brandUrl" />
 		<a href="${brandUrl}"><img src="${feature.media.url}"></a>
 	</li>
-</c:if>
+</c:if> --%>
 <!-- Homepage Desktop Brands Section --> 
-<c:if test="${positionAttribute == 'HomePageBrandSectionSlot'}">
+<%-- <c:if test="${positionAttribute == 'HomePageBrandSectionSlot'}">
 		<li class="my-auto ${fn:toLowerCase(feature.brandImageTitle)}">
 	<c:url value="${feature.urlLink}" var="brandUrl" />
 	<a href="${brandUrl}"><img src="${feature.media.url}"></a>
 	</li>
-</c:if>
+</c:if> --%>
+<!-- Commented, because its not working for mobile and MobileHomePageBrandSectionSlot not exist -->
+
+
+
 <!-- BL-345 : Homepage Mobile They Borrow From Us Section --> 
 <!--BL-2010 :- commented out code for "they borrow from us section" -->
 <!-- <c:if test="${positionAttribute == 'MobileHomePageBorrowFromUsSectionSlot'}">
@@ -33,3 +40,7 @@
 </c:if> -->
 
 
+<li class="splide__slide my-auto ${fn:toLowerCase(feature.brandImageTitle)}">
+		<c:url value="${feature.urlLink}" var="brandUrl" />
+		<a href="${brandUrl}"><img src="${feature.media.url}"></a>
+	</li>

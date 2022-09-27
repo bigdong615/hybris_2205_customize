@@ -156,24 +156,24 @@ jQuery(document).ready(function ($) {
 		$("#billing-address-saved").addClass("show");
         $('#billing-address-saved a').each(function() {            
             var optionText = this.text;
-            var newOption = optionText.substring(0,58);
-            if(screen.width<600){
-                var newOption = optionText.substring(0,35);
-            }
-            if(optionText > optionText.substring(0,64)){
-                jQuery(this).text(newOption + '..');
-            }
+          //  var newOption = optionText.substring(0,58);
+          //  if(screen.width<600){
+           //     var newOption = optionText.substring(0,35);
+            //}
+           // if(optionText > optionText.substring(0,64)){
+           //     jQuery(this).text(newOption + '..');
+           // }
         }); 
         
         $('.for-credit-card a').each(function() {            
             var optionText = this.text;
-            var newOption = optionText.substring(0,51);
-            if(screen.width<600){
-                var newOption = optionText.substring(0,35);
-            }
-            if(optionText > optionText.substring(0,59)){
-                jQuery(this).text(newOption + '..');
-            }
+          //  var newOption = optionText.substring(0,51);
+           // if(screen.width<600){
+            //    var newOption = optionText.substring(0,35);
+           // }
+           // if(optionText > optionText.substring(0,59)){
+            //    jQuery(this).text(newOption + '..');
+           // }
         });
 	}
 	if($("#savePaymentInfo").length == 1)
@@ -1136,12 +1136,12 @@ $('ul.selectSavedBillingAddress').on('click','li',function(e){
     $('#savedAddresses').each(function() {            
         var optionText = this.text;
         var newOption = optionText.substring(0,42);
-        if(screen.width<600){
-            var newOption = optionText.substring(0,35);
-        }
-        if(optionText > optionText.substring(0,42)){
-            jQuery(this).text(newOption + '..');
-        }
+       // if(screen.width<600){
+       //     var newOption = optionText.substring(0,35);
+       // }
+       // if(optionText > optionText.substring(0,42)){
+        //    jQuery(this).text(newOption + '..');
+       // }
     });
 	$("#savedBillingAddressId").val(selectedBillingAddressId);
 	$("#billing-address-form-expand").removeClass("show");

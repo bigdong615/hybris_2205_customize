@@ -4,12 +4,18 @@ import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.PK;
+import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.servicelayer.exceptions.ModelLoadingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionService;
+import de.hybris.platform.solrfacetsearch.enums.IndexerOperationValues;
+import de.hybris.platform.solrfacetsearch.indexer.cron.SolrIndexerHotUpdateJob;
+import de.hybris.platform.solrfacetsearch.model.config.SolrFacetSearchConfigModel;
+import de.hybris.platform.solrfacetsearch.model.indexer.cron.SolrIndexerHotUpdateCronJobModel;
 import de.hybris.platform.tx.AfterSaveEvent;
 import de.hybris.platform.tx.AfterSaveListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +29,7 @@ import org.apache.log4j.Logger;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.service.BlProductService;
+import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 
 
@@ -42,6 +49,8 @@ public class BlSerialProductAfterSaveListener implements AfterSaveListener
 	private CatalogVersionDao catalogVersionDao;
 	private Populator<BlSerialProductModel, BlSerialProductModel> populator;
 	private SessionService sessionService;
+	private BlStockLevelDao blStockLevelDao;
+	private SolrIndexerHotUpdateJob solrIndexerHotUpdateJob;
 
 	@Override
 	public void afterSave(final Collection<AfterSaveEvent> afterSaveEventCollection)
@@ -58,6 +67,11 @@ public class BlSerialProductAfterSaveListener implements AfterSaveListener
 					if (object instanceof BlSerialProductModel)
 					{
 						performUpdateStagedSerial(object);
+						final BlSerialProductModel serial = (BlSerialProductModel) object;
+						if (serial.getIsSyncRequired())
+						{
+							updateIndexForProduct(serial);
+						}
 					}
 				}
 			});
@@ -117,6 +131,27 @@ public class BlSerialProductAfterSaveListener implements AfterSaveListener
 							stagedSerial.getCode(), stagedSerial.getPk().toString());
 				}
 			}
+		}
+	}
+
+	private void updateIndexForProduct(final BlSerialProductModel serial)
+	{
+		try
+		{
+			final SolrIndexerHotUpdateCronJobModel cronJob = new SolrIndexerHotUpdateCronJobModel();
+			final List<ItemModel> products = new ArrayList<ItemModel>();
+			products.add(serial.getBlProduct());
+			cronJob.setItems(products);
+			final SolrFacetSearchConfigModel facetConfig = getBlStockLevelDao().getFacetConfigModel();
+			cronJob.setFacetSearchConfig(facetConfig);
+			cronJob.setIndexerOperation(IndexerOperationValues.UPDATE);
+			cronJob.setIndexTypeName("BlProduct");
+			getSolrIndexerHotUpdateJob().perform(cronJob);
+		}
+		catch (final Exception ex)
+		{
+			LOG.info("Error during running hot update index for product " + serial.getBlProduct().getCode() + "and exception is ",
+					ex);
 		}
 	}
 
@@ -203,6 +238,40 @@ public class BlSerialProductAfterSaveListener implements AfterSaveListener
 	public void setSessionService(final SessionService sessionService)
 	{
 		this.sessionService = sessionService;
+	}
+
+	/**
+	 * @return the blStockLevelDao
+	 */
+	public BlStockLevelDao getBlStockLevelDao()
+	{
+		return blStockLevelDao;
+	}
+
+	/**
+	 * @param blStockLevelDao
+	 *           the blStockLevelDao to set
+	 */
+	public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao)
+	{
+		this.blStockLevelDao = blStockLevelDao;
+	}
+
+	/**
+	 * @return the solrIndexerHotUpdateJob
+	 */
+	public SolrIndexerHotUpdateJob getSolrIndexerHotUpdateJob()
+	{
+		return solrIndexerHotUpdateJob;
+	}
+
+	/**
+	 * @param solrIndexerHotUpdateJob
+	 *           the solrIndexerHotUpdateJob to set
+	 */
+	public void setSolrIndexerHotUpdateJob(final SolrIndexerHotUpdateJob solrIndexerHotUpdateJob)
+	{
+		this.solrIndexerHotUpdateJob = solrIndexerHotUpdateJob;
 	}
 
 }

@@ -43,8 +43,9 @@ INSERT_UPDATE Trigger ; cronJob(code)[unique=true]             ; second[default=
 INSERT_UPDATE CronJob ; code[unique=true]          ; job(code)                  ; sessionLanguage(isoCode)[default=en]
                       ; pullOrdersAwaitingQueueJob ; pullOrdersAwaitingQueueJob ;                                     
                       ; pulledOrdersQueueJob       ; pulledOrdersQueueJob       ;
+                      ; blGoogleMerchantJob		   ; blGoogleMerchantJob		;
                                                          
 INSERT_UPDATE Trigger ; cronjob(code)[unique=true] ; active ; cronExpression
                       ; pullOrdersAwaitingQueueJob ; true   ; 0 0/10 * * * ?
                       ; pulledOrdersQueueJob       ; true   ; 0 0/10 * * * ? 
-                      
+                      ; blGoogleMerchantJob		   ; true   ; 0 0/10 * * * ? 

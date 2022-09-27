@@ -27,7 +27,7 @@
 					<c:forEach items="${component.navigationNode.entries}"	var="entry">
 					<c:if test="${entry.item.type  ne 'Link'}">
 					<div class="col-md-3">
-						<a href="#" class=" card card-${fn:toLowerCase(entry.item.mode)}">
+						<a href="ship-or-pickup" class=" card card-${fn:toLowerCase(entry.item.mode)}">
 							<p class="overline">${entry.item.mode }</p>
 							<h6>${entry.item.title }</h6>
 							<p class="body14">${entry.item.content }</p>
