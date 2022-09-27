@@ -661,7 +661,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                   for (BlProductModel serialProductModel : entryModel.getSerialProducts()) {
                     if (serialProductModel instanceof BlSerialProductModel) {
                       OrderModel orderModel = ((BlSerialProductModel)serialProductModel).getAssociatedOrder();
-                      if (Objects.nonNull(orderModel) && OrderStatus.LATE.equals(orderModel.getStatus())) {v
+                      if (Objects.nonNull(orderModel) && OrderStatus.LATE.equals(orderModel.getStatus())) {
                         entryModel.setSerialProducts(Collections.emptyList());
                         modelService.save(entryModel);
                         mapOfLateOrders.put(order, productSet);
