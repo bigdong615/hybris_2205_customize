@@ -29,33 +29,33 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "item")
 public class Item
 {
-	@XmlElement(name = "id")
+	@XmlElement(name = "g:id")
 	protected String id;
 	@XmlElement(name = "title")
 	protected String title;
 	@XmlElement(name = "link")
 	protected String link;
-	@XmlElement(name = "description")
+	@XmlElement(name = "g:description")
 	protected String description;
-	@XmlElement(name = "condition")
+	@XmlElement(name = "g:condition")
 	protected String condition;
-	@XmlElement(name = "availability")
+	@XmlElement(name = "g:availability")
 	protected String availability;
-	@XmlElement(name = "product_Type")
+	@XmlElement(name = "g:product_Type")
 	protected String product_Type;
-	@XmlElement(name = "google_Product_Category")
+	@XmlElement(name = "g:google_Product_Category")
 	protected String google_Product_Category;
-	@XmlElement(name = "brand")
+	@XmlElement(name = "g:brand")
 	protected String brand;
-	@XmlElement(name = "image_Link")
+	@XmlElement(name = "g:image_Link")
 	protected String image_Link;
-	@XmlElement(name = "model_Number")
+	@XmlElement(name = "g:model_Number")
 	protected String model_Number;
 	@XmlElement(name = "gtin")
 	protected String gtin;
-	@XmlElement(name = "price")
+	@XmlElement(name = "g:price")
 	protected String price;
-	@XmlElement(name = "shipping")
+	@XmlElement(name = "g:shipping")
 	protected Shipping shipping;
 	/**
 	 * @return the id
@@ -64,7 +64,7 @@ public class Item
 	{
 		return id;
 	}
-	
+
 	/**
 	 * @param id
 	 *           the id to set
@@ -80,7 +80,7 @@ public class Item
 	{
 		return title;
 	}
-	
+
 	/**
 	 * @param title
 	 *           the title to set
@@ -96,7 +96,7 @@ public class Item
 	{
 		return link;
 	}
-	
+
 	/**
 	 * @param link
 	 *           the link to set
@@ -112,7 +112,7 @@ public class Item
 	{
 		return description;
 	}
-	
+
 	/**
 	 * @param description
 	 *           the description to set
@@ -128,7 +128,7 @@ public class Item
 	{
 		return condition;
 	}
-	
+
 	/**
 	 * @param condition
 	 *           the condition to set
@@ -144,7 +144,7 @@ public class Item
 	{
 		return availability;
 	}
-	
+
 	/**
 	 * @param availability
 	 *           the availability to set
@@ -153,7 +153,7 @@ public class Item
 	{
 		this.availability = availability;
 	}
-	
+
 	/**
 	 * @return the product_Type
 	 */
@@ -161,7 +161,7 @@ public class Item
 	{
 		return product_Type;
 	}
-	
+
 	/**
 	 * @param product_Type
 	 *           the product_Type to set
@@ -170,7 +170,7 @@ public class Item
 	{
 		this.product_Type = product_Type;
 	}
-	
+
 	/**
 	 * @return the google_Product_Category
 	 */
@@ -178,7 +178,7 @@ public class Item
 	{
 		return google_Product_Category;
 	}
-	
+
 	/**
 	 * @param google_Product_Category
 	 *           the google_Product_Category to set
@@ -194,7 +194,7 @@ public class Item
 	{
 		return brand;
 	}
-	
+
 	/**
 	 * @param brand
 	 *           the brand to set
@@ -203,7 +203,7 @@ public class Item
 	{
 		this.brand = brand;
 	}
-	
+
 	/**
 	 * @return the image_Link
 	 */
@@ -211,7 +211,7 @@ public class Item
 	{
 		return image_Link;
 	}
-	
+
 	/**
 	 * @param image_Link
 	 *           the image_Link to set
@@ -220,7 +220,7 @@ public class Item
 	{
 		this.image_Link = image_Link;
 	}
-	
+
 	/**
 	 * @return the model_Number
 	 */
@@ -228,7 +228,7 @@ public class Item
 	{
 		return model_Number;
 	}
-	
+
 	/**
 	 * @param model_Number
 	 *           the model_Number to set
@@ -244,7 +244,7 @@ public class Item
 	{
 		return gtin;
 	}
-	
+
 	/**
 	 * @param gtin
 	 *           the gtin to set
@@ -260,7 +260,7 @@ public class Item
 	{
 		return price;
 	}
-	
+
 	/**
 	 * @param price
 	 *           the price to set
@@ -276,7 +276,7 @@ public class Item
 	{
 		return shipping;
 	}
-	
+
 	/**
 	 * @param shipping
 	 *           the shipping to set
