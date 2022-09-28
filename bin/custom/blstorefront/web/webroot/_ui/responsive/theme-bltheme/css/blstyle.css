@@ -676,6 +676,7 @@ input[type="file"] { display: none; }
 #accountMobileNav .dropdown-menu li a { padding: 15px; }
 #newCard .dropdown a { letter-spacing: normal; font-size: 1rem; text-transform: none; }
 #accountContent input[type=text], #accountContent select.form-control { padding: 10px; }
+#accountContent input[type=number], #accountContent select.form-control { padding: 10px; }
 #accountContent .dropdown-toggle:after { position: absolute; top: 50%; right: 20px; margin-top: -2px; }
 input[type=text].secure { background: url(../assets/icon-lock.svg) 97% center no-repeat; }
 .rental-images img { max-width: 100%; height: auto; }
