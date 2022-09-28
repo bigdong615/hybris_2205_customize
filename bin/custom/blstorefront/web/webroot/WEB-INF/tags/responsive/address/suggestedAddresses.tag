@@ -49,7 +49,7 @@
                         <input id="line2" name="line2" type="hidden" value="${fn:escapeXml(suggestedAddress.line2)}"/>
                         <input id="townCity" name="townCity" type="hidden" value="${fn:escapeXml(suggestedAddress.town)}"/>
                         <input id="regionIso" name="regionIso" type="hidden" value="${fn:escapeXml(suggestedAddress.region.isocode)}"/>
-                        <input id="postcode" name="postcode" type="hidden" value="${fn:escapeXml(suggestedAddress.postalCode)}"/>
+                        <input id="postcode" name="postcode" type="hidden" type="number" value="" onKeyPress="if(this.value.length==5) return false;" value="${fn:escapeXml(suggestedAddress.postalCode)}" />
                         <input id="countryIso" name="countryIso" type="hidden" value="${fn:escapeXml(suggestedAddress.country.isocode)}"/>
                         <input id="phone" name="phone" type="hidden" value="${fn:escapeXml(suggestedAddress.phone)}"/>
                         <input id="saveInAddressBook" name="saveInAddressBook" type="hidden" value="${fn:escapeXml(saveInAddressBook)}"/>
@@ -105,7 +105,7 @@
                         <input id="line2" name="line2" type="hidden" value="${fn:escapeXml(inputAddress.line2)}"/>
                         <input id="townCity" name="townCity" type="hidden" value="${fn:escapeXml(inputAddress.town)}"/>
                         <input id="regionIso" name="regionIso" type="hidden" value="${fn:escapeXml(inputAddress.region.isocode)}"/>
-                        <input id="postcode" name="postcode" type="hidden" value="${fn:escapeXml(inputAddress.postalCode)}"/>
+                        <input id="postcode" name="postcode" type="hidden" type="number" value="" onKeyPress="if(this.value.length==5) return false;" value="${fn:escapeXml(inputAddress.postalCode)}"/>
                         <input id="countryIso" name="countryIso" type="hidden" value="${fn:escapeXml(inputAddress.country.isocode)}"/>
                         <input id="phone" name="phone" type="hidden" value="${fn:escapeXml(inputAddress.phone)}"/>
                         <input id="saveInAddressBook" name="saveInAddressBook" type="hidden" value="${fn:escapeXml(saveInAddressBook)}"/>
