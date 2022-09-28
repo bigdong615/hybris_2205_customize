@@ -337,6 +337,10 @@ window.mediator.subscribe('searchRentalDate', function(data) {
 });
 
 function trackDatePickerClick(daysInAdvance,lengthOfRental) {
+    gtag('event', 'select_date', {
+        'event_category': 'Search Rental Dates',
+        'event_label': "Open"
+    });
 	gtag('event', 'select_date', {
       'event_category': 'Search Rental Dates',
       'event_label': "[#] Days in Advance",
