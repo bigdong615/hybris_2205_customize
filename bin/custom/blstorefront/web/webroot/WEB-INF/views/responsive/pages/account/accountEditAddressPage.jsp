@@ -37,13 +37,21 @@
             <formElement:formInputBox idKey="address.line1" labelKey="" path="line1" inputCSS="form-control mb-3" mandatory="true" placeholder="address.line1"/>
             <formElement:formInputBox idKey="address.line2" labelKey="" path="line2" inputCSS="form-control mb-3" mandatory="false" placeholder="address.line2"/>
             <formElement:formInputBox idKey="address.townCity" labelKey="" path="townCity" inputCSS="form-control mb-3" mandatory="true" placeholder="address.townCity"/>
-            <formElement:formInputBox idKey="zip" labelKey="" path="postcode" inputCSS="form-control mb-3 float-start" mandatory="true"  placeholder="address.postalcode" styleCSS="width: calc(40% - 15px);"/>
+<%--              <formElement:formInputBox idKey="zip" labelKey="" path="postcode" inputCSS="form-control mb-3 float-start" mandatory="true"  placeholder="address.postalcode" styleCSS="width: calc(40% - 15px);"/> 
+ --%>          
+             <div class="form-group">
+            <input id="zip" name="postcode" class="form-control mb-3 float-start" style="width: calc(40% - 15px);" placeholder="Zip" type="number" value="" onKeyPress="if(this.value.length==5) return false;" >
+            </div>
+            
             <div class="select-wrapper float-end mb-3" style="width: 60%;">
                <formElement:formSelectBox idKey="state" labelKey="" path="regionIso" mandatory="true" skipBlank="false" styleCSS="width:100%;"
                   skipBlankMessageKey="address.state" items="${regions}" itemValue="${useShortRegionIso ? 'isocodeShort' : 'isocode'}"  selectCSSClass="form-control"/>
             </div>
             <formElement:formInputBox idKey="address.email" labelKey="" placeholder="address.email" path="email" inputCSS="form-control mb-3" mandatory="true" />
-            <formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="phone" inputCSS="form-control mb-3" mandatory="true" />
+           <%--  <formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="phone" inputCSS="form-control mb-3" mandatory="true" /> --%>
+             <div class="form-group">
+            <input id="address.phone" name="phone" class="form-control mb-3"  placeholder="Phone Number" type="text" path="phone" inputCSS="form-control" mandatory="false" maxlength="16" />
+            </div> 
             <input type="checkbox" id="default-billing-address" name="billingAddress" ${addressForm.billingAddress eq 'true' ? 'checked':''} >
             <label for="default-billing-address">
                <span class="gray80">

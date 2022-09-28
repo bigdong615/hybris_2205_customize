@@ -307,7 +307,7 @@
                     //    perPage: 3,
                     //},
                     '640': {
-                        perPage: 2,
+                        perPage: 3,
                     },
                    /* BL-536 - A.1. */
                 },
@@ -326,7 +326,7 @@
                     pagination:false,
                     breakpoints: {
                     '540': {
-                        perPage: 2, 
+                        perPage: 3, 
                       pagination:true
                     },
                   }
@@ -350,7 +350,7 @@
                        
                     },
                     '540': {
-                        perPage: 2,
+                        perPage: 3,
                          
                         
                     },
@@ -360,7 +360,7 @@
                } ).mount();
              }
 
-            if(cat_slider_image_qty<=2 && screen.width<=540){
+            if(cat_slider_image_qty<=3 && screen.width<=540){
                document.querySelector("#logo-slider .splide__pagination").classList.add("d-none");
              }
              }); 
