@@ -5,6 +5,7 @@ import com.bl.Ordermanagement.reshuffler.service.BlOptimizeShippingFromWHService
 import com.bl.Ordermanagement.reshuffler.service.BlReshufflerService;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -161,12 +162,35 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
             final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
             //It filters the orders which needs to be processed and ignore the orders which contains the SKU (when total number
             // of sku needed for orders, will ship on same day, is not sufficient to fulfill from main and buffer inventory
+            filterOrdersForProcessingSoftAssignedSerials(finalSortedOrders);
             final Map<AbstractOrderModel, Set<String>> filteredOrders = filterOrdersForProcessingLateSerials(
                     finalSortedOrders,
                     warehouses, currentDate, isPresentDay);
             processOrders(filteredOrders, warehouses);
         }
     }
+
+  private void filterOrdersForProcessingSoftAssignedSerials(List<AbstractOrderModel> todayOrdersToBeProcessed) {
+    for (AbstractOrderModel order: todayOrdersToBeProcessed) {
+      for(AbstractOrderEntryModel entryModel: order.getEntries())
+      {
+        if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
+          for (BlProductModel productModel : entryModel.getSerialProducts()) {
+            if (productModel instanceof BlSerialProductModel) {
+              OrderModel orderModel = ((BlSerialProductModel)productModel).getAssociatedOrder();
+              BlSerialProductModel serialProductModel = (BlSerialProductModel) productModel;
+              if (Objects.nonNull(orderModel) && serialProductModel.getSoftAssigned() && (serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_NEEDED) ||
+                      serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_AWAITING_QUOTES) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_PARTS_NEEDED) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_SEND_TO_VENDOR) ||
+                      serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_IN_HOUSE))) {
+                entryModel.setSerialProducts(Collections.emptyList());
+                modelService.save(entryModel);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   /**
    * It processes the orders which can be fulfilled

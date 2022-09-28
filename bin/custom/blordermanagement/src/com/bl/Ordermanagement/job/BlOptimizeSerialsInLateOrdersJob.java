@@ -23,17 +23,17 @@ public class BlOptimizeSerialsInLateOrdersJob extends AbstractJobPerformable<Cro
 
     @Override
     public PerformResult perform(CronJobModel cronJobModel) {
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlReshufflerJob...");
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlOptimizeSerialsInLateOrdersJob...");
 
         try
         {
             getBlReshufflerService().processSerialsInLateOrders();
-            BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlReshufflerJob finished successfully");
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlOptimizeSerialsInLateOrdersJob finished successfully");
         }
         catch (final Exception ex)
         {
-            BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error occurred while performing BlReshufflerJob {} ", ex.getMessage());
-            BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlReshufflerJob", ex);
+            BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error occurred while performing BlOptimizeSerialsInLateOrdersJob {} ", ex.getMessage());
+            BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlOptimizeSerialsInLateOrdersJob", ex);
             return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
         }
         return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
