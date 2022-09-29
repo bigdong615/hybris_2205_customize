@@ -21,11 +21,18 @@
 		<formElement:formInputBox idKey="address.line1" labelKey="" placeholder="address.street1" path="billTo_street1" inputCSS="form-control" mandatory="true" />
 		<formElement:formInputBox idKey="address.line2" labelKey="" placeholder="address.street2" path="billTo_street2" inputCSS="form-control" mandatory="false"/>
 		<formElement:formInputBox idKey="address.townCity" labelKey="" placeholder="address.townCity" path="billTo_city" inputCSS="form-control" mandatory="true" />
-		<formElement:formInputBox idKey="address.postcode" labelKey="" placeholder="address.zipcode1" path="billTo_postalCode" inputCSS="form-control float-start shortInput" mandatory="true" />
+		<%-- <formElement:formInputBox idKey="address.postcode" labelKey="" placeholder="address.zipcode1" path="billTo_postalCode" inputCSS="form-control" mandatory="true" /> --%>
+		  <div class="form-group">
+            <input id="address.postcode" name="billTo_postalCode" class="form-control float-start shortInput " placeholder="Zip" type="number" value="" onKeyPress="if(this.value.length==5) return false;" >
+            </div>
+		
 		<%--<formElement:formSelectBox idKey="address.countryIso" labelKey="" path="billTo_country" mandatory="true" skipBlank="false"
                                       skipBlankMessageKey="address.selectCountry2" items="${regions}" itemValue="isocodeShort" tabindex="${tabindex + 7}" selectCSSClass="form-control"/>--%>
 		<formElement:formSelectBox idKey="address.region" labelKey="" path="billTo_state" mandatory="true" skipBlank="false" skipBlankMessageKey="billing.address.selectState" items="${regions}" itemValue="isocode" tabindex="${tabindex + 7}" selectCSSClass="form-control selectBoxSize" divCSS="select-wrapper float-end selectBoxDivWidth"/>
 		<%-- <formElement:formSelectBox idKey="address.region" labelKey="address.state" path="billTo_state" mandatory="true" skipBlank="false"  skipBlankMessageKey="address.selectState" items="${regions}" itemValue="isocodeShort"  selectCSSClass="form-control"/>--%>
 		<formElement:formInputBox idKey="address.email" labelKey="" placeholder="address.email" path="billTo_email" inputCSS="form-control" mandatory="false" />
-		<formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="billTo_phoneNumber" inputCSS="form-control mb-3" mandatory="false" />
+		<%-- <formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="billTo_phoneNumber" inputCSS="form-control mb-3" mandatory="false" /> --%>
+		 <div class="form-group">
+            <input id="address.phone" name="billTo_phoneNumber" class="form-control"  placeholder="Phone Number" type="text" maxlength="16" />
+            </div> 
 		<input type="checkbox" id="save-address"><label for="save-address"><span class="gray80">Save address</span></label>	

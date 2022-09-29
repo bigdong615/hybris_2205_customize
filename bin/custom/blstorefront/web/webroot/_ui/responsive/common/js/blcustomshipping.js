@@ -1,6 +1,6 @@
  $(document).ready(function() {
     resetSelectBox('ship-it-select-box');
-    defaultShipIt();
+   defaultShipIt();
     hideLabelsFromForm();
     changeUPSStore();
     hideShippingForm();
@@ -12,13 +12,13 @@
     }
     $('#ship-it-savedAddresses option').each(function() {
         var optionText = this.text;
-        var newOption = optionText.substring(0,52);
-        if(screen.width<600){
-            var newOption = optionText.substring(0,35);
-        }
-        if(optionText > optionText.substring(0,52)){
-            jQuery(this).text(newOption + '..');
-        }
+      //  var newOption = optionText.substring(0,52);
+      //  if(screen.width<600){
+       //     var newOption = optionText.substring(0,35);
+       // }
+       // if(optionText > optionText.substring(0,52)){
+         //   jQuery(this).text(newOption + '..');
+       // }
     });
     reverseTraverseOnShipping();
 });
@@ -1623,7 +1623,8 @@ function reverseTraverseOnShipping() {
 		showErrorForInputValidation(section);
           return true;
       } else {
-          if(phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
+          //if(phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
+	  if(phone && phone.trim() != '' && phone.length>=16){
             fieldName.removeClass('error');
             return true;
           } else {

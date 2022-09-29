@@ -640,8 +640,10 @@ footer .social a:hover { opacity: .7; }
 .icon-check-teal { display: inline-block; width: 24px; height: 12px; background: url(../assets/icon-check-teal.svg) center no-repeat; }
 .order-block .rental-arrow { margin-top: 24%; }
 .order-block .dropdown-toggle::after { display: none; }
-#accountContent .dropdown-menu { padding: 15px; box-shadow: 0 0 12px rgba(0,0,0,.2); width: 100%; }
-#accountContent .dropdown-menu li { padding: 4px 0; }
+/* #accountContent .dropdown-menu { padding: 15px; box-shadow: 0 0 12px rgba(0,0,0,.2); width: 100%; } */
+/* #accountContent .dropdown-menu li { padding: 4px 0; } */
+#accountContent .dropdown-menu { padding: 0px; box-shadow: 0 0 12px rgba(0,0,0,.2); width: 100%; }
+#accountContent .dropdown-menu li { padding: 0px 0;  border-bottom: 1px solid #d4d3d3; }
 #accountContent .dropdown-menu li a { color: #3d3c3c; text-decoration: none; }
 #accountContent .dropdown-menu li a:hover { color: #e64b4f; }
 input[type="file"] { display: none; }
@@ -674,11 +676,14 @@ input[type="file"] { display: none; }
 #accountMobileNav .dropdown-menu li a { padding: 15px; }
 #newCard .dropdown a { letter-spacing: normal; font-size: 1rem; text-transform: none; }
 #accountContent input[type=text], #accountContent select.form-control { padding: 10px; }
+#accountContent input[type=number], #accountContent select.form-control { padding: 10px; }
 #accountContent .dropdown-toggle:after { position: absolute; top: 50%; right: 20px; margin-top: -2px; }
 input[type=text].secure { background: url(../assets/icon-lock.svg) 97% center no-repeat; }
 .rental-images img { max-width: 100%; height: auto; }
 input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!important; background: url(../assets/icon-calendar.svg) no-repeat 97% center; max-width: 300px; }
-#accountContent .dropdown button { padding: 10px 35px 10px 10px; letter-spacing: normal; font-size: 1rem; text-transform: none; }
+/* #accountContent .dropdown button { padding: 10px 35px 10px 10px; letter-spacing: normal; font-size: 1rem; text-transform: none; } */
+#accountContent .dropdown button { padding: 10px 35px 10px 10px; letter-spacing: normal; font-size: 1rem; text-transform: none;white-space: normal; }
+
 #accountContent .product-block b { display: block; }
 .dropdown .btn-outline:hover { background-color: transparent; }
 .rental-arrow { max-width: 12px; }
