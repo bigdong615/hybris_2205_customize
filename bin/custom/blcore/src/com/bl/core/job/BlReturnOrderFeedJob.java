@@ -50,26 +50,34 @@ public class BlReturnOrderFeedJob extends AbstractJobPerformable<CronJobModel>
 			getBlReturnOrderPopulator().populate(orderModelList, returnOrderList);
 			final File returnOrderFeed = new File("Reurn_Order_Feed.csv");
 			FileWriter writer = null;
+			try
+			{
+				writer = new FileWriter(returnOrderFeed);
+			}
+			catch (final IOException e1)
+			{
+				LOG.info("Exception occurred during during creation of Writer");
+				e1.printStackTrace();
+			}
 
 			final ColumnPositionMappingStrategy mappingStrategy = new ColumnPositionMappingStrategy();
 			mappingStrategy.setType(ReturnOrderData.class);
-
 			final String[] columns = new String[]
-			{ "CustomerName", "Email", "OrderNumber", "OrderPlacedDate", "OrderDate", "ReturnOrderDate" };
+			{ "CustomerName", "Email", "OrderNumber", "OrderPlacedDate", "ReturnOrderDate", "ActualReturnOrderDate" };
 			mappingStrategy.setColumnMapping(columns);
-
 			final StatefulBeanToCsvBuilder<ReturnOrderData> builder = new StatefulBeanToCsvBuilder(writer);
 			final StatefulBeanToCsv beanWriter = builder.withMappingStrategy(mappingStrategy).build();
 			try
 			{
-				writer = new FileWriter(returnOrderFeed);
+				writer.append("Customer Name, Email, Order Number, Order Placed Date, Return Order Date, Actual Return Order Date");
+				writer.append("\n");
 				beanWriter.write(returnOrderList);
 				writer.close();
 			}
 			catch (final CsvDataTypeMismatchException | CsvRequiredFieldEmptyException | IOException e)
 			{
 				e.printStackTrace();
-				LOG.info("Exception occurred during converting to Xml");
+				LOG.info("Exception occurred during converting to CSV");
 				return new PerformResult(CronJobResult.ERROR, CronJobStatus.ABORTED);
 			}
 			final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyyHH:mm:ss");
