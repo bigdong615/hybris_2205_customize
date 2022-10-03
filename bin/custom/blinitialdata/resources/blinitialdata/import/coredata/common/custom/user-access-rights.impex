@@ -203,6 +203,7 @@ UserGroup ; warehouseagentgroup ;                ;          ;                   
           ;                     ;                ;          ; Consignment2OrderNotes ; +    ; +      ; +      ; +      ; -
           ;                     ;                ;          ;SavedValues             ;+     ;-       ;-       ;-       ;
           ;                     ;                ;           ;SavedValueEntry        ;+     ;-       ;-       ;-       ;
+          ;                     ;                ;           ;ShippingLabelHistory   ;+     ;-       ;-       ;-       ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 

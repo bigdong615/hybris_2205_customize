@@ -2046,4 +2046,10 @@
 		<property name="blGoogleProductFeedXmlPupulator" ref="blGoogleProductFeedXmlPupulator"/>
 		<property name="mediaService" ref="mediaService"/>
 	</bean>
+
+	<alias name="defaultBlOptimizedShippingMethodGenericDao" alias="blOptimizedShippingMethodGenericDao"/>
+	<bean name="defaultBlOptimizedShippingMethodGenericDao"
+		  class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="OptimizedShippingMethod"/>
+	</bean>
 </beans>
