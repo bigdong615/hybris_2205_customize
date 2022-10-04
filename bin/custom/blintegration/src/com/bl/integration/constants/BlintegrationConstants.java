@@ -69,6 +69,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String UPS_SHIPMENT_MSG = "Shipment Call Started.....";
 	public static final String RETURN_SHIPMENT_MSG = "Return Shipment Call Started.....";
 	public static final String DEFAULT_WAREHOUSE_CODE = "OPTIMISED";
+	public static final String DEFAULT_SHIPPING_CODE = "DEFAULT";
 	public static final String WAREHOUSE_MA = "warehouse_ma";
 	public static final String WAREHOUSE_CA = "warehouse_ca";
 	public static final String WEIGHT_UNIT = "LB";

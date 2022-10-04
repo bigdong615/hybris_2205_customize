@@ -3,6 +3,8 @@
  */
 package com.bl.integration.facades;
 
+import com.bl.core.enums.CarrierEnum;
+import com.bl.core.model.OptimizedShippingMethodModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
@@ -28,7 +30,11 @@ public interface BlCreateShipmentFacade
 	 * @throws ParseException as Exception
 	 * @throws IOException 
 	 */
-	void createBlShipmentPackages(PackagingInfoModel packagingInfo,final int packageCount, final Map<String, Integer> sequenceMap) throws ParseException, IOException;
+	boolean createBlShipmentPackages(PackagingInfoModel packagingInfo,final int packageCount, final Map<String, Integer> sequenceMap) throws ParseException, IOException;
+
+	boolean createBlShipmentPackages(PackagingInfoModel packagingInfo, final int packageCount, final Map<String, Integer> sequenceMap,
+			final CarrierEnum shippingType, final OptimizedShippingMethodModel optimizedShippingMethod)
+			throws ParseException, IOException;
 
 
 	/**
