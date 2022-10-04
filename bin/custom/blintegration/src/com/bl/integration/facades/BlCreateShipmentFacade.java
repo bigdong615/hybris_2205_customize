@@ -45,6 +45,6 @@ public interface BlCreateShipmentFacade
 	 * @param sequenceMap as SequenceMap
 	 * @throws IOException 
 	 */
-	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,final int packageCount,
+	public boolean createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,final int packageCount,
 			final Map<String, Integer> sequenceMap) throws IOException;
 }

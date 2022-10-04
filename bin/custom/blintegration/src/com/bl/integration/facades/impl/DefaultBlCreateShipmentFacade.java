@@ -132,7 +132,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @throws ParseException
 	 */
 	@Override
-	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,
+	public boolean createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,
 			final int packageCount, final Map<String, Integer> sequenceMap) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.RETURN_SHIPMENT_MSG);
@@ -147,11 +147,16 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 			if (upsResponse != null)
 			{
 				saveResponseOnInBoundPackage(upsResponse, packagingInfo);
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
 		else
 		{
-			createFedExShipment(packagingInfo, packageCount, sequenceMap, warehouseModel);
+			return createFedExShipment(packagingInfo, packageCount, sequenceMap, warehouseModel);
 		}
 	}
 
