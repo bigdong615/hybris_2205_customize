@@ -2046,4 +2046,18 @@
 		<property name="blGoogleProductFeedXmlPupulator" ref="blGoogleProductFeedXmlPupulator"/>
 		<property name="mediaService" ref="mediaService"/>
 	</bean>
+
+	<alias name="defaultBlOptimizedShippingMethodGenericDao" alias="blOptimizedShippingMethodGenericDao"/>
+	<bean name="defaultBlOptimizedShippingMethodGenericDao"
+		  class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="OptimizedShippingMethod"/>
+	</bean>
+
+	<bean id="blReturnOrderPopulator" class="com.bl.core.order.populators.BlReturnOrderPopulator"/>
+
+	<bean id="blReturnOrderJob" class="com.bl.core.job.BlReturnOrderFeedJob" parent="abstractJobPerformable">
+		<property name="blReturnOrderPopulator" ref="blReturnOrderPopulator"/>
+		<property name="mediaService" ref="mediaService"/>
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
 </beans>
