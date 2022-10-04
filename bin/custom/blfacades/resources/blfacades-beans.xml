@@ -691,6 +691,15 @@
 		<property name="forRent" type="java.lang.Boolean" />
 		<property name="forBuy" type="java.lang.Boolean" />
 	</bean>
+	
+	<bean class="de.hybris.platform.order.ReturnOrderData">
+		<property name="customerName" type="String" />
+		<property name="email" type="String" />
+		<property name="orderNumber" type="String" />
+		<property name="orderPlacedDate" type="String" />
+		<property name="returnOrderDate" type="String" />
+		<property name="actualReturnOrderDate" type="String" />
+	</bean>
 
 </beans>
 

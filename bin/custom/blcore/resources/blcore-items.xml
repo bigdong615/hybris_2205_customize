@@ -3442,6 +3442,19 @@
 	            </attribute>
           	</attributes>
           </itemtype>
+          
+          <itemtype code="BlReturnOrderFeed" autocreate="true" generate="true">
+          	<description>Return Order feed CSV will be saved here</description>
+          	<deployment table="BlReturnOrderFeed" typecode="12248"/>
+          	<attributes>
+	            <attribute qualifier="name" type="java.lang.String">
+	                <persistence type="property" />
+	            </attribute>
+	            <attribute qualifier="orderFeedFile" type="Media">
+	                <persistence type="property" />
+	            </attribute>
+          	</attributes>
+          </itemtype>
         </typegroup>
 
 		<typegroup name="StateWarehouseMapping">
