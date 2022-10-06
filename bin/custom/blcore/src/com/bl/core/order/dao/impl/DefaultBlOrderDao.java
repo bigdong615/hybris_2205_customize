@@ -18,6 +18,7 @@ import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -611,18 +612,19 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	}
 
 	@Override
-	public List<OrderModel> getOrdersReadyForReturn()
+	public List<OrderModel> getOrdersReadyForReturn() throws ParseException
 	{
-		final Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-		final Date endDate = DateUtils.addDays(currentDate, 2);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+		String date = simpleDateFormat.format(new Date());
+		Date currentDate = simpleDateFormat.parse(date);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(RETURN_ORDERS_FEED_QUERY);
 		fQuery.addQueryParameter("returnOrderBefore", BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
-		fQuery.addQueryParameter("returnOrderAfter", BlDateTimeUtils.getFormattedEndDay(endDate).getTime());
+		fQuery.addQueryParameter("returnOrderAfter", BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<OrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders))
 		{
-			BlLogger.logMessage(LOG, Level.INFO, "No orders found for Order feed with date {}");
+			BlLogger.logMessage(LOG, Level.INFO, "No orders found for Return Order feed with date {}");
 			return Collections.emptyList();
 		}
 		return orders;
