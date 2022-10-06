@@ -1,6 +1,5 @@
 package com.bl.core.job;
 
-import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
@@ -9,22 +8,32 @@ import de.hybris.platform.order.ReturnOrderData;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
 import de.hybris.platform.servicelayer.media.MediaService;
+import de.hybris.platform.util.Config;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.bl.core.model.BlReturnOrderFeedModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.order.populators.BlReturnOrderPopulator;
+import com.bl.esp.constants.BlespintegrationConstants;
+import com.bl.logging.BlLogger;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -37,18 +46,25 @@ public class BlReturnOrderFeedJob extends AbstractJobPerformable<CronJobModel>
 	private static final Logger LOG = Logger.getLogger(BlReturnOrderFeedJob.class);
 	private BlReturnOrderPopulator blReturnOrderPopulator;
 	private BlOrderDao orderDao;
-	private static final String MIME_TYPE = "csv";
-	private MediaService mediaService;
 
 	@Override
 	public PerformResult perform(final CronJobModel cronJob)
 	{
-		final List<OrderModel> orderModelList = getOrderDao().getOrdersReadyForReturn();
+		List<OrderModel> orderModelList = new ArrayList<OrderModel>();
+		try
+		{
+			orderModelList = getOrderDao().getOrdersReadyForReturn();
+		}
+		catch (final ParseException ex)
+		{
+			LOG.info("Exception occurred during fetching return order models");
+			ex.printStackTrace();
+		}
 		if (!orderModelList.isEmpty())
 		{
 			final List<ReturnOrderData> returnOrderList = new ArrayList<ReturnOrderData>();
 			getBlReturnOrderPopulator().populate(orderModelList, returnOrderList);
-			final File returnOrderFeed = new File("Reurn_Order_Feed.csv");
+			final File returnOrderFeed = getFile();
 			FileWriter writer = null;
 			try
 			{
@@ -56,7 +72,7 @@ public class BlReturnOrderFeedJob extends AbstractJobPerformable<CronJobModel>
 			}
 			catch (final IOException e1)
 			{
-				LOG.info("Exception occurred during during creation of Writer");
+				LOG.info("Exception occurred during creation of Writer");
 				e1.printStackTrace();
 			}
 
@@ -80,31 +96,89 @@ public class BlReturnOrderFeedJob extends AbstractJobPerformable<CronJobModel>
 				LOG.info("Exception occurred during converting to CSV");
 				return new PerformResult(CronJobResult.ERROR, CronJobStatus.ABORTED);
 			}
-			final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyyHH:mm:ss");
-			final MediaModel media = createMediaModel(returnOrderFeed, formatter);
-			final BlReturnOrderFeedModel returnOrderFeedModel = modelService.create(BlReturnOrderFeedModel.class);
-			returnOrderFeedModel.setName("Reurn_Order_Feed_" + formatter.format(new Date()));
-			returnOrderFeedModel.setOrderFeedFile(media);
-			modelService.save(returnOrderFeedModel);
+			sendFileToFTPLocation(returnOrderFeed);
 		}
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
 	}
 
-	private MediaModel createMediaModel(final File returnOrderFeedFile, final SimpleDateFormat formatter)
+	private void sendFileToFTPLocation(final File file)
 	{
-		final MediaModel media = modelService.create(MediaModel.class);
-		media.setCode(returnOrderFeedFile.getName() + "_" + formatter.format(new Date()));
-		modelService.save(media);
+		Session session = null;
+		Channel channel = null;
+		ChannelSftp channelSftp = null;
+		try
+		{
+			final JSch jsch = new JSch();
+			session = jsch.getSession(Config.getParameter(BlespintegrationConstants.SFTPUSER),
+					Config.getParameter(BlespintegrationConstants.SFTP_RETURN_ORDER_HOST),
+					Config.getInt(BlespintegrationConstants.SFTPPORT, 22));
+			session.setPassword(Config.getParameter(BlespintegrationConstants.SFTP_RETURN_ORDER_PASS));
+			final Properties config = new Properties();
+			config.put(BlespintegrationConstants.STICT_HOST_KEY, BlespintegrationConstants.NO);
+			session.setConfig(config);
+			session.connect();
+			channel = session.openChannel(BlespintegrationConstants.SFTP);
+			channel.connect();
+			channelSftp = (ChannelSftp) channel;
+			channelSftp.cd(Config.getParameter(BlespintegrationConstants.CLIENT_FTP_PATH));
+			final File f = new File(file.getAbsolutePath());
+			try (FileInputStream fileInputStream = new FileInputStream(f))
+			{
+				channelSftp.put(fileInputStream, f.getName());
+			}
+		}
+		catch (JSchException | SftpException | IOException ex)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Error while sending file to FTP location.:-", ex);
+		}
+		finally
+		{
+			if (null != channelSftp)
+			{
+				channelSftp.disconnect();
+				channelSftp.exit();
+			}
+			if (null != channel)
+			{
+				channel.disconnect();
+			}
+			if (null != session)
+			{
+				session.disconnect();
+			}
+		}
+		if (file.exists())
+		{
+			file.delete();
+		}
+	}
 
-		try (InputStream returnOrderFeedInputStream = new FileInputStream(returnOrderFeedFile))
+	private File getFile()
+	{
+		final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
+		final String fileName = new StringBuilder(BlespintegrationConstants.RETUNR_ORDER_FILE_NAME_PREFIX).append(logFileName)
+				.append(BlespintegrationConstants.RETURN_ORDER_FILE_SUFFIX).toString();
+		final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
+		createDirectoryForFTPFeed(path);
+		return new File(new StringBuilder(path).append(BlespintegrationConstants.SLASH).append(fileName).toString());
+	}
+
+	private void createDirectoryForFTPFeed(final String path)
+	{
+		try
 		{
-			getMediaService().setStreamForMedia(media, returnOrderFeedInputStream, returnOrderFeedFile.getName(), MIME_TYPE);
+			final File directory = new File(path);
+			if (!directory.exists())
+			{
+				directory.mkdirs();
+			}
 		}
-		catch (final IOException e)
+		catch (final Exception e)
 		{
-			LOG.info("Exception occurred during Media Stream " + e);
+			BlLogger.logMessage(LOG, Level.ERROR, "Error while creating Directory", e);
 		}
-		return media;
+
+
 	}
 
 	public BlReturnOrderPopulator getBlReturnOrderPopulator()
@@ -115,16 +189,6 @@ public class BlReturnOrderFeedJob extends AbstractJobPerformable<CronJobModel>
 	public void setBlReturnOrderPopulator(final BlReturnOrderPopulator blReturnOrderPopulator)
 	{
 		this.blReturnOrderPopulator = blReturnOrderPopulator;
-	}
-
-	protected MediaService getMediaService()
-	{
-		return mediaService;
-	}
-
-	public void setMediaService(final MediaService mediaService)
-	{
-		this.mediaService = mediaService;
 	}
 
 	public BlOrderDao getOrderDao()
