@@ -2057,7 +2057,6 @@
 
 	<bean id="blReturnOrderJob" class="com.bl.core.job.BlReturnOrderFeedJob" parent="abstractJobPerformable">
 		<property name="blReturnOrderPopulator" ref="blReturnOrderPopulator"/>
-		<property name="mediaService" ref="mediaService"/>
 		<property name="orderDao" ref="orderDao"/>
 	</bean>
 </beans>
