@@ -73,25 +73,6 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 	 */
 	public ActionResult<ConsignmentModel> perform(final ActionContext<ConsignmentModel> actionContext)
 	{
-		final Map<String, Integer> sequenceMap = new HashedMap();
-		final ConsignmentModel consignment = actionContext.getData();
-		modelService.refresh(consignment);
-		final List<PackagingInfoModel> packages = consignment.getPackaginginfos();
-		final int packageCount = packages.size();
-
-		final Map<String, Integer> sequenceNumber = getBlShipmentCreationService().getSequenceNumber(sequenceMap, packages, packageCount);
-
-		for (final PackagingInfoModel packagingInfoModel : packages)
-		{
-			try
-			{
-				getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel, packageCount, sequenceNumber);
-			}
-			catch (final ParseException | IOException exception)
-			{
-				BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while generating shipment label", exception);
-			}
-		}
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
 		return new ActionResult(BlintegrationConstants.SUCCESS);
 	}

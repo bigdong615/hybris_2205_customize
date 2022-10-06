@@ -9,22 +9,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Messagebox;
 
 import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
@@ -97,16 +103,25 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		final List<PackagingInfoModel> packages = selectedConsignment.getPackaginginfos();
 
 		final List<WarehouseModel> activeWarehouseList = blWarehouseGenericDao.find();
-
+		final List<String> errorPackages = Lists.newArrayList();
 		if (!BlintegrationConstants.DEFAULT_WAREHOUSE_CODE.equalsIgnoreCase(this.warehouseCombobox.getSelectedItem().getValue()))
 		{
-			createShipmentForSelectedWarehouse(packages, activeWarehouseList);
+			errorPackages.addAll(createShipmentForSelectedWarehouse(packages, activeWarehouseList));
 		}
 		else
 		{
-			createShipmentForOptimizedWarehouse(packages);
+			errorPackages.addAll(createShipmentForOptimizedWarehouse(packages));
 		}
-
+		if (CollectionUtils.isNotEmpty(errorPackages))
+		{
+			Messagebox.show("Error while generating Inbound label for packages with ID : " + String.join(", ", errorPackages),
+					BlCoreConstants.ERROR_TITLE, Messagebox.OK, Messagebox.ERROR);
+		}
+		else
+		{
+			Messagebox.show("Inbound Label Generated Successfully", BlintegrationConstants.POPUP_TEXT, Messagebox.OK, "icon");
+		}
+		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
 	/**
@@ -126,19 +141,20 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 * @param packages
 	 * @throws IOException 
 	 */
-	private void createShipmentForOptimizedWarehouse(final List<PackagingInfoModel> packages) throws IOException
+	private List<String> createShipmentForOptimizedWarehouse(final List<PackagingInfoModel> packages) throws IOException
 	{
 		final WarehouseModel stateWarehouse = getBlDeliveryStateSourcingLocationFilter()
 				.applyFilter(selectedConsignment.getOrder());
-
+		final List<String> errorPackages = Lists.newArrayList();
 		if (stateWarehouse.equals(selectedConsignment.getWarehouse()))
 		{
-			startShipmentCreationProcess(packages, stateWarehouse);
+			errorPackages.addAll(startShipmentCreationProcess(packages, stateWarehouse));
 		}
 		else
 		{
-			startShipmentCreationProcess(packages, selectedConsignment.getWarehouse());
+			errorPackages.addAll(startShipmentCreationProcess(packages, selectedConsignment.getWarehouse()));
 		}
+		return errorPackages;
 	}
 
 	/**
@@ -147,22 +163,23 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 * @param packages
 	 * @param activeWarehouseList
 	 */
-	private void createShipmentForSelectedWarehouse(final List<PackagingInfoModel> packages,
+	private List<String> createShipmentForSelectedWarehouse(final List<PackagingInfoModel> packages,
 			final List<WarehouseModel> activeWarehouseList)
 	{
-		activeWarehouseList.forEach(warehouse -> {
-			if (this.warehouseCombobox.getSelectedItem().getValue().equals(warehouse.getCode()))
+		final Optional<WarehouseModel> selectedWarehouse = activeWarehouseList.stream().filter(warehouse -> this.warehouseCombobox.getSelectedItem().getValue().equals(warehouse.getCode())).findAny();
+		final List<String> errorPackages = Lists.newArrayList();
+		if(selectedWarehouse.isPresent())
+		{
+			try
 			{
-				try
-				{
-					startShipmentCreationProcess(packages, warehouse);
-				}
-				catch (final IOException ioException)
-				{
-					BlLogger.logMessage(LOG, Level.ERROR, "An exception occurred while generating return label", ioException);
-				}
+				errorPackages.addAll(startShipmentCreationProcess(packages, selectedWarehouse.get()));
 			}
-		});
+			catch (final IOException ioException)
+			{
+				BlLogger.logMessage(LOG, Level.ERROR, "An exception occurred while generating return label", ioException);
+			}
+		}
+		return errorPackages;
 	}
 
 	/**
@@ -172,17 +189,22 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 * @param stateWarehouse
 	 * @throws IOException 
 	 */
-	private void startShipmentCreationProcess(final List<PackagingInfoModel> packages, final WarehouseModel stateWarehouse) throws IOException
+	private List<String> startShipmentCreationProcess(final List<PackagingInfoModel> packages, final WarehouseModel stateWarehouse) throws IOException
 	{
 		final Map<String, Integer> sequenceMap = new HashedMap();
 		final int packageCount = packages.size();
 		final Map<String, Integer> sequenceNumber = getBlShipmentCreationService().getSequenceNumber(sequenceMap, packages, packageCount);
-		
+		final List<String> errorPackages = Lists.newArrayList();
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Creating shipment package for {}", packagingInfoModel);
-			getBlCreateShipmentFacade().createBlReturnShipmentPackages(packagingInfoModel, stateWarehouse,packageCount, sequenceNumber);
+			final boolean isLabelGenerateSuccess = getBlCreateShipmentFacade().createBlReturnShipmentPackages(packagingInfoModel, stateWarehouse,packageCount, sequenceNumber);
+			if(BooleanUtils.isFalse(isLabelGenerateSuccess))
+			{
+				errorPackages.add(packagingInfoModel.getPackageId());
+			}
 		}
+		return errorPackages;
 	}
 
 	/**
