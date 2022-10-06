@@ -93,7 +93,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     public void processSerialsInLateOrders() {
         final Date currentDate = Date
                 .from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        final Date endDate = DateUtils.addDays(currentDate, 2);
+        final Date endDate = DateUtils.addDays(currentDate, 3);
         for (Date startDate = currentDate; startDate.before(endDate); startDate = DateUtils.addDays(startDate, 1)) {
             processOrdersSoonToBeTransitByDay(startDate, startDate.equals(currentDate));
             if(startDate.equals(currentDate)) {
@@ -683,13 +683,11 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
             {
                 if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
                   for (BlProductModel serialProductModel : entryModel.getSerialProducts()) {
-                    if (serialProductModel instanceof BlSerialProductModel) {
-                      OrderModel orderModel = ((BlSerialProductModel)serialProductModel).getAssociatedOrder();
-                      if (Objects.nonNull(orderModel) && OrderStatus.LATE.equals(orderModel.getStatus())) {
+                    if (serialProductModel instanceof BlSerialProductModel && ((BlSerialProductModel) serialProductModel).getSerialStatus().equals(SerialStatusEnum.LATE)) {
                         entryModel.setSerialProducts(Collections.emptyList());
                         modelService.save(entryModel);
+                        modelService.refresh(order);
                         mapOfLateOrders.put(order, productSet);
-                      }
                     }
                   }
                 }
