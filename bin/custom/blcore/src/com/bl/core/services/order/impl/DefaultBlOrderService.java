@@ -361,6 +361,13 @@ public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
 	}
 
 	@Override
+	public boolean isRentalOrderOnly(final AbstractOrderModel order)
+	{
+		return BooleanUtils.isTrue(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder())
+				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
+	}
+
+	@Override
 	public void commitOrderToAvalara(AbstractOrderModel order)
 	{
 		if(order instanceof OrderModel && BooleanUtils.isFalse(order.getIsOrderCommittedToAvalara()))
