@@ -1405,6 +1405,8 @@
 					<editorArea:attribute qualifier="internalTransferConsignment"/>
 					<editorArea:attribute qualifier="actualShippingDateToCustomer"/>
 					<editorArea:attribute qualifier="orderTransferConsignment"/>
+					<editorArea:attribute qualifier="rentalStartDate"/>
+					<editorArea:attribute qualifier="rentalEndDate"/>
 				</editorArea:section>
 				<editorArea:section name="warehousingbackoffice.section.consignment.entries">
 					<editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
