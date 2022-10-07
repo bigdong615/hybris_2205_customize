@@ -74,4 +74,6 @@ public interface BlOrderService {
    * @param order the order
    */
   public void commitOrderToAvalara(final AbstractOrderModel order);
+
+  boolean isRentalOrderOnly(final AbstractOrderModel order);
 }
