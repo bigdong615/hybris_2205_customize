@@ -8,6 +8,7 @@ import de.hybris.platform.order.daos.OrderDao;
 import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -143,6 +144,6 @@ public interface BlOrderDao extends OrderDao
 	 */
 	List<TaskConditionModel> getTaskCondition(final String code);
 
-	List<OrderModel> getOrdersReadyForReturn();
+	List<OrderModel> getOrdersReadyForReturn() throws ParseException;
 
 }
