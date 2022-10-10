@@ -454,6 +454,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blSerialProduct.setLastLocationScanParent(blInventoryLocationLocal.getParentInventoryLocation() != null
 				? blInventoryLocationLocal.getParentInventoryLocation().getCode() : null);
 		blSerialProduct.setOcLocationDetails(blInventoryLocationLocal);
+		blSerialProduct.setInventoryLocationID(blInventoryLocationLocal.getInventoryLocationID());
 		modelService.save(blSerialProduct);
 		modelService.refresh(blSerialProduct);
 
