@@ -53,6 +53,7 @@
 		<property name="manufacturerAID" type="java.lang.String"/>
 		<property name="nextAvailableDate" type="java.lang.String"/>
 		<property name="disableButton" type="boolean"/>
+		<property name="isBlProductType" type="Boolean"/>
   </bean>
 
 
