@@ -454,6 +454,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blSerialProduct.setLastLocationScanParent(blInventoryLocationLocal.getParentInventoryLocation() != null
 				? blInventoryLocationLocal.getParentInventoryLocation().getCode() : null);
 		blSerialProduct.setOcLocationDetails(blInventoryLocationLocal);
+		blSerialProduct.setInventoryLocationID(blInventoryLocationLocal.getInventoryLocationID());
 		modelService.save(blSerialProduct);
 		modelService.refresh(blSerialProduct);
 
@@ -481,6 +482,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			serialStagedProductModel.setLastLocationScanParent(blInventoryLocationLocal.getParentInventoryLocation() != null
 					? blInventoryLocationLocal.getParentInventoryLocation().getCode() : null);
 			serialStagedProductModel.setOcLocationDetails(blInventoryLocationLocal);
+			serialStagedProductModel.setInventoryLocationID(blInventoryLocationLocal.getInventoryLocationID());
 			modelService.save(serialStagedProductModel);
 			modelService.refresh(serialStagedProductModel);
 		}
