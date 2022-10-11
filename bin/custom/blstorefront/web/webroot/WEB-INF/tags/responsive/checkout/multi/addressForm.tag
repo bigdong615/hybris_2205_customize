@@ -44,11 +44,18 @@
             <formElement:formInputBox idKey="address.line1" labelKey="" placeholder="address.street1" path="line1" inputCSS="form-control" mandatory="true" />
             <formElement:formInputBox idKey="address.line2" labelKey="" placeholder="address.street2" path="line2" inputCSS="form-control" mandatory="false"/>
             <formElement:formInputBox idKey="address.townCity" labelKey="" placeholder="address.townCity" path="townCity" inputCSS="form-control" mandatory="true" />
-            <formElement:formInputBox idKey="address.postcode" labelKey="" placeholder="address.zipcode1" path="postcode" inputCSS="form-control" mandatory="true" />
+            <%-- <formElement:formInputBox idKey="address.postcode" labelKey="" placeholder="address.zipcode1" path="postcode" inputCSS="form-control" mandatory="true" /> --%>
+           <div class="form-group">
+            <input id="address.postcode" name="postcode" class="form-control" placeholder="Zip" type="number" value="" onKeyPress="if(this.value.length==5) return false;" >
+            </div>
             <formElement:formSelectBox idKey="address.countryIso" labelKey="" path="countryIso" mandatory="true" skipBlank="false"
                 skipBlankMessageKey="address.selectCountry2" items="${regions}" itemValue="isocodeShort" tabindex="${tabindex + 0}" selectCSSClass="form-control forcolor-change"/>
             <formElement:formInputBox idKey="address.email" labelKey="" placeholder="address.email" path="email" inputCSS="form-control" mandatory="false" />
-            <formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="phone" inputCSS="form-control" mandatory="false" />
+            <%--  <formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="phone" inputCSS="form-control" mandatory="false" />  --%>
+           <div class="form-group">
+            <input id="address.phone" name="phone" class="form-control"  placeholder="Phone Number" type="text" path="phone" inputCSS="form-control" mandatory="false" maxlength="16" />
+            </div> 
+            
         </form:form>
     </div>
 </div>

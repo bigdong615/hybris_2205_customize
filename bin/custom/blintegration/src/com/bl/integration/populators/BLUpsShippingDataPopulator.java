@@ -3,10 +3,12 @@
  */
 package com.bl.integration.populators;
 
+import com.bl.core.model.OptimizedShippingMethodModel;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.util.Config;
@@ -91,12 +93,12 @@ public class BLUpsShippingDataPopulator
 	 * @param packagingInfo
 	 * @return
 	 */
-	public UpsShippingRequestData populateUPSShipmentRequest(final PackagingInfoModel packagingInfo)
+	public UpsShippingRequestData populateUPSShipmentRequest(final PackagingInfoModel packagingInfo, final OptimizedShippingMethodModel om)
 	{
 		final UpsShippingRequestData upsRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
 
-		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, null, false);
+		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, null, false, om);
 		upsRequestData.setShipment(upsShipmentData);
 		return upsRequestData;
 
@@ -114,7 +116,7 @@ public class BLUpsShippingDataPopulator
 		final UpsShippingRequestData upsReturnRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
 
-		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel, true);
+		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel, true, null);
 
 		/** Creating return service Data **/
 
@@ -136,7 +138,7 @@ public class BLUpsShippingDataPopulator
 	 * @param shipmentData
 	 */
 	private ShipmentData populateUpsShipmentRequestData(final PackagingInfoModel packagingInfo, final ShipmentData shipmentData,
-			final WarehouseModel stateWarehouse, final boolean isRSLabel)
+			final WarehouseModel stateWarehouse, final boolean isRSLabel, final OptimizedShippingMethodModel om)
 	{
 		/** Creating UPS Payment Data **/
 		final UpsPaymentInformation upsPaymentInformation = new UpsPaymentInformation();
@@ -198,7 +200,7 @@ public class BLUpsShippingDataPopulator
 		/** Creating UPS Shipment Service Data **/
 		final UpsShipmentServiceData upsShipmentServiceData = new UpsShipmentServiceData();
 
-		populateUpsShipmentServiceData(packagingInfo, upsShipmentServiceData);
+		populateUpsShipmentServiceData(packagingInfo, upsShipmentServiceData, om);
 
 		/** Creating UPS Package Data List **/
 		final List<PackageTypeData> packageDataList = new ArrayList<>();
@@ -272,9 +274,14 @@ public class BLUpsShippingDataPopulator
 	 * @param upsShipmentServiceData
 	 */
 	private void populateUpsShipmentServiceData(final PackagingInfoModel packagingInfo,
-			final UpsShipmentServiceData upsShipmentServiceData)
+			final UpsShipmentServiceData upsShipmentServiceData, final OptimizedShippingMethodModel om)
 	{
-		if (Objects.nonNull(packagingInfo.getConsignment().getOptimizedShippingType())
+		if(Objects.nonNull(om) && StringUtils.isNotBlank(om.getServiceTypeCode()) && StringUtils.isNotBlank(om.getServiceTypeDesc()))
+		{
+			upsShipmentServiceData.setCode(om.getServiceTypeCode());
+			upsShipmentServiceData.setDescription(om.getServiceTypeDesc());
+		}
+		else if (Objects.nonNull(packagingInfo.getConsignment().getOptimizedShippingType())
 				&& StringUtils.isNotBlank(packagingInfo.getConsignment().getOptimizedShippingType().getCode()))
 		{
 			upsShipmentServiceData.setCode(packagingInfo.getConsignment().getOptimizedShippingType().getServiceTypeCode());

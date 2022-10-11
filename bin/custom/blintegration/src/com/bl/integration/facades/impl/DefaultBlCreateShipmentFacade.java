@@ -1,5 +1,9 @@
 package com.bl.integration.facades.impl;
 
+import com.bl.core.enums.ShippingLabelTypeEnum;
+import com.bl.core.model.OptimizedShippingMethodModel;
+import com.bl.core.model.ShippingLabelHistoryModel;
+import com.google.common.collect.Lists;
 import de.hybris.platform.catalog.model.CatalogUnawareMediaModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -12,11 +16,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -73,26 +80,46 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @throws ParseException
 	 */
 	@Override
-	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
+	public boolean createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
 			final Map<String, Integer> sequenceMap) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.UPS_SHIPMENT_MSG);
 
 		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
 		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
+		return processLabelGeneration(packagingInfo, packageCount, delivertCarrier, sequenceMap, null);
+	}
 
-		if (StringUtils.isNotEmpty(delivertCarrier.getCode()) && CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
+	@Override
+	public boolean createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
+			final Map<String, Integer> sequenceMap, final CarrierEnum shippingType,
+			final OptimizedShippingMethodModel optimizedShippingMethod) throws IOException
+	{
+		return processLabelGeneration(packagingInfo, packageCount, shippingType, sequenceMap, optimizedShippingMethod);
+	}
+
+	private boolean processLabelGeneration(final PackagingInfoModel packagingInfo, final int packageCount,
+			final CarrierEnum delivertCarrier, final Map<String, Integer> sequenceMap,
+			final OptimizedShippingMethodModel optimizedShippingMethod) throws IOException
+	{
+		if (StringUtils.isNotBlank(delivertCarrier.getCode())
+				&& CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
 		{
-			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService()
-					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo), packagingInfo);
+			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService().createUPSShipment(
+					getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo, optimizedShippingMethod), packagingInfo);
 			if (upsResponse != null)
 			{
-				saveResponseOnOutboundPackage(upsResponse, packagingInfo);
+				saveResponseOnOutboundPackage(upsResponse, packagingInfo, delivertCarrier, optimizedShippingMethod);
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
 		else
 		{
-			createFedExShipment(packagingInfo, packageCount, sequenceMap, null);
+			return createFedExShipment(packagingInfo, packageCount, sequenceMap, null);
 		}
 	}
 
@@ -105,7 +132,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @throws ParseException
 	 */
 	@Override
-	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,
+	public boolean createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,
 			final int packageCount, final Map<String, Integer> sequenceMap) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.RETURN_SHIPMENT_MSG);
@@ -120,11 +147,16 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 			if (upsResponse != null)
 			{
 				saveResponseOnInBoundPackage(upsResponse, packagingInfo);
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
 		else
 		{
-			createFedExShipment(packagingInfo, packageCount, sequenceMap, warehouseModel);
+			return createFedExShipment(packagingInfo, packageCount, sequenceMap, warehouseModel);
 		}
 	}
 
@@ -134,7 +166,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @param packagingInfo
 	 * @param sequenceMap
 	 */
-	private void createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
+	private boolean createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
 			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel)
 	{
 
@@ -146,13 +178,16 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 			try
 			{
 				processResponse(masterReply, packagingInfo, warehouseModel);
+				return true;
 			}
 			catch (final Exception exception)
 			{
 				BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception occurred while creating fedEx shipment {}",
 						exception);
+				return false;
 			}
 		}
+		return false;
 	}
 
 	/**
@@ -196,18 +231,25 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipment created for Transaction Id {} : ",
 				reply.getTransactionDetail().getCustomerTransactionId());
 		final CompletedShipmentDetail completedShipmentDetails = reply.getCompletedShipmentDetail();
+		ShippingLabelTypeEnum labelTypeEnum = null;
+		String trackingNumber = StringUtils.EMPTY;
 		if (warehouseModel == null)
 		{
-			packagingInfo.setOutBoundTrackingNumber(completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
+			trackingNumber = completedShipmentDetails.getMasterTrackingId().getTrackingNumber();
+			packagingInfo.setOutBoundTrackingNumber(trackingNumber);
+			labelTypeEnum = ShippingLabelTypeEnum.OUTBOUND;
 		}
 		else
 		{
-			packagingInfo.setInBoundTrackingNumber(completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
+			trackingNumber = completedShipmentDetails.getMasterTrackingId().getTrackingNumber();
+			packagingInfo.setInBoundTrackingNumber(trackingNumber);
+			labelTypeEnum = ShippingLabelTypeEnum.INBOUND;
 		}
 		packagingInfo.setLabelURL(fedExShipmentURL + completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
 		setTotalChargesOnPackage(completedShipmentDetails.getShipmentRating(), packagingInfo);
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
+		createShippingLabelHistory(labelTypeEnum, packagingInfo, trackingNumber, StringUtils.EMPTY, StringUtils.EMPTY, null, null, null);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Tracking Id {} generated for package {}",
 				completedShipmentDetails.getMasterTrackingId().getTrackingNumber(), packagingInfo.getPackageId());
 	}
@@ -254,6 +296,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		packagingInfo.setInBoundShippingMedia(createCatalogUnawareMediaModel);
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
+		createShippingLabelHistory(ShippingLabelTypeEnum.INBOUND, packagingInfo, shipmentPackage.getTrackingNumber(),
+				shipmentPackage.getGraphicImage(), buffer.toString(),createCatalogUnawareMediaModel, null, null);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Inbound Shipment generated for Package with tracking number : {}",
 				packagingInfo.getInBoundTrackingNumber());
 	}
@@ -265,7 +309,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @param packagingInfo
 	 * @throws IOException 
 	 */
-	private void saveResponseOnOutboundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo) throws IOException
+	private void saveResponseOnOutboundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo, final CarrierEnum shippingType,
+			final OptimizedShippingMethodModel optimizedShippingMethod) throws IOException
 	{
 		final StringBuilder buffer = new StringBuilder();
 		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo, buffer);
@@ -281,6 +326,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		packagingInfo.setOutBoundShippingMedia(createCatalogUnawareMediaModel);
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
+		createShippingLabelHistory(ShippingLabelTypeEnum.OUTBOUND, packagingInfo, shipmentPackage.getTrackingNumber(),
+				shipmentPackage.getGraphicImage(), buffer.toString(),createCatalogUnawareMediaModel, shippingType, optimizedShippingMethod);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Outbound Shipment generated for Package with tracking number : {}",
 				packagingInfo.getOutBoundTrackingNumber());
 	}
@@ -403,6 +450,40 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	private void createShippingLabelHistory(final ShippingLabelTypeEnum labelTypeEnum, final PackagingInfoModel packaging,
+			final String trackingNumber, final String graphicLabel, final String shippingLabel,
+			final CatalogUnawareMediaModel shippingLabelMedia, final CarrierEnum shippingType,
+			final OptimizedShippingMethodModel optimizedShippingMethodModel)
+	{
+		final ShippingLabelHistoryModel shippingLabelHistory = getModelService().create(ShippingLabelHistoryModel.class);
+		shippingLabelHistory.setShippingLabelType(labelTypeEnum);
+		shippingLabelHistory.setTrackingNumber(trackingNumber);
+		shippingLabelHistory.setGraphicImage(graphicLabel);
+		shippingLabelHistory.setShippingLabel(shippingLabel);
+		shippingLabelHistory.setShippingLabelMedia(shippingLabelMedia);
+		shippingLabelHistory
+				.setOrderCode(Objects.nonNull(packaging.getConsignment()) && Objects.nonNull(packaging.getConsignment().getOrder())
+						? packaging.getConsignment().getOrder().getCode()
+						: StringUtils.EMPTY);
+		shippingLabelHistory.setConsignmentCode(
+				Objects.nonNull(packaging.getConsignment()) ? packaging.getConsignment().getCode() : StringUtils.EMPTY);
+		shippingLabelHistory.setPackage(packaging);
+		final boolean isOptimizedShippingMethodModified = Objects.nonNull(shippingType)
+				&& Objects.nonNull(optimizedShippingMethodModel);
+		shippingLabelHistory.setCarrier(isOptimizedShippingMethodModified ? shippingType
+				: ((ZoneDeliveryModeModel) packaging.getConsignment().getDeliveryMode()).getCarrier());
+		shippingLabelHistory.setOptimizedShippingMethod(isOptimizedShippingMethodModified ? optimizedShippingMethodModel
+				: packaging.getConsignment().getOptimizedShippingType());
+		shippingLabelHistory.setIsOptimizedShippingMethodModified(isOptimizedShippingMethodModified);
+		getModelService().save(shippingLabelHistory);
+		final List<ShippingLabelHistoryModel> shippingLabelHistoryModelList = Lists
+				.newArrayList(CollectionUtils.emptyIfNull(packaging.getShippingLabelHistoryLogs()));
+		shippingLabelHistoryModelList.add(shippingLabelHistory);
+		packaging.setShippingLabelHistoryLogs(shippingLabelHistoryModelList);
+		getModelService().save(packaging);
+		getModelService().refresh(packaging);
 	}
 
 }

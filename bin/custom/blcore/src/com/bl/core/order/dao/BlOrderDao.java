@@ -5,9 +5,10 @@ import de.hybris.platform.core.model.order.CartEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.OrderDao;
-import de.hybris.platform.task.TaskCondition;
 import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public interface BlOrderDao extends OrderDao
 	 * @return list of orders
 	 */
 	public AbstractOrderModel getOrderByCode(final String orderNumber);
-	
+
 	/**
 	 * It gets the order by customer
 	 * @return list of orders
@@ -126,7 +127,7 @@ public interface BlOrderDao extends OrderDao
 	 * @return list of orders
 	 */
 	public List<OrderModel> getOrdersToVoidTransactions();
-	
+
 	/**
 	 * Gets the all legacy orders.
 	 *
@@ -140,5 +141,7 @@ public interface BlOrderDao extends OrderDao
 	 * @return list of TaskConditionModel
 	 */
 	List<TaskConditionModel> getTaskCondition(final String code);
+
+	List<OrderModel> getOrdersReadyForReturn() throws ParseException;
 
 }
