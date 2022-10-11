@@ -101,7 +101,7 @@ gtag('config', googleAnalyticsTrackingId);
         	    "event_category": "Cart Page",
             	"event_label": "View Cart",
             	"checkout_step" : 1,
-            	"checkout_option": "View Cart",
+            	"checkout_option": ${cartType},
             	"value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
               "items": [
         				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -129,7 +129,7 @@ gtag('config', googleAnalyticsTrackingId);
                   	    "event_category": "Shipping Page",
                       	"event_label": "Delivery Method",
                         "checkout_step": 2,
-                        "checkout_option": "Delivery Method",
+                        //"checkout_option": "Delivery Method",
                        "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                         "items": [
                   				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -156,7 +156,7 @@ gtag('config', googleAnalyticsTrackingId);
                           	    "event_category": "Payment Page",
                               	"event_label": "Payment Method",
                               	"checkout_step": 3,
-                                "checkout_option": "Payment Method",
+                                //"checkout_option": "Payment Method",
                                 "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                                 "items": [
                           				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -183,7 +183,7 @@ gtag('config', googleAnalyticsTrackingId);
                    	    "event_category": "Review Page",
                        	"event_label": "Review Order",
                        	"checkout_step": 4,
-                        "checkout_option": "Review Order",
+                       // "checkout_option": "Review Order",
                        	"value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                         "items": [
                    				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -362,6 +362,17 @@ function trackSearchClick(searchText) {
       'event_category': 'Search',
       'event_label': searchText
 	});
+}
+
+window.mediator.subscribe('usedGearNavClick', function() {
+        trackUsedGearNavClick
+});
+
+function trackUsedGearNavClick(){
+    gtag('event', 'usedGearNavClick', {
+        'event_category': 'Navigation',
+        'event_label': pageType
+    });
 }
 
 
