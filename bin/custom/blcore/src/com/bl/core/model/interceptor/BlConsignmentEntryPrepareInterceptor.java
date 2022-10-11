@@ -115,29 +115,29 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			}
 		}
 		consignmentEntryModel.setConsignmentEntryStatus(consEntryStatus);
-		setUsedGearConsignment(consignmentEntryModel, interceptorContext);
+		//setUsedGearConsignment(consignmentEntryModel, interceptorContext);
 	}
 
 	/**
 	 * @param consignmentEntryModel
 	 * @param interceptorContext
 	 */
-	private void setUsedGearConsignment(final ConsignmentEntryModel consignmentEntryModel,
-			final InterceptorContext interceptorContext)
-	{
-		final AbstractOrderModel order = consignmentEntryModel.getConsignment().getOrder();
-		if (BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder())
-				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder()))
-		{
-			final ProductModel product = consignmentEntryModel.getOrderEntry().getProduct();
-			if (product instanceof BlSerialProductModel)
-			{
-				((BlSerialProductModel) product).setAssociatedUsedGearConsignment(consignmentEntryModel.getConsignment());
-				interceptorContext.getModelService().save(product);
-			}
-
-		}
-	}
+//	private void setUsedGearConsignment(final ConsignmentEntryModel consignmentEntryModel,
+//			final InterceptorContext interceptorContext)
+//	{
+//		final AbstractOrderModel order = consignmentEntryModel.getConsignment().getOrder();
+//		if (BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder())
+//				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder()))
+//		{
+//			final ProductModel product = consignmentEntryModel.getOrderEntry().getProduct();
+//			if (product instanceof BlSerialProductModel)
+//			{
+//				((BlSerialProductModel) product).setAssociatedUsedGearConsignment(consignmentEntryModel.getConsignment());
+//				interceptorContext.getModelService().save(product);
+//			}
+//
+//		}
+//	}
 
 	/**
 	 * Validate billing charges if modified.
