@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2018 SAP SE or an SAP affiliate company.
+ All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+
+
+<widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+        sclass="oms-widget-reallocationconsignment-configuration" height="100%" width="100%"
+        id="createPackage">
+
+<div id="barcodesSectionId">
+  <grid style="margin-left:50px;margin-top:10px">
+    <rows>
+      <row>
+       <label value="${labels.blbackoffice.order.scan.title.code}" width="100%"/>
+      </row>
+      <row>
+        <hlayout>
+          <textbox id="scanningArea" width="450px" height="300px" multiline="true"/>
+        </hlayout>
+      </row>
+    </rows>
+  </grid>
+
+    <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
+       
+	  
+	    <button id="scanBarCodes" 
+				label="${labels.blbackoffice.bulk.scan.barcodes.button}" 
+				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
+	  
+		 <button id="cancel"
+				label="${labels.blbackoffice.order.scan.cancel.button}" 
+				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
+    </div>  
+    </div>  
+      
+    
+    <div style="margin:10px;"  id="productsListDiv">
+    <hlayout width="100%"  sclass="oms-widget-reassignserial-list">
+        <div sclass="oms-widget-reassignserial-list-container">
+            <grid id="productEntries" mold="paging"
+                  pageSize="5" width="100%" height="100%">
+                <columns  style="background-color:#d5d8dc;">
+                	<column width="6px" style="padding-left:20px;" sclass="oms-widget-reassignserial-listbox-header">
+                        <checkbox id="globalDeclineEntriesSelection" class="oms-widget-reassignserial-list-container__checkbox"/>
+                    </column>
+                    <column width="25%" sclass="oms-widget-reassignserial-listbox-header">
+                        <label value="${labels.blbackoffice.bulk.scan.product.code}" width="100%"/>
+                    </column>
+                    <column width="25%" sclass="oms-widget-reassignserial-listbox-header">
+                        <label value="${labels.blbackoffice.bulk.scan.productName.code}" width="100%"/>
+                    </column>
+                    <column width="25%" sclass="oms-widget-reassignserial-listbox-header">
+                         <label value="${labels.blbackoffice.bulk.scan.orderNumber.code}" width="100%"/>
+                    </column>
+                    
+                    <column width="1%" sclass="oms-widget-reassignserial-listbox-header">
+                        
+                    </column>
+                 
+                </columns>
+                <rows>
+                    <template name="model">
+                        <row>
+                            <checkbox style="margin-left:20px;" class="oms-widget-reassignserial-list-container__checkbox"/>
+                            <label value="${each.serialProductId}" width="100%"/>
+                            <label value="${each.serialProductName}" width="100%"/>
+                            <label value="${each.orderNumber}" width="100%"/>
+                             <label value="${each.barcode}" style="display:none;" width="0%"/>
+                        </row>
+                    </template>
+                </rows>
+            </grid>
+        </div>
+    </hlayout>
+
+    <div  sclass="oms-widget-reassignserial-configuration-footer oms-widget-footer">
+                <button id="cancelBtn"
+                        label="${labels.blbackoffice.order.scan.cancel.button}"
+                        sclass="oms-widget-reassignserial-configuration-button oms-widget-reassignserial-configuration-revert-button"/>
+                <button id="confirmchangestatus"
+                        label="${labels.blbackoffice.serial.confirm.submit.button}"
+                        sclass="y-btn-primary oms-widget-reassignserial-configuration-button oms-widget-reassignserial-configuration-save-button"/>
+    </div>
+          </div>	
+</widget>
