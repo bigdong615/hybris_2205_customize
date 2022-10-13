@@ -252,6 +252,7 @@
 	<bean id="blSearchFiltersPopulator" class="com.bl.facades.populators.BlSearchFiltersPopulator" parent="defaultCommerceSearchFiltersPopulator" >
 		<property name="commerceCategoryService" ref="commerceCategoryService"/>
 		<property name="userService" ref="userService"/>
+		<property name="sessionService" ref="sessionService" />
 	</bean>
 
 	<alias name="blSolrSearchQueryDecoderPopulator" alias="solrSearchQueryDecoderPopulator"/>

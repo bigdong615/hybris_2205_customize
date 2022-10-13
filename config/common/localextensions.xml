@@ -33,7 +33,6 @@
 
     <!-- Extension to enable Commerce Services -->
     <extension name='commerceservicesbackoffice'/>
-    <extension name='commercewebservices'/>
 
     <!-- Extension to enable SmartEdit -->
     <extension name='cmssmartedit'/>
@@ -173,6 +172,7 @@
 	<extension name='blhotfolder' />
 	
 	<extension name='commercewebservicescommons' />
-	<extension name='blocc' />
+	
+	<extension name='blcommercewebservices' />
   </extensions>
 </hybrisconfig>

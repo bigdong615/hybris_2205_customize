@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="src" path="/commercefacades"/>
+	<classpathentry exported="true" kind="src" path="/commercewebservicescommons"/>
+	<classpathentry exported="true" kind="src" path="/ordermanagementfacades"/>
+	<classpathentry kind="lib" path="web/webroot/WEB-INF/lib/javax.servlet.jsp.jstl-1.2.5.jar"/>
+	<classpathentry kind="lib" path="web/webroot/WEB-INF/lib/stax-utils-20070216.jar"/>
+	<classpathentry exported="true" kind="lib" path="resources"/>
+	<classpathentry kind="src" output="eclipsebin/classes" path="src"/>
+	<classpathentry kind="src" output="eclipsebin/web/classes" path="web/src"/>
+	<classpathentry kind="src" output="eclipsebin/web/classes" path="web/testsrc"/>
+	<classpathentry kind="src" output="eclipsebin/classes" path="testsrc"/>
+	<classpathentry kind="src" output="eclipsebin/classes" path="gensrc"/>
+	<classpathentry kind="src" path="/platform"/>
+	<classpathentry kind="lib" path="/platform/ext/core/lib/spring-context-5.2.9.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/platform/ext/core/lib/spring-web-5.2.9.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/platform/ext/core/lib/swagger-annotations-1.5.22.jar"/>
+	<classpathentry kind="lib" path="/platform/ext/core/lib/commons-collections-3.2.2.jar" sourcepath="/var/folders/zv/pqyc1r793ynfr53d9n1tjylh0000gn/T/.org.sf.feeling.decompiler1664746501184/source/commons-collections-3.2.2-sources.jar"/>
+	<classpathentry kind="lib" path="/platform/ext/core/lib/commons-validator-1.4.1.jar"/>
+	<classpathentry kind="lib" path="/platform/ext/core/lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="src" path="/outboundservices"/>
+	<classpathentry kind="lib" path="/platform/ext/core/lib/spring-security-core-5.3.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/platform/tomcat/lib/annotations-api.jar"/>
+	<classpathentry kind="lib" path="/platform/ext/oauth2/bin/oauth2server.jar"/>
+	<classpathentry kind="lib" path="/platform/ext/core/bin/coreserver.jar"/>
+	<classpathentry kind="lib" path="/platform/ext/core/lib/guava-27.0.1-jre.jar"/>
+	<classpathentry kind="output" path="eclipsebin/notused"/>
+</classpath>
