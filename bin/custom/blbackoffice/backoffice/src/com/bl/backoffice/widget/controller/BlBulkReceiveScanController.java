@@ -310,6 +310,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 					for (final BlSerialProductModel productModel : blSerialsModel)
 					{
 						productModel.setSerialStatus(SerialStatusEnum.RECEIVED_OR_RETURNED);
+						productModel.setHardAssigned(Boolean.FALSE);
 						getModelService().save(productModel);
 					}
 
