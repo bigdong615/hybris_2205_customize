@@ -46,9 +46,7 @@ ACC.blanalyticsevent = {
 		$(".dropdown-toggle").on('click', function (){
 			var ddToggle = $(this).attr('id');
 			if(ddToggle.indexOf("used") > -1) {
-				window.mediator.publish('usedGearNavClick',{
-					pageType: pagetype
-				});
+				window.mediator.publish('usedGearNavClick');
 			}
 		});
 	}

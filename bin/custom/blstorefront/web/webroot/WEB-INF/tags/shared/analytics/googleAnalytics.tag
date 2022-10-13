@@ -390,14 +390,14 @@ function trackSearchClick(searchText) {
 	});
 }
 
-window.mediator.subscribe('usedGearNavClick', function(data) {
-    trackUsedGearNavClick(data.pageType);
+window.mediator.subscribe('usedGearNavClick', function() {
+    trackUsedGearNavClick();
 });
 
-function trackUsedGearNavClick(pageType){
+function trackUsedGearNavClick(){
     gtag('event', 'usedGearNavClick', {
         'event_category': 'Navigation',
-        'event_label': pageType
+        'event_label': 'UsedGear'
     });
 }
 
