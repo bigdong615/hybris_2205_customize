@@ -390,11 +390,11 @@ function trackSearchClick(searchText) {
 	});
 }
 
-window.mediator.subscribe('usedGearNavClick', function() {
-    trackUsedGearNavClick();
+window.mediator.subscribe('usedGearNavClick', function(data) {
+    trackUsedGearNavClick(data.pageType);
 });
 
-function trackUsedGearNavClick(){
+function trackUsedGearNavClick(pageType){
     gtag('event', 'usedGearNavClick', {
         'event_category': 'Navigation',
         'event_label': pageType
