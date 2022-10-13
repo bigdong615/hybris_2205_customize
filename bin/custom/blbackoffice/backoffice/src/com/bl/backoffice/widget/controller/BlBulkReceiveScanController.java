@@ -323,7 +323,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 
 		}
 
-		Messagebox.show(BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_PLS_SELECT_MSG);
+		Messagebox.show(BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_SUCCESS_MSG);
 
 	}
 	else
