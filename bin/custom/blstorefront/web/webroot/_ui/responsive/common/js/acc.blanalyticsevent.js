@@ -45,7 +45,7 @@ ACC.blanalyticsevent = {
 
 		$(".dropdown-toggle").on('click', function (){
 			var ddToggle = $(this).attr('id');
-			if(ddToggle.contains("used")) {
+			if(ddToggle.indexOf("used") > -1) {
 				window.mediator.publish('usedGearNavClick');
 			}
 		});

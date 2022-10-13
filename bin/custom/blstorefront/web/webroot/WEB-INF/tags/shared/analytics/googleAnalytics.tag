@@ -391,7 +391,7 @@ function trackSearchClick(searchText) {
 }
 
 window.mediator.subscribe('usedGearNavClick', function() {
-        trackUsedGearNavClick
+    trackUsedGearNavClick();
 });
 
 function trackUsedGearNavClick(){
