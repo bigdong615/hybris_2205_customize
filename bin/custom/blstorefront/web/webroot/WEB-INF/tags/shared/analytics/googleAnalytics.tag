@@ -48,11 +48,33 @@ gtag('config', googleAnalyticsTrackingId);
 		 <c:set var="listName" value="${pageType == 'CATEGORY' ? 'List' : 'Search'}"/>
      <c:set var="variantName" value="${ blPageType == 'rentalGear' ? 'Rental gear' : 'Used gear'}"/>
      <c:set var="_href" value="${not empty header.referer ? header.referer : 'javascript:window.history.back()'}" />
+     <c:set var="req" value="${pageContext.request}" />
+     <c:set var="withDates" value="" />
 
+        var datePickerText = $("#litepicker").attr('placeholder');
+        var withDates = "viewWithDates";
+        if(datePickerText.indexOf("Select dates...") > -1){
+            withDates = "viewWithoutDates";
+        }
 
 		<c:choose>
 			<c:when test="${searchPageData.pagination.totalNumberOfResults > 0}">
 				<c:if test="${not empty searchPageData.results}">
+                        <c:choose>
+                            <c:when test="${pageType eq 'CATEGORY'}">
+                                    gtag('event',withDates, {
+                                        "event_category": "Category View",
+                                        "event_label": window.location.pathname.split("category/")[1]
+                                    });
+                            </c:when>
+                            <c:otherwise>
+                                    gtag('event', withDates, {
+                                        "event_category": "Category View",
+                                        "event_label": (window.location.search.split("text=")[1]).split("&")[0]
+                                    });
+                            </c:otherwise>
+                        </c:choose>
+
 						gtag('event', 'view_item_list', {
 							"event_category": "Category View",
 							"event_label": "${ycommerce:encodeJavaScript(listName)}",
@@ -358,9 +380,13 @@ window.mediator.subscribe('trackSearch', function(data) {
 });
 
 function trackSearchClick(searchText) {
+    gtag('event', 'select_search', {
+        'event_category': 'Search Bar',
+        'event_label': searchText
+    });
 	gtag('event', 'select_search', {
-      'event_category': 'Search',
-      'event_label': searchText
+      'event_category': 'Search Bar',
+      'event_label': 'Submit'
 	});
 }
 
