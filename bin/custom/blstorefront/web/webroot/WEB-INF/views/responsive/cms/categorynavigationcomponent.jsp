@@ -56,7 +56,7 @@
 
 					<c:choose>
 					<c:when test="${childlink1.item.linkName eq 'Used Gear'}">
-						<a class="nav-link dropdown-toggle" href="buy/category/usedgear" id="${fn:toLowerCase(childlink1.item.linkName)}dropdown" aria-expanded="false">${childlink1.item.linkName}</a>
+						<a class="nav-link" href="/buy/category/usedgear" id="${fn:toLowerCase(childlink1.item.linkName)}dropdown" aria-expanded="false">${childlink1.item.linkName}</a>
 					</c:when>
 					<c:when test="${childlink1.item.linkName eq 'Retail Gear'}">
           <c:if test="${not empty agent.uid}">

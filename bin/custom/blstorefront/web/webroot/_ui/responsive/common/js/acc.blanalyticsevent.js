@@ -47,7 +47,7 @@ ACC.blanalyticsevent = {
 			var ddToggle = $(this).attr('id');
 			if(ddToggle.indexOf("used") > -1) {
 				window.mediator.publish('usedGearNavClick',{
-					pageType: pageType
+					pageType: pagetype
 				});
 			}
 		});
