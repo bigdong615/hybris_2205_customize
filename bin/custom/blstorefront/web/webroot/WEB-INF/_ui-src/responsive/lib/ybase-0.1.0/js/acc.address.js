@@ -437,7 +437,7 @@ ACC.address = {
         /*Validating phone number*/
          function validatePhone(phone, fieldName) {
         	//if (phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
-     	if(phone && phone.trim() != '' && phone.length>=16){
+     	if(phone && phone.trim() != '' && phone.length<=16){
         		fieldName.removeClass('error');
         		return true;
         	}
