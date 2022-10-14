@@ -1352,11 +1352,11 @@ function hideShorting(){
 		 div.remove();
      }
  }
- setTimeout(function(){
-	let hideArrow = document.querySelectorAll("#product-slider ul li").length;
-	if (hideArrow < 2 ){                                              
-	document.querySelector("#product-slider .splide__arrows").style.visibility="hidden";
-	} },1000);
+ //setTimeout(function(){
+//	let hideArrow = document.querySelectorAll("#product-slider ul li").length;
+//	if (hideArrow < 2 ){                                              
+//	document.querySelector("#product-slider .splide__arrows").style.visibility="hidden";
+//	} },1000);
  
 $('.bookmark-addToCart').on("click", function(e) {
 	e.preventDefault();
