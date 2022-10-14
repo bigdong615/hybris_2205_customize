@@ -9,6 +9,7 @@
 /* Google Analytics */
 
 var googleAnalyticsTrackingId = '${ycommerce:encodeJavaScript(googleAnalyticsTrackingId)}';
+var pageType = '';
 
 window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -62,12 +63,14 @@ gtag('config', googleAnalyticsTrackingId);
 				<c:if test="${not empty searchPageData.results}">
                         <c:choose>
                             <c:when test="${pageType eq 'CATEGORY'}">
+                                    pageType = 'category page';
                                     gtag('event',withDates, {
                                         "event_category": "Category View",
                                         "event_label": window.location.pathname.split("category/")[1]
                                     });
                             </c:when>
                             <c:otherwise>
+                                    pageType = 'search page';
                                     gtag('event', withDates, {
                                         "event_category": "Category View",
                                         "event_label": (window.location.search.split("text=")[1]).split("&")[0]
@@ -396,8 +399,8 @@ window.mediator.subscribe('usedGearNavClick', function() {
 
 function trackUsedGearNavClick(){
     gtag('event', 'usedGearNavClick', {
-        'event_category': 'Navigation',
-        'event_label': 'UsedGear'
+        'event_category': 'Used Gear Nav',
+        'event_label': pageType
     });
 }
 
