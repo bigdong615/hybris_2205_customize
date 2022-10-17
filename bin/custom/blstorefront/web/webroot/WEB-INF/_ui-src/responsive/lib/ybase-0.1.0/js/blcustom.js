@@ -1445,9 +1445,20 @@ const formatToPhone = (event) => {
 
 setTimeout(()=>{
 	const inputElement = document.getElementById('address.phone');
+	if(inputElement!=null){
 inputElement.addEventListener('keydown',enforceFormat);
 inputElement.addEventListener('keyup',formatToPhone);
+}
 },2000);
+
+setTimeout(()=>{
+	const inputElement = document.getElementById('blPickUpBy.phone');
+	if(inputElement!=null){
+inputElement.addEventListener('keydown',enforceFormat);
+inputElement.addEventListener('keyup',formatToPhone);
+}
+},2000);
+
 	
 
 	});
