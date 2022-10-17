@@ -15,6 +15,6 @@
         <formElement:formInputBox idKey="blPickUpBy.firstName" placeholder="blPickUpBy.firstName" labelKey="" path="firstName" inputCSS="form-control" mandatory="true" />
         <formElement:formInputBox idKey="blPickUpBy.lastName" labelKey="" placeholder="blPickUpBy.lastName" path="lastName" inputCSS="form-control" mandatory="true" />
         <formElement:formInputBox idKey="blPickUpBy.email" labelKey="" placeholder="blPickUpBy.email" path="email" inputCSS="form-control" mandatory="true" />
-        <formElement:formInputBox idKey="blPickUpBy.phone" labelKey="" placeholder="blPickUpBy.phone" path="phone" inputCSS="form-control" mandatory="true" />
+        <formElement:formInputBox idKey="blPickUpBy.phone" labelKey="" placeholder="blPickUpBy.phone" path="phone" inputCSS="form-control blPickUpByPhone" mandatory="true" />
     </form:form>
 </div>
