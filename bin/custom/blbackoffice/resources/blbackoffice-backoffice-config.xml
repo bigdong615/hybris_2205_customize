@@ -3550,5 +3550,17 @@
 			</y:labels>
 		</y:base>
 	</context>
+	
+	<context merge-by="type" parent="GenericItem" type="AbstractOrder" component="editor-area">
+		<ea:editorArea name="">
+			<ea:essentials>
+				<ea:essentialSection name="hmc.essential">
+					<ea:attribute qualifier="rentalStartDate" readonly="true"/>
+					<ea:attribute qualifier="rentalEndDate" readonly="true"/>
+					<ea:attribute qualifier="sumOfGearValueOnOrder" readonly="true"/>
+				</ea:essentialSection>
+			</ea:essentials>			
+		</ea:editorArea>
+	</context>
 
 </config>
