@@ -1354,8 +1354,10 @@ function hideShorting(){
  }
  setTimeout(function(){
 	let hideArrow = document.querySelectorAll("#product-slider ul li").length;
-	if (hideArrow < 2 ){                                              
+	if (hideArrow < 2 ){ 
+		if(document.querySelector("#product-slider .splide__arrows")!=null){                                             
 	document.querySelector("#product-slider .splide__arrows").style.visibility="hidden";
+	}
 	} },1000);
  
 $('.bookmark-addToCart').on("click", function(e) {
@@ -1443,23 +1445,24 @@ const formatToPhone = (event) => {
     else if(input.length > 0){event.target.value = `(${areaCode}`;}
 };
 
-setTimeout(()=>{
-	const inputElement = document.getElementById('address.phone');
-	if(inputElement!=null){
-inputElement.addEventListener('keydown',enforceFormat);
-inputElement.addEventListener('keyup',formatToPhone);
-}
-},2000);
+	setTimeout(() => {
+		const inputElement = document.getElementById('address.phone');
+		if (inputElement != null) {
+			inputElement.addEventListener('keydown', enforceFormat);
+			inputElement.addEventListener('keyup', formatToPhone);
+		}
+	}, 2000);
 
-setTimeout(()=>{
-	const inputElement = document.getElementById('blPickUpBy.phone');
-	if(inputElement!=null){
-inputElement.addEventListener('keydown',enforceFormat);
-inputElement.addEventListener('keyup',formatToPhone);
-}
-},2000);
+	setTimeout(() => {
+		document.querySelectorAll("#blPickUpByForm").forEach((ele) => {
+			Array.from(ele.elements).forEach((formItems) => {
+				if (formItems.id == 'blPickUpBy.phone') {
+					formItems.addEventListener('keydown', enforceFormat);
+					formItems.addEventListener('keyup', formatToPhone);
+				}
+			});
+		});
+	}, 2000);
 
-	
-
-	});
+});
 
