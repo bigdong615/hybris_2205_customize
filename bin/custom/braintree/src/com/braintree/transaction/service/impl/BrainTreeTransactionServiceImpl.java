@@ -139,7 +139,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	{
 		final CartModel cart = cartService.getSessionCart();
 		try {
-			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, getCustomFields(cart), 
+			Map<String, String> customFields2 = getCustomFields(cart);
+			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, customFields2, 
 				getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE, null);
 			return handleAuthorizationResult(result, cart);
 		} catch(final Exception ex) {
@@ -159,11 +160,12 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		try {
 			BrainTreeAuthorizationResult result = null;
 			//Added condition for modifyPayment with zero order total (full Gift Card Order)
+			Map<String, String> customFields = getCustomFields(orderModel);
 			if(amountToAuthorize != null && amountToAuthorize.compareTo(BigDecimal.ZERO) == ZERO){
-				result = brainTreeAuthorize(orderModel, Collections.emptyMap(),
+				result = brainTreeAuthorize(orderModel, customFields,
 						getBrainTreeConfigService().getAuthAMountToVerifyCard(), submitForSettlement, paymentInfo);
 			}else {
-				 result = brainTreeAuthorize(orderModel, Collections.emptyMap(),
+				 result = brainTreeAuthorize(orderModel, customFields,
 						amountToAuthorize, submitForSettlement, paymentInfo);
 			}
 			if(submitForSettlement) {
