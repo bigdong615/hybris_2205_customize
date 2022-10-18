@@ -2066,4 +2066,6 @@
     <bean id="blConsignmentRentalEndDateHandler" class="com.bl.core.model.handler.BLConsignmentRentalEndDateHandler">
         <property name="blOrderService" ref="blOrderService"/>
     </bean>
+
+	<bean id="blSumOfGearValueOnOrderHandler" class="com.bl.core.model.handler.BLSumOfGearValueOnOrderHandler"/>
 </beans>
