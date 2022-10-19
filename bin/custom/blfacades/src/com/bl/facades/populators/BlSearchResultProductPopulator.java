@@ -100,6 +100,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     target.setConfiguratorType(this.<String>getValue(source, "configuratorType"));
     target.setBaseProduct(this.<String>getValue(source, "baseProductCode"));
     target.setIsDiscontinued(this.<Boolean>getValue(source, "isDiscontinued"));
+    target.setIsBlProductType(this.<Boolean>getValue(source, "isBlProductType"));
     if(null != this.getValue(source , BlCoreConstants.RETAILGEAR)) {
       target.setRetailGear(this.<Boolean>getValue(source, "retailGear"));
       target.setIsRetailGearInStock(this.<Boolean>getValue(source, "retailGearInStock"));
