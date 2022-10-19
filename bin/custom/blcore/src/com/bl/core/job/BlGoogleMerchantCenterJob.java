@@ -28,7 +28,7 @@ import com.bl.core.google.product.populators.BlGoogleProductFeedXmlPupulator;
 import com.bl.core.model.BlGoogleMarketPlaceProductFeedModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.product.service.BlProductService;
-import com.bl.integration.marketplace.jaxb.Channel;
+import com.bl.integration.marketplace.jaxb.Rss;
 
 
 public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobModel>
@@ -45,11 +45,11 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 		final List<BlProductModel> blProducts = getProductService().getUsedProductsOnSale();
 		if (!blProducts.isEmpty())
 		{
-			final Channel channel = new Channel();
-			getBlGoogleProductFeedXmlPupulator().populate(blProducts, channel);
+			final Rss rss = new Rss();
+			getBlGoogleProductFeedXmlPupulator().populate(blProducts, rss);
 			try
 			{
-				convertToXML(channel);
+				convertToXML(rss);
 			}
 			catch (final FileNotFoundException e)
 			{
@@ -67,8 +67,9 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 			final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyyHH:mm:ss");
 			final JAXBContext jaxbContext = JAXBContext.newInstance(data.getClass());
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			final File productFeedFile = new File("Product_Feed");
+			final File productFeedFile = new File("/Users/sraone/Desktop/Product_Feed.xml");
 			jaxbMarshaller.marshal(data, productFeedFile);
 			final MediaModel media = createMediaModel(productFeedFile, formatter);
 			final BlGoogleMarketPlaceProductFeedModel googleMarketPlaceFeed = modelService
