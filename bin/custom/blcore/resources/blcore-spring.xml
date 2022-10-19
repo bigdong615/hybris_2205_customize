@@ -2050,4 +2050,26 @@
 	<bean id="blProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
+
+	<alias name="defaultBlOptimizedShippingMethodGenericDao" alias="blOptimizedShippingMethodGenericDao"/>
+	<bean name="defaultBlOptimizedShippingMethodGenericDao"
+		  class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="OptimizedShippingMethod"/>
+	</bean>
+
+	<bean id="blReturnOrderPopulator" class="com.bl.core.order.populators.BlReturnOrderPopulator"/>
+
+	<bean id="blReturnOrderJob" class="com.bl.core.job.BlReturnOrderFeedJob" parent="abstractJobPerformable">
+		<property name="blReturnOrderPopulator" ref="blReturnOrderPopulator"/>
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
+	
+	<bean id="blConsignmentRentalStartDateHandler" class="com.bl.core.model.handler.BLConsignmentRentalStartDateHandler">
+        <property name="blOrderService" ref="blOrderService"/>
+    </bean>
+    <bean id="blConsignmentRentalEndDateHandler" class="com.bl.core.model.handler.BLConsignmentRentalEndDateHandler">
+        <property name="blOrderService" ref="blOrderService"/>
+    </bean>
+
+	<bean id="blSumOfGearValueOnOrderHandler" class="com.bl.core.model.handler.BLSumOfGearValueOnOrderHandler"/>
 </beans>

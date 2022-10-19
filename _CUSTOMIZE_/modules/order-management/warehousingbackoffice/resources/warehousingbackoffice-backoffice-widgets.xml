@@ -524,6 +524,29 @@
                         <setting key="_height" type="String">650px</setting>
                         <virtual-sockets />
                     </widget>
+
+                    <widget id="createOutboundLabelPopup" widgetDefinitionId="custom.bl.widgets.createOutboundLabelShipment" slotId="cockpitWidgetChildrenInvisible"
+                            template="true">
+
+                        <instance-settings socketEventRoutingMode="LAST_USED">
+                            <create onInit="false" reuseExisting="true">
+                                <all-incoming-events/>
+                            </create>
+                            <close>
+                                <all-outgoing-events/>
+                            </close>
+                            <select onInit="false">
+                                <all-incoming-events/>
+                            </select>
+                        </instance-settings>
+
+                        <setting key="widgetStyleClass" type="String"></setting>
+                        <setting key="__externalLocationPath" type="String">extension://warehousingbackoffice</setting>
+                        <setting key="widgetStyleAttribute" type="String"></setting>
+                        <setting key="_width" type="String">1020px</setting>
+                        <setting key="_height" type="String">650px</setting>
+                        <virtual-sockets />
+                    </widget>
 					
                     <widget id="warehousingStockAdjustmentPopup" widgetDefinitionId="de.hybris.platform.warehousingbackoffice.widgets.stockadjustment" slotId="cockpitWidgetChildrenInvisible"
                             template="true">
@@ -754,4 +777,5 @@
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.capturepaymentaction" outputId="blCapturePaymentContext" targetWidgetId="capturePaymentPopup" inputId="inputObject" />
 	<widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.frontdeskorderscan" outputId="blFrontDeskOrderScanContext" targetWidgetId="createFrontDeskScanPopup" inputId="inputObject" />
 <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.createreturnlabelaction" outputId="blCreateInboundLabelContext" targetWidgetId="createInboundLabelPopup" inputId="inputObject" />
+    <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.createshipmentaction" outputId="blCreatePackageShipmentContext" targetWidgetId="createOutboundLabelPopup" inputId="inputObject" />
 </widgets>

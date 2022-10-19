@@ -69,6 +69,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String UPS_SHIPMENT_MSG = "Shipment Call Started.....";
 	public static final String RETURN_SHIPMENT_MSG = "Return Shipment Call Started.....";
 	public static final String DEFAULT_WAREHOUSE_CODE = "OPTIMISED";
+	public static final String DEFAULT_SHIPPING_CODE = "DEFAULT";
 	public static final String WAREHOUSE_MA = "warehouse_ma";
 	public static final String WAREHOUSE_CA = "warehouse_ca";
 	public static final String WEIGHT_UNIT = "LB";
@@ -191,7 +192,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final int STATUS_CODE_201 = 201;
 	public static final int STATUS_CODE_400 = 400;
 	public static final String UPS_DATE_FORMAT = "yyyyMMdd";
-
+	public static final String WHITE_SPACE = " ";
 
 	private BlintegrationConstants()
 	{

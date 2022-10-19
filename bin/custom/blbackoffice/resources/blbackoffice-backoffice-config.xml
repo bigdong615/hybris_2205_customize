@@ -1405,6 +1405,8 @@
 					<editorArea:attribute qualifier="internalTransferConsignment"/>
 					<editorArea:attribute qualifier="actualShippingDateToCustomer"/>
 					<editorArea:attribute qualifier="orderTransferConsignment"/>
+					<editorArea:attribute qualifier="rentalStartDate"/>
+					<editorArea:attribute qualifier="rentalEndDate"/>
 				</editorArea:section>
 				<editorArea:section name="warehousingbackoffice.section.consignment.entries">
 					<editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
@@ -1535,6 +1537,7 @@
                    	<editorArea:attribute qualifier="outBoundShippingLabel"/>
                    	<editorArea:attribute qualifier="inBoundShippingMedia"/>
                    	<editorArea:attribute qualifier="outBoundShippingMedia"/>
+					<editorArea:attribute qualifier="shippingLabelHistoryLogs" readonly="true"/>
                     <editorArea:attribute qualifier="hTMLImage"/>
                     <editorArea:attribute qualifier="consignmentPOS"/>
                     <editorArea:attribute qualifier="consignment"/>
@@ -3517,5 +3520,46 @@
 		</yss:simple-search>
 	</context>
 	<!-- BL-1976 End  -->
+
+	<context merge-by="type" parent="GenericItem" type="ShippingLabelHistory" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="warehousingbackoffice.tab.general">
+				<editorArea:section name="warehousingbackoffice.section.general.properties">
+					<editorArea:attribute qualifier="orderCode" readonly="true"/>
+					<editorArea:attribute qualifier="consignmentCode" readonly="true"/>
+					<editorArea:attribute qualifier="package" readonly="true"/>
+					<editorArea:attribute qualifier="creationtime" readonly="true"/>
+					<editorArea:attribute qualifier="shippingLabelType" readonly="true"/>
+					<editorArea:attribute qualifier="trackingNumber" readonly="true"/>
+					<editorArea:attribute qualifier="graphicImage" readonly="true"/>
+					<editorArea:attribute qualifier="shippingLabel" readonly="true"/>
+					<editorArea:attribute qualifier="isOptimizedShippingMethodModified" readonly="true"/>
+					<editorArea:attribute qualifier="carrier" readonly="true"/>					
+					<editorArea:attribute qualifier="optimizedShippingMethod" readonly="true"/>
+					<editorArea:attribute qualifier="shippingLabelMedia" readonly="true"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+	<context type="ShippingLabelHistory" component="base">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>trackingNumber+ ' - ' +shippingLabelType+ ' - ' +creationtime</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+	
+	<context merge-by="type" parent="GenericItem" type="AbstractOrder" component="editor-area">
+		<ea:editorArea name="">
+			<ea:essentials>
+				<ea:essentialSection name="hmc.essential">
+					<ea:attribute qualifier="rentalStartDate" readonly="true"/>
+					<ea:attribute qualifier="rentalEndDate" readonly="true"/>
+					<ea:attribute qualifier="sumOfGearValueOnOrder" readonly="true"/>
+				</ea:essentialSection>
+			</ea:essentials>			
+		</ea:editorArea>
+	</context>
 
 </config>

@@ -24,7 +24,7 @@ public class Channel
    protected String link;
 	@XmlElement(name = "description")
    protected String description;
-	@XmlElement(name = "items")
+	@XmlElement(name = "item")
 	protected List<Item> items;
 
 	/**

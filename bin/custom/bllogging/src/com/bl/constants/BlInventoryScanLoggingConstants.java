@@ -233,10 +233,12 @@ public class BlInventoryScanLoggingConstants {
  	public static final String SCANNING_AREA = "scanningArea";
  	public static final String SCAN_TO_BIN = "scanToBin";
  	public static final String GENERATE_INBOUND_LABEL = "generateInboundLabel";
+ 	public static final String GENERATE_OUTBOUND_LABEL = "generateOutboundLabel";
  	public static final String SCAN_TO_WORKSTATION = "scanToWorkStation";
  	public static final String SCAN_TO_TRACKING_ID = "scanToTrackingLabel";
  	public static final String SCAN_TO_UPS_OUTBOUND = "scanToOutBoundCart";
  	public static final String WAREHOUSE_COMBOBOX = "warehouseCombobox";
+ 	public static final String SHIPPING_TYPE_COMBOBOX = "shippingTypeComboBox";
  	public static final String EMPTY_STRING = "";
  	public static final String LAST_SCANNED_ITEM = "lastScannedItem";
     public static final String UNBOX_NOTIFICATION_HANDLER = "UnboxingScanToolNotification";

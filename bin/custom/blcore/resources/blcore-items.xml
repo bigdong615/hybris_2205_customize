@@ -38,6 +38,8 @@
 
         <collectiontype code="ModifiedOrderGCPaymentList" elementtype="GiftCard" type="list"/>
 
+        <collectiontype code="ShippingLabelHistoryList" elementtype="ShippingLabelHistory" type="list"/>
+
     </collectiontypes>
 
     <enumtypes>
@@ -516,6 +518,11 @@
         <value code="OTHER" />
 
     </enumtype>
+
+        <enumtype code="ShippingLabelTypeEnum" generate="true" autocreate="true" dynamic="true">
+            <value code="INBOUND"/>
+            <value code="OUTBOUND"/>
+        </enumtype>
     </enumtypes>
     <maptypes>
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
@@ -3353,6 +3360,11 @@
 			            <modifiers read="true" write="true" optional="true" />
 			            <description>Timestamp on which the the first item is unboxed on the order</description>
 			        </attribute>
+                    <attribute qualifier="sumOfGearValueOnOrder" type="java.lang.Double">
+                        <description>Sum Of Gear Value On Order</description>
+                        <modifiers write="false"/>
+                        <persistence type="dynamic" attributeHandler="blSumOfGearValueOnOrderHandler"/>
+                    </attribute>
                 </attributes>
 
             </itemtype>
@@ -3663,8 +3675,17 @@
             <persistence type="property" />
             <modifiers read="true" write="true" optional="true" />
             <description>Date on which the Shipment status changes to BL_SHIPPED</description>
-        </attribute>
-	
+          </attribute>
+          <attribute qualifier="rentalStartDate" type="java.util.Date">
+              <description>Dynamic attribute on consignment to display Rental Start Date from Order</description>
+              <modifiers write="false"/>
+              <persistence type="dynamic" attributeHandler="blConsignmentRentalStartDateHandler"/>
+          </attribute>
+          <attribute qualifier="rentalEndDate" type="java.util.Date">
+              <description>Dynamic attribute on consignment to display Rental Return Date from Order</description>
+              <modifiers write="false"/>
+              <persistence type="dynamic" attributeHandler="blConsignmentRentalEndDateHandler"/>
+          </attribute>	
         </attributes>
       </itemtype>
 
@@ -4345,6 +4366,11 @@
             <modifiers read="true" write="true" optional="true"/>
               <persistence type="property"/>
           </attribute>
+                    <attribute qualifier="shippingLabelHistoryLogs" type="ShippingLabelHistoryList">
+                        <description>List of shipping labels</description>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <persistence type="property"/>
+                    </attribute>
         </attributes>
 			</itemtype>
 		</typegroup>
@@ -7849,6 +7875,89 @@ new Integer(0)
 	<typegroup name="orderBussinessProcess">
 		<itemtype code="OrderToAvalaraProcess" autocreate="true" generate="true" extends="BusinessProcess"/>
 	</typegroup>
+
+        <typegroup name="ShippingLabelLog">
+            <itemtype code="ShippingLabelHistory" autocreate="true" generate="true">
+                <description>Shipping Label History log on Packages</description>
+                <deployment table="ShippingLabelHistoryLog" typecode="25241"/>
+                <attributes>
+                    <attribute qualifier="shippingLabelType" type="ShippingLabelTypeEnum">
+                        <modifiers read="true" write="true" optional="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="trackingNumber" type="java.lang.String">
+                        <modifiers read="true" write="true" optional="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="graphicImage" type="java.lang.String">
+                        <description>Graphic Image</description>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <persistence type="property">
+                            <columntype database="oracle">
+                                <value>CLOB</value>
+                            </columntype>
+                            <columntype database="sap">
+                                <value>NCLOB</value>
+                            </columntype>
+                            <columntype database="mysql">
+                                <value>TEXT</value>
+                            </columntype>
+                            <columntype database="sqlserver">
+                                <value>TEXT</value>
+                            </columntype>
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                    </attribute>
+                    <attribute qualifier="shippingLabel" type="java.lang.String">
+                        <description>It saves the shipping level once graphic image is converted into ZPL code</description>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <persistence type="property">
+                            <columntype database="oracle">
+                                <value>CLOB</value>
+                            </columntype>
+                            <columntype database="sap">
+                                <value>NCLOB</value>
+                            </columntype>
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                    </attribute>
+                    <attribute qualifier="shippingLabelMedia" type="CatalogUnawareMedia">
+                        <description>It saves the inbound shipping label ZPL code in text format</description>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="orderCode" type="java.lang.String">
+                        <modifiers read="true" write="true" optional="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="consignmentCode" type="java.lang.String">
+                        <modifiers read="true" write="true" optional="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="package" type="PackagingInfo">
+                        <modifiers read="true" write="true" optional="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="carrier" type="CarrierEnum">
+                    	<modifiers read="true" write="true" optional="true"/>
+                        <persistence type="property" />                        
+                    </attribute>
+                    <attribute qualifier="optimizedShippingMethod" type="OptimizedShippingMethod">
+						<modifiers read="true" write="true" optional="true"/>
+						<persistence type="property" />
+					</attribute>
+					<attribute qualifier="isOptimizedShippingMethodModified" type="boolean">
+			          <modifiers read="true" write="true" search="true" optional="true" />
+			          <persistence type="property" />
+			          <defaultvalue>Boolean.FALSE</defaultvalue>
+			        </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
 
     </itemtypes>
 </items>

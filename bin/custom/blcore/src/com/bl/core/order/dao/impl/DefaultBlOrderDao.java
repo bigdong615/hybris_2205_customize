@@ -1,13 +1,5 @@
 package com.bl.core.order.dao.impl;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.order.dao.BlOrderDao;
-import com.bl.core.suggestion.dao.SimpleSuggestionDao;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.integration.constants.BlintegrationConstants;
-import com.bl.logging.BlLogger;
-import com.google.common.collect.Lists;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -25,16 +17,28 @@ import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.order.dao.BlOrderDao;
+import com.bl.core.suggestion.dao.SimpleSuggestionDao;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.integration.constants.BlintegrationConstants;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 
 /**
  * Default implementation of {@link SimpleSuggestionDao}.
@@ -151,7 +155,10 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 					+ "{o:" + AbstractOrderModel.ISREPLACEMENTORDER + "} = ?isReplacementOrder AND "
 					+ "{o:" + AbstractOrderModel.ISEXTENDEDORDER + "} = ?isExtendedOrder AND "
 					+ "{o:" + AbstractOrderModel.INTERNALTRANSFERORDER + "} = ?internalTransferOrder" ;
-	
+
+	private static final String RETURN_ORDERS_FEED_QUERY = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE
+			+ " AS o} WHERE {o:" + OrderModel.RENTALENDDATE + "} BETWEEN ?returnOrderBefore AND ?returnOrderAfter";
+
 	/**
  	* {@inheritDoc}
  	*/
@@ -195,7 +202,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		}
 		return orders.get(0);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -209,7 +216,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			if (CollectionUtils.isEmpty(result.getResult()))
 			{
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "There are no orders for current user with incomplete status {} ", getUserService().getCurrentUser().getUid());
-				
+
 			}
 			return result.getResult();
 	}
@@ -257,7 +264,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private List<String> getOrderStatuses(){
 		return Lists.newArrayList(OrderStatus.INCOMPLETE.getCode(),OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR.getCode(),
 				OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS.getCode(),OrderStatus.INCOMPLETE_MISSING_ITEMS.getCode());
-		
+
 	}
 
 	/**
@@ -310,7 +317,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		fQuery.addQueryParameter(BlintegrationConstants.OPTIMIZED_SHIPPING_START_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 		fQuery.addQueryParameter( BlintegrationConstants.OPTIMIZED_SHIPPING_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
-		List<AbstractOrderModel> orders = result.getResult();
+		final List<AbstractOrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders)) {
 			BlLogger.logMessage(LOG , Level.INFO , "No Results found for UPS Scrape service which optimizedShippingEndDate has ",
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
@@ -519,7 +526,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	/**
 	 * @param userService the userService to set
 	 */
-	public void setUserService(UserService userService)
+	public void setUserService(final UserService userService)
 	{
 		this.userService = userService;
 	}
@@ -528,7 +535,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		return configurationService;
 	}
 
-	public void setConfigurationService(ConfigurationService configurationService) {
+	public void setConfigurationService(final ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
 
@@ -536,7 +543,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		return baseStoreService;
 	}
 
-	public void setBaseStoreService(BaseStoreService baseStoreService) {
+	public void setBaseStoreService(final BaseStoreService baseStoreService) {
 		this.baseStoreService = baseStoreService;
 	}
 
@@ -566,7 +573,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<TaskConditionModel> getTaskCondition(String code) {
+	public List<TaskConditionModel> getTaskCondition(final String code) {
 		final StringBuilder sql = new StringBuilder();
 		sql.append("SELECT {tm:pk} ");
 		sql.append("FROM {").append(TaskConditionModel._TYPECODE).append(" AS tm} ");
@@ -579,5 +586,24 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			return Collections.emptyList();
 		}
 		return taskConditions;
+	}
+
+	@Override
+	public List<OrderModel> getOrdersReadyForReturn() throws ParseException
+	{
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+		String date = simpleDateFormat.format(new Date());
+		Date currentDate = simpleDateFormat.parse(date);
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(RETURN_ORDERS_FEED_QUERY);
+		fQuery.addQueryParameter("returnOrderBefore", BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
+		fQuery.addQueryParameter("returnOrderAfter", BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders))
+		{
+			BlLogger.logMessage(LOG, Level.INFO, "No orders found for Return Order feed with date {}");
+			return Collections.emptyList();
+		}
+		return orders;
 	}
 }
