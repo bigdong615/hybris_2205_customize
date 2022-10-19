@@ -3360,6 +3360,11 @@
 			            <modifiers read="true" write="true" optional="true" />
 			            <description>Timestamp on which the the first item is unboxed on the order</description>
 			        </attribute>
+                    <attribute qualifier="sumOfGearValueOnOrder" type="java.lang.Double">
+                        <description>Sum Of Gear Value On Order</description>
+                        <modifiers write="false"/>
+                        <persistence type="dynamic" attributeHandler="blSumOfGearValueOnOrderHandler"/>
+                    </attribute>
                 </attributes>
 
             </itemtype>

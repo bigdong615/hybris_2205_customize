@@ -2046,6 +2046,10 @@
 		<property name="blGoogleProductFeedXmlPupulator" ref="blGoogleProductFeedXmlPupulator"/>
 		<property name="mediaService" ref="mediaService"/>
 	</bean>
+	
+	<bean id="blProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
 
 	<alias name="defaultBlOptimizedShippingMethodGenericDao" alias="blOptimizedShippingMethodGenericDao"/>
 	<bean name="defaultBlOptimizedShippingMethodGenericDao"
@@ -2066,4 +2070,6 @@
     <bean id="blConsignmentRentalEndDateHandler" class="com.bl.core.model.handler.BLConsignmentRentalEndDateHandler">
         <property name="blOrderService" ref="blOrderService"/>
     </bean>
+
+	<bean id="blSumOfGearValueOnOrderHandler" class="com.bl.core.model.handler.BLSumOfGearValueOnOrderHandler"/>
 </beans>

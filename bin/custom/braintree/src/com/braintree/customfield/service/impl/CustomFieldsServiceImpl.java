@@ -4,6 +4,8 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.braintree.constants.BraintreeConstants;
 import com.braintree.customfield.service.CustomFieldsService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 
@@ -17,7 +19,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
+
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 public class CustomFieldsServiceImpl implements CustomFieldsService
@@ -74,16 +79,16 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 			Map<String, String> customFields) {
 		final CustomerModel customer = (CustomerModel) order.getUser();
 		customFieldName = customFieldName
-				.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", "");
+				.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY);
 		switch (customFieldName) {
 			case "order_count":
 				customFields.put(customFieldName
-								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
+								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
 						String.valueOf(customer.getOrderCount()));
 				break;
 			case "incompleted_order_count":
 				customFields.put(customFieldName
-								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
+								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
 						String.valueOf(customer.getInprocessOrderCount()));
 				break;
 			case "outstanding_bill":
@@ -92,17 +97,17 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 					outstandingBill.append(bill.getBillChargeType()
 							.getCode().concat(HYPHEN).concat(bill.getChargedAmount().toString()).concat(SPACE)));
 				customFields.put(customFieldName
-						.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""), outstandingBill.toString());
+						.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY), outstandingBill.toString());
 				break;
 			case "average_order_value":
 				customFields.put(customFieldName
-								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
+								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
 						String.valueOf(BigDecimal.valueOf(customer.getAverageGearOrderValue()).setScale(
 								BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN)));
 				break;
 			case "sum_of_gear_value_in_pre_shipping_status":
 				customFields.put(customFieldName
-								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
+								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
 						String.valueOf(BigDecimal.valueOf(customer.getGearValueOrdersInProgress())
 								.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN)));
 				break;
@@ -111,14 +116,48 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 					final LocalDateTime rentalStartDate = getFormattedDateTime(order.getRentalStartDate());
 					final LocalDateTime rentalEndDate = getFormattedDateTime(order.getRentalEndDate());
 					customFields.put(customFieldName
-									.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
+									.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
 							String.valueOf(ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1))));
-					break;
 				}
+				else
+				{
+					customFields.put(customFieldName
+							.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY), StringUtils.EMPTY);
+				}
+				break;
+			case "order_number":
+				customFields.put(customFieldName
+						.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
+						order instanceof CartModel ? StringUtils.EMPTY : order.getCode());
+				break;
+			case "sum_of_gear_value_in_order":
+				customFields.put(customFieldName
+						.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
+						order instanceof CartModel ? StringUtils.EMPTY : String.valueOf(order.getSumOfGearValueOnOrder()));
+				break;
+			case "phone_number":
+				customFields.put(customFieldName
+						.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
+						getPhoneNumber(order));
+				break;
 			default:
 				customFields.put(customFieldName
-								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""), "");
+								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY), StringUtils.EMPTY);
 		}
+	}
+	
+	private String getPhoneNumber(final AbstractOrderModel order)
+	{
+		if(order instanceof CartModel)
+		{
+			return Objects.nonNull(order.getPaymentInfo()) && Objects.nonNull(order.getPaymentInfo().getBillingAddress())
+					&& StringUtils.isNotBlank(order.getPaymentInfo().getBillingAddress().getPhone1()) 
+					? order.getPaymentInfo().getBillingAddress().getPhone1()
+							: StringUtils.EMPTY;			
+		}
+		return Objects.nonNull(order.getPaymentAddress()) && StringUtils.isNotBlank(order.getPaymentAddress().getPhone1()) 
+				? order.getPaymentAddress().getPhone1() 
+						: StringUtils.EMPTY;
 	}
 
 	/**

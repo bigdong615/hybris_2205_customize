@@ -33,7 +33,6 @@
 
     <!-- Extension to enable Commerce Services -->
     <extension name='commerceservicesbackoffice'/>
-    <extension name='commercewebservices'/>
 
     <!-- Extension to enable SmartEdit -->
     <extension name='cmssmartedit'/>
@@ -160,18 +159,20 @@
     <extension name='blespintegration' />
 
 	<extension name='braintree' />
-      <extension name='braintreeacceleratorfacades' />
-      <extension name='braintreeaddon' />
-      <!-- <extension name='braintreecscockpit' /> -->
-      <extension name='braintreecustomersupportbackoffice' />
-      <extension name='braintreefacades' />
-      <extension name='braintreehac' />
-      <extension name='tealiumiqaddon' />
+    <extension name='braintreeacceleratorfacades' />
+    <extension name='braintreeaddon' />
+    <!-- <extension name='braintreecscockpit' /> -->
+    <extension name='braintreecustomersupportbackoffice' />
+    <extension name='braintreefacades' />
+    <extension name='braintreehac' />
+    <extension name='tealiumiqaddon' />
     <extension name="integrationmonitoringbackoffice" />
     <extension name="outboundsyncbackoffice" />
 
 	<extension name='blhotfolder' />
 	
 	<extension name='commercewebservicescommons' />
+	
+	<extension name='blcommercewebservices' />
   </extensions>
 </hybrisconfig>
