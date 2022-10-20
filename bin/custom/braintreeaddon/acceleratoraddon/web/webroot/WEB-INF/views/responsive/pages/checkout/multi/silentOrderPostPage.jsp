@@ -435,14 +435,14 @@
 						         <cart:blGiftCartPurchaseOrderSummery cartData="${cartData}" emptyCart="${emptyCart}" />
 						      <div class="cart-actions continue-button">
 						          <a href="javascript:void(0)" class="btn btn-sm btn-primary" id="submit_silentOrderPostForm">Continue</a>
-                     	 <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
+                     	 <a href="#" class="btn btn-sm btn-primary" id="submit_silentOrderSavedForm">Continue</a>
 						   </div>
 						    </c:when>
 						    <c:otherwise>
 						             <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}" />
 						       <div class="cart-actions continue-button">
 						             <a href="javascript:void(0)" class="btn btn-sm btn-primary" id="submit_silentOrderPostForm">Continue</a>
-                           <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
+                           <a href="#" class="btn btn-sm btn-primary" id="submit_silentOrderSavedForm">Continue</a>
                   </div>
 						    </c:otherwise>
 						</c:choose>
