@@ -67,9 +67,8 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 			final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyyHH:mm:ss");
 			final JAXBContext jaxbContext = JAXBContext.newInstance(data.getClass());
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			final File productFeedFile = new File("/Users/sraone/Desktop/Product_Feed.xml");
+			final File productFeedFile = new File("Product_Feed");
 			jaxbMarshaller.marshal(data, productFeedFile);
 			final MediaModel media = createMediaModel(productFeedFile, formatter);
 			final BlGoogleMarketPlaceProductFeedModel googleMarketPlaceFeed = modelService
