@@ -45,8 +45,8 @@
                            <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                            
                              <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
-                             <div class="cart-actions">
-                                   <a href="${cartDeliveryOrPickupAction}" class="btn btn-sm btn-primary float-end">
+                             <div class="cart-actions continue-button">
+                                   <a href="${cartDeliveryOrPickupAction}" class="btn btn-sm btn-primary">
                                       <spring:theme code="general.continue.button" /></a>
                               </div>
                               <c:if test ="${not empty fn:escapeXml(errorMsg)}">
