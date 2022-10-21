@@ -28,7 +28,7 @@ import com.bl.core.google.product.populators.BlGoogleProductFeedXmlPupulator;
 import com.bl.core.model.BlGoogleMarketPlaceProductFeedModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.product.service.BlProductService;
-import com.bl.integration.marketplace.jaxb.Channel;
+import com.bl.integration.marketplace.jaxb.Rss;
 
 
 public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobModel>
@@ -45,11 +45,11 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 		final List<BlProductModel> blProducts = getProductService().getUsedProductsOnSale();
 		if (!blProducts.isEmpty())
 		{
-			final Channel channel = new Channel();
-			getBlGoogleProductFeedXmlPupulator().populate(blProducts, channel);
+			final Rss rss = new Rss();
+			getBlGoogleProductFeedXmlPupulator().populate(blProducts, rss);
 			try
 			{
-				convertToXML(channel);
+				convertToXML(rss);
 			}
 			catch (final FileNotFoundException e)
 			{

@@ -428,7 +428,11 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	 */
 	private File getFile(final String trackingNumber, final String packageInfo) throws IOException
 	{
-		return File.createTempFile(packageInfo.concat(BlintegrationConstants.UNDERSCORE).concat(trackingNumber), BlintegrationConstants.FILE_FORMAT);
+		final String fileName = packageInfo.concat(BlintegrationConstants.UNDERSCORE).concat(trackingNumber);
+		final String fileExtention = BlintegrationConstants.FILE_FORMAT;
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Creating Label file with file name : {} and file Extention : {}",
+				fileName, fileExtention);
+		return File.createTempFile(fileName, fileExtention);
 
 	}
 

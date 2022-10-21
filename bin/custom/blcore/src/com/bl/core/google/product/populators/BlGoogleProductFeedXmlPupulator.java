@@ -26,22 +26,26 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.shipping.service.impl.DefaultBlDeliveryModeService;
 import com.bl.integration.marketplace.jaxb.Channel;
 import com.bl.integration.marketplace.jaxb.Item;
+import com.bl.integration.marketplace.jaxb.Rss;
 import com.bl.integration.marketplace.jaxb.Shipping;
 
 
-public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProductModel>, Channel>
+public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProductModel>, Rss>
 {
 	private static final Logger LOG = Logger.getLogger(BlGoogleProductFeedXmlPupulator.class);
 	private DefaultBlDeliveryModeService blDeliveryModeService;
 	private ModelService modelService;
 
 	@Override
-	public void populate(final List<BlProductModel> source, final Channel target) throws ConversionException
+	public void populate(final List<BlProductModel> source, final Rss target) throws ConversionException
 	{
-		target.setTitle("BorrowLenses.com");
-		target.setLink("https://www.borrowlenses.com");
-		target.setDescription("BorrowLenses.com");
-		createItems(source, target);
+		target.setVersion("2.0");
+		final Channel channel = new Channel();
+		channel.setTitle("BorrowLenses.com");
+		channel.setLink("https://www.borrowlenses.com");
+		channel.setDescription("BorrowLenses.com");
+		target.setChannel(channel);
+		createItems(source, channel);
 	}
 
 	private void createItems(final List<BlProductModel> source, final Channel target)
