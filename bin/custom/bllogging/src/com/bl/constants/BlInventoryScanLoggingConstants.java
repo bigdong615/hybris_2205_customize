@@ -81,6 +81,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE = "webSanToolNotificationFailure";
     public static final String ICC_NO_ACTIVE_NOTIFICATION_FAILURE = "iccNoActiveNotificationFailure";
     public static final String WEB_SCAN_TOOL_DATA_MODEL_KEY = "webScanToolDataModelKey";
+	 public static final String BULK_RECEIVE_TOOL_DATA_MODEL_KEY = "bulkReceiveScanToolDataModelKey";
     public static final String INVENTORY_CYCLE_COUNT_SCAN_TOOL_DATA_MODEL_KEY = "inventoryCycleCountScanToolDataModelKey";
     public static final String VALID_BIN_LOCATION_ERROR_FAILURE = "validBINLocationErrorFailure";
     public static final String VALID_PARENT_LOCATION_ERROR_FAILURE = "validParentLocationErrorFailure";
@@ -137,6 +138,7 @@ public class BlInventoryScanLoggingConstants {
     //public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: ";
     //public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: ";
     public static final String BAR_CODE_SCAN_EMPTY_BAR_CODES = "No Barcodes found to scan.";
+	 public static final String BULK_RECEIVE_NOTIFICATION_HANDLER = "bulkReceiveSanToolNotification";
 
     public static final String TECH_ENG_NOTIFICATION_HANDLER = "techEngSanToolNotification";
     public static final String TECH_ENGINEERING_WORKSTATION = "TECH_ENGINEERING_WORKSTATION";
@@ -228,10 +230,13 @@ public class BlInventoryScanLoggingConstants {
  	public static final String ON_CHANGE_EVENT = "onChange";
  	public static final String ON_CLICK_EVENT = "onClick";
  	public static final String CANCEL_EVENT = "cancel";
+	public static final String CANCEL_BTN_EVENT = "cancelBtn";
  	public static final String VERIFY_SCAN_EVENT = "verifyScan";
  	public static final String SOCKET_ID = "inputObject";
  	public static final String SCANNING_AREA = "scanningArea";
  	public static final String SCAN_TO_BIN = "scanToBin";
+	public static final String SCAN_BAR_CODES = "scanBarCodes";
+
  	public static final String GENERATE_INBOUND_LABEL = "generateInboundLabel";
  	public static final String GENERATE_OUTBOUND_LABEL = "generateOutboundLabel";
  	public static final String SCAN_TO_WORKSTATION = "scanToWorkStation";
@@ -375,6 +380,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String SCRAPPED = "SCRAPPED";
 
 	 public static final String WAREHOUSE = "warehouse_";
+
+	 public static final String BULK_SCAN_TOOL_SUCCESS_MSG = "Serials updated successfully.";
+	 public static final String BULK_SCAN_TOOL_PLS_SELECT_MSG = "Please select atleast one.";
 
     private BlInventoryScanLoggingConstants() { }
 
