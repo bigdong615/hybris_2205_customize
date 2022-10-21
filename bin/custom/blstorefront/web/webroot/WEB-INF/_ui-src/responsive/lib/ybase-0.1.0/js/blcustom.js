@@ -1352,6 +1352,7 @@ function hideShorting(){
 		 div.remove();
      }
  }
+
  setTimeout(function(){
 	let hideArrow = document.querySelectorAll("#product-slider ul li").length;
 	if (hideArrow < 2 ){ 
