@@ -4,6 +4,7 @@
 package com.bl.backoffice.widget.controller;
 
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 
@@ -29,6 +30,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
@@ -39,7 +41,9 @@ import org.zkoss.zul.Textbox;
 import com.bl.backoffice.wizards.util.BulkReceiveRespData;
 import com.bl.backoffice.wizards.util.BulkReceiveScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.enums.ConditionRatingValueEnum;
 import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.enums.ItemTestingStatusEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
 import com.bl.core.model.BlSerialProductModel;
@@ -78,6 +82,9 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 	@Wire
 	private Div barcodesSectionId;
 
+	@WireVariable
+	private transient EnumerationService enumerationService;
+
 	@Wire
 	private Checkbox globalDeclineEntriesSelection;
 
@@ -103,7 +110,6 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 	 * @param inputObject
 	 */
 
-
 	@SocketEvent(socketId = IN_SOCKET)
 	public void initLoadPage(final Object inputObject)
 	{
@@ -116,7 +122,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 	}
 
 	/**
-	 * This method is used to close the Package Shipping Popup
+	 * This method is used to close the Popup
 	 */
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.CANCEL_EVENT, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void cancel()
@@ -125,7 +131,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 	}
 
 	/**
-	 * This method is used to close the Package Shipping Popup
+	 * This method is used to close the Popup
 	 */
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.CANCEL_BTN_EVENT, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void cancelBtn()
@@ -134,7 +140,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 	}
 
 	/**
-	 * This method is used to scan bin to working location.
+	 * This method is used to scan bar codes
 	 */
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.SCAN_BAR_CODES, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void scanBarCodes()
@@ -158,16 +164,60 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 
 			for (final BlSerialProductModel blSerialProductModel : serialProducts)
 			{
+				final List<String> testingStatusValues = new ArrayList<String>();
+				this.getEnumerationService().getEnumerationValues(ItemTestingStatusEnum.class).forEach(testingStatus -> {
+					testingStatusValues.add(testingStatus.getCode());
+				});
+
+				final List<String> cosmeticRatingValues = new ArrayList<String>();
+				this.getEnumerationService().getEnumerationValues(ConditionRatingValueEnum.class).forEach(cosmRating -> {
+					cosmeticRatingValues.add(cosmRating.getCode());
+				});
+
+				final List<String> functionalRatingValues = new ArrayList<String>();
+				this.getEnumerationService().getEnumerationValues(ConditionRatingValueEnum.class).forEach(funRating -> {
+					functionalRatingValues.add(funRating.getCode());
+				});
+
 				final BulkReceiveRespData bulkReceiveRespData = new BulkReceiveRespData();
 				bulkReceiveRespData.setSerialProductId(blSerialProductModel.getCode());
 				bulkReceiveRespData.setSerialProductName(blSerialProductModel.getBlProduct().getName());
 				bulkReceiveRespData.setProductType(blSerialProductModel.getProductType().getCode());
 				bulkReceiveRespData.setMainProductId(blSerialProductModel.getBlProduct().getCode());
 				bulkReceiveRespData.setBarcode(blSerialProductModel.getBarcode());
+				bulkReceiveRespData.setSkuFirmwareVersion(blSerialProductModel.getSkuFirmwareVersion());
+				bulkReceiveRespData.setFirmwareVersion(blSerialProductModel.getBlProduct().getFirmwareVersion());
+				bulkReceiveRespData.setCosmeticRatingValue(blSerialProductModel.getCosmeticRating().getCode());
+				bulkReceiveRespData.setFunctionalRatingValue(blSerialProductModel.getFunctionalRating().getCode());
+				bulkReceiveRespData.setTestingStatusValue(blSerialProductModel.getTestingStatus().getCode());
+
+				bulkReceiveRespData.setCosmeticRating(new ListModelList<>(cosmeticRatingValues));
+				bulkReceiveRespData.setTestingStatus(new ListModelList<>(testingStatusValues));
+				bulkReceiveRespData.setFunctionalRating(new ListModelList<>(functionalRatingValues));
+
 				bulkReceiveRespData.setOrderNumber(
 						blSerialProductModel.getAssociatedOrder() != null ? blSerialProductModel.getAssociatedOrder().getCode()
 								: StringUtils.EMPTY);
+				String orderNotesValue = "";
+				final List<String> orderNotesData = new ArrayList<String>();
+				blSerialProductModel.getAssociatedOrder().getOrderNotes().forEach(notes -> {
+					orderNotesData.add(notes.getNote());
+				});
 
+				for (final String orderNote : orderNotesData)
+				{
+					if (StringUtils.isEmpty(orderNotesValue))
+					{
+						orderNotesValue = orderNote;
+					}
+					else
+					{
+						orderNotesValue = orderNotesValue + ", " + orderNote;
+					}
+				}
+				bulkReceiveRespData.setOrderNotes(orderNotesValue);
+
+				/* Adding serial product information */
 				bulkReceiveRespDataList.add(bulkReceiveRespData);
 
 				if (CollectionUtils.isNotEmpty(blSerialProductModel.getBlProduct().getSubpartProducts()))
@@ -180,14 +230,17 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 						bulkSubpartReceiveRespData.setProductType(blSubPartModel.getSubpartProduct().getProductType().getCode());
 						bulkSubpartReceiveRespData.setMainProductId(blSerialProductModel.getBlProduct().getCode());
 						bulkSubpartReceiveRespData.setBarcode(blSerialProductModel.getBarcode());
+						bulkSubpartReceiveRespData.setFirmwareVersion(blSerialProductModel.getBlProduct().getFirmwareVersion());
 						bulkSubpartReceiveRespData.setOrderNumber(
 								blSerialProductModel.getAssociatedOrder() != null ? blSerialProductModel.getAssociatedOrder().getCode()
 										: StringUtils.EMPTY);
+						bulkSubpartReceiveRespData.setOrderNotes(orderNotesValue);
+
+						/* Adding sub part product information */
 						bulkReceiveRespDataList.add(bulkSubpartReceiveRespData);
 					}
 				}
 			}
-
 
 			this.productsListDiv.setStyle("resize:none;display:block");
 			this.barcodesSectionId.setStyle("resize:none;display:none");
@@ -196,6 +249,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 					.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.bulk.scan.heading")));
 
 			this.getProductEntries().setModel(new ListModelList<>(bulkReceiveRespDataList));
+
 			this.getProductEntries().renderAll();
 		}
 		else
@@ -243,10 +297,18 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				final String productCode = ((Label) row.getChildren().get(1)).getValue();
 				final String orderCode = ((Label) row.getChildren().get(3)).getValue();
 				final String barCode = ((Label) row.getChildren().get(4)).getValue();
+				//	final String skuFirmwareVersion = ((Label) row.getChildren().get(6)).getValue();
+				final String functionalRating = ((Combobox) row.getChildren().get(7)).getValue();
+				final String cosmRating = ((Combobox) row.getChildren().get(8)).getValue();
+				final String testingStatus = ((Combobox) row.getChildren().get(9)).getValue();
 
 				bulkReceiveData.setSerialProductId(productCode);
 				bulkReceiveData.setOrderNumber(orderCode);
 				bulkReceiveData.setBarcode(barCode);
+				bulkReceiveData.setFunctionalRatingValue(functionalRating);
+				bulkReceiveData.setTestingStatusValue(testingStatus);
+				bulkReceiveData.setCosmeticRatingValue(cosmRating);
+				//bulkReceiveData.setSkuFirmwareVersion(skuFirmwareVersion);
 
 				selectedSerials.add(bulkReceiveData);
 			}
@@ -309,8 +371,25 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 
 					for (final BlSerialProductModel productModel : blSerialsModel)
 					{
+
+						final BulkReceiveRespData	bulkResData = selectedSerials
+								 .stream()
+								.filter(bulkData -> bulkData.getSerialProductId().equals(productModel.getCode()))
+										.findFirst()
+						            .orElse(null);
+
+
 						productModel.setSerialStatus(SerialStatusEnum.RECEIVED_OR_RETURNED);
 						productModel.setHardAssigned(Boolean.FALSE);
+						final ItemTestingStatusEnum testingStatusEnum = enumerationService
+								.getEnumerationValue(ItemTestingStatusEnum.class, bulkResData.getTestingStatusValue());
+						final ConditionRatingValueEnum functionalRatingEnum = enumerationService
+								.getEnumerationValue(ConditionRatingValueEnum.class, bulkResData.getFunctionalRatingValue());
+						final ConditionRatingValueEnum cosmeticRatingEnum = enumerationService
+								.getEnumerationValue(ConditionRatingValueEnum.class, bulkResData.getCosmeticRatingValue());
+						productModel.setFunctionalRating(functionalRatingEnum);
+						productModel.setTestingStatus(testingStatusEnum);
+						productModel.setCosmeticRating(cosmeticRatingEnum);
 						getModelService().save(productModel);
 					}
 
@@ -332,22 +411,6 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_PLS_SELECT_MSG);
 	}
 
-	}
-
-	/**
-	 * @return the defaultBlProductDao
-	 */
-	public DefaultBlProductDao getDefaultBlProductDao()
-	{
-		return defaultBlProductDao;
-	}
-
-	/**
-	 * @param defaultBlProductDao the defaultBlProductDao to set
-	 */
-	public void setDefaultBlProductDao(final DefaultBlProductDao defaultBlProductDao)
-	{
-		this.defaultBlProductDao = defaultBlProductDao;
 	}
 
 	protected void selectAllEntries()
@@ -440,4 +503,37 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 		this.blInventoryScanToolService = blInventoryScanToolService;
 	}
 
+	/**
+	 * @return the enumerationService
+	 */
+	public EnumerationService getEnumerationService()
+	{
+		return enumerationService;
+	}
+
+	/**
+	 * @param enumerationService
+	 *           the enumerationService to set
+	 */
+	public void setEnumerationService(final EnumerationService enumerationService)
+	{
+		this.enumerationService = enumerationService;
+	}
+
+	/**
+	 * @return the defaultBlProductDao
+	 */
+	public DefaultBlProductDao getDefaultBlProductDao()
+	{
+		return defaultBlProductDao;
+	}
+
+	/**
+	 * @param defaultBlProductDao
+	 *           the defaultBlProductDao to set
+	 */
+	public void setDefaultBlProductDao(final DefaultBlProductDao defaultBlProductDao)
+	{
+		this.defaultBlProductDao = defaultBlProductDao;
+	}
 }
