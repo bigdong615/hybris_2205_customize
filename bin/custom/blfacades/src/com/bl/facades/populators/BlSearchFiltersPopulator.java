@@ -243,6 +243,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
 	  if (getSessionService().getAttribute("isApliCall") == null)
 	  {
 		  target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
+		  target.getSearchQuery().addFilterQuery("productTypeExclusion", BlCoreConstants.FALSE);
 	  }
   }
 
