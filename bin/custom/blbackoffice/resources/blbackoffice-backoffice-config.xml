@@ -2695,6 +2695,7 @@
 	<context component="explorer-tree" principal="techEnguserrole">
         <n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
         	<n:navigation-node id="TechEngScanTool"/>
+        	<n:navigation-node id="BulkScanTool"/>
 			<n:navigation-node id="TechEngQueue" >				
 				<n:type-node id="RemainingItemsQueue" code="RemainingItemsQueue"/>
 				<n:type-node id="RemainingPriorityItems" code="RemainingPriorityItems"/>

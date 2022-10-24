@@ -299,7 +299,7 @@
         //handled brands for mobile
         document.addEventListener( 'DOMContentLoaded', function () {
             new Splide( '#logo-slider', {
-                perPage: 5,
+                perPage: 4,
                  arrows :false,
                 pagination:false,
                 breakpoints: {
