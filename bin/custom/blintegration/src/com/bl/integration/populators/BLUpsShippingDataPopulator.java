@@ -200,7 +200,7 @@ public class BLUpsShippingDataPopulator
 		/** Creating UPS Shipment Service Data **/
 		final UpsShipmentServiceData upsShipmentServiceData = new UpsShipmentServiceData();
 
-		populateUpsShipmentServiceData(packagingInfo, upsShipmentServiceData, om);
+		populateUpsShipmentServiceData(packagingInfo, upsShipmentServiceData, om, isRSLabel);
 
 		/** Creating UPS Package Data List **/
 		final List<PackageTypeData> packageDataList = new ArrayList<>();
@@ -274,9 +274,13 @@ public class BLUpsShippingDataPopulator
 	 * @param upsShipmentServiceData
 	 */
 	private void populateUpsShipmentServiceData(final PackagingInfoModel packagingInfo,
-			final UpsShipmentServiceData upsShipmentServiceData, final OptimizedShippingMethodModel om)
+			final UpsShipmentServiceData upsShipmentServiceData, final OptimizedShippingMethodModel om, final boolean isRSLabel)
 	{
-		if(Objects.nonNull(om) && StringUtils.isNotBlank(om.getServiceTypeCode()) && StringUtils.isNotBlank(om.getServiceTypeDesc()))
+		if(isRSLabel){
+			upsShipmentServiceData.setCode(BlintegrationConstants.RETURN_LABEL_CODE);
+			upsShipmentServiceData.setDescription(BlintegrationConstants.RETURN_LABEL_DESC);
+		}
+		else if(Objects.nonNull(om) && StringUtils.isNotBlank(om.getServiceTypeCode()) && StringUtils.isNotBlank(om.getServiceTypeDesc()))
 		{
 			upsShipmentServiceData.setCode(om.getServiceTypeCode());
 			upsShipmentServiceData.setDescription(om.getServiceTypeDesc());
