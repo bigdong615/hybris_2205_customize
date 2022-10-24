@@ -97,6 +97,8 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String UPS_API_USER_NAME = "ups.token.user.name";
 	public static final String UPS_API_PASSWORD = "ups.token.password";
 	public static final String UPS_API_LICENSE = "ups.token.license";
+	public static final String RETURN_LABEL_CODE = "02";
+	public static final String RETURN_LABEL_DESC = "TWO DAY AIR";
 
 	public static final String ESTIMATED_DELIVERY_TIME_STAMP = "EstimatedDeliveryTimestamp";
 	public static final String TRACKING_NUMBER = "TrackingNumber";

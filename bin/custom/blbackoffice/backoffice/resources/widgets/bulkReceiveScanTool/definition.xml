@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<widget-definition id="custom.bl.widgets.blBulkReceiveScan"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd">
+
+	<name>Bulk Receive Scan</name>
+	<description>Bulk Receive Scan Tool</description>
+	<defaultTitle>Bulk Receive Scan</defaultTitle>
+    <author>hybris</author>
+    <version>0.1</version>
+    <view src="bulkReceiveScan.zul" />
+    
+	<sockets>
+		<!-- <input type="java.lang.String" id="bulkReceiveInput" /> -->
+		<input id="input" type="lang.java.Object"/>
+        <input id="nodeSelected" type="java.lang.Object" />
+		<output type="java.lang.String" id="bulkReceiveOutput" />
+	</sockets>
+
+	 <keywords>
+        <keyword>OMS</keyword>
+    </keywords>
+    
+    <controller class="com.bl.backoffice.widget.controller.BlBulkReceiveScanController" />
+    
+</widget-definition>
