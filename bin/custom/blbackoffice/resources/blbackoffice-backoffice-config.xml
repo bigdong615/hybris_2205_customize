@@ -1354,6 +1354,7 @@
 					<editorArea:attribute qualifier="isRentalOrder"/>
 					<editorArea:attribute qualifier="status" readonly="false"/>
 					<editorArea:attribute qualifier="verificationStatus" readonly="false"/>
+					<editorArea:attribute qualifier="sumOfGearValueOnOrder" readonly="true"/>
 				</editorArea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">
