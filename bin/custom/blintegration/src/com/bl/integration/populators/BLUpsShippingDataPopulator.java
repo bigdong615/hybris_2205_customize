@@ -167,7 +167,7 @@ public class BLUpsShippingDataPopulator
 
 
 		final ShipmentPhoneData shipperPhone = new ShipmentPhoneData();
-		shipperPhone.setNumber(addressData.getPhone());
+		shipperPhone.setNumber(trimmedPhoneNumber(addressData.getPhone()));
 
 		final AddressData shipperAddressData = new AddressData();
 		populateShipperAddressData(addressData, shipperAddressData, isRSLabel);
@@ -200,7 +200,7 @@ public class BLUpsShippingDataPopulator
 		/** Creating UPS Shipment Service Data **/
 		final UpsShipmentServiceData upsShipmentServiceData = new UpsShipmentServiceData();
 
-		populateUpsShipmentServiceData(packagingInfo, upsShipmentServiceData, om);
+		populateUpsShipmentServiceData(packagingInfo, upsShipmentServiceData, om, isRSLabel);
 
 		/** Creating UPS Package Data List **/
 		final List<PackageTypeData> packageDataList = new ArrayList<>();
@@ -235,7 +235,7 @@ public class BLUpsShippingDataPopulator
 		shipperAddressData.setLine1(addressData.getLine1());
 		shipperAddressData.setLine2(addressData.getLine2());
 		shipperAddressData.setTown(addressData.getTown());
-		shipperAddressData.setPhone(addressData.getPhone());
+		shipperAddressData.setPhone(trimmedPhoneNumber(addressData.getPhone()));
 
 		if (Objects.nonNull(addressData.getCountry()) && Objects.nonNull(addressData.getCountry().getIsocode()))
 		{
@@ -274,9 +274,13 @@ public class BLUpsShippingDataPopulator
 	 * @param upsShipmentServiceData
 	 */
 	private void populateUpsShipmentServiceData(final PackagingInfoModel packagingInfo,
-			final UpsShipmentServiceData upsShipmentServiceData, final OptimizedShippingMethodModel om)
+			final UpsShipmentServiceData upsShipmentServiceData, final OptimizedShippingMethodModel om, final boolean isRSLabel)
 	{
-		if(Objects.nonNull(om) && StringUtils.isNotBlank(om.getServiceTypeCode()) && StringUtils.isNotBlank(om.getServiceTypeDesc()))
+		if(isRSLabel){
+			upsShipmentServiceData.setCode(BlintegrationConstants.RETURN_LABEL_CODE);
+			upsShipmentServiceData.setDescription(BlintegrationConstants.RETURN_LABEL_DESC);
+		}
+		else if(Objects.nonNull(om) && StringUtils.isNotBlank(om.getServiceTypeCode()) && StringUtils.isNotBlank(om.getServiceTypeDesc()))
 		{
 			upsShipmentServiceData.setCode(om.getServiceTypeCode());
 			upsShipmentServiceData.setDescription(om.getServiceTypeDesc());
@@ -336,7 +340,7 @@ public class BLUpsShippingDataPopulator
 		shipToAddressData.setLine1(shipToAddress.getLine1());
 		shipToAddressData.setLine2(shipToAddress.getLine2());
 		shipToAddressData.setTown(shipToAddress.getTown());
-		shipToAddressData.setPhone(shipToAddress.getPhone());
+		shipToAddressData.setPhone(trimmedPhoneNumber(shipToAddress.getPhone()));
 
 		if (Objects.nonNull(shipToAddress.getRegion()) && Objects.nonNull(shipToAddress.getRegion().getIsocodeShort()))
 		{
@@ -354,7 +358,7 @@ public class BLUpsShippingDataPopulator
 		shipToAddressData.setPostalCode(shipToAddress.getPostalCode());
 
 		final ShipmentPhoneData shipToPhone = new ShipmentPhoneData();
-		shipToPhone.setNumber(shipToAddress.getPhone());
+		shipToPhone.setNumber(trimmedPhoneNumber(shipToAddress.getPhone()));
 
 		final ShipToData shipToData = new ShipToData();
 		if (StringUtils.isNotBlank(shipToAddressData.getCompanyName()))
@@ -439,5 +443,14 @@ public class BLUpsShippingDataPopulator
 	private AddressModel getWarehouseAddress(final WarehouseModel warehouse)
 	{
 		return warehouse.getPointsOfService().iterator().next().getAddress();
+	}
+	
+	private String trimmedPhoneNumber(final String phoneNumber)
+	{
+		if(StringUtils.isNotBlank(phoneNumber) && phoneNumber.length() > 15)
+		{
+			return phoneNumber.replace(BlintegrationConstants.WHITE_SPACE, StringUtils.EMPTY);
+		}
+		return phoneNumber;
 	}
 }

@@ -1,7 +1,5 @@
 package com.bl.facades.populators;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.google.common.base.Splitter;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.commerceservices.category.CommerceCategoryService;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.IndexedPropertyValueData;
@@ -12,6 +10,7 @@ import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearc
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchRequest;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.populators.SearchFiltersPopulator;
 import de.hybris.platform.core.model.security.PrincipalGroupModel;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
 import de.hybris.platform.solrfacetsearch.config.IndexedType;
@@ -19,13 +18,18 @@ import de.hybris.platform.solrfacetsearch.config.IndexedTypeSort;
 import de.hybris.platform.solrfacetsearch.config.IndexedTypeSortField;
 import de.hybris.platform.solrfacetsearch.search.SearchQuery;
 import de.hybris.platform.util.Config;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.google.common.base.Splitter;
 
 
 /**
@@ -39,11 +43,15 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
 
   private CommerceCategoryService commerceCategoryService;
   private UserService userService;
+  private SessionService sessionService;
 
   /**
-   * This method is overriden for adding  search filter query to existing query to fetch results accordingly
-   * @param source determines the SolrSearchQueryData
-   * @param target determines the SolrSearchRequest
+   * This method is overriden for adding search filter query to existing query to fetch results accordingly
+   *
+   * @param source
+   *           determines the SolrSearchQueryData
+   * @param target
+   *           determines the SolrSearchRequest
    */
   @Override
   public void populate(final SearchQueryPageableData<SolrSearchQueryData> source,
@@ -168,7 +176,10 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addSaleAndRentQuery(target);
     } else {
       addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
-      addQueryForCategory(target,BlCoreConstants.IS_DISCONTINUED,BlCoreConstants.FALSE);
+		if (getSessionService().getAttribute("isApliCall") == null)
+		{
+			addQueryForCategory(target, BlCoreConstants.IS_DISCONTINUED, BlCoreConstants.FALSE);
+		}
       addSaleAndRentQuery(target);
     }
   }
@@ -229,7 +240,11 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    * this method is created for adding itemType to solr query
    */
   private void addSaleAndRentQuery(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
-    target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
+	  if (getSessionService().getAttribute("isApliCall") == null)
+	  {
+		  target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
+		  target.getSearchQuery().addFilterQuery("productTypeExclusion", BlCoreConstants.FALSE);
+	  }
   }
 
   /*
@@ -266,7 +281,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
   }
 
   public void setCommerceCategoryService(
-      CommerceCategoryService commerceCategoryService) {
+      final CommerceCategoryService commerceCategoryService) {
     this.commerceCategoryService = commerceCategoryService;
   }
 
@@ -274,8 +289,18 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     return userService;
   }
 
-  public void setUserService(UserService userService) {
+  public void setUserService(final UserService userService) {
     this.userService = userService;
+  }
+
+  public SessionService getSessionService()
+  {
+	  return sessionService;
+  }
+
+  public void setSessionService(final SessionService sessionService)
+  {
+	  this.sessionService = sessionService;
   }
 
 }

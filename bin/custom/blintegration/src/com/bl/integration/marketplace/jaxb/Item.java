@@ -17,12 +17,11 @@ import javax.xml.bind.annotation.XmlType;
 		"description",
 		"condition",
 		"availability",
-		"product_Type",
-		"google_Product_Category",
 		"brand",
 		"image_Link",
 		"model_Number",
 		"gtin",
+		"mpn",
 		"price",
 		"shipping"
 })
@@ -41,10 +40,6 @@ public class Item
 	protected String condition;
 	@XmlElement(name = "g:availability")
 	protected String availability;
-	@XmlElement(name = "g:product_Type")
-	protected String product_Type;
-	@XmlElement(name = "g:google_Product_Category")
-	protected String google_Product_Category;
 	@XmlElement(name = "g:brand")
 	protected String brand;
 	@XmlElement(name = "g:image_Link")
@@ -53,6 +48,8 @@ public class Item
 	protected String model_Number;
 	@XmlElement(name = "gtin")
 	protected String gtin;
+	@XmlElement(name = "g:mpn")
+	protected String mpn;
 	@XmlElement(name = "g:price")
 	protected String price;
 	@XmlElement(name = "g:shipping")
@@ -155,39 +152,6 @@ public class Item
 	}
 
 	/**
-	 * @return the product_Type
-	 */
-	public String getProduct_Type()
-	{
-		return product_Type;
-	}
-
-	/**
-	 * @param product_Type
-	 *           the product_Type to set
-	 */
-	public void setProduct_Type(final String product_Type)
-	{
-		this.product_Type = product_Type;
-	}
-
-	/**
-	 * @return the google_Product_Category
-	 */
-	public String getGoogle_Product_Category()
-	{
-		return google_Product_Category;
-	}
-
-	/**
-	 * @param google_Product_Category
-	 *           the google_Product_Category to set
-	 */
-	public void setGoogle_Product_Category(final String google_Product_Category)
-	{
-		this.google_Product_Category = google_Product_Category;
-	}
-	/**
 	 * @return the brand
 	 */
 	public String getBrand()
@@ -253,6 +217,24 @@ public class Item
 	{
 		this.gtin = gtin;
 	}
+
+	/**
+	 * @return the mpn
+	 */
+	public String getMpn()
+	{
+		return mpn;
+	}
+
+	/**
+	 * @param mpn
+	 *           the mpn to set
+	 */
+	public void setMpn(final String mpn)
+	{
+		this.mpn = mpn;
+	}
+
 	/**
 	 * @return the price
 	 */

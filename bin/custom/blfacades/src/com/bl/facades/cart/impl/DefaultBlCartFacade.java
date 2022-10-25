@@ -261,7 +261,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			parameter.setIsDamageWaiverProSelected(Boolean.FALSE);
 			parameter.setIsDamageWaiverSelected(Boolean.FALSE);
 			parameter.setUnit(blProductModel.getUnit());
-			parameter.setIsFromRentAgainPage(Boolean.TRUE);//reusing this attribute to set damage waiver flags
+			//parameter.setIsFromRentAgainPage(Boolean.TRUE);//reusing this attribute to set damage waiver flags
 		   parameter.setGiftCardAmount(Double.valueOf(giftCardForm.getAmount())); 
 		   parameter.setRecipientEmail(giftCardForm.getEmail()); 
 		   parameter.setRecipientName(giftCardForm.getName());

@@ -1354,6 +1354,7 @@
 					<editorArea:attribute qualifier="isRentalOrder"/>
 					<editorArea:attribute qualifier="status" readonly="false"/>
 					<editorArea:attribute qualifier="verificationStatus" readonly="false"/>
+					<editorArea:attribute qualifier="sumOfGearValueOnOrder" readonly="true"/>
 				</editorArea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">
@@ -1405,6 +1406,8 @@
 					<editorArea:attribute qualifier="internalTransferConsignment"/>
 					<editorArea:attribute qualifier="actualShippingDateToCustomer"/>
 					<editorArea:attribute qualifier="orderTransferConsignment"/>
+					<editorArea:attribute qualifier="rentalStartDate"/>
+					<editorArea:attribute qualifier="rentalEndDate"/>
 				</editorArea:section>
 				<editorArea:section name="warehousingbackoffice.section.consignment.entries">
 					<editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
@@ -2693,6 +2696,7 @@
 	<context component="explorer-tree" principal="techEnguserrole">
         <n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
         	<n:navigation-node id="TechEngScanTool"/>
+        	<n:navigation-node id="BulkScanTool"/>
 			<n:navigation-node id="TechEngQueue" >				
 				<n:type-node id="RemainingItemsQueue" code="RemainingItemsQueue"/>
 				<n:type-node id="RemainingPriorityItems" code="RemainingPriorityItems"/>
@@ -3546,6 +3550,18 @@
 				<y:label>trackingNumber+ ' - ' +shippingLabelType+ ' - ' +creationtime</y:label>
 			</y:labels>
 		</y:base>
+	</context>
+	
+	<context merge-by="type" parent="GenericItem" type="AbstractOrder" component="editor-area">
+		<ea:editorArea name="">
+			<ea:essentials>
+				<ea:essentialSection name="hmc.essential">
+					<ea:attribute qualifier="rentalStartDate" readonly="true"/>
+					<ea:attribute qualifier="rentalEndDate" readonly="true"/>
+					<ea:attribute qualifier="sumOfGearValueOnOrder" readonly="true"/>
+				</ea:essentialSection>
+			</ea:essentials>			
+		</ea:editorArea>
 	</context>
 
 </config>

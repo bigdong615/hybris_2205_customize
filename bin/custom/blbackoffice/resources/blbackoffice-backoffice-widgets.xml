@@ -32,6 +32,8 @@
 			<setting key="expression" type="String" value="#root?.id EQ 'WebScanTool'"/>
 			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
 		</widget>
+		
+
 
 		<!-- BL:863 : Widget definition for Front team payment capture -->
 		<widget id="frontCapturePaymentPopup"
@@ -179,6 +181,31 @@
 			<setting key="_height" type="String">650px</setting>
 			<virtual-sockets/>
 		</widget>
+		
+		 <widget id="BulkReceiveScanTool_propertyextractor" widgetDefinitionId="custom.bl.widgets.blBulkReceiveScan" slotId="cockpitWidgetChildrenInvisible"
+                            template="true">
+
+                        <instance-settings socketEventRoutingMode="LAST_USED">
+                            <create onInit="false" reuseExisting="true">
+                                <all-incoming-events/>
+                            </create>
+                            <close>
+                                <all-outgoing-events/>
+                            </close>
+                            <select onInit="false">
+                                <all-incoming-events/>
+                            </select>
+                        </instance-settings>
+
+                        <setting key="widgetStyleClass" type="String"></setting>
+                        <setting key="__externalLocationPath" type="String">extension://warehousingbackoffice</setting>
+                        <setting key="widgetStyleAttribute" type="String"></setting>
+                        <setting key="_width" type="String">1520px</setting>
+                        <setting key="_height" type="String">650px</setting>
+                        <virtual-sockets />
+                    </widget> 
+                    
+		
 	</widget-extension>
 	
 	<!-- Tech Eng. Section -->
@@ -194,6 +221,21 @@
 			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
 		</widget>
 	</widget-extension>
+	
+	 <widget-extension widgetId="mainSlot">
+		<widget id="BulkReceiveScanTool_conditionevaluator" widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+				slotId="cockpitWidgetChildrenInvisible" template="false">
+			<widget id="BulkReceiveScanTool_propertyextractor" widgetDefinitionId="custom.bl.widgets.blBulkReceiveScan"
+					slotId="cockpitWidgetChildrenInvisible" template="true">
+				<setting key="expression" type="String" value="id"/>
+				<setting key="socketDataType_$T" type="String" value="java.lang.String"/>
+			</widget>
+			<setting key="expression" type="String" value="#root?.id EQ 'BulkScanTool'"/>
+			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
+			 <virtual-sockets />
+		</widget>
+	</widget-extension> 
+	
 	
 	<!-- Unboxing Tool Section -->
 	<widget-extension widgetId="mainSlot">
@@ -237,7 +279,8 @@
 			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
 		</widget>
 	</widget-extension>
-
+	
+	
 	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="WebScanTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="WebScanTool_conditionevaluator" outputId="true" targetWidgetId="WebScanTool_propertyextractor" inputId="genericInput"/>
 	<widget-connection sourceWidgetId="WebScanTool_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
@@ -248,6 +291,12 @@
 	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="TechEngScanTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="TechEngScanTool_conditionevaluator" outputId="true" targetWidgetId="TechEngScanTool_propertyextractor" inputId="genericInput"/>
 	<widget-connection sourceWidgetId="TechEngScanTool_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
+	
+	<!-- Tech Eng. Bulk Receive Section -->
+	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="BulkReceiveScanTool_conditionevaluator" inputId="input"/>
+	<widget-connection sourceWidgetId="BulkReceiveScanTool_conditionevaluator" outputId="true" targetWidgetId="BulkReceiveScanTool_propertyextractor" inputId="nodeSelected"/>
+
+	
 	<!--BL-863 : Widgets Definition for Front Team Payment Captured Widget -->
 	<widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.front.capturepaymentaction" outputId="blFrontCapturePaymentContext" targetWidgetId="frontCapturePaymentPopup" inputId="inputObject" />
 	<widget-connection sourceWidgetId="STUB_com.bl.backoffice.actions.blFrontScan.frontdeskscanaction" outputId="frontDeskScanOutContext" targetWidgetId="frontDeskScanPopUp" inputId="inputObject"/>
@@ -267,4 +316,5 @@
 	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="InventoryCycleCountScan_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="InventoryCycleCountScan_conditionevaluator" outputId="true" targetWidgetId="InventoryCycleCountScan_propertyextractor" inputId="genericInput"/>
 	<widget-connection sourceWidgetId="InventoryCycleCountScan_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
+
 </widgets>

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
@@ -25,23 +26,26 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.shipping.service.impl.DefaultBlDeliveryModeService;
 import com.bl.integration.marketplace.jaxb.Channel;
 import com.bl.integration.marketplace.jaxb.Item;
+import com.bl.integration.marketplace.jaxb.Rss;
 import com.bl.integration.marketplace.jaxb.Shipping;
-import com.microsoft.sqlserver.jdbc.StringUtils;
 
 
-public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProductModel>, Channel>
+public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProductModel>, Rss>
 {
 	private static final Logger LOG = Logger.getLogger(BlGoogleProductFeedXmlPupulator.class);
 	private DefaultBlDeliveryModeService blDeliveryModeService;
 	private ModelService modelService;
 
 	@Override
-	public void populate(final List<BlProductModel> source, final Channel target) throws ConversionException
+	public void populate(final List<BlProductModel> source, final Rss target) throws ConversionException
 	{
-		target.setTitle("BorrowLenses.com");
-		target.setLink("https://www.borrowlenses.com");
-		target.setDescription("BorrowLenses.com");
-		createItems(source, target);
+		target.setVersion("2.0");
+		final Channel channel = new Channel();
+		channel.setTitle("BorrowLenses.com");
+		channel.setLink("https://www.borrowlenses.com");
+		channel.setDescription("BorrowLenses.com");
+		target.setChannel(channel);
+		createItems(source, channel);
 	}
 
 	private void createItems(final List<BlProductModel> source, final Channel target)
@@ -57,16 +61,20 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 			item.setDescription(product.getDescription());
 			item.setCondition("Used");
 			item.setAvailability("in_stock");
-			if(product.getProductType()!=null) {
-				item.setProduct_Type(product.getProductType().getCode());
-				item.setGoogle_Product_Category(product.getProductType().getCode());
-			}
 			item.setBrand(product.getManufacturerName());
 			if(product.getPicture()!=null) {
 				item.setImage_Link(product.getPicture().getURL());
 			}
 			item.setModel_Number(product.getCode());
-			item.setGtin(product.getUpc());
+			if (!product.getUpc().isBlank())
+			{
+				item.setGtin(product.getUpc());
+			}
+			else
+			{
+				item.setMpn(product.getMpn());
+			}
+
 			item.setPrice(getSerialPrice(product.getSerialProducts().iterator().next()));
 			shipping.setCountry("US");
 			final double price = getShippingPrice(product);

@@ -135,6 +135,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			upsShipmentResponseData.setStatusCode(BlintegrationConstants.CLIENT_SIDE_ERROR);
 			upsShipmentResponseData.setStatusMessage(BlintegrationConstants.CLIENT_SIDE_ERROR_DESCRIPTION);
 			upsShipmentResponseData.setErrorDescription(ct.getMessage());
+			BlLogger.logMessage(LOG, Level.ERROR, "UPS Exception  : " + ct.getMessage(), ct);
 		}
 		catch (final Exception ex)
 		{
@@ -148,15 +149,19 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 					upsShipmentResponseData.setStatusCode(errorDetails.getPrimaryErrorCode().getCode());
 					upsShipmentResponseData.setErrorDescription(errorDetails.getPrimaryErrorCode().getDescription());
 					upsShipmentResponseData.setStatusMessage(ex.getMessage());
+					BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, ex, 
+							"UPS Exception Status Code : {} Description : {}", upsShipmentResponseData.getStatusCode(),
+							upsShipmentResponseData.getErrorDescription());
 				}
 				else
 				{
 					upsShipmentResponseData.setErrorDescription(ex.getMessage());
+					BlLogger.logMessage(LOG, Level.ERROR, "UPS Exception - " + ex.getMessage(), ex);
 				}
 			}
 			else
 			{
-				BlLogger.logMessage(LOG, Level.INFO, ex.getMessage());
+				BlLogger.logMessage(LOG, Level.ERROR, "UPS Exception - " + ex.getMessage(), ex);
 				populateResponseExceptionData(upsShipmentResponseData, ex);
 			}
 		}
@@ -423,7 +428,11 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	 */
 	private File getFile(final String trackingNumber, final String packageInfo) throws IOException
 	{
-		return File.createTempFile(packageInfo.concat(BlintegrationConstants.UNDERSCORE).concat(trackingNumber), BlintegrationConstants.FILE_FORMAT);
+		final String fileName = packageInfo.concat(BlintegrationConstants.UNDERSCORE).concat(trackingNumber);
+		final String fileExtention = BlintegrationConstants.FILE_FORMAT;
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Creating Label file with file name : {} and file Extention : {}",
+				fileName, fileExtention);
+		return File.createTempFile(fileName, fileExtention);
 
 	}
 

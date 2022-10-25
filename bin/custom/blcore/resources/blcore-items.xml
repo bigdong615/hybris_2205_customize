@@ -3360,6 +3360,11 @@
 			            <modifiers read="true" write="true" optional="true" />
 			            <description>Timestamp on which the the first item is unboxed on the order</description>
 			        </attribute>
+                    <attribute qualifier="sumOfGearValueOnOrder" type="java.lang.Double">
+                        <description>Sum Of Gear Value On Order</description>
+                        <modifiers write="false"/>
+                        <persistence type="dynamic" attributeHandler="blSumOfGearValueOnOrderHandler"/>
+                    </attribute>
                 </attributes>
 
             </itemtype>
@@ -3670,8 +3675,17 @@
             <persistence type="property" />
             <modifiers read="true" write="true" optional="true" />
             <description>Date on which the Shipment status changes to BL_SHIPPED</description>
-        </attribute>
-	
+          </attribute>
+          <attribute qualifier="rentalStartDate" type="java.util.Date">
+              <description>Dynamic attribute on consignment to display Rental Start Date from Order</description>
+              <modifiers write="false"/>
+              <persistence type="dynamic" attributeHandler="blConsignmentRentalStartDateHandler"/>
+          </attribute>
+          <attribute qualifier="rentalEndDate" type="java.util.Date">
+              <description>Dynamic attribute on consignment to display Rental Return Date from Order</description>
+              <modifiers write="false"/>
+              <persistence type="dynamic" attributeHandler="blConsignmentRentalEndDateHandler"/>
+          </attribute>	
         </attributes>
       </itemtype>
 
