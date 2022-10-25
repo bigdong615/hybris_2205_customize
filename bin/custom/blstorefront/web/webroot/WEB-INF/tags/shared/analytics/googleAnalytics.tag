@@ -9,6 +9,12 @@
 /* Google Analytics */
 
 var googleAnalyticsTrackingId = '${ycommerce:encodeJavaScript(googleAnalyticsTrackingId)}';
+var pageType = '';
+var datePickerText = $("#litepicker").attr('placeholder');
+var withDates = "viewWithDates";
+if(datePickerText.indexOf("Select dates...") > -1){
+    withDates = "viewWithoutDates";
+}
 
 window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -48,11 +54,31 @@ gtag('config', googleAnalyticsTrackingId);
 		 <c:set var="listName" value="${pageType == 'CATEGORY' ? 'List' : 'Search'}"/>
      <c:set var="variantName" value="${ blPageType == 'rentalGear' ? 'Rental gear' : 'Used gear'}"/>
      <c:set var="_href" value="${not empty header.referer ? header.referer : 'javascript:window.history.back()'}" />
-
+     <c:set var="req" value="${pageContext.request}" />
+     <c:set var="withDates" value="" />
 
 		<c:choose>
 			<c:when test="${searchPageData.pagination.totalNumberOfResults > 0}">
 				<c:if test="${not empty searchPageData.results}">
+                        <c:choose>
+                            <c:when test="${pageType == 'CATEGORY'}">
+                                    pageType = 'category page';
+                                    var eventLabel = window.location.pathname.split("category/")[1];
+                                    gtag('event', withDates, {
+                                        "event_category": "Category View",
+                                        "event_label": eventLabel
+                                    });
+                            </c:when>
+                            <c:otherwise>
+                                    pageType = 'search page';
+                                    var eventLabel = (window.location.search.split("text=")[1]).split("&")[0];
+                                    gtag('event', withDates, {
+                                        "event_category": "Category View",
+                                        "event_label": eventLabel
+                                    });
+                            </c:otherwise>
+                        </c:choose>
+
 						gtag('event', 'view_item_list', {
 							"event_category": "Category View",
 							"event_label": "${ycommerce:encodeJavaScript(listName)}",
@@ -101,7 +127,7 @@ gtag('config', googleAnalyticsTrackingId);
         	    "event_category": "Cart Page",
             	"event_label": "View Cart",
             	"checkout_step" : 1,
-            	"checkout_option": "View Cart",
+            	"checkout_option": ${cartType},
             	"value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
               "items": [
         				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -129,7 +155,7 @@ gtag('config', googleAnalyticsTrackingId);
                   	    "event_category": "Shipping Page",
                       	"event_label": "Delivery Method",
                         "checkout_step": 2,
-                        "checkout_option": "Delivery Method",
+                        //"checkout_option": "Delivery Method",
                        "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                         "items": [
                   				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -156,7 +182,7 @@ gtag('config', googleAnalyticsTrackingId);
                           	    "event_category": "Payment Page",
                               	"event_label": "Payment Method",
                               	"checkout_step": 3,
-                                "checkout_option": "Payment Method",
+                                //"checkout_option": "Payment Method",
                                 "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                                 "items": [
                           				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -183,7 +209,7 @@ gtag('config', googleAnalyticsTrackingId);
                    	    "event_category": "Review Page",
                        	"event_label": "Review Order",
                        	"checkout_step": 4,
-                        "checkout_option": "Review Order",
+                       // "checkout_option": "Review Order",
                        	"value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                         "items": [
                    				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -358,10 +384,25 @@ window.mediator.subscribe('trackSearch', function(data) {
 });
 
 function trackSearchClick(searchText) {
+    gtag('event', 'select_search', {
+        'event_category': 'Search Bar',
+        'event_label': searchText
+    });
 	gtag('event', 'select_search', {
-      'event_category': 'Search',
-      'event_label': searchText
+      'event_category': 'Search Bar',
+      'event_label': 'Submit'
 	});
+}
+
+window.mediator.subscribe('usedGearNavClick', function() {
+    trackUsedGearNavClick();
+});
+
+function trackUsedGearNavClick(){
+    gtag('event', 'usedGearNavClick', {
+        'event_category': 'Used Gear Nav',
+        'event_label': pageType
+    });
 }
 
 
