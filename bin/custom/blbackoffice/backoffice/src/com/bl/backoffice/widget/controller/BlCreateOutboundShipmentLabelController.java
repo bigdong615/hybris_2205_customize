@@ -1,5 +1,6 @@
 package com.bl.backoffice.widget.controller;
 
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -24,11 +25,13 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Textbox;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.model.OptimizedShippingMethodModel;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
@@ -51,6 +54,8 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	private Combobox shippingTypeComboBox;
 	@Wire
 	private Combobox optimizedShippingMethodComboBox;
+	@Wire
+	private Textbox deliveryDate;
 
 	protected static final String OUT_CONFIRM = "confirmOutput";
 	protected static final String COMPLETE = "completed";
@@ -66,6 +71,9 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
+	
+	@Resource(name = "blOrderService")
+	private BlOrderService blOrderService;
 
 	private ListModelList<String> shippingTypeList = new ListModelList<>();
 	private ListModelList<String> optimizedShippingMethodList = new ListModelList<>();
@@ -92,6 +100,24 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		shippingTypeComboBox.setModel(shippingTypeList);
 		optimizedShippingMethodList = new ListModelList<>(Lists.newArrayList());
 		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
+		deliveryDate.setValue(getDeliveryDateFromOrder(inputObject));
+	}
+	
+	private String getDeliveryDateFromOrder(final ConsignmentModel consignment)
+	{
+		final AbstractOrderModel orderModel = consignment.getOrder();
+		if(Objects.nonNull(orderModel))
+		{
+			if(getBlOrderService().isRentalOrderOnly(orderModel) && Objects.nonNull(orderModel.getRentalStartDate()))
+			{
+				return orderModel.getRentalStartDate().toString();
+			}
+			if(getBlOrderService().isUsedOrderOnly(orderModel) && Objects.nonNull(orderModel.getActualRentalStartDate()))
+			{
+				return orderModel.getActualRentalStartDate().toString();
+			}
+		}
+		return StringUtils.EMPTY;
 	}
 
 	/**
@@ -321,6 +347,39 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	/**
+	 * @return the deliveryDate
+	 */
+	public Textbox getDeliveryDate()
+	{
+		return deliveryDate;
+	}
+
+	/**
+	 * @param deliveryDate
+	 *           the deliveryDate to set
+	 */
+	public void setDeliveryDate(final Textbox deliveryDate)
+	{
+		this.deliveryDate = deliveryDate;
+	}
+
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService()
+	{
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService)
+	{
+		this.blOrderService = blOrderService;
 	}
 
 }
