@@ -154,6 +154,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 		}
 		else
 		{
+			boolean noOrderExistFlag = false;
 			final List<BulkReceiveRespData> bulkReceiveRespDataList = new ArrayList<BulkReceiveRespData>();
 
 			final Collection<BlSerialProductModel> serialProducts = getBlInventoryScanToolService()
@@ -200,9 +201,12 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 								: StringUtils.EMPTY);
 				String orderNotesValue = "";
 				final List<String> orderNotesData = new ArrayList<String>();
-				blSerialProductModel.getAssociatedOrder().getOrderNotes().forEach(notes -> {
-					orderNotesData.add(notes.getNote());
-				});
+				if (blSerialProductModel.getAssociatedOrder() != null)
+				{
+					blSerialProductModel.getAssociatedOrder().getOrderNotes().forEach(notes -> {
+						orderNotesData.add(notes.getNote());
+					});
+				}
 
 				for (final String orderNote : orderNotesData)
 				{
@@ -217,10 +221,18 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				}
 				bulkReceiveRespData.setOrderNotes(orderNotesValue);
 
-				/* Adding serial product information */
-				bulkReceiveRespDataList.add(bulkReceiveRespData);
+				if (blSerialProductModel.getAssociatedOrder() != null)
+				{
+					/* Adding serial product information */
+					bulkReceiveRespDataList.add(bulkReceiveRespData);
+				}
+				else
+				{
+					noOrderExistFlag = true;
+				}
 
-				if (CollectionUtils.isNotEmpty(blSerialProductModel.getBlProduct().getSubpartProducts()))
+				if (CollectionUtils.isNotEmpty(blSerialProductModel.getBlProduct().getSubpartProducts())
+						&& blSerialProductModel.getAssociatedOrder() != null)
 				{
 					for (final BlSubpartsModel blSubPartModel : blSerialProductModel.getBlProduct().getSubpartProducts())
 					{
@@ -242,6 +254,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				}
 			}
 
+			if (!noOrderExistFlag || bulkReceiveRespDataList.size() > 0)
+			{
 			this.productsListDiv.setStyle("resize:none;display:block");
 			this.barcodesSectionId.setStyle("resize:none;display:none");
 
@@ -251,6 +265,12 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 			this.getProductEntries().setModel(new ListModelList<>(bulkReceiveRespDataList));
 
 			this.getProductEntries().renderAll();
+		}
+		else
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.NO_ORDER_FOR_SERIAL_SCAN_KEY);
+		}
 		}
 		else
 		{
