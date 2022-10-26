@@ -1320,6 +1320,7 @@
 			name="Order editor area">
 			<ea:tab name="customersupportbackoffice.order.tab.details">
 				<ea:section name="customersupportbackoffice.section.order.general.totals" columns="3">
+					<editorArea:attribute qualifier="sumOfGearValueOnOrder" readonly="true"/>
 					<editorArea:customPanel name="customersupportbackoffice.order.details.total"
 						spring-bean="blTotalPriceWithTaxRenderer"/>
 				</ea:section>
@@ -1353,8 +1354,7 @@
 					<editorArea:attribute qualifier="isVipOrder" />
 					<editorArea:attribute qualifier="isRentalOrder"/>
 					<editorArea:attribute qualifier="status" readonly="false"/>
-					<editorArea:attribute qualifier="verificationStatus" readonly="false"/>
-					<editorArea:attribute qualifier="sumOfGearValueOnOrder" readonly="true"/>
+					<editorArea:attribute qualifier="verificationStatus" readonly="false"/>					
 				</editorArea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">
