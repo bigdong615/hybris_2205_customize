@@ -43,6 +43,11 @@
                                 </template>
                             </combobox>
       </row>
+      <row>
+                   <label value="Delivery Date" width="50%" />
+                <textbox sclass="oms-widget-updateorder__template-reason" readonly="true" id="deliveryDate"
+                         style=""/>
+      </row>
     </rows>
   </grid>
   
