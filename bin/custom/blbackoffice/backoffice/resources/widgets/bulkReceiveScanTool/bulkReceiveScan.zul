@@ -45,11 +45,11 @@
     </div>  
       
     
-    <div style="margin:10px;"  id="productsListDiv">
+    <div style="margin:10px;" id="productsListDiv">
     <hlayout width="100%"  sclass="oms-widget-reassignserial-list">
-        <div sclass="oms-widget-reassignserial-list-container">
+        <div style="overflow-y: auto; height:500px;" sclass="oms-widget-reassignserial-list-container">
             <grid id="productEntries" mold="paging"
-                  pageSize="5" width="100%" height="100%">
+                  pageSize="10" width="100%" height="100%">
                 <columns  style="background-color:#d5d8dc;">
                 	<column width="5%" style="padding-left:20px;" sclass="oms-widget-reassignserial-listbox-header">
                         <checkbox id="globalDeclineEntriesSelection" class="oms-widget-reassignserial-list-container__checkbox"/>
@@ -87,7 +87,7 @@
                    
                  
                 </columns>
-                <rows>
+                <rows >
                     <template name="model">
                         <row>
                             <checkbox style="margin-left:20px;" class="oms-widget-reassignserial-list-container__checkbox"/>
