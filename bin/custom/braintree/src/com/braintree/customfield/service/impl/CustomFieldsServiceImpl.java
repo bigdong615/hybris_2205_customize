@@ -133,7 +133,7 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 			case "sum_of_gear_value_in_order":
 				customFields.put(customFieldName
 						.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
-						order instanceof CartModel ? StringUtils.EMPTY : String.valueOf(order.getSumOfGearValueOnOrder()));
+						String.valueOf(order.getSumOfGearValueOnOrder()));
 				break;
 			case "phone_number":
 				customFields.put(customFieldName
