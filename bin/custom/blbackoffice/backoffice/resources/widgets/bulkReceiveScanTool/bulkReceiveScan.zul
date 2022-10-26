@@ -97,8 +97,8 @@
                             <label value="${each.barcode}" style="display:none;" width="0%"/>
                              <label value="${each.firmwareVersion}" width="100%"/>
                              
-                             <intbox disabled="${each.skuFirmwareVersion == null}"  value="${each.skuFirmwareVersion}" width="50%" style="margin-left:15px;text-align:center;"
-                                    constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
+                             <textbox disabled="${each.skuFirmwareVersion == null}" value="${each.skuFirmwareVersion}" width="50%" style="margin-left:15px;text-align:center;"
+                                    />
                            
                                 <combobox xmlns:w="client" value = "${each.functionalRatingValue}" disabled="${empty each.functionalRating}"
                                 model="${each.functionalRating}" 
