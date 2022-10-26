@@ -32,10 +32,12 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.model.OptimizedShippingMethodModel;
 import com.bl.core.services.order.BlOrderService;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.bl.logging.BlLogger;
+import com.bl.facades.constants.BlFacadesConstants;
 import com.google.common.collect.Maps;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
@@ -110,11 +112,11 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		{
 			if(getBlOrderService().isRentalOrderOnly(orderModel) && Objects.nonNull(orderModel.getRentalStartDate()))
 			{
-				return orderModel.getRentalStartDate().toString();
+				return convertDateToString(orderModel.getRentalStartDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE);
 			}
 			if(getBlOrderService().isUsedOrderOnly(orderModel) && Objects.nonNull(orderModel.getActualRentalStartDate()))
 			{
-				return orderModel.getActualRentalStartDate().toString();
+				return convertDateToString(orderModel.getActualRentalStartDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE);
 			}
 		}
 		return StringUtils.EMPTY;
@@ -380,6 +382,13 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	public void setBlOrderService(BlOrderService blOrderService)
 	{
 		this.blOrderService = blOrderService;
+	}
+
+	/**
+	 * This Method converts rental startDate and rental endDate to String
+	 */
+	private String convertDateToString(final Date rentalDate , final String dateFormat) {
+		return BlDateTimeUtils.convertDateToStringDate(rentalDate,dateFormat);
 	}
 
 }
