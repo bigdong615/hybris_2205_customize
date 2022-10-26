@@ -112,11 +112,11 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		{
 			if(getBlOrderService().isRentalOrderOnly(orderModel) && Objects.nonNull(orderModel.getRentalStartDate()))
 			{
-				return convertDateToString(orderModel.getRentalStartDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE)
+				return convertDateToString(orderModel.getRentalStartDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE);
 			}
 			if(getBlOrderService().isUsedOrderOnly(orderModel) && Objects.nonNull(orderModel.getActualRentalStartDate()))
 			{
-				return convertDateToString(orderModel.getActualRentalStartDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE)
+				return convertDateToString(orderModel.getActualRentalStartDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE);
 			}
 		}
 		return StringUtils.EMPTY;
