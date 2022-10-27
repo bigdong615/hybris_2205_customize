@@ -38,7 +38,6 @@ import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.bl.logging.BlLogger;
-import com.bl.facades.constants.BlFacadesConstants;
 import com.google.common.collect.Maps;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
@@ -113,11 +112,11 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		{
 			if(getBlOrderService().isRentalOrderOnly(orderModel) && Objects.nonNull(orderModel.getRentalStartDate()))
 			{
-				return convertDateToString(orderModel.getRentalStartDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE);
+				return convertDateToString(orderModel.getRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT);
 			}
 			if(getBlOrderService().isUsedOrderOnly(orderModel) && Objects.nonNull(orderModel.getActualRentalStartDate()))
 			{
-				return convertDateToString(orderModel.getActualRentalStartDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE);
+				return convertDateToString(orderModel.getActualRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT);
 			}
 		}
 		return StringUtils.EMPTY;
@@ -242,6 +241,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 				optimizedShippingMethod -> optimizedMethodList.put(optimizedShippingMethod.getName(), optimizedShippingMethod));
 		if (selectedShippingType.equalsIgnoreCase(CarrierEnum.UPS.getCode()))
 		{
+			optimizedShippingMethodList.clearSelection();
 			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
 			{
 				if (!optimizedShippingMethod.getCode().toLowerCase().contains(CarrierEnum.FEDEX.getCode().toLowerCase()))
@@ -253,6 +253,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		}
 		else if (selectedShippingType.equalsIgnoreCase(CarrierEnum.FEDEX.getCode()))
 		{
+			optimizedShippingMethodList.clearSelection();
 			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
 			{
 				if (optimizedShippingMethod.getCode().toLowerCase().contains(CarrierEnum.FEDEX.getCode().toLowerCase()))
@@ -261,6 +262,11 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 				}
 
 			}
+		}
+		else
+		{
+			carrierBasedOptimizedShippingMethodList.clear();
+			optimizedShippingMethodList.clearSelection();
 		}
 		optimizedShippingMethodList = new ListModelList<>(carrierBasedOptimizedShippingMethodList);
 		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
@@ -388,8 +394,8 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	/**
 	 * This Method converts rental startDate and rental endDate to String
 	 */
-	private String convertDateToString(final Date rentalDate , final String dateFormat) {
-		return BlDateTimeUtils.convertDateToStringDate(rentalDate,dateFormat);
+	private String convertDateToString(final Date deliveryDate , final String dateFormat) {
+		return BlDateTimeUtils.convertDateToStringDate(deliveryDate,dateFormat);
 	}
 
 }
