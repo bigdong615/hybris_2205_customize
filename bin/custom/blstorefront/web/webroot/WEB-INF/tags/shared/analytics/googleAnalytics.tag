@@ -10,11 +10,6 @@
 
 var googleAnalyticsTrackingId = '${ycommerce:encodeJavaScript(googleAnalyticsTrackingId)}';
 var pageType = '';
-var datePickerText = $("#litepicker").attr('placeholder');
-var withDates = "viewWithDates";
-if(datePickerText.indexOf("Select dates...") > -1){
-    withDates = "viewWithoutDates";
-}
 
 window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -50,34 +45,30 @@ gtag('config', googleAnalyticsTrackingId);
     });
 	</c:when>
 
-	<c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
-		 <c:set var="listName" value="${pageType == 'CATEGORY' ? 'List' : 'Search'}"/>
+	 <c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
+     <c:set var="listName" value="${pageType == 'CATEGORY' ? 'List' : 'Search'}"/>
      <c:set var="variantName" value="${ blPageType == 'rentalGear' ? 'Rental gear' : 'Used gear'}"/>
      <c:set var="_href" value="${not empty header.referer ? header.referer : 'javascript:window.history.back()'}" />
-     <c:set var="req" value="${pageContext.request}" />
-     <c:set var="withDates" value="" />
 
 		<c:choose>
 			<c:when test="${searchPageData.pagination.totalNumberOfResults > 0}">
 				<c:if test="${not empty searchPageData.results}">
-                        <c:choose>
-                            <c:when test="${pageType == 'CATEGORY'}">
+                            <c:if test="${pageType eq 'CATEGORY'}">
                                     pageType = 'category page';
                                     var eventLabel = window.location.pathname.split("category/")[1];
-                                    gtag('event', withDates, {
+                                    gtag('event', "withDates", {
                                         "event_category": "Category View",
                                         "event_label": eventLabel
                                     });
-                            </c:when>
-                            <c:otherwise>
+                            </c:if>
+                            <c:if test="${pageType eq 'PRODUCTSEARCH'}">
                                     pageType = 'search page';
                                     var eventLabel = (window.location.search.split("text=")[1]).split("&")[0];
-                                    gtag('event', withDates, {
+                                    gtag('event', "withDates", {
                                         "event_category": "Category View",
                                         "event_label": eventLabel
                                     });
-                            </c:otherwise>
-                        </c:choose>
+                            </c:if>
 
 						gtag('event', 'view_item_list', {
 							"event_category": "Category View",
