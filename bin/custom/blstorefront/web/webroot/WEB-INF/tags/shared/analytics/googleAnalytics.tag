@@ -108,6 +108,21 @@ gtag('config', googleAnalyticsTrackingId);
 		</c:choose>
 
 	</c:when>
+    <c:set var="cartType" value=""/>
+    <c:choose>
+        <c:when test="${cartData.hasGiftCart}">
+            <c:set var="cartType" value="Gift Cart Order"/>
+        </c:when>
+        <c:when test="${cartData.isRetailGearOrder eq true}">
+            <c:set var="cartType" value="New Gear Order"/>
+        </c:when>
+        <c:when test="${cartData.isRentalCart}">
+            <c:set var="cartType" value="Rental Order"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="cartType" value="Used Gear Order"/>
+        </c:otherwise>
+    </c:choose>
   <c:when test="${pageType == 'CART' && !_href.contains('cart')}">
       <c:set var="couponCodes" value=""/>
       <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
@@ -224,21 +239,6 @@ gtag('config', googleAnalyticsTrackingId);
     <c:forEach items='${orderData.appliedVouchers}' var='voucher' varStatus='status'>
       <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
     </c:forEach>
-    <c:set var="cartType" value=""/>
-                      <c:choose>
-                      <c:when test="${orderData.hasGiftCart}">
-                        <c:set var="cartType" value="Gift Cart Order"/>
-                      </c:when>
-                       <c:when test="${orderData.isRetailGearOrder}">
-                         <c:set var="cartType" value="New Gear Order"/>
-                       </c:when>
-                       <c:when test="${orderData.isRentalCart}">
-                         <c:set var="cartType" value="Rental Order"/>
-                       </c:when>
-                      <c:otherwise>
-                        <c:set var="cartType" value="Used Gear Order"/>
-                      </c:otherwise>
-                      </c:choose>
 		gtag('event', 'purchase', {
 		  "event_category": "Order Confirmation",
     	"event_label": "Confirmed",
