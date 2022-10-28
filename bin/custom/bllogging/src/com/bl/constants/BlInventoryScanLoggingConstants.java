@@ -180,6 +180,7 @@ public class BlInventoryScanLoggingConstants {
 	public static final String PACKAGE_SERIAL_MISMATCH_SCANNED_ERROR = "blbackoffice.order.package.serial.mismatch.error";
 	public static final String MIX_SCAN_EMPTY_ERROR_FAILURE_KEY = "blbackoffice.order.scan.mix.location.error";
  	public static final String NO_ITEM_SCAN_KEY = "blbackoffice.order.scan.tool.noitem.scan.error";
+	public static final String NO_ORDER_FOR_SERIAL_SCAN_KEY = "blbackoffice.order.scan.tool.noorder.scan.error";
  	public static final String INVALID_SCAN_ERROR = "blbackoffice.order.scan.invalid.scan.error";
  	public static final String MANY_LOCATION_ERROR_KEY = "blbackoffice.order.scan.many.location.error";
  	public static final String INVALID_LOCATION_ERROR = "blbackoffice.order.scan.invalid.location.error";
