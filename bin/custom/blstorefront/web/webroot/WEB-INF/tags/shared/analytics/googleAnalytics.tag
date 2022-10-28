@@ -16,6 +16,22 @@ window.dataLayer = window.dataLayer || [];
   gtag('js', new Date());
 gtag('config', googleAnalyticsTrackingId);
 
+<c:set var="cartType" value=""/>
+<c:choose>
+    <c:when test="${cartData.hasGiftCart}">
+        <c:set var="cartType" value="Gift Cart Order"/>
+    </c:when>
+    <c:when test="${cartData.isRetailGearOrder eq true}">
+        <c:set var="cartType" value="New Gear Order"/>
+    </c:when>
+    <c:when test="${cartData.isRentalCart}">
+        <c:set var="cartType" value="Rental Order"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="cartType" value="Used Gear Order"/>
+    </c:otherwise>
+</c:choose>
+
 <c:choose>
 	<c:when test="${pageType == 'PRODUCT'}">
 		<c:set var="categories" value="" />
@@ -108,21 +124,6 @@ gtag('config', googleAnalyticsTrackingId);
 		</c:choose>
 
 	</c:when>
-    <c:set var="cartType" value=""/>
-    <c:choose>
-        <c:when test="${cartData.hasGiftCart}">
-            <c:set var="cartType" value="Gift Cart Order"/>
-        </c:when>
-        <c:when test="${cartData.isRetailGearOrder eq true}">
-            <c:set var="cartType" value="New Gear Order"/>
-        </c:when>
-        <c:when test="${cartData.isRentalCart}">
-            <c:set var="cartType" value="Rental Order"/>
-        </c:when>
-        <c:otherwise>
-            <c:set var="cartType" value="Used Gear Order"/>
-        </c:otherwise>
-    </c:choose>
   <c:when test="${pageType == 'CART' && !_href.contains('cart')}">
       <c:set var="couponCodes" value=""/>
       <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
@@ -135,7 +136,7 @@ gtag('config', googleAnalyticsTrackingId);
             	"checkout_step" : 1,
             	"checkout_option": ${cartType},
             	"value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
-              "items": [
+                "items": [
         				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
         					{
         					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
