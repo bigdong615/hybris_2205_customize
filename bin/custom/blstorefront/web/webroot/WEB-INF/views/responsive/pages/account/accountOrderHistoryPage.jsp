@@ -126,7 +126,7 @@
                                  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
                                   <c:choose>
                                     <c:when test="${order.retailGearOrder eq true}">
-                                      <p class="my-2"> ${order.status.code}</p>
+                                      <p class="my-2"> ${order.orderStatus}</p>
                                     </c:when>
                                     <c:otherwise>
                                                <p class="my-2">${order.orderStatus}</p>
@@ -197,7 +197,7 @@
                 								
                 								
                 						
-                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending') && (order.isCaptured eq false) }">
+                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending' || order.orderStatus eq 'Sold') && (order.isCaptured eq false) }">
 													<li></li>
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                                       <a href="${modifyPaymentAction}">
