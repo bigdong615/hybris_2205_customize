@@ -653,6 +653,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ZIP_FILE_EXTENSION = ".zip";
 	public static final String BL_INITIAL = "BL_";
 	public static final String ZIP_MIME_TYPE = "application/zip, application/octet-stream";
+	
+	public static final String DELIVERY_DATE_FORMAT= "EEEE, MMMM dd yyyy";
 
 	private BlCoreConstants()
 	{
