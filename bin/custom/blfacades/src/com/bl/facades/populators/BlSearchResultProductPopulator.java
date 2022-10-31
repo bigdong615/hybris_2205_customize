@@ -176,8 +176,14 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 		 target.setSupplierAlternativeAID(this.<String> getValue(source, "supplierAlternativeAID"));
 		 target.setErpGroupBuyer(this.<String> getValue(source, "erpGroupBuyer"));
 		 target.setErpGroupSupplier(this.<String> getValue(source, "erpGroupSupplier"));
-		 target.setDeliveryTime(this.<Double> getValue(source, "deliveryTime"));
-		 target.setPriceQuantity(this.<Double> getValue(source, "priceQuantity"));
+		 if (this.<Double> getValue(source, "deliveryTime") != null)
+		 {
+			 target.setDeliveryTime(this.<Double> getValue(source, "deliveryTime"));
+		 }
+		 if (this.<Double> getValue(source, "priceQuantity") != null)
+		 {
+			 target.setPriceQuantity(this.<Double> getValue(source, "priceQuantity"));
+		 }
 		 target.setMinOrderQuantity(this.<Integer> getValue(source, "minOrderQuantity"));
 		 target.setMaxOrderQuantity(this.<Integer> getValue(source, "maxOrderQuantity"));
 		 target.setOrderQuantityInterval(this.<Integer> getValue(source, "orderQuantityInterval"));
