@@ -1,0 +1,36 @@
+$solrIndexedType = blProductType
+                           
+# Non-facet properties       
+INSERT_UPdate SolrIndexedProperty ; solrIndexedType(identifier)[unique = true] ; name[unique = true]       ; type(code) ; fieldValueProvider ; valueProviderParameter ;  
+#                                 ; $solrIndexedType                           ; createdTS                 ; date       ;                    ;                        ;  
+#                                 ; $solrIndexedType                           ; modifiedTS                ; date       ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; onlineDate                ; date       ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; offlineDate               ; date       ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; createdDate               ; date       ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; dateFirstActive           ; date       ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; invoiceDate               ; date       ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; dateOfSale                ; date       ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; lastUnboxedOcLocationDate ; date       ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; supplierAlternativeAID    ; string     ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; erpGroupBuyer             ; string     ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; erpGroupSupplier          ; string     ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; deliveryTime              ; double     ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; priceQuantity             ; double     ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; minOrderQuantity          ; int        ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; maxOrderQuantity          ; int        ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; orderQuantityInterval     ; int        ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; startLineNumber           ; int        ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; endLineNumber             ; int        ;                    ;                        ;  
+                                  ; $solrIndexedType                           ; reviewCount               ; int        ;                    ;                        ;  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                    
+                                  
+                                  
