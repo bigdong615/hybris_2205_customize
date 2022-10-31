@@ -43,11 +43,8 @@ ACC.blanalyticsevent = {
          });
         });
 
-		$(".dropdown-toggle").on('click', function (){
-			var ddToggle = $(this).attr('id');
-			if(ddToggle.indexOf("used") > -1) {
+		$("#usedgeardopdown").on('click', function (){
 				window.mediator.publish('usedGearNavClick');
-			}
 		});
 	}
 };

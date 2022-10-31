@@ -10,16 +10,27 @@
 
 var googleAnalyticsTrackingId = '${ycommerce:encodeJavaScript(googleAnalyticsTrackingId)}';
 var pageType = '';
-var datePickerText = $("#litepicker").attr('placeholder');
-var withDates = "viewWithDates";
-if(datePickerText.indexOf("Select dates...") > -1){
-    withDates = "viewWithoutDates";
-}
 
 window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 gtag('config', googleAnalyticsTrackingId);
+
+<c:set var="cartType" value=""/>
+<c:choose>
+    <c:when test="${cartData.hasGiftCart}">
+        <c:set var="cartType" value="Gift Cart Order"/>
+    </c:when>
+    <c:when test="${cartData.isRetailGearOrder eq true}">
+        <c:set var="cartType" value="New Gear Order"/>
+    </c:when>
+    <c:when test="${cartData.isRentalCart}">
+        <c:set var="cartType" value="Rental Order"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="cartType" value="Used Gear Order"/>
+    </c:otherwise>
+</c:choose>
 
 <c:choose>
 	<c:when test="${pageType == 'PRODUCT'}">
@@ -50,34 +61,30 @@ gtag('config', googleAnalyticsTrackingId);
     });
 	</c:when>
 
-	<c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
-		 <c:set var="listName" value="${pageType == 'CATEGORY' ? 'List' : 'Search'}"/>
+	 <c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
+     <c:set var="listName" value="${pageType == 'CATEGORY' ? 'List' : 'Search'}"/>
      <c:set var="variantName" value="${ blPageType == 'rentalGear' ? 'Rental gear' : 'Used gear'}"/>
      <c:set var="_href" value="${not empty header.referer ? header.referer : 'javascript:window.history.back()'}" />
-     <c:set var="req" value="${pageContext.request}" />
-     <c:set var="withDates" value="" />
 
 		<c:choose>
 			<c:when test="${searchPageData.pagination.totalNumberOfResults > 0}">
 				<c:if test="${not empty searchPageData.results}">
-                        <c:choose>
-                            <c:when test="${pageType == 'CATEGORY'}">
+                            <c:if test="${pageType eq 'CATEGORY'}">
                                     pageType = 'category page';
                                     var eventLabel = window.location.pathname.split("category/")[1];
-                                    gtag('event', withDates, {
+                                    gtag('event', "withDates", {
                                         "event_category": "Category View",
                                         "event_label": eventLabel
                                     });
-                            </c:when>
-                            <c:otherwise>
+                            </c:if>
+                            <c:if test="${pageType eq 'PRODUCTSEARCH'}">
                                     pageType = 'search page';
                                     var eventLabel = (window.location.search.split("text=")[1]).split("&")[0];
-                                    gtag('event', withDates, {
+                                    gtag('event', "withDates", {
                                         "event_category": "Category View",
                                         "event_label": eventLabel
                                     });
-                            </c:otherwise>
-                        </c:choose>
+                            </c:if>
 
 						gtag('event', 'view_item_list', {
 							"event_category": "Category View",
@@ -127,9 +134,10 @@ gtag('config', googleAnalyticsTrackingId);
         	    "event_category": "Cart Page",
             	"event_label": "View Cart",
             	"checkout_step" : 1,
-            	"checkout_option": ${cartType},
+            	"checkout_option": "View Cart",
+                "cart_variant": ${cartType},
             	"value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
-              "items": [
+                "items": [
         				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
         					{
         					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
@@ -155,7 +163,7 @@ gtag('config', googleAnalyticsTrackingId);
                   	    "event_category": "Shipping Page",
                       	"event_label": "Delivery Method",
                         "checkout_step": 2,
-                        //"checkout_option": "Delivery Method",
+                        "checkout_option": "Delivery Method",
                        "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                         "items": [
                   				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -182,7 +190,7 @@ gtag('config', googleAnalyticsTrackingId);
                           	    "event_category": "Payment Page",
                               	"event_label": "Payment Method",
                               	"checkout_step": 3,
-                                //"checkout_option": "Payment Method",
+                                "checkout_option": "Payment Method",
                                 "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                                 "items": [
                           				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -209,7 +217,7 @@ gtag('config', googleAnalyticsTrackingId);
                    	    "event_category": "Review Page",
                        	"event_label": "Review Order",
                        	"checkout_step": 4,
-                       // "checkout_option": "Review Order",
+                        "checkout_option": "Review Order",
                        	"value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                         "items": [
                    				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -233,21 +241,6 @@ gtag('config', googleAnalyticsTrackingId);
     <c:forEach items='${orderData.appliedVouchers}' var='voucher' varStatus='status'>
       <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
     </c:forEach>
-    <c:set var="cartType" value=""/>
-                      <c:choose>
-                      <c:when test="${orderData.hasGiftCart}">
-                        <c:set var="cartType" value="Gift Cart Order"/>
-                      </c:when>
-                       <c:when test="${orderData.isRetailGearOrder}">
-                         <c:set var="cartType" value="New Gear Order"/>
-                       </c:when>
-                       <c:when test="${orderData.isRentalCart}">
-                         <c:set var="cartType" value="Rental Order"/>
-                       </c:when>
-                      <c:otherwise>
-                        <c:set var="cartType" value="Used Gear Order"/>
-                      </c:otherwise>
-                      </c:choose>
 		gtag('event', 'purchase', {
 		  "event_category": "Order Confirmation",
     	"event_label": "Confirmed",
