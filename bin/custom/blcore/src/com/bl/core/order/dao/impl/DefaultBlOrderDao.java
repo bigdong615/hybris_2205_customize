@@ -157,7 +157,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 					+ "{o:" + AbstractOrderModel.INTERNALTRANSFERORDER + "} = ?internalTransferOrder" ;
 
 	private static final String RETURN_ORDERS_FEED_QUERY = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE
-			+ " AS o} WHERE {o:" + OrderModel.RENTALENDDATE + "} BETWEEN ?returnOrderBefore AND ?returnOrderAfter";
+			+ " AS o} WHERE {o:" + OrderModel.RENTALENDDATE + "} BETWEEN ?returnOrderBefore AND ?returnOrderAfter and {o:status} IN ({{select {se:pk} from {OrderStatus as se} where {se:code} IN (?orderStatuses) }})";
 
 	/**
  	* {@inheritDoc}
@@ -264,6 +264,12 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private List<String> getOrderStatuses(){
 		return Lists.newArrayList(OrderStatus.INCOMPLETE.getCode(),OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR.getCode(),
 				OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS.getCode(),OrderStatus.INCOMPLETE_MISSING_ITEMS.getCode());
+
+	}
+	
+	private List<String> getOrderStatusesForReturnOrderFeed(){
+		return Lists.newArrayList(OrderStatus.CANCELLED.getCode(),OrderStatus.UNBOXED_COMPLETELY.getCode(),
+				OrderStatus.UNBOXED_PARTIALLY.getCode(),OrderStatus.COMPLETED.getCode());
 
 	}
 
@@ -597,6 +603,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(RETURN_ORDERS_FEED_QUERY);
 		fQuery.addQueryParameter("returnOrderBefore", BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
 		fQuery.addQueryParameter("returnOrderAfter", BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
+		fQuery.addQueryParameter("orderStatuses", getOrderStatusesForReturnOrderFeed());
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<OrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders))
