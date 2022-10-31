@@ -1,16 +1,5 @@
 package com.bl.facades.populators;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.price.service.BlCommercePriceService;
-import com.bl.core.product.service.BlProductService;
-import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlRentalDateUtils;
-import com.bl.facades.constants.BlFacadesConstants;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -38,20 +27,35 @@ import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.product.service.BlProductService;
+import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -147,14 +151,59 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     populateUrl(source, target);
     populatePromotions(source, target);
     target.setIsWatching(getStockNotificationFacade().isWatchingProduct(target));
+	 populateAdditionalAttributesForDomo(source, target);
+
   }
+
+
+/**
+ * @param source
+ * @param target
+ */
+private void populateAdditionalAttributesForDomo(final SearchResultValueData source, final ProductData target)
+{
+	try
+	{
+		//target.setCreatedTS(this.<Date> getValue(source, "createdTS"));
+		 //target.setModifiedTS(this.<Date> getValue(source, "modifiedTS"));
+		 target.setOnlineDate(this.<Date> getValue(source, "onlineDate"));
+		 target.setOfflineDate(this.<Date> getValue(source, "offlineDate"));
+		 target.setCreatedDate(this.<Date> getValue(source, "createdDate"));
+		 target.setDateFirstActive(this.<Date> getValue(source, "dateFirstActive"));
+		 target.setInvoiceDate(this.<Date> getValue(source, "invoiceDate"));
+		 target.setDateOfSale(this.<Date> getValue(source, "dateOfSale"));
+		 target.setLastUnboxedOcLocationDate(this.<Date> getValue(source, "lastUnboxedOcLocationDate"));
+		 target.setSupplierAlternativeAID(this.<String> getValue(source, "supplierAlternativeAID"));
+		 target.setErpGroupBuyer(this.<String> getValue(source, "erpGroupBuyer"));
+		 target.setErpGroupSupplier(this.<String> getValue(source, "erpGroupSupplier"));
+		 if (this.<Double> getValue(source, "deliveryTime") != null)
+		 {
+			 target.setDeliveryTime(this.<Double> getValue(source, "deliveryTime"));
+		 }
+		 if (this.<Double> getValue(source, "priceQuantity") != null)
+		 {
+			 target.setPriceQuantity(this.<Double> getValue(source, "priceQuantity"));
+		 }
+		 target.setMinOrderQuantity(this.<Integer> getValue(source, "minOrderQuantity"));
+		 target.setMaxOrderQuantity(this.<Integer> getValue(source, "maxOrderQuantity"));
+		 target.setOrderQuantityInterval(this.<Integer> getValue(source, "orderQuantityInterval"));
+		 target.setStartLineNumber(this.<Integer> getValue(source, "startLineNumber"));
+		 target.setEndLineNumber(this.<Integer> getValue(source, "endLineNumber"));
+		 target.setReviewCount(this.<Integer> getValue(source, "reviewCount"));
+	}
+	catch (final Exception e)
+	{
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Error while creating Additional Attributes For Domo", e.getMessage());
+		e.printStackTrace();
+	}
+}
 
 
   /**
    * To Populate the Product data for bookmark
    * @param target
    */
-  private void populateBookMarks(ProductData target) {
+  private void populateBookMarks(final ProductData target) {
     final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
     if (blProductModel != null)
     {
@@ -166,7 +215,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * To Populate the Product data for product type
    * @param target
    */
-  private void populateProductType(ProductData target) {
+  private void populateProductType(final ProductData target) {
     final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
     if (blProductModel != null)
     {
@@ -203,7 +252,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Dynamic Calculated Price Value is {} for Product : {}", dynamicPriceValue, target.getCode());
 		target.setPrice(getProductPriceData(dynamicPriceValue));
     }
-    
+
    else if(target.isIsBundle())
     {
       final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
@@ -212,7 +261,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
        target.setPrice(Objects.nonNull(dynamicPriceValue) ? getProductPriceData(dynamicPriceValue) : (getProductPriceData(BigDecimal.valueOf(0.0d))));
     }
   }
-  
+
   /**
    * Populates serial product prices.
    *
@@ -222,13 +271,13 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private void populateSerialProductPrices(final SearchResultValueData source, final ProductData target)
   {
 	  final Double minSerialfinalSalePrice = this.<Double> getValue(source, "minSerialfinalSalePrice");
-	  if(PredicateUtils.notNullPredicate().evaluate(minSerialfinalSalePrice)) 
+	  if(PredicateUtils.notNullPredicate().evaluate(minSerialfinalSalePrice))
 	  {
 		  target.setSerialfinalSalePrice(getProductPriceData(BigDecimal.valueOf(minSerialfinalSalePrice)));
 	  }
-	  
+
 	  final Double minSerialIncentivizedPrice = this.<Double> getValue(source, "minSerialIncentivizedPrice");
-	  if(PredicateUtils.notNullPredicate().evaluate(minSerialIncentivizedPrice)) 
+	  if(PredicateUtils.notNullPredicate().evaluate(minSerialIncentivizedPrice))
 	  {
 		  target.setSerialIncentivizedPrice(getProductPriceData(BigDecimal.valueOf(minSerialIncentivizedPrice)));
 	  }
@@ -238,7 +287,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 		  target.setSerialPromotionPrice(getProductPriceData(BigDecimal.valueOf(minSerialPromoPrice)));
 	  }
   }
-  
+
   /**
    * Gets the product price data.
    *
@@ -249,7 +298,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   {
 	  return getPriceDataFactory().create(PriceDataType.BUY, priceValue, getCommonI18NService().getCurrentCurrency());
   }
-  
+
   protected void populateUrl(final SearchResultValueData source, final ProductData target)
   {
     final String url = this.<String> getValue(source, "url");
@@ -587,7 +636,7 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
     return stockNotificationFacade;
   }
 
-  public void setStockNotificationFacade(StockNotificationFacade stockNotificationFacade) {
+  public void setStockNotificationFacade(final StockNotificationFacade stockNotificationFacade) {
     this.stockNotificationFacade = stockNotificationFacade;
   }
 
@@ -596,7 +645,7 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
   }
 
   public void setBlWishlistOptionsPopulator(
-      BlWishlistOptionsPopulator blWishlistOptionsPopulator) {
+      final BlWishlistOptionsPopulator blWishlistOptionsPopulator) {
     this.blWishlistOptionsPopulator = blWishlistOptionsPopulator;
   }
 
@@ -604,7 +653,7 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
     return baseStoreService;
   }
 
-  public void setBaseStoreService(BaseStoreService baseStoreService) {
+  public void setBaseStoreService(final BaseStoreService baseStoreService) {
     this.baseStoreService = baseStoreService;
   }
 
@@ -613,7 +662,7 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
   }
 
   public void setBlPromotionService(
-      BlPromotionService blPromotionService) {
+      final BlPromotionService blPromotionService) {
     this.blPromotionService = blPromotionService;
   }
 
@@ -629,7 +678,7 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
     return blCommerceStockService;
   }
 
-  public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService) {
+  public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService) {
     this.blCommerceStockService = blCommerceStockService;
   }
 
@@ -637,7 +686,7 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
     return blDatePickerService;
   }
 
-  public void setBlDatePickerService(BlDatePickerService blDatePickerService) {
+  public void setBlDatePickerService(final BlDatePickerService blDatePickerService) {
     this.blDatePickerService = blDatePickerService;
   }
 

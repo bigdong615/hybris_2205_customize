@@ -11,10 +11,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -150,6 +152,16 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 		  final Component row)
   {
 	  final BlSerialProductModel serial = this.getDefaultBlProductDao().getSerialByBarcode(barCode);
+	  if(Objects.isNull(serial))
+	  {
+		  throw new WrongValueException((row.getChildren().get(4)),
+				  this.getLabel("warehousingbackoffice.reassignserial.validation.incorrect.barcode"));
+	  }
+	  if(Objects.isNull(serial.getWarehouseLocation()) || BooleanUtils.isFalse(serial.getWarehouseLocation().getCode().equals(entry.getConsignment().getWarehouse().getCode())))
+	  {
+		  throw new WrongValueException((row.getChildren().get(4)),
+				  "provided serial barcode warehouse doesn't matched the shipment warehouse");
+	  }
 	  final List<String> serialsCodesToRemove = new ArrayList<String>();
 	  final List<String> serialsCodesToAdd = new ArrayList<String>();
 	  final List<BlProductModel> productEntries = new ArrayList<BlProductModel>();

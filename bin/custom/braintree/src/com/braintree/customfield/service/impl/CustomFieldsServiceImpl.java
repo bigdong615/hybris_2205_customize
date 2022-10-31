@@ -3,6 +3,8 @@ package com.braintree.customfield.service.impl;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.braintree.constants.BraintreeConstants;
 import com.braintree.customfield.service.CustomFieldsService;
+
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
@@ -108,7 +110,7 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 			case "sum_of_gear_value_in_pre_shipping_status":
 				customFields.put(customFieldName
 								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
-						String.valueOf(BigDecimal.valueOf(customer.getGearValueOrdersInProgress())
+						String.valueOf(BigDecimal.valueOf(getGearValueOrdersInProgress(order, customer))
 								.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN)));
 				break;
 			case "rental_duration":
@@ -133,7 +135,7 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 			case "sum_of_gear_value_in_order":
 				customFields.put(customFieldName
 						.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY),
-						order instanceof CartModel ? StringUtils.EMPTY : String.valueOf(order.getSumOfGearValueOnOrder()));
+						String.valueOf(order.getSumOfGearValueOnOrder()));
 				break;
 			case "phone_number":
 				customFields.put(customFieldName
@@ -144,6 +146,16 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 				customFields.put(customFieldName
 								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + BraintreeConstants.CONFIGURATION_PROPERTY_DELIMETER, StringUtils.EMPTY), StringUtils.EMPTY);
 		}
+	}
+	
+	private double getGearValueOrdersInProgress(final AbstractOrderModel order, final CustomerModel customer)
+	{
+		if(order instanceof CartModel)
+		{
+			final Double priceOfProducts = order.getEntries().stream().mapToDouble(AbstractOrderEntryModel::getTotalPrice).sum();
+			return customer.getGearValueOrdersInProgress() + priceOfProducts.doubleValue();
+		}
+		return customer.getGearValueOrdersInProgress();
 	}
 	
 	private String getPhoneNumber(final AbstractOrderModel order)

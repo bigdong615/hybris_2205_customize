@@ -171,5 +171,29 @@
 		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
 		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
 	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.product.ProductWsDTO">
+		<property name="isBlProductType" type="Boolean"/>
+		<property name="createdTS" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="onlineDate" type="java.util.Date"/>
+		<property name="offlineDate" type="java.util.Date"/>
+		<property name="createdDate" type="java.util.Date"/>
+		<property name="dateFirstActive" type="java.util.Date"/>
+		<property name="invoiceDate" type="java.util.Date"/>
+		<property name="dateOfSale" type="java.util.Date"/>
+		<property name="lastUnboxedOcLocationDate" type="java.util.Date"/>
+		<property name="supplierAlternativeAID" type="java.lang.String"/>
+		<property name="erpGroupBuyer" type="java.lang.String"/>
+		<property name="erpGroupSupplier" type="java.lang.String"/>
+		<property name="deliveryTime" type="double"/>
+		<property name="priceQuantity" type="double"/>
+		<property name="minOrderQuantity" type="java.lang.Integer"/>
+		<property name="maxOrderQuantity" type="java.lang.Integer"/>
+		<property name="orderQuantityInterval" type="java.lang.Integer"/>
+		<property name="startLineNumber" type="java.lang.Integer"/>
+		<property name="endLineNumber" type="java.lang.Integer"/>
+		<property name="reviewCount" type="java.lang.Integer"/>
+	</bean>
 
 </beans>

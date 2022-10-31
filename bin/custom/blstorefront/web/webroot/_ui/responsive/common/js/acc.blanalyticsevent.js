@@ -42,6 +42,10 @@ ACC.blanalyticsevent = {
           "print_quote" : "1"
          });
         });
+
+		$("#usedgeardopdown").on('click', function (){
+				window.mediator.publish('usedGearNavClick');
+		});
 	}
 };
 

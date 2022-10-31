@@ -2051,6 +2051,12 @@
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
 
+    <bean id="blProductTypeExclusionVP" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductTypeExclusionValueProvider"
+          parent="abstractPropertyFieldValueProvider">
+        <property name="modelService"  ref="modelService" />
+        <property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+    </bean>
+    
 	<alias name="defaultBlOptimizedShippingMethodGenericDao" alias="blOptimizedShippingMethodGenericDao"/>
 	<bean name="defaultBlOptimizedShippingMethodGenericDao"
 		  class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
@@ -2072,4 +2078,6 @@
     </bean>
 
 	<bean id="blSumOfGearValueOnOrderHandler" class="com.bl.core.model.handler.BLSumOfGearValueOnOrderHandler"/>
+	
+
 </beans>

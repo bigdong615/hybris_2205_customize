@@ -1,5 +1,6 @@
 package com.bl.backoffice.widget.controller;
 
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -7,9 +8,12 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TimeZone;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -24,11 +28,14 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Textbox;
 
+import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.model.OptimizedShippingMethodModel;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
@@ -51,6 +58,10 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	private Combobox shippingTypeComboBox;
 	@Wire
 	private Combobox optimizedShippingMethodComboBox;
+	@Wire
+	private Textbox deliveryDate;
+	@Wire
+	private Textbox destinationState;
 
 	protected static final String OUT_CONFIRM = "confirmOutput";
 	protected static final String COMPLETE = "completed";
@@ -66,6 +77,9 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
+	
+	@Resource(name = "blOrderService")
+	private BlOrderService blOrderService;
 
 	private ListModelList<String> shippingTypeList = new ListModelList<>();
 	private ListModelList<String> optimizedShippingMethodList = new ListModelList<>();
@@ -92,6 +106,40 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		shippingTypeComboBox.setModel(shippingTypeList);
 		optimizedShippingMethodList = new ListModelList<>(Lists.newArrayList());
 		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
+		deliveryDate.setValue(getDeliveryDateFromOrder(inputObject));
+		destinationState.setValue(getDestinationStateValue(inputObject));
+	}
+	
+	private String getDeliveryDateFromOrder(final ConsignmentModel consignment)
+	{
+		final AbstractOrderModel orderModel = consignment.getOrder();
+		if(Objects.nonNull(orderModel))
+		{
+			if(getBlOrderService().isRentalOrderOnly(orderModel) && Objects.nonNull(orderModel.getRentalStartDate()))
+			{
+				return convertDateToString(orderModel.getRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT, 
+						TimeZone.getTimeZone(BlDeliveryModeLoggingConstants.ZONE_PST));
+			}
+			if(getBlOrderService().isUsedOrderOnly(orderModel) && Objects.nonNull(orderModel.getActualRentalStartDate()))
+			{
+				return convertDateToString(orderModel.getActualRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT, 
+						TimeZone.getTimeZone(BlDeliveryModeLoggingConstants.ZONE_PST));
+			}
+		}
+		return StringUtils.EMPTY;
+	}
+	
+	private String getDestinationStateValue(final ConsignmentModel consignment)
+	{
+		final AbstractOrderModel orderModel = consignment.getOrder();
+		if(Objects.nonNull(orderModel) && Objects.nonNull(orderModel.getDeliveryAddress()) 
+				&& Objects.nonNull(orderModel.getDeliveryAddress().getRegion()))
+		{
+			final String destinationStateName = orderModel.getDeliveryAddress().getRegion().getName();
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Destination State - {}", destinationStateName);
+			return destinationStateName;
+		}
+		return StringUtils.EMPTY;
 	}
 
 	/**
@@ -213,6 +261,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 				optimizedShippingMethod -> optimizedMethodList.put(optimizedShippingMethod.getName(), optimizedShippingMethod));
 		if (selectedShippingType.equalsIgnoreCase(CarrierEnum.UPS.getCode()))
 		{
+			optimizedShippingMethodList.clearSelection();
 			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
 			{
 				if (!optimizedShippingMethod.getCode().toLowerCase().contains(CarrierEnum.FEDEX.getCode().toLowerCase()))
@@ -224,6 +273,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		}
 		else if (selectedShippingType.equalsIgnoreCase(CarrierEnum.FEDEX.getCode()))
 		{
+			optimizedShippingMethodList.clearSelection();
 			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
 			{
 				if (optimizedShippingMethod.getCode().toLowerCase().contains(CarrierEnum.FEDEX.getCode().toLowerCase()))
@@ -232,6 +282,11 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 				}
 
 			}
+		}
+		else
+		{
+			carrierBasedOptimizedShippingMethodList.clear();
+			optimizedShippingMethodList.clearSelection();
 		}
 		optimizedShippingMethodList = new ListModelList<>(carrierBasedOptimizedShippingMethodList);
 		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
@@ -321,6 +376,66 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	/**
+	 * @return the deliveryDate
+	 */
+	public Textbox getDeliveryDate()
+	{
+		return deliveryDate;
+	}
+
+	/**
+	 * @param deliveryDate
+	 *           the deliveryDate to set
+	 */
+	public void setDeliveryDate(final Textbox deliveryDate)
+	{
+		this.deliveryDate = deliveryDate;
+	}
+
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService()
+	{
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService)
+	{
+		this.blOrderService = blOrderService;
+	}
+
+	/**
+	 * This Method converts rental startDate and rental endDate to String
+	 */
+	private String convertDateToString(final Date deliveryDate , final String dateFormat, final TimeZone timeZone) {
+		final SimpleDateFormat sd = new SimpleDateFormat(dateFormat);
+		sd.setTimeZone(timeZone);
+		final String formattedDeliveryDate = sd.format(deliveryDate);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Delivery Date - {}", formattedDeliveryDate);
+		return formattedDeliveryDate;
+	}
+
+	/**
+	 * @return the destinationState
+	 */
+	public Textbox getDestinationState()
+	{
+		return destinationState;
+	}
+
+	/**
+	 * @param destinationState the destinationState to set
+	 */
+	public void setDestinationState(Textbox destinationState)
+	{
+		this.destinationState = destinationState;
 	}
 
 }
