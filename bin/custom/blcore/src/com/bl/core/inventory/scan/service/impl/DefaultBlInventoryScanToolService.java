@@ -1693,9 +1693,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			final Date latePackageDate =
 					null != packagingInfo.getLatePackageDate() ? packagingInfo.getLatePackageDate()
 							: orderModel.getRentalEndDate();
-
-			daysRented = BlDateTimeUtils
-					.getDaysBetweenDates(orderModel.getRentalStartDate(), latePackageDate);
+			//For used gear, we dont have startDate and endDate
+			if (orderModel.getRentalStartDate() != null && latePackageDate != null)
+			{
+				daysRented = BlDateTimeUtils.getDaysBetweenDates(orderModel.getRentalStartDate(), latePackageDate);
+			}
 		}
 
 		serialProductModel.setNoDaysRented(daysRentedEarlier + daysRented);
