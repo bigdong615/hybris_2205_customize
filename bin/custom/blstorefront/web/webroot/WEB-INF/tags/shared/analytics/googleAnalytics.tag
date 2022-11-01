@@ -132,10 +132,9 @@ gtag('config', googleAnalyticsTrackingId);
         if(window.document.referrer.indexOf('cart') == -1){
   	    	gtag('event', 'begin_checkout', {
         	    "event_category": "Cart Page",
-            	"event_label": "View Cart",
+            	"event_label": "View Cart" + ${cartType},
             	"checkout_step" : 1,
             	"checkout_option": "View Cart",
-                "cart_variant": ${cartType},
             	"value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                 "items": [
         				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
@@ -381,10 +380,6 @@ function trackSearchClick(searchText) {
         'event_category': 'Search Bar',
         'event_label': searchText
     });
-	gtag('event', 'select_search', {
-      'event_category': 'Search Bar',
-      'event_label': 'Submit'
-	});
 }
 
 window.mediator.subscribe('usedGearNavClick', function() {
