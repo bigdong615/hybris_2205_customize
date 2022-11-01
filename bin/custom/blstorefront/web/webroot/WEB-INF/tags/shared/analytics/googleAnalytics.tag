@@ -132,7 +132,7 @@ gtag('config', googleAnalyticsTrackingId);
         if(window.document.referrer.indexOf('cart') == -1){
   	    	gtag('event', 'begin_checkout', {
         	    "event_category": "Cart Page",
-            	"event_label": "View Cart" + ${cartType},
+            	"event_label": "View Cart" + "${cartType}",
             	"checkout_step" : 1,
             	"checkout_option": "View Cart",
             	"value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
