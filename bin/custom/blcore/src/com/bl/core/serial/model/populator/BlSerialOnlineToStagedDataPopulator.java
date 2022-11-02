@@ -48,6 +48,8 @@ public class BlSerialOnlineToStagedDataPopulator implements Populator<BlSerialPr
 			stagedSerial.setNoDaysNotInService(onlineSerial.getNoDaysNotInService());
 			stagedSerial.setNoDaysRented(onlineSerial.getNoDaysRented());
 			stagedSerial.setOcLocation(onlineSerial.getOcLocation());
+			stagedSerial.setOcLocationDetails(onlineSerial.getOcLocationDetails());
+			stagedSerial.setInventoryLocationID(onlineSerial.getInventoryLocationID());
 			stagedSerial.setUserChangedConditionRating(onlineSerial.getUserChangedConditionRating());
 			stagedSerial.setIsBufferedInventory(onlineSerial.getIsBufferedInventory());
 			stagedSerial.setAssociatedShippedConsignment(onlineSerial.getAssociatedShippedConsignment());
