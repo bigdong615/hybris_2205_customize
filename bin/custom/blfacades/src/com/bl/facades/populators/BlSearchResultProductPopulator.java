@@ -184,12 +184,53 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 		 {
 			 target.setPriceQuantity(this.<Double> getValue(source, "priceQuantity"));
 		 }
+		 if (this.<Double> getValue(source, "bufferedInventoryPercentage") != null)
+		 {
+			 target.setBufferedInventoryPercentage(this.<Double> getValue(source, "bufferedInventoryPercentage"));
+		 }
 		 target.setMinOrderQuantity(this.<Integer> getValue(source, "minOrderQuantity"));
 		 target.setMaxOrderQuantity(this.<Integer> getValue(source, "maxOrderQuantity"));
 		 target.setOrderQuantityInterval(this.<Integer> getValue(source, "orderQuantityInterval"));
 		 target.setStartLineNumber(this.<Integer> getValue(source, "startLineNumber"));
 		 target.setEndLineNumber(this.<Integer> getValue(source, "endLineNumber"));
 		 target.setReviewCount(this.<Integer> getValue(source, "reviewCount"));
+		 //target.setWeight(this.<BigDecimal> getValue(source, "weight"));
+		 //target.setHeight(this.<BigDecimal> getValue(source, "height"));
+		 //target.setWidth(this.<BigDecimal> getValue(source, "width"));
+		 //target.setLength(this.<BigDecimal> getValue(source, "length"));
+		 target.setDiscontinued(this.<Boolean> getValue(source, "isDiscontinued"));
+		 target.setLevel1Required(this.<Boolean> getValue(source, "level1Required"));
+		 target.setLevel2Required(this.<Boolean> getValue(source, "level2Required"));
+		 target.setMostPopular(this.<Boolean> getValue(source, "mostPopular"));
+		 target.setScheduled(this.<Boolean> getValue(source, "scheduled"));
+		 target.setStaffPick(this.<Boolean> getValue(source, "staffPick"));
+		 target.setBufferInvPercChangedManually(this.<Boolean> getValue(source, "bufferInvPercChangedManually"));
+		 target.setRetailGearInStock(this.<Boolean> getValue(source, "retailGearInStock"));
+		 target.setBundleProduct(this.<Boolean> getValue(source, "bundleProduct"));
+		 target.setConstrained(this.<Boolean> getValue(source, "constrained"));
+		 target.setForRent(this.<Boolean> getValue(source, "forRent"));
+		 target.setForSale(this.<Boolean> getValue(source, "forSale"));
+		 target.setGreatValue(this.<Boolean> getValue(source, "greatValue"));
+		 target.setIsAccounting(this.<Boolean> getValue(source, "isAccounting"));
+		 if (this.<Double> getValue(source, "isNew") != null)
+		 {
+			 target.setIsNew(this.<Boolean> getValue(source, "isNew"));
+		 }
+		 if (this.<Double> getValue(source, "isVideo") != null)
+		 {
+			 target.setIsVideo(this.<Boolean> getValue(source, "isVideo"));
+		 }
+		 if (this.<Double> getValue(source, "hardAssigned") != null)
+		 {
+			 target.setHardAssigned(this.<Boolean> getValue(source, "hardAssigned"));
+		 }
+		 target.setIsBufferedInventory(this.<Boolean> getValue(source, "isBufferedInventory"));
+		 target.setIsSyncRequired(this.<Boolean> getValue(source, "isSyncRequired"));
+		 target.setSoftAssigned(this.<Boolean> getValue(source, "softAssigned"));
+		 target.setDirtyPriorityStatus(this.<Boolean> getValue(source, "dirtyPriorityStatus"));
+		 target.setGearRated(this.<Boolean> getValue(source, "gearRated"));
+		 target.setSoldIndividually(this.<Boolean> getValue(source, "soldIndividually"));
+		 target.setSoftAssigned(this.<Boolean> getValue(source, "softAssigned"));
 	}
 	catch (final Exception e)
 	{

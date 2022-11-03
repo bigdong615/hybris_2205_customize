@@ -68,14 +68,35 @@
 		<property name="erpGroupSupplier" type="java.lang.String"/>
 		<property name="deliveryTime" type="double"/>
 		<property name="priceQuantity" type="double"/>
+		<property name="bufferedInventoryPercentage" type="double"/>
 		<property name="minOrderQuantity" type="java.lang.Integer"/>
 		<property name="maxOrderQuantity" type="java.lang.Integer"/>
 		<property name="orderQuantityInterval" type="java.lang.Integer"/>
 		<property name="startLineNumber" type="java.lang.Integer"/>
 		<property name="endLineNumber" type="java.lang.Integer"/>
 		<property name="reviewCount" type="java.lang.Integer"/>
-		
-		
+		<property name="weight" type="java.math.BigDecimal"/>
+		<property name="height" type="java.math.BigDecimal"/>
+		<property name="width" type="java.math.BigDecimal"/>
+		<property name="length" type="java.math.BigDecimal"/>
+		<property name="level1Required" type="boolean"/>
+		<property name="level2Required" type="boolean"/>
+		<property name="mostPopular" type="boolean"/>
+		<property name="scheduled" type="boolean"/>
+		<property name="staffPick" type="boolean"/>
+		<property name="bufferInvPercChangedManually" type="boolean"/>
+		<property name="constrained" type="boolean"/>
+		<property name="greatValue" type="boolean"/>
+		<property name="isAccounting" type="boolean"/>
+		<property name="hardAssigned" type="boolean"/>
+		<property name="gearRated" type="boolean"/>
+		<property name="dirtyPriorityStatus" type="boolean"/>
+		<property name="softAssigned" type="boolean"/>
+		<property name="isSyncRequired" type="boolean"/>
+		<property name="isBufferedInventory" type="boolean"/>
+		<property name="discontinued" type="boolean"/>
+		<property name="retailGearInStock" type="boolean"/>
+		<property name="bundleProduct" type="boolean"/>
   </bean>
 
 
