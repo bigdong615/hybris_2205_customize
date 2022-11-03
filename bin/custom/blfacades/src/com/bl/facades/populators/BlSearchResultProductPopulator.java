@@ -224,13 +224,34 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 		 {
 			 target.setHardAssigned(this.<Boolean> getValue(source, "hardAssigned"));
 		 }
-		 target.setIsBufferedInventory(this.<Boolean> getValue(source, "isBufferedInventory"));
-		 target.setIsSyncRequired(this.<Boolean> getValue(source, "isSyncRequired"));
-		 target.setSoftAssigned(this.<Boolean> getValue(source, "softAssigned"));
-		 target.setDirtyPriorityStatus(this.<Boolean> getValue(source, "dirtyPriorityStatus"));
-		 target.setGearRated(this.<Boolean> getValue(source, "gearRated"));
-		 target.setSoldIndividually(this.<Boolean> getValue(source, "soldIndividually"));
-		 target.setSoftAssigned(this.<Boolean> getValue(source, "softAssigned"));
+		 if (this.<Double> getValue(source, "isBufferedInventory") != null)
+		 {
+			 target.setIsBufferedInventory(this.<Boolean> getValue(source, "isBufferedInventory"));
+		 }
+		 if (this.<Double> getValue(source, "isSyncRequired") != null)
+		 {
+			 target.setIsSyncRequired(this.<Boolean> getValue(source, "isSyncRequired"));
+		 }
+		 if (this.<Double> getValue(source, "softAssigned") != null)
+		 {
+			 target.setSoftAssigned(this.<Boolean> getValue(source, "softAssigned"));
+		 }
+		 if (this.<Double> getValue(source, "dirtyPriorityStatus") != null)
+		 {
+			 target.setDirtyPriorityStatus(this.<Boolean> getValue(source, "dirtyPriorityStatus"));
+		 }
+		 if (this.<Double> getValue(source, "gearRated") != null)
+		 {
+			 target.setGearRated(this.<Boolean> getValue(source, "gearRated"));
+		 }
+		 if (this.<Double> getValue(source, "soldIndividually") != null)
+		 {
+			 target.setSoldIndividually(this.<Boolean> getValue(source, "soldIndividually"));
+		 }
+		 if (this.<Double> getValue(source, "softAssigned") != null)
+		 {
+			 target.setSoftAssigned(this.<Boolean> getValue(source, "softAssigned"));
+		 }
 	}
 	catch (final Exception e)
 	{
