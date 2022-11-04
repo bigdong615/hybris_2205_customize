@@ -224,6 +224,53 @@
 		<property name="isBufferedInventory" type="boolean"/>
 		<property name="discontinued" type="boolean"/>
 		<property name="bundleProduct" type="boolean"/>
+		<property name="assetNumber" type="java.lang.String"/>
+		<property name="assetstatus" type="java.lang.String"/>
+		<property name="barcode" type="java.lang.String"/>
+		<property name="conditions" type="java.lang.String"/>
+		<property name="inventoryLocationID" type="java.lang.String"/>
+		<property name="invoiceNumber" type="java.lang.String"/>
+		<property name="invoiceNumberRecord" type="java.lang.String"/>
+		<property name="lastLocationScanParent" type="java.lang.String"/>
+		<property name="notes" type="java.lang.String"/>
+		<property name="ocLocation" type="java.lang.String"/>
+		<property name="orderNumberRecord" type="java.lang.String"/>
+		<property name="otherRepairsReason" type="java.lang.String"/>
+		<property name="ownedBy" type="java.lang.String"/>
+		<property name="purchaseOrder" type="java.lang.String"/>
+		<property name="serialNumber" type="java.lang.String"/>
+		<property name="skuFirmwareVersion" type="java.lang.String"/>
+		<property name="userChangedConditionRating" type="java.lang.String"/>
+		<property name="withOrderID" type="java.lang.String"/>
+		<property name="alternativeProduct" type="java.lang.String"/>
+		<property name="displayName" type="java.lang.String"/>
+		<property name="displayNotes" type="java.lang.String"/>
+		<property name="firmwareVersion" type="java.lang.String"/>
+		<property name="lrLink" type="java.lang.String"/>
+		<property name="mpn" type="java.lang.String"/>
+		<property name="primaryCategoryID" type="java.lang.String"/>
+		<property name="procurementID" type="java.lang.String"/>
+		<property name="procurementSource" type="java.lang.String"/>
+		<property name="productId" type="java.lang.String"/>
+		<property name="productStatus" type="java.lang.String"/>
+		<property name="purchaseNotes" type="java.lang.String"/>
+		<property name="rentalIncludes" type="java.lang.String"/>
+		<property name="shortDescription" type="java.lang.String"/>
+		<property name="specifications" type="java.lang.String"/>
+		<property name="techEngNotes" type="java.lang.String"/>
+		<property name="titleTag" type="java.lang.String"/>
+		<property name="upc" type="java.lang.String"/>
+		<property name="usedDescription" type="java.lang.String"/>
+		<property name="usedIncludes" type="java.lang.String"/>
+		<property name="articleStatus" type="java.lang.String"/>
+		<property name="remarks" type="java.lang.String"/>
+		<property name="ean" type="java.lang.String"/>
+		<property name="manufacturerAID" type="java.lang.String"/>
+		<property name="manufacturerName" type="java.lang.String"/>
+		<property name="manufacturerTypeDescription" type="java.lang.String"/>
+		<property name="segment" type="java.lang.String"/>
+		<property name="specialTreatmentClasses" type="java.lang.String"/>
+		<property name="xmlcontent" type="java.lang.String"/>
 	</bean>
 
 </beans>

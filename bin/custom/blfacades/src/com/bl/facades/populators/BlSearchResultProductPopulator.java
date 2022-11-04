@@ -252,6 +252,51 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 		 {
 			 target.setSoftAssigned(this.<Boolean> getValue(source, "softAssigned"));
 		 }
+		 target.setAssetNumber(this.<String> getValue(source, "assetNumber"));
+		 target.setAssetstatus(this.<String> getValue(source, "assetstatus"));
+		 target.setBarcode(this.<String> getValue(source, "barcode"));
+		 target.setConditions(this.<String> getValue(source, "conditions"));
+		 target.setInventoryLocationID(this.<String> getValue(source, "inventoryLocationID"));
+		 target.setInvoiceNumber(this.<String> getValue(source, "invoiceNumber"));
+		 target.setInvoiceNumberRecord(this.<String> getValue(source, "invoiceNumberRecord"));
+		 target.setLastLocationScanParent(this.<String> getValue(source, "lastLocationScanParent"));
+		 target.setNotes(this.<String> getValue(source, "notes"));
+		 target.setOcLocation(this.<String> getValue(source, "ocLocation"));
+		 target.setOrderNumberRecord(this.<String> getValue(source, "orderNumberRecord"));
+		 target.setOtherRepairsReason(this.<String> getValue(source, "otherRepairsReason"));
+		 target.setOwnedBy(this.<String> getValue(source, "ownedBy"));
+		 target.setSerialNumber(this.<String> getValue(source, "serialNumber"));
+		 target.setSkuFirmwareVersion(this.<String> getValue(source, "skuFirmwareVersion"));
+		 target.setUserChangedConditionRating(this.<String> getValue(source, "userChangedConditionRating"));
+		 target.setWithOrderID(this.<String> getValue(source, "withOrderID"));
+		 target.setAlternativeProduct(this.<String> getValue(source, "alternativeProduct"));
+		 target.setDisplayNotes(this.<String> getValue(source, "displayNotes"));
+		 target.setFirmwareVersion(this.<String> getValue(source, "firmwareVersion"));
+		 target.setLrLink(this.<String> getValue(source, "lrLink"));
+		 target.setMpn(this.<String> getValue(source, "mpn"));
+		 target.setPrimaryCategoryID(this.<String> getValue(source, "primaryCategoryID"));
+		 target.setProcurementID(this.<String> getValue(source, "procurementID"));
+		 target.setProcurementSource(this.<String> getValue(source, "procurementSource"));
+		 target.setProductId(this.<String> getValue(source, "productId"));
+		 target.setProductStatus(this.<String> getValue(source, "productStatus"));
+		 target.setPurchaseNotes(this.<String> getValue(source, "purchaseNotes"));
+		 target.setRentalIncludes(this.<String> getValue(source, "rentalIncludes"));
+		 target.setShortDescription(this.<String> getValue(source, "shortDescription"));
+		 target.setSpecifications(this.<String> getValue(source, "specifications"));
+		 target.setTechEngNotes(this.<String> getValue(source, "techEngNotes"));
+		 target.setTitleTag(this.<String> getValue(source, "titleTag"));
+		 target.setUpc(this.<String> getValue(source, "upc"));
+		 target.setUsedDescription(this.<String> getValue(source, "usedDescription"));
+		 target.setUsedIncludes(this.<String> getValue(source, "usedIncludes"));
+		 target.setArticleStatus(this.<String> getValue(source, "articleStatus"));
+		 target.setEan(this.<String> getValue(source, "ean"));
+		 target.setManufacturerAID(this.<String> getValue(source, "manufacturerAID"));
+		 target.setManufacturerTypeDescription(this.<String> getValue(source, "manufacturerTypeDescription"));
+		 target.setRemarks(this.<String> getValue(source, "remarks"));
+		 target.setSegment(this.<String> getValue(source, "segment"));
+		 target.setSpecialTreatmentClasses(this.<String> getValue(source, "specialTreatmentClasses"));
+		 target.setXmlcontent(this.<String> getValue(source, "xmlcontent"));
+		 target.setManufacturerName(this.<String> getValue(source, "manufacturerName"));
 	}
 	catch (final Exception e)
 	{
