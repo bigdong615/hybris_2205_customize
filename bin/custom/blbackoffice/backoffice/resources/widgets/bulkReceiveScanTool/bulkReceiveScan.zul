@@ -95,10 +95,10 @@
                             <label value="${each.serialProductName}" width="100%"/>
                             <label value="${each.orderNumber}" width="100%"/>
                             <label value="${each.barcode}" style="display:none;" width="0%"/>
-                             <label value="${each.firmwareVersion}" width="100%"/>
+                          
+                             <textbox disabled="${each.firmwareVersion == null}" value="${each.firmwareVersion}" width="50%" style="margin-left:15px;text-align:center;"/>
                              
-                             <textbox disabled="${each.skuFirmwareVersion == null}" value="${each.skuFirmwareVersion}" width="50%" style="margin-left:15px;text-align:center;"
-                                    />
+                             <label value="${each.skuFirmwareVersion}" width="100%" />
                            
                                 <combobox xmlns:w="client" value = "${each.functionalRatingValue}" disabled="${empty each.functionalRating}"
                                 model="${each.functionalRating}" 
