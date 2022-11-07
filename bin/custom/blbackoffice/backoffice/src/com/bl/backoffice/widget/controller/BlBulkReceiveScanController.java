@@ -185,7 +185,9 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				bulkReceiveRespData.setMainProductId(blSerialProductModel.getBlProduct().getCode());
 				bulkReceiveRespData.setBarcode(blSerialProductModel.getBarcode());
 				bulkReceiveRespData.setSkuFirmwareVersion(blSerialProductModel.getSkuFirmwareVersion());
-				bulkReceiveRespData.setFirmwareVersion(blSerialProductModel.getFirmwareVersion());
+				bulkReceiveRespData.setFirmwareVersion(
+						blSerialProductModel.getFirmwareVersion() != null ? blSerialProductModel.getFirmwareVersion()
+								: StringUtils.EMPTY);
 				bulkReceiveRespData.setCosmeticRatingValue(blSerialProductModel.getCosmeticRating().getCode());
 				bulkReceiveRespData.setFunctionalRatingValue(blSerialProductModel.getFunctionalRating().getCode());
 				bulkReceiveRespData.setTestingStatusValue(blSerialProductModel.getTestingStatus().getCode());
@@ -240,7 +242,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 						bulkSubpartReceiveRespData.setProductType(blSubPartModel.getSubpartProduct().getProductType().getCode());
 						bulkSubpartReceiveRespData.setMainProductId(blSerialProductModel.getBlProduct().getCode());
 						bulkSubpartReceiveRespData.setBarcode(blSerialProductModel.getBarcode());
-						bulkSubpartReceiveRespData.setFirmwareVersion(blSerialProductModel.getBlProduct().getFirmwareVersion());
+						//bulkSubpartReceiveRespData.setFirmwareVersion("");
 						bulkSubpartReceiveRespData.setOrderNumber(
 								blSerialProductModel.getAssociatedOrder() != null ? blSerialProductModel.getAssociatedOrder().getCode()
 										: StringUtils.EMPTY);
