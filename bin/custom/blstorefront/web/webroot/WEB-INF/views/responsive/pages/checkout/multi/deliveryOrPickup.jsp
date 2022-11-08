@@ -103,6 +103,9 @@
                             <div id="validationMessage"></div>
                             <div class="cart-actions">
                                   <a href="${cart}" class="gray80"><c:choose><c:when test="${cartData.isRetailGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
+                               <c:if test="${isReplacementOrderCart eq true}">
+                                   <checkout:blReplacementOrder/>
+                              </c:if>
                             </div>
                             <div id="statusUpdateTestMessage">
 
@@ -113,6 +116,7 @@
                         </div>
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                             <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
+
                             <div class="cart-actions continue-button">
                                 <c:choose>
                                    <c:when test="${isReplacementOrderCart eq true}">
