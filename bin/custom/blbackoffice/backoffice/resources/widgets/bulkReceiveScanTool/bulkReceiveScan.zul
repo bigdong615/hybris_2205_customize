@@ -48,7 +48,7 @@
     <div style="margin:10px;" id="productsListDiv">
     <hlayout width="100%"  sclass="oms-widget-reassignserial-list">
         <div style="overflow-y: auto; height:500px;" sclass="oms-widget-reassignserial-list-container">
-            <grid id="productEntries" mold="paging"
+            <grid id="productEntries" mold="paging" style="overflow-y: auto;"
                   pageSize="10" width="100%" height="100%">
                 <columns  style="background-color:#d5d8dc;">
                 	<column width="5%" style="padding-left:20px;" sclass="oms-widget-reassignserial-listbox-header">
