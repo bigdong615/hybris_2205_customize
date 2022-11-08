@@ -117,13 +117,13 @@
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                             <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
 
-                            <div class="cart-actions continue-button">
+                            <div class="cart-actions">
                                 <c:choose>
                                    <c:when test="${isReplacementOrderCart eq true}">
                                               <checkout:blReplacementOrder/>
                                     </c:when>
                                     <c:otherwise>
-                                         <button type="button" class="btn btn-sm btn-primary" onClick="shippingMethodContinue(true)">
+                                         <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue(true)">
                                               <spring:theme code="text.checkout.multi.order.delivery.continue"/>
                                          </button>
                                     </c:otherwise>
