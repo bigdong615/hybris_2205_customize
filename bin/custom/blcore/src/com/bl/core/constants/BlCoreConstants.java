@@ -4,6 +4,8 @@
 package com.bl.core.constants;
 
 import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -655,6 +657,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ZIP_MIME_TYPE = "application/zip, application/octet-stream";
 	
 	public static final String DELIVERY_DATE_FORMAT= "EEEE, MMMM dd yyyy";
+	public static final List<String> UPS_ROUND_TRIP = Arrays
+			.asList(new String[]{"UPS_STANDARD_ROUND_TRIP", "UPS_STORE_STANDARD_ROUND_TRIP"});
+
 
 	private BlCoreConstants()
 	{
