@@ -164,8 +164,8 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 {
 	try
 	{
-		//target.setCreatedTS(this.<Date> getValue(source, "createdTS"));
-		 //target.setModifiedTS(this.<Date> getValue(source, "modifiedTS"));
+		 target.setCreatedTS(this.<Date> getValue(source, "creationtime"));
+		 target.setModifiedTS(this.<Date> getValue(source, "modifiedtime"));
 		 target.setOnlineDate(this.<Date> getValue(source, "onlineDate"));
 		 target.setOfflineDate(this.<Date> getValue(source, "offlineDate"));
 		 target.setCreatedDate(this.<Date> getValue(source, "createdDate"));
@@ -188,17 +188,81 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 		 {
 			 target.setBufferedInventoryPercentage(this.<Double> getValue(source, "bufferedInventoryPercentage"));
 		 }
+		 if (this.<Double> getValue(source, "numberContentUnits") != null)
+		 {
+			 target.setNumberContentUnits(this.<Double> getValue(source, "numberContentUnits"));
+		 }
+		 if (this.<Double> getValue(source, "reviewRating") != null)
+		 {
+			 target.setReviewRating(this.<Double> getValue(source, "reviewRating"));
+		 }
+		 if (this.<Double> getValue(source, "retailPrice") != null)
+		 {
+			 target.setRetailPrice(this.<Double> getValue(source, "retailPrice"));
+		 }
+		 if (this.<Long> getValue(source, "sequenceId") != null)
+		 {
+			 target.setSequenceId(this.<Long> getValue(source, "sequenceId"));
+		 }
+		 if (this.<Long> getValue(source, "noDaysRented") != null)
+		 {
+			 target.setNoDaysRented(this.<Long> getValue(source, "noDaysRented"));
+		 }
+		 if (this.<Long> getValue(source, "noDaysNotInService") != null)
+		 {
+			 target.setNoDaysNotInService(this.<Long> getValue(source, "noDaysNotInService"));
+		 }
+		 if (this.<Long> getValue(source, "noDaysRented") != null)
+		 {
+			 target.setNoDaysRented(this.<Long> getValue(source, "noDaysRented"));
+		 }
 		 target.setMinOrderQuantity(this.<Integer> getValue(source, "minOrderQuantity"));
 		 target.setMaxOrderQuantity(this.<Integer> getValue(source, "maxOrderQuantity"));
 		 target.setOrderQuantityInterval(this.<Integer> getValue(source, "orderQuantityInterval"));
 		 target.setStartLineNumber(this.<Integer> getValue(source, "startLineNumber"));
 		 target.setEndLineNumber(this.<Integer> getValue(source, "endLineNumber"));
 		 target.setReviewCount(this.<Integer> getValue(source, "reviewCount"));
-		 //target.setWeight(this.<BigDecimal> getValue(source, "weight"));
-		 //target.setHeight(this.<BigDecimal> getValue(source, "height"));
-		 //target.setWidth(this.<BigDecimal> getValue(source, "width"));
-		 //target.setLength(this.<BigDecimal> getValue(source, "length"));
+		 target.setForSaleDiscount(this.<Integer> getValue(source, "forSaleDiscount"));
+		 if (this.<String> getValue(source, "forSaleBasePrice") != null)
+		 {
+			 target.setForSaleBasePrice(new BigDecimal(this.<String> getValue(source, "forSaleBasePrice")));
+		 }
+		 if (this.<String> getValue(source, "forRetailGearPrice") != null)
+		 {
+			 target.setForRetailGearPrice(new BigDecimal(this.<String> getValue(source, "retailGearPrice")));
+		 }
+		 if (this.<String> getValue(source, "forFinalSalePrice") != null)
+		 {
+			 target.setForFinalSalePrice(new BigDecimal(this.<String> getValue(source, "finalSalePrice")));
+		 }
+		 if (this.<String> getValue(source, "incentivizedPrice") != null)
+		 {
+			 target.setIncentivizedPrice(new BigDecimal(this.<String> getValue(source, "incentivizedPrice")));
+		 }
+		 if (this.<String> getValue(source, "procurementCost") != null)
+		 {
+			 target.setProcurementCost(new BigDecimal(this.<String> getValue(source, "procurementCost")));
+		 }
+		 if(this.<String> getValue(source, "weight")!=null)
+		 {
+			 target.setWeight(new BigDecimal(this.<String> getValue(source, "weight")));
+		 }
+		 if(this.<String> getValue(source, "height")!=null)
+		 {
+			 target.setHeight(new Integer(this.<String> getValue(source, "height")));
+		 }
+		 if(this.<String> getValue(source, "width")!=null)
+		 {
+			 target.setWidth(new Integer(this.<String> getValue(source, "weight")));
+		 }
+		 if(this.<String> getValue(source, "length")!=null)
+		 {
+			 target.setLength(new Integer(this.<String> getValue(source, "length")));
+		 }
+		 target.setReserveRatio(this.<Integer> getValue(source, "reserveRatio"));
 		 target.setDiscontinued(this.<Boolean> getValue(source, "isDiscontinued"));
+		 target.setDiscounted(this.<Boolean> getValue(source, "discounted"));
+		 target.setIsSealed(this.<Boolean> getValue(source, "isSealed"));
 		 target.setLevel1Required(this.<Boolean> getValue(source, "level1Required"));
 		 target.setLevel2Required(this.<Boolean> getValue(source, "level2Required"));
 		 target.setMostPopular(this.<Boolean> getValue(source, "mostPopular"));
@@ -212,43 +276,43 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 		 target.setForSale(this.<Boolean> getValue(source, "forSale"));
 		 target.setGreatValue(this.<Boolean> getValue(source, "greatValue"));
 		 target.setIsAccounting(this.<Boolean> getValue(source, "isAccounting"));
-		 if (this.<Double> getValue(source, "isNew") != null)
+		 if (this.<Boolean> getValue(source, "isNew") != null)
 		 {
 			 target.setIsNew(this.<Boolean> getValue(source, "isNew"));
 		 }
-		 if (this.<Double> getValue(source, "isVideo") != null)
+		 if (this.<Boolean> getValue(source, "isVideo") != null)
 		 {
 			 target.setIsVideo(this.<Boolean> getValue(source, "isVideo"));
 		 }
-		 if (this.<Double> getValue(source, "hardAssigned") != null)
+		 if (this.<Boolean> getValue(source, "hardAssigned") != null)
 		 {
 			 target.setHardAssigned(this.<Boolean> getValue(source, "hardAssigned"));
 		 }
-		 if (this.<Double> getValue(source, "isBufferedInventory") != null)
+		 if (this.<Boolean> getValue(source, "isBufferedInventory") != null)
 		 {
 			 target.setIsBufferedInventory(this.<Boolean> getValue(source, "isBufferedInventory"));
 		 }
-		 if (this.<Double> getValue(source, "isSyncRequired") != null)
+		 if (this.<Boolean> getValue(source, "isSyncRequired") != null)
 		 {
 			 target.setIsSyncRequired(this.<Boolean> getValue(source, "isSyncRequired"));
 		 }
-		 if (this.<Double> getValue(source, "softAssigned") != null)
+		 if (this.<Boolean> getValue(source, "softAssigned") != null)
 		 {
 			 target.setSoftAssigned(this.<Boolean> getValue(source, "softAssigned"));
 		 }
-		 if (this.<Double> getValue(source, "dirtyPriorityStatus") != null)
+		 if (this.<Boolean> getValue(source, "dirtyPriorityStatus") != null)
 		 {
 			 target.setDirtyPriorityStatus(this.<Boolean> getValue(source, "dirtyPriorityStatus"));
 		 }
-		 if (this.<Double> getValue(source, "gearRated") != null)
+		 if (this.<Boolean> getValue(source, "gearRated") != null)
 		 {
 			 target.setGearRated(this.<Boolean> getValue(source, "gearRated"));
 		 }
-		 if (this.<Double> getValue(source, "soldIndividually") != null)
+		 if (this.<Boolean> getValue(source, "soldIndividually") != null)
 		 {
 			 target.setSoldIndividually(this.<Boolean> getValue(source, "soldIndividually"));
 		 }
-		 if (this.<Double> getValue(source, "softAssigned") != null)
+		 if (this.<Boolean> getValue(source, "softAssigned") != null)
 		 {
 			 target.setSoftAssigned(this.<Boolean> getValue(source, "softAssigned"));
 		 }
@@ -297,6 +361,36 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 		 target.setSpecialTreatmentClasses(this.<String> getValue(source, "specialTreatmentClasses"));
 		 target.setXmlcontent(this.<String> getValue(source, "xmlcontent"));
 		 target.setManufacturerName(this.<String> getValue(source, "manufacturerName"));
+		 target.setVariantType(this.<String> getValue(source, "variantType"));
+		 target.setTestingStatus(this.<String> getValue(source, "testingStatus"));
+		 target.setRepairLogType(this.<String> getValue(source, "repairLogType"));
+		 target.setRepairReasons(this.<String> getValue(source, "repairReasons"));
+		 target.setCosmeticRatings(this.<String> getValue(source, "cosmeticRating"));
+		 target.setFunctionalRatings(this.<String> getValue(source, "functionalRating"));
+		 target.setApprovalStatus(this.<String> getValue(source, "approvalStatus"));
+		 target.setBatteryMaterial(this.<String> getValue(source, "batteryMaterial"));
+		 target.setNumberSystem(this.<String> getValue(source, "numberSystem"));
+		 target.setSerialStatusses(this.<String> getValue(source, "serialStatus"));
+		 target.setVariantType(this.<String> getValue(source, "variantType"));
+		 target.setOrder(this.<Integer> getValue(source, "order"));
+		 target.setUnit(this.<String> getValue(source, "unit"));
+		 target.setCatalogVersion(this.<String> getValue(source, "catalogVersion"));
+		 target.setContentUnit(this.<String> getValue(source, "contentUnit"));
+		 target.setProductOrderLimit(this.<String> getValue(source, "productOrderLimit"));
+		 target.setRentalVideosLinks(this.<String> getValue(source, "rentalVideosLinks"));
+		 target.setUsedGearVideosLinks(this.<String> getValue(source, "usedGearVideosLinks"));
+		 target.setTrackingNumber(this.<String> getValue(source, "trackingNumber"));
+		 target.setWarehouseLocation(this.<String> getValue(source, "warehouseLocation"));
+		 target.setSerialHomeLocation(this.<String> getValue(source, "serialHomeLocation"));
+		 target.setOcLocationDetails(this.<String> getValue(source, "ocLocationDetails"));
+		 target.setAssociatedConsignment(this.<String> getValue(source, "associatedConsignment"));
+		 target.setAssociatedOrder(this.<String> getValue(source, "associatedOrder"));
+		 target.setAssociatedShippedConsignment(this.<String> getValue(source, "associatedShippedConsignment"));
+		 target.setConsignmentEntry(this.<String> getValue(source, "consignmentEntry"));
+		 target.setLastUnboxedOcLocationHistory(this.<String> getValue(source, "lastUnboxedOcLocationHistory"));
+		 target.setBlProduct(this.<String> getValue(source, "blProduct"));
+		 target.setAssociatedUsedGearConsignment(this.<String> getValue(source, "associatedUsedGearConsignment"));
+		 target.setAssociatedUsedGearOrder(this.<String> getValue(source, "associatedUsedGearOrder"));
 	}
 	catch (final Exception e)
 	{

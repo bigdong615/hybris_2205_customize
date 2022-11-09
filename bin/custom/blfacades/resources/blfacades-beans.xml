@@ -54,6 +54,7 @@
 		<property name="nextAvailableDate" type="java.lang.String"/>
 		<property name="disableButton" type="boolean"/>
 		<property name="isBlProductType" type="Boolean"/>
+		<property name="discounted" type="Boolean"/>
 		<property name="createdTS" type="java.util.Date"/>
 		<property name="modifiedTS" type="java.util.Date"/>
 		<property name="onlineDate" type="java.util.Date"/>
@@ -69,16 +70,27 @@
 		<property name="deliveryTime" type="double"/>
 		<property name="priceQuantity" type="double"/>
 		<property name="bufferedInventoryPercentage" type="double"/>
+		<property name="numberContentUnits" type="double"/>
+		<property name="reviewRating" type="double"/>
+		<property name="retailPrice" type="double"/>
+		<property name="sequenceId" type="long"/>
 		<property name="minOrderQuantity" type="java.lang.Integer"/>
+		<property name="reserveRatio" type="java.lang.Integer"/>
 		<property name="maxOrderQuantity" type="java.lang.Integer"/>
 		<property name="orderQuantityInterval" type="java.lang.Integer"/>
 		<property name="startLineNumber" type="java.lang.Integer"/>
 		<property name="endLineNumber" type="java.lang.Integer"/>
 		<property name="reviewCount" type="java.lang.Integer"/>
+		<property name="forSaleDiscount" type="java.lang.Integer"/>
+		<property name="forSaleBasePrice" type="java.math.BigDecimal"/>
+		<property name="forRetailGearPrice" type="java.math.BigDecimal"/>
+		<property name="forFinalSalePrice" type="java.math.BigDecimal"/>
+		<property name="incentivizedPrice" type="java.math.BigDecimal"/>
+		<property name="procurementCost" type="java.math.BigDecimal"/>
 		<property name="weight" type="java.math.BigDecimal"/>
-		<property name="height" type="java.math.BigDecimal"/>
-		<property name="width" type="java.math.BigDecimal"/>
-		<property name="length" type="java.math.BigDecimal"/>
+		<property name="height" type="java.lang.Integer"/>
+		<property name="width" type="java.lang.Integer"/>
+		<property name="length" type="java.lang.Integer"/>
 		<property name="level1Required" type="boolean"/>
 		<property name="level2Required" type="boolean"/>
 		<property name="mostPopular" type="boolean"/>
@@ -133,6 +145,38 @@
 		<property name="segment" type="java.lang.String"/>
 		<property name="specialTreatmentClasses" type="java.lang.String"/>
 		<property name="xmlcontent" type="java.lang.String"/>
+		<property name="isSealed" type="boolean"/>
+		<property name="noDaysInTransit" type="long"/>
+		<property name="noDaysNotInService" type="long"/>
+		<property name="noDaysRented" type="long"/>
+		<property name="testingStatus" type="java.lang.String"/>
+		<property name="repairLogType" type="java.lang.String"/>
+		<property name="repairReasons" type="java.lang.String"/>
+		<property name="cosmeticRatings" type="java.lang.String"/>
+		<property name="functionalRatings" type="java.lang.String"/>
+		<property name="approvalStatus" type="java.lang.String"/>
+		<property name="batteryMaterial" type="java.lang.String"/>
+		<property name="numberSystem" type="java.lang.String"/>
+		<property name="serialStatusses" type="java.lang.String"/>
+		<property name="order" type="java.lang.Integer"/>
+		<property name="unit" type="java.lang.String"/>
+		<property name="catalogVersion" type="java.lang.String"/>
+		<property name="contentUnit" type="java.lang.String"/>
+		<property name="productOrderLimit" type="java.lang.String"/>
+		<property name="rentalVideosLinks" type="java.lang.String"/>
+		<property name="usedGearVideosLinks" type="java.lang.String"/>
+		<property name="trackingNumber" type="java.lang.String"/>
+		<property name="warehouseLocation" type="java.lang.String"/>
+		<property name="serialHomeLocation" type="java.lang.String"/>
+		<property name="ocLocationDetails" type="java.lang.String"/>
+		<property name="associatedConsignment" type="java.lang.String"/>
+		<property name="associatedOrder" type="java.lang.String"/>
+		<property name="associatedShippedConsignment" type="java.lang.String"/>
+		<property name="consignmentEntry" type="java.lang.String"/>
+		<property name="lastUnboxedOcLocationHistory" type="java.lang.String"/>
+		<property name="blProduct" type="java.lang.String"/>
+		<property name="associatedUsedGearConsignment" type="java.lang.String"/>
+		<property name="associatedUsedGearOrder" type="java.lang.String"/>
   </bean>
     
 	<bean class="com.bl.facades.product.data.GenderData">
