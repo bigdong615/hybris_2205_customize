@@ -177,6 +177,9 @@
 		<property name="blProduct" type="java.lang.String"/>
 		<property name="associatedUsedGearConsignment" type="java.lang.String"/>
 		<property name="associatedUsedGearOrder" type="java.lang.String"/>
+		<property name="europe1PriceFactory_PDG" type="java.lang.String"/>
+		<property name="europe1PriceFactory_PPG" type="java.lang.String"/>
+		<property name="europe1PriceFactory_PTG" type="java.lang.String"/>
   </bean>
     
 	<bean class="com.bl.facades.product.data.GenderData">

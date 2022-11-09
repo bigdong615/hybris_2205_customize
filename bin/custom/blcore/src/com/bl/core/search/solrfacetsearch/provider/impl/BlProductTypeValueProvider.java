@@ -35,8 +35,6 @@ public class BlProductTypeValueProvider extends AbstractPropertyFieldValueProvid
 	 *           defines product
 	 * @return Collection<FieldValue> to solr
 	 */
-	int blProduct = 0;
-	int blSerialProduct = 0;
 	@Override
 	public Collection<FieldValue> getFieldValues(final IndexConfig indexConfig, final IndexedProperty indexedProperty,
 			final Object model)
@@ -53,16 +51,6 @@ public class BlProductTypeValueProvider extends AbstractPropertyFieldValueProvid
 	private List<FieldValue> addFieldValues(final List<FieldValue> fieldValues, final IndexedProperty indexedProperty,
 			final boolean value)
 	{
-		if (value)
-		{
-			blProduct++;
-			LOG.info("********************blProduct*****************" + blProduct);
-		}
-		else
-		{
-			blSerialProduct++;
-			LOG.info("********************blSerialProduct*****************" + blSerialProduct);
-		}
 		final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
 		for (final String fieldName : fieldNames)
 		{

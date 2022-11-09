@@ -229,7 +229,7 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 		 }
 		 if (this.<String> getValue(source, "forRetailGearPrice") != null)
 		 {
-			 target.setForRetailGearPrice(new BigDecimal(this.<String> getValue(source, "retailGearPrice")));
+			 target.setForRetailGearPrice(new BigDecimal(this.<String> getValue(source, "forRetailGearPrice")));
 		 }
 		 if (this.<String> getValue(source, "forFinalSalePrice") != null)
 		 {
@@ -247,35 +247,74 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 		 {
 			 target.setWeight(new BigDecimal(this.<String> getValue(source, "weight")));
 		 }
-		 if(this.<String> getValue(source, "height")!=null)
-		 {
-			 target.setHeight(new Integer(this.<String> getValue(source, "height")));
-		 }
-		 if(this.<String> getValue(source, "width")!=null)
-		 {
-			 target.setWidth(new Integer(this.<String> getValue(source, "weight")));
-		 }
-		 if(this.<String> getValue(source, "length")!=null)
-		 {
-			 target.setLength(new Integer(this.<String> getValue(source, "length")));
-		 }
+		 target.setHeight(this.<Integer> getValue(source, "height"));
+		 target.setWidth(this.<Integer> getValue(source, "width"));
+		 target.setLength(this.<Integer> getValue(source, "length"));
 		 target.setReserveRatio(this.<Integer> getValue(source, "reserveRatio"));
-		 target.setDiscontinued(this.<Boolean> getValue(source, "isDiscontinued"));
-		 target.setDiscounted(this.<Boolean> getValue(source, "discounted"));
-		 target.setIsSealed(this.<Boolean> getValue(source, "isSealed"));
-		 target.setLevel1Required(this.<Boolean> getValue(source, "level1Required"));
-		 target.setLevel2Required(this.<Boolean> getValue(source, "level2Required"));
-		 target.setMostPopular(this.<Boolean> getValue(source, "mostPopular"));
-		 target.setScheduled(this.<Boolean> getValue(source, "scheduled"));
-		 target.setStaffPick(this.<Boolean> getValue(source, "staffPick"));
-		 target.setBufferInvPercChangedManually(this.<Boolean> getValue(source, "bufferInvPercChangedManually"));
-		 target.setRetailGearInStock(this.<Boolean> getValue(source, "retailGearInStock"));
-		 target.setBundleProduct(this.<Boolean> getValue(source, "bundleProduct"));
-		 target.setConstrained(this.<Boolean> getValue(source, "constrained"));
-		 target.setForRent(this.<Boolean> getValue(source, "forRent"));
-		 target.setForSale(this.<Boolean> getValue(source, "forSale"));
-		 target.setGreatValue(this.<Boolean> getValue(source, "greatValue"));
-		 target.setIsAccounting(this.<Boolean> getValue(source, "isAccounting"));
+		 if (this.<Boolean> getValue(source, "isDiscontinued") != null)
+		 {
+			 target.setDiscontinued(this.<Boolean> getValue(source, "isDiscontinued"));
+		 }
+		 if (this.<Boolean> getValue(source, "discounted") != null)
+		 {
+			 target.setDiscounted(this.<Boolean> getValue(source, "discounted"));
+		 }
+		 if (this.<Boolean> getValue(source, "isSealed") != null)
+		 {
+			 target.setIsSealed(this.<Boolean> getValue(source, "isSealed"));
+		 }
+		 if (this.<Boolean> getValue(source, "level1Required") != null)
+		 {
+			 target.setLevel1Required(this.<Boolean> getValue(source, "level1Required"));
+		 }
+		 if (this.<Boolean> getValue(source, "level2Required") != null)
+		 {
+			 target.setLevel2Required(this.<Boolean> getValue(source, "level2Required"));
+		 }
+		 if (this.<Boolean> getValue(source, "mostPopular") != null)
+		 {
+			 target.setMostPopular(this.<Boolean> getValue(source, "mostPopular"));
+		 }
+		 if (this.<Boolean> getValue(source, "scheduled") != null)
+		 {
+			 target.setScheduled(this.<Boolean> getValue(source, "scheduled"));
+		 }
+		 if (this.<Boolean> getValue(source, "staffPick") != null)
+		 {
+			 target.setStaffPick(this.<Boolean> getValue(source, "staffPick"));
+		 }
+		 if (this.<Boolean> getValue(source, "bufferInvPercChangedManually") != null)
+		 {
+			 target.setBufferInvPercChangedManually(this.<Boolean> getValue(source, "bufferInvPercChangedManually"));
+		 }
+		 if (this.<Boolean> getValue(source, "retailGearInStock") != null)
+		 {
+			 target.setRetailGearInStock(this.<Boolean> getValue(source, "retailGearInStock"));
+		 }
+		 if (this.<Boolean> getValue(source, "bundleProduct") != null)
+		 {
+			 target.setBundleProduct(this.<Boolean> getValue(source, "bundleProduct"));
+		 }
+		 if (this.<Boolean> getValue(source, "constrained") != null)
+		 {
+			 target.setConstrained(this.<Boolean> getValue(source, "constrained"));
+		 }
+		 if (this.<Boolean> getValue(source, "forRent") != null)
+		 {
+			 target.setForRent(this.<Boolean> getValue(source, "forRent"));
+		 }
+		 if (this.<Boolean> getValue(source, "forSale") != null)
+		 {
+			 target.setForSale(this.<Boolean> getValue(source, "forSale"));
+		 }
+		 if (this.<Boolean> getValue(source, "greatValue") != null)
+		 {
+			 target.setGreatValue(this.<Boolean> getValue(source, "greatValue"));
+		 }
+		 if (this.<Boolean> getValue(source, "isAccounting") != null)
+		 {
+			 target.setIsAccounting(this.<Boolean> getValue(source, "isAccounting"));
+		 }
 		 if (this.<Boolean> getValue(source, "isNew") != null)
 		 {
 			 target.setIsNew(this.<Boolean> getValue(source, "isNew"));
@@ -391,6 +430,9 @@ private void populateAdditionalAttributesForDomo(final SearchResultValueData sou
 		 target.setBlProduct(this.<String> getValue(source, "blProduct"));
 		 target.setAssociatedUsedGearConsignment(this.<String> getValue(source, "associatedUsedGearConsignment"));
 		 target.setAssociatedUsedGearOrder(this.<String> getValue(source, "associatedUsedGearOrder"));
+		 target.setEurope1PriceFactory_PDG(this.<String> getValue(source, "europe1PriceFactory_PDG"));
+		 target.setEurope1PriceFactory_PPG(this.<String> getValue(source, "europe1PriceFactory_PPG"));
+		 target.setEurope1PriceFactory_PTG(this.<String> getValue(source, "europe1PriceFactory_PTG"));
 	}
 	catch (final Exception e)
 	{

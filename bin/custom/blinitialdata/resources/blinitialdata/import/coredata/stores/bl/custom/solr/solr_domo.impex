@@ -31,7 +31,7 @@ INSERT_UPdate SolrIndexedProperty ; solrIndexedType(identifier)[unique = true] ;
                                   ; $solrIndexedType                           ; forSaleDiscount               ; int        ;                                            ;  
                                   ; $solrIndexedType                           ; order                         ; int        ;                                            ;  
                                   ; $solrIndexedType                           ; forSaleBasePrice              ; string     ; saleBasePriceValueProvider                 ;  
-                                  ; $solrIndexedType                           ; retailGearPrice               ; string     ; retailGearPriceValueProvider               ;  
+                                  ; $solrIndexedType                           ; forRetailGearPrice            ; string     ; retailGearPriceValueProvider               ;  
                                   ; $solrIndexedType                           ; finalSalePrice                ; string     ; finalSalePriceValueProvider                ;  
                                   ; $solrIndexedType                           ; incentivizedPrice             ; string     ; incentivizedPriceValueProvider             ;  
                                   ; $solrIndexedType                           ; procurementCost               ; string     ; procurementCostValueProvider               ;  
@@ -138,4 +138,8 @@ INSERT_UPdate SolrIndexedProperty ; solrIndexedType(identifier)[unique = true] ;
                                   ; $solrIndexedType                           ; blProduct                     ; string     ; blProductValueProvider                     ;  
                                   ; $solrIndexedType                           ; associatedUsedGearConsignment ; string     ; associatedUsedGearConsignmentValueProvider ;  
                                   ; $solrIndexedType                           ; associatedUsedGearOrder       ; string     ; associatedUsedGearOrderValueProvider       ;  
+                                  ; $solrIndexedType                           ; europe1PriceFactory_PPG       ; string     ;                                            ;  
+                                  ; $solrIndexedType                           ; europe1PriceFactory_PTG       ; string     ;                                            ;  
+                                  ; $solrIndexedType                           ; europe1PriceFactory_PDG       ; string     ;                                            ;  
+                                    
                                    
