@@ -3,11 +3,6 @@
  */
 package com.bl.storefront.controllers.pages;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.utils.BlRentalDateUtils;
-import com.bl.facades.cart.BlCartFacade;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.facades.solrfacetsearch.BlProductSearchFacade;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.customer.CustomerLocationService;
@@ -30,11 +25,14 @@ import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageDat
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SortData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -47,6 +45,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.solrfacetsearch.BlProductSearchFacade;
 
 
 @Controller
@@ -164,6 +169,10 @@ public class SearchPageController extends AbstractSearchPageController
 		if(StringUtils.isNotEmpty(currentCartType)){
 			model.addAttribute(currentCartType,true);
 		}
+		else
+		{
+			model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
+		}
 		final String metaDescription = MetaSanitizerUtil
 				.sanitizeDescription(getMessageSource().getMessage(SEARCH_META_DESCRIPTION_RESULTS, null,
 						SEARCH_META_DESCRIPTION_RESULTS, getI18nService().getCurrentLocale()) + " " + searchText + " "
@@ -217,6 +226,10 @@ public class SearchPageController extends AbstractSearchPageController
 		final String currentCartType = blCartFacade.identifyCartType();
 		if(StringUtils.isNotEmpty(currentCartType)){
 			model.addAttribute(currentCartType,true);
+		}
+		else
+		{
+			model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
 		}
 		return getViewForPage(model);
 	}

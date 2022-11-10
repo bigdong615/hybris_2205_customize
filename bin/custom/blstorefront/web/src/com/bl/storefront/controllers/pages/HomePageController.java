@@ -3,18 +3,16 @@
  */
 package com.bl.storefront.controllers.pages;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.utils.BlRentalDateUtils;
-import com.bl.facades.cart.BlCartFacade;
-import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.AbstractPageModel;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 
 /**
@@ -34,19 +36,20 @@ import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 public class HomePageController extends AbstractPageController
 {
 	private static final String LOGOUT = "logout";
+	private static final String ISRENTAL_CART = "isRentalCart";
 
 	@Resource(name = "cartFacade")
 	private BlCartFacade blCartFacade;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
-	private RentalDateDto getRentalsDuration() 
+	private RentalDateDto getRentalsDuration()
 	{
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
 	@Resource(name = "blEmailSubscriptionFacade")
 	private BlEmailSubscriptionFacade blEmailSubscriptionFacade;
-	
+
 	@GetMapping
 	public String home(@RequestParam(value = WebConstants.CLOSE_ACCOUNT, defaultValue = "false") final boolean closeAcc,
 			@RequestParam(value = LOGOUT, defaultValue = "false") final boolean logout, final Model model,
@@ -64,6 +67,10 @@ public class HomePageController extends AbstractPageController
 		final String currentCartType = blCartFacade.identifyCartType();
 		if(StringUtils.isNotEmpty(currentCartType)){
 			model.addAttribute(currentCartType,true);
+		}
+		else
+		{
+			model.addAttribute(ISRENTAL_CART, true);
 		}
 		return getViewForPage(model);
 	}

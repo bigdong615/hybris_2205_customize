@@ -3,7 +3,6 @@
  */
 package com.bl.storefront.controllers.pages;
 
-import com.bl.facades.cart.BlCartFacade;
 import de.hybris.platform.acceleratorfacades.futurestock.FutureStockFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
@@ -37,10 +36,6 @@ import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
 
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.storefront.controllers.ControllerConstants;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +64,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.storefront.controllers.ControllerConstants;
 import com.google.common.collect.Maps;
 
 
@@ -116,10 +116,10 @@ public class AbstractBlProductPageController extends AbstractPageController
 
 	@Resource(name = "futureStockFacade")
 	private FutureStockFacade futureStockFacade;
-	
+
 	@Resource(name = "blCommerceStockService")
 	private BlCommerceStockService blCommerceStockService;
-	
+
 	@Resource(name = "blDatePickerService")
 	private BlDatePickerService blDatePickerService;
 
@@ -439,16 +439,25 @@ public class AbstractBlProductPageController extends AbstractPageController
 					productBreadcrumbBuilder.getBreadcrumbs(productCode));
 		}
     final String currentCartType = blCartFacade.identifyCartType();
-    if(StringUtils.isNotEmpty(currentCartType)){
-      model.addAttribute(currentCartType,true);
-    }
-		if (CollectionUtils.isNotEmpty(productData.getVariantMatrix()))
-		{
-			model.addAttribute(WebConstants.MULTI_DIMENSIONAL_PRODUCT,
-					Boolean.valueOf(CollectionUtils.isNotEmpty(productData.getVariantMatrix())));
-		}
+	 if (StringUtils.isNotEmpty(currentCartType))
+	 {
+		 model.addAttribute(currentCartType, true);
+	 }
+	 else if (productData.isRetailGear())
+	 {
+		 model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
+	 }
+	 else
+	 {
+		 model.addAttribute(BlFacadesConstants.USED_GEAR_CART, true);
+	 }
+	 if (CollectionUtils.isNotEmpty(productData.getVariantMatrix()))
+	 {
+		 model.addAttribute(WebConstants.MULTI_DIMENSIONAL_PRODUCT,
+				 Boolean.valueOf(CollectionUtils.isNotEmpty(productData.getVariantMatrix())));
+	 }
 	}
-	
+
 	protected void populateProductData(final ProductData productData, final Model model)
 	{
 		model.addAttribute("galleryImages", getGalleryImages(productData));
@@ -554,7 +563,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 	/**
 	 * @param blCommerceStockService the blCommerceStockService to set
 	 */
-	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
+	public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService)
 	{
 		this.blCommerceStockService = blCommerceStockService;
 	}
@@ -570,7 +579,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 	/**
 	 * @param blDatePickerService the blDatePickerService to set
 	 */
-	public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+	public void setBlDatePickerService(final BlDatePickerService blDatePickerService)
 	{
 		this.blDatePickerService = blDatePickerService;
 	}
