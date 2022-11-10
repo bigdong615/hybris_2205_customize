@@ -8,9 +8,11 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TimeZone;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -28,12 +30,12 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
+import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.model.OptimizedShippingMethodModel;
 import com.bl.core.services.order.BlOrderService;
-import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
@@ -58,6 +60,8 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	private Combobox optimizedShippingMethodComboBox;
 	@Wire
 	private Textbox deliveryDate;
+	@Wire
+	private Textbox destinationState;
 
 	protected static final String OUT_CONFIRM = "confirmOutput";
 	protected static final String COMPLETE = "completed";
@@ -103,6 +107,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		optimizedShippingMethodList = new ListModelList<>(Lists.newArrayList());
 		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
 		deliveryDate.setValue(getDeliveryDateFromOrder(inputObject));
+		destinationState.setValue(getDestinationStateValue(inputObject));
 	}
 	
 	private String getDeliveryDateFromOrder(final ConsignmentModel consignment)
@@ -112,12 +117,27 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		{
 			if(getBlOrderService().isRentalOrderOnly(orderModel) && Objects.nonNull(orderModel.getRentalStartDate()))
 			{
-				return convertDateToString(orderModel.getRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT);
+				return convertDateToString(orderModel.getRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT, 
+						TimeZone.getTimeZone(BlDeliveryModeLoggingConstants.ZONE_PST));
 			}
 			if(getBlOrderService().isUsedOrderOnly(orderModel) && Objects.nonNull(orderModel.getActualRentalStartDate()))
 			{
-				return convertDateToString(orderModel.getActualRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT);
+				return convertDateToString(orderModel.getActualRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT, 
+						TimeZone.getTimeZone(BlDeliveryModeLoggingConstants.ZONE_PST));
 			}
+		}
+		return StringUtils.EMPTY;
+	}
+	
+	private String getDestinationStateValue(final ConsignmentModel consignment)
+	{
+		final AbstractOrderModel orderModel = consignment.getOrder();
+		if(Objects.nonNull(orderModel) && Objects.nonNull(orderModel.getDeliveryAddress()) 
+				&& Objects.nonNull(orderModel.getDeliveryAddress().getRegion()))
+		{
+			final String destinationStateName = orderModel.getDeliveryAddress().getRegion().getName();
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Destination State - {}", destinationStateName);
+			return destinationStateName;
 		}
 		return StringUtils.EMPTY;
 	}
@@ -394,8 +414,28 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	/**
 	 * This Method converts rental startDate and rental endDate to String
 	 */
-	private String convertDateToString(final Date deliveryDate , final String dateFormat) {
-		return BlDateTimeUtils.convertDateToStringDate(deliveryDate,dateFormat);
+	private String convertDateToString(final Date deliveryDate , final String dateFormat, final TimeZone timeZone) {
+		final SimpleDateFormat sd = new SimpleDateFormat(dateFormat);
+		sd.setTimeZone(timeZone);
+		final String formattedDeliveryDate = sd.format(deliveryDate);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Delivery Date - {}", formattedDeliveryDate);
+		return formattedDeliveryDate;
+	}
+
+	/**
+	 * @return the destinationState
+	 */
+	public Textbox getDestinationState()
+	{
+		return destinationState;
+	}
+
+	/**
+	 * @param destinationState the destinationState to set
+	 */
+	public void setDestinationState(Textbox destinationState)
+	{
+		this.destinationState = destinationState;
 	}
 
 }

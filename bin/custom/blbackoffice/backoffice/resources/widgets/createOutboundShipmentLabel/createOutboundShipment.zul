@@ -48,6 +48,11 @@
                 <textbox sclass="oms-widget-updateorder__template-reason" readonly="true" id="deliveryDate"
                          style=""/>
       </row>
+      <row>
+                   <label value="Destination State" width="50%" />
+                <textbox sclass="oms-widget-updateorder__template-reason" readonly="true" id="destinationState"
+                         style=""/>
+      </row>
     </rows>
   </grid>
   
