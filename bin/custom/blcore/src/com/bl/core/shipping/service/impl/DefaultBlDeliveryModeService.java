@@ -14,6 +14,7 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 
+import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.DayOfWeek;
@@ -570,10 +571,19 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(maxValue, zoneDeliveryModeModel);
         if (shippingCostModel != null) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping calculated amount: {} ", shippingCostModel.getAmount());
-            if (BooleanUtils.isFalse(order.getIsRentalOrder())) {
-                return (shippingCostModel.getAmount() * Double.valueOf(maxValue) / BlInventoryScanLoggingConstants.TWO);
+            if (BooleanUtils.isTrue(order.getIsRentalOrder())) {
+                if (order.getSubtotal() > Double
+                    .parseDouble(Config.getParameter("bl.min.subtotal.for.free.shipping"))
+                    && BlCoreConstants.UPS_ROUND_TRIP.contains(zoneDeliveryModeModel.getCode())) {
+                    return Double.valueOf(0.00);
+                } else {
+                    return shippingCostModel.getAmount() * Double.valueOf(maxValue);
+                }
+            } else {
+                return (shippingCostModel.getAmount() * Double.valueOf(maxValue)
+                    / BlInventoryScanLoggingConstants.TWO);
             }
-            return shippingCostModel.getAmount() * Double.valueOf(maxValue);
+            
         }
         return null;
     }
