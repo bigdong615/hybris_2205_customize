@@ -16,6 +16,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.core.enums.ConsignmentEntryStatusEnum;
+import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
@@ -47,7 +49,7 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		final List<String> items = new ArrayList<>();
 		if (!source.getItems().isEmpty())
 		{
-			source.getItems().forEach((k, v) -> items.add((k + ":" + v != null ? v.getCode() : StringUtils.EMPTY)));
+			source.getItems().forEach((k, v) -> items.add((k + ":" + getItemsCode(v))));
 		}
 		target.setItems(StringUtils.join(items, ','));
 		final List<String> billingcharges = new ArrayList<>();
@@ -60,7 +62,7 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		if (!source.getConsignmentEntryStatus().isEmpty())
 		{
 			source.getConsignmentEntryStatus()
-					.forEach((k, v) -> consignmententrystatus.add((k + ":" + v != null ? v.getCode() : StringUtils.EMPTY)));
+					.forEach((k, v) -> consignmententrystatus.add((k + ":" + getConsignmentEntryStatus(v))));
 		}
 		target.setConsignmententrystatus(StringUtils.join(consignmententrystatus, ','));
 
@@ -74,6 +76,42 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		target.setMainItemNotScannedCount(source.getMainItemNotScannedCount());
 		target.setSubpartsNotScannedCount(source.getSubpartsNotScannedCount());
 
+	}
+
+	/**
+	 * @param v
+	 * @return
+	 */
+	private String getConsignmentEntryStatus(final ConsignmentEntryStatusEnum v)
+	{
+		System.out.println("ConsignmentEntryStatusEnum " + v);
+
+		if (v != null)
+		{
+			return v.getCode();
+		}
+		else
+		{
+			return StringUtils.EMPTY;
+		}
+	}
+
+	/**
+	 * @param v
+	 * @return
+	 */
+	private String getItemsCode(final ItemStatusEnum v)
+	{
+		System.out.println("ItemStatusEnum " + v);
+
+		if (v != null)
+		{
+			return v.getCode();
+		}
+		else
+		{
+			return StringUtils.EMPTY;
+		}
 	}
 
 	private String getCode(final List<BlItemsBillingChargeModel> v)
