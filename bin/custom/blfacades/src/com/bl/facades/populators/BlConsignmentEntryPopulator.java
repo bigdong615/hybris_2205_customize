@@ -33,16 +33,16 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		if (source.getOrderEntry() != null)
 		{
 			super.populate(source, target);
+			target.setOrder_entry(source.getOrderEntry().getOrder().getCode() + "." + source.getOrderEntry().getEntryNumber());
 		}
 		target.setQuantity(source.getQuantity());
 		target.setShippedQuantity(source.getShippedQuantity());
-		target.setConsignment(source.getConsignment().getCode());
+		target.setConsignment(source.getConsignment() != null ? source.getConsignment().getCode() : StringUtils.EMPTY);
 		target.setPK(source.getPk().getLongValueAsString());
 		target.setShippedQuantity(source.getShippedQuantity());
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setGearrated(source.isGearRated());
-		target.setOrder_entry(source.getOrderEntry().getOrder().getCode() + "." + source.getOrderEntry().getEntryNumber());
 
 		final List<String> items = new ArrayList<>();
 		if (!source.getItems().isEmpty())
