@@ -1297,12 +1297,24 @@
                   value="de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentEntryWsDTO"/>
         <property name="levelMapping">
             <map>
+                <entry key="BASIC" value="shippedQuantity,quantity"/>
+                <entry key="DEFAULT" value="shippedQuantity,quantity"/>
+                <entry key="FULL" value="createdTS,modifiedTS,pK,consignment,gearrated,testingstatus,consignmententrystatus,billingcharges,options,items,serialproducts,mainItemNotScannedCount,subpartsNotScannedCount,order_entry,shippedQuantity,quantity,quantityDeclined,quantityPending,quantityShipped"/>
+            </map>
+        </property>
+    </bean>
+    
+<!--     <bean parent="fieldSetLevelMapping" id="consignmentEntryWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentEntryWsDTO"/>
+        <property name="levelMapping">
+            <map>
                 <entry key="BASIC" value="orderEntry,shippedQuantity,quantity"/>
                 <entry key="DEFAULT" value="orderEntry(DEFAULT),shippedQuantity,quantity"/>
                 <entry key="FULL" value="orderEntry(FULL),shippedQuantity,quantity"/>
             </map>
         </property>
-    </bean>
+    </bean> -->
 
     <bean parent="fieldSetLevelMapping" id="promotionOrderEntryConsumedWsDTOFieldSetLevelMapping">
         <property name="dtoClass"
@@ -1497,6 +1509,17 @@
             </map>
         </property>
     </bean>
+
+	<bean parent="fieldSetLevelMapping" id="consignmentEntryListWsDTOFieldSetLevelMapping">
+		<property name="dtoClass" value="com.bl.facades.consignment.dto.ConsignmentEntryListWsDTO" />
+		<property name="levelMapping">
+			<map>
+				<entry key="BASIC" value="consignmentEntries,pagination,sorts" />
+				<entry key="DEFAULT" value="consignmentEntries(DEFAULT),pagination(DEFAULT),sorts(DEFAULT)" />
+				<entry key="FULL" value="consignmentEntries(FULL),pagination(FULL),sorts(FULL)" />
+			</map>
+		</property>
+	</bean>
 
     <bean parent="fieldSetLevelMapping" id="saveCartResultWsDTOFieldSetLevelMapping">
         <property name="dtoClass"

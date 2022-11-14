@@ -827,6 +827,71 @@
 		<property name="actualReturnOrderDate" type="String" />
 	</bean>
 
+	<bean class="de.hybris.platform.commercefacades.order.data.ConsignmentEntryData">
+	    <property name="createdTS" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="typePkString" type="String" />
+		<property name="ownerPkString" type="String" />
+		<property name="pK" type="String" />
+		<property name="consignment" type="String" />
+		<property name="gearrated" type="java.lang.Boolean" />
+		<property name="testingstatus" type="String" />
+		<property name="consignmententrystatus" type="String" />
+		<property name="billingcharges" type="String" />
+		<property name="options" type="String" />
+		<property name="items" type="String" />
+		<property name="order_entry" type="String" />
+		<property name="serialproducts" type="String" />	
+		<property name="mainItemNotScannedCount" type="java.lang.Integer"/>
+		<property name="subpartsNotScannedCount" type="java.lang.Integer"/>	
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentEntryWsDTO">
+	    <property name="createdTS" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="typePkString" type="String" />
+		<property name="ownerPkString" type="String" />
+		<property name="pK" type="String" />
+		<property name="consignment" type="String" />
+		<property name="gearrated" type="java.lang.Boolean" />
+		<property name="testingstatus" type="String" />
+		<property name="consignmententrystatus" type="String" />
+		<property name="billingcharges" type="String" />
+		<property name="options" type="String" />
+		<property name="items" type="String" />
+		<property name="serialproducts" type="String" />
+		<property name="order_entry" type="String" />	
+		<property name="mainItemNotScannedCount" type="java.lang.Integer"/>
+		<property name="subpartsNotScannedCount" type="java.lang.Integer"/>		
+	</bean>
+  
+  	<bean class="com.bl.facades.consignment.data.ConsignmentEntryListData">
+		<property name="consignmentEntries"
+		          type="java.util.List&lt;de.hybris.platform.commercefacades.order.data.ConsignmentEntryData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.consignment.dto.ConsignmentEntryListWsDTO">
+        <description>Representation of an  ConsignmentEntryList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">ConsignmentEntryList</hint>
+        </hints>
+        <property name="consignmentEntries"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentEntryWsDTO>">
+            <description>List of order history items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
+
 </beans>
 
 

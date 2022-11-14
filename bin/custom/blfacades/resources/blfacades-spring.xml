@@ -836,6 +836,13 @@
 		<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
 		<property name="urlEncoderService" ref="urlEncoderService"/>
 	</bean>
-
 	
+ 	<alias name="defaultBlConsignmentEntryPopulator" alias="consignmentEntryPopulator"/>
+   	<bean id="defaultBlConsignmentEntryPopulator" class="com.bl.facades.populators.BlConsignmentEntryPopulator" parent="defaultConsignmentEntryPopulator" />
+	
+	<alias name="defaultBlConsignmentFacade" alias="blconsignmentFacade"/>
+	<bean id="defaultBlConsignmentFacade" class="com.bl.facades.consignment.impl.DefaultBLConsignmentFacade">
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+		<property name="consignmentEntryConverter" ref="consignmentEntryConverter"/>
+	</bean>
 </beans>

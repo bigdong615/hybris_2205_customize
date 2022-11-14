@@ -1086,6 +1086,7 @@
 	<alias name="defaultBlConsignmentDao" alias="blConsignmentDao"/>
 	<bean id="defaultBlConsignmentDao" class="com.bl.core.dao.warehouse.impl.DefaultBlConsignmentDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
 
 	<alias name="defaultBlReadyToShipOrderItemDao" alias="blReadyToShipOrderItemDao"/>
