@@ -66,7 +66,7 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		target.setSerialproducts(
 				source.getSerialProducts().stream().map(BlProductModel::getCode).collect(Collectors.joining(", ")));
 		target.setOptions(source.getOptions().stream().map(BlOptionsModel::getOptionId).collect(Collectors.joining(", ")));
-		target.setTestingstatus(source.getTestingStatus().getCode());
+		target.setTestingstatus(source.getTestingStatus() != null ? source.getTestingStatus().getCode() : StringUtils.EMPTY);
 		target.setQuantityDeclined(source.getQuantityDeclined());
 		target.setQuantityPending(source.getQuantityPending());
 		target.setQuantityShipped(source.getQuantityShipped());
