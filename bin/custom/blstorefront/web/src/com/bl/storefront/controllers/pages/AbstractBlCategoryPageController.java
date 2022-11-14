@@ -4,10 +4,6 @@
 package com.bl.storefront.controllers.pages;
 
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.utils.BlRentalDateUtils;
-import com.bl.facades.cart.BlCartFacade;
-import com.google.common.base.Splitter;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
@@ -28,16 +24,18 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SortData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.util.Config;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ui.Model;
@@ -45,6 +43,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.constants.BlFacadesConstants;
+import com.google.common.base.Splitter;
 
 /**
  * Since we have seperate controller for used gear and rental gear . Hence making as AbstractBlCategoryPageController
@@ -166,6 +170,10 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
             final String currentCartType = blCartFacade.identifyCartType();
             if(StringUtils.isNotEmpty(currentCartType)){
                 model.addAttribute(currentCartType,true);
+				 }
+				 else
+				 {
+					 model.addAttribute(BlFacadesConstants.NEW_GEAR_CART, true);
             }
         }
         else if(category.isRentalCategory()){
@@ -173,6 +181,10 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
             final String currentCartType = blCartFacade.identifyCartType();
             if(StringUtils.isNotEmpty(currentCartType)){
                 model.addAttribute(currentCartType,true);
+				 }
+				 else
+				 {
+					 model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
             }
         }
         else {
