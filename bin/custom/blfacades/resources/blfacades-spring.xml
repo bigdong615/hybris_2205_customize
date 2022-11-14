@@ -202,7 +202,11 @@
 		<property name="blProductService" ref="productService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
 		<property name="blDatePickerService" ref="blDatePickerService" />
+		<property name="blSearchResultDomoProductPopulator" ref="blSearchResultDomoProductPopulator"/>
+		<property name="sessionService" ref="sessionService" />
 	</bean>
+	
+	<bean id="blSearchResultDomoProductPopulator" class="com.bl.facades.populators.BlSearchResultDomoProductPopulator"/>
 
 
 	<alias name="blSearchResultVariantProductPopulator" alias="blSearchResultVariantProductPopulator"/>
