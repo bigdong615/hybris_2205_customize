@@ -47,7 +47,7 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		final List<String> items = new ArrayList<>();
 		if (!source.getItems().isEmpty())
 		{
-			source.getItems().forEach((k, v) -> items.add((k + ":" + v.getCode())));
+			source.getItems().forEach((k, v) -> items.add((k + ":" + v != null ? v.getCode() : StringUtils.EMPTY)));
 		}
 		target.setItems(StringUtils.join(items, ','));
 		final List<String> billingcharges = new ArrayList<>();
@@ -59,7 +59,8 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		final List<String> consignmententrystatus = new ArrayList<>();
 		if (!source.getConsignmentEntryStatus().isEmpty())
 		{
-			source.getConsignmentEntryStatus().forEach((k, v) -> consignmententrystatus.add((k + ":" + v.getCode())));
+			source.getConsignmentEntryStatus()
+					.forEach((k, v) -> consignmententrystatus.add((k + ":" + v != null ? v.getCode() : StringUtils.EMPTY)));
 		}
 		target.setConsignmententrystatus(StringUtils.join(consignmententrystatus, ','));
 
