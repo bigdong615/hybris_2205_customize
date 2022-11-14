@@ -13,17 +13,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
+import com.bl.logging.BlLogger;
 
 
 public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 {
+	private static final Logger LOG = Logger.getLogger(BlConsignmentEntryPopulator.class);
 
 	@Override
 	public void populate(final ConsignmentEntryModel source, final ConsignmentEntryData target) throws ConversionException
 	{
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "ConsignmentEntryModel : {} ", source.getPk());
+
 		super.populate(source, target);
 		target.setConsignment(source.getConsignment().getCode());
 		target.setPK(source.getPk().getLongValueAsString());
