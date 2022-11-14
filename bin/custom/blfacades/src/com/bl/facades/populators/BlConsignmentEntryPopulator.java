@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.logging.BlLogger;
@@ -29,8 +30,12 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 	public void populate(final ConsignmentEntryModel source, final ConsignmentEntryData target) throws ConversionException
 	{
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "ConsignmentEntryModel : {} ", source.getPk());
-
-		super.populate(source, target);
+		if (source.getOrderEntry() != null)
+		{
+			super.populate(source, target);
+		}
+		target.setQuantity(source.getQuantity());
+		target.setShippedQuantity(source.getShippedQuantity());
 		target.setConsignment(source.getConsignment().getCode());
 		target.setPK(source.getPk().getLongValueAsString());
 		target.setShippedQuantity(source.getShippedQuantity());
@@ -48,7 +53,7 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		final List<String> billingcharges = new ArrayList<>();
 		if (!source.getBillingCharges().isEmpty())
 		{
-			source.getBillingCharges().forEach((k, v) -> billingcharges.add((k + ":" + v.get(0).getCode())));
+			source.getBillingCharges().forEach((k, v) -> billingcharges.add((k + ":" + getCode(v))));
 		}
 		target.setBillingcharges(StringUtils.join(billingcharges, ','));
 		final List<String> consignmententrystatus = new ArrayList<>();
@@ -68,6 +73,11 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		target.setMainItemNotScannedCount(source.getMainItemNotScannedCount());
 		target.setSubpartsNotScannedCount(source.getSubpartsNotScannedCount());
 
+	}
+
+	private String getCode(final List<BlItemsBillingChargeModel> v)
+	{
+		return v.isEmpty() ? StringUtils.EMPTY : v.get(0).getCode();
 	}
 
 }
