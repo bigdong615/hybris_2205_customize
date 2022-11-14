@@ -1,25 +1,5 @@
 package com.bl.facades.cart.impl;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.data.StockResult;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.enums.BlackoutDateTypeEnum;
-import com.bl.core.enums.ProductTypeEnum;
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlOptionsModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.product.service.BlProductService;
-import com.bl.core.services.cart.BlCartService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.core.utils.BlUpdateStagedProductUtils;
-import com.bl.facades.cart.BlCartFacade;
-import com.bl.facades.constants.BlFacadesConstants;
-import com.bl.facades.product.data.AvailabilityMessage;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.logging.BlLogger;
-import com.bl.storefront.forms.GiftCardPurchaseForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.contents.components.CMSLinkComponentModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSComponentService;
@@ -40,6 +20,7 @@ import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.store.services.BaseStoreService;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,13 +32,36 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.data.StockResult;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlOptionsModel;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.core.utils.BlUpdateStagedProductUtils;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.product.data.AvailabilityMessage;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
 
 
 /**
@@ -69,11 +73,11 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
   private static final Logger LOGGER = Logger.getLogger(DefaultBlCartFacade.class);
   private BlCartService blCartService;
-  
+
   private BlDatePickerService blDatePickerService;
-  
+
   private BaseStoreService baseStoreService;
-  
+
   private BlCommerceStockService blCommerceStockService;
   private CMSComponentService cmsComponentService;
 
@@ -91,7 +95,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   public void removeCartEntries() {
     getBlCartService().clearCartEntries(null);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -100,7 +104,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   {
 	  getBlCartService().resetCartCalculationFlag();
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -127,7 +131,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	{
 		getBlCartService().updateCartEntrySelectedOption(entryNumber, optionCode);
 	}
-  
+
   /**
    * {@inheritDoc}
    */
@@ -145,15 +149,16 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 * @return CartModificationData
 	 * @throws CommerceCartModificationException the exception
 	 */
-  public CartModificationData addToCart(final String productCode, final long quantity,
+  @Override
+public CartModificationData addToCart(final String productCode, final long quantity,
       final String serialCode)
       throws CommerceCartModificationException {
 
     BlSerialProductModel blSerialProductModel = null;
-    BlProductModel blProductModel = (BlProductModel) getProductService()
+    final BlProductModel blProductModel = (BlProductModel) getProductService()
         .getProductForCode(productCode);
 
-    CartModel cartModel = blCartService.getSessionCart();
+    final CartModel cartModel = blCartService.getSessionCart();
     final CommerceCartParameter parameter = new CommerceCartParameter();
 
     try {
@@ -215,7 +220,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	  	if(cartModel.getIsRentalOrder() &&CollectionUtils.isNotEmpty(orderEntry.getOptions())){
 				final BlOptionsModel optionsModel = orderEntry.getOptions().iterator().next();
 				final Integer quantity = Integer.parseInt(orderEntry.getQuantity().toString());
-				List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
+				final List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
 				for(int i = 0 ; i < quantity ; i++){
 					selectOptionList.add(optionsModel);
 				}
@@ -244,7 +249,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			final GiftCardPurchaseForm giftCardForm) throws CommerceCartModificationException
 	{
 		final BlSerialProductModel blSerialProductModel = null;
-		
+
 		final CartModel cartModel = blCartService.getSessionCart();
 		// Removing previous cart model to ensure if the card is not used earlier
 		getModelService().remove(cartModel);
@@ -255,15 +260,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(productCode);
 			//For Gift card product
 			if(Objects.nonNull(blProductModel) && Objects.nonNull(giftCardCartModel))
-			{	
+			{
 			parameter.setProduct(blProductModel);
 			parameter.setIsNoDamageWaiverSelected(Boolean.TRUE);
 			parameter.setIsDamageWaiverProSelected(Boolean.FALSE);
 			parameter.setIsDamageWaiverSelected(Boolean.FALSE);
 			parameter.setUnit(blProductModel.getUnit());
-			//parameter.setIsFromRentAgainPage(Boolean.TRUE);//reusing this attribute to set damage waiver flags
-		   parameter.setGiftCardAmount(Double.valueOf(giftCardForm.getAmount())); 
-		   parameter.setRecipientEmail(giftCardForm.getEmail()); 
+			parameter.setIsFromRentAgainPage(Boolean.TRUE);//reusing this attribute to set damage waiver flags
+		   parameter.setGiftCardAmount(Double.valueOf(giftCardForm.getAmount()));
+		   parameter.setRecipientEmail(giftCardForm.getEmail());
 		   parameter.setRecipientName(giftCardForm.getName());
 		   parameter.setRecipientMessage(giftCardForm.getMessage());
 			parameter.setCreateNewEntry(false);
@@ -272,7 +277,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			parameter.setQuantity(quantity);
 			}
 		}
-		catch (ModelNotFoundException e) 
+		catch (final ModelNotFoundException e)
 		{
          BlLogger.logMessage(LOGGER, Level.ERROR,"Add to cart entry with product not found.",e);
 		}
@@ -324,10 +329,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   public boolean isRentalProductAddedToCartInUsedGearCart(final String productCode, final String serialCode) {
 
     boolean isAddToCartNotAllowed = false;
-    CartModel cartModel = blCartService.getSessionCart();
-    BlProductModel blProductModel = (BlProductModel) getProductService()
+    final CartModel cartModel = blCartService.getSessionCart();
+    final BlProductModel blProductModel = (BlProductModel) getProductService()
         .getProductForCode(productCode);
-    BlSerialProductModel blSerialProductModel = getBlSerialProductModel(serialCode, blProductModel);
+    final BlSerialProductModel blSerialProductModel = getBlSerialProductModel(serialCode, blProductModel);
 
 		if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
 
@@ -359,7 +364,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	public boolean isNewGearProductAllowToAdd(final String productCode, final String serialCode) {
 
 		final CartModel cartModel = blCartService.getSessionCart();
-    BlProductModel blProductModel = (BlProductModel) getProductService()
+    final BlProductModel blProductModel = (BlProductModel) getProductService()
         .getProductForCode(productCode);
     if( BooleanUtils.isTrue(blProductModel.getRetailGear())) {
       if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
@@ -373,9 +378,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 * {@inheritDoc}
 	 */
 	@Override
-  
+
   public boolean cartHasRentalOrUsedGearProducts(){
-		CartModel cartModel = blCartService.getSessionCart();
+		final CartModel cartModel = blCartService.getSessionCart();
 		return (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) ? Boolean.TRUE : Boolean.FALSE;
 	}
 
@@ -384,8 +389,8 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 */
 	@Override
 	public boolean cartHasGiftCard(final String productCode){
-		CartModel cartModel = blCartService.getSessionCart();
-		
+		final CartModel cartModel = blCartService.getSessionCart();
+
       if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
 	   	final Optional<AbstractOrderEntryModel> giftCardEntry = cartModel.getEntries().stream().findFirst();
 	   	if(giftCardEntry.isPresent()){
@@ -394,7 +399,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		}
 	   return false;
 	}
-	
+
 
 	/**
 	 * {@inheritDoc}
@@ -639,7 +644,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
 		return getCartModificationConverter().convert(modification);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -697,6 +702,8 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 */
 	@Override
 	public String identifyCartType() {
+		if (blCartService.hasSessionCart())
+		{
 		final CartModel cartModel = blCartService.getSessionCart();
 		if (CollectionUtils
 				.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())) {
@@ -712,6 +719,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 				.isEmpty(cartModel.getEntries())) {
 			return BlFacadesConstants.RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED;
 		}
+	}
 		return null;
 	}
 
@@ -803,7 +811,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 */
 	@Override
 	public void removePoNumber() {
-		CartModel cartModel = blCartService.getSessionCart();
+		final CartModel cartModel = blCartService.getSessionCart();
 		if (cartModel != null) {
 			try {
 				cartModel.setPoNumber(null);
@@ -823,10 +831,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
 	@Override
 	public void setCommerceCartParameterConverter(
-			Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
+			final Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
 		this.commerceCartParameterConverter = commerceCartParameterConverter;
 	}
-	
+
 	/**
     * @inheritDoc
     */
@@ -841,7 +849,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
    *
    * @return the bl cart service
    */
-  public BlCartService getBlCartService() 
+  public BlCartService getBlCartService()
   {
     return blCartService;
   }
@@ -851,7 +859,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
    *
    * @param blCartService the new bl cart service
    */
-  public void setBlCartService(final BlCartService blCartService) 
+  public void setBlCartService(final BlCartService blCartService)
   {
     this.blCartService = blCartService;
   }
@@ -867,7 +875,7 @@ public BlDatePickerService getBlDatePickerService()
 /**
  * @param blDatePickerService the blDatePickerService to set
  */
-public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+public void setBlDatePickerService(final BlDatePickerService blDatePickerService)
 {
 	this.blDatePickerService = blDatePickerService;
 }
@@ -883,7 +891,7 @@ public BaseStoreService getBaseStoreService()
 /**
  * @param baseStoreService the baseStoreService to set
  */
-public void setBaseStoreService(BaseStoreService baseStoreService)
+public void setBaseStoreService(final BaseStoreService baseStoreService)
 {
 	this.baseStoreService = baseStoreService;
 }
@@ -899,7 +907,7 @@ public BlCommerceStockService getBlCommerceStockService()
 /**
  * @param blCommerceStockService the blCommerceStockService to set
  */
- public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
+ public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService)
 	{
 		this.blCommerceStockService = blCommerceStockService;
 	}
@@ -909,7 +917,7 @@ public BlCommerceStockService getBlCommerceStockService()
 	}
 
 	public void setCmsComponentService(
-			CMSComponentService cmsComponentService) {
+			final CMSComponentService cmsComponentService) {
 		this.cmsComponentService = cmsComponentService;
 	}
 

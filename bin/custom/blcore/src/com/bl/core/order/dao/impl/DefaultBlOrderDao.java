@@ -163,7 +163,8 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 					+ "{o:" + AbstractOrderModel.INTERNALTRANSFERORDER + "} = ?internalTransferOrder" ;
 
 	private static final String RETURN_ORDERS_FEED_QUERY = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE
-			+ " AS o} WHERE {o:" + OrderModel.RENTALENDDATE + "} BETWEEN ?returnOrderBefore AND ?returnOrderAfter and {o:status} IN ({{select {se:pk} from {OrderStatus as se} where {se:code} IN (?orderStatuses) }})";
+			+ " AS o} WHERE {o:" + OrderModel.RENTALENDDATE
+			+ "} BETWEEN ?returnOrderBefore AND ?returnOrderAfter and {o:status} NOT IN ({{select {se:pk} from {OrderStatus as se} where {se:code} IN (?orderStatuses)}})";
 
 	/**
  	* {@inheritDoc}
