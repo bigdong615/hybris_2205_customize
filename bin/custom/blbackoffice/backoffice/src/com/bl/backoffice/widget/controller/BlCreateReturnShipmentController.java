@@ -3,6 +3,7 @@ package com.bl.backoffice.widget.controller;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.io.IOException;
@@ -61,6 +62,9 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	
 	@Resource(name = "blShipmentCreationService")
 	private DefaultBLShipmentCreationService blShipmentCreationService;
+
+	@Resource(name = "modelService")
+	private ModelService modelService;
 
 	private ListModelList<String> warehouseList = new ListModelList<>();
 
@@ -203,6 +207,13 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 			{
 				errorPackages.add(packagingInfoModel.getPackageId());
 			}
+			if(BooleanUtils.isTrue(isLabelGenerateSuccess)){
+				packagingInfoModel.setInboundWarehouse(stateWarehouse);
+				getModelService().save(packagingInfoModel);
+				getModelService().refresh(packagingInfoModel);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "InboundWarehouse {} updated for package {}", stateWarehouse.getCode(),packagingInfoModel);
+
+			}
 		}
 		return errorPackages;
 	}
@@ -270,5 +281,12 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		this.blShipmentCreationService = blShipmentCreationService;
 	}
 
+	public ModelService getModelService() {
+		return modelService;
+	}
+
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
+	}
 }
 
