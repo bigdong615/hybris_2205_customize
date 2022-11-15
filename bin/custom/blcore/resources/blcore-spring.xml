@@ -2078,6 +2078,14 @@
     </bean>
 
 	<bean id="blSumOfGearValueOnOrderHandler" class="com.bl.core.model.handler.BLSumOfGearValueOnOrderHandler"/>
-	
+
+	<!-- Interceptor for PackageInfoModel to perform custom logic before saving the model -->
+	<alias name="blPackagingInfoPrepareInterceptor" alias="blPackagingInfoPrepareInterceptor"/>
+	<bean id="blPackagingInfoPrepareInterceptor" class="com.bl.core.model.interceptor.BlPackagingInfoPrepareInterceptor"/>
+
+	<bean id="blPackagingInfoPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blPackagingInfoPrepareInterceptor"/>
+		<property name="typeCode" value="PackagingInfo"/>
+	</bean>
 
 </beans>
