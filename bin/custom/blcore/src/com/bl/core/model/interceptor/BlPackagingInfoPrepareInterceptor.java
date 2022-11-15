@@ -30,11 +30,11 @@ public class BlPackagingInfoPrepareInterceptor implements PrepareInterceptor<Pac
             packagingInfoModel.getSerialProducts().forEach(serialProduct ->{
                 if(serialProduct instanceof BlSerialProductModel && Objects.nonNull(packagingInfoModel.getInboundWarehouse())){
                     final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serialProduct);
-                    if(!StringUtils.equalsIgnoreCase(serialProductModel.getWarehouseLocation().getCode(), packagingInfoModel.getInboundWarehouse().getCode())){
+                    if( Objects.nonNull(serialProductModel.getWarehouseLocation()) && !StringUtils.equalsIgnoreCase(serialProductModel.getWarehouseLocation().getCode(), packagingInfoModel.getInboundWarehouse().getCode())){
                         serialProductModel.setWarehouseLocation(packagingInfoModel.getInboundWarehouse());
                         ctx.getModelService().save(serialProductModel);
                         ctx.getModelService().refresh(serialProductModel);
-                        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Warehouse Location updated to {} for serial {}",
+                        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Warehouse Location updated to {} for serial {}",
                                 serialProductModel.getWarehouseLocation().getCode(), serialProductModel.getCode());
                     }
                 }
