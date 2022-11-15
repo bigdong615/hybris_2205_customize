@@ -39,8 +39,6 @@
                               </c:forEach>
                               <div class="cart-actions">
                                  <a href="${usedGearPlpUrl}" class="gray80"><spring:theme code="text.usedGear.cart.back.plp" /></a>
-                                 <a href="${cartDeliveryOrPickupAction}" class="btn btn-sm btn-primary float-end">
-                                 <spring:theme code="general.continue.button" /></a>
                               </div>
                               
                           </div>
