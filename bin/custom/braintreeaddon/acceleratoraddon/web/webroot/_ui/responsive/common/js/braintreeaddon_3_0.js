@@ -596,6 +596,7 @@ function allFieldValidation(errorMessage){
 	
 	 var validationDiv = $('<div class="notification notification-error mb-4" />').text(errorMessage);
 	  $('#allFieldvalidationMessage').append(validationDiv);
+	  document.getElementById('allFieldvalidationMessage').scrollIntoView(true);
 }
 
 
@@ -1190,6 +1191,7 @@ $('#submit_silentOrderPostForm').click(function () {
 		creditCardValidation(ACC.ccError.cardMonth);
 		creditCardValidation(ACC.ccError.cardYear);
 		creditCardValidation(ACC.ccError.cardCVV);
+		document.getElementById('validationMessage').scrollIntoView(true);
 	}
 	
 	if(ccEnable == true && $('#savedAddresses').length > 0 && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)

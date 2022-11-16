@@ -335,6 +335,7 @@ $('#cart-continue').on("click", function (e) {
 				window.location.href = url;
 			} else if (response == 'rentalDateNotSelected') {
 				$('#cart-warning').css('display', 'block');
+				document.getElementById('cart-warning').scrollIntoView(true);
 			}else{
 			  window.location.href = ACC.config.encodedContextPath + "/cart";
 			}
