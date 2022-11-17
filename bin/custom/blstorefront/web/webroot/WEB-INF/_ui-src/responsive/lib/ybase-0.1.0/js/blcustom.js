@@ -16,6 +16,13 @@ jQuery(document).ready(function () {
             {
             	$('#editWarning').modal("show");
             }
+
+            var divElement = document.getElementById('apply-voucher-error');
+             if ( (divElement != null) && (divElement != undefined) &&  (divElement != 'undefined')) {
+                divElement.scrollIntoView(true);
+             }
+
+
 });
 
 //BL-467 clear cart functionality from cart page.
@@ -335,6 +342,7 @@ $('#cart-continue').on("click", function (e) {
 				window.location.href = url;
 			} else if (response == 'rentalDateNotSelected') {
 				$('#cart-warning').css('display', 'block');
+				document.getElementById('cart-warning').scrollIntoView(true);
 			}else{
 			  window.location.href = ACC.config.encodedContextPath + "/cart";
 			}

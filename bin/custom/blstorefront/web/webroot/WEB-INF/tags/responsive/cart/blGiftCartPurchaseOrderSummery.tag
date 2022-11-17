@@ -38,4 +38,17 @@
 			</tr>
 		</tbody>
 	</table>
-</div>
+	<div class="cart-actions">
+     <c:choose>
+        <c:when test="${cmsPage.uid eq 'multiStepCheckoutSummaryPage'}">
+           <a href="javascript:void(0)" class="btn btn-block btn-primary mt-4" id="submit_silentOrderPostForm">Continue</a>
+           <a href="#" class="btn btn-block btn-primary mt-4" id="submit_silentOrderSavedForm">Continue</a>
+        </c:when>
+        <c:otherwise>
+           <a href="#" class="btn btn-block btn-primary mt-4" id="submitCard">
+              <spring:theme code="general.continue.button" />
+           </a>
+        </c:otherwise>
+     </c:choose>
+  </div>
+	</div>

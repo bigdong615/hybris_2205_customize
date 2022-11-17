@@ -72,18 +72,6 @@
 	           						    </c:if>      
                               <div class="cart-actions">
                                   <a href="${homePageUrl}" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
-                                  <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
-                                   <a class="btn btn-sm btn-primary float-end js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#"
-                                   data-bs-toggle="modal" data-bs-target="#signIn">
-                                    <spring:theme code="general.continue.button" />
-                                    <input type="hidden" value="${pageType}" class="js-page-type"/>
-                                   </a>
-                                  </sec:authorize>
-                                  <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-                                  <a href="" class="btn btn-sm btn-primary float-end" id="cart-continue">
-                                    <spring:theme code="general.continue.button" />
-                                   </a>
-                                  </sec:authorize>
 
                               </div>
 								
@@ -93,7 +81,7 @@
                           <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                               <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
                              <c:if test ="${not empty fn:escapeXml(errorMsg)}">
-                              <div class="notification notification-error js-promo-error">
+                              <div id="apply-voucher-error" class="notification notification-error js-promo-error">
                                       ${fn:escapeXml(errorMsg)}
                                </div>
                              </c:if>

@@ -45,10 +45,6 @@
 							<cart:blGiftCardPurchaseCartItem entry="${entry}"
 								cartData="${cartData}" />
 						</c:forEach>
-						  <div class="cart-actions">
-                                  <a href="#" class="btn btn-sm btn-primary float-end" id="submitCard">
-                                 <spring:theme code="general.continue.button" /></a>
-                              </div>
 
 					</div>
 					<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">

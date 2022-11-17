@@ -596,6 +596,7 @@ function allFieldValidation(errorMessage){
 	
 	 var validationDiv = $('<div class="notification notification-error mb-4" />').text(errorMessage);
 	  $('#allFieldvalidationMessage').append(validationDiv);
+	  document.getElementById('allFieldvalidationMessage').scrollIntoView(true);
 }
 
 
@@ -1007,6 +1008,8 @@ function createHostedFields(clientInstance) {
 							submitForm.submit();
 						}
 					});
+				}else{
+         document.getElementById('validationMessage').scrollIntoView(true);
 				}
 			  }
             });
@@ -1190,6 +1193,7 @@ $('#submit_silentOrderPostForm').click(function () {
 		creditCardValidation(ACC.ccError.cardMonth);
 		creditCardValidation(ACC.ccError.cardYear);
 		creditCardValidation(ACC.ccError.cardCVV);
+		document.getElementById('validationMessage').scrollIntoView(true);
 	}
 	
 	if(ccEnable == true && $('#savedAddresses').length > 0 && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
@@ -1290,6 +1294,7 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 						$('#validationMessage').append(validationDiv);
 			$('.page-loader-new-layout').hide();
+			document.getElementById('validationMessage').scrollIntoView(true);
 		}
 		else
 		{
