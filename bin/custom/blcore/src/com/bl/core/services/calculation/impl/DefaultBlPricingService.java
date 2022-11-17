@@ -2,14 +2,6 @@ package com.bl.core.services.calculation.impl;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.DurationEnum;
-import com.bl.core.enums.PricingTierEnum;
-import com.bl.core.enums.ProductTypeEnum;
-import com.bl.core.model.BlPricingLogicModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.services.calculation.BlPricingService;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PDTRowModel;
 import de.hybris.platform.europe1.model.PriceRowModel;
@@ -18,6 +10,7 @@ import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
@@ -26,9 +19,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.DurationEnum;
+import com.bl.core.enums.PricingTierEnum;
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.model.BlPricingLogicModel;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.services.calculation.BlPricingService;
+import com.bl.logging.BlLogger;
 
 /**
  * This class has implementation of methods related to duration prices
@@ -52,7 +55,7 @@ public class DefaultBlPricingService implements BlPricingService {
   @Override
   public PriceRowModel createOrUpdateSevenDayPrice(final BlProductModel blProductModel,
       final Double retailPrice, final boolean isNew) {
-    ProductTypeEnum productType = blProductModel.getProductType();
+    final ProductTypeEnum productType = blProductModel.getProductType();
     validateParameterNotNull(productType, "ProductType must not be null");
     final Map<String, Object> queryParams = Collections
         .singletonMap(BlPricingLogicModel.PRODUCTTYPE, productType);
@@ -93,7 +96,7 @@ public class DefaultBlPricingService implements BlPricingService {
    */
   private PriceRowModel updateSevenDayPrice(final BlProductModel blProductModel,
       final Double price) {
-    PriceRowModel priceRow = getPriceRowByDuration(BlCoreConstants.SEVEN_DAY_PRICE, blProductModel);
+    final PriceRowModel priceRow = getPriceRowByDuration(BlCoreConstants.SEVEN_DAY_PRICE, blProductModel);
     if (priceRow != null) {
       priceRow.setPrice(price);
       getModelService().save(priceRow);
@@ -135,7 +138,7 @@ public class DefaultBlPricingService implements BlPricingService {
   private BlPricingLogicModel getTierPricing(final List<BlPricingLogicModel> blPricingLogicModels,
       final PricingTierEnum tierEnum) {
 
-    Optional<BlPricingLogicModel> blpricing = blPricingLogicModels.stream()
+    final Optional<BlPricingLogicModel> blpricing = blPricingLogicModels.stream()
         .filter(blPricingLogicModel -> Objects.equals(blPricingLogicModel.getTier(), tierEnum))
         .findAny();
     return blpricing.orElse(null);
@@ -153,7 +156,7 @@ public class DefaultBlPricingService implements BlPricingService {
    */
   private PriceRowModel createNewDurationPrice(final BlProductModel blProductModel,
       final Double price, final String duration) {
-    PriceRowModel priceRowModel = getModelService().create(PriceRowModel.class);
+    final PriceRowModel priceRowModel = getModelService().create(PriceRowModel.class);
     priceRowModel.setProduct(blProductModel);
     priceRowModel.setPrice(price);
     priceRowModel.setCurrency(getCommonI18NService().getCurrency(BlCoreConstants.USD));
@@ -171,12 +174,12 @@ public class DefaultBlPricingService implements BlPricingService {
       final BlProductModel blProductModel) {
     validateParameterNotNull(duration, "Duration must not be null");
     validateParameterNotNull(blProductModel, "BlProduct must not be null");
-    DurationEnum durationEnum = getEnumerationService()
+    final DurationEnum durationEnum = getEnumerationService()
         .getEnumerationValue(DurationEnum.class, duration);
     final Map<String, Object> queryParams = new HashMap<>();
     queryParams.put(PriceRowModel.DURATION, durationEnum);
     queryParams.put(PDTRowModel.PRODUCT, blProductModel);
-    List<PriceRowModel> resultSet = getPriceRowGenericDao().find(queryParams);
+    final List<PriceRowModel> resultSet = getPriceRowGenericDao().find(queryParams);
     return CollectionUtils.isNotEmpty(resultSet) ? resultSet.get(0) : null;
   }
 
@@ -200,22 +203,75 @@ public class DefaultBlPricingService implements BlPricingService {
    */
   private int getPricePercentageByRating(final Double conditionRatingOverallScore) {
     int pricePercent = 0;
-    if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_HIGH) {
-      pricePercent = Integer
-          .parseInt(Config.getParameter("conditionrating.abovefour.price.percentage"));
-    } else if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_MEDIUM
-   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_HIGH) {
-      pricePercent = Integer
-          .parseInt(Config.getParameter("conditionrating.abovethree.price.percentage"));
-    } else if (conditionRatingOverallScore >= BlCoreConstants.CONDITION_RATING_LOW
-   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_MEDIUM) {
-      pricePercent = Integer
-          .parseInt(Config.getParameter("conditionrating.belowthree.price.percentage"));
-    } else if (conditionRatingOverallScore < BlCoreConstants.CONDITION_RATING_LOW
-   		 && conditionRatingOverallScore > 0) {
-      pricePercent = Integer
-          .parseInt(Config.getParameter("conditionrating.belowtwo.price.percentage"));
-    }
+	 //    if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_HIGH) {
+	 //      pricePercent = Integer
+	 //          .parseInt(Config.getParameter("conditionrating.abovefour.price.percentage"));
+	 //    } else if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_MEDIUM
+	 //   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_HIGH) {
+	 //      pricePercent = Integer
+	 //          .parseInt(Config.getParameter("conditionrating.abovethree.price.percentage"));
+	 //    } else if (conditionRatingOverallScore >= BlCoreConstants.CONDITION_RATING_LOW
+	 //   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_MEDIUM) {
+	 //      pricePercent = Integer
+	 //          .parseInt(Config.getParameter("conditionrating.belowthree.price.percentage"));
+	 //    } else if (conditionRatingOverallScore < BlCoreConstants.CONDITION_RATING_LOW
+	 //   		 && conditionRatingOverallScore > 0) {
+	 //      pricePercent = Integer
+	 //          .parseInt(Config.getParameter("conditionrating.belowtwo.price.percentage"));
+	 //    }
+
+
+	 if (conditionRatingOverallScore == BlCoreConstants.CONDITION_RATING_TEN
+			 || conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_NINE)
+	 {
+		 pricePercent = Integer.parseInt(Config.getParameter("conditionrating.ten.price.percentage"));
+	 }
+	 else if (conditionRatingOverallScore == BlCoreConstants.CONDITION_RATING_NINE
+			 || conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_EIGHT)
+	 {
+		 pricePercent = Integer.parseInt(Config.getParameter("conditionrating.nine.price.percentage"));
+	 }
+	 else if (conditionRatingOverallScore == BlCoreConstants.CONDITION_RATING_EIGHT
+			 || conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_SEVEN)
+	 {
+		 pricePercent = Integer.parseInt(Config.getParameter("conditionrating.eight.price.percentage"));
+	 }
+	 else if (conditionRatingOverallScore == BlCoreConstants.CONDITION_RATING_SEVEN
+			 || conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_SIX)
+	 {
+		 pricePercent = Integer.parseInt(Config.getParameter("conditionrating.seven.price.percentage"));
+	 }
+	 else if (conditionRatingOverallScore == BlCoreConstants.CONDITION_RATING_SIX
+			 || conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_FIVE)
+	 {
+		 pricePercent = Integer.parseInt(Config.getParameter("conditionrating.six.price.percentage"));
+	 }
+	 else if (conditionRatingOverallScore == BlCoreConstants.CONDITION_RATING_FIVE
+			 || conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_FOUR)
+	 {
+		 pricePercent = Integer.parseInt(Config.getParameter("conditionrating.five.price.percentage"));
+	 }
+	 else if (conditionRatingOverallScore == BlCoreConstants.CONDITION_RATING_FOUR
+			 || conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_THREE)
+	 {
+		 pricePercent = Integer.parseInt(Config.getParameter("conditionrating.four.price.percentage"));
+	 }
+	 else if (conditionRatingOverallScore == BlCoreConstants.CONDITION_RATING_THREE
+			 || conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_TWO)
+	 {
+		 pricePercent = Integer.parseInt(Config.getParameter("conditionrating.three.price.percentage"));
+	 }
+	 else if (conditionRatingOverallScore == BlCoreConstants.CONDITION_RATING_TWO
+			 || conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_ONE)
+	 {
+		 pricePercent = Integer.parseInt(Config.getParameter("conditionrating.two.price.percentage"));
+	 }
+	 else if (conditionRatingOverallScore == BlCoreConstants.CONDITION_RATING_ONE
+			 || conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_ZERO)
+	 {
+		 pricePercent = Integer.parseInt(Config.getParameter("conditionrating.one.price.percentage"));
+	 }
+
     return pricePercent;
   }
 
@@ -256,7 +312,7 @@ public class DefaultBlPricingService implements BlPricingService {
     return modelService;
   }
 
-  public void setModelService(ModelService modelService) {
+  public void setModelService(final ModelService modelService) {
     this.modelService = modelService;
   }
 
@@ -264,7 +320,7 @@ public class DefaultBlPricingService implements BlPricingService {
     return enumerationService;
   }
 
-  public void setEnumerationService(EnumerationService enumerationService) {
+  public void setEnumerationService(final EnumerationService enumerationService) {
     this.enumerationService = enumerationService;
   }
 
@@ -272,7 +328,7 @@ public class DefaultBlPricingService implements BlPricingService {
     return unitService;
   }
 
-  public void setUnitService(UnitService unitService) {
+  public void setUnitService(final UnitService unitService) {
     this.unitService = unitService;
   }
 
@@ -280,7 +336,7 @@ public class DefaultBlPricingService implements BlPricingService {
     return commonI18NService;
   }
 
-  public void setCommonI18NService(CommonI18NService commonI18NService) {
+  public void setCommonI18NService(final CommonI18NService commonI18NService) {
     this.commonI18NService = commonI18NService;
   }
 
@@ -289,7 +345,7 @@ public class DefaultBlPricingService implements BlPricingService {
   }
 
   public void setBlPricingGenericDao(
-      GenericDao<BlPricingLogicModel> blPricingGenericDao) {
+      final GenericDao<BlPricingLogicModel> blPricingGenericDao) {
     this.blPricingGenericDao = blPricingGenericDao;
   }
 
@@ -298,7 +354,7 @@ public class DefaultBlPricingService implements BlPricingService {
   }
 
   public void setPriceRowGenericDao(
-      GenericDao<PriceRowModel> priceRowGenericDao) {
+      final GenericDao<PriceRowModel> priceRowGenericDao) {
     this.priceRowGenericDao = priceRowGenericDao;
   }
 

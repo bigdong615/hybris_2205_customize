@@ -157,6 +157,19 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int CONDITION_RATING_MEDIUM = 8;
 	public static final int CONDITION_RATING_LOW = 7;
 
+	public static final int CONDITION_RATING_TEN = 10;
+	public static final int CONDITION_RATING_NINE = 9;
+	public static final int CONDITION_RATING_EIGHT = 8;
+	public static final int CONDITION_RATING_SEVEN = 7;
+	public static final int CONDITION_RATING_SIX = 6;
+	public static final int CONDITION_RATING_FIVE = 5;
+	public static final int CONDITION_RATING_FOUR = 4;
+	public static final int CONDITION_RATING_THREE = 3;
+	public static final int CONDITION_RATING_TWO = 2;
+	public static final int CONDITION_RATING_ONE = 1;
+	public static final int CONDITION_RATING_ZERO = 0;
+
+
 	public static final String PRICE_ASC = "price-asc";
 	public static final String PRICE_DESC = "price-desc";
 	public static final String MIN_SERIAL_PRICE = "minSerialfinalSalePrice";
@@ -640,22 +653,22 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String IS_REPLACEMENT_ORDER = "isReplacementOrder";
 	public static final String IS_EXTENDED_ORDER = "isExtendedOrder";
 	public static final String INTERNAL_TRANSFER_ORDER = "internalTransferOrder";
-	
+
 	public static final String ESP_GEAR_GUARD = "GEAR GUARD"; // BL-2130
 	public static final String ESP_GEAR_GUARD_PRO = "GEAR GUARD PRO"; // BL-2130
-	
+
 	public static final String MAIN_ITEM_SCAN_REMAINING_ERROR_MSG = "Order cannot be shipped. One or more items has not been included.";
 	public static final String SUBPART_SCAN_REMAINING_ERROR_MSG_1 = "Do you want to proceed. The subparts ";
 	public static final String SUBPART_SCAN_REMAINING_ERROR_MSG_2 = " are not included.";
-	public static final String ERROR_TITLE = "Error: ";	
-	public static final String COMMA_SEPRATOR = " ,";	
-	
+	public static final String ERROR_TITLE = "Error: ";
+	public static final String COMMA_SEPRATOR = " ,";
+
 	public static final String SOCKET_OUT_CONTEXT = "blPrintLabelContext";
 	public static final String PACKAGE_LABELS = "_Package_Labels_";
 	public static final String ZIP_FILE_EXTENSION = ".zip";
 	public static final String BL_INITIAL = "BL_";
 	public static final String ZIP_MIME_TYPE = "application/zip, application/octet-stream";
-	
+
 	public static final String DELIVERY_DATE_FORMAT= "EEEE, MMMM dd yyyy";
 	public static final List<String> UPS_ROUND_TRIP = Arrays
 			.asList(new String[]{"UPS_STANDARD_ROUND_TRIP", "UPS_STORE_STANDARD_ROUND_TRIP"});
