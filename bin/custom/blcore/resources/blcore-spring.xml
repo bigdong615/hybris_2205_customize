@@ -1773,6 +1773,7 @@
         <property name="sessionService" ref="sessionService"/>
         <property name="blStockLevelDao" ref="blStockLevelDao"/>
 		<property name="solrIndexerHotUpdateJob" ref="solrIndexerHotUpdateJob"/>
+		<property name="productDao" ref="productDao"/>
     </bean>
 
 	<alias name="blItemsBillingChargePrepareInterceptor" alias="itemsBillingChargePrepareInterceptor"/>
