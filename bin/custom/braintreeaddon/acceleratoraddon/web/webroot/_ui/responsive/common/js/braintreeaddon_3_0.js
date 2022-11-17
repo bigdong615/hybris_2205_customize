@@ -1008,6 +1008,8 @@ function createHostedFields(clientInstance) {
 							submitForm.submit();
 						}
 					});
+				}else{
+         document.getElementById('validationMessage').scrollIntoView(true);
 				}
 			  }
             });
@@ -1292,6 +1294,7 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 						$('#validationMessage').append(validationDiv);
 			$('.page-loader-new-layout').hide();
+			document.getElementById('validationMessage').scrollIntoView(true);
 		}
 		else
 		{

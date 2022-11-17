@@ -16,6 +16,13 @@ jQuery(document).ready(function () {
             {
             	$('#editWarning').modal("show");
             }
+
+            var divElement = document.getElementById('apply-voucher-error');
+             if ( (divElement != null) && (divElement != undefined) &&  (divElement != 'undefined')) {
+                divElement.scrollIntoView(true);
+             }
+
+
 });
 
 //BL-467 clear cart functionality from cart page.

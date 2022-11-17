@@ -125,7 +125,7 @@
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                             <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
                             <c:if test ="${not empty fn:escapeXml(errorMsg)}">
-                                                          <div class="notification notification-error js-promo-error">
+                                                          <div id="apply-voucher-error" class="notification notification-error js-promo-error">
                                                                   ${fn:escapeXml(errorMsg)}
                                                            </div>
                                                          </c:if>
