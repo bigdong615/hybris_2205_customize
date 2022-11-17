@@ -3,8 +3,10 @@ package com.bl.core.after.save.listener;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
+import de.hybris.platform.core.GenericSearchConstants.LOG;
 import de.hybris.platform.core.PK;
 import de.hybris.platform.core.model.ItemModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.exceptions.ModelLoadingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -28,6 +30,7 @@ import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
@@ -51,6 +54,7 @@ public class BlSerialProductAfterSaveListener implements AfterSaveListener
 	private SessionService sessionService;
 	private BlStockLevelDao blStockLevelDao;
 	private SolrIndexerHotUpdateJob solrIndexerHotUpdateJob;
+	private BlProductDao productDao;
 
 	@Override
 	public void afterSave(final Collection<AfterSaveEvent> afterSaveEventCollection)
@@ -76,7 +80,21 @@ public class BlSerialProductAfterSaveListener implements AfterSaveListener
 				}
 			});
 		}
-
+		afterSaveEventCollection.forEach(event -> {
+			if (event.getType() == AfterSaveEvent.CREATE)
+			{
+				final PK pk = event.getPk();
+				final Object object = getObjectFromPK(pk);
+				if (object instanceof StockLevelModel)
+				{
+					final StockLevelModel stockLevel = (StockLevelModel) object;
+					final BlSerialProductModel serial = getProductDao().getSerialBySerialCode(stockLevel.getSerialProductCode());
+					stockLevel.setForSale(serial.getForSale());
+					getModelService().save(stockLevel);
+					getModelService().refresh(stockLevel);
+				}
+			}
+		});
 	}
 
 	/**
@@ -272,6 +290,16 @@ public class BlSerialProductAfterSaveListener implements AfterSaveListener
 	public void setSolrIndexerHotUpdateJob(final SolrIndexerHotUpdateJob solrIndexerHotUpdateJob)
 	{
 		this.solrIndexerHotUpdateJob = solrIndexerHotUpdateJob;
+	}
+
+	public BlProductDao getProductDao()
+	{
+		return productDao;
+	}
+
+	public void setProductDao(BlProductDao productDao)
+	{
+		this.productDao = productDao;
 	}
 
 }

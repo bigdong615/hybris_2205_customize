@@ -1242,6 +1242,16 @@
 	      </advanced-search:field-list>
 	    </advanced-search:advanced-search>
   	</context>
+  	
+  	<context merge-by="type" type="StockLevel" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="warehousingbackoffice.tab.general" position="1">
+				<editorArea:section name="hmc.section.blSerial.attributes">
+					<editorArea:attribute qualifier="forSale" readonly="true"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
 		
 	<context component="cseditorareaactions" type="Order" merge-by="type">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">

@@ -174,6 +174,17 @@ public class DefaultBlStockService implements BlStockService
 			});
 		}
 	}
+	
+	@Override
+	public void findAndUpdateStockRecordsForSale(final BlSerialProductModel blSerialProduct)
+	{
+		final List<StockLevelModel> stockLevels = getBlStockLevelDao().findStockLevelForUsedGearSerials(blSerialProduct.getCode());
+		for(StockLevelModel stockLevel : stockLevels)
+		{
+			stockLevel.setForSale(blSerialProduct.getForSale());
+			getModelService().save(stockLevel); 
+		}
+	}
 
 	/**
 	 * {@inheritDoc}
