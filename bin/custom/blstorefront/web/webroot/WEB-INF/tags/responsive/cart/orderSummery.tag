@@ -8,6 +8,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 <spring:url value="/cart/voucher/remove" var="removeVoucherAction"
 	htmlEscape="false" />
@@ -16,6 +17,7 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 <spring:url value="/cart/voucher/apply" var="applyVoucher"
 	htmlEscape="false" />
+	<c:url value="/checkout/multi/delivery-method/chooseShipping" var="cartDeliveryOrPickupAction" />
 
 <div id="orderSummary" class="card">
 	<h5>
@@ -166,20 +168,6 @@
 		</tbody>
 	</table>
 
-	<c:if test="${currentStepUrl eq '/checkout/multi/summary/view'}">
-		<div class="cart-actions">
-			<form:form action="${placeOrderUrl}" id="placeOrderForm1"
-				modelAttribute="placeOrderForm">
-
-				<button id="placeOrder" type="submit"
-					class="btn btn-block btn-primary mt-4">
-					<spring:theme code="checkout.summary.placeOrder"
-						text="Place Your Order" />
-				</button>
-			</form:form>
-		</div>
-	</c:if>
-
 <c:choose>
 	 <c:when test="${isReplacementOrderCart eq true}">
 	 </c:when>
@@ -256,4 +244,74 @@
 			</p>
 		</form:form>
 	</c:forEach>
+
+<div class="cart-actions ">
+   <c:choose>
+      <c:when test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
+         <c:choose>
+            <c:when test="${isReplacementOrderCart eq true}">
+               <checkout:blReplacementOrder/>
+            </c:when>
+            <c:otherwise>
+               <button type="button" class="btn btn-block btn-primary mt-4" onClick="shippingMethodContinue(true)">
+                  <spring:theme code="text.checkout.multi.order.delivery.continue"/>
+               </button>
+            </c:otherwise>
+         </c:choose>
+      </c:when>
+      <c:when test="${cmsPage.uid eq 'multiStepCheckoutSummaryPage'}">
+         <a href="javascript:void(0)" class="btn btn-block btn-primary mt-4" id="submit_silentOrderPostForm">Continue</a>
+         <a href="#" class="btn btn-block btn-primary mt-4" id="submit_silentOrderSavedForm">Continue</a>
+      </c:when>
+      <c:when test="${cmsPage.uid eq 'cartpage'}">
+         <c:choose>
+            <c:when test="${cartData.isRetailGearOrder eq true}">
+               <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+                  <a class="btn btn-block btn-primary mt-4 js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#"
+                     data-bs-toggle="modal" data-bs-target="#signIn">
+                     <spring:theme code="general.continue.button" />
+                     <input type="hidden" value="${pageType}" class="js-page-type"/>
+                  </a>
+               </sec:authorize>
+               <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+                  <a href="${cartDeliveryOrPickupAction}" class="btn btn-block btn-primary mt-4">
+                     <spring:theme code="general.continue.button" />
+                  </a>
+               </sec:authorize>
+            </c:when>
+            <c:when test="${cartData.isRentalCart}">
+               <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+                  <a class="btn btn-block btn-primary mt-4 js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#"
+                     data-bs-toggle="modal" data-bs-target="#signIn">
+                     <spring:theme code="general.continue.button" />
+                     <input type="hidden" value="${pageType}" class="js-page-type"/>
+                  </a>
+               </sec:authorize>
+               <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+                  <a href="" class="btn btn-block btn-primary mt-4" id="cart-continue">
+                     <spring:theme code="general.continue.button" />
+                  </a>
+               </sec:authorize>
+            </c:when>
+            <c:otherwise>
+               <a href="${cartDeliveryOrPickupAction}" class="btn btn-block btn-primary mt-4">
+                  <spring:theme code="general.continue.button" />
+               </a>
+            </c:otherwise>
+         </c:choose>
+      </c:when>
+      <c:otherwise>
+         <c:if test="${currentStepUrl eq '/checkout/multi/summary/view'}">
+            <form:form action="${placeOrderUrl}" id="placeOrderForm1"
+               modelAttribute="placeOrderForm">
+               <button id="placeOrder" type="submit"
+                  class="btn btn-block btn-primary mt-4">
+                  <spring:theme code="checkout.summary.placeOrder"
+                     text="Place Your Order" />
+               </button>
+            </form:form>
+         </c:if>
+      </c:otherwise>
+   </c:choose>
+</div>
 </div>
