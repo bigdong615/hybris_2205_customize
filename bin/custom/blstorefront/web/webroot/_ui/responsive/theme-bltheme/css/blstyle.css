@@ -699,6 +699,7 @@ input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!im
     #productFilter .checkbox-list { padding-left: 0; }
     .splide__slide .card h6 .period, #productList .card .period { font-size: 14px; }
     .btn-filter { font-size: 12px; background: #e0f0f1 url(../assets/icon-close-filter.svg) 12px 9px no-repeat; }
+    .ratingBox { margin-left: 30px;margin-top: 155px;margin-right: 10px; }
 }
 
 @media screen and (min-width: 768px) and (max-width: 991px) {
@@ -730,7 +731,7 @@ input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!im
 
     /* modals */
     .modal-dialog { max-width: 680px; }
-
+    .ratingBox { margin-left: 30px;margin-top: 155px;margin-right: 10px; }
 }
 
 /* Fix calendar days to be 7 on all resolutions */
