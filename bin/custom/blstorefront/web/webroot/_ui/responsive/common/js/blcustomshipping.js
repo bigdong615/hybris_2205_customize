@@ -1270,6 +1270,7 @@ function reverseTraverseOnShipping() {
     notification += '</div>' + '<br>';
     $('#showErrorForInputValidation').html(notification);
     $('#showErrorForInputValidation').show();
+    document.getElementById('showErrorForInputValidation').scrollIntoView(true);
  }
 
  function showErrorForZipInputInvalidValidation(section) {
@@ -1318,6 +1319,7 @@ function reverseTraverseOnShipping() {
      notification += '</div>' + '<br>';
      $('#showErrorForInvalidPhoneInputValidation').html(notification);
      $('#showErrorForInvalidPhoneInputValidation').show();
+     document.getElementById('showErrorForInvalidPhoneInputValidation').scrollIntoView(true);
  }
 
  function scrollUpForError(event) {
@@ -1344,6 +1346,7 @@ function reverseTraverseOnShipping() {
          notification += '</div>' + '<br>';
          $('#showErrorForUPSOrPickAddressError').html(notification);
          $('#showErrorForUPSOrPickAddressError').show();
+         document.getElementById('showErrorForUPSOrPickAddressError').scrollIntoView(true);
      }
     function showErrorForShipToHomeError() {
          let notification = '';
@@ -1351,6 +1354,7 @@ function reverseTraverseOnShipping() {
          notification += '</div>' + '<br>';
          $('#showErrorForUPSOrPickAddressError').html(notification);
          $('#showErrorForUPSOrPickAddressError').show();
+         document.getElementById('showErrorForUPSOrPickAddressError').scrollIntoView(true);
      }
 
   function showErrorForInputValidationPick(section) {
@@ -1376,6 +1380,7 @@ function reverseTraverseOnShipping() {
      notification += '</div>' + '<br>';
      $('#showErrorForInputValidation').html(notification);
      $('#showErrorForInputValidation').show();
+     document.getElementById('showErrorForInputValidation').scrollIntoView(true);
   }
 
  function scrollUpForErrorPick(event) {

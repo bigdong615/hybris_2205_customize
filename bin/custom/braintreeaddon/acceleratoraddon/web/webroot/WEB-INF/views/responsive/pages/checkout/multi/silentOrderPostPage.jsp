@@ -421,14 +421,22 @@
                                <c:choose>
 							    <c:when test="${cartData.hasGiftCart}">
 							         <a href="${cartPageUrl}" class="gray80">Back</a>
-							         <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
-							         <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
 							    </c:when>
 							    <c:otherwise>
-							         <a href="${shippingPageUrl}" class="gray80"><c:choose> <c:when test="${cartData.isRetailGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
-                                     <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
-                                      <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
-                               </c:otherwise>
+							         <a href="${shippingPageUrl}" class="gray80">
+                          <c:choose>
+                             <c:when test="${cartData.isRetailGearOrder eq true}">
+                                <spring:theme code="text.newgear.cart.back" />
+                             </c:when>
+                             <c:when test="${cartData.isRentalCart}">
+                                <spring:theme code="text.rental.cart.back" />
+                             </c:when>
+                             <c:otherwise>
+                                <spring:theme code="text.usedGear.cart.back.plp" />
+                             </c:otherwise>
+                          </c:choose>
+                       </a>
+                   </c:otherwise>
 							</c:choose>
 							
                             </div>
@@ -443,7 +451,7 @@
 						    </c:otherwise>
 						</c:choose>
 							<c:if test ="${not empty fn:escapeXml(errorMsg)}">
-                      <div class="notification notification-error js-promo-error">
+                      <div id="apply-voucher-error" class="notification notification-error js-promo-error">
                            ${fn:escapeXml(errorMsg)}
                       </div>
               </c:if>

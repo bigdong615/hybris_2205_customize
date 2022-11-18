@@ -41,19 +41,6 @@
                               </c:forEach>
                               <div class="cart-actions">
                                   <a href="${homePageUrl}" class="gray80"><spring:theme code="text.newgear.cart.back" /></a>
-                                  <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
-                                   <a class="btn btn-sm btn-primary float-end js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#"
-                                   data-bs-toggle="modal" data-bs-target="#signIn">
-                                    <spring:theme code="general.continue.button" />
-                                    <input type="hidden" value="${pageType}" class="js-page-type"/>
-                                   </a>
-                                  </sec:authorize>
-                                  <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-                                  <a href="${cartDeliveryOrPickupAction}" class="btn btn-sm btn-primary float-end">
-                                    <spring:theme code="general.continue.button" />
-                                   </a>
-                                  </sec:authorize>
-
                               </div>
 
                               <!--BL-533 changes -->

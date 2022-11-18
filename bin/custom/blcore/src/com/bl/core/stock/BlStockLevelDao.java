@@ -59,6 +59,8 @@ public interface BlStockLevelDao {
 	 */
 	public StockLevelModel findStockLevelForUsedGearSerial(final String serialProductCode);
 
+	public List<StockLevelModel> findStockLevelForUsedGearSerials(final String serialProductCode);
+
 	/**
 	 * It checks whether the serial product is not assigned to any rental orders
 	 *
