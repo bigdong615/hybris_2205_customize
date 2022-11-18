@@ -767,7 +767,8 @@ input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!im
     .hero-content .overline { font-size: 12px; }
     .hero-content h1 { font-size: 48px; line-height: 56px; width: auto; padding-bottom: 70px; }
     #hero-slider .splide__arrows { left: 0; right: 0; margin: 0 auto; width: 100px; }
-    #hero-slider .embed-responsive-item { width: 232vw; margin-left: -116vw; }
+   /* #hero-slider .embed-responsive-item { width: 232vw; margin-left: -116vw; } */
+   #hero-slider .embed-responsive-item { width: 232vw;}
     #hero-slider .product-feature, #heroSearch #litepicker { display: none; }
     .home #globalSearch { margin-top: 0; }
     #globalSearch .input-group input:first-child { border-right: 2px solid #ddd; }
