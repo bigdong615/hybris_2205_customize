@@ -1793,9 +1793,9 @@
                      <description>If the item is required to Sync</description>
                    </attribute>
                    <attribute qualifier="visibleOnStoreFront" type="java.lang.Boolean">
-                     <persistence type="property" />
-                     <modifiers read="true" write="true" search="true"/>
-                     <description>If the item is available in storefront</description>
+                     	<persistence type="dynamic" attributeHandler="blVisibleOnStorefrontHandler"/>
+                         <modifiers read="true" write="false" optional="true"/>
+                     	<description>If the item is available in storefront</description>
                    </attribute>
                  </attributes>
              </itemtype>
@@ -1925,9 +1925,9 @@
                 <description>The status of the Serial Product</description>
               </attribute>
               <attribute qualifier="forSale" type="java.lang.Boolean">
-              	<persistence type="property" />
-                <modifiers read="true" write="true" search="true"  />
+              	<persistence type="dynamic" attributeHandler="blStockLevelForSaleHandler" />
                 <description>If the item is available for sale</description>
+                <modifiers write="false" />
             </attribute>
             </attributes>
             <indexes>

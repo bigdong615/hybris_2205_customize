@@ -897,7 +897,15 @@
 	</bean>
 
 	<bean id="giftCardbalance" class="com.bl.core.attributes.BlGiftCardBalanceHandler" />
-
+	
+	<bean id="blStockLevelForSaleHandler" class="com.bl.core.attributes.BlStockLevelForSaleHandler">
+		<property name="productDao" ref="productDao"/>
+	</bean>
+	
+	<bean id="blVisibleOnStorefrontHandler" class="com.bl.core.attributes.BlVisibleOnStorefrontHandler">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
+	
 	<alias alias="commerceCartCalculationStrategy" name="defaultBlCheckoutCartCalculationStrategy" />
 	<bean id="defaultBlCheckoutCartCalculationStrategy"
 		class="com.bl.core.services.order.impl.DefaultBlCommerceCartCalculationStrategy"
@@ -1773,7 +1781,6 @@
         <property name="sessionService" ref="sessionService"/>
         <property name="blStockLevelDao" ref="blStockLevelDao"/>
 		<property name="solrIndexerHotUpdateJob" ref="solrIndexerHotUpdateJob"/>
-		<property name="productDao" ref="productDao"/>
     </bean>
 
 	<alias name="blItemsBillingChargePrepareInterceptor" alias="itemsBillingChargePrepareInterceptor"/>

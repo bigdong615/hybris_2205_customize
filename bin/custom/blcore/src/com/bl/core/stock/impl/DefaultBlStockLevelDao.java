@@ -522,20 +522,5 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		final List<SolrFacetSearchConfigModel> facetCofig = result.getResult();
 		return facetCofig.get(0);
 	}
-	
-	public List<StockLevelModel> findStockLevelForUsedGearSerials(final String serialProductCode){
-		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(USED_GEAR_SERIAL_STOCK_LEVEL);
-		fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
-
-		final SearchResult result = getFlexibleSearchService().search(fQuery);
-		final List<StockLevelModel> stockLevels = result.getResult();
-		if (CollectionUtils.isEmpty(stockLevels))
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for serial product code {} ",
-					serialProductCode);
-			return null;
-		}
-		return stockLevels;
-	}
 
 }

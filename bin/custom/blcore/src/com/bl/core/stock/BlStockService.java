@@ -113,8 +113,4 @@ public interface BlStockService
 	 */
 	public void findAndUpdateStockRecordsForSerialCode(final BlSerialProductModel blSerialProduct, String intialCode);
 
-	/**
-	 * @param blSerialProduct
-	 */
-	public void findAndUpdateStockRecordsForSale(BlSerialProductModel blSerialProduct);
 }
