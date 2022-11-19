@@ -98,23 +98,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
 			setLastUserChangedConditionRating(blSerialProduct, ctx);
 			setFlagForBufferedInventoryOnSerial(blSerialProduct);
-			setVisibleonStoreFront(blSerialProduct);
 			updateStockRecordsOnSerialCodeUpdate(blSerialProduct, ctx);
 		}
-	}
-
-	/**
-	 * @param blSerialProduct
-	 */
-	private void setVisibleonStoreFront(BlSerialProductModel blSerialProduct)
-	{
-		if(getBlStockService().isActiveStatus(blSerialProduct.getSerialStatus()) && blSerialProduct.getHardAssigned() && blSerialProduct.getSoftAssigned()){
-			blSerialProduct.setVisibleOnStoreFront(true);
-		}
-		else {
-			blSerialProduct.setVisibleOnStoreFront(false);
-		}
-		
 	}
 
 	/**
@@ -314,19 +299,14 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					blSerialProduct.setIsSyncRequired(true);
 					blSerialProduct.setHardAssigned(false);
 					blSerialProduct.setSoftAssigned(false);
-					blSerialProduct.setVisibleOnStoreFront(true);
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, false);
 				}
 				 else if(getBlStockService().isInactiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
 						.isActiveStatus((SerialStatusEnum) initialValue)){
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, true);
-					blSerialProduct.setVisibleOnStoreFront(false);
 				} else if (SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus())) {
 					createStockRecordsForNewProducts(blSerialProduct, initialValue);
 				}
-			}
-			if (ctx.isModified(blSerialProduct, BlSerialProductModel.FORSALE)) {
-				getBlStockService().findAndUpdateStockRecordsForSale(blSerialProduct);
 			}
 			
 		} catch(final Exception ex) {
