@@ -4,11 +4,13 @@ import com.bl.core.enums.CarrierEnum;
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.services.upsscrape.UPSScrapeService;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl;
 import com.bl.integration.services.impl.DefaultBlUPSTrackServiceImpl;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -82,7 +84,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
   private void performUPSScrapeService(final PackagingInfoModel packagingInfoModel, final String carrierCode,
       final AtomicReference<Map<String, Object>> stringObjectMap, final AbstractOrderModel abstractOrderModel){
     if (isOrderAllowToScan(packagingInfoModel) && (Objects.isNull(packagingInfoModel.getNumberOfRepetitions())
-        || packagingInfoModel.getNumberOfRepetitions() < 3)) {
+        || packagingInfoModel.getNumberOfRepetitions() < 6)) {
       if (StringUtils.equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
         performUPSService(abstractOrderModel, packagingInfoModel, stringObjectMap);
       } else if (StringUtils.equalsIgnoreCase(CarrierEnum.FEDEX.getCode(), carrierCode)) {
@@ -107,7 +109,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
       final AbstractOrderModel abstractOrderModel = packagingInfoModel.getConsignment().getOrder();
       try {
        final String carrierCode = getCarrierType(packagingInfoModel);
-        if(Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) || packagingInfoModel.getNumberOfRepetitions() < 3) {
+        if(Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) || packagingInfoModel.getNumberOfRepetitions() < 6) {
           if (StringUtils
               .equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
             performUPSService(abstractOrderModel, packagingInfoModel, stringObjectMap);
@@ -139,7 +141,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
       final AbstractOrderModel abstractOrderModel = packagingInfoModel.getConsignment().getOrder();
       try {
         final String carrierCode = getCarrierType(packagingInfoModel);
-        if(Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) || packagingInfoModel.getNumberOfRepetitions() < 3) {
+        if(Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) || packagingInfoModel.getNumberOfRepetitions() < 6) {
           if (StringUtils
               .equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
             performUPSService(abstractOrderModel, packagingInfoModel, stringObjectMap);
@@ -215,8 +217,6 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
       final Map<String, Object>  stringObjectMap){
     if (MapUtils.isNotEmpty(stringObjectMap)) {
       if (Objects.nonNull(stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP))) {
-
-
         updatePackagesDetailsForEstimatedDelivery(stringObjectMap , abstractOrderModel , packagingInfoModel);
       } else if (StringUtils.equalsIgnoreCase(BlintegrationConstants.DELIVERED,
           String.valueOf(stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION)))) {
@@ -313,10 +313,11 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
     if (null != packagingInfoModel.getConsignment() &&
         BooleanUtils.isFalse(abstractOrderModel.getIsExtendedOrder()) && CollectionUtils
         .isNotEmpty(abstractOrderModel.getExtendedOrderCopyList())) {
-      final Date optimizedShippingEndDate = getDateFromExtendOrderCopyList(abstractOrderModel , packagingInfoModel.getConsignment());
-      if(Objects.nonNull(optimizedShippingEndDate)) {
-        if (DateUtils.isSameDay(optimizedShippingEndDate, new Date())) {
-          isAllowed.set(Boolean.TRUE);
+      final Date rentalEndDate = getDateFromExtendOrderCopyList(abstractOrderModel , packagingInfoModel.getConsignment());
+      // BRLN-2225
+      if(Objects.nonNull(rentalEndDate)) {
+        if (DateUtils.isSameDay(rentalEndDate, new Date())) {
+            isAllowed.set(Boolean.TRUE);
         }
         else {
           isAllowed.set(Boolean.FALSE);
@@ -348,7 +349,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
               .equals(extendOrder.getPk())) {
             extendOrder.getConsignments().forEach(consignmentModel -> {
               if(consignmentModel.getCode().equalsIgnoreCase(consignment.getCode())){
-                optimizedShippingEndDate.set(consignmentModel.getOptimizedShippingEndDate());
+                optimizedShippingEndDate.set(consignmentModel.getOrder().getRentalEndDate());
               }
             });
           }

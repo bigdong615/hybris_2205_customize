@@ -112,10 +112,10 @@ public class BlUpdateSerialService implements UpdateSerialService {
       final PackagingInfoModel packagingInfoModel, final Date upsDeliveryDate , final Date trackDate) {
     if (blProductModel instanceof BlSerialProductModel) {
       final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
-      if (Objects.isNull(numberOfRepetition) || numberOfRepetition < 3) {
+      if (Objects.isNull(numberOfRepetition) || numberOfRepetition < 6) {
         updateSerialStatus(blSerialProductModel, packagingInfoModel, numberOfRepetition,
             upsDeliveryDate , trackDate);
-      } else if (numberOfRepetition == 3) {
+      } else if (numberOfRepetition == 6) {
         updateStolenSerialStatus(blSerialProductModel, packagingInfoModel);
       }
       saveAndRefreshSerialModel(blSerialProductModel);
@@ -143,10 +143,10 @@ public class BlUpdateSerialService implements UpdateSerialService {
     }
     Calendar latePackageDate = Calendar.getInstance();
     latePackageDate.setTime(upsDeliveryDate);
-    latePackageDate.add(Calendar.DAY_OF_MONTH ,2);
+    latePackageDate.add(Calendar.DAY_OF_MONTH ,1);
     packagingInfoModel.setLatePackageDate(latePackageDate.getTime());
 
-    if(packagingInfoModel.getNumberOfRepetitions() == 3){
+    if(packagingInfoModel.getNumberOfRepetitions() == 6){
       updateStolenSerialStatus(blSerialProductModel, packagingInfoModel);
     }
     getModelService().save(packagingInfoModel);
@@ -160,8 +160,8 @@ public class BlUpdateSerialService implements UpdateSerialService {
    * @param packagingInfoModel to update the serial products which belongs to package
    */
   private void updateStolenSerialStatus(final BlSerialProductModel blSerialProductModel, final PackagingInfoModel packagingInfoModel){
-    blSerialProductModel.setSerialStatus(SerialStatusEnum.STOLEN);
-    BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.STOLEN);
+    blSerialProductModel.setSerialStatus(SerialStatusEnum.LOST_UNDER_INVESTIGATION);//BRLN-2224
+    BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.LOST_UNDER_INVESTIGATION);
     final AbstractOrderModel abstractOrderModel = packagingInfoModel.getConsignment().getOrder();
     abstractOrderModel.setStatus(OrderStatus.INCOMPLETE_MISSING_ITEMS);
     packagingInfoModel.setPackageReturnedToWarehouse(Boolean.FALSE);

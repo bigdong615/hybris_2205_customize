@@ -97,11 +97,11 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ OrderModel.USER + "} IN ({{SELECT {" + ItemModel.PK + "} FROM {" + CustomerModel._TYPECODE + "} WHERE {"
 			+ CustomerModel.UID + "} = ?uid}})";
 
-	private static final String ORDERS_TO_BE_UPS_SCRAPE = "SELECT DISTINCT {" + ItemModel.PK + BlintegrationConstants.FROM
-			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
-			+ ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?optimizedShippingStartDate AND ?optimizedShippingEndDate ";
-
-	private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.PK + BlintegrationConstants.FROM
+	private static final String ORDERS_TO_BE_UPS_SCRAPE =  "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.RENTALENDDATE + "} <= ?optimizedShippingStartDate AND {o:"
+			+ OrderModel.ISLATESTORDER	+ "} = 1  AND {o:" + OrderModel.ISSAPORDER+ "} = 1  AND {" + OrderModel.STATUS + "} IN "
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})  ORDER BY {o:" + OrderModel.RENTALENDDATE + "} ASC";
+private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.PK + BlintegrationConstants.FROM
 			+ PackagingInfoModel._TYPECODE + "}" + "WHERE {" + PackagingInfoModel.PACKAGERETURNEDTOWAREHOUSE + "} = ?packageReturnedToWarehouse AND {"
 			+ PackagingInfoModel.ISSCRAPESCANCOMPLETED + "} = ?isScrapeScanCompleted AND {"
 			+ PackagingInfoModel.LATEPACKAGEDATE + "} BETWEEN ?startDate AND ?endDate ";
@@ -322,11 +322,10 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_BE_UPS_SCRAPE);
 		fQuery.addQueryParameter(BlintegrationConstants.OPTIMIZED_SHIPPING_START_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
-		fQuery.addQueryParameter( BlintegrationConstants.OPTIMIZED_SHIPPING_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<AbstractOrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders)) {
-			BlLogger.logMessage(LOG , Level.INFO , "No Results found for UPS Scrape service which optimizedShippingEndDate has ",
+			BlLogger.logMessage(LOG , Level.INFO , "No Results found for UPS Scrape service which is same or before rental end date has ",
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
