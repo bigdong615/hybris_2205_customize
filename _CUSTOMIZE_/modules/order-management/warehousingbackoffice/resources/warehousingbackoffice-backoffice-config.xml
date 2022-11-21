@@ -643,6 +643,7 @@
                     <editorArea:attribute qualifier="weightUnit"/>
                     <editorArea:attribute qualifier="serialProducts"/>
                     <editorArea:attribute qualifier="labelURL"/>
+                    <editorArea:attribute qualifier="inboundWarehouse"/>
                 </editorArea:section>
             </editorArea:tab>
         </editorArea:editorArea>

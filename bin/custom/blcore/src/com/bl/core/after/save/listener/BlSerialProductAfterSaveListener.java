@@ -3,8 +3,10 @@ package com.bl.core.after.save.listener;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
+import de.hybris.platform.core.GenericSearchConstants.LOG;
 import de.hybris.platform.core.PK;
 import de.hybris.platform.core.model.ItemModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.exceptions.ModelLoadingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -76,7 +78,6 @@ public class BlSerialProductAfterSaveListener implements AfterSaveListener
 				}
 			});
 		}
-
 	}
 
 	/**
