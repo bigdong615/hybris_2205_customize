@@ -1,5 +1,6 @@
 package com.bl.core.services.upsscrape.impl;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.order.dao.BlOrderDao;
@@ -14,6 +15,7 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -51,6 +53,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
   private BlOrderDao orderDao;
   private ModelService service;
   private DefaultBlUPSTrackServiceImpl defaultBlUPSTrackServiceImpl;
+  private ConfigurationService configurationService;
 
   /**
    * {@inheritDoc}
@@ -84,7 +87,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
   private void performUPSScrapeService(final PackagingInfoModel packagingInfoModel, final String carrierCode,
       final AtomicReference<Map<String, Object>> stringObjectMap, final AbstractOrderModel abstractOrderModel){
     if (isOrderAllowToScan(packagingInfoModel) && (Objects.isNull(packagingInfoModel.getNumberOfRepetitions())
-        || packagingInfoModel.getNumberOfRepetitions() < 6)) {
+        || packagingInfoModel.getNumberOfRepetitions() < getRepetitions())) {
       if (StringUtils.equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
         performUPSService(abstractOrderModel, packagingInfoModel, stringObjectMap);
       } else if (StringUtils.equalsIgnoreCase(CarrierEnum.FEDEX.getCode(), carrierCode)) {
@@ -109,7 +112,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
       final AbstractOrderModel abstractOrderModel = packagingInfoModel.getConsignment().getOrder();
       try {
        final String carrierCode = getCarrierType(packagingInfoModel);
-        if(Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) || packagingInfoModel.getNumberOfRepetitions() < 6) {
+        if(Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) || packagingInfoModel.getNumberOfRepetitions() < getRepetitions()) {
           if (StringUtils
               .equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
             performUPSService(abstractOrderModel, packagingInfoModel, stringObjectMap);
@@ -130,6 +133,14 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
   }
 
   /**
+   * get No of allowed repetitions
+   * @return
+   */
+  private int getRepetitions() {
+    return getConfigurationService().getConfiguration().getInt(BlCoreConstants.UPS_SCRAPE_JOB_NO_OF_REPETITIONS_KEY);
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override
@@ -141,7 +152,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
       final AbstractOrderModel abstractOrderModel = packagingInfoModel.getConsignment().getOrder();
       try {
         final String carrierCode = getCarrierType(packagingInfoModel);
-        if(Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) || packagingInfoModel.getNumberOfRepetitions() < 6) {
+        if(Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) || packagingInfoModel.getNumberOfRepetitions() < getRepetitions()) {
           if (StringUtils
               .equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
             performUPSService(abstractOrderModel, packagingInfoModel, stringObjectMap);
@@ -313,10 +324,9 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
     if (null != packagingInfoModel.getConsignment() &&
         BooleanUtils.isFalse(abstractOrderModel.getIsExtendedOrder()) && CollectionUtils
         .isNotEmpty(abstractOrderModel.getExtendedOrderCopyList())) {
-      final Date rentalEndDate = getDateFromExtendOrderCopyList(abstractOrderModel , packagingInfoModel.getConsignment());
-      // BRLN-2225
-      if(Objects.nonNull(rentalEndDate)) {
-        if (DateUtils.isSameDay(rentalEndDate, new Date())) {
+      final Date optimizedShippingEndDate = getDateFromExtendOrderCopyList(abstractOrderModel , packagingInfoModel.getConsignment());
+      if(Objects.nonNull(optimizedShippingEndDate)) {
+        if (DateUtils.isSameDay(optimizedShippingEndDate, new Date())) {
             isAllowed.set(Boolean.TRUE);
         }
         else {
@@ -349,7 +359,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
               .equals(extendOrder.getPk())) {
             extendOrder.getConsignments().forEach(consignmentModel -> {
               if(consignmentModel.getCode().equalsIgnoreCase(consignment.getCode())){
-                optimizedShippingEndDate.set(consignmentModel.getOrder().getRentalEndDate());
+                optimizedShippingEndDate.set(consignmentModel.getOptimizedShippingEndDate());
               }
             });
           }
@@ -431,4 +441,11 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
   }
 
 
+  public ConfigurationService getConfigurationService() {
+    return configurationService;
+  }
+
+  public void setConfigurationService(ConfigurationService configurationService) {
+    this.configurationService = configurationService;
+  }
 }

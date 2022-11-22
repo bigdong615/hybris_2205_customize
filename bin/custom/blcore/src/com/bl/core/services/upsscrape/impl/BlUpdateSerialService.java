@@ -1,5 +1,6 @@
 package com.bl.core.services.upsscrape.impl;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.NotesEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
@@ -17,6 +18,7 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -46,6 +48,7 @@ public class BlUpdateSerialService implements UpdateSerialService {
   private ModelService modelService;
   private BlOrderDao orderDao;
   private BlStockLevelDao blStockLevelDao;
+  private ConfigurationService configurationService;
 
   /**
    * {@inheritDoc}
@@ -112,10 +115,10 @@ public class BlUpdateSerialService implements UpdateSerialService {
       final PackagingInfoModel packagingInfoModel, final Date upsDeliveryDate , final Date trackDate) {
     if (blProductModel instanceof BlSerialProductModel) {
       final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
-      if (Objects.isNull(numberOfRepetition) || numberOfRepetition < 6) {
+      if (Objects.isNull(numberOfRepetition) || numberOfRepetition < getRepetitions()) {
         updateSerialStatus(blSerialProductModel, packagingInfoModel, numberOfRepetition,
             upsDeliveryDate , trackDate);
-      } else if (numberOfRepetition == 6) {
+      } else if (numberOfRepetition == getRepetitions()) {
         updateStolenSerialStatus(blSerialProductModel, packagingInfoModel);
       }
       saveAndRefreshSerialModel(blSerialProductModel);
@@ -143,16 +146,23 @@ public class BlUpdateSerialService implements UpdateSerialService {
     }
     Calendar latePackageDate = Calendar.getInstance();
     latePackageDate.setTime(upsDeliveryDate);
-    latePackageDate.add(Calendar.DAY_OF_MONTH ,1);
+    latePackageDate.add(Calendar.DAY_OF_MONTH ,getConfigurationService().getConfiguration().getInt(BlCoreConstants.UPS_SCRAPE_JOB_NO_OF_ADDED_DAYS_KEY));
     packagingInfoModel.setLatePackageDate(latePackageDate.getTime());
 
-    if(packagingInfoModel.getNumberOfRepetitions() == 6){
+    if(packagingInfoModel.getNumberOfRepetitions() == getRepetitions()){
       updateStolenSerialStatus(blSerialProductModel, packagingInfoModel);
     }
     getModelService().save(packagingInfoModel);
     getModelService().refresh(packagingInfoModel);
   }
 
+  /**
+   * get No of allowed repetitions
+   * @return
+   */
+  private int getRepetitions() {
+    return getConfigurationService().getConfiguration().getInt(BlCoreConstants.UPS_SCRAPE_JOB_NO_OF_REPETITIONS_KEY);
+  }
 
   /**
    * This method created to update serial status as STOLEN based on number Of Repetition
@@ -275,5 +285,13 @@ public class BlUpdateSerialService implements UpdateSerialService {
 
   public void setBlStockLevelDao(BlStockLevelDao blStockLevelDao) {
     this.blStockLevelDao = blStockLevelDao;
+  }
+
+  public ConfigurationService getConfigurationService() {
+    return configurationService;
+  }
+
+  public void setConfigurationService(ConfigurationService configurationService) {
+    this.configurationService = configurationService;
   }
 }
