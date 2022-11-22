@@ -23,8 +23,8 @@ public class BlVisibleOnStorefrontHandler extends
 
 		try
 		{
-			if (getBlStockService().isActiveStatus(blSerialProduct.getSerialStatus()) && blSerialProduct.getHardAssigned()
-					&& blSerialProduct.getSoftAssigned())
+			if (getBlStockService().isActiveStatus(blSerialProduct.getSerialStatus()) && !blSerialProduct.getHardAssigned()
+					&& !blSerialProduct.getSoftAssigned())
 			{
 				forSale = true;
 			}
