@@ -97,10 +97,10 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ OrderModel.USER + "} IN ({{SELECT {" + ItemModel.PK + "} FROM {" + CustomerModel._TYPECODE + "} WHERE {"
 			+ CustomerModel.UID + "} = ?uid}})";
 
-	private static final String ORDERS_TO_BE_UPS_SCRAPE =  "SELECT {" + ItemModel.PK + "} FROM {"
+	private static final String ORDERS_TO_BE_UPS_SCRAPE =  "SELECT distinct{" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.RENTALENDDATE + "} <= ?optimizedShippingStartDate AND {o:"
 			+ OrderModel.ISLATESTORDER	+ "} = 1  AND {o:" + OrderModel.ISSAPORDER+ "} = 1  AND {" + OrderModel.STATUS + "} IN "
-			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})  ORDER BY {o:" + OrderModel.RENTALENDDATE + "} ASC";
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})";
 private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.PK + BlintegrationConstants.FROM
 			+ PackagingInfoModel._TYPECODE + "}" + "WHERE {" + PackagingInfoModel.PACKAGERETURNEDTOWAREHOUSE + "} = ?packageReturnedToWarehouse AND {"
 			+ PackagingInfoModel.ISSCRAPESCANCOMPLETED + "} = ?isScrapeScanCompleted AND {"
