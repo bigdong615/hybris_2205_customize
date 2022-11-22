@@ -37,7 +37,6 @@ public class SeoRobotsFollowBeforeViewHandler implements BeforeViewHandler
 				abstractPageModel = (AbstractPageModel)cmsPage;
 			}
 
-
 			if (RequestMethod.GET.name().equalsIgnoreCase(request.getMethod()))
 			{
 				//Since no model attribute metaRobots can be set for JSON response, then configure that servlet path in the xml.
