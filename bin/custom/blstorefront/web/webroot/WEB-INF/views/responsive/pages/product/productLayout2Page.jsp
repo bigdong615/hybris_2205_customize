@@ -57,7 +57,7 @@
                            <li>6 -&nbsp;Moderate wear and tear; noticeable scuffs and blemished paint</li>
                            <li>5 -&nbsp;Above average wear and tear; noticeable dents and blemished paint </li>
                            <li>4 -&nbsp;Heavy wear and tear; noticeable dents or finish loss, glass may have marks but no picture quality impact</li>
-                           <li>3 -&nbsp;Severe wear and tear; more noticeable impacts, dents or finish loss, glass may have marks or blemishes but shouldn’t affect picture
+                           <li>3 -&nbsp;Severe wear and tear; more noticeable impacts, dents or finish loss, glass may have marks or blemishes but shouldn't affect picture
                                quality</li>
                            <li>2 -&nbsp;Extreme wear in certain areas with impressions in metal and other markings</li>
                            <li>1 -&nbsp;Extreme wear on all aspects of gear, though functional</li>
