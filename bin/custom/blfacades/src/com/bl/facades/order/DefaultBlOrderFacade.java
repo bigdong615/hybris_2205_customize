@@ -59,6 +59,8 @@ import de.hybris.platform.servicelayer.time.TimeService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.BaseStoreModel;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -862,6 +864,16 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   public void setDefaultBlCalculationService(
       DefaultBlCalculationService defaultBlCalculationService) {
     this.defaultBlCalculationService = defaultBlCalculationService;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String getPendingDate(final String orderCode) {
+    final OrderModel orderModel = getOrderModelFromOrderCode(orderCode);
+    final Date date =(BooleanUtils.isTrue(orderModel.isGiftCardOrder()) || BooleanUtils.isFalse(orderModel.getIsRentalOrder())) ? orderModel.getDate() : orderModel.getRentalStartDate();
+    return BlDateTimeUtils.convertDateToStringDate(BlDateTimeUtils.addingNoOfDaysInGivenDate(date, 7), "MM/dd/yy");
   }
 
   public PromotionsService getPromotionsService() {
