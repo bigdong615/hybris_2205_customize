@@ -9,6 +9,8 @@
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="checkout" tagdir="/WEB-INF/tags/responsive/checkout/multi" %>
+
 
 <spring:url value="/cart/voucher/remove" var="removeVoucherAction"
 	htmlEscape="false" />
@@ -167,7 +169,6 @@
 			</tr>
 		</tbody>
 	</table>
-
 <c:choose>
 	 <c:when test="${isReplacementOrderCart eq true}">
 	 </c:when>
