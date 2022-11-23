@@ -5,14 +5,13 @@ import com.bl.core.enums.CarrierEnum;
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.services.upsscrape.UPSScrapeService;
-import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl;
 import com.bl.integration.services.impl.DefaultBlUPSTrackServiceImpl;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
-import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
@@ -21,8 +20,6 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -60,22 +57,44 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
    */
   @Override
   public void performUPSScrapeForOrders() {
-    final AtomicReference<Map<String, Object>> stringObjectMap = new AtomicReference<>();
     final List<AbstractOrderModel> orderModelList = getOrderDao().getOrdersForUPSScrape();
-    orderModelList.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel ->
-        consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
-          if(BooleanUtils.isFalse(packagingInfoModel.isIsScrapeScanCompleted())) {
-            final String carrierCode = getCarrierType(packagingInfoModel);
-            BlLogger.logMessage(LOG, Level.INFO, "Performing UPS Scrape job for carrier ", carrierCode);
-            try {
-              performUPSScrapeService(packagingInfoModel, carrierCode, stringObjectMap, abstractOrderModel);
-            } catch (final Exception e) {
-              BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error while fetching package{} from Order {} ", e.getMessage(), packagingInfoModel.getPk(), abstractOrderModel.getCode());
-              BlLogger.logMessage(LOG, Level.ERROR, "Error while performing UPS Scrape job", e);
+    orderModelList.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel -> {
+      if (CollectionUtils.isEmpty(consignmentModel.getPackaginginfos()) && BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder())
+              && BooleanUtils.isTrue(abstractOrderModel.isIsLatestOrder())) {
+        final OrderModel originalOrder = getOrderDao().getOriginalOrderFromExtendedOrderCode(abstractOrderModel.getCode());
+        if (Objects.nonNull(originalOrder) && CollectionUtils.isNotEmpty(originalOrder.getConsignments())) {
+          originalOrder.getConsignments().forEach(origConsignment -> {
+            if (CollectionUtils.isNotEmpty(origConsignment.getPackaginginfos())) {
+              processPackagesForUPSScrape(origConsignment.getPackaginginfos(), originalOrder);
             }
-          }
-        })));
+          });
+        }
+      } else {
+        processPackagesForUPSScrape(consignmentModel.getPackaginginfos(), abstractOrderModel);
+      }
+    }));
   }
+
+  /**
+   * Process Packages for UPS ORDERS
+   * @param packaginginfos
+   * @param abstractOrderModel
+   */
+  private void processPackagesForUPSScrape(final List<PackagingInfoModel> packaginginfos,final AbstractOrderModel abstractOrderModel) {
+    final AtomicReference<Map<String, Object>> stringObjectMap = new AtomicReference<>();
+    packaginginfos.forEach(packagingInfoModel -> {
+        if (BooleanUtils.isFalse(packagingInfoModel.isIsScrapeScanCompleted())) {
+          final String carrierCode = getCarrierType(packagingInfoModel);
+          BlLogger.logMessage(LOG, Level.INFO, "Performing UPS Scrape job for carrier ", carrierCode);
+          try {
+            performUPSScrapeService(packagingInfoModel, carrierCode, stringObjectMap, abstractOrderModel);
+          } catch (final Exception e) {
+            BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error while fetching package{} from Order {} ", e.getMessage(), packagingInfoModel.getPk(), abstractOrderModel.getCode());
+            BlLogger.logMessage(LOG, Level.ERROR, "Error while performing UPS Scrape job", e);
+          }
+        }
+      });
+    }
 
   /**
    * This method created to perform the UPS scrape Service for UPS and Fedex service

@@ -40,6 +40,8 @@ import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+
 /**
  * Default implementation of {@link SimpleSuggestionDao}.
  * @author Moumita
@@ -159,6 +161,9 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 	private static final String RETURN_ORDERS_FEED_QUERY = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE
 			+ " AS o} WHERE {o:" + OrderModel.RENTALENDDATE
 			+ "} BETWEEN ?returnOrderBefore AND ?returnOrderAfter and {o:status} NOT IN ({{select {se:pk} from {OrderStatus as se} where {se:code} IN (?orderStatuses)}})";
+
+	private static final String ORIGINAL_ORDER_BY_CODE = "SELECT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.EXTENDEDORDERCOPYLIST + "} IS NOT NULL" +
+			" AND {o:" + OrderModel.VERSIONID  + "} IS NULL AND {" + OrderModel.CODE+ "} = ?code";
 
 	/**
  	* {@inheritDoc}
@@ -612,5 +617,25 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			return Collections.emptyList();
 		}
 		return orders;
+	}
+
+	/**
+	 * get Original order from extended order
+	 *
+	 * @param code
+	 * @return
+	 */
+	@Override
+	public OrderModel getOriginalOrderFromExtendedOrderCode(String code) {
+		validateParameterNotNull(code, "code must not be null");
+
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORIGINAL_ORDER_BY_CODE);
+		fQuery.addQueryParameter(OrderModel.CODE, code);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (orders.isEmpty()) {
+			BlLogger.logMessage(LOG , Level.ERROR , "Cannot find order with code: " + code);
+		}
+		return orders.size() == 1 ? orders.get(0) : null;
 	}
 }
