@@ -19,7 +19,7 @@
             		<input type="hidden" id="shipsFromPostalCode"
             			name="shipsFromPostalCode" value="${shipsFromPostalCode}">
             		<button id="placeOrderButton" type="button"
-            			class="btn btn-sm btn-primary float-end js-replacement-order">
+            			class="btn btn-block btn-primary mt-4 js-replacement-order">
             			<spring:theme code="checkout.summary.placeOrder"
             				text="Place Your Order" />
             		</button>
