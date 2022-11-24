@@ -370,10 +370,6 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      */
     private void populateModelForRentalAndUsedGearCategory(final Model model , final CategoryModel category , final String searchQuery) {
 
-        if (searchQuery != null)
-        {
-            model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.INDEX_FOLLOW);
-        }
         // If its rental gear
         if(category.isRentalCategory() && category.isFacetedCategory()) {
             addClearAllModelAttribute(model);

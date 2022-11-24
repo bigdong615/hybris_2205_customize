@@ -7,6 +7,7 @@ import de.hybris.platform.acceleratorservices.storefront.data.MetaElementData;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.interceptors.BeforeViewHandler;
 
+import de.hybris.platform.cms2.model.pages.AbstractPageModel;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +31,20 @@ public class SeoRobotsFollowBeforeViewHandler implements BeforeViewHandler
 		{
 			// Build a default directive
 			String robotsValue = ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW;
+			Object cmsPage = modelAndView.getModel().get("cmsPage");
+			AbstractPageModel abstractPageModel = null;
+			if(cmsPage!=null){
+				abstractPageModel = (AbstractPageModel)cmsPage;
+			}
 
 			if (RequestMethod.GET.name().equalsIgnoreCase(request.getMethod()))
 			{
 				//Since no model attribute metaRobots can be set for JSON response, then configure that servlet path in the xml.
 				//If its a regular response and this setting has to be overriden then set model attribute metaRobots
-				if (CollectionUtils.contains(getRobotIndexForJSONMapping().keySet().iterator(), request.getServletPath()))
+				if(null != abstractPageModel && abstractPageModel.getRobotTag() != null && abstractPageModel.getRobotTag().getCode().contains("NOINDEX")){
+					robotsValue = ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW;
+				}
+				else if (CollectionUtils.contains(getRobotIndexForJSONMapping().keySet().iterator(), request.getServletPath()))
 				{
 					robotsValue = getRobotIndexForJSONMapping().get(request.getServletPath());
 				}
