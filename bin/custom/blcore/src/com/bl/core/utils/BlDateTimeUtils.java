@@ -905,4 +905,16 @@ public final class BlDateTimeUtils
 		return decimalFormat.format(amount);
 	}
 
+	/**
+	 * This method used for adding no of days in given date.
+	 * @param dateToAdd
+	 * @param noOfDays
+	 * @return
+	 */
+	public static Date addingNoOfDaysInGivenDate(final Date dateToAdd,final int noOfDays){
+		final Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateToAdd);
+		calendar.add(Calendar.DAY_OF_MONTH ,noOfDays);
+		return calendar.getTime();
+	}
 }
