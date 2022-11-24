@@ -14,6 +14,7 @@ import com.bl.core.services.gitfcard.BlGiftCardService;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.giftcard.data.BLGiftCardData;
+import com.bl.facades.order.BlOrderFacade;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
@@ -113,6 +114,9 @@ public class CheckoutController extends AbstractCheckoutController
 
 	@Resource(name = "orderFacade")
 	private OrderFacade orderFacade;
+
+	@Resource(name="blOrderFacade")
+  private BlOrderFacade blOrderFacade;
 
 	@Resource(name = "checkoutFacade")
 	private CheckoutFacade checkoutFacade;
@@ -338,7 +342,7 @@ public class CheckoutController extends AbstractCheckoutController
 				entry.setProduct(product);
 			}
 		}
-
+		model.addAttribute("pendingDate",blOrderFacade.getPendingDate(orderCode));
 		model.addAttribute("orderCode", orderCode);
 		model.addAttribute("orderData", orderDetails);
 		model.addAttribute("allItems", orderDetails.getEntries());
