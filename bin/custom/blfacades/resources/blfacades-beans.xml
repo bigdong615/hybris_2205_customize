@@ -404,14 +404,14 @@
         <property name="url" type="String"/>
         <property name="defaultBillingAddress" type="boolean"/>
     </bean>
-  	<bean class="de.hybris.platform.warehousingfacades.order.data.PackagingInfoData">
+<!--   	<bean class="de.hybris.platform.warehousingfacades.order.data.PackagingInfoData">
 		<property name="dimension" type="java.lang.String"/>
 		<property name="outBoundShippingLabel" type="java.lang.String"/>
 		<property name="inBoundShippingLabel" type="java.lang.String"/>
 		<property name="inBoundGraphicImage" type="java.lang.String"/>
 		<property name="outBoundGraphicImage" type="java.lang.String"/>
 		<property name="packageCode" type="java.lang.String"/>
-	</bean>
+	</bean> -->
     <!-- Shipping End-->
 
   <!-- UPS Locator start -->
@@ -881,6 +881,119 @@
         <property name="consignmentEntries"
                   type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentEntryWsDTO>">
             <description>List of order history items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
+    
+    
+	<bean class="de.hybris.platform.warehousingfacades.order.data.PackagingInfoData">
+		<property name="dimension" type="java.lang.String"/>
+		<property name="outBoundShippingLabel" type="java.lang.String"/>
+		<property name="inBoundShippingLabel" type="java.lang.String"/>
+		<property name="inBoundGraphicImage" type="java.lang.String"/>
+		<property name="outBoundGraphicImage" type="java.lang.String"/>
+		<property name="outBoundShippingMedia" type="java.lang.String"/>
+		<property name="inBoundShippingMedia" type="java.lang.String"/>
+		<property name="packagetype" type="java.lang.String"/>
+		<property name="subpartname" type="java.lang.String"/>
+		<property name="packageCode" type="java.lang.String"/>
+		<property name="ordercode" type="java.lang.String"/>
+		<property name="returningdate" type="java.util.Date"/>
+		<property name="delayeddate" type="java.util.Date"/>
+		<property name="labelURL" type="java.lang.String"/>
+		<property name="totalShippingPrice" type="java.lang.Double"/>
+		<property name="shipmentIdentificationNumber" type="java.lang.String"/>
+		<property name="outBoundTrackingNumber" type="java.lang.String"/>
+		<property name="inBoundTrackingNumber" type="java.lang.String"/>
+		<property name="hTMLImage" type="java.lang.String"/>
+		<property name="serialProducts" type="java.lang.String"/>
+		<property name="packagingInfoStatus" type="java.lang.String"/>
+		<property name="latePackageDate" type="java.util.Date"/>
+		<property name="numberOfRepetitions" type="java.lang.Integer"/>
+		<property name="packageReturnedToWarehouse" type="java.lang.String"/>
+		<property name="isScrapeScanCompleted" type="boolean"/>
+		<property name="delayedDate" type="java.util.Date"/>
+		<property name="returningDate" type="java.util.Date"/>
+		<property name="orderCode" type="java.lang.String"/>
+		<property name="packageId" type="java.lang.String"/>
+		<property name="PackageTypeEnum" type="java.lang.String"/>
+		<property name="subpartName" type="java.lang.String"/>
+		<property name="shippingLabelHistoryLogs" type="java.lang.String"/>
+		<property name="createdTS" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="typePkString" type="String" />
+		<property name="ownerPkString" type="String" />
+		<property name="pK" type="String" />
+		<property name="sealed" type="String" />
+		<property name="consignmentpos" type="String" />
+		<property name="graphicimage" type="String" />
+	</bean>
+	
+	 <bean class="de.hybris.platform.warehousingwebservices.dto.order.PackagingInfoWsDTO">
+		<property name="outBoundShippingLabel" type="java.lang.String"/>
+		<property name="inBoundShippingLabel" type="java.lang.String"/>
+		<property name="inBoundGraphicImage" type="java.lang.String"/>
+		<property name="outBoundGraphicImage" type="java.lang.String"/>
+		<property name="outBoundShippingMedia" type="java.lang.String"/>
+		<property name="inBoundShippingMedia" type="java.lang.String"/>
+		<property name="packagetype" type="java.lang.String"/>
+		<property name="subpartname" type="java.lang.String"/>
+		<property name="packageCode" type="java.lang.String"/>
+		<property name="ordercode" type="java.lang.String"/>
+		<property name="returningdate" type="java.util.Date"/>
+		<property name="delayeddate" type="java.util.Date"/>
+		<property name="labelURL" type="java.lang.String"/>
+		<property name="totalShippingPrice" type="java.lang.Double"/>
+		<property name="shipmentIdentificationNumber" type="java.lang.String"/>
+		<property name="outBoundTrackingNumber" type="java.lang.String"/>
+		<property name="inBoundTrackingNumber" type="java.lang.String"/>
+		<property name="hTMLImage" type="java.lang.String"/>
+		<property name="serialProducts" type="java.lang.String"/>
+		<property name="PackagingInfoStatus" type="java.lang.String"/>
+		<property name="latePackageDate" type="java.util.Date"/>
+		<property name="numberOfRepetitions" type="java.lang.Integer"/>
+		<property name="packageReturnedToWarehouse" type="java.lang.String"/>
+		<property name="isScrapeScanCompleted" type="boolean"/>
+		<property name="delayedDate" type="java.util.Date"/>
+		<property name="returningDate" type="java.util.Date"/>
+		<property name="orderCode" type="java.lang.String"/>
+		<property name="packageId" type="java.lang.String"/>
+		<property name="PackageTypeEnum" type="java.lang.String"/>
+		<property name="subpartName" type="java.lang.String"/>
+		<property name="shippingLabelHistoryLogs" type="java.lang.String"/>
+		<property name="createdTS" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="typePkString" type="String" />
+		<property name="ownerPkString" type="String" />
+		<property name="pK" type="String" />
+		<property name="sealed" type="String" />
+		<property name="consignmentpos" type="String" />
+		<property name="graphicimage" type="String" />
+	</bean>
+	
+	<bean class="com.bl.facades.packageinfo.data.PackagingInfoListData">
+		<property name="packageinfos"
+		          type="java.util.List&lt;de.hybris.platform.warehousingfacades.order.data.PackagingInfoData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.packageinfo.dto.PackagingInfoListWsDTO">
+        <description>Representation of an  PackagingInfoListData</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">PackagingInfos</hint>
+        </hints>
+        <property name="packageinfos"
+                  type="java.util.List&lt;de.hybris.platform.warehousingwebservices.dto.order.PackagingInfoWsDTO>">
+            <description>List of package items</description>
         </property>
         <property name="sorts"
                   type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">

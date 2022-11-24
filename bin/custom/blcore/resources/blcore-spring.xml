@@ -2199,5 +2199,15 @@
 		<property name="interceptor" ref="blPackagingInfoPrepareInterceptor"/>
 		<property name="typeCode" value="PackagingInfo"/>
 	</bean>
+	
+	<alias name="defaultBlDomoDao" alias="blDomoDao"/>
+	<bean id="defaultBlDomoDao" class="com.bl.core.domo.impl.DefaultBlDomoDao">
+		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
+	</bean>
+
+	<alias name="defaultBlDomoService" alias="blDomoService"/>
+	<bean id="defaultBlDomoService" class="com.bl.core.services.domo.impl.DefaultBlDomoService">
+		<property name="blDomoDao" ref="blDomoDao"/>
+	</bean>
 
 </beans>

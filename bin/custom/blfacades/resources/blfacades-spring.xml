@@ -849,4 +849,24 @@
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 		<property name="consignmentEntryConverter" ref="consignmentEntryConverter"/>
 	</bean>
+	
+	<alias name="defaultBlDomoFacade" alias="blDomoFacade"/>
+	<bean id="defaultBlDomoFacade" class="com.bl.facades.domo.impl.DefaultBlDomoFacade">
+		<property name="blDomoService" ref="blDomoService"/>
+		<property name="blpackagingInfoConverter" ref="blpackagingInfoConverter"/>
+	</bean>
+
+	<alias name="blPackagingInfoPopulator" alias="blPackagingInfoPopulator"/>
+	<bean id="blPackagingInfoPopulator" class="com.bl.facades.populators.BlPackagingInfoPopulator">
+	</bean>
+
+	<alias name="blpackagingInfoConverter" alias="blpackagingInfoConverter"/>
+	<bean id="blpackagingInfoConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.warehousingfacades.order.data.PackagingInfoData" />
+		<property name="populators">
+			<list>
+				<ref bean="blPackagingInfoPopulator"/>
+				</list>
+		</property>
+	</bean>
 </beans>
