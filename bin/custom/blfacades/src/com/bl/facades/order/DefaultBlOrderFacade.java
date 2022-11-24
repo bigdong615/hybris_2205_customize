@@ -404,20 +404,14 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
    * To set additional dated to check status
    */
  private Date setAdditionalDaysForStock(final Date dateToAdd) {
-   final Calendar calendar = Calendar.getInstance();
-   calendar.setTime(dateToAdd);
-   calendar.add(Calendar.DAY_OF_MONTH ,2);
-   return calendar.getTime();
+   return BlDateTimeUtils.addingNoOfDaysInGivenDate(dateToAdd,2);
  }
 
   /**
    * To set additional date for startDate
    */
   private Date setAdditionalDaysForStartDate(final Date dateToAdd) {
-    final Calendar calendar = Calendar.getInstance();
-    calendar.setTime(dateToAdd);
-    calendar.add(Calendar.DAY_OF_MONTH ,1);
-    return calendar.getTime();
+    return BlDateTimeUtils.addingNoOfDaysInGivenDate(dateToAdd,1);
   }
 
   /**
@@ -738,10 +732,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
    * @return date from consignment
    */
   private Date additonalDaysForStock(final ConsignmentModel consignmentModel){
-    final Calendar calendar = Calendar.getInstance();
-    calendar.setTime(consignmentModel.getOptimizedShippingEndDate());
-    calendar.add(Calendar.DAY_OF_MONTH ,1);
-    return calendar.getTime();
+    return BlDateTimeUtils.addingNoOfDaysInGivenDate(consignmentModel.getOptimizedShippingEndDate(),1);
   }
 
     /**
