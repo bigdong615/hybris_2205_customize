@@ -10,11 +10,6 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import com.bl.core.domo.BlDomoDao;
 import com.bl.core.services.domo.BlDomoService;
 
-
-/**
- * @author ravi
- *
- */
 public class DefaultBlDomoService implements BlDomoService
 {
 	private BlDomoDao blDomoDao;

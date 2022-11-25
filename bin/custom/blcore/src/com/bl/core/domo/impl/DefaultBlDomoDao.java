@@ -12,10 +12,6 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import com.bl.core.domo.BlDomoDao;
 
 
-/**
- * @author ravi
- *
- */
 public class DefaultBlDomoDao implements BlDomoDao
 {
 	private PagedFlexibleSearchService pagedFlexibleSearchService;
