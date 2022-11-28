@@ -98,7 +98,11 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
             "Number of consignments created during allocation: {}", consignments.size());
         startConsignmentSubProcess(consignments, process);
+        
+        // If it went to fruad manual check, we changed logic to assign consignment, serials, so no need to update status again, if its fruad
+        if(!order.getStatus().equals(OrderStatus.WAIT_FRAUD_MANUAL_CHECK)) {
         order.setStatus(OrderStatus.PENDING);
+        }
 
         if (order.getEntries().stream()
             .anyMatch(orderEntry -> orderEntry.getUnAllocatedQuantity().longValue() > 0)) {
