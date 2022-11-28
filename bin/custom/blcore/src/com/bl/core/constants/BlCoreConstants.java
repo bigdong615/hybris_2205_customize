@@ -673,6 +673,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final List<String> UPS_ROUND_TRIP = Arrays
 			.asList(new String[]{"UPS_STANDARD_ROUND_TRIP", "UPS_STORE_STANDARD_ROUND_TRIP"});
 
+	public static final String UPS_SCRAPE_JOB_NO_OF_REPETITIONS_KEY = "ups.scrape.job.no.of.repetitions";
+	public static final String UPS_SCRAPE_JOB_NO_OF_ADDED_DAYS_KEY = "ups.scrape.job.days.to.add.number";
+
 
 	private BlCoreConstants()
 	{
