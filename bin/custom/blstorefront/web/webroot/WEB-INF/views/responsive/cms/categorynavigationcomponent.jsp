@@ -12,7 +12,7 @@
                <c:when test="${childlink1.item.linkName eq 'Used Gear'}">
                   <li>
                      <c:url value="/buy/category/usedgear" var="usedGearUrl" />
-                     <a class="mm-btn mm-btn_next mm-listitem__btn mm-listitem__text" href="${usedGearUrl}">
+                     <a class="mm-btn mm-btn_next mm-listitem__btn mm-listitem__text" href="${usedGearUrl}" id="usedgeardopdown">
                      <i class="icon-usedgear"></i>
                      ${childlink1.item.linkName}
                      </a>
