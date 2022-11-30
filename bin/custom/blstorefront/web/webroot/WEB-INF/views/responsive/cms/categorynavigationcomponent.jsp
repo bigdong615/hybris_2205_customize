@@ -5,42 +5,56 @@
 
 <!-- Mobile Category Navigation Menu -->
 <c:if test="${positionAttribute == 'NavigationBarMobileSlot'}">
-	<c:if test="${component.visible}">
-		<c:forEach items="${component.navigationNode.children}"	var="childLevel1">
-            	<c:forEach items="${childLevel1.entries}" var="childlink1">
-            		<li><span><i class="icon-${fn:toLowerCase(childlink1.item.category.code)}"></i> ${childlink1.item.linkName}</span>
-            			<ul>
-		            		<c:if test="${childlink1.item.type  eq 'Link'}">
-		            			<c:if test="${childlink1.item.visible}">
-			            			<c:if test="${not empty childLevel1.children}">
-				            			<c:set var="hasChildren" value="false"/>
-				            			<c:forEach items="${childLevel1.children}" var="childLevel2" varStatus="loopStatus">
-					            			<c:if test="${not empty childLevel2.children }">
-												<c:set var="hasChildren" value="true"/>
-											</c:if>
-					            			<c:forEach items="${childLevel2.entries}" var="childlink2">							
-												<c:url value="${childlink2.item.url}" var="linkNode"/>
-												<li><a href="${linkNode }">${childlink2.item.linkName}</a></li> 
-											</c:forEach>
-											<c:if test="${loopStatus.isLast() and hasChildren}">	
-												<c:forEach items="${childLevel1.children}" var="childLevel2" varStatus="childLevel2loopStatus">
-													<c:forEach items="${childLevel2.children}" var="childLevel3" varStatus="childLevel3loopStatus">
-														<c:forEach items="${childLevel3.entries}" var="childlink3">							
-															<c:url value="${childlink3.item.url}" var="linkNode"/>
-															<li><a href="${linkNode }">${childlink3.item.linkName}</a></li> 
-														</c:forEach>
-													</c:forEach>
-												</c:forEach>
-											</c:if>													
-				            			</c:forEach>
-			            			</c:if>
-		            			</c:if>
-		            		</c:if>
-            			</ul>
-            		</li>
-            	</c:forEach>
-            </c:forEach>            
-	</c:if>
+   <c:if test="${component.visible}">
+      <c:forEach items="${component.navigationNode.children}"	var="childLevel1">
+         <c:forEach items="${childLevel1.entries}" var="childlink1">
+            <c:choose>
+               <c:when test="${childlink1.item.linkName eq 'Used Gear'}">
+                  <li>
+                     <c:url value="/buy/category/usedgear" var="usedGearUrl" />
+                     <a class="mm-btn mm-btn_next mm-listitem__btn mm-listitem__text" href="${usedGearUrl}">
+                     <i class="icon-usedgear"></i>
+                     ${childlink1.item.linkName}
+                     </a>
+                  </li>
+               </c:when>
+               <c:otherwise>
+                  <li>
+                     <span><i class="icon-${fn:toLowerCase(childlink1.item.category.code)}"></i> ${childlink1.item.linkName}</span>
+                     <ul>
+                        <c:if test="${childlink1.item.type  eq 'Link'}">
+                           <c:if test="${childlink1.item.visible}">
+                              <c:if test="${not empty childLevel1.children}">
+                                 <c:set var="hasChildren" value="false"/>
+                                 <c:forEach items="${childLevel1.children}" var="childLevel2" varStatus="loopStatus">
+                                    <c:if test="${not empty childLevel2.children }">
+                                       <c:set var="hasChildren" value="true"/>
+                                    </c:if>
+                                    <c:forEach items="${childLevel2.entries}" var="childlink2">
+                                       <c:url value="${childlink2.item.url}" var="linkNode"/>
+                                       <li><a href="${linkNode }">${childlink2.item.linkName}</a></li>
+                                    </c:forEach>
+                                    <c:if test="${loopStatus.isLast() and hasChildren}">
+                                       <c:forEach items="${childLevel1.children}" var="childLevel2" varStatus="childLevel2loopStatus">
+                                          <c:forEach items="${childLevel2.children}" var="childLevel3" varStatus="childLevel3loopStatus">
+                                             <c:forEach items="${childLevel3.entries}" var="childlink3">
+                                                <c:url value="${childlink3.item.url}" var="linkNode"/>
+                                                <li><a href="${linkNode }">${childlink3.item.linkName}</a></li>
+                                             </c:forEach>
+                                          </c:forEach>
+                                       </c:forEach>
+                                    </c:if>
+                                 </c:forEach>
+                              </c:if>
+                           </c:if>
+                        </c:if>
+                     </ul>
+                  </li>
+               </c:otherwise>
+            </c:choose>
+         </c:forEach>
+      </c:forEach>
+   </c:if>
 </c:if>
 
 <!-- Category Navigation Menu -->
