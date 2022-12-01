@@ -1223,6 +1223,7 @@
 	    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
 	      <list-view:column qualifier="serialProductCode"/>
 	      <list-view:column qualifier="reservedStatus"/>
+	      <list-view:column qualifier="forSale"/>
 	      <list-view:column qualifier="date"/>
 	      <list-view:column qualifier="order"/>
 	      <list-view:column merge-mode="remove" qualifier="available"/>
