@@ -2165,6 +2165,10 @@
 		<property name="model" value="associatedUsedGearOrder"/>
 	</bean>
 	
+	<bean id="visibleOnStoreFrontValueProvider" parent="blModelToStringValueProvider" >
+  		<property name="model" value="visibleOnStoreFront"/>
+	</bean>
+	
     <bean id="blProductTypeExclusionVP" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductTypeExclusionValueProvider"
           parent="abstractPropertyFieldValueProvider">
         <property name="modelService"  ref="modelService" />

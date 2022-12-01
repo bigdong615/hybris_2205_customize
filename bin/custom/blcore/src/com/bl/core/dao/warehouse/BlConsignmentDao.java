@@ -56,4 +56,6 @@ public interface BlConsignmentDao {
 	 */
 	SearchPageData<ConsignmentEntryModel> getConsignmentEntries(PageableData pageableData);
 
+	SearchPageData<ConsignmentModel> getConsignments(PageableData pageableData);
+
 }

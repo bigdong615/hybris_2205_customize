@@ -206,6 +206,7 @@
 		<property name="retailGear" type="boolean"/>
 		<property name="scheduled" type="boolean"/>
 		<property name="staffPick" type="boolean"/>
+		<property name="visibleOnStoreFront" type="boolean"/>
 		<property name="bufferInvPercChangedManually" type="boolean"/>
 		<property name="retailGearInStock" type="boolean"/>
 		<property name="constrained" type="boolean"/>
@@ -318,5 +319,47 @@
 		<property name="europe1PriceFactory_PPG" type="java.lang.String"/>
 		<property name="europe1PriceFactory_PTG" type="java.lang.String"/>
 	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentWsDTO">
+	    <property name="createdTS" type="java.util.Date"/>
+		<property name="nameddeliverydate" type="java.util.Date"/>
+		<property name="optimizedShippingStartDate" type="java.util.Date"/>
+		<property name="optimizedshippingenddate" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="actualShippingDateToCustomer" type="java.util.Date"/>
+		<property name="shipmentBlShippedStatusDate" type="java.util.Date"/>
+		<property name="taskAssignmentWorkflow" type="String" />
+		<property name="optimizedshippingtype" type="String" />
+		<property name="carrier" type="String" />
+		<property name="optimizedShippingMethodType" type="String" />
+		<property name="cleanCompleteConsignment" type="java.lang.Boolean" />
+		<property name="threeDayGroundAvailability" type="java.lang.Boolean" />
+		<property name="internalTransferConsignment" type="java.lang.Boolean" />
+		<property name="ordertransferconsignment" type="java.lang.Boolean" />
+		<property name="optimizedRentalEndDateChangedByJob" type="java.lang.Boolean" />	
+		<property name="rentalEndDate" type="java.util.Date"/>
+		<property name="rentalStartDate" type="java.util.Date"/>
+		<property name="orderNotes" type="String" />
+	</bean>
+	
+	<bean class="com.bl.facades.consignment.dto.ConsignmentListWsDTO">
+        <description>Representation of an ConsignmentList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">ConsignmentList</hint>
+        </hints>
+        <property name="consignments"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentWsDTO>">
+            <description>List of order history items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
 
 </beans>

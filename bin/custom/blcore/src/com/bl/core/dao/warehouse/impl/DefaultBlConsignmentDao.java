@@ -198,6 +198,13 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
 
+	@Override
+	public SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {c.pk} FROM {Consignment as c}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+
 	public PagedFlexibleSearchService getPagedFlexibleSearchService()
 	{
 		return pagedFlexibleSearchService;

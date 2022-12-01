@@ -716,5 +716,12 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 		return getBlConsignmentDao().getConsignmentEntries(pageableData);
 
 	}
+	
+	@Override
+	public SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData)
+	{
+		return getBlConsignmentDao().getConsignments(pageableData);
+
+	}
 
 }

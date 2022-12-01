@@ -123,6 +123,10 @@ public class BlSearchResultDomoProductPopulator implements Populator<SearchResul
 			{
 				target.setDiscounted(this.<Boolean> getValue(source, "discounted"));
 			}
+			if (this.<Boolean> getValue(source, "visibleOnStoreFront") != null)
+			{
+				target.setVisibleOnStoreFront(this.<Boolean> getValue(source, "visibleOnStoreFront"));
+			}
 			if (this.<Boolean> getValue(source, "isSealed") != null)
 			{
 				target.setIsSealed(this.<Boolean> getValue(source, "isSealed"));

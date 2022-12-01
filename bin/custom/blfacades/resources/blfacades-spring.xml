@@ -869,4 +869,10 @@
 				</list>
 		</property>
 	</bean>
+	
+	<alias name="defaultBlConsignmentPopulator" alias="consignmentPopulator"/>
+	<bean id="defaultBlConsignmentPopulator" class="com.bl.facades.populators.BlConsignmentPopulator" parent="defaultConsignmentPopulator">
+  		<property name="deliveryModeConverter" ref="deliveryModeConverter"/>
+	</bean>
+
 </beans>

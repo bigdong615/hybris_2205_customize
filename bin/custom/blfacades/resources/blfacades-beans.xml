@@ -180,6 +180,7 @@
 		<property name="europe1PriceFactory_PDG" type="java.lang.String"/>
 		<property name="europe1PriceFactory_PPG" type="java.lang.String"/>
 		<property name="europe1PriceFactory_PTG" type="java.lang.String"/>
+		<property name="visibleOnStoreFront" type="boolean"/>
   </bean>
     
 	<bean class="com.bl.facades.product.data.GenderData">
@@ -1004,6 +1005,35 @@
             <description>Pagination items</description>
         </property>
     </bean>
+    
+    <bean class="de.hybris.platform.commercefacades.order.data.ConsignmentData">
+	  <property name="nameddeliverydate" type="java.util.Date"/>
+	  <property name="optimizedShippingStartDate" type="java.util.Date"/>
+	  <property name="optimizedshippingenddate" type="java.util.Date"/>
+	  <property name="modifiedTS" type="java.util.Date"/>
+	  <property name="actualShippingDateToCustomer" type="java.util.Date"/>
+	  <property name="shipmentBlShippedStatusDate" type="java.util.Date"/>
+	  <property name="taskAssignmentWorkflow" type="String" />
+	  <property name="optimizedshippingtype" type="String" />
+	  <property name="carrier" type="String" />
+	  <property name="optimizedShippingMethodType" type="String" />
+	  <property name="cleanCompleteConsignment" type="java.lang.Boolean" />
+	  <property name="threeDayGroundAvailability" type="java.lang.Boolean" />
+	  <property name="internalTransferConsignment" type="java.lang.Boolean" />
+	  <property name="ordertransferconsignment" type="java.lang.Boolean" />
+	  <property name="optimizedRentalEndDateChangedByJob" type="java.lang.Boolean" />	
+	  <property name="rentalEndDate" type="java.util.Date"/>
+	  <property name="rentalStartDate" type="java.util.Date"/>
+	  <property name="orderNotes" type="String" />
+	</bean>
+	
+	
+	<bean class="com.bl.facades.consignment.data.ConsignmentListData">
+	  <property name="consignments"
+	            type="java.util.List&lt;de.hybris.platform.commercefacades.order.data.ConsignmentData>"/>
+	  <property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+	  <property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
 
 </beans>
 

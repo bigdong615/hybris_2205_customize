@@ -155,13 +155,10 @@ public class ModelToStringValueProvider extends AbstractPropertyFieldValueProvid
 					return addFieldValues(new ArrayList<>(), indexedProperty, serial.getAssociatedUsedGearOrder().getCode());
 				}
 
-
-
-
-
-
-
-
+				if (getModel().equalsIgnoreCase("visibleOnStoreFront") && serial.getVisibleOnStoreFront() != null)
+				{
+					return addFieldValuesBoolean(new ArrayList<>(), indexedProperty, serial.getVisibleOnStoreFront());
+				}
 			}
 
 		}
@@ -170,6 +167,17 @@ public class ModelToStringValueProvider extends AbstractPropertyFieldValueProvid
 
 	private List<FieldValue> addFieldValues(final List<FieldValue> fieldValues, final IndexedProperty indexedProperty,
 			final String value)
+	{
+		final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
+		for (final String fieldName : fieldNames)
+		{
+			fieldValues.add(new FieldValue(fieldName, value));
+		}
+		return fieldValues;
+	}
+
+	private List<FieldValue> addFieldValuesBoolean(final List<FieldValue> fieldValues, final IndexedProperty indexedProperty,
+			final Boolean value)
 	{
 		final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
 		for (final String fieldName : fieldNames)

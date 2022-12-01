@@ -5,6 +5,7 @@ import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 import java.util.List;
 import java.util.Set;
@@ -102,4 +103,6 @@ public interface BlConsignmentEntryService
 	 * @return SearchPageData of ConsignmentEntries
 	 */
 	SearchPageData<ConsignmentEntryModel> getConsignmentEntries(final PageableData pageableData);
+
+	SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData);
 }

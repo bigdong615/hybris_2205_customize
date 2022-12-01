@@ -3,6 +3,7 @@
  */
 package com.bl.commercewebservices.v2.controller;
 
+import de.hybris.platform.commercefacades.order.data.ConsignmentData;
 import de.hybris.platform.commercefacades.order.data.ConsignmentEntryData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
@@ -25,7 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bl.facades.consignment.BLConsignmentFacade;
 import com.bl.facades.consignment.data.ConsignmentEntryListData;
+import com.bl.facades.consignment.data.ConsignmentListData;
 import com.bl.facades.consignment.dto.ConsignmentEntryListWsDTO;
+import com.bl.facades.consignment.dto.ConsignmentListWsDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,6 +66,28 @@ public class ConsignmentController extends BaseCommerceController
 		return getDataMapper().map(consignmentEntryListData, ConsignmentEntryListWsDTO.class, fields);
 	}
 
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/consignments", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getConsignments", value = "Get consignments", notes = "Returns order history data for all orders placed by a specified user for a specified base store. The response can display the results across multiple pages, if required.")
+	@ApiBaseSiteIdAndUserIdParam
+	public ConsignmentListWsDTO getConsignments(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final ConsignmentListData consignmentListData;
+		consignmentListData = createConsignmentListData(blconsignmentFacade.getConsignments(pageableData));
+		setTotalCountHeader(response, consignmentListData.getPagination());
+		return getDataMapper().map(consignmentListData, ConsignmentListWsDTO.class, fields);
+	}
+
+
 	protected PageableData createPageableData(final int currentPage, final int pageSize)
 	{
 		final PageableData pageable = new PageableData();
@@ -81,5 +106,16 @@ public class ConsignmentController extends BaseCommerceController
 		consignmentEntryListData.setPagination(result.getPagination());
 
 		return consignmentEntryListData;
+	}
+
+	protected ConsignmentListData createConsignmentListData(final SearchPageData<ConsignmentData> result)
+	{
+		final ConsignmentListData consignmentListData = new ConsignmentListData();
+
+		consignmentListData.setConsignments(result.getResults());
+		consignmentListData.setSorts(result.getSorts());
+		consignmentListData.setPagination(result.getPagination());
+
+		return consignmentListData;
 	}
 }
