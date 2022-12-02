@@ -45,6 +45,27 @@
 			<div class="page-loader-new-layout">
 				<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
 			</div>
+			<div id="stories" class="row justify-content-center">
+				<div class="col-lg-11 col-xl-9">
+					<h5>
+						<cms:pageSlot position="HomePageFeaturedStoriesTitleSlot"
+									  var="feature">
+							<cms:component component="${feature}" />
+						</cms:pageSlot>
+					</h5>
+					<div id="blog-slider" class="splide mt-4">
+						<div class="splide__track">
+							<ul class="splide__list">
+								<cms:pageSlot position="HomePageFeaturedStoriesSectionSlot"
+											  var="feature">
+									<cms:component component="${feature}" />
+								</cms:pageSlot>
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</div>
 			<div id="featured" class="row justify-content-center">
 				<div class="col-lg-11 col-xl-9">
 					<c:choose>
@@ -183,28 +204,7 @@
 			</div>
 			<div class="row justify-content-center my-5">
 				<div class="divider col-xl-10"></div>
-			</div> -->	
-			<div id="stories" class="row justify-content-center">
-				<div class="col-lg-11 col-xl-9">
-					<h5>
-						<cms:pageSlot position="HomePageFeaturedStoriesTitleSlot"
-							var="feature">
-							<cms:component component="${feature}" />
-						</cms:pageSlot>
-					</h5>
-					<div id="blog-slider" class="splide mt-4">
-						<div class="splide__track">
-							<ul class="splide__list">
-								<cms:pageSlot position="HomePageFeaturedStoriesSectionSlot"
-									var="feature">
-									<cms:component component="${feature}" />
-					</cms:pageSlot>
-							</ul>
-						</div>
-					</div>
-
-				</div>
-			</div>
+			</div> -->
 		</div>
 	</section>
 
