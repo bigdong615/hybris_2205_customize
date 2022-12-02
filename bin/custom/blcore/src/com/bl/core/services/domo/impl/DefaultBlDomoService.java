@@ -5,6 +5,8 @@ package com.bl.core.services.domo.impl;
 
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
+import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import com.bl.core.domo.BlDomoDao;
@@ -19,6 +21,20 @@ public class DefaultBlDomoService implements BlDomoService
 	{
 
 		return getBlDomoDao().getPackagingInfos(pageableData);
+	}
+
+	@Override
+	public SearchPageData<PaymentTransactionModel> getPaymentTransactions(final PageableData pageableData)
+	{
+
+		return getBlDomoDao().getPaymentTransactions(pageableData);
+	}
+
+	@Override
+	public SearchPageData<PaymentTransactionEntryModel> getPaymentTransactionEntries(final PageableData pageableData)
+	{
+
+		return getBlDomoDao().getPaymentTransactionEntries(pageableData);
 	}
 
 	/**
@@ -37,7 +53,6 @@ public class DefaultBlDomoService implements BlDomoService
 	{
 		this.blDomoDao = blDomoDao;
 	}
-
 
 
 }

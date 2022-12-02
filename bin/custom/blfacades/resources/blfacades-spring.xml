@@ -854,6 +854,8 @@
 	<bean id="defaultBlDomoFacade" class="com.bl.facades.domo.impl.DefaultBlDomoFacade">
 		<property name="blDomoService" ref="blDomoService"/>
 		<property name="blpackagingInfoConverter" ref="blpackagingInfoConverter"/>
+		<property name="blpaymentTransactionConverter" ref="blpaymentTransactionConverter"/>
+		<property name="blpaymentTransactionEntryConverter" ref="blpaymentTransactionEntryConverter"/>
 	</bean>
 
 	<alias name="blPackagingInfoPopulator" alias="blPackagingInfoPopulator"/>
@@ -870,9 +872,39 @@
 		</property>
 	</bean>
 	
+	<alias name="blPaymentTransactionPopulator" alias="blPaymentTransactionPopulator"/>
+	<bean id="blPaymentTransactionPopulator" class="com.bl.facades.populators.BlPaymentTransactionPopulator">
+	</bean>
+
+	<alias name="blpaymentTransactionConverter" alias="blpaymentTransactionConverter"/>
+	<bean id="blpaymentTransactionConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData" />
+		<property name="populators">
+			<list>
+				<ref bean="blPaymentTransactionPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	
 	<alias name="defaultBlConsignmentPopulator" alias="consignmentPopulator"/>
 	<bean id="defaultBlConsignmentPopulator" class="com.bl.facades.populators.BlConsignmentPopulator" parent="defaultConsignmentPopulator">
   		<property name="deliveryModeConverter" ref="deliveryModeConverter"/>
 	</bean>
+	
+	<alias name="blPaymentTransactionEntryPopulator" alias="blPaymentTransactionEntryPopulator"/>
+	<bean id="blPaymentTransactionEntryPopulator" class="com.bl.facades.populators.BlPaymentTransactionEntryPopulator">
+	</bean>
+
+   <alias name="blpaymentTransactionEntryConverter" alias="blpaymentTransactionEntryConverter"/>
+	<bean id="blpaymentTransactionEntryConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData" />
+		<property name="populators">
+			<list>
+				<ref bean="blPaymentTransactionEntryPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
 
 </beans>

@@ -1034,7 +1034,96 @@
 	  <property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
 	  <property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
 	</bean>
+	
+	<bean class="de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData">
+	    <property name="createdTS" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="order" type="java.lang.String"/>
+		<property name="transactionType" type="java.lang.String"/>
+		<property name="legacytransaction" type="java.lang.String"/>
+		<property name="aCLTS" type="java.lang.String"/>
+		<property name="propTS" type="java.lang.String"/>
+		<property name="paymentInfoCode" type="java.lang.String"/>
+	</bean>
 
+	<bean class="de.hybris.platform.ordermanagementwebservices.dto.payment.PaymentTransactionWsDTO">
+		<property name="createdTS" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="order" type="java.lang.String"/>
+		<property name="transactionType" type="java.lang.String"/>
+		<property name="legacytransaction" type="java.lang.String"/>
+		<property name="aCLTS" type="java.lang.String"/>
+		<property name="propTS" type="java.lang.String"/>
+		<property name="paymentInfoCode" type="java.lang.String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.paymentTransaction.data.PaymentTransactionListData">
+		<property name="paymentTransactions" type="java.util.List&lt;de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.paymentTransaction.dto.PaymentTransactionListWsDTO">
+        <description>Representation of an  PaymentTransactionListData</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">PaymentTransactions</hint>
+        </hints>
+        <property name="paymentTransactions" type="java.util.List&lt;de.hybris.platform.ordermanagementwebservices.dto.payment.PaymentTransactionWsDTO>">
+            <description>List of paymentTransactions </description>
+        </property>
+        <property name="sorts"  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination" type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
+	
+	<bean class="de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData">
+        <property name="createdTS" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="paymentTransaction" type="java.lang.String"/>
+		<property name="refundedamount" type="java.math.BigDecimal"/>
+		<property name="submittedforsettlementamount" type="java.math.BigDecimal"/>
+		<property name="consignment" type="java.lang.String"/>		
+    </bean>
+    
+    <bean class="de.hybris.platform.ordermanagementwebservices.dto.payment.PaymentTransactionEntryWsDTO">
+        <property name="createdTS" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="paymentTransaction" type="java.lang.String"/>
+		<property name="refundedamount" type="java.math.BigDecimal"/>
+		<property name="submittedforsettlementamount" type="java.math.BigDecimal"/>
+		<property name="consignment" type="java.lang.String"/>	
+    </bean>
+    
+    <bean class="com.bl.facades.paymentTransaction.data.PaymentTransactionEntryListData">
+		<property name="paymentTransactionEntries"
+		          type="java.util.List&lt;de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.paymentTransaction.dto.PaymentTransactionEntryListWsDTO">
+        <description>Representation of an  PaymentTransactionEntryListData</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">PaymentTransactionEntries</hint>
+        </hints>
+        <property name="paymentTransactionEntries"
+                  type="java.util.List&lt;de.hybris.platform.ordermanagementwebservices.dto.payment.PaymentTransactionEntryWsDTO>">
+            <description>List of paymentTransactionEntries </description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
 </beans>
 
 
