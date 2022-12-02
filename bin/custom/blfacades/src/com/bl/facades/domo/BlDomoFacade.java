@@ -8,10 +8,6 @@ import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 
 
-/**
- * @author ravi
- *
- */
 public interface BlDomoFacade
 {
 	/**
