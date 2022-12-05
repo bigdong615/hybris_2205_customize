@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -47,14 +48,20 @@ public class DefaultBlSourcingService implements BlSourcingService {
   private BlDatePickerService blDatePickerService;
   private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
 
+
+  @Override
+  public SourcingResults sourceOrder(AbstractOrderModel abstractOrderModel) {
+    return null;
+  }
   /**
-   * This is to source the order
+   * This is to source the BL order
    *
    * @param order the order
+   * @param newOrderEntry the new order entry
    * @return SourcingResults The SourcingResults
    */
   @Override
-  public SourcingResults sourceOrder(final AbstractOrderModel order) {
+  public SourcingResults sourceOrder(final AbstractOrderModel order, final AbstractOrderEntryModel newOrderEntry) {
 
     try {
 
@@ -69,11 +76,17 @@ public class DefaultBlSourcingService implements BlSourcingService {
     result.setComplete(Boolean.FALSE);
     context.setResult(result);
 
-     final List<AbstractOrderEntryModel> entryListForAllocation=   order.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleMainEntry()).collect(
-          Collectors.toList());
-    //context.setOrderEntries(order.getEntries()); //NOSONAR
-      context.setOrderEntries(entryListForAllocation);
+    if(Objects.nonNull(newOrderEntry)){
+          context.setOrderEntries(Arrays.asList(newOrderEntry));
+          context.setIsNewOrderEntryFromBackoffice(true);
 
+    }
+    else {
+      final List<AbstractOrderEntryModel> entryListForAllocation = order.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleMainEntry()).collect(
+              Collectors.toList());
+      //context.setOrderEntries(order.getEntries()); //NOSONAR
+      context.setOrderEntries(entryListForAllocation);
+    }
     blSourcingLocationService.createSourcingLocation(context, blDeliveryStateSourcingLocationFilter.applyFilter(order));
 
     final List<SourcingStrategy> strategies = this.blSourcingStrategyService.getDefaultStrategies();
@@ -212,4 +225,6 @@ public class DefaultBlSourcingService implements BlSourcingService {
   public void setBlDatePickerService(final BlDatePickerService blDatePickerService) {
     this.blDatePickerService = blDatePickerService;
   }
+
+
 }
