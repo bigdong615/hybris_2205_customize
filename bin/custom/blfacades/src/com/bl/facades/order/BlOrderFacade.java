@@ -98,11 +98,4 @@ public interface BlOrderFacade extends OrderFacade {
    */
   public void setResolvedStatusOnRepairLog(final String orderCode);
 
-  /**
-   * This method used to get pending date which is used for tracking shareASale lead pixel.
-   * @param orderCode
-   * @return
-   */
-   String getPendingDate(final String orderCode);
-
 }

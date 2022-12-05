@@ -12,7 +12,7 @@
 <spring:eval expression="T(de.hybris.platform.util.Config).getParameter('shareasale.lead.pixel.value')"	var="pixel" scope="page" />
 
 <c:if test = "${pageType == 'ORDERCONFIRMATION'}">
-<img id='_SHRSL_img_1' src='https://www.shareasale.com/sale.cfm?tracking=${orderData.code}&amount=0.00&merchantID=${merchantID}&transtype=${pixel}&pendingdate=${pendingDate}' width='1' height='1'>
+<img id='_SHRSL_img_1' src='https://www.shareasale.com/sale.cfm?tracking=${orderData.code}&amount=0.00&merchantID=${merchantID}&transtype=${pixel}' width='1' height='1'>
 <script src='https://www.dwin1.com/19038.js' type='text/javascript' defer='defer'></script>
 </c:if>
 <!-- End sharasale integration code -->

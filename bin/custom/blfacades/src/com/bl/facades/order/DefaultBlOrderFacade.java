@@ -59,8 +59,6 @@ import de.hybris.platform.servicelayer.time.TimeService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.BaseStoreModel;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -404,14 +402,20 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
    * To set additional dated to check status
    */
  private Date setAdditionalDaysForStock(final Date dateToAdd) {
-   return BlDateTimeUtils.addingNoOfDaysInGivenDate(dateToAdd,2);
+   final Calendar calendar = Calendar.getInstance();
+   calendar.setTime(dateToAdd);
+   calendar.add(Calendar.DAY_OF_MONTH ,2);
+   return calendar.getTime();
  }
 
   /**
    * To set additional date for startDate
    */
   private Date setAdditionalDaysForStartDate(final Date dateToAdd) {
-    return BlDateTimeUtils.addingNoOfDaysInGivenDate(dateToAdd,1);
+    final Calendar calendar = Calendar.getInstance();
+    calendar.setTime(dateToAdd);
+    calendar.add(Calendar.DAY_OF_MONTH ,1);
+    return calendar.getTime();
   }
 
   /**
@@ -732,7 +736,10 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
    * @return date from consignment
    */
   private Date additonalDaysForStock(final ConsignmentModel consignmentModel){
-    return BlDateTimeUtils.addingNoOfDaysInGivenDate(consignmentModel.getOptimizedShippingEndDate(),1);
+    final Calendar calendar = Calendar.getInstance();
+    calendar.setTime(consignmentModel.getOptimizedShippingEndDate());
+    calendar.add(Calendar.DAY_OF_MONTH ,1);
+    return calendar.getTime();
   }
 
     /**
@@ -855,16 +862,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   public void setDefaultBlCalculationService(
       DefaultBlCalculationService defaultBlCalculationService) {
     this.defaultBlCalculationService = defaultBlCalculationService;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public String getPendingDate(final String orderCode) {
-    final OrderModel orderModel = getOrderModelFromOrderCode(orderCode);
-    final Date date =(BooleanUtils.isTrue(orderModel.isGiftCardOrder()) || BooleanUtils.isFalse(orderModel.getIsRentalOrder())) ? orderModel.getDate() : orderModel.getRentalStartDate();
-    return BlDateTimeUtils.convertDateToStringDate(BlDateTimeUtils.addingNoOfDaysInGivenDate(date, 7), "MM/dd/yy");
   }
 
   public PromotionsService getPromotionsService() {

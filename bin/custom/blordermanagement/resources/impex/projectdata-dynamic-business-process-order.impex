@@ -42,6 +42,7 @@ name='order-process' processClass='de.hybris.platform.orderprocessing.model.Orde
 <!-- Fraud Check : POTENTIAL -->
 <action id='manualOrderCheckCSA' bean='prepareOrderForManualCheckAction'>
     <transition name='OK' to='waitForManualOrderCheckCSA'/>
+     <transition name='OK' to='geocodeShippingAddress'/>
 </action>
 
 <wait id='waitForManualOrderCheckCSA' then='orderManualChecked' prependProcessCode='true'>
