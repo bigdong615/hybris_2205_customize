@@ -66,15 +66,17 @@
 						<c:set value=" hidebutton" var="hidebutton" />
 					</sec:authorize> <c:choose>
 						<c:when test="${serialProduct.serialStatus eq 'ACTIVE' || serialProduct.serialStatus eq 'RECEIVED_OR_RETURNED' || serialProduct.serialStatus eq 'IN_HOUSE'}">
-							<button type="button"
+						<!--	<button type="button"
 								data-link="<c:url value='/login/loginpopup'/>"
 								class="btn btn-primary  js-login-popup hide-after-login"
 								data-bs-toggle="modal" data-bs-target="#signIn"
 								data-click="serial_entry_${loop.index }">
 								<spring:theme code="basket.add.to.basket" />
-							</button>
+							</button> -->
+							<!--class="btn btn-primary js-add-to-used-cart serial_entry_${loop.index }  ${hidebutton}" -->
 							<button type="button"
-								class="btn btn-primary js-add-to-used-cart serial_entry_${loop.index }  ${hidebutton}"
+							
+							    class="btn btn-primary js-add-to-used-cart serial_entry_${loop.index }"
 								data-product-code="${product.code}" data-product-name="${product.name}" data-product-brand="${product.manufacturer}"
 								data-bs-toggle="modal" data-bs-target="#addToCart" data-product-category="${product.categories[0].name}"
 								data-serial="${serialProduct.serialId}">
