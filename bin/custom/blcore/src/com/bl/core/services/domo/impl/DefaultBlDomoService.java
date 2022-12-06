@@ -10,6 +10,8 @@ import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import com.bl.core.domo.BlDomoDao;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.domo.BlDomoService;
 
 public class DefaultBlDomoService implements BlDomoService
@@ -37,6 +39,18 @@ public class DefaultBlDomoService implements BlDomoService
 		return getBlDomoDao().getPaymentTransactionEntries(pageableData);
 	}
 
+	@Override
+	public SearchPageData<GiftCardModel> getGiftCards(final PageableData pageableData)
+	{
+		return getBlDomoDao().getGiftCards(pageableData);
+	}
+
+	@Override
+	public SearchPageData<GiftCardMovementModel> getGiftCardMovements(final PageableData pageableData)
+	{
+		return getBlDomoDao().getGiftCardMovements(pageableData);
+	}
+
 	/**
 	 * @return the blDomoDao
 	 */
@@ -53,6 +67,5 @@ public class DefaultBlDomoService implements BlDomoService
 	{
 		this.blDomoDao = blDomoDao;
 	}
-
 
 }

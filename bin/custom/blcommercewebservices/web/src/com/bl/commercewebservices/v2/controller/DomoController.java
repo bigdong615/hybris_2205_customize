@@ -3,6 +3,8 @@
  */
 package com.bl.commercewebservices.v2.controller;
 
+import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
+import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
@@ -25,7 +27,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bl.facades.commercefacades.giftcard.data.GiftCardListData;
+import com.bl.facades.commercefacades.giftcard.movement.data.GiftCardMovementListData;
 import com.bl.facades.domo.BlDomoFacade;
+import com.bl.facades.giftcard.dto.GiftCardListWsDTO;
+import com.bl.facades.giftcardmovements.dto.GiftCardMovementListWsDTO;
 import com.bl.facades.packageinfo.data.PackagingInfoListData;
 import com.bl.facades.packageinfo.dto.PackagingInfoListWsDTO;
 import com.bl.facades.paymentTransaction.data.PaymentTransactionEntryListData;
@@ -154,5 +160,69 @@ public class DomoController extends BaseCommerceController
 		return paymentTransactionEntryListData;
 	}
 
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/giftCard", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getGiftCards", value = "Get Gift Cards", notes = "Returns Gift Cards")
+	@ApiBaseSiteIdAndUserIdParam
+	public GiftCardListWsDTO getGiftCards(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final GiftCardListData giftCardListData;
+		giftCardListData = createGiftCardListData(blDomoFacade.getGiftCards(pageableData));
+		setTotalCountHeader(response, giftCardListData.getPagination());
+		return getDataMapper().map(giftCardListData, GiftCardListWsDTO.class, fields);
+	}
+
+	protected GiftCardListData createGiftCardListData(final SearchPageData<GiftCardData> result)
+	{
+		final GiftCardListData giftCardListData = new GiftCardListData();
+
+		giftCardListData.setGiftCards(result.getResults());
+		giftCardListData.setSorts(result.getSorts());
+		giftCardListData.setPagination(result.getPagination());
+
+		return giftCardListData;
+	}
+
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/getGiftCardMovements", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getGiftCardMovements", value = "Get Gift Card Movements", notes = "Returns Gift Card Movements")
+	@ApiBaseSiteIdAndUserIdParam
+	public GiftCardMovementListWsDTO getGiftCardMovements(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final GiftCardMovementListData giftCardMovementListData;
+		giftCardMovementListData = createGiftCardMovementListData(blDomoFacade.getGiftCardMovements(pageableData));
+		setTotalCountHeader(response, giftCardMovementListData.getPagination());
+		return getDataMapper().map(giftCardMovementListData, GiftCardMovementListWsDTO.class, fields);
+	}
+
+	protected GiftCardMovementListData createGiftCardMovementListData(final SearchPageData<GiftCardMovementData> result)
+	{
+		final GiftCardMovementListData giftCardMovementListData = new GiftCardMovementListData();
+
+		giftCardMovementListData.setGiftCardMovements(result.getResults());
+		giftCardMovementListData.setSorts(result.getSorts());
+		giftCardMovementListData.setPagination(result.getPagination());
+
+		return giftCardMovementListData;
+	}
 
 }

@@ -12,6 +12,8 @@ import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import com.bl.core.domo.BlDomoDao;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
 
 
 public class DefaultBlDomoDao implements BlDomoDao
@@ -47,6 +49,20 @@ public class DefaultBlDomoDao implements BlDomoDao
 	public SearchPageData<PaymentTransactionEntryModel> getPaymentTransactionEntries(final PageableData pageableData)
 	{
 		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {p.pk} FROM {PaymentTransactionEntry as p}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+
+	@Override
+	public SearchPageData<GiftCardModel> getGiftCards(final PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {g.pk} FROM {GiftCard as g}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+
+	@Override
+	public SearchPageData<GiftCardMovementModel> getGiftCardMovements(final PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {gp.pk} FROM {GiftCardMovement as gp}");
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
 

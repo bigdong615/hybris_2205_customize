@@ -1124,6 +1124,55 @@
             <description>Pagination items</description>
         </property>
     </bean>
+    
+    <bean class="de.hybris.platform.commercefacades.giftcard.data.GiftCardData">
+   	  <property name="createdTS" type="java.util.Date"/>
+	  <property name="modifiedTS" type="java.util.Date"/>
+	  <property name="code" type="String" />
+	  <property name="amount" type="double"/>
+	  <property name="currency" type="String"/>
+	  <property name="startDate" type="java.util.Date"/>
+	  <property name="endDate" type="java.util.Date"/>
+	  <property name="active" type="java.lang.Boolean" />
+	  <property name="email" type="java.lang.Boolean" />
+	  <property name="issuer" type="String" />
+	  <property name="balance" type="double"/>
+	  <property name="isPurchased" type="java.lang.Boolean" />
+	  <property name="customerEmail" type="String" />
+	  <property name="name" type="String" />
+	  <property name="message" type="String" />
+	  <property name="discountID" type="String" />
+	  <property name="order" type="java.util.List&lt;String>" />
+	  <property name="customer" type="String" />
+	</bean>
+	
+	<bean class="com.bl.facades.commercefacades.giftcard.data.GiftCardListData">
+		<property name="giftCards"
+		          type="java.util.List&lt;de.hybris.platform.commercefacades.giftcard.data.GiftCardData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData">
+   	  <property name="createdTS" type="java.util.Date"/>
+	  <property name="modifiedTS" type="java.util.Date"/>
+	  <property name="transactionId" type="String" />
+	  <property name="amount" type="double"/>
+	  <property name="currency" type="String"/>
+	  <property name="redeemDate" type="java.util.Date"/>
+	  <property name="committed" type="java.lang.Boolean" />
+	  <property name="balanceAmount" type="double"/>
+	  <property name="order" type="String" />
+	  <property name="giftCard" type="String" />
+	</bean>
+	
+	<bean class="com.bl.facades.commercefacades.giftcard.movement.data.GiftCardMovementListData">
+		<property name="giftCardMovements"
+		          type="java.util.List&lt;de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+    
 </beans>
 
 

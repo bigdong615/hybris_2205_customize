@@ -1619,5 +1619,57 @@
             </map>
         </property>
     </bean>
+    
+     <bean parent="fieldSetLevelMapping" id="giftCardWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.giftcard.GiftCardWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="code,amount,currency"/>
+                <entry key="DEFAULT"
+                       value="code,amount,currency,active"/>
+                <entry key="FULL" 
+                	   value="createdTS,modifiedTS,code,amount,currency,startDate,endDate,active,email,issuer,balance,isPurchased,customerEmail,name,message,discountID,order,customer"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="giftCardListWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="com.bl.facades.giftcard.dto.GiftCardListWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="pagination,giftCard,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),giftCard(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),giftCard(FULL),sorts(FULL)"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="giftCardMovementWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.giftcard.movement.GiftCardMovementWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="createdTS,modifiedTS,transactionId"/>
+                <entry key="DEFAULT"
+                       value="createdTS,modifiedTS,transactionId,amount"/>
+                <entry key="FULL" 
+                	   value="createdTS,modifiedTS,transactionId,amount,currency,redeemDate,committed,balanceAmount,order,giftCard"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="giftCardMovementListWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="com.bl.facades.giftcardmovements.dto.GiftCardMovementListWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="pagination,giftCardMovements,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),giftCardMovements(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),giftCardMovements(FULL),sorts(FULL)"/>
+            </map>
+        </property>
+    </bean>
 
 </beans>

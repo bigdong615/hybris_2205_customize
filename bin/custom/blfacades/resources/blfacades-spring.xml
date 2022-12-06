@@ -856,6 +856,8 @@
 		<property name="blpackagingInfoConverter" ref="blpackagingInfoConverter"/>
 		<property name="blpaymentTransactionConverter" ref="blpaymentTransactionConverter"/>
 		<property name="blpaymentTransactionEntryConverter" ref="blpaymentTransactionEntryConverter"/>
+		<property name="blGiftCardConverter" ref="blGiftCardConverter"/>
+		<property name="blGiftCardMovementConverter" ref="blGiftCardMovementConverter"/>
 	</bean>
 
 	<alias name="blPackagingInfoPopulator" alias="blPackagingInfoPopulator"/>
@@ -902,6 +904,34 @@
 		<property name="populators">
 			<list>
 				<ref bean="blPaymentTransactionEntryPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blGiftCardPopulator" alias="blGiftCardPopulator"/>
+	<bean id="blGiftCardPopulator" class="com.bl.facades.populators.BlGiftCardPopulator">
+	</bean>
+
+	<alias name="blGiftCardConverter" alias="blGiftCardConverter"/>
+	<bean id="blGiftCardConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.giftcard.data.GiftCardData" />
+		<property name="populators">
+			<list>
+				<ref bean="blGiftCardPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blGiftCardMovementPopulator" alias="blGiftCardMovementPopulator"/>
+	<bean id="blGiftCardMovementPopulator" class="com.bl.facades.populators.BlGiftCardMovementPopulator">
+	</bean>
+
+	<alias name="blGiftCardMovementConverter" alias="blGiftCardMovementConverter"/>
+	<bean id="blGiftCardMovementConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData" />
+		<property name="populators">
+			<list>
+				<ref bean="blGiftCardMovementPopulator"/>
 				</list>
 		</property>
 	</bean>

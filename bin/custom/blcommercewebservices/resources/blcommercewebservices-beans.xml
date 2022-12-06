@@ -350,7 +350,81 @@
         </hints>
         <property name="consignments"
                   type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentWsDTO>">
-            <description>List of order history items</description>
+            <description>List of Consignments history items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
+    
+    <bean class="de.hybris.platform.commercewebservicescommons.dto.giftcard.GiftCardWsDTO">
+   	  <property name="createdTS" type="java.util.Date"/>
+	  <property name="modifiedTS" type="java.util.Date"/>
+	  <property name="code" type="String" />
+	  <property name="amount" type="double"/>
+	  <property name="currency" type="String"/>
+	  <property name="startDate" type="java.util.Date"/>
+	  <property name="endDate" type="java.util.Date"/>
+	  <property name="active" type="java.lang.Boolean" />
+	  <property name="email" type="java.lang.Boolean" />
+	  <property name="issuer" type="String" />
+	  <property name="balance" type="double"/>
+	  <property name="isPurchased" type="java.lang.Boolean" />
+	  <property name="customerEmail" type="String" />
+	  <property name="name" type="String" />
+	  <property name="message" type="String" />
+	  <property name="discountID" type="String" />
+	  <property name="order" type="String" />
+	  <property name="customer" type="String" />
+	</bean>
+	
+	<bean class="com.bl.facades.giftcard.dto.GiftCardListWsDTO">
+        <description>Representation of an GiftCardList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">GiftCardList</hint>
+        </hints>
+        <property name="giftCards"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.giftcard.GiftCardWsDTO>">
+            <description>List of GiftCard history items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.giftcard.movement.GiftCardMovementWsDTO">
+   	  <property name="createdTS" type="java.util.Date"/>
+	  <property name="modifiedTS" type="java.util.Date"/>
+	  <property name="transactionId" type="String" />
+	  <property name="amount" type="double"/>
+	  <property name="currency" type="String"/>
+	  <property name="redeemDate" type="java.util.Date"/>
+	  <property name="committed" type="java.lang.Boolean" />
+	  <property name="balanceAmount" type="double"/>
+	  <property name="order" type="String" />
+	  <property name="giftCard" type="String" />
+	</bean>
+	
+	<bean class="com.bl.facades.giftcardmovements.dto.GiftCardMovementListWsDTO">
+        <description>Representation of an GiftCardMovementList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">GiftCardMovementList</hint>
+        </hints>
+        <property name="giftCardMovements"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.giftcard.movement.GiftCardMovementWsDTO>">
+            <description>List of GiftCard Movement history items</description>
         </property>
         <property name="sorts"
                   type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">

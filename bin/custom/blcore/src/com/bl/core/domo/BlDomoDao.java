@@ -9,6 +9,10 @@ import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
+
+
 public interface BlDomoDao
 {
 	/**
@@ -34,5 +38,17 @@ public interface BlDomoDao
 	 * @return SearchPageData of paymentTransactions
 	 */
 	SearchPageData<PaymentTransactionEntryModel> getPaymentTransactionEntries(final PageableData pageableData);
+
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<GiftCardModel> getGiftCards(PageableData pageableData);
+
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<GiftCardMovementModel> getGiftCardMovements(PageableData pageableData);
 
 }
