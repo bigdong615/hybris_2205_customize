@@ -379,7 +379,7 @@
 	  <property name="name" type="String" />
 	  <property name="message" type="String" />
 	  <property name="discountID" type="String" />
-	  <property name="order" type="String" />
+	  <property name="order" type="java.util.List&lt;String>" />
 	  <property name="customer" type="String" />
 	</bean>
 	
