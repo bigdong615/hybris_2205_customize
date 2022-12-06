@@ -60,6 +60,7 @@ public class FraudCheckOrderAction extends AbstractFraudCheckAction<OrderProcess
 		final FraudServiceResponse response = getFraudService().recognizeOrderSymptoms(getProviderName(), order);
 
 		final double score = response.getScore();
+		LOG.info("Order: {} has a score of {}", order.getCode(), score);
 		if (score < scoreLimit)
 		{
 			final FraudReportModel fraudReport = createFraudReport(providerName, response, order, FraudStatus.OK);
