@@ -27,6 +27,34 @@
                     <cms:component component="${feature}"/>
                 </cms:pageSlot> 
             </div>
-        </div>  
+        </div>
+
 </footer>
 
+<div class="modal fade" id="privacyconsent" tabindex="-1" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered modal-mm">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="privacyconsent-title">Your Privacy</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+            <div class="row">
+               <p class="body14 mt-3">When you visit our site, we use cookies and similar technology to provide our advertising to you on other websites </p>
+               <p class="body14 mt-3"><b>Enable personalized advertising</b></p>
+               <p class="body14 mb-3 ">Off &nbsp
+                  <label class="switch">
+                  <input type="checkbox" id="js-consent-box" >
+                  <span class="slider round"></span>
+                  </label>&nbspOn
+               </p>
+            </div>
+            <div class="row">
+               <p class="body14 mb-3"></p>
+               <p class="body14 mb-3"></p>
+               <p class="body14 mb-3"><b>CA CO VA CT Residents additional options</b><br> If youare a resident of one of these states and want more data option, <a href="<c:url value='/stateConfirm'/>">Click Here</a></p>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
