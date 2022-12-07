@@ -1639,9 +1639,9 @@
                   value="com.bl.facades.giftcard.dto.GiftCardListWsDTO"/>
         <property name="levelMapping">
             <map>
-                <entry key="BASIC" value="pagination,giftCard,sorts"/>
-                <entry key="DEFAULT" value="pagination(DEFAULT),giftCard(DEFAULT),sorts(DEFAULT)"/>
-                <entry key="FULL" value="pagination(FULL),giftCard(FULL),sorts(FULL)"/>
+                <entry key="BASIC" value="pagination,giftCards,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),giftCards(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),giftCards(FULL),sorts(FULL)"/>
             </map>
         </property>
     </bean>
