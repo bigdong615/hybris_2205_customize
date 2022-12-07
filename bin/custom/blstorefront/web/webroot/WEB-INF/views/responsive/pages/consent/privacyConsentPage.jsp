@@ -5,7 +5,7 @@
 
 <template:page pageTitle="${pageTitle}">
    <section id="about-us" class="p-0">
-      <div class="container">
+      <div class="container row">
          <cms:pageSlot position="BodyContent" var="feature">
          							${feature.content}
          </cms:pageSlot>
@@ -25,7 +25,6 @@
                 checkboxSelectedUrl= ele[i].value
             }
            var redirectUrl= encodeURI(ACC.config.encodedContextPath+checkboxSelectedUrl);
-           alert(redirectUrl);
             if(checkboxSelectedUrl != ""){
             window.location.href = redirectUrl;
             }
