@@ -42,7 +42,7 @@
             <div class="row">
                <p class="body14 mt-3">When you visit our site, we use cookies and similar technology to provide our advertising to you on other websites </p>
                <p class="body14 mt-3"><b>Enable personalized advertising</b></p>
-               <p class="body14 mb-3 ">Off &nbsp
+               <p class="d-flex align-items-center body14 mb-3 ">Off &nbsp
                   <label class="switch">
                   <input type="checkbox" id="js-consent-box" >
                   <span class="slider round"></span>
