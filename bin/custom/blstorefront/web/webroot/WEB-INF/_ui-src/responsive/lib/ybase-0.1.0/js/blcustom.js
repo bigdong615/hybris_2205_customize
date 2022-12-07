@@ -1475,7 +1475,7 @@ const formatToPhone = (event) => {
 
 });
 
-//document.getElementById("js-consent-box").onclick=async()=>{
+document.getElementById("js-consent-box").onclick=async()=>{
 await airgap.sync();
 
 // Is user fully opted-in to core unessential tracking purposes:
@@ -1497,6 +1497,6 @@ consentCheckbox.addEventListener('change', (interaction) => {
     airgap.optOut({ interaction });
   }
 });
-//}
+}
 
 
