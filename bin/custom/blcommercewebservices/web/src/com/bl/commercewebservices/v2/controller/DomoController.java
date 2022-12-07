@@ -5,8 +5,8 @@ package com.bl.commercewebservices.v2.controller;
 
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
--import de.hybris.platform.commerceservices.search.pagedata.PageableData;
--import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.commerceservices.search.pagedata.PageableData;
+import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
