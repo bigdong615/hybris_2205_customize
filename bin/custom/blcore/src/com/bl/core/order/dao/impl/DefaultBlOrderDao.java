@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -91,7 +92,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ " AND {o:status} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED'}})";
 
 	private static final String GET_COMPLETED_RENTAL_ORDERS_FOR_SHARE_A_SALE = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALORDER + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALORDER + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:"+OrderModel.RENTALENDDATE + "} >= ?previousYearEndDate  and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
 			+ " as type} where {type:code} = ?code}})";
 
 	private static final String GET_ONE_YEAR_OLD_COMPLETED_ORDERS = "SELECT {" + ItemModel.PK + "} FROM {"
@@ -289,6 +290,10 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		query.addQueryParameter(BlCoreConstants.RENTAL_ORDER, Boolean.TRUE);
 		query.addQueryParameter(BlCoreConstants.SHARE_A_SALE, Boolean.FALSE);
 		query.addQueryParameter(BlCoreConstants.ORDER_STATUS, OrderStatus.COMPLETED.getCode());
+		final Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.YEAR, -1);
+		final Date previousYear = cal.getTime();
+    query.addQueryParameter(BlCoreConstants.PREVIOUS_YEAR_END_DATE,previousYear);
 		final SearchResult<AbstractOrderModel> result = getFlexibleSearchService().search(query);
 		final List<AbstractOrderModel> abstractOrderModelList = result.getResult();
 		if (CollectionUtils.isEmpty(abstractOrderModelList)) {

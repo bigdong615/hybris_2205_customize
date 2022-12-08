@@ -80,7 +80,7 @@ INSERT_UPDATE FooterNavigationComponent ; $contentCV[unique=true] ; uid[unique=t
                                         ;                         ; FooterNavigationComponent ; 6         ; FooterNavigationComponent ; false                ; FooterNavNode            ;  
                                         
 INSERT_UPDATE CustomFooterCopyRightComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                                       ; &componentRef                ; footerCopyRight                                             ; footerLinks
-                                             ;                         ; CopyRightParagraphComponent1 ; Copy Right Paragraph Component for footer1 ; CopyRightParagraphComponent1 ; "BorrowLenses.com" ; "<p class=""body14 text-end""> <a  data-bs-target=""#privacyconsent"" href=""#"" data-bs-toggle=""modal"">Do Not Sell of Share My Personal Informtion</a>&nbsp&nbsp&nbsp&nbsp<a href=""https://www.shutterflyinc.com/privacy"" target=""_blank"">Privacy Policy</a></p>"
+                                             ;                         ; CopyRightParagraphComponent1 ; Copy Right Paragraph Component for footer1 ; CopyRightParagraphComponent1 ; "BorrowLenses.com" ; "<p class=""body14 text-end""> <a  data-bs-target=""#privacyconsent"" href=""#"" data-bs-toggle=""modal"">Do Not Sell of Share My Personal Information</a>&nbsp&nbsp&nbsp&nbsp<a href=""https://www.shutterflyinc.com/privacy"" target=""_blank"">Privacy Policy</a></p>"
                                              
                                              
                                              
