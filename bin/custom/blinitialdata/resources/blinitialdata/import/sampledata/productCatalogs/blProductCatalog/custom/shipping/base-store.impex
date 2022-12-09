@@ -11,4 +11,3 @@ UPDATE BaseStore; uid[unique = true]; deliveryModes(code[unique = true])
 UPDATE Warehouse; code[unique = true]; name; cutOffTime; pointsOfService(name); vendor(code)[default = default]; default[default = false]
                 ; warehouse_ca       ; CA  ; 13:30     ; BL SAN CARLOS POS
                 ; warehouse_ma       ; MA  ; 17:00     ; BL WALTHAM POS
-                
