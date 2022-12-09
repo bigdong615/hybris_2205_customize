@@ -858,6 +858,7 @@
 		<property name="blpaymentTransactionEntryConverter" ref="blpaymentTransactionEntryConverter"/>
 		<property name="blGiftCardConverter" ref="blGiftCardConverter"/>
 		<property name="blGiftCardMovementConverter" ref="blGiftCardMovementConverter"/>
+		<property name="blDomoOrderConverter" ref="blDomoOrderConverter"/>
 	</bean>
 
 	<alias name="blPackagingInfoPopulator" alias="blPackagingInfoPopulator"/>
@@ -936,5 +937,17 @@
 		</property>
 	</bean>
 	
-
+	<alias name="blOrderPopulator" alias="blOrderPopulator"/>
+	<bean id="blOrderPopulator" class="com.bl.facades.populators.BlOrderPopulator" parent="defaultOrderPopulator"></bean>
+	
+	<alias name="blDomoOrderConverter" alias="blDomoOrderConverter"/>
+	<bean id="blDomoOrderConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.OrderData" />
+		<property name="populators">
+			<list>
+				<ref bean="blOrderPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
 </beans>

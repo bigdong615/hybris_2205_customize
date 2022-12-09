@@ -5,6 +5,7 @@ package com.bl.core.services.domo.impl;
 
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -50,6 +51,13 @@ public class DefaultBlDomoService implements BlDomoService
 	{
 		return getBlDomoDao().getGiftCardMovements(pageableData);
 	}
+
+	@Override
+	public SearchPageData<OrderModel> getOrders(final PageableData pageableData)
+	{
+		return getBlDomoDao().getOrders(pageableData);
+	}
+
 
 	/**
 	 * @return the blDomoDao

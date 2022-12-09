@@ -5,14 +5,16 @@ package com.bl.facades.domo.impl;
 
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
+import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.converters.Converters;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
-import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
+import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 
@@ -30,10 +32,12 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	private Converter<PaymentTransactionModel, PaymentTransactionData> blpaymentTransactionConverter;
 
 	private Converter<PaymentTransactionEntryModel, PaymentTransactionEntryData> blpaymentTransactionEntryConverter;
-	
+
 	private Converter<GiftCardModel, GiftCardData> blGiftCardConverter;
-	
+
 	private Converter<GiftCardMovementModel, GiftCardMovementData> blGiftCardMovementConverter;
+
+	private Converter<OrderModel, OrderData> blDomoOrderConverter;
 
 	@Override
 	public SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData)
@@ -83,6 +87,29 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 		return convertPageData(giftCardMovements, getBlGiftCardMovementConverter());
 	}
 
+	@Override
+	public SearchPageData<OrderData> getOrders(final PageableData pageableData)
+	{
+		final SearchPageData<OrderModel> orders = getBlDomoService().getOrders(pageableData);
+		return convertPageData(orders, getBlDomoOrderConverter());
+	}
+
+	/**
+	 * @return the BlDomoOrderConverter
+	 */
+	public Converter<OrderModel, OrderData> getBlDomoOrderConverter()
+	{
+		return blDomoOrderConverter;
+	}
+
+	/**
+	 * @param BlDomoOrderConverter
+	 *           the BlDomoOrderConverter to set
+	 */
+	public void setBlDomoOrderConverter(final Converter<OrderModel, OrderData> blDomoOrderConverter)
+	{
+		this.blDomoOrderConverter = blDomoOrderConverter;
+	}
 
 	/**
 	 * @return the blpaymentTransactionConverter
@@ -154,7 +181,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	{
 		this.blDomoService = blDomoService;
 	}
-	
+
 	/**
 	 * @return the blGiftCardConverter
 	 */
@@ -166,7 +193,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	/**
 	 * @param blGiftCardConverter the blGiftCardConverter to set
 	 */
-	public void setBlGiftCardConverter(Converter<GiftCardModel, GiftCardData> blGiftCardConverter)
+	public void setBlGiftCardConverter(final Converter<GiftCardModel, GiftCardData> blGiftCardConverter)
 	{
 		this.blGiftCardConverter = blGiftCardConverter;
 	}
@@ -182,7 +209,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	/**
 	 * @param blGiftCardMovementConverter the blGiftCardMovementConverter to set
 	 */
-	public void setBlGiftCardMovementConverter(Converter<GiftCardMovementModel, GiftCardMovementData> blGiftCardMovementConverter)
+	public void setBlGiftCardMovementConverter(final Converter<GiftCardMovementModel, GiftCardMovementData> blGiftCardMovementConverter)
 	{
 		this.blGiftCardMovementConverter = blGiftCardMovementConverter;
 	}

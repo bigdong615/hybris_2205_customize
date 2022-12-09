@@ -5,6 +5,7 @@ package com.bl.commercewebservices.v2.controller;
 
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
+import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
@@ -32,6 +33,8 @@ import com.bl.facades.commercefacades.giftcard.movement.data.GiftCardMovementLis
 import com.bl.facades.domo.BlDomoFacade;
 import com.bl.facades.giftcard.dto.GiftCardListWsDTO;
 import com.bl.facades.giftcardmovements.dto.GiftCardMovementListWsDTO;
+import com.bl.facades.order.data.OrderListData;
+import com.bl.facades.orders.dto.OrderListWsDTO;
 import com.bl.facades.packageinfo.data.PackagingInfoListData;
 import com.bl.facades.packageinfo.dto.PackagingInfoListWsDTO;
 import com.bl.facades.paymentTransaction.data.PaymentTransactionEntryListData;
@@ -223,6 +226,38 @@ public class DomoController extends BaseCommerceController
 		giftCardMovementListData.setPagination(result.getPagination());
 
 		return giftCardMovementListData;
+	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/orders", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getOrders", value = "Get orders", notes = "Returns orders")
+	@ApiBaseSiteIdAndUserIdParam
+	public OrderListWsDTO getOrders(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final OrderListData orderListData;
+		orderListData = createOrderListData(blDomoFacade.getOrders(pageableData));
+		setTotalCountHeader(response, orderListData.getPagination());
+		return getDataMapper().map(orderListData, OrderListWsDTO.class, fields);
+	}
+
+	protected OrderListData createOrderListData(final SearchPageData<OrderData> result)
+	{
+		final OrderListData orderListData = new OrderListData();
+
+		orderListData.setOrders(result.getResults());
+		orderListData.setSorts(result.getSorts());
+		orderListData.setPagination(result.getPagination());
+
+		return orderListData;
 	}
 
 }

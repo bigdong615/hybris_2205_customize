@@ -1340,7 +1340,7 @@
         </property>
     </bean>
 
-    <bean parent="fieldSetLevelMapping" id="orderWsDTOFieldSetLevelMapping">
+<!--     <bean parent="fieldSetLevelMapping" id="orderWsDTOFieldSetLevelMapping">
         <property name="dtoClass"
                   value="de.hybris.platform.commercewebservicescommons.dto.order.OrderWsDTO"/>
         <property name="levelMapping">
@@ -1352,7 +1352,7 @@
                        value="unconsignedEntries(FULL),status,created,deliveryStatusDisplay,statusDisplay,consignments(FULL),guestCustomer,deliveryStatus,store,appliedOrderPromotions(FULL),pickupItemsQuantity,net,calculated,appliedVouchers(FULL),productDiscounts(FULL),totalDiscounts(FULL),subTotal(FULL),orderDiscounts(FULL),entries(FULL),appliedProductPromotions(FULL),totalPrice(FULL),site,deliveryMode(FULL),code,deliveryOrderGroups(FULL),guid,paymentInfo(FULL),pickupOrderGroups(FULL),totalItems,totalPriceWithTax(FULL),deliveryItemsQuantity,totalTax(FULL),user(FULL),deliveryAddress(FULL),deliveryCost(FULL),cancellable,returnable"/>
             </map>
         </property>
-    </bean>
+    </bean> -->
 
     <bean parent="fieldSetLevelMapping" id="pickupOrderEntryGroupWsDTOFieldSetLevelMapping">
         <property name="dtoClass"
