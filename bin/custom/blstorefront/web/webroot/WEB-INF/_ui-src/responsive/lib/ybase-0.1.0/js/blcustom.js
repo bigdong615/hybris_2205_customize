@@ -1475,28 +1475,5 @@ const formatToPhone = (event) => {
 
 });
 
-document.getElementById("js-consent-box").onclick=async()=>{
-await airgap.sync();
-
-// Is user fully opted-in to core unessential tracking purposes:
-// Functional, Analytics, and Advertising
-const isOptedIn = airgap.isOptedIn();
-
-// a similar utility is available for detecting full opt-out
-// of these purposes:
-// const isOptedOut = airgap.isOptedOut();
-
-const consentCheckbox = document.getElementById('js-consent-box');
-consentCheckbox.checked = isOptedIn;
-consentCheckbox.addEventListener('change', (interaction) => {
-  if (interaction.target.checked) {
-    // Consent to all user-configurable tracking purposes
-    airgap.optIn({ interaction });
-  } else {
-    // Opt-out of all user-configurable tracking purposes
-    airgap.optOut({ interaction });
-  }
-});
-}
 
 

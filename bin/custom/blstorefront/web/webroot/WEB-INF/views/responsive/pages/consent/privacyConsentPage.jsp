@@ -13,20 +13,3 @@
       <br>
    </section>
 </template:page>
-
-<script>
-        function displayConsent() {
-            var ele = document.getElementsByName('privacy-consent');
-            var baseUrl= window.location.origin;
-            var checkboxSelectedUrl ="";
-
-            for(i = 0; i < ele.length; i++) {
-                if(ele[i].checked)
-                checkboxSelectedUrl= ele[i].value
-            }
-           var redirectUrl= encodeURI(ACC.config.encodedContextPath+checkboxSelectedUrl);
-            if(checkboxSelectedUrl != ""){
-            window.location.href = redirectUrl;
-            }
-        }
-    </script>
