@@ -63,6 +63,9 @@ public class BLUpsShippingDataPopulator
 	@Value("${blintegration.ups.shipment.shipper.attension.name}")
 	private String shipperAttensionName;
 
+	@Value("${blintegration.ups.shipment.shipper.company.name}")
+	private String shipperCompanyName;
+
 	@Value("${blintegration.ups.shipment.payment.information.type}")
 	private String paymentInfoType;
 
