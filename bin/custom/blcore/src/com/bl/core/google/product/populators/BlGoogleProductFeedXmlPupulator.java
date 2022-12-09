@@ -1,26 +1,20 @@
 package com.bl.core.google.product.populators;
 
 import de.hybris.platform.converters.Populator;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.CartEntryModel;
-import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeValueModel;
-import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.ShippingCostEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.shipping.service.impl.DefaultBlDeliveryModeService;
@@ -87,24 +81,19 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 
 	private double getShippingPrice(final BlProductModel product)
 	{
-		final CartModel cart = getModelService().create(CartModel.class);
-		final CartEntryModel entry = getModelService().create(CartEntryModel.class);
-		entry.setProduct(product);
-		entry.setQuantity(1l);
-		final List<AbstractOrderEntryModel> cartEntries = new ArrayList<AbstractOrderEntryModel>();
-		cartEntries.add(entry);
-		cart.setEntries(cartEntries);
-		final ZoneDeliveryModeModel deliveryMode = getModelService().create(ZoneDeliveryModeModel.class);
-		deliveryMode.setCode("UPS_STANDARD_ROUND_TRIP");
-		deliveryMode.setShippingCostCode(ShippingCostEnum.UPS_STANDARD_ROUND_TRIP);
-		final ZoneDeliveryModeValueModel zoneDeliveryMode = getModelService().create(ZoneDeliveryModeValueModel.class);
-		zoneDeliveryMode.setMinimum(0.0);
-		zoneDeliveryMode.setValue(0.0);
-		zoneDeliveryMode.setFixedAmount(false);
-		final Set<ZoneDeliveryModeValueModel> zoneDeliveryModeValues = new HashSet<ZoneDeliveryModeValueModel>();
-		zoneDeliveryModeValues.add(zoneDeliveryMode);
-		deliveryMode.setValues(zoneDeliveryModeValues);
-		final double price = getBlDeliveryModeService().getShippingCostAmount(cart, deliveryMode);
+		double price = 0.0;
+		try {
+   		final Collection<ZoneDeliveryModeModel> zoneDeliveryModeModelList = getBlDeliveryModeService()
+   				.getShipToHomeDeliveryModesWithoutRentalDates("UPS", true);
+   		if (!zoneDeliveryModeModelList.isEmpty())
+   		{
+   			price = zoneDeliveryModeModelList.stream().findFirst().get().getValues().stream().findFirst().get().getValue();
+   		}
+		}
+		catch(Exception e)
+		{
+			LOG.info("Shipping Price calculation for Google Product Feed went wrong "+ e.getMessage());
+		}
 		return price;
 	}
 
