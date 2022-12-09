@@ -110,10 +110,10 @@
                                            <c:forEach items="${orderData.trackingNumber}" var="trackingInfo">
                                              <c:if test="${trackingInfo.key ne null}">
                                                <c:url value="${trackingInfo.value}" var="trackingUrl" />
-                                                 <c:if test="${fn:containsIgnoreCase(trackingInfo.valuee ,'ups') == 'true'}">
+                                                 <c:if test="${fn:containsIgnoreCase(trackingInfo.value ,'ups') == 'true'}">
                                                      <a class="tracking-info" href="https://www.ups.com/track?loc=en_US&tracknum=${trackingInfo.key}" target="_new"> ${trackingInfo.key}</a></br>
                                                  </c:if>
-                                                 <c:if test="${fn:containsIgnoreCase(trackingInfo.valuee ,'fedex') == 'true'}">
+                                                 <c:if test="${fn:containsIgnoreCase(trackingInfo.value ,'fedex') == 'true'}">
                                                      <a class="tracking-info" href="https://www.fedex.com/fedextrack/?trknbr=${trackingInfo.key}" target="_new"> ${trackingInfo.key}</a></br>
                                                  </c:if>
                                              </c:if>
