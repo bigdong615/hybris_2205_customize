@@ -114,7 +114,7 @@
                                                      <a class="tracking-info" href="https://www.ups.com/track?loc=en_US&tracknum=${trackingInfo.key}" target="_new"> ${trackingInfo.key}</a></br>
                                                  </c:if>
                                                  <c:if test="${fn:containsIgnoreCase(trackingInfo.valuee ,'fedex') == 'true'}">
-                                                     <a class="tracking-info" href="https://www.fedex.com/fedextrack/?action=track&trackingnumber=${trackingInfo.key}" target="_new"> ${trackingInfo.key}</a></br>
+                                                     <a class="tracking-info" href="https://www.fedex.com/fedextrack/?trknbr=${trackingInfo.key}" target="_new"> ${trackingInfo.key}</a></br>
                                                  </c:if>
                                              </c:if>
                                             </c:forEach>
