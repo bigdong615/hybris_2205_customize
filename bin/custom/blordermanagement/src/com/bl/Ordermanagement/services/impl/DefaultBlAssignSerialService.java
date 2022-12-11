@@ -86,7 +86,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     }
 
       context.getOrderEntries().forEach(entry -> {
-        final Long quantity = entry.getQuantity();
+        final Long quantity = BooleanUtils.isTrue(context.isModifiedEntryFromBackoffice()) ? context.getModifiedQuantityForEntry() : entry.getQuantity();
         fulfillEachEntry(context, result, finalSourcingLocation, entry, allEntrySourceComplete, quantity);
     });
 
@@ -199,7 +199,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       }
 
       if (!isAquatechProductInEntry(entry)) {
-        if (allResultQuantityAllocated.equals(entry.getQuantity())) {
+        final Long quantity = BooleanUtils.isTrue(context.isModifiedEntryFromBackoffice()) ? context.getModifiedQuantityForEntry() : entry.getQuantity();
+        if (allResultQuantityAllocated.equals(quantity)) {
           allEntryQuantityFulfilled.add(new AtomicBoolean(true));
         } else {
           allEntryQuantityFulfilled.add(new AtomicBoolean(false));
