@@ -330,10 +330,12 @@ public class DefaultBlOrderModificationService
 					consEntry.setQuantity(Long.valueOf(result.getSerialProductMap().get(orderEntryModel.getEntryNumber()).size()));
 					getModelService().save(consEntry);
 				}
-				final List<BlProductModel> assignedSerialProducts = new ArrayList<>(
-						orderEntryModel.getSerialProducts());
-				assignedSerialProducts.addAll(orderEntryModel.getModifiedSerialProductList());
-				orderEntryModel.setSerialProducts(assignedSerialProducts);
+				if(CollectionUtils.isNotEmpty(orderEntryModel.getModifiedSerialProductList())) {
+					final List<BlProductModel> assignedSerialProducts = new ArrayList<>(
+							orderEntryModel.getSerialProducts());
+					assignedSerialProducts.addAll(orderEntryModel.getModifiedSerialProductList());
+					orderEntryModel.setSerialProducts(assignedSerialProducts);
+				}
 		}
 
 		order.getOrderProcess().forEach(orderProcess -> {
