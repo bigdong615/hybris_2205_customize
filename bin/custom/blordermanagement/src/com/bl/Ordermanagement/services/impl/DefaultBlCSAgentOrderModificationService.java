@@ -192,6 +192,15 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
                 filter(consignmentEntryModel -> consignmentEntryModel.getConsignment().equals(consignment)).findFirst();
         if(consignmentEnt.isPresent()) {
             blOptimizeShippingFromWHService.updateConsignmentEntry(consignmentEnt.get(), sourceResult, orderEntryModel);
+            final List<BlProductModel> associatedSerialProducts = new ArrayList<>();
+            orderEntryModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
+                consignmentEntryModel.getSerialProducts().forEach(serial-> {
+                    if(serial instanceof BlSerialProductModel) {
+                        associatedSerialProducts.add(serial);
+                    }
+                });
+            });
+            orderEntryModel.setSerialProducts(associatedSerialProducts);
         } else {
             final Long entryQty = BooleanUtils.isTrue(orderEntryModel.getAqautechProduct())? orderEntryModel.getQuantity() : Long.valueOf(sourceResult.getSerialProductMap().get(orderEntryModel.getEntryNumber()).size());
             final ConsignmentEntryModel createConsignmentEntry = defaultBlAllocationService
