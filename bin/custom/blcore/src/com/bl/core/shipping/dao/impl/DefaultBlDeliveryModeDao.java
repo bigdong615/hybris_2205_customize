@@ -96,7 +96,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
    @Override
    public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode,
                                                                                           final boolean payByCustomer) {
-       final StringBuilder barcodeList = queryForShipToHomeDeliveryWithoutAMModes(mode);
+       final StringBuilder barcodeList = queryForShipToHomeDeliveryForUsedGear(mode);
 
        final FlexibleSearchQuery query = getShipToHomeDeliveryCommonAttributes(carrier, mode, payByCustomer, barcodeList);
        final Collection<ZoneDeliveryModeModel> results = getFlexibleSearchService().<ZoneDeliveryModeModel>search(query).getResult();
@@ -400,6 +400,15 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     * @return
     */
    private StringBuilder queryForShipToHomeDeliveryWithoutAMModes(final String mode)
+	{
+		final StringBuilder barcodeList = new StringBuilder("select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, " +
+               "{CarrierEnum as ce} where {sg.pk} = {zdm.shippingGroup} and {sg.code} = 'SHIP_HOME_HOTEL_BUSINESS' and {zdm.active} = 1 and " +
+               "{zdm.carrier} = {ce.pk} and {ce.code} = ?carrier and {zdm.code} like '%" + mode + "%' and {zdm.code} not like '%AM%'" +
+               " and {zdm.payByCustomer} = ?payByCustomer");
+		return barcodeList;
+	}
+   
+   private StringBuilder queryForShipToHomeDeliveryForUsedGear(final String mode)
 	{
 		final StringBuilder barcodeList = new StringBuilder("select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, " +
                "{CarrierEnum as ce} where {sg.pk} = {zdm.shippingGroup} and {sg.code} = 'SHIP_HOME_HOTEL_BUSINESS' and {zdm.active} = 1 and " +

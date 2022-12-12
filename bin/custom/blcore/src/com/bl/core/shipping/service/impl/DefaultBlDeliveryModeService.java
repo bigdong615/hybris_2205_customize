@@ -261,7 +261,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     @Override
     public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesWithoutRentalDates(final String carrier,
                                                                                           final boolean payByCustomer) {
-        return getShipToHomeDeliveryModesForUsedGear(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, payByCustomer);
+        return getShipToHomeDeliveryModesForUsedGear(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_USEDGEAR, payByCustomer);
     }
 
     /**

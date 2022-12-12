@@ -41,8 +41,6 @@
 		<%-- added custom js bl-custom.js for gift card --%>
 		<script src="${commonResourcePathHtml}/js/acc.address.js"></script>
 
-    <script src="${commonResourcePathHtml}/js/acc.address.js"></script>
-
 		<script src="${commonResourcePathHtml}/js/acc.autocomplete.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.carousel.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.cart.js"></script>
@@ -94,6 +92,7 @@
 
 		<%-- custom js file --%>
         <script src="${commonResourcePathHtml}/js/blcustom.js"></script>
+        <script src="${commonResourcePathHtml}/js/acc.privacyconsent.js"></script>
 
 
 		<%-- Cms Action JavaScript files --%>

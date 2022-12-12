@@ -1,0 +1,136 @@
+$contentCatalog = blContentCatalog
+$contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]), CatalogVersion.version[default=Online])[default=$contentCatalog:Online]
+$lang = en
+
+# Import modulegen config properties into impex macros
+UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor]; pk[unique = true]
+$jarResourceCms = $config-jarResourceCmsValue
+
+###  Page Template For Borrow Lenses Home Page  ###
+
+INSERT_UPDATE PageTemplate; $contentCV[unique = true]; uid[unique = true]         ; name                          ; frontendTemplateName       ; restrictedPageTypes(code); active[default = true]
+                          ;                          ; PrivacyConsentPageTemplate ; Privacy consent page Template ; consent/privacyConsentPage ; ContentPage              ; false
+
+
+
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName; name[unique = true]                 ; template(uid, $contentCV)[unique = true][default = 'PrivacyConsentPageTemplate']; validComponentTypes(code); compTypeGroup(code)
+                             ; PromoBannerSlot                     ;                                                                                 ;                          ; wide
+                             ; SiteLogoHeaderSlot                  ;                                                                                 ;                          ; logo
+                             ; HeaderLinkForSupportSlot            ;                                                                                 ;                          ; headerlink
+                             ; HeaderLinkForShipOrPickupSlot       ;                                                                                 ;                          ; headerlink
+                             ; NavigationPromoSlot                 ;                                                                                 ;                          ; logo
+                             ; NavigationBarSlot                   ;                                                                                 ;                          ; navigation
+                             ; NavigationBarMobileSlot             ;                                                                                 ;                          ; navigation
+                             ; MiniCartSlot                        ;                                                                                 ;                          ; minicart
+                             ; FooterSlot                          ;                                                                                 ;                          ; footer
+                             ; FooterSubscriptionSlot              ;                                                                                 ;                          ; wide
+                             ; FooterCopyRightslot                 ;                                                                                 ;                          ; wide
+                             ; MobileHeaderLinkForShipOrPickupSlot ;                                                                                 ;                          ; headerlink
+                             ; MobileHeaderLinkForSupportSlot      ;                                                                                 ;                          ; headerlink
+                             ; MobileHeaderLinkForAccountSlot      ;                                                                                 ;                          ; headerlink
+                             ; MobileHeaderBottomInfo              ;                                                                                 ;                          ; wide
+                             ; MobileMiniCartSlot                  ;                                                                                 ;                          ; minicart
+                             ; SocialMediaSectionSlot              ;                                                                                 ;                          ; wide
+                             ; TopHeaderSlot                       ;                                                                                 ;                          ; wide
+                             ; BodyContent                         ;                                                                                 ;                          ; wide
+
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                                        ; position[unique = true]             ; pageTemplate(uid, $contentCV)[unique = true][default = 'PrivacyConsentPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
+                                    ;                          ; PromoBannerSlot-stateConfirmationPage                     ; PromoBannerSlot                     ;                                                                                     ; PromoBannerSlot                            ; true
+                                    ;                          ; SiteLogoHeaderSlot-stateConfirmationPage                  ; SiteLogoHeaderSlot                  ;                                                                                     ; SiteLogoHeaderSlot                         ; true
+                                    ;                          ; HeaderLinkForSupportSlot-stateConfirmationPage            ; HeaderLinkForSupportSlot            ;                                                                                     ; HeaderLinkForSupportSlot                   ; true
+                                    ;                          ; HeaderLinkForShipOrPickupSlot-stateConfirmationPage       ; HeaderLinkForShipOrPickupSlot       ;                                                                                     ; HeaderLinkForShipOrPickupSlot              ; true
+                                    ;                          ; NavigationPromoSlot-stateConfirmationPage                 ; NavigationPromoSlot                 ;                                                                                     ; NavigationPromoSlot                        ; true
+                                    ;                          ; NavigationBarSlot-stateConfirmationPage                   ; NavigationBarSlot                   ;                                                                                     ; NavigationBarSlot                          ; true
+                                    ;                          ; NavigationBarMobileSlot-stateConfirmationPage             ; NavigationBarMobileSlot             ;                                                                                     ; NavigationBarMobileSlot                    ; true
+                                    ;                          ; MiniCartSlot-stateConfirmationPage                        ; MiniCartSlot                        ;                                                                                     ; MiniCartSlot                               ; true
+                                    ;                          ; FooterSlot-stateConfirmationPage                          ; FooterSlot                          ;                                                                                     ; FooterSlot                                 ; true
+                                    ;                          ; FooterSubscriptionSlot-stateConfirmationPage              ; FooterSubscriptionSlot              ;                                                                                     ; FooterSubscriptionSlot                     ; true
+                                    ;                          ; FooterCopyRightslot-stateConfirmationPage                 ; FooterCopyRightslot                 ;                                                                                     ; FooterCopyRightslot                        ; true
+                                    ;                          ; MobileHeaderLinkForShipOrPickupSlot-stateConfirmationPage ; MobileHeaderLinkForShipOrPickupSlot ;                                                                                     ; MobileHeaderLinkForShipOrPickupSlot        ; true
+                                    ;                          ; MobileHeaderLinkForSupportSlot-stateConfirmationPage      ; MobileHeaderLinkForSupportSlot      ;                                                                                     ; MobileHeaderLinkForSupportSlot             ; true
+                                    ;                          ; MobileHeaderLinkForAccountSlot-stateConfirmationPage      ; MobileHeaderLinkForAccountSlot      ;                                                                                     ; MobileHeaderLinkForAccountSlot             ; true
+                                    ;                          ; MobileHeaderBottomInfo-stateConfirmationPage              ; MobileHeaderBottomInfo              ;                                                                                     ; MobileHeaderBottomInfo                     ; true
+                                    ;                          ; MobileMiniCartSlot-stateConfirmationPage                  ; MobileMiniCartSlot                  ;                                                                                     ; MobileMiniCartSlot                         ; true
+                                    ;                          ; SocialMediaSectionSlot-stateConfirmationPage              ; SocialMediaSectionSlot              ;                                                                                     ; SocialMediaSectionSlot                     ; true
+                                    ;                          ; TopHeaderSlot-stateConfirmationPage                       ; TopHeaderSlot                       ;                                                                                     ; TopHeaderSlot                              ; true
+
+# Site-wide Homepage
+INSERT_UPDATE ContentPage; $contentCV[unique = true]; uid[unique = true]    ; name               ; &pageRef              ; masterTemplate(uid, $contentCV); label           ; defaultPage[default = 'true']; approvalStatus(code)[default = 'approved']; homepage[default = 'false']; title
+                         ;                          ; stateConfirmationPage ; state confirmation ; stateConfirmationPage ; PrivacyConsentPageTemplate     ; /stateConfirm   ;                              ;                                           ;                            ; Privacy Consent
+                         ;                          ; stateResidentPage     ; state resident     ; stateResidentPage     ; PrivacyConsentPageTemplate     ; /stateResident  ;                              ;                                           ;                            ; Privacy Consent
+                         ;                          ; stateAuthorizePage    ; state authorize    ; stateAuthorizePage    ; PrivacyConsentPageTemplate     ; /stateAuthorize ;                              ;                                           ;                            ; Privacy Consent
+
+INSERT_UPDATE CMSParagraphComponent; $contentCV[unique = true]; uid[unique = true]         ; name                              ; &componentRef              ; content[lang = $lang]
+                                   ;                          ; stateConfirmationComponent ; state Confirmation Page Component ; stateConfirmationComponent ; "<div class=""mb-5 col-lg-6"">
+            <h5 class=""privacyConcentTitle"">State Confirmation - CA CO VA CT residents</h5>
+            <p class=""mb-5 body14"">The laws in these four states provide consumers with additional rights regarding their personal information</p>
+            <h6>Please confirm you are a resident of California, Colorado, Virginia, or Connecticut:</h6>
+      <ul class=""consentContainer body14"">
+         <li class=""residentPersonItem"">
+               <input type=""radio"" id=""residentPerson"" name=""privacy-consent"" value=""/stateResident"">
+               <label for=""residentPerson"">I represent and warrant that I am a resident of California, Colorado, Connecticut, or Virginia, and I wish to exercise a data privacy right pursuant to state law on behalf of myself or my minor child.</label>
+         </li>
+         <li class=""authorizePersonItem"">
+               <input type=""radio"" id=""authorizePerson"" name=""privacy-consent"" value=""/stateAuthorize"">
+               <label for=""authorizePerson"">I represent and warrant that I am an authorized representative of a resident of California, Colorado, Connecticut, or Virginia, and I wish to exercise a data privacy right pursuant to state law on behalf of that person.</label>
+         </li>
+     </ul>
+         <div class=""cart-actions"">
+            <button onclick=""displayConsent()"" class=""btn btn-sm btn-primary"">Continue</button>
+         </div>
+</div>"
+            ;                          ; stateAuthorizeComponent ; state Authorize Page Component ; stateAuthorizeComponent ; "<div class=""justify-content-center mb-5 row""><p></p>
+<p class=""body14"">CALFORNIA CONSUMER PRIVACY ACT AUTHORIZED REPRESENTATIVE INSTRUCTIONS</p>
+<pclass=""body14"">Shutter fly will process requests to know and requests to delete submitted by authorized agents if we can verify that the agent has permission from the subject of the request. There are two methods of confirming this permission.</p>
+<p> </p>
+<p> </p>
+<h5>Power of Attorney </h5>
+<p class=""body14"">If the agent has an executed Power of Attorney from the subject of the request, the agent can submit this Power of Attorney document via mail at:<br>
+Shutter fly Privacy Office, Legal Department<br>
+ATTN: Shutter fly CCPA Data Subject Request – Agent Power of Attorney<br>
+11000 Viking Drive, Suite 400W<br>
+Eden Prairie, MN 55344
+</p>
+<p class=""body14"">
+The Power of Attorney document can also be provided via e-mail with the subject line “Shutterfly CCPA Data Subject Request – Agent Power of Attorney” to Privacy@shutterfly.com.
+</p>
+<p></p>
+<h5>Written Permission and Subject Verification</h5>
+<p class=""body14"">If the agent does not have an executed Power of Attorney, the agent will need to submit proof that the request subject has given written permission to the Agent to submit the request. The request subject will also need to separately verify their own identity. The agent can submit proof of written permission via mail at:<br>
+Shutterfly Privacy Office, Legal Department<br>
+ATTN: Shutterfly CCPA Data Subject Request – Agent Permission<br>
+11000 Viking Drive, Suite 400W<br>
+Eden Prairie, MN 55344<br>
+</p>
+<p class=""body14"">The proof of written permission can also be provided via e-mail with the subject line “Shutterfly CCPA Data Subject Request – Agent Permission” to privacy@shutterfly.com</p>
+</div>"
+                              ;                          ; stateResidentComponent ; state Resident Component ; stateResidentComponent ; "<div class=""justify-content-center mb-5 row""><p></p>
+<h5>Information Access Request</h5>
+<p class=""body14"">I want to access the personal information that Shutter fly has collected or shared about me or my minor child. You must validate your request by responding to an email that will be sent to the above address.</p>
+<p></p>
+<h5>Do Not Sell or Share Request</h5>
+<p class=""body14"">I want to prevent sale or share of personal information for targeted advertising for me or my minor child.</p>
+<p></p>
+<h5>Delete Account Request</h5>
+<p class=""body14"">I want to delete the personal information that Shutter fly has collected or shared about me or my minor child. Please note that your Shutter fly account, including all photos, will be deleted if you process this requests. You must validate your request by responding to an email that will be sent to the above address.</p>
+</div>"
+
+
+###  Define Content Slots  ###
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]                ; name                                 ; active[default = true]; cmsComponents(uid, $contentCV)
+                         ;                          ; BodyContent-stateConfirmationSlot ; Body Content state Confirmation Slot ; true                  ; stateConfirmationComponent
+                         ;                          ; BodyContent-stateAuthorizeSlot ; state Authorize Slot ; true                  ; stateAuthorizeComponent
+                         ;                          ; BodyContent-stateResidentSlot ; state Resident Slot ; true                  ; stateResidentComponent
+
+
+# ContentSlotForPage
+INSERT_UPDATE ContentSlotForPage; $contentCV[unique = true]; uid[unique = true]                ; position[unique = true]; page(uid, $contentCV)[unique = true][default = 'stateConfirmationPage']; contentSlot(uid, $contentCV)[unique = true]
+                                ;                          ; BodyContent-stateConfirmationPage ; BodyContent            ;                                                                        ; BodyContent-stateConfirmationSlot
+
+INSERT_UPDATE ContentSlotForPage; $contentCV[unique = true]; uid[unique = true]                ; position[unique = true]; page(uid, $contentCV)[unique = true][default = 'stateAuthorizePage']; contentSlot(uid, $contentCV)[unique = true]
+                                ;                          ; BodyContent-stateAuthorizePage ; BodyContent            ;                                                                        ; BodyContent-stateAuthorizeSlot
+
+INSERT_UPDATE ContentSlotForPage; $contentCV[unique = true]; uid[unique = true]                ; position[unique = true]; page(uid, $contentCV)[unique = true][default = 'stateResidentPage']; contentSlot(uid, $contentCV)[unique = true]
+                                ;                          ; BodyContent-stateResidentPage ; BodyContent            ;                                                                        ; BodyContent-stateResidentSlot
