@@ -31,7 +31,8 @@ INSERT_UPDATE BlPickUpZoneDeliveryMode; code[unique = 'true']                ; s
                                       ; UPS_STORE_OVERNIGHT_ROUND_TRIP_BL       ; UPS_OVERNIGHT_ROUND_TRIP       ; 58              ; Ups Store Overnight Round Trip                      ;                            ;                                   ; UPS          ; PER_WEIGHT_UNIT_TABLE   ; 1                 ; SATURDAY,SUNDAY                  ; 13:00     ; SHIP_UPS_OFFICE    ; true                             ;                 ;         ;         ;                              ;                         ;                      ;                ;                                        ;false                                ; 1              ; 1
                                       ; UPS_STORE_STANDARD_AM_ROUND_TRIP_BL     ; UPS_STANDARD_AM_ROUND_TRIP     ; 59              ; Ups Store Standard Am Round Trip                    ;                            ;                                   ; UPS          ; PER_WEIGHT_UNIT_TABLE   ; 2                 ; SATURDAY,SUNDAY                  ; 13:00     ; SHIP_UPS_OFFICE    ; true                             ;                 ;         ;         ;                              ;                         ;                      ;                ; true                                   ;false                                ; 2              ; 1
                                       ; UPS_STORE_OVERNIGHT_SAVER_ROUND_TRIP_BL ; UPS_OVERNIGHT_SAVER_ROUND_TRIP ; 69              ; Ups Store Overnight Saver Round Trip                ;                            ;                                   ; UPS          ; PER_WEIGHT_UNIT_TABLE   ; 1                 ; SATURDAY,SUNDAY                  ; 13:00     ; SHIP_UPS_OFFICE    ; true                             ;                 ;         ;         ;                              ;                         ;                      ;                ; true                                   ;false                                ; 1              ; 1
-
+									  ; UPS_STORE_USEDGEAR_ROUND_TRIP  			; UPS_USEDGEAR_STANDARD_ROUND_TRIP; 29              ; Ups Store Standard Round Trip                       ;                            ;                                   ; UPS          ; FLAT_RATE			   ; 2                 ; 				                  ; 13:00     ; SHIP_UPS_OFFICE    ; true                             ;                 ;         ;         ;                              ;                         ;                      ;                ;                                        ;                                ; 2              ; 1
+                                      
 
 
 INSERT_UPDATE Address; &addrID            ; url                                       ; firstname                                           ; streetname                     ; postalcode[unique = true]; town[unique = true]; region(isocodeShort); country(isocode); owner(PointOfService.name)[unique = true]; openingDaysDetails[key2value-delimiter = ->][map-delimiter = :]; phone1          ; email; addressType(code)[default = 'BUSINESS']
@@ -84,6 +85,7 @@ INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]    ; zone
                                    ; UPS_STORE_OVERNIGHT_ROUND_TRIP_BL       ;                                           ; $usCurrency                     ; 0    ; 0                     ;true
                                    ; UPS_STORE_STANDARD_AM_ROUND_TRIP_BL     ;                                           ; $usCurrency                     ; 0    ; 0                     ;true
                                    ; UPS_STORE_OVERNIGHT_SAVER_ROUND_TRIP_BL ;                                           ; $usCurrency                     ; 0    ; 0                     ;true
+								   ; UPS_STORE_USEDGEAR_ROUND_TRIP		     ;                                           ; $usCurrency                     ; 0    ; 0                     ;true
 
 UPDATE BlPickUpZoneDeliveryMode; code[unique = 'true']                ; shippingOrderSequence
                                ; BL_SAN_CARLOS                        ; 1
@@ -110,3 +112,4 @@ UPDATE BlPickUpZoneDeliveryMode; code[unique = 'true']                ; shipping
                                ; UPS_STORE_OVERNIGHT_ROUND_TRIP_BL       ; 2
                                ; UPS_STORE_STANDARD_AM_ROUND_TRIP_BL     ; 3
                                ; UPS_STORE_OVERNIGHT_SAVER_ROUND_TRIP_BL ; 4
+                               ; UPS_STORE_USEDGEAR_ROUND_TRIP  		 ; 1
