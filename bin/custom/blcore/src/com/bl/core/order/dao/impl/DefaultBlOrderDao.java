@@ -163,8 +163,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ " AS o} WHERE {o:" + OrderModel.RENTALENDDATE
 			+ "} BETWEEN ?returnOrderBefore AND ?returnOrderAfter and {o:status} NOT IN ({{select {se:pk} from {OrderStatus as se} where {se:code} IN (?orderStatuses)}})";
 
-	private static final String ORIGINAL_ORDER_BY_CODE = "SELECT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.EXTENDEDORDERCOPYLIST + "} IS NOT NULL" +
-			" AND {o:" + OrderModel.VERSIONID  + "} IS NULL AND {" + OrderModel.CODE+ "} = ?code";
+	private static final String ORIGINAL_ORDER_BY_CODE = "SELECT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.VERSIONID  + "} IS NULL AND {" + OrderModel.CODE+ "} = ?code";
 
 	/**
  	* {@inheritDoc}
