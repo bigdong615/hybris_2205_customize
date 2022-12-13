@@ -325,7 +325,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public Collection<BlPickUpZoneDeliveryModeModel> getPartnerPickUpDeliveryModesWithoutRentalDates(final boolean payByCustomer) {
-        return getPartnerZoneUPSStoreDeliveryModesForUsedGear(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, payByCustomer);
+        return getPartnerZoneUPSStoreDeliveryModesForUsedGear(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_USEDGEAR, payByCustomer);
     }
 
     /**
