@@ -1,5 +1,6 @@
 package com.bl.Ordermanagement.services;
 
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
@@ -26,4 +27,10 @@ public interface BlCSAgentOrderModificationService {
      */
     void modifyExistingEntryForQuantity(final OrderEntryModel orderEntryModel, final InterceptorContext interceptorContext, List originalSerialProducts, boolean isOrderModified) throws InterceptorException;
 
+    /**
+     * Allowed statuses for modification
+     * @param orderStatus
+     * @return
+     */
+    boolean allowedOrderStatusforModification(final OrderStatus orderStatus);
 }

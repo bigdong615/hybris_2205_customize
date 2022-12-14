@@ -677,6 +677,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String UPS_SCRAPE_JOB_NO_OF_REPETITIONS_KEY = "ups.scrape.job.no.of.repetitions";
 	public static final String UPS_SCRAPE_JOB_NO_OF_ADDED_DAYS_KEY = "ups.scrape.job.days.to.add.number";
 	public static final String PREVIOUS_YEAR_END_DATE = "previousYearEndDate";
+    public static final String FRAUD_CHECKED = "FRAUD_CHECKED";
+    public static final String PARTIAL_CAPTURE = "PARTIAL_CAPTURE";
+    public static final String SUSPENDED = "SUSPENDED";
+	public static final String PAYMENT_NOT_AUTHORIZED ="PAYMENT_NOT_AUTHORIZED" ;
+	public static final String CHECKED_INVALID ="CHECKED_INVALID" ;
 
 
 	private BlCoreConstants()
