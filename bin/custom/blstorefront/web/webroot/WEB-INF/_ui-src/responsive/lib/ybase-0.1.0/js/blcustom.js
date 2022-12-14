@@ -1412,9 +1412,9 @@ $( ".forcolor-change" ).addClass( 'hide-error');
 			"00D1I000002xB0t"
 			);
 		}
-	  $("#privacyconsent").on('click', function(interaction) {
+	  $("#privacyConsentFooterLink").on('click', function(interaction) {
 		  var consentOptions = airgap.getConsent().purposes;
-		  console.log(JSON.stringify(consent, null, 2));
+		  console.log(JSON.stringify(consentOptions, null, 2));
 		  airgap.setConsent(interaction, consentOptions);
 	  });
 });
