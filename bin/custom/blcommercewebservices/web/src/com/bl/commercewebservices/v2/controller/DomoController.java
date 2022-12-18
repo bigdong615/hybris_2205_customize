@@ -6,8 +6,10 @@ package com.bl.commercewebservices.v2.controller;
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
+import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryListWsDTO;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
@@ -33,6 +35,7 @@ import com.bl.facades.commercefacades.giftcard.movement.data.GiftCardMovementLis
 import com.bl.facades.domo.BlDomoFacade;
 import com.bl.facades.giftcard.dto.GiftCardListWsDTO;
 import com.bl.facades.giftcardmovements.dto.GiftCardMovementListWsDTO;
+import com.bl.facades.order.data.OrderEntryListData;
 import com.bl.facades.order.data.OrderListData;
 import com.bl.facades.orders.dto.OrderListWsDTO;
 import com.bl.facades.packageinfo.data.PackagingInfoListData;
@@ -259,5 +262,38 @@ public class DomoController extends BaseCommerceController
 
 		return orderListData;
 	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/orderEntries", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getOrderEntries", value = "Get orders", notes = "Returns orders")
+	@ApiBaseSiteIdAndUserIdParam
+	public OrderEntryListWsDTO getOrderEntries(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final OrderEntryListData orderEntryListData;
+		orderEntryListData = createOrderEntryListData(blDomoFacade.getOrderEntries(pageableData));
+		setTotalCountHeader(response, orderEntryListData.getPagination());
+		return getDataMapper().map(orderEntryListData, OrderEntryListWsDTO.class, fields);
+	}
+
+	protected OrderEntryListData createOrderEntryListData(final SearchPageData<OrderEntryData> result)
+	{
+		final OrderEntryListData orderEntryListData = new OrderEntryListData();
+
+		orderEntryListData.setOrderEntries(result.getResults());
+		orderEntryListData.setSorts(result.getSorts());
+		orderEntryListData.setPagination(result.getPagination());
+
+		return orderEntryListData;
+	}
+
 
 }

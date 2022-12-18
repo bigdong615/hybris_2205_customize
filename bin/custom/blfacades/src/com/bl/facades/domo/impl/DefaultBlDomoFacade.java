@@ -6,9 +6,11 @@ package com.bl.facades.domo.impl;
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
+import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.converters.Converters;
+import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
@@ -38,6 +40,8 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	private Converter<GiftCardMovementModel, GiftCardMovementData> blGiftCardMovementConverter;
 
 	private Converter<OrderModel, OrderData> blDomoOrderConverter;
+
+	private Converter<OrderEntryModel, OrderEntryData> orderEntryConverter;
 
 	@Override
 	public SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData)
@@ -93,6 +97,31 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 		final SearchPageData<OrderModel> orders = getBlDomoService().getOrders(pageableData);
 		return convertPageData(orders, getBlDomoOrderConverter());
 	}
+
+	@Override
+	public SearchPageData<OrderEntryData> getOrderEntries(final PageableData pageableData)
+	{
+		final SearchPageData<OrderEntryModel> orderEntries = getBlDomoService().getOrderEntries(pageableData);
+		return convertPageData(orderEntries, getOrderEntryConverter());
+	}
+
+	/**
+	 * @return the orderEntryConverter
+	 */
+	public Converter<OrderEntryModel, OrderEntryData> getOrderEntryConverter()
+	{
+		return orderEntryConverter;
+	}
+
+	/**
+	 * @param orderEntryConverter
+	 *           the orderEntryConverter to set
+	 */
+	public void setOrderEntryConverter(final Converter<OrderEntryModel, OrderEntryData> orderEntryConverter)
+	{
+		this.orderEntryConverter = orderEntryConverter;
+	}
+
 
 	/**
 	 * @return the BlDomoOrderConverter

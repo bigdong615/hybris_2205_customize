@@ -859,6 +859,15 @@
 		<property name="blGiftCardConverter" ref="blGiftCardConverter"/>
 		<property name="blGiftCardMovementConverter" ref="blGiftCardMovementConverter"/>
 		<property name="blDomoOrderConverter" ref="blDomoOrderConverter"/>
+		<property name="orderEntryConverter" ref="orderEntryConverter"/>
+	</bean>
+	
+	<alias name="blDomoOrderEntryPopulator" alias="blDomoOrderEntryPopulator"/>
+	<bean id="blDomoOrderEntryPopulator" class="com.bl.facades.populators.BlDomoOrderEntryPopulator"></bean>
+	
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="orderEntryConverter"/>
+		<property name="add" ref="blDomoOrderEntryPopulator"/>
 	</bean>
 
 	<alias name="blPackagingInfoPopulator" alias="blPackagingInfoPopulator"/>

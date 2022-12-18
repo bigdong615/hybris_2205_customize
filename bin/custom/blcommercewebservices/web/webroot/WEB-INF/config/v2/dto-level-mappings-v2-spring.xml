@@ -1236,8 +1236,7 @@
             <map>
                 <entry key="BASIC" value="entryNumber,quantity,deliveryPointOfService,configurationInfos,statusSummaryList"/>
                 <entry key="DEFAULT" value="BASIC,totalPrice,product(DEFAULT),cancellableQuantity,cancelledItemsPrice(DEFAULT),returnableQuantity,returnedItemsPrice(DEFAULT)"/>
-                <entry key="FULL"
-                       value="product(FULL),deliveryPointOfService(FULL),entryNumber,updateable,deliveryMode(FULL),quantity,basePrice(FULL),totalPrice(FULL),configurationInfos(FULL),statusSummaryList,cancellableQuantity,cancelledItemsPrice(FULL),returnableQuantity,returnedItemsPrice(FULL)"/>
+                <entry key="FULL" value="product(FULL),deliveryPointOfService(FULL),entryNumber,updateable,deliveryMode(FULL),basePrice(FULL),totalPrice(FULL),configurationInfos(FULL),statusSummaryList,cancellableQuantity,cancelledItemsPrice(FULL),returnableQuantity,returnedItemsPrice(FULL),createdTS,modifiedTS,calculated,orderCode,quantity,taxvaluesinternal,unit,giveaway,rejected,entryGroupNumberCodes,europe1pricefactory_ppg,europe1pricefactory_ptg,europe1pricefactory_pdg,chosenvendor,nameddeliverydate,quantitystatus,deliverypointofserviceCode,gearGuardWaiverPrice,gearGuardProFullWaiverPrice,gearGuardWaiverSelected,gearGuardProFullWaiverSelected,noDamageWaiverSelected,rentalStartDate,rentalReturnDate,serialProducts,recipientEmail,recipientName,recipientMessage,aqautechProduct,warehouse,modifiedSerialProductList,isModifiedOrder,unAllocatedQuantity,entryCreated,bundleEntry,bundleProductCode,bundleMainEntry,splitConsignmentQuantity,updatedTime,avalaralinetax,cancelledQuantity,refundedQuantity,fullyRefunded"/>
             </map>
         </property>
     </bean>

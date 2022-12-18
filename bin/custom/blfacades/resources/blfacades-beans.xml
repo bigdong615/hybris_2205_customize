@@ -266,6 +266,40 @@
 	<property name="selectedOptions" type="java.lang.String"/>
 	<property name="selectedProductOptions" type="com.bl.facades.product.data.BlOptionData"/>
 	<property name="mainOptionName" type="String"/>
+	<property name="updatedTime" type="java.util.Date"/>
+	<property name="splitConsignmentQuantity" type="java.lang.long"/>
+	<property name="bundleMainEntry" type="boolean"/>
+	<property name="bundleProductCode" type="java.lang.String"/>
+	<property name="entryCreated" type="boolean"/>
+	<property name="unAllocatedQuantity" type="java.lang.long"/>
+	<property name="isModifiedOrder" type="boolean"/>
+	<property name="modifiedSerialProductList" type="java.lang.String"/>
+	<property name="warehouse" type="java.lang.String"/>
+	<property name="serialProducts" type="java.lang.String"/>
+	<property name="rentalReturnDate" type="java.util.Date"/>
+	<property name="rentalStartDate" type="java.util.Date"/>
+	<property name="fullyRefunded" type="boolean"/>
+	<property name="refundedQuantity" type="java.lang.Long"/>
+	<property name="cancelledQuantity" type="java.lang.Long"/>
+	<property name="avalaralinetax" type="java.lang.Double"/>
+	<property name="createdTS" type="java.util.Date"/>
+	<property name="modifiedTS" type="java.util.Date"/>
+	<property name="europe1pricefactory_ppg" type="java.lang.String"/>
+	<property name="europe1pricefactory_ptg" type="java.lang.String"/>
+	<property name="europe1pricefactory_pdg" type="java.lang.String"/>	
+ 	<property name="chosenvendor" type="java.lang.String"/>	
+ 	<property name="nameddeliverydate" type="java.util.Date"/> 
+ 	<property name="deliveryModeCode" type="java.lang.String"/>
+ 	<property name="deliverypointofserviceCode" type="java.lang.String"/>
+ 	<property name="orderCode" type="java.lang.String"/>
+ 	<property name="discountvaluesinternal" type="java.lang.String"/>
+ 	<property name="calculated" type="boolean"/>
+ 	<property name="taxvaluesinternal" type="java.lang.String"/>
+ 	<property name="unit" type="java.lang.String"/>
+ 	<property name="giveaway" type="boolean"/>
+ 	<property name="rejected" type="boolean"/>
+ 	<property name="entryGroupNumberCodes" type="java.lang.String"/>
+ 	<property name="quantitystatus" type="java.lang.String"/>
   </bean>
   
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
@@ -1424,6 +1458,84 @@
         </property>
     </bean>
     
+  <bean class="de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryWsDTO">
+  	<property name="gearGuardWaiverPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="gearGuardProFullWaiverPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="gearGuardWaiverSelected" type="java.lang.Boolean"/>
+	<property name="gearGuardProFullWaiverSelected" type="java.lang.Boolean"/>
+	<property name="noDamageWaiverSelected" type="java.lang.Boolean"/>
+	<property name="availabilityMessage" type="com.bl.facades.product.data.AvailabilityMessage"/>
+	<property name="recipientEmail" type="java.lang.String"/>
+    <property name="recipientName" type="java.lang.String" />
+    <property name="recipientMessage" type="java.lang.String"/>
+    <property name="messages" type="java.util.List&lt;com.bl.facades.product.data.AvailabilityMessage>"/>
+	<property name="option" type="java.util.List&lt;com.bl.facades.product.data.BlOptionData>"/>
+	<property name="aqautechProduct" type="boolean"/>
+	<property name="bundleEntry" type="boolean" />
+	<property name="selectedOptions" type="java.lang.String"/>
+	<property name="selectedProductOptions" type="com.bl.facades.product.data.BlOptionData"/>
+	<property name="mainOptionName" type="String"/>
+	<property name="updatedTime" type="java.util.Date"/>
+	<property name="splitConsignmentQuantity" type="java.lang.long"/>
+	<property name="bundleMainEntry" type="boolean"/>
+	<property name="bundleProductCode" type="java.lang.String"/>
+	<property name="entryCreated" type="boolean"/>
+	<property name="unAllocatedQuantity" type="java.lang.long"/>
+	<property name="isModifiedOrder" type="boolean"/>
+	<property name="modifiedSerialProductList" type="java.lang.String"/>
+	<property name="warehouse" type="java.lang.String"/>
+	<property name="serialProducts" type="java.lang.String"/>
+	<property name="rentalReturnDate" type="java.util.Date"/>
+	<property name="rentalStartDate" type="java.util.Date"/>
+	<property name="fullyRefunded" type="boolean"/>
+	<property name="refundedQuantity" type="java.lang.Long"/>
+	<property name="cancelledQuantity" type="java.lang.Long"/>
+	<property name="createdTS" type="java.util.Date"/>
+	<property name="modifiedTS" type="java.util.Date"/>
+	<property name="europe1pricefactory_ppg" type="java.lang.String"/>
+	<property name="europe1pricefactory_ptg" type="java.lang.String"/>
+	<property name="europe1pricefactory_pdg" type="java.lang.String"/>	
+	<property name="chosenvendor" type="java.lang.String"/>	 
+    <property name="nameddeliverydate" type="java.util.Date"/>
+    <property name="deliveryModeCode" type="java.lang.String"/>
+ 	<property name="deliverypointofserviceCode" type="java.lang.String"/>
+ 	<property name="orderCode" type="java.lang.String"/>
+ 	<property name="discountvaluesinternal" type="java.lang.String"/>
+ 	<property name="calculated" type="boolean"/>
+ 	<property name="taxvaluesinternal" type="java.lang.String"/>
+ 	<property name="unit" type="java.lang.String"/>
+ 	<property name="giveaway" type="boolean"/>
+ 	<property name="rejected" type="boolean"/>
+ 	<property name="entryGroupNumberCodes" type="java.lang.String"/>
+ 	<property name="quantitystatus" type="java.lang.String"/>
+   <property name="avalaralinetax" type="java.lang.Double"/>
+  </bean>
+
+    <bean class="com.bl.facades.order.data.OrderEntryListData">
+		<property name="orderEntries" type="java.util.List&lt;de.hybris.platform.commercefacades.order.data.OrderEntryData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.orders.dto.OrderEntryListWsDTO">
+        <description>Representation of an  OrderEntryListData</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">orderEntries</hint>
+        </hints>
+        <property name="orderEntries"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryWsDTO>">
+            <description>List of order entries </description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>    
 </beans>
 
 

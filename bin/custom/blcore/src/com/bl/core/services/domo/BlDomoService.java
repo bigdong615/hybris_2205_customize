@@ -5,6 +5,7 @@ package com.bl.core.services.domo;
 
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
@@ -59,6 +60,14 @@ public interface BlDomoService
 	 * @return SearchPageData of orders
 	 */
 	SearchPageData<OrderModel> getOrders(final PageableData pageableData);
+
+	/**
+	 * To fetch orderentries for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of orderentries
+	 */
+	SearchPageData<OrderEntryModel> getOrderEntries(final PageableData pageableData);
 
 
 }
