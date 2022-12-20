@@ -103,11 +103,11 @@ public class BlOrderShippedRequestPopulator extends
       data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
       data.setRentalDuration((int) getRentalDuration(orderModel));
     }
-   final List<String> trackingNumber = new ArrayList<>();
+   final List<String> labelURLs = new ArrayList<>();
 	orderModel.getConsignments().forEach(consignment -> consignment.getPackaginginfos()
-			.forEach(packagingInfo -> trackingNumber.add(packagingInfo.getOutBoundTrackingNumber())));
-	final String allTrackingId = String.join(BlCoreConstants.TRACK_STRING_SEPARATOR, trackingNumber);
-	data.setTrackingString(allTrackingId);
+			.forEach(packagingInfo -> labelURLs.add(packagingInfo.getLabelURL())));
+	final String allLabelURLs= String.join(BlCoreConstants.TRACK_STRING_SEPARATOR, labelURLs);
+	data.setTrackingString(allLabelURLs);
     populateShippingInfoInXML(orderModel, data);
     orderShippedEventRequest.setData(data);
   }

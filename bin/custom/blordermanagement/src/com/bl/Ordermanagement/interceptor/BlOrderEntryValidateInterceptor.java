@@ -3,8 +3,12 @@ package com.bl.Ordermanagement.interceptor;
 import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.Ordermanagement.reshuffler.service.BlOptimizeShippingFromWHService;
+import com.bl.Ordermanagement.services.BlCSAgentOrderModificationService;
+import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.Ordermanagement.services.impl.DefaultBlAllocationService;
+import com.bl.Ordermanagement.services.impl.DefaultBlCSAgentOrderModificationService;
 import com.bl.Ordermanagement.services.impl.DefaultBlOrderModificationService;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
@@ -14,6 +18,7 @@ import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
@@ -88,6 +93,12 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	@Resource
 	private BlOptimizeShippingFromWHService blOptimizeShippingFromWHService;
 
+	@Resource(name="blSourcingService")
+	private BlSourcingService blSourcingService;
+
+	@Resource(name="blCSAgentOrderModificationService")
+	private DefaultBlCSAgentOrderModificationService blCSAgentOrderModificationService;
+
 	/**
 	 * method will validate order entry for modified order
 	 */
@@ -122,13 +133,31 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 							AbstractOrderEntryModel.SERIALPRODUCTS);
 					updateConsignmentEntry(serialProducts, orderEntryModel, order);
 				}
+				else if (CollectionUtils.isEmpty(orderEntryModel.getSerialProducts()) && warehouse == null && CollectionUtils.isEmpty(orderEntryModel.getConsignmentEntries()) && orderEntryModel.getUnAllocatedQuantity() == 0) {
+					blCSAgentOrderModificationService.addNewOrderEntry(orderEntryModel, interceptorContext, getInitialValue(orderEntryModel, AbstractOrderEntryModel.SERIALPRODUCTS), false);
+				} else if (blCSAgentOrderModificationService.allowedOrderStatusforModification(orderEntryModel.getOrder().getStatus())&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.QUANTITY) && orderEntryModel.getQuantity() > getLongValueForQty(getAttributeInitialValue(orderEntryModel, OrderEntryModel.QUANTITY)) && orderEntryModel.getUnAllocatedQuantity() == 0) {
+					blCSAgentOrderModificationService.modifyExistingEntryForQuantity(orderEntryModel, interceptorContext, getInitialValue(orderEntryModel, AbstractOrderEntryModel.SERIALPRODUCTS), true);
+
+				}
+			}
 			}
 			else if(CollectionUtils.isEmpty(serialProduct) && warehouse == null)
 			{
 				modifyUsedGearOrder(orderEntryModel,interceptorContext);
 			}
 
-		}
+	}
+
+
+
+	/**
+	 * Get long value for qty
+	 * @param qty
+	 * @return
+	 */
+	private Long getLongValueForQty(final Object qty) {
+		String stringToConvert = String.valueOf(qty);
+		return Long.parseLong(stringToConvert);
 	}
 
 	/**
@@ -176,6 +205,19 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) orderEntryModel
 				.getItemModelContext();
 		return itemModelCtx.exists() ? itemModelCtx.getOriginalValue(serialProducts) : null;
+	}
+
+	/**
+	 * It gets the initial value of the attribute before update
+	 *
+	 * @param orderEntryModel
+	 *           the bl serial product
+	 * @return
+	 */
+	private Object getAttributeInitialValue(final OrderEntryModel orderEntryModel, final String attribute) {
+		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) orderEntryModel
+				.getItemModelContext();
+		return itemModelCtx.exists() ? itemModelCtx.getOriginalValue(attribute) : null;
 	}
 
 	/**
@@ -438,4 +480,10 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		this.blOrderModificationService = blOrderModificationService;
 	}
 
+	public DefaultBlCSAgentOrderModificationService getBlCSAgentOrderModificationService() {
+		return blCSAgentOrderModificationService;
+	}
+	public void setBlCSAgentOrderModificationService(DefaultBlCSAgentOrderModificationService blCSAgentOrderModificationService) {
+		this.blCSAgentOrderModificationService = blCSAgentOrderModificationService;
+	}
 }

@@ -15,8 +15,11 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.sourcing.strategy.AbstractSourcingStrategy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -53,32 +56,38 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
 
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "Sourcing is In-complete after tried sourcing from all possible location");
-      updateOrderStatusForSourcingIncomplete(sourcingContext);
+        updateOrderStatusForSourcingIncomplete(sourcingContext);
+
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. !!!");
     }
+
   }
 
   private boolean updateOrderEntryUnallocatedQuantity(final SourcingContext sourcingContext) {
 
-    final List<AtomicBoolean> allEntrySourceInComplete = new ArrayList<>();
-    sourcingContext.getOrderEntries().stream().forEach(entry -> {
-      Long allResultQuantityAllocated = 0l;
-      for (SourcingResult result : sourcingContext.getResult().getResults()) {
-        if (null != result.getAllocation().get(entry)) {
-          allResultQuantityAllocated += result.getAllocation().get(entry);
+
+      final List<AtomicBoolean> allEntrySourceInComplete = new ArrayList<>();
+      sourcingContext.getOrderEntries().stream().forEach(entry -> {
+        Long allResultQuantityAllocated = 0l;
+        for (SourcingResult result : sourcingContext.getResult().getResults()) {
+          if (null != result.getAllocation().get(entry)) {
+            allResultQuantityAllocated += result.getAllocation().get(entry);
+          }
         }
-      }
 
-      if (!isAquatechProductInEntry(entry) && allResultQuantityAllocated < entry.getQuantity()) {
-        allEntrySourceInComplete.add(new AtomicBoolean(true));
-        entry.setUnAllocatedQuantity(entry.getQuantity() - allResultQuantityAllocated);
-      }
-    });
-
-    modelService.saveAll(sourcingContext.getOrderEntries());
-
+        Long entryQuantity = BooleanUtils.isTrue(sourcingContext.isModifiedEntryFromBackoffice()) ? sourcingContext.getModifiedQuantityForEntry() : entry.getQuantity();
+        if (!isAquatechProductInEntry(entry) && allResultQuantityAllocated < entryQuantity) {
+          allEntrySourceInComplete.add(new AtomicBoolean(true));
+          entry.setUnAllocatedQuantity(entryQuantity - allResultQuantityAllocated);
+        }
+      });
+  try{
+      modelService.saveAll(sourcingContext.getOrderEntries());
+    }catch(final Exception ex){
+    BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "An exception occurred while updating OrderEntry Unallocated Quantity ", ex);
+  }
     return !allEntrySourceInComplete.isEmpty() && allEntrySourceInComplete.stream()
-        .allMatch(AtomicBoolean::get);
+            .allMatch(AtomicBoolean::get);
   }
 
   /**
@@ -102,7 +111,10 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     //can not be sourced all the products from all warehouses
     sourcingContext.getResult().setComplete(false);
     AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
-    order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
+    if(Objects.isNull(sourcingContext.isNewOrderEntryFromBackoffice()) || BooleanUtils.isFalse(sourcingContext.isNewOrderEntryFromBackoffice())) {
+
+        order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
+      }
     modelService.save(order);
 
   }
