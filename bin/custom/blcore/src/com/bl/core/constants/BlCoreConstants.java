@@ -682,9 +682,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
     public static final String SUSPENDED = "SUSPENDED";
 	public static final String PAYMENT_NOT_AUTHORIZED ="PAYMENT_NOT_AUTHORIZED" ;
 	public static final String CHECKED_INVALID ="CHECKED_INVALID" ;
+    public static final String CHECKED_VALID = "CHECKED_VALID";
 
 
-	private BlCoreConstants()
+    private BlCoreConstants()
 	{
 		//empty
 	}

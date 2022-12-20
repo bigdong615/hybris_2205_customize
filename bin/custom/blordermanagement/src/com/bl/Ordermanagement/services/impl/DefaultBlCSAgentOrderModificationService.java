@@ -315,13 +315,10 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
 
         switch (orderStatus.getCode()) {
             case BlCoreConstants.PENDING_STATUS:
-            case BlCoreConstants.RECEIVED_SHIPPING_MANUAL_REVIEW:
             case BlCoreConstants.RECEIVED_MANUAL_REVIEW:
             case BlCoreConstants.FRAUD_CHECKED:
-            case BlCoreConstants.RECEIVED_PAYMENT_DECLINED:
             case BlCoreConstants.SUSPENDED:
-            case BlCoreConstants.PARTIAL_CAPTURE:
-            case BlCoreConstants.PAYMENT_NOT_AUTHORIZED:
+            case BlCoreConstants.CHECKED_VALID:
             case BlCoreConstants.CHECKED_INVALID:
                 return Boolean.TRUE;
             default :
