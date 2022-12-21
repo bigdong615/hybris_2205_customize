@@ -297,7 +297,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
       setRegionShortCodeIfNotAvailable(addressData);
       final BrainTreeAddressRequest brainTreeAddressRequest =
           BlBrainTreeConvertUtils.convertBrainTreeAddress(currentUserForCheckout.getBraintreeCustomerId(), addressData);
-      String brainTreeAddressId = paymentInfo.getBillingAddress().getBrainTreeAddressId();
+	      String brainTreeAddressId = paymentInfo.getBillingAddress().getBrainTreeAddressId();
 			if(StringUtils.isBlank(brainTreeAddressId)) {
 				brainTreeAddressId = getBrainTreeTransactionService().getBraintreeAddressIDForLegacyPaymentMethods(paymentInfo.getPaymentMethodToken());
 				paymentInfo.getBillingAddress().setBrainTreeAddressId(brainTreeAddressId);
@@ -307,13 +307,17 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
       {
         brainTreeAddressRequest.setAddressId(brainTreeAddressId);
         final BrainTreeAddressResult updateAddressResult = getBrainTreePaymentService().updateAddress(brainTreeAddressRequest);
-        if (updateAddressResult.isSuccess())
-        {
-          final AddressModel addressModel = getModelService().create(AddressModel.class);
-          getAddressReversePopulator().populate(addressData, addressModel);
-          addressModel.setBrainTreeAddressId(brainTreeAddressId);
-          return addressModel;
-        }
+		LOG.info("brainTreeAddressRequest is" + brainTreeAddressRequest);
+		if (updateAddressResult == null)
+		{
+			LOG.info("Error while updating address in braintree updateAddressResult is " + updateAddressResult + " For address ID" + brainTreeAddressId);
+		}else{
+			LOG.info("Error while updating address in braintree updateAddressResult.isSuccess() is " + updateAddressResult.isSuccess() + " For address ID" + brainTreeAddressId);
+		}
+		final AddressModel addressModel = getModelService().create(AddressModel.class);
+		getAddressReversePopulator().populate(addressData, addressModel);
+		addressModel.setBrainTreeAddressId(brainTreeAddressId);
+		return addressModel;
       }
     }
     catch (final Exception exception)
