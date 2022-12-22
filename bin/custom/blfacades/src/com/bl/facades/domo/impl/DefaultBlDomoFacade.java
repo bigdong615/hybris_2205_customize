@@ -41,7 +41,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 
 	private Converter<OrderModel, OrderData> blDomoOrderConverter;
 
-	private Converter<OrderEntryModel, OrderEntryData> orderEntryConverter;
+	private Converter<OrderEntryModel, OrderEntryData> blorderEntryConverter;
 
 	@Override
 	public SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData)
@@ -102,24 +102,24 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	public SearchPageData<OrderEntryData> getOrderEntries(final PageableData pageableData)
 	{
 		final SearchPageData<OrderEntryModel> orderEntries = getBlDomoService().getOrderEntries(pageableData);
-		return convertPageData(orderEntries, getOrderEntryConverter());
+		return convertPageData(orderEntries, getBlorderEntryConverter());
 	}
 
 	/**
-	 * @return the orderEntryConverter
+	 * @return the blorderEntryConverter
 	 */
-	public Converter<OrderEntryModel, OrderEntryData> getOrderEntryConverter()
+	public Converter<OrderEntryModel, OrderEntryData> getBlorderEntryConverter()
 	{
-		return orderEntryConverter;
+		return blorderEntryConverter;
 	}
 
 	/**
-	 * @param orderEntryConverter
-	 *           the orderEntryConverter to set
+	 * @param blorderEntryConverter
+	 *           the blorderEntryConverter to set
 	 */
-	public void setOrderEntryConverter(final Converter<OrderEntryModel, OrderEntryData> orderEntryConverter)
+	public void setBlorderEntryConverter(final Converter<OrderEntryModel, OrderEntryData> blorderEntryConverter)
 	{
-		this.orderEntryConverter = orderEntryConverter;
+		this.blorderEntryConverter = blorderEntryConverter;
 	}
 
 

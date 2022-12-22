@@ -859,16 +859,27 @@
 		<property name="blGiftCardConverter" ref="blGiftCardConverter"/>
 		<property name="blGiftCardMovementConverter" ref="blGiftCardMovementConverter"/>
 		<property name="blDomoOrderConverter" ref="blDomoOrderConverter"/>
-		<property name="orderEntryConverter" ref="orderEntryConverter"/>
+		<property name="blorderEntryConverter" ref="blorderEntryConverter"/>
 	</bean>
 	
 	<alias name="blDomoOrderEntryPopulator" alias="blDomoOrderEntryPopulator"/>
 	<bean id="blDomoOrderEntryPopulator" class="com.bl.facades.populators.BlDomoOrderEntryPopulator"></bean>
 	
-	<bean parent="modifyPopulatorList">
+	<alias name="blorderEntryConverter" alias="blorderEntryConverter"/>
+	<bean id="blorderEntryConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.OrderEntryData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoOrderEntryPopulator"/>
+				<ref bean="defaultBlOrderEntryPopulator"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- <bean parent="modifyPopulatorList">
 		<property name="list" ref="orderEntryConverter"/>
 		<property name="add" ref="blDomoOrderEntryPopulator"/>
-	</bean>
+	</bean> -->
 
 	<alias name="blPackagingInfoPopulator" alias="blPackagingInfoPopulator"/>
 	<bean id="blPackagingInfoPopulator" class="com.bl.facades.populators.BlPackagingInfoPopulator">
