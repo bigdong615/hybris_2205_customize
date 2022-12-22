@@ -3,10 +3,12 @@
  */
 package com.bl.facades.domo;
 
+import de.hybris.platform.commercefacades.BlItemsBillingChargeData;
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
+import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
@@ -67,6 +69,18 @@ public interface BlDomoFacade
 	 * @return SearchPageData of orderentries
 	 */
 	SearchPageData<OrderEntryData> getOrderEntries(final PageableData pageableData);
+
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<BlItemsBillingChargeData> getBlItemsBillingCharge(PageableData pageableData);
+
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<CustomerData> getCustomers(PageableData pageableData);
 
 
 }

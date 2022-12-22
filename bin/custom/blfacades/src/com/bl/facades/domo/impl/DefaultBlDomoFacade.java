@@ -3,15 +3,18 @@
  */
 package com.bl.facades.domo.impl;
 
+import de.hybris.platform.commercefacades.BlItemsBillingChargeData;
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
+import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.converters.Converters;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
@@ -20,6 +23,7 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 
+import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.domo.BlDomoService;
@@ -42,6 +46,10 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	private Converter<OrderModel, OrderData> blDomoOrderConverter;
 
 	private Converter<OrderEntryModel, OrderEntryData> blorderEntryConverter;
+
+	private Converter<BlItemsBillingChargeModel, BlItemsBillingChargeData> blItemsBillingChargeConverter;
+
+	private Converter<CustomerModel, CustomerData> blCustomerConverter;
 
 	@Override
 	public SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData)
@@ -103,6 +111,21 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	{
 		final SearchPageData<OrderEntryModel> orderEntries = getBlDomoService().getOrderEntries(pageableData);
 		return convertPageData(orderEntries, getBlorderEntryConverter());
+	}
+
+	@Override
+	public SearchPageData<BlItemsBillingChargeData> getBlItemsBillingCharge(final PageableData pageableData)
+	{
+		final SearchPageData<BlItemsBillingChargeModel> blItemsBillingCharges = getBlDomoService()
+				.getBlItemsBillingCharge(pageableData);
+		return convertPageData(blItemsBillingCharges, getBlItemsBillingChargeConverter());
+	}
+
+	@Override
+	public SearchPageData<CustomerData> getCustomers(final PageableData pageableData)
+	{
+		final SearchPageData<CustomerModel> customers = getBlDomoService().getCustomers(pageableData);
+		return convertPageData(customers, getBlCustomerConverter());
 	}
 
 	/**
@@ -241,6 +264,41 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	public void setBlGiftCardMovementConverter(final Converter<GiftCardMovementModel, GiftCardMovementData> blGiftCardMovementConverter)
 	{
 		this.blGiftCardMovementConverter = blGiftCardMovementConverter;
+	}
+
+	/**
+	 * @return the blItemsBillingChargeConverter
+	 */
+	public Converter<BlItemsBillingChargeModel, BlItemsBillingChargeData> getBlItemsBillingChargeConverter()
+	{
+		return blItemsBillingChargeConverter;
+	}
+
+	/**
+	 * @param blItemsBillingChargeConverter
+	 *           the blItemsBillingChargeConverter to set
+	 */
+	public void setBlItemsBillingChargeConverter(
+			final Converter<BlItemsBillingChargeModel, BlItemsBillingChargeData> blItemsBillingChargeConverter)
+	{
+		this.blItemsBillingChargeConverter = blItemsBillingChargeConverter;
+	}
+
+	/**
+	 * @return the blCustomerConverter
+	 */
+	public Converter<CustomerModel, CustomerData> getBlCustomerConverter()
+	{
+		return blCustomerConverter;
+	}
+
+	/**
+	 * @param blCustomerConverter
+	 *           the blCustomerConverter to set
+	 */
+	public void setBlCustomerConverter(final Converter<CustomerModel, CustomerData> blCustomerConverter)
+	{
+		this.blCustomerConverter = blCustomerConverter;
 	}
 
 }

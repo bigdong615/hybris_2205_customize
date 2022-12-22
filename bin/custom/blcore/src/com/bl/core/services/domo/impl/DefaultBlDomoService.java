@@ -7,11 +7,13 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import com.bl.core.domo.BlDomoDao;
+import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.domo.BlDomoService;
@@ -63,6 +65,18 @@ public class DefaultBlDomoService implements BlDomoService
 	public SearchPageData<OrderEntryModel> getOrderEntries(final PageableData pageableData)
 	{
 		return getBlDomoDao().getOrderEntries(pageableData);
+	}
+
+	@Override
+	public SearchPageData<BlItemsBillingChargeModel> getBlItemsBillingCharge(final PageableData pageableData)
+	{
+		return getBlDomoDao().getBlItemsBillingCharge(pageableData);
+	}
+
+	@Override
+	public SearchPageData<CustomerModel> getCustomers(final PageableData pageableData)
+	{
+		return getBlDomoDao().getCustomers(pageableData);
 	}
 
 

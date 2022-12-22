@@ -860,6 +860,8 @@
 		<property name="blGiftCardMovementConverter" ref="blGiftCardMovementConverter"/>
 		<property name="blDomoOrderConverter" ref="blDomoOrderConverter"/>
 		<property name="blorderEntryConverter" ref="blorderEntryConverter"/>
+		<property name="blItemsBillingChargeConverter" ref="blItemsBillingChargeConverter"/>
+		<property name="blCustomerConverter" ref="blCustomerConverter"/>	
 	</bean>
 	
 	<alias name="blDomoOrderEntryPopulator" alias="blDomoOrderEntryPopulator"/>
@@ -966,6 +968,31 @@
 		<property name="populators">
 			<list>
 				<ref bean="blOrderPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blItemsBillingChargePopulator" alias="blItemsBillingChargePopulator"/>
+	<bean id="blItemsBillingChargePopulator" class="com.bl.facades.populators.BlItemsBillingChargePopulator"/>
+
+	<alias name="blItemsBillingChargeConverter" alias="blItemsBillingChargeConverter"/>
+	<bean id="blItemsBillingChargeConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.BlItemsBillingChargeData" />
+		<property name="populators">
+			<list>
+				<ref bean="blItemsBillingChargePopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<bean id="blCustomerPopulator" class="com.bl.facades.populators.BlCustomerPopulator" parent="customerPopulator"></bean>
+	
+	<alias name="blCustomerConverter" alias="blCustomerConverter"/>
+	<bean id="blCustomerConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.user.data.CustomerData" />
+		<property name="populators">
+			<list>
+				<ref bean="blCustomerPopulator"/>
 				</list>
 		</property>
 	</bean>

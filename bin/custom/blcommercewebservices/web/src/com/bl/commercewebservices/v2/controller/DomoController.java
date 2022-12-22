@@ -3,12 +3,17 @@
  */
 package com.bl.commercewebservices.v2.controller;
 
+import de.hybris.platform.commercefacades.BlItemsBillingChargeData;
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
+import de.hybris.platform.commercefacades.user.data.CustomerData;
+import de.hybris.platform.commercefacades.user.data.CustomerListData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryListWsDTO;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
@@ -30,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bl.facades.commercefacades.BlItemsBillingChargeListData;
+import com.bl.facades.commercefacades.CustomerListsData;
 import com.bl.facades.commercefacades.giftcard.data.GiftCardListData;
 import com.bl.facades.commercefacades.giftcard.movement.data.GiftCardMovementListData;
 import com.bl.facades.domo.BlDomoFacade;
@@ -294,6 +301,69 @@ public class DomoController extends BaseCommerceController
 
 		return orderEntryListData;
 	}
+	
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/blItemsBillingCharge", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getBlItemsBillingCharge", value = "Get BL Items Return Charge", notes = "Returns BL Items Return Charge")
+	@ApiBaseSiteIdAndUserIdParam
+	public BlItemsBillingChargeListWsDTO getBlItemsBillingCharge(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final BlItemsBillingChargeListData blItemsBillingChargeListData;
+		blItemsBillingChargeListData = createBlItemsBillingChargeListData(blDomoFacade.getBlItemsBillingCharge(pageableData));
+		setTotalCountHeader(response, blItemsBillingChargeListData.getPagination());
+		return getDataMapper().map(blItemsBillingChargeListData, BlItemsBillingChargeListWsDTO.class, fields);
+	}
 
+	protected BlItemsBillingChargeListData createBlItemsBillingChargeListData(final SearchPageData<BlItemsBillingChargeData> searchPageData)
+	{
+		final BlItemsBillingChargeListData blItemsBillingChargeListData = new BlItemsBillingChargeListData();
+
+		blItemsBillingChargeListData.setBlItemsBillingChargeData(searchPageData.getResults());
+		blItemsBillingChargeListData.setSorts(searchPageData.getSorts());
+		blItemsBillingChargeListData.setPagination(searchPageData.getPagination());
+
+		return blItemsBillingChargeListData;
+	}
+	
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/customers", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getCustomers", value = "Get Customers", notes = "Returns Customers")
+	@ApiBaseSiteIdAndUserIdParam
+	public UsersListWsDTO getCustomers(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final CustomerListsData customerListsData;
+		customerListsData = createCustomerListsData(blDomoFacade.getCustomers(pageableData));
+		setTotalCountHeader(response, customerListsData.getPagination());
+		return getDataMapper().map(customerListsData, UsersListWsDTO.class, fields);
+	}
+
+	protected CustomerListsData createCustomerListsData(final SearchPageData<CustomerData> result)
+	{
+		final CustomerListsData customerListsData = new CustomerListsData();
+
+		customerListsData.setCustomers(result.getResults());
+		customerListsData.setSorts(result.getSorts());
+		customerListsData.setPagination(result.getPagination());
+
+		return customerListsData;
+	}
 
 }

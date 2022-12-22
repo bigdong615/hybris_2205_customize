@@ -435,5 +435,108 @@
             <description>Pagination items</description>
         </property>
     </bean>
+    
+    <bean class="de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeWsDTO">
+   	  <property name="createdTS" type="java.util.Date"/>
+	  <property name="modifiedTS" type="java.util.Date"/>
+	  <property name="billChargeType" type="String" />
+	  <property name="chargedAmount" type="java.math.BigDecimal"/>
+	  <property name="taxAmount" type="java.math.BigDecimal"/>
+	  <property name="billPaid" type="java.lang.Boolean" />
+	  <property name="unPaidBillNotes" type="String" />
+	  <property name="code" type="String" />
+	  <property name="serialCode" type="String" />
+	  <property name="orderCode" type="String" />
+	  <property name="customer" type="String" />
+	  <property name="updatedBillTime" type="java.util.Date" />
+	  <property name="billStatus" type="String" />
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO">
+		<description>Representation of an BlItemsBillingChargeList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">BlItemsBillingChargeList</hint>
+        </hints>
+        <property name="blItemsBillingChargeData"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeWsDTO>">
+            <description>List of BlItems Billing Charge items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.user.UserWsDTO"
+	      extends="de.hybris.platform.commercewebservicescommons.dto.user.PrincipalWsDTO">
+		<property name="defaultPaymentAddress" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
+		<property name="createdTS" type="java.util.Date"/>
+	  	<property name="modifiedTS" type="java.util.Date"/>
+		<property name="description" type="String"/>
+		<property name="passwordAnswer" type="String"/>
+		<property name="passwordQuestion" type="String"/>
+		<property name="retentionState" type="String"/>
+		<property name="taxExemptNumber" type="String"/>
+		<property name="taxExemptState" type="String"/>
+		<property name="lastLogin" type="java.util.Date"/>
+		<property name="coiExpirationDate" type="java.util.Date"/>
+		<property name="taxExemptExpiry" type="java.util.Date"/>
+		<property name="backofficeLoginDisabled" type="java.lang.Boolean" />
+		<property name="loginDisabled" type="java.lang.Boolean" />
+		<property name="authorizedToUnlockPages" type="java.lang.Boolean" />
+		<property name="isTaxExempt" type="java.lang.Boolean" />
+		<property name="hmcLoginDisabled" type="java.lang.Boolean" />
+		<property name="emailPreference" type="java.lang.Boolean" />
+		<property name="smsPreference" type="java.lang.Boolean" />
+		<property name="poEnabled" type="java.lang.Boolean" />
+		<property name="vip" type="java.lang.Boolean" />
+		<property name="coiVerified" type="java.lang.Boolean" />
+		<property name="employee" type="java.lang.Boolean" />
+		<property name="originalUid" type="String"/>
+		<property name="type" type="String"/>
+		<property name="braintreeCustomerId" type="String"/>
+		<property name="badBehaviorTag" type="String"/>
+		<property name="coiCoverageAmount" type="java.math.BigDecimal"/>
+		<property name="kycScore" type="java.lang.Double"/>
+		<property name="vipType" type="String"/>
+		<property name="verificationLinkSource" type="String"/>
+		<property name="photoOrVideo" type="String"/>
+		<property name="badBehaviorNotes" type="String"/>
+		<property name="verificationNotes" type="String"/>
+		<property name="verificationLink" type="String"/>
+		<property name="accountNotes" type="String"/>
+		<property name="orderCount" type="java.lang.Integer"/>
+		<property name="completedOrderCount" type="java.lang.Integer"/>
+		<property name="inprocessOrderCount" type="java.lang.Integer"/>
+		<property name="totalAmountPastDue" type="java.math.BigDecimal"/>
+		<property name="blRewards" type="java.math.BigDecimal"/>
+		<property name="averageGearOrderValue" type="java.lang.Double"/>
+		<property name="gearvalueordersinprogress" type="java.lang.Double"/>
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO">
+		<description>Representation of an Customers List</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">Customers List</hint>
+        </hints>
+        <property name="customers"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.user.UserWsDTO>">
+            <description>List of Customers</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+	</bean>
 
 </beans>

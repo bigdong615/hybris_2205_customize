@@ -8,12 +8,14 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import com.bl.core.domo.BlDomoDao;
+import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 
@@ -81,6 +83,19 @@ public class DefaultBlDomoDao implements BlDomoDao
 		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {o.pk} FROM {OrderEntry as o}");
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
+	
+	@Override
+	public SearchPageData<BlItemsBillingChargeModel> getBlItemsBillingCharge(PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {b.pk} FROM {BlItemsBillingCharge as b}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
 
+	@Override
+	public SearchPageData<CustomerModel> getCustomers(PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {c.pk} FROM {Customer as c}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
 
 }

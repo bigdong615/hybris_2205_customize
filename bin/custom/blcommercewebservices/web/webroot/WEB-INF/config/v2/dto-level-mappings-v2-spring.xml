@@ -160,7 +160,7 @@
                 <entry key="DEFAULT"
                        value="lastName,title,titleCode,displayUid,defaultAddress(DEFAULT),language(DEFAULT),firstName,currency(DEFAULT),uid,name,customerId,deactivationDate"/>
                 <entry key="FULL"
-                       value="lastName,title,titleCode,displayUid,defaultAddress(FULL),language(FULL),firstName,currency(FULL),uid,name,customerId,deactivationDate"/>
+                       value="lastName,title,titleCode,displayUid,defaultAddress(FULL),language(FULL),firstName,currency(FULL),uid,name,customerId,deactivationDate,createdTS,modifiedTS,description,passwordAnswer,passwordQuestion,retentionState,taxExemptNumber,taxExemptState,lastLogin,coiExpirationDate,taxExemptExpiry,backofficeLoginDisabled,loginDisabled,authorizedToUnlockPages,isTaxExempt,hmcLoginDisabled,emailPreference,smsPreference,poEnabled,vip,coiVerified,employee,originalUid,type,braintreeCustomerId,badBehaviorTag,coiCoverageAmount,kycScore,vipType,verificationLinkSource,photoOrVideo,badBehaviorNotes,verificationNotes,verificationLink,accountNotes,orderCount,completedOrderCount,inprocessOrderCount,totalAmountPastDue,blRewards,averageGearOrderValue,gearvalueordersinprogress"/>
             </map>
         </property>
     </bean>
@@ -1645,28 +1645,41 @@
         </property>
     </bean>
     
-    <bean parent="fieldSetLevelMapping" id="giftCardMovementWsDTOFieldSetLevelMapping">
+    <bean parent="fieldSetLevelMapping" id="userListWsDTOFieldSetLevelMapping">
         <property name="dtoClass"
-                  value="de.hybris.platform.commercewebservicescommons.dto.giftcard.movement.GiftCardMovementWsDTO"/>
+                  value="de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO"/>
         <property name="levelMapping">
             <map>
-                <entry key="BASIC" value="createdTS,modifiedTS,transactionId"/>
-                <entry key="DEFAULT"
-                       value="createdTS,modifiedTS,transactionId,amount"/>
-                <entry key="FULL" 
-                	   value="createdTS,modifiedTS,transactionId,amount,currency,redeemDate,committed,balanceAmount,order,giftCard"/>
+                <entry key="BASIC" value="pagination,customers,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),customers(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),customers(FULL),sorts(FULL)"/>
             </map>
         </property>
     </bean>
     
-    <bean parent="fieldSetLevelMapping" id="giftCardMovementListWsDTOFieldSetLevelMapping">
+    
+    <bean parent="fieldSetLevelMapping" id="blItemsBillingChargeWsDTOFieldSetLevelMapping">
         <property name="dtoClass"
-                  value="com.bl.facades.giftcardmovements.dto.GiftCardMovementListWsDTO"/>
+                  value="de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeWsDTO"/>
         <property name="levelMapping">
             <map>
-                <entry key="BASIC" value="pagination,giftCardMovements,sorts"/>
-                <entry key="DEFAULT" value="pagination(DEFAULT),giftCardMovements(DEFAULT),sorts(DEFAULT)"/>
-                <entry key="FULL" value="pagination(FULL),giftCardMovements(FULL),sorts(FULL)"/>
+                <entry key="BASIC" value="createdTS,modifiedTS,code"/>
+                <entry key="DEFAULT"
+                       value="createdTS,modifiedTS,code"/>
+                <entry key="FULL" 
+                	   value="createdTS,modifiedTS,billChargeType,chargedAmount,taxAmount,billPaid,unPaidBillNotes,code,serialCode,orderCode,customer,updatedBillTime,billStatus"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="blItemsBillingChargeListWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="pagination,blItemsBillingChargeData,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),blItemsBillingChargeData(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),blItemsBillingChargeData(FULL),sorts(FULL)"/>
             </map>
         </property>
     </bean>
