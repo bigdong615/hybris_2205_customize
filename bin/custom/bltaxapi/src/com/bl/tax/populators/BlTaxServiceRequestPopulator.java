@@ -15,6 +15,7 @@ import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.impl.DefaultWarehouseService;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
@@ -64,7 +65,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     taxRequest.setCompanyCode(getCompanyCode());
     taxRequest.setCode(abstractOrder.getCode());
     //taxRequest.setType(BooleanUtils.isTrue(abstractOrder.getIsOrderSubmit()) ? BltaxapiConstants.SALESINVOICE : BltaxapiConstants.SALESORDER);
-    taxRequest.setType(BooleanUtils.isTrue(abstractOrder.getStatus() == "COMPLETED") ? BltaxapiConstants.SALESINVOICE : BltaxapiConstants.SALESORDER);
+    taxRequest.setType(BooleanUtils.isTrue(abstractOrder.getStatus() == OrderStatus.COMPLETED) ? BltaxapiConstants.SALESINVOICE : BltaxapiConstants.SALESORDER);
     setOrderDateToRequest(taxRequest);
     taxRequest.setCustomerCode(abstractOrder.getUser().getUid());
     taxRequest.setSalesPersonCode(null);
