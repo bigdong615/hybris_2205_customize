@@ -23,9 +23,13 @@
                 </div>    
             </div> 
             <div id="copyright" class="row justify-content-center pt-5">
+            <div class="col-12 col-xl-10">
+            	<div class="row">
                 <cms:pageSlot position="FooterCopyRightslot" var="feature">
                     <cms:component component="${feature}"/>
-                </cms:pageSlot> 
+                </cms:pageSlot>
+                </div>
+                </div>
             </div>
         </div>
 
