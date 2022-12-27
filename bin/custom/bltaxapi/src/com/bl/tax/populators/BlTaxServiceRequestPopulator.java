@@ -2,6 +2,7 @@ package com.bl.tax.populators;
 
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.tax.Addresses;
@@ -63,7 +64,8 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       throws ConversionException{
     taxRequest.setCompanyCode(getCompanyCode());
     taxRequest.setCode(abstractOrder.getCode());
-    taxRequest.setType(BooleanUtils.isTrue(abstractOrder.getIsOrderSubmit()) ? BltaxapiConstants.SALESINVOICE : BltaxapiConstants.SALESORDER);
+    //taxRequest.setType(BooleanUtils.isTrue(abstractOrder.getIsOrderSubmit()) ? BltaxapiConstants.SALESINVOICE : BltaxapiConstants.SALESORDER);
+    taxRequest.setType(BooleanUtils.isTrue(abstractOrder.getStatus() == BlCoreConstants.ORDER_COMPLETED) ? BltaxapiConstants.SALESINVOICE : BltaxapiConstants.SALESORDER);
     setOrderDateToRequest(taxRequest);
     taxRequest.setCustomerCode(abstractOrder.getUser().getUid());
     taxRequest.setSalesPersonCode(null);
