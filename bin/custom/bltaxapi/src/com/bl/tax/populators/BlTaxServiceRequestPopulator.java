@@ -63,7 +63,8 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       throws ConversionException{
     taxRequest.setCompanyCode(getCompanyCode());
     taxRequest.setCode(abstractOrder.getCode());
-    taxRequest.setType(BooleanUtils.isTrue(abstractOrder.getIsOrderSubmit()) ? BltaxapiConstants.SALESINVOICE : BltaxapiConstants.SALESORDER);
+    //taxRequest.setType(BooleanUtils.isTrue(abstractOrder.getIsOrderSubmit()) ? BltaxapiConstants.SALESINVOICE : BltaxapiConstants.SALESORDER);
+    taxRequest.setType(BltaxapiConstants.SALESORDER);
     setOrderDateToRequest(taxRequest);
     taxRequest.setCustomerCode(abstractOrder.getUser().getUid());
     taxRequest.setSalesPersonCode(null);
