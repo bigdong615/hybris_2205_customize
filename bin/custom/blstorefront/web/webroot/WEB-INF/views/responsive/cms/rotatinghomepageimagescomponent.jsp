@@ -6,10 +6,10 @@
 	<div class="embed-responsive embed-responsive-16by9">
 		<c:choose>
 			<c:when test="${fn:containsIgnoreCase(feature.media.mime,'image/jpeg')}">
-				<img class="embed-responsive-item" alt="Banner Image" src="${feature.media.url}"/>
+				<img class="embed-responsive-item hero-image-slider" alt="Banner Image" src="${feature.media.url}"/>
 			</c:when>
 			<c:otherwise>
-				<video class="embed-responsive-item" defaultMuted playsinline autoplay 
+				<video class="embed-responsive-item hero-video-slider" defaultMuted playsinline autoplay
 				muted loop>
 					<source src="${feature.media.url}" type="video/mp4">
 						Your browser does not support the video tag.
