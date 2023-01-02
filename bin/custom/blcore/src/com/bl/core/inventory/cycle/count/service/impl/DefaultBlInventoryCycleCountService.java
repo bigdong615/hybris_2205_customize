@@ -1,6 +1,7 @@
 package com.bl.core.inventory.cycle.count.service.impl;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.InventoryCycleCountSerialStatus;
 import com.bl.core.enums.InventoryCycleCountStatus;
 import com.bl.core.enums.SerialStatusEnum;
@@ -218,15 +219,71 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
             modifiedScannedSerials.remove(serial.getBarcode());
         } else {
             if(SerialStatusEnum.SHIPPED.equals(serial.getSerialStatus())) {
-                if(serial.getAssociatedShippedConsignment() != null && DateUtils.isSameDay(Calendar.getInstance().getTime(),
-                        serial.getAssociatedShippedConsignment().getOptimizedShippingEndDate())) {
-                    missingList.add(serial);
-                }
-            } else {
+                updateSerialAsScannedOrMissing(serial,missingList,modifiedScannedSerials,successScannedSerials);
+            }else if(allowSerialWithStatusToBeFound(serial.getSerialStatus())){
+                successScannedSerials.add(serial);
+                modifiedScannedSerials.remove(serial.getBarcode());
+            }else {
                 missingList.add(serial);
             }
         }
     }
+
+    /**
+     * Update shipped Serial in the respective list
+     * @param serial
+     * @param missingList
+     * @param modifiedScannedSerials
+     * @param successScannedSerials
+     */
+    private void updateSerialAsScannedOrMissing(final BlSerialProductModel serial, final List<BlSerialProductModel> missingList, final Collection<String> modifiedScannedSerials,final List<BlSerialProductModel> successScannedSerials) {
+        final Collection<ConsignmentModel> shippedConsignments = getBlInventoryCycleCountDao().getAllShippedConsignmentForSerial(serial.getCode());
+        if(CollectionUtils.isNotEmpty(shippedConsignments)) {
+            for (final ConsignmentModel shippedConsignment : shippedConsignments) {
+                if (DateUtils.isSameDay(Calendar.getInstance().getTime(), shippedConsignment.getOptimizedShippingEndDate())) {
+                    missingList.add(serial);
+                } else if (Calendar.getInstance().getTime().before(shippedConsignment.getOptimizedShippingEndDate())) {
+                    successScannedSerials.add(serial);
+                    modifiedScannedSerials.remove(serial.getBarcode());
+                }
+            }
+        }
+    }
+
+    /**
+     * Return true if serial is found in any one of the listed statuses
+     * @param serialStatus
+     * @return
+     */
+    private boolean allowSerialWithStatusToBeFound(final SerialStatusEnum serialStatus) {
+        switch (serialStatus.getCode()) {
+            case "REPAIR":
+            case "REPAIR_IN_HOUSE":
+            case "REPAIR_SEND_TO_VENDOR":
+            case "REPAIR_PARTS_NEEDED":
+            case "REPAIR_AWAITING_QUOTES":
+            case "LOST_IN_TRANSIT":
+            case "LOST_IN_HOUSE":
+            case "LOST_UNDER_INVESTIGATION":
+            case "STOLEN":
+            case "STOLEN_PAID_IN_FULL":
+            case "STOLEN_PAID_SOME":
+            case "STOLEN_NOT_PAID":
+            case "STOLEN_PAID_12_PERCENT":
+            case "SCRAPPED":
+            case "COMING_FROM_PURCHASE":
+            case "REPAIR_NEEDED":
+            case "PARTS_NEEDED":
+            case "SOLD":
+            case "INACTIVE":
+            case "LATE":
+            case "ACTIVE":
+                return Boolean.TRUE;
+            default :
+        }
+        return Boolean.FALSE;
+    }
+
 
     /**
      * This method will log the scan history to DB
