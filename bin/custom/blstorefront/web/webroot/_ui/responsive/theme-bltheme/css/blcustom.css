@@ -1247,3 +1247,15 @@ max-height:100%;
 object-fit: contain;
 object-position:center;
 }
+
+@media only screen and (max-width:767px){
+.hero-video-slider,
+.hero-image-slider{
+    width: -webkit-fill-available !important;
+    object-position: center;
+    object-fit: cover;
+    height: inherit !important;
+    width: -moz-available !important;
+      width: fill-available !important;
+}
+}
