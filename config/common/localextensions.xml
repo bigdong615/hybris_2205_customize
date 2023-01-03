@@ -174,5 +174,9 @@
 	<extension name='commercewebservicescommons' />
 	
 	<extension name='blcommercewebservices' />
+	
+	<extension name="smartedittools"></extension>
+	
+	
   </extensions>
 </hybrisconfig>

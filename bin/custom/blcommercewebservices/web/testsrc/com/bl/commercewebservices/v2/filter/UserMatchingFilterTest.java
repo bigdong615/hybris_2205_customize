@@ -3,6 +3,10 @@
  */
 package com.bl.commercewebservices.v2.filter;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import de.hybris.platform.commerceservices.user.UserMatchingService;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
@@ -10,14 +14,15 @@ import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.servlet.DispatcherType;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,10 +32,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 
 /**
@@ -86,6 +87,7 @@ public class UserMatchingFilterTest
 		userMatchingFilter.setSessionService(sessionService);
 		authorities = new ArrayList<>();
 		given(userService.getAnonymousUser()).willReturn(anonymousUserModel);
+		given(httpServletRequest.getDispatcherType()).willReturn(DispatcherType.REQUEST);
 	}
 
 	public void createAuthority(final String role, final String principal)
