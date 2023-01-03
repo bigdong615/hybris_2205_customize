@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.bl.logging.BlLogger;
 
 @Controller
-@RequestMapping(value = "/products")
+@RequestMapping(value = "/products/**")
 public class ProductsPageController extends AbstractBlProductPageController {
 
   private static final Logger LOG = Logger.getLogger(ProductsPageController.class);
