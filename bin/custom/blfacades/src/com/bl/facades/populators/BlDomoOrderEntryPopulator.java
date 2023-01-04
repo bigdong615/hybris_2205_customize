@@ -96,6 +96,10 @@ public class BlDomoOrderEntryPopulator implements Populator<OrderEntryModel, Ord
 		{
 			target.setQuantitystatus(source.getQuantityStatus().getCode());
 		}
+		if (source.getProduct() != null)
+		{
+			target.setProductCode(source.getProduct().getCode());
+		}
 
 	}
 

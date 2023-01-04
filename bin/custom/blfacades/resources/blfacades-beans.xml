@@ -300,6 +300,7 @@
  	<property name="rejected" type="boolean"/>
  	<property name="entryGroupNumberCodes" type="java.lang.String"/>
  	<property name="quantitystatus" type="java.lang.String"/>
+ 	<property name="productCode" type="java.lang.String" />
   </bean>
   
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
@@ -1508,7 +1509,8 @@
  	<property name="rejected" type="boolean"/>
  	<property name="entryGroupNumberCodes" type="java.lang.String"/>
  	<property name="quantitystatus" type="java.lang.String"/>
-   <property name="avalaralinetax" type="java.lang.Double"/>
+   	<property name="avalaralinetax" type="java.lang.Double"/>
+   	<property name="productCode" type="java.lang.String" />
   </bean>
 
     <bean class="com.bl.facades.order.data.OrderEntryListData">
