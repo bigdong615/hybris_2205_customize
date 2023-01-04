@@ -10,6 +10,7 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
 import java.util.stream.Collectors;
 
+import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 
@@ -101,6 +102,14 @@ public class BlDomoOrderEntryPopulator implements Populator<OrderEntryModel, Ord
 			target.setProductCode(source.getProduct().getCode());
 		}
 
+		target.setOptions(source.getOptions().stream().map(BlOptionsModel::getCode).collect(Collectors.joining(", ")));
+		target.setCreatedTS(source.getCreationtime());
+		target.setModifiedTS(source.getModifiedtime());
+		target.setInfo(source.getInfo());
+		if (source.getDeliveryAddress() != null)
+		{
+			target.setDeliveryaddress(source.getDeliveryAddress().getAddressID());
+		}
 	}
 
 }
