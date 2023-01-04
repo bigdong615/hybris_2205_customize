@@ -301,6 +301,9 @@
  	<property name="entryGroupNumberCodes" type="java.lang.String"/>
  	<property name="quantitystatus" type="java.lang.String"/>
  	<property name="productCode" type="java.lang.String" />
+ 	<property name="options" type="java.lang.String"/>	
+    <property name="deliveryaddress" type="java.lang.String"/>	
+    <property name="info" type="java.lang.String"/>  
   </bean>
   
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
@@ -445,6 +448,43 @@
         <property name="extendRentalEndDate" type="java.lang.Date"/>
         <property name="totalExtendDays" type="java.lang.Integer"/>
         <property name="extendedOrderCopyList" type="java.lang.String"/>
+        <property name="extendedcart" type="java.lang.Boolean"/>	
+        <property name="quotediscountvaluesinternal" type="java.lang.String"/>	
+        <property name="quotereference" type="java.lang.String"/>	
+        <property name="language" type="java.lang.String"/>	
+        <property name="salesapplication" type="java.lang.String"/>	
+        <property name="potentiallyfraudulent" type="java.lang.String"/>	
+        <property name="fraudulent" type="java.lang.Boolean"/>	
+        <property name="originalversion" type="java.lang.String"/>	
+        <property name="versionid" type="java.lang.String"/>	
+        <property name="isordertaxexempt" type="java.lang.Boolean"/>	
+        <property name="avalarataxcalculated" type="java.lang.Boolean"/>	
+        <property name="verificationstatus" type="java.lang.String"/>	
+        <property name="rentalenddate" type="java.util.Date"/>	
+        <property name="rentalstartdate" type="java.util.Date"/>	
+        <property name="totaldamagewaivercost" type="java.lang.Double"/>	
+        <property name="appliedcouponcodes" type="java.lang.String"/>	
+        <property name="previousdeliverymode" type="java.lang.String"/>	
+        <property name="europe1pricefactory_utg" type="java.lang.String"/>	
+        <property name="europe1pricefactory_upg" type="java.lang.String"/>	
+        <property name="europe1pricefactory_udg" type="java.lang.String"/>	
+        <property name="statusinfo" type="java.lang.String"/>	
+        <property name="exportstatus" type="java.lang.String"/>	
+        <property name="paymentstatus" type="java.lang.String"/>	
+        <property name="paymentmode" type="java.lang.String"/>	
+        <property name="paymentinfo" type="java.lang.String"/>	
+        <property name="paymentcost" type="java.lang.Double"/>	
+        <property name="paymentaddress" type="java.lang.String"/>	
+        <property name="globaldiscountvaluesinternal" type="java.lang.String"/>	
+        <property name="currency" type="java.lang.String"/>	
+        <property name="discountsincludepaymentcost" type="java.lang.Boolean"/>	
+        <property name="discountsincludedeliverycost" type="java.lang.Boolean"/>	
+        <property name="deliveryAddressid" type="java.lang.String"/>	
+        <property name="deliverycost" type="java.lang.Double"/>	
+        <property name="deliveryModeCode" type="java.lang.String"/>	
+        <property name="userId" type="java.lang.String"/>	
+        <property name="entrygroups" type="java.lang.String"/>	
+        <property name="totaltaxvaluesinternal" type="java.lang.String"/>
   </bean>
   
   	<bean class="de.hybris.platform.commercefacades.order.data.OrderData" extends="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
@@ -497,6 +537,7 @@
 		<property name="newEndDateForExtendRental" type="java.lang.Integer"/>
 		<property name="customerMail" type="String"/>
 		<property name="extendOrderConfirmationDate" type="String"/>
+		<property name="extendedcart" type="java.lang.Boolean"/>
 		<property name="isPOEnabled" type="java.lang.Boolean"/>
 		<property name="poNumber" type="java.lang.String"/>
 		<property name="poNotes" type="java.lang.String"/>
@@ -599,6 +640,46 @@
 		<property name="extendRentalEndDate" type="java.lang.Date"/>
 		<property name="totalExtendDays" type="java.lang.Integer"/>
 		<property name="extendedOrderCopyList" type="java.lang.String"/>
+		<property name="quotediscountvaluesinternal" type="java.lang.String"/>	
+		<property name="expirationtime" type="java.lang.Date"/>	
+		<property name="description" type="java.lang.String"/>	
+        <property name="quotereference" type="java.lang.String"/>	
+        <property name="placedby" type="java.lang.String"/>	
+        <property name="language" type="java.lang.String"/>	
+        <property name="salesapplication" type="java.lang.String"/>	
+        <property name="potentiallyfraudulent" type="java.lang.Boolean"/>	
+        <property name="fraudulent" type="java.lang.Boolean"/>	
+        <property name="originalversion" type="java.lang.String"/>	
+        <property name="versionid" type="java.lang.String"/>	
+        <property name="isordertaxexempt" type="java.lang.Boolean"/>	
+        <property name="avalarataxcalculated" type="java.lang.Boolean"/>	
+        <property name="verificationstatus" type="java.lang.String"/>	
+        <property name="rentalenddate" type="java.util.Date"/>	
+        <property name="rentalstartdate" type="java.util.Date"/>	
+        <property name="totaldamagewaivercost" type="java.lang.Double"/>	
+        <property name="appliedcouponcodes" type="java.lang.String"/>	
+        <property name="previousdeliverymode" type="java.lang.String"/>	
+        <property name="europe1pricefactory_utg" type="java.lang.String"/>	
+        <property name="europe1pricefactory_upg" type="java.lang.String"/>	
+        <property name="europe1pricefactory_udg" type="java.lang.String"/>	
+        <property name="statusinfo" type="java.lang.String"/>	
+        <property name="exportstatus" type="java.lang.String"/>	
+        <property name="paymentstatus" type="java.lang.String"/>	
+        <property name="paymentmode" type="java.lang.String"/>	
+        <property name="paymentinfo" type="java.lang.String"/>	
+        <property name="paymentcost" type="java.lang.Double"/>	
+        <property name="paymentaddress" type="java.lang.String"/>	
+        <property name="name" type="java.lang.String"/>	
+        <property name="globaldiscountvaluesinternal" type="java.lang.String"/>	
+        <property name="currency" type="java.lang.String"/>			
+        <property name="discountsincludepaymentcost" type="java.lang.Boolean"/>	
+        <property name="discountsincludedeliverycost" type="java.lang.Boolean"/>	
+        <property name="deliveryAddressid" type="java.lang.String"/>	
+        <property name="deliverycost" type="java.lang.Double"/>	
+        <property name="deliveryModeCode" type="java.lang.String"/>	
+        <property name="userId" type="java.lang.String"/>		
+        <property name="entrygroups" type="java.lang.String"/>		
+        <property name="totaltaxvaluesinternal" type="java.lang.String"/>
 	</bean>
   
 
@@ -1511,6 +1592,9 @@
  	<property name="quantitystatus" type="java.lang.String"/>
    	<property name="avalaralinetax" type="java.lang.Double"/>
    	<property name="productCode" type="java.lang.String" />
+   	<property name="options" type="java.lang.String"/>	
+   	<property name="deliveryaddress" type="java.lang.String"/>	
+    <property name="info" type="java.lang.String"/>
   </bean>
 
     <bean class="com.bl.facades.order.data.OrderEntryListData">
