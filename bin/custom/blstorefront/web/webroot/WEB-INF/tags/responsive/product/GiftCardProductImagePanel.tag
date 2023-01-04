@@ -31,7 +31,7 @@
 							<c:url value="${imagePath}" var="imageUrl" />
 						</c:otherwise>
 					</c:choose>
-					<li class="splide__slide"><img class="pdp-image" src="${fn:escapeXml(imageUrl)}"></li>
+					<li class="splide__slide"><img src="${fn:escapeXml(imageUrl)}"></li>
 				</ul>
 			</div>
 		</div>
@@ -40,7 +40,7 @@
 		<div id="product-slider" class="gift-card-pdp">
 			<c:forEach items="${galleryImages}" var="container"
 				varStatus="varStatus">
-				<img class="pdp-image" src="${fn:escapeXml(container.product.url)}"
+				<img src="${fn:escapeXml(container.product.url)}"
 					alt="${fn:escapeXml(container.thumbnail.altText)}">
 			</c:forEach>
 		</div>
