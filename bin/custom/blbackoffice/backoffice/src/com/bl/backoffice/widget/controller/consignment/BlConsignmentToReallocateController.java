@@ -161,23 +161,10 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     this.globalPossibleLocations.setModel(new ListModelArray<>(this.locations.toArray()));
     this.consignmentsEntriesToReallocate = new HashSet<>();
     if(!this.getConsignment().getStatus().equals(ConsignmentStatus.BL_SHIPPED)) {
-
-      final List<ConsignmentEntryModel> pendingConsEntries = this.getConsignment().getConsignmentEntries().stream()
-          .filter(entry -> entry.getQuantityPending() > 0L).collect(Collectors.toList());
-      for(ConsignmentEntryModel entry :pendingConsEntries){
-        boolean isSerialNotShipped = true;
-        for (BlProductModel product : entry.getSerialProducts()){
-          if(product instanceof BlSerialProductModel && ConsignmentEntryStatusEnum.SHIPPED.equals(entry.getConsignmentEntryStatus().get(product.getCode()))){
-            isSerialNotShipped=false;
-            break;
-          }
-        }
-        if(isSerialNotShipped){
+      this.getConsignment().getConsignmentEntries().stream()
+          .filter(entry -> entry.getQuantityPending() > 0L).forEach(entry ->
           this.consignmentsEntriesToReallocate
-              .add(
-                  new ConsignmentEntryToReallocateDto(entry, this.declineReasons, this.locations));
-        }
-      }
+              .add(new ConsignmentEntryToReallocateDto(entry, this.declineReasons, this.locations)));
     }
     this.getConsignmentEntries().setModel(new ListModelList<>(this.consignmentsEntriesToReallocate));
     this.getConsignmentEntries().renderAll();
