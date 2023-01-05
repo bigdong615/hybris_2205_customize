@@ -1,5 +1,18 @@
 package com.bl.backoffice.widget.controller.consignment;
 
+import com.bl.Ordermanagement.reallocation.BlReallocationService;
+import com.bl.core.enums.ConsignmentEntryStatusEnum;
+import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.google.common.collect.Sets;
+import com.hybris.backoffice.i18n.BackofficeLocaleService;
+import com.hybris.cockpitng.annotations.SocketEvent;
+import com.hybris.cockpitng.annotations.ViewEvent;
+import com.hybris.cockpitng.core.events.CockpitEventQueue;
+import com.hybris.cockpitng.util.DefaultWidgetController;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -19,7 +32,6 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.enums.DeclineReason;
 import de.hybris.platform.warehousing.process.WarehousingBusinessProcessService;
 import de.hybris.platform.warehousingbackoffice.dtos.ConsignmentEntryToReallocateDto;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -30,11 +42,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -57,19 +69,6 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.impl.InputElement;
-
-import com.bl.Ordermanagement.reallocation.BlReallocationService;
-import com.bl.core.enums.ItemStatusEnum;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.google.common.collect.Sets;
-import com.hybris.backoffice.i18n.BackofficeLocaleService;
-import com.hybris.cockpitng.annotations.SocketEvent;
-import com.hybris.cockpitng.annotations.ViewEvent;
-import com.hybris.cockpitng.core.events.CockpitEventQueue;
-import com.hybris.cockpitng.util.DefaultWidgetController;
 
 public class BlConsignmentToReallocateController  extends DefaultWidgetController {
 
@@ -161,10 +160,25 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     this.globalDeclineReasons.setModel(new ListModelArray<>(this.declineReasons));
     this.globalPossibleLocations.setModel(new ListModelArray<>(this.locations.toArray()));
     this.consignmentsEntriesToReallocate = new HashSet<>();
-    this.getConsignment().getConsignmentEntries().stream()
-        .filter(entry -> entry.getQuantityPending() > 0L).forEach(entry ->
-        this.consignmentsEntriesToReallocate
-            .add(new ConsignmentEntryToReallocateDto(entry, this.declineReasons, this.locations)));
+    if(!this.getConsignment().getStatus().equals(ConsignmentStatus.BL_SHIPPED)) {
+
+      final List<ConsignmentEntryModel> pendingConsEntries = this.getConsignment().getConsignmentEntries().stream()
+          .filter(entry -> entry.getQuantityPending() > 0L).collect(Collectors.toList());
+      for(ConsignmentEntryModel entry :pendingConsEntries){
+        boolean isSerialNotShipped = true;
+        for (BlProductModel product : entry.getSerialProducts()){
+          if(product instanceof BlSerialProductModel && ConsignmentEntryStatusEnum.SHIPPED.equals(entry.getConsignmentEntryStatus().get(product.getCode()))){
+            isSerialNotShipped=false;
+            break;
+          }
+        }
+        if(isSerialNotShipped){
+          this.consignmentsEntriesToReallocate
+              .add(
+                  new ConsignmentEntryToReallocateDto(entry, this.declineReasons, this.locations));
+        }
+      }
+    }
     this.getConsignmentEntries().setModel(new ListModelList<>(this.consignmentsEntriesToReallocate));
     this.getConsignmentEntries().renderAll();
     this.addListeners();
@@ -241,7 +255,15 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     blReallocationService.createConsignment(orderModel, context, selectedWH);
 
     updateCurrentConsignmentStatus(this.consignment, allEntryAllQuantityReallocated, orderEntries);
-
+    final List<ConsignmentEntryModel> entryModels = new ArrayList<>();
+    orderModel.getEntries().forEach(entryModel -> {
+      entryModel.getConsignmentEntries().forEach(consEntryModel -> {
+        if (Objects.isNull(consEntryModel.getConsignment())) {
+          entryModels.add(consEntryModel);
+        }
+      });
+    });
+    modelService.removeAll(entryModels);
     this.sendOutput(OUT_CONFIRM, COMPLETED);
   }
 
