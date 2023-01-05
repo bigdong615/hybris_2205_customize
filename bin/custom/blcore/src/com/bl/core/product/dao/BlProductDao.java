@@ -62,5 +62,5 @@ public interface BlProductDao extends ProductDao {
    * @param productId
    * @return
    */
-    BlSerialProductModel getSerialByID(final String productId, );
+    BlSerialProductModel getSerialByID(final String productId);
 }

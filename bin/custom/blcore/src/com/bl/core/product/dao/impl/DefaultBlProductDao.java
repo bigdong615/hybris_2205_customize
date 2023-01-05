@@ -78,9 +78,8 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
   private static final String GET_STOCKLEVELS_FOR_SERIAL_QUERY = "SELECT {s.pk} from {stockLevel as s} where {s.serialProductCode} = ?serialCode";
 
   private static final String GET_BLSERIALPRODUCTS_FOR_SERIAL_ID_QUERY = "SELECT {pk} from {" + BlSerialProductModel._TYPECODE
-            + " as p} WHERE {p:" + BlSerialProductModel.PRODUCTID + "} = ?serialID" + " AND {p:" + BlSerialProductModel.CATALOGVERSION
-            + "} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE + " as cv} WHERE {cv:" + CatalogVersionModel.VERSION
-            + "} = ?version AND {cv:" + CatalogVersionModel.CATALOG + "} in ({{SELECT {c:pk} FROM {" + CatalogModel._TYPECODE
+            + " as p} WHERE {p:" + BlSerialProductModel.PRODUCTID + "} = ?productId" + " AND {p:" + BlSerialProductModel.CATALOGVERSION
+            + "} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE + " as cv} WHERE {cv:" + CatalogVersionModel.CATALOG + "} in ({{SELECT {c:pk} FROM {" + CatalogModel._TYPECODE
             + " as c} WHERE {c:" + CatalogModel.ID + "} = ?catalog}})}})";
 
     /**
@@ -165,7 +164,6 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_BLSERIALPRODUCTS_FOR_SERIAL_ID_QUERY);
 	  fQuery.addQueryParameter(BlCoreConstants.PRODUCT_ID, serialID);
 	  fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CATALOG, BlCoreConstants.CATALOG_VALUE);
-	  fQuery.addQueryParameter(BlCoreConstants.VERSION, BlCoreConstants.ONLINE);
 	  final SearchResult<BlSerialProductModel> result = getFlexibleSearchService().search(fQuery);
 	  final List<BlSerialProductModel> serialProducts = result.getResult();
 	  if (CollectionUtils.isEmpty(serialProducts))
@@ -174,7 +172,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 				  serialID);
 		  return null;
 	  }
-	  return serialProducts.get(0);
+	  return serialProducts.iterator().next();
   }
 
   /**
