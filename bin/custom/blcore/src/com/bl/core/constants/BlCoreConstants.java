@@ -3,8 +3,6 @@
  */
 package com.bl.core.constants;
 
-import com.bl.core.model.BlProductModel;
-
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
