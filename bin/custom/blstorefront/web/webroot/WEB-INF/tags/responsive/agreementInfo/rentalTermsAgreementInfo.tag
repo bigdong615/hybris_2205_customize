@@ -1,7 +1,10 @@
 <textarea readonly class="form-control" rows="4">
-THIS EQUIPMENT LEASE (&#034;Lease&#034;) is made and effective by clicking on the &#034;Place Your Order&#034; button, by and between BorrowLenses.com, (&#034;Lessor&#034;), and current user (&#034;Lessee&#034;).  By clicking on the &#034;Place Your Order&#034; button, Lessee agrees to be bound by these terms and conditions, whether or not Lessee has read them.  Lessor may at its sole discretion modify these terms and conditions at any time and any modifications shall become effective immediately as posted on this site.  By clicking on the &#034;Place Your Order&#034; button, Lessee indicates acceptance of the modified terms and conditions. 
+UPDATED JANUARY 1, 2023 :
+THIS EQUIPMENT LEASE (&#034;Lease&#034;) is made and effective by clicking on the &#034;Place Your Order&#034; button, by and between BorrowLenses.com, (&#034;Lessor&#034;), and current user (&#034;Lessee&#034;).  By clicking on the &#034;Place Your Order&#034; button, Lessee agrees to be bound by these terms and conditions, whether or not Lessee has read them.  Lessor may at its sole discretion modify these terms and conditions at any time and any modifications shall become effective immediately as posted on this site.  By clicking on the &#034;Place Your Order&#034; button, Lessee indicates acceptance of the modified terms and conditions.
 
-NOW, THEREFORE, in consideration of the mutual covenants and promises hereinafter set forth, the parties hereto agree as follows: 
+This Lease includes and incorporates by reference the Terms of Use, including its arbitration agreement, and Privacy Policy.  You can review the full Terms of Use(https://shutterflyinc.com/terms-of-use/) and Privacy Policy(https://shutterflyinc.com/privacy-policy/) by visiting the links in the parentheses.
+
+NOW, THEREFORE, in consideration of the mutual covenants and promises hereinafter set forth, the parties hereto agree as follows:
 
 1.	Lease.  Lessor hereby leases to Lessee, and Lessee hereby leases from Lessor, the equipment shown in the order preview above ("Equipment").  Lessor reserves the right to refuse or decline leasing Equipment to potential lessee at Lessor's sole discretion.  Lessor may, at its sole discretion, gather information from third parties regarding potential lessee's past rental history and credit worthiness.
 
@@ -18,7 +21,7 @@ Lessor represents and warrants as follows: (1) the Equipment is free from known 
 
 Lessee agrees as follows: (a) except as set forth in Lessor's representations and warranties above, the Equipment is rented to Lessee without any warranty or guaranty of any kind, express or implied, and specifically, there is no warranty of merchantability or fitness for a particular purpose; (b) Lessor shall not be held responsible with respect to production downtime, loss of profits, extra expense, indirect, consequential, or punitive damages, production delays; and (c) except as set forth in Lessor's representations and warranties above, Lessee is responsible for all costs associated with any repair or replacement (without deduction for depreciation) of the Equipment necessitated as a result of Lessee's usage, possession, transportation or failure to return the Equipment for any reason, including, without limitation, as a result of the negligence or willful misconduct of Lessee, its employees, agents, or contractors.  At all times Lessor's maximum liability in connection with the Equipment is limited to the rent paid to Lessor by Lessee. 
 
-7.	Used Equipment.  Lessee acknowledges that the Equipment may be used gear and may be cosmetically flawed.  However, Lessor warrants that the Equipment, whether new or used, will be in proper working condition when leased to Lessee.  Should Lessee discover that the Equipment, as received, is not working properly, Lessee agrees to notify Lessor pursuant to Section 15 of this Agreement.   
+7.	Used Equipment.  Lessee acknowledges that the Equipment may be used gear and may be cosmetically flawed.  However, Lessor warrants that the Equipment, whether new or used, will be in proper working condition when leased to Lessee.  Should Lessee discover that the Equipment, as received, is not working properly, Lessee agrees to notify Lessor pursuant to Section 15 of this Lease.
 
 8.	Typographical Errors.  In the event a product rental rate is listed incorrectly due to errors in pricing information received from Lessor's suppliers, Lessor has the right to refuse or cancel any orders placed for products listed at the incorrect rate whether or not Lessee's credit card has been charged.   Should Lessor cancel Lessee's order, Lessor will immediately credit Lessee's account for the incorrect amount paid. 
 
@@ -74,9 +77,9 @@ Notwithstanding any repossession or any other action which Lessor may take, Less
 
 27.	Entire Agreement. This instrument constitutes the entire agreement between the parties on the subject matter hereof. 
 
-28.	Notices.  Service of all notices under this Agreement shall be sufficient if given personally or by certified mail, return receipt requested, postage prepaid, at the address hereinafter set forth, or to such address as such party may provide in writing from time to time. 
+28.	Notices.  Service of all notices under this Lease shall be sufficient if given personally or by certified mail, return receipt requested, postage prepaid, at the address hereinafter set forth, or to such address as such party may provide in writing from time to time.
 
-29.	Governing Law.  This Lease shall be construed and enforced according to laws of the State of California. 
+29.	Governing Law.  This Lease is governed by and construed in accordance with the laws of the state in which you were billed for your Lease, without regard to the state’s conflict of law provisions, and except to the extent preempted by or inconsistent with federal law.
 
 Underwater Housing Equipment Addendum 
 

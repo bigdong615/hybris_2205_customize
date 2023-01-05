@@ -60,13 +60,13 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 				item.setImage_Link(product.getPicture().getURL());
 			}
 			item.setModel_Number(product.getCode());
-			if (!product.getUpc().isBlank() && !product.getUpc().contains("NA"))
-			{
-				item.setGtin(product.getUpc());
-			}
-			else
+			if (!product.getMpn().isBlank() && !product.getMpn().contains("NA"))
 			{
 				item.setMpn(product.getMpn());
+			}
+			else if (!product.getUpc().isBlank() && !product.getUpc().contains("NA"))
+			{
+				item.setGtin(product.getUpc());
 			}
 
 			item.setPrice(getSerialPrice(product.getSerialProducts().iterator().next()));

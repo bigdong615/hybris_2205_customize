@@ -9,23 +9,27 @@ ACC.privacyconsent = {
 
         // Is user fully opted-in to core unessential tracking purposes:
         // Functional, Analytics, and Advertising
+        const hasPrivacyRights = airgap.getRegimePurposes().size !== 0;
         const isOptedIn = airgap.isOptedIn();
         const consentCheckbox = document.getElementById('js-consent-box');
         consentCheckbox.checked = isOptedIn;
-        consentCheckbox.addEventListener('change', (interaction) => {
-            if (interaction.target.checked) {
-                // Consent to all user-configurable tracking purposes
-                airgap.optIn({
-                    interaction
-                });
-            } else {
-                // Opt-out of all user-configurable tracking purposes
-                airgap.optOut({
-                    interaction
-                });
-            }
-        });
-
+        if (hasPrivacyRights) {
+            consentCheckbox.addEventListener('click', (interaction) => {
+                if (interaction.target.checked) {
+                    // Consent to all user-configurable tracking purposes
+                    airgap.optIn({
+                        interaction
+                    });
+                } else {
+                    // Opt-out of all user-configurable tracking purposes
+                    airgap.optOut({
+                        interaction
+                    });
+                }
+            });
+        }else{
+            consentCheckbox.disabled = true;
+        }
     },
 }
 
@@ -42,4 +46,4 @@ ACC.privacyconsent = {
             if(checkboxSelectedUrl != ""){
             window.location.href = redirectUrl;
             }
-        }
+}
