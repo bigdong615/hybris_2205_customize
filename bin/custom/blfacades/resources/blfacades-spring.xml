@@ -202,7 +202,11 @@
 		<property name="blProductService" ref="productService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
 		<property name="blDatePickerService" ref="blDatePickerService" />
+		<property name="blSearchResultDomoProductPopulator" ref="blSearchResultDomoProductPopulator"/>
+		<property name="sessionService" ref="sessionService" />
 	</bean>
+	
+	<bean id="blSearchResultDomoProductPopulator" class="com.bl.facades.populators.BlSearchResultDomoProductPopulator"/>
 
 
 	<alias name="blSearchResultVariantProductPopulator" alias="blSearchResultVariantProductPopulator"/>
@@ -836,6 +840,161 @@
 		<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
 		<property name="urlEncoderService" ref="urlEncoderService"/>
 	</bean>
+	
+ 	<alias name="defaultBlConsignmentEntryPopulator" alias="consignmentEntryPopulator"/>
+   	<bean id="defaultBlConsignmentEntryPopulator" class="com.bl.facades.populators.BlConsignmentEntryPopulator" parent="defaultConsignmentEntryPopulator" />
+	
+	<alias name="defaultBlConsignmentFacade" alias="blconsignmentFacade"/>
+	<bean id="defaultBlConsignmentFacade" class="com.bl.facades.consignment.impl.DefaultBLConsignmentFacade">
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+		<property name="consignmentEntryConverter" ref="consignmentEntryConverter"/>
+	</bean>
+	
+	<alias name="defaultBlDomoFacade" alias="blDomoFacade"/>
+	<bean id="defaultBlDomoFacade" class="com.bl.facades.domo.impl.DefaultBlDomoFacade">
+		<property name="blDomoService" ref="blDomoService"/>
+		<property name="blpackagingInfoConverter" ref="blpackagingInfoConverter"/>
+		<property name="blpaymentTransactionConverter" ref="blpaymentTransactionConverter"/>
+		<property name="blpaymentTransactionEntryConverter" ref="blpaymentTransactionEntryConverter"/>
+		<property name="blGiftCardConverter" ref="blGiftCardConverter"/>
+		<property name="blGiftCardMovementConverter" ref="blGiftCardMovementConverter"/>
+		<property name="blDomoOrderConverter" ref="blDomoOrderConverter"/>
+		<property name="blorderEntryConverter" ref="blorderEntryConverter"/>
+		<property name="blItemsBillingChargeConverter" ref="blItemsBillingChargeConverter"/>
+		<property name="blCustomerConverter" ref="blCustomerConverter"/>	
+	</bean>
+	
+	<alias name="blDomoOrderEntryPopulator" alias="blDomoOrderEntryPopulator"/>
+	<bean id="blDomoOrderEntryPopulator" class="com.bl.facades.populators.BlDomoOrderEntryPopulator"></bean>
+	
+	<alias name="blorderEntryConverter" alias="blorderEntryConverter"/>
+	<bean id="blorderEntryConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.OrderEntryData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoOrderEntryPopulator"/>
+				<ref bean="defaultBlOrderEntryPopulator"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- <bean parent="modifyPopulatorList">
+		<property name="list" ref="orderEntryConverter"/>
+		<property name="add" ref="blDomoOrderEntryPopulator"/>
+	</bean> -->
 
+	<alias name="blPackagingInfoPopulator" alias="blPackagingInfoPopulator"/>
+	<bean id="blPackagingInfoPopulator" class="com.bl.facades.populators.BlPackagingInfoPopulator">
+	</bean>
+
+	<alias name="blpackagingInfoConverter" alias="blpackagingInfoConverter"/>
+	<bean id="blpackagingInfoConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.warehousingfacades.order.data.PackagingInfoData" />
+		<property name="populators">
+			<list>
+				<ref bean="blPackagingInfoPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blPaymentTransactionPopulator" alias="blPaymentTransactionPopulator"/>
+	<bean id="blPaymentTransactionPopulator" class="com.bl.facades.populators.BlPaymentTransactionPopulator">
+	</bean>
+
+	<alias name="blpaymentTransactionConverter" alias="blpaymentTransactionConverter"/>
+	<bean id="blpaymentTransactionConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData" />
+		<property name="populators">
+			<list>
+				<ref bean="blPaymentTransactionPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	
+	<alias name="defaultBlConsignmentPopulator" alias="consignmentPopulator"/>
+	<bean id="defaultBlConsignmentPopulator" class="com.bl.facades.populators.BlConsignmentPopulator" parent="defaultConsignmentPopulator">
+  		<property name="deliveryModeConverter" ref="deliveryModeConverter"/>
+	</bean>
+	
+	<alias name="blPaymentTransactionEntryPopulator" alias="blPaymentTransactionEntryPopulator"/>
+	<bean id="blPaymentTransactionEntryPopulator" class="com.bl.facades.populators.BlPaymentTransactionEntryPopulator">
+	</bean>
+
+   <alias name="blpaymentTransactionEntryConverter" alias="blpaymentTransactionEntryConverter"/>
+	<bean id="blpaymentTransactionEntryConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData" />
+		<property name="populators">
+			<list>
+				<ref bean="blPaymentTransactionEntryPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blGiftCardPopulator" alias="blGiftCardPopulator"/>
+	<bean id="blGiftCardPopulator" class="com.bl.facades.populators.BlGiftCardPopulator">
+	</bean>
+
+	<alias name="blGiftCardConverter" alias="blGiftCardConverter"/>
+	<bean id="blGiftCardConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.giftcard.data.GiftCardData" />
+		<property name="populators">
+			<list>
+				<ref bean="blGiftCardPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blGiftCardMovementPopulator" alias="blGiftCardMovementPopulator"/>
+	<bean id="blGiftCardMovementPopulator" class="com.bl.facades.populators.BlGiftCardMovementPopulator">
+	</bean>
+
+	<alias name="blGiftCardMovementConverter" alias="blGiftCardMovementConverter"/>
+	<bean id="blGiftCardMovementConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData" />
+		<property name="populators">
+			<list>
+				<ref bean="blGiftCardMovementPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blOrderPopulator" alias="blOrderPopulator"/>
+	<bean id="blOrderPopulator" class="com.bl.facades.populators.BlOrderPopulator" parent="defaultOrderPopulator"></bean>
+	
+	<alias name="blDomoOrderConverter" alias="blDomoOrderConverter"/>
+	<bean id="blDomoOrderConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.OrderData" />
+		<property name="populators">
+			<list>
+				<ref bean="blOrderPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blItemsBillingChargePopulator" alias="blItemsBillingChargePopulator"/>
+	<bean id="blItemsBillingChargePopulator" class="com.bl.facades.populators.BlItemsBillingChargePopulator"/>
+
+	<alias name="blItemsBillingChargeConverter" alias="blItemsBillingChargeConverter"/>
+	<bean id="blItemsBillingChargeConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.BlItemsBillingChargeData" />
+		<property name="populators">
+			<list>
+				<ref bean="blItemsBillingChargePopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<bean id="blCustomerPopulator" class="com.bl.facades.populators.BlCustomerPopulator" parent="customerPopulator"></bean>
+	
+	<alias name="blCustomerConverter" alias="blCustomerConverter"/>
+	<bean id="blCustomerConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.user.data.CustomerData" />
+		<property name="populators">
+			<list>
+				<ref bean="blCustomerPopulator"/>
+				</list>
+		</property>
+	</bean>
 	
 </beans>

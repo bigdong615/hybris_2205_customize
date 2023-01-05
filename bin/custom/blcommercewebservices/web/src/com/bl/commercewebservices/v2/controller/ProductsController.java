@@ -151,7 +151,7 @@ public class ProductsController extends BaseController
 			@ApiParam(value = "The context to be used in the search query.") @RequestParam(required = false) final String searchQueryContext,
 			@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields, final HttpServletResponse response)
 	{
-		sessionService.setAttribute("isApliCall", true);
+		sessionService.setAttribute("isApiCall", true);
 		final ProductSearchPageWsDTO result = productsHelper
 				.searchProducts(query, currentPage, pageSize, sort, addPaginationField(fields), searchQueryContext);
 		setTotalCountHeader(response, result.getPagination());

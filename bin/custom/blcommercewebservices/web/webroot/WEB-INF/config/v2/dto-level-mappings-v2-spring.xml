@@ -160,7 +160,7 @@
                 <entry key="DEFAULT"
                        value="lastName,title,titleCode,displayUid,defaultAddress(DEFAULT),language(DEFAULT),firstName,currency(DEFAULT),uid,name,customerId,deactivationDate"/>
                 <entry key="FULL"
-                       value="lastName,title,titleCode,displayUid,defaultAddress(FULL),language(FULL),firstName,currency(FULL),uid,name,customerId,deactivationDate"/>
+                       value="lastName,title,titleCode,displayUid,defaultAddress(FULL),language(FULL),firstName,currency(FULL),uid,name,customerId,deactivationDate,createdTS,modifiedTS,description,passwordAnswer,passwordQuestion,retentionState,taxExemptNumber,taxExemptState,lastLogin,coiExpirationDate,taxExemptExpiry,backofficeLoginDisabled,loginDisabled,authorizedToUnlockPages,isTaxExempt,hmcLoginDisabled,emailPreference,smsPreference,poEnabled,vip,coiVerified,employee,originalUid,type,braintreeCustomerId,badBehaviorTag,coiCoverageAmount,kycScore,vipType,verificationLinkSource,photoOrVideo,badBehaviorNotes,verificationNotes,verificationLink,accountNotes,orderCount,completedOrderCount,inprocessOrderCount,totalAmountPastDue,blRewards,averageGearOrderValue,gearvalueordersinprogress"/>
             </map>
         </property>
     </bean>
@@ -514,9 +514,9 @@
                 <entry key="BASIC"
                        value="purchasable,stock,name,baseProduct,availableForPickup,code,url,price"/>
                 <entry key="DEFAULT"
-                       value="summary,averageRating,purchasable,stock(DEFAULT),description,variantMatrix(DEFAULT),name,baseOptions(DEFAULT),baseProduct,availableForPickup,variantOptions(DEFAULT),code,url,price(DEFAULT),numberOfReviews,manufacturer,categories(BASIC,name),priceRange,multidimensional,configuratorType,configurable,tags"/>
+                       value="summary,averageRating,purchasable,stock(DEFAULT),description,variantMatrix(DEFAULT),name,baseOptions(DEFAULT),baseProduct,availableForPickup,variantOptions(DEFAULT),code,url,price(DEFAULT),numberOfReviews,manufacturerName,categories(BASIC,name),priceRange,multidimensional,configuratorType,configurable,tags"/>
                 <entry key="FULL"
-                       value="summary,productReferences(FULL),classifications(FULL),averageRating,purchasable,volumePrices(FULL),variantType,stock(FULL),description,variantMatrix(FULL),name,baseOptions(FULL),baseProduct,availableForPickup,variantOptions(FULL),reviews(FULL),code,url,price(FULL),numberOfReviews,manufacturer,volumePricesFlag,futureStocks(FULL),images(FULL),categories(FULL),potentialPromotions(FULL),priceRange,multidimensional,configuratorType,configurable,tags,isBlProductType,createdTS,modifiedTS,onlineDate,offlineDate,createdDate,dateFirstActive,invoiceDate,dateOfSale,lastUnboxedOcLocationDate,supplierAlternativeAID,erpGroupBuyer,erpGroupSupplier,deliveryTime,priceQuantity,minOrderQuantity,maxOrderQuantity,orderQuantityInterval,startLineNumber,endLineNumber,reviewCount"/>
+                       value="createdTS,modifiedTS,height,weight,width,length,summary,displayName,manufacturerName,productReferences(FULL),classifications(FULL),averageRating,purchasable,volumePrices(FULL),variantType,stock(FULL),description,variantMatrix(FULL),name,baseOptions(FULL),baseProduct,availableForPickup,variantOptions(FULL),reviews(FULL),code,url,price(FULL),numberOfReviews,volumePricesFlag,futureStocks(FULL),images(FULL),categories(FULL),potentialPromotions(FULL),priceRange,multidimensional,configuratorType,configurable,tags,isBlProductType,createdTS,modifiedTS,onlineDate,offlineDate,createdDate,dateFirstActive,invoiceDate,dateOfSale,lastUnboxedOcLocationDate,supplierAlternativeAID,erpGroupBuyer,erpGroupSupplier,deliveryTime,priceQuantity,minOrderQuantity,maxOrderQuantity,orderQuantityInterval,startLineNumber,endLineNumber,reviewCount,weight,height,width,length,level1Required,level2Required,mostPopular,onSale,retailGear,scheduled,staffPick,bufferInvPercChangedManually,retailGearInStock,bundleProduct,constrained,discontinued,forRent,forSale,greatValue,isAccounting,isNew,isVideo,hardAssigned,isBufferedInventory,isSyncRequired,softAssigned,dirtyPriorityStatus,gearRated,soldIndividually,bufferedInventoryPercentage,assetNumber,assetstatus,barcode,conditions,inventoryLocationID,invoiceNumber,invoiceNumberRecord,lastLocationScanParent,notes,ocLocation,orderNumberRecord,otherRepairsReason,ownedBy,purchaseOrder,serialNumber,skuFirmwareVersion,userChangedConditionRating,withOrderID,alternativeProduct,displayNotes,firmwareVersion,lrLink,mpn,primaryCategoryID,procurementID,procurementSource,productId,productStatus,purchaseNotes,rentalIncludes,shortDescription,specifications,techEngNotes,titleTag,upc,usedDescription,usedIncludes,articleStatus,ean,manufacturerAID,manufacturerTypeDescription,remarks,segment,specialTreatmentClasses,xmlcontent,isSealed,discounted,numberContentUnits,reviewRating,sequenceId,forSaleDiscount,retailPrice,forSaleBasePrice,forRetailGearPrice,forFinalSalePrice,incentivizedPrice,procurementCost,noDaysInTransit,noDaysNotInService,noDaysRented,testingStatus,repairLogType,repairReasons,cosmeticRatings,functionalRatings,approvalStatus,batteryMaterial,numberSystem,serialStatusses,order,unit,catalogVersion,contentUnit,productOrderLimit,rentalVideosLinks,usedGearVideosLinks,trackingNumber,warehouseLocation,serialHomeLocation,ocLocationDetails,associatedConsignment,associatedOrder,associatedShippedConsignment,consignmentEntry,lastUnboxedOcLocationHistory,blProduct,associatedUsedGearConsignment,associatedUsedGearOrder,europe1PriceFactory_PDG,europe1PriceFactory_PPG,europe1PriceFactory_PTG,visibleOnStoreFront"/>
             </map>
         </property>
     </bean>
@@ -1236,8 +1236,7 @@
             <map>
                 <entry key="BASIC" value="entryNumber,quantity,deliveryPointOfService,configurationInfos,statusSummaryList"/>
                 <entry key="DEFAULT" value="BASIC,totalPrice,product(DEFAULT),cancellableQuantity,cancelledItemsPrice(DEFAULT),returnableQuantity,returnedItemsPrice(DEFAULT)"/>
-                <entry key="FULL"
-                       value="product(FULL),deliveryPointOfService(FULL),entryNumber,updateable,deliveryMode(FULL),quantity,basePrice(FULL),totalPrice(FULL),configurationInfos(FULL),statusSummaryList,cancellableQuantity,cancelledItemsPrice(FULL),returnableQuantity,returnedItemsPrice(FULL)"/>
+                <entry key="FULL" value="productCode,deliveryPointOfService(FULL),discountvaluesinternal,info,deliveryaddress,options,entryNumber,updateable,deliveryMode(FULL),basePrice(FULL),totalPrice(FULL),configurationInfos(FULL),statusSummaryList,cancellableQuantity,cancelledItemsPrice(FULL),returnableQuantity,returnedItemsPrice(FULL),createdTS,modifiedTS,calculated,orderCode,quantity,taxvaluesinternal,unit,giveaway,rejected,entryGroupNumberCodes,europe1pricefactory_ppg,europe1pricefactory_ptg,europe1pricefactory_pdg,chosenvendor,nameddeliverydate,quantitystatus,deliverypointofserviceCode,gearGuardWaiverPrice,gearGuardProFullWaiverPrice,gearGuardWaiverSelected,gearGuardProFullWaiverSelected,noDamageWaiverSelected,rentalStartDate,rentalReturnDate,serialProducts,recipientEmail,recipientName,recipientMessage,aqautechProduct,warehouse,modifiedSerialProductList,isModifiedOrder,unAllocatedQuantity,entryCreated,bundleEntry,bundleProductCode,bundleMainEntry,splitConsignmentQuantity,updatedTime,avalaralinetax,cancelledQuantity,refundedQuantity,fullyRefunded"/>
             </map>
         </property>
     </bean>
@@ -1286,8 +1285,8 @@
                 <entry key="BASIC" value="code,trackingID,status"/>
                 <entry key="DEFAULT"
                        value="deliveryPointOfService(DEFAULT),status,statusDisplay,trackingID,entries(DEFAULT),code,statusDate,shippingAddress(DEFAULT)"/>
-                <entry key="FULL"
-                       value="deliveryPointOfService(FULL),status,statusDisplay,trackingID,entries(FULL),code,statusDate,shippingAddress(FULL)"/>
+                <entry key="FULL" 
+                	   value="code,trackingID,status,statusDisplay,statusDate,entries,shippingAddress,orderCode,deliveryPointOfService,orderCode,shippingDate,deliveryMode,warehouseCode,packagingInfo,createdTS,nameddeliverydate,optimizedShippingStartDate,optimizedshippingenddate,modifiedTS,actualShippingDateToCustomer,shipmentBlShippedStatusDate,taskAssignmentWorkflow,optimizedshippingtype,carrier,optimizedShippingMethodType,cleanCompleteConsignment,threeDayGroundAvailability,internalTransferConsignment,ordertransferconsignment,optimizedRentalEndDateChangedByJob,rentalEndDate,rentalStartDate,orderNotes"/>
             </map>
         </property>
     </bean>
@@ -1297,12 +1296,24 @@
                   value="de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentEntryWsDTO"/>
         <property name="levelMapping">
             <map>
+                <entry key="BASIC" value="shippedQuantity,quantity"/>
+                <entry key="DEFAULT" value="shippedQuantity,quantity"/>
+                <entry key="FULL" value="createdTS,modifiedTS,pK,consignment,gearrated,testingstatus,consignmententrystatus,billingcharges,options,items,serialproducts,mainItemNotScannedCount,subpartsNotScannedCount,order_entry,shippedQuantity,quantity,quantityDeclined,quantityPending,quantityShipped"/>
+            </map>
+        </property>
+    </bean>
+    
+<!--     <bean parent="fieldSetLevelMapping" id="consignmentEntryWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentEntryWsDTO"/>
+        <property name="levelMapping">
+            <map>
                 <entry key="BASIC" value="orderEntry,shippedQuantity,quantity"/>
                 <entry key="DEFAULT" value="orderEntry(DEFAULT),shippedQuantity,quantity"/>
                 <entry key="FULL" value="orderEntry(FULL),shippedQuantity,quantity"/>
             </map>
         </property>
-    </bean>
+    </bean> -->
 
     <bean parent="fieldSetLevelMapping" id="promotionOrderEntryConsumedWsDTOFieldSetLevelMapping">
         <property name="dtoClass"
@@ -1328,7 +1339,7 @@
         </property>
     </bean>
 
-    <bean parent="fieldSetLevelMapping" id="orderWsDTOFieldSetLevelMapping">
+<!--     <bean parent="fieldSetLevelMapping" id="orderWsDTOFieldSetLevelMapping">
         <property name="dtoClass"
                   value="de.hybris.platform.commercewebservicescommons.dto.order.OrderWsDTO"/>
         <property name="levelMapping">
@@ -1340,7 +1351,7 @@
                        value="unconsignedEntries(FULL),status,created,deliveryStatusDisplay,statusDisplay,consignments(FULL),guestCustomer,deliveryStatus,store,appliedOrderPromotions(FULL),pickupItemsQuantity,net,calculated,appliedVouchers(FULL),productDiscounts(FULL),totalDiscounts(FULL),subTotal(FULL),orderDiscounts(FULL),entries(FULL),appliedProductPromotions(FULL),totalPrice(FULL),site,deliveryMode(FULL),code,deliveryOrderGroups(FULL),guid,paymentInfo(FULL),pickupOrderGroups(FULL),totalItems,totalPriceWithTax(FULL),deliveryItemsQuantity,totalTax(FULL),user(FULL),deliveryAddress(FULL),deliveryCost(FULL),cancellable,returnable"/>
             </map>
         </property>
-    </bean>
+    </bean> -->
 
     <bean parent="fieldSetLevelMapping" id="pickupOrderEntryGroupWsDTOFieldSetLevelMapping">
         <property name="dtoClass"
@@ -1498,6 +1509,28 @@
         </property>
     </bean>
 
+	<bean parent="fieldSetLevelMapping" id="consignmentEntryListWsDTOFieldSetLevelMapping">
+		<property name="dtoClass" value="com.bl.facades.consignment.dto.ConsignmentEntryListWsDTO" />
+		<property name="levelMapping">
+			<map>
+				<entry key="BASIC" value="consignmentEntries,pagination,sorts" />
+				<entry key="DEFAULT" value="consignmentEntries(DEFAULT),pagination(DEFAULT),sorts(DEFAULT)" />
+				<entry key="FULL" value="consignmentEntries(FULL),pagination(FULL),sorts(FULL)" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean parent="fieldSetLevelMapping" id="consignmentListWsDTOFieldSetLevelMapping">
+		<property name="dtoClass" value="com.bl.facades.consignment.dto.ConsignmentListWsDTO" />
+		<property name="levelMapping">
+			<map>
+				<entry key="BASIC" value="consignments,pagination,sorts" />
+				<entry key="DEFAULT" value="consignments(DEFAULT),pagination(DEFAULT),sorts(DEFAULT)" />
+				<entry key="FULL" value="consignments(FULL),pagination(FULL),sorts(FULL)" />
+			</map>
+		</property>
+	</bean>
+
     <bean parent="fieldSetLevelMapping" id="saveCartResultWsDTOFieldSetLevelMapping">
         <property name="dtoClass"
                   value="de.hybris.platform.commercewebservicescommons.dto.order.SaveCartResultWsDTO"/>
@@ -1582,6 +1615,71 @@
                 <entry key="BASIC" value="expectedQuantity,orderEntry,refundAmount"/>
                 <entry key="DEFAULT" value="expectedQuantity,orderEntry(DEFAULT),refundAmount(DEFAULT)"/>
                 <entry key="FULL" value="expectedQuantity,orderEntry(FULL),refundAmount(FULL)"/>
+            </map>
+        </property>
+    </bean>
+    
+     <bean parent="fieldSetLevelMapping" id="giftCardWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.giftcard.GiftCardWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="code,amount,currency"/>
+                <entry key="DEFAULT"
+                       value="code,amount,currency,active"/>
+                <entry key="FULL" 
+                	   value="createdTS,modifiedTS,code,amount,currency,startDate,endDate,active,email,issuer,balance,isPurchased,customerEmail,name,message,discountID,order,customer"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="giftCardListWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="com.bl.facades.giftcard.dto.GiftCardListWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="pagination,giftCards,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),giftCards(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),giftCards(FULL),sorts(FULL)"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="userListWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="pagination,customers,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),customers(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),customers(FULL),sorts(FULL)"/>
+            </map>
+        </property>
+    </bean>
+    
+    
+    <bean parent="fieldSetLevelMapping" id="blItemsBillingChargeWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="createdTS,modifiedTS,code"/>
+                <entry key="DEFAULT"
+                       value="createdTS,modifiedTS,code"/>
+                <entry key="FULL" 
+                	   value="createdTS,modifiedTS,billChargeType,chargedAmount,taxAmount,billPaid,unPaidBillNotes,code,serialCode,orderCode,customer,updatedBillTime,billStatus"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="blItemsBillingChargeListWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="pagination,blItemsBillingChargeData,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),blItemsBillingChargeData(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),blItemsBillingChargeData(FULL),sorts(FULL)"/>
             </map>
         </property>
     </bean>

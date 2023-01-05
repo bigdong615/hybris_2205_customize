@@ -1,7 +1,10 @@
 package com.bl.core.dao.warehouse;
 
+import de.hybris.platform.commerceservices.search.pagedata.PageableData;
+import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +31,7 @@ public interface BlConsignmentDao {
    * @return the consignment for return date
    */
   List<ConsignmentModel> getConsignmentForReturnDate(final Date returnDate);
-  
+
   /**
    * Gets the consignment entries for serial code and from date.
    *
@@ -46,5 +49,13 @@ public interface BlConsignmentDao {
 	 * @return the consignment entries for serial code and date
 	 */
 	public ConsignmentModel getConsignmentForSerialCode(final String serialCode, final String orderCode);
+
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<ConsignmentEntryModel> getConsignmentEntries(PageableData pageableData);
+
+	SearchPageData<ConsignmentModel> getConsignments(PageableData pageableData);
 
 }
