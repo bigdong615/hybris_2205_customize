@@ -3,6 +3,8 @@
  */
 package com.bl.core.constants;
 
+import com.bl.core.model.BlProductModel;
+
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
@@ -683,6 +685,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String PAYMENT_NOT_AUTHORIZED ="PAYMENT_NOT_AUTHORIZED" ;
 	public static final String CHECKED_INVALID ="CHECKED_INVALID" ;
     public static final String CHECKED_VALID = "CHECKED_VALID";
+    public static final String PRODUCT_ID = "productId";
 
 
     private BlCoreConstants()
