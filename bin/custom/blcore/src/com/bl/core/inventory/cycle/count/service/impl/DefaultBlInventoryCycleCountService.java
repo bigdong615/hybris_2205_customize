@@ -277,8 +277,9 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
             case "SOLD":
             case "INACTIVE":
             case "LATE":
-            case "ACTIVE":
                 return Boolean.TRUE;
+            case "ACTIVE":
+                return Boolean.FALSE;
             default :
         }
         return Boolean.FALSE;
