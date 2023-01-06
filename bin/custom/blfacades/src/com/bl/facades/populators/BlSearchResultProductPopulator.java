@@ -24,6 +24,7 @@ import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -31,7 +32,6 @@ import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -82,11 +82,16 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private BlProductService blProductService;
   private BlCommerceStockService blCommerceStockService;
   private BlDatePickerService blDatePickerService;
+  private BlSearchResultDomoProductPopulator blSearchResultDomoProductPopulator;
+  private SessionService sessionService;
 
   /**
    * this method is created for populating values from source to target
-   * @param source the source object
-   * @param target the target to fill
+   *
+   * @param source
+   *           the source object
+   * @param target
+   *           the target to fill
    */
   @Override
   public void populate(final SearchResultValueData source, final ProductData target) {
@@ -151,53 +156,12 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     populateUrl(source, target);
     populatePromotions(source, target);
     target.setIsWatching(getStockNotificationFacade().isWatchingProduct(target));
-	 populateAdditionalAttributesForDomo(source, target);
+	 if (getSessionService().getAttribute("isApiCall") != null)
+	 {
+		 getBlSearchResultDomoProductPopulator().populate(source, target);
+	 }
 
   }
-
-
-/**
- * @param source
- * @param target
- */
-private void populateAdditionalAttributesForDomo(final SearchResultValueData source, final ProductData target)
-{
-	try
-	{
-		//target.setCreatedTS(this.<Date> getValue(source, "createdTS"));
-		 //target.setModifiedTS(this.<Date> getValue(source, "modifiedTS"));
-		 target.setOnlineDate(this.<Date> getValue(source, "onlineDate"));
-		 target.setOfflineDate(this.<Date> getValue(source, "offlineDate"));
-		 target.setCreatedDate(this.<Date> getValue(source, "createdDate"));
-		 target.setDateFirstActive(this.<Date> getValue(source, "dateFirstActive"));
-		 target.setInvoiceDate(this.<Date> getValue(source, "invoiceDate"));
-		 target.setDateOfSale(this.<Date> getValue(source, "dateOfSale"));
-		 target.setLastUnboxedOcLocationDate(this.<Date> getValue(source, "lastUnboxedOcLocationDate"));
-		 target.setSupplierAlternativeAID(this.<String> getValue(source, "supplierAlternativeAID"));
-		 target.setErpGroupBuyer(this.<String> getValue(source, "erpGroupBuyer"));
-		 target.setErpGroupSupplier(this.<String> getValue(source, "erpGroupSupplier"));
-		 if (this.<Double> getValue(source, "deliveryTime") != null)
-		 {
-			 target.setDeliveryTime(this.<Double> getValue(source, "deliveryTime"));
-		 }
-		 if (this.<Double> getValue(source, "priceQuantity") != null)
-		 {
-			 target.setPriceQuantity(this.<Double> getValue(source, "priceQuantity"));
-		 }
-		 target.setMinOrderQuantity(this.<Integer> getValue(source, "minOrderQuantity"));
-		 target.setMaxOrderQuantity(this.<Integer> getValue(source, "maxOrderQuantity"));
-		 target.setOrderQuantityInterval(this.<Integer> getValue(source, "orderQuantityInterval"));
-		 target.setStartLineNumber(this.<Integer> getValue(source, "startLineNumber"));
-		 target.setEndLineNumber(this.<Integer> getValue(source, "endLineNumber"));
-		 target.setReviewCount(this.<Integer> getValue(source, "reviewCount"));
-	}
-	catch (final Exception e)
-	{
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Error while creating Additional Attributes For Domo", e.getMessage());
-		e.printStackTrace();
-	}
-}
-
 
   /**
    * To Populate the Product data for bookmark
@@ -690,5 +654,24 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
     this.blDatePickerService = blDatePickerService;
   }
 
+  public BlSearchResultDomoProductPopulator getBlSearchResultDomoProductPopulator()
+  {
+	  return blSearchResultDomoProductPopulator;
+  }
+
+  public void setBlSearchResultDomoProductPopulator(final BlSearchResultDomoProductPopulator blSearchResultDomoProductPopulator)
+  {
+	  this.blSearchResultDomoProductPopulator = blSearchResultDomoProductPopulator;
+  }
+
+  public SessionService getSessionService()
+  {
+	  return sessionService;
+  }
+
+  public void setSessionService(final SessionService sessionService)
+  {
+	  this.sessionService = sessionService;
+  }
 
 }

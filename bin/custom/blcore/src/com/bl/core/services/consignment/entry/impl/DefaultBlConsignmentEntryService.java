@@ -1,6 +1,8 @@
 package com.bl.core.services.consignment.entry.impl;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.commerceservices.search.pagedata.PageableData;
+import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -26,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -46,35 +49,6 @@ import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
-import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.search.restriction.SearchRestrictionService;
-import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.session.SessionExecutionBody;
-import de.hybris.platform.servicelayer.session.SessionService;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 
 
@@ -734,6 +708,20 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 			}
 		});
 		return mainItemsList;
+	}
+
+	@Override
+	public SearchPageData<ConsignmentEntryModel> getConsignmentEntries(final PageableData pageableData)
+	{
+		return getBlConsignmentDao().getConsignmentEntries(pageableData);
+
+	}
+	
+	@Override
+	public SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData)
+	{
+		return getBlConsignmentDao().getConsignments(pageableData);
+
 	}
 
 }
