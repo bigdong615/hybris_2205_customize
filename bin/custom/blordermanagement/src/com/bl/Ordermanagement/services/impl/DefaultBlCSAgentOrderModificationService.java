@@ -76,11 +76,11 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Auto allocation and assignment on the New Order Entry {} ",
                 orderEntryModel.getOrder().getCode());
         final AbstractOrderModel orderModel = orderEntryModel.getOrder();
-        if(OrderStatus.SHIPPED.equals(orderModel.getStatus())){
+        if(OrderStatus.SHIPPED.equals(orderModel.getStatus()) || !BlCoreConstants.PENDING_STATUS.equals(orderModel.getStatus().getCode())){
             modelService.remove(orderEntryModel);
             updateOrderDetailsForModifiedEntry(orderModel);
             throw new InterceptorException("Item cannot be added to order if Consignment Status = BL_SHIPPED, Order Status = Shipped");
-        } else if(allowedOrderStatusforModification(orderModel.getStatus())) {
+        } else {
             originalSerialProducts= (List<BlProductModel>) originalSerialProducts.stream().map(ogSerial -> ((BlProductModel) ogSerial)).collect(Collectors.toList());
             performAllocationAndAssignment(orderEntryModel,originalSerialProducts,orderEntryModel.getItemModelContext().getOriginalValue(OrderEntryModel.QUANTITY), orderEntryModel.getItemModelContext().getOriginalValue(OrderEntryModel.UNALLOCATEDQUANTITY),false);
         }
@@ -304,29 +304,8 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
         Map<String,BlProductModel> codeSerialMap = Maps.newHashMap();
         serialProducts.forEach(ser -> codeSerialMap.put(ser.getCode(),ser));
         newSerialCodes.removeIf(oldSerialCodes::contains);
-    }
 
-    /**
-     * Allowed statuses for modification
-     * @param orderStatus
-     * @return
-     */
-    public boolean allowedOrderStatusforModification(final OrderStatus orderStatus) {
 
-        switch (orderStatus.getCode()) {
-            case BlCoreConstants.PENDING_STATUS:
-            case BlCoreConstants.RECEIVED_SHIPPING_MANUAL_REVIEW:
-            case BlCoreConstants.RECEIVED_MANUAL_REVIEW:
-            case BlCoreConstants.FRAUD_CHECKED:
-            case BlCoreConstants.RECEIVED_PAYMENT_DECLINED:
-            case BlCoreConstants.SUSPENDED:
-            case BlCoreConstants.PARTIAL_CAPTURE:
-            case BlCoreConstants.PAYMENT_NOT_AUTHORIZED:
-            case BlCoreConstants.CHECKED_INVALID:
-                return Boolean.TRUE;
-            default :
-        }
-        return Boolean.FALSE;
     }
 
     /**

@@ -135,7 +135,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 				}
 				else if (CollectionUtils.isEmpty(orderEntryModel.getSerialProducts()) && warehouse == null && CollectionUtils.isEmpty(orderEntryModel.getConsignmentEntries()) && orderEntryModel.getUnAllocatedQuantity() == 0) {
 					blCSAgentOrderModificationService.addNewOrderEntry(orderEntryModel, interceptorContext, getInitialValue(orderEntryModel, AbstractOrderEntryModel.SERIALPRODUCTS), false);
-				} else if (blCSAgentOrderModificationService.allowedOrderStatusforModification(orderEntryModel.getOrder().getStatus())&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.QUANTITY) && orderEntryModel.getQuantity() > getLongValueForQty(getAttributeInitialValue(orderEntryModel, OrderEntryModel.QUANTITY)) && orderEntryModel.getUnAllocatedQuantity() == 0) {
+				} else if (allowedOrderStatusforModification(orderEntryModel.getOrder().getStatus())&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.QUANTITY) && orderEntryModel.getQuantity() > getLongValueForQty(getAttributeInitialValue(orderEntryModel, OrderEntryModel.QUANTITY)) && orderEntryModel.getUnAllocatedQuantity() == 0) {
 					blCSAgentOrderModificationService.modifyExistingEntryForQuantity(orderEntryModel, interceptorContext, getInitialValue(orderEntryModel, AbstractOrderEntryModel.SERIALPRODUCTS), true);
 
 				}
@@ -148,7 +148,15 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 
 	}
 
+	private boolean allowedOrderStatusforModification(final OrderStatus orderStatus) {
 
+		switch (orderStatus.getCode()) {
+			case BlCoreConstants.PENDING_STATUS:
+				return Boolean.TRUE;
+			default :
+		}
+		return Boolean.FALSE;
+	}
 
 	/**
 	 * Get long value for qty
