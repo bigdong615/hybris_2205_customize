@@ -17,10 +17,12 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import org.apache.commons.collections4.CollectionUtils;
@@ -116,7 +118,7 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
         final int allocatedQty = getAllocatedQuantityValue(sourcingResults);
         BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Allocated Quantity to the modified or new entry {} ", allocatedQty);
         boolean isSourcingComplete = allocatedQty == orderEntryModel.getQuantity() && !isQtyModified  ? true: isQtyModified && allocatedQty == (orderEntryModel.getQuantity().intValue() - originalQuantity);
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "is Sourcing Complete {}  is it for modified order {}  ", isSourcingComplete , isQtyModified);
+        System.out.println("is Sourcing Complete "+ isSourcingComplete +"for modified order : "+ isQtyModified);
 
         if (CollectionUtils.isNotEmpty(sourcingResults.getResults())  && BooleanUtils.isTrue(isSourcingComplete)) {
             updateNewOrModifiedOrderEntry(orderEntryModel, sourcingResults, order, originalSerials,originalQuantity,originalUnallocatedQuantity );
