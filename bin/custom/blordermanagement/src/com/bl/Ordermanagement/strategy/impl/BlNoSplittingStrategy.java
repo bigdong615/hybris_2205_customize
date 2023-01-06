@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -92,7 +91,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     final Map<String, Long> unAllocatedMap = new HashMap<>();
     if (MapUtils.isEmpty(sourcingContext.getUnallocatedMap())) {
       sourcingContext.getOrderEntries()
-          .forEach(entry -> unAllocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), BooleanUtils.isTrue(sourcingContext.isModifiedEntryFromBackoffice()) ? sourcingContext.getModifiedQuantityForEntry() : entry.getQuantity()));
+          .forEach(entry -> unAllocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), entry.getQuantity()));
     }
     sourcingContext.setUnallocatedMap(unAllocatedMap);
   }
@@ -122,8 +121,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
 
       final Long availableQty = isAquatechProductInEntry(entry) ? entry.getQuantity()
           : getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
-      final Long quantity = BooleanUtils.isTrue(sourcingContext.isModifiedEntryFromBackoffice()) ? sourcingContext.getModifiedQuantityForEntry() :((OrderEntryModel) entry).getQuantity();
-      return quantity <= availableQty;
+      return ((OrderEntryModel) entry).getQuantity() <= availableQty;
     });
   }
 

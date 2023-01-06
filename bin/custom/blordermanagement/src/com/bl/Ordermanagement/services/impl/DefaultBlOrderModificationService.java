@@ -249,7 +249,7 @@ public class DefaultBlOrderModificationService
 	 *
 	 * @param serial
 	 */
-	public void updateStockForSerial(final Date optimizedShippingStartDate, final Date optimizedShippingEndDate, final BlProductModel serial,final boolean isUsedGearOrder)
+	private void updateStockForSerial(final Date optimizedShippingStartDate, final Date optimizedShippingEndDate, final BlProductModel serial,final boolean isUsedGearOrder)
 	{
 		if (serial instanceof BlSerialProductModel)
 		{
@@ -326,8 +326,7 @@ public class DefaultBlOrderModificationService
 				if (CollectionUtils.isNotEmpty(consignment.getConsignmentEntries())) {
 					final ConsignmentEntryModel consEntry = consignment.getConsignmentEntries()
 							.iterator().next();
-					//TODO: check it for AQuatech quantity assignment as earlier value was hardcoded 1
-					consEntry.setQuantity(Long.valueOf(result.getSerialProductMap().get(orderEntryModel.getEntryNumber()).size()));
+					consEntry.setQuantity(Long.valueOf(1));
 					getModelService().save(consEntry);
 				}
 				final List<BlProductModel> assignedSerialProducts = new ArrayList<>(

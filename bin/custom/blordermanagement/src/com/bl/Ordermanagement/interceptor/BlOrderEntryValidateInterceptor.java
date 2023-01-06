@@ -3,12 +3,9 @@ package com.bl.Ordermanagement.interceptor;
 import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.Ordermanagement.reshuffler.service.BlOptimizeShippingFromWHService;
-import com.bl.Ordermanagement.services.BlCSAgentOrderModificationService;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.Ordermanagement.services.impl.DefaultBlAllocationService;
-import com.bl.Ordermanagement.services.impl.DefaultBlCSAgentOrderModificationService;
 import com.bl.Ordermanagement.services.impl.DefaultBlOrderModificationService;
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
@@ -23,11 +20,13 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
@@ -96,9 +95,6 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	@Resource(name="blSourcingService")
 	private BlSourcingService blSourcingService;
 
-	@Resource(name="blCSAgentOrderModificationService")
-	private DefaultBlCSAgentOrderModificationService blCSAgentOrderModificationService;
-
 	/**
 	 * method will validate order entry for modified order
 	 */
@@ -123,7 +119,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			}
 			if (orderEntryModel.getOrder().getIsRentalOrder())
 			{
-				if(CollectionUtils.isNotEmpty(serialProduct) && warehouse != null) {
+				if(CollectionUtils.isNotEmpty(orderEntryModel.getSerialProducts())) {
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Modifiy order {} ",
 							orderEntryModel.getOrder().getCode());
 					checkForOrderModification(orderEntryModel, interceptorContext, serialProduct, warehouse);
@@ -133,29 +129,80 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 							AbstractOrderEntryModel.SERIALPRODUCTS);
 					updateConsignmentEntry(serialProducts, orderEntryModel, order);
 				}
-				else if (CollectionUtils.isEmpty(orderEntryModel.getSerialProducts()) && warehouse == null && CollectionUtils.isEmpty(orderEntryModel.getConsignmentEntries()) && orderEntryModel.getUnAllocatedQuantity() == 0) {
-					blCSAgentOrderModificationService.addNewOrderEntry(orderEntryModel, interceptorContext, getInitialValue(orderEntryModel, AbstractOrderEntryModel.SERIALPRODUCTS), false);
-				} else if (allowedOrderStatusforModification(orderEntryModel.getOrder().getStatus())&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.QUANTITY) && orderEntryModel.getQuantity() > getLongValueForQty(getAttributeInitialValue(orderEntryModel, OrderEntryModel.QUANTITY)) && orderEntryModel.getUnAllocatedQuantity() == 0) {
-					blCSAgentOrderModificationService.modifyExistingEntryForQuantity(orderEntryModel, interceptorContext, getInitialValue(orderEntryModel, AbstractOrderEntryModel.SERIALPRODUCTS), true);
+				else if(CollectionUtils.isEmpty(orderEntryModel.getSerialProducts()) && warehouse == null && CollectionUtils.isEmpty(orderEntryModel.getConsignmentEntries())) {
 
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Auto allocation and assignment on the New Order Entry {} ",
+							orderEntryModel.getOrder().getCode());
+					if(OrderStatus.SHIPPED.equals(orderEntryModel.getOrder().getStatus())){
+						updateRemovedEntryOnOrder(orderEntryModel);
+						throw new InterceptorException("Item cannot be added to order if Consignment Status = BL_SHIPPED, Order Status = Shipped");
+					}else {
+						performAllocationAndAssignment(orderEntryModel, interceptorContext);
+					}
+
+				}else if(interceptorContext.isModified(orderEntryModel, OrderEntryModel.QUANTITY)){
+					performAllocationAndAssignment(orderEntryModel, interceptorContext);
+					throw new InterceptorException("Not Enough Serials Available for Product");
 				}
-			}
 			}
 			else if(CollectionUtils.isEmpty(serialProduct) && warehouse == null)
 			{
 				modifyUsedGearOrder(orderEntryModel,interceptorContext);
 			}
 
+		}
 	}
 
-	private boolean allowedOrderStatusforModification(final OrderStatus orderStatus) {
+	private void performAllocationAndAssignment(final OrderEntryModel orderEntryModel,final InterceptorContext interceptorContext) throws InterceptorException {
+		SourcingResults sourcingResults = null;
+		sourcingResults = blSourcingService.sourceOrder(orderEntryModel.getOrder(), orderEntryModel);
+		if (null != sourcingResults && CollectionUtils.isNotEmpty(sourcingResults.getResults()) && orderEntryModel.getUnAllocatedQuantity().intValue()==0) {
 
-		switch (orderStatus.getCode()) {
-			case BlCoreConstants.PENDING_STATUS:
-				return Boolean.TRUE;
-			default :
+			for (SourcingResult sourcingResult : sourcingResults.getResults()) {
+				final Optional<ConsignmentModel> consignmentModel = orderEntryModel.getOrder().getConsignments().stream()
+						.filter(consignment -> consignment.getWarehouse().getCode().equals(sourcingResult.getWarehouse().getCode())).findFirst();
+				if (sourcingResult.getAllocation().containsKey(orderEntryModel)) {
+					if (consignmentModel.isPresent()) {
+						createNewConsignmentEntry(orderEntryModel, sourcingResult, consignmentModel.get());
+					} else {
+						createNewConsignment(orderEntryModel, sourcingResult);
+					}
+				}
+			}
+			orderEntryModel.setUpdatedTime(new Date());
 		}
-		return Boolean.FALSE;
+		else{
+			final String product = orderEntryModel.getProduct().getCode();
+			updateRemovedEntryOnOrder(orderEntryModel);
+			throw new InterceptorException("Serial not allocated to the added/modified : ".concat(product));
+		}
+
+		final AbstractOrderModel abstractOrderModel = orderEntryModel.getOrder();
+		abstractOrderModel.setOrderModifiedDate(new Date());
+		abstractOrderModel.setUpdatedTime(new Date());
+		modelService.save(abstractOrderModel);
+		modelService.refresh(abstractOrderModel);
+		BlLogger.logFormattedMessage(LOG , Level.DEBUG , "order{} is modified and updated with OrderModifiedDate {} and UpdatedTime {} " ,
+				orderEntryModel.getOrder().getCode() , abstractOrderModel.getOrderModifiedDate() , abstractOrderModel.getUpdatedTime());
+
+	}
+
+	private void updateRemovedEntryOnOrder(OrderEntryModel orderEntryModel) {
+
+		final AbstractOrderModel abstractOrderModel = orderEntryModel.getOrder();
+
+		Object initialValue = getAttributeInitialValue(orderEntryModel, OrderEntryModel.QUANTITY);
+		Long oldQty = initialValue == null? 0 : getLongValueForQty(initialValue);
+		if(oldQty.intValue() - orderEntryModel.getQuantity().intValue() == 0) {
+			modelService.remove(orderEntryModel);
+		}
+		abstractOrderModel.setOrderModifiedDate(new Date());
+		abstractOrderModel.setUpdatedTime(new Date());
+		modelService.refresh(abstractOrderModel);
+		modelService.save(abstractOrderModel);
+		modelService.refresh(abstractOrderModel);
+		BlLogger.logFormattedMessage(LOG , Level.DEBUG , "order{} is modified and updated with OrderModifiedDate {} and UpdatedTime {} " ,
+				orderEntryModel.getOrder().getCode() , abstractOrderModel.getOrderModifiedDate() , abstractOrderModel.getUpdatedTime());
 	}
 
 	/**
@@ -294,7 +341,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		final SourcingLocation finalSourcingLocation = createSourcingLocation(orderEntryModel);
 		final SourcingResult sourceResult = createSourceResult(orderEntryModel, serialProduct, finalSourcingLocation);
 		final Optional<ConsignmentModel> consignmentModel = orderEntryModel.getOrder().getConsignments().stream()
-				.filter(consignment -> consignment.getWarehouse().getCode().equals(warehouse.getCode())).findFirst();
+				.filter(consignment -> consignment.getWarehouse().getCode().equals(sourceResult.getWarehouse().getCode())).findFirst();
 		if (consignmentModel.isPresent())
 		{
 			createNewConsignmentEntry(orderEntryModel, sourceResult, consignmentModel.get());
@@ -357,9 +404,13 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 					orderEntryModel.getSerialProducts());
 			assignedSerialProducts.addAll(orderEntryModel.getModifiedSerialProductList());
 			orderEntryModel.setSerialProducts(assignedSerialProducts);
+			if(CollectionUtils.isEmpty(serialCodes)){
+				List<String> assignedSerialCodes = assignedSerialProducts.stream().map(ProductModel::getCode).collect(Collectors.toList());
+				serialCodes.addAll(assignedSerialCodes);
+			}
 		}
 
-		if (consignment.getOrder().getIsRentalOrder()) {
+		if (consignment.getOrder().getIsRentalOrder() ) {
 
 			Collection<StockLevelModel> serialStocks = blStockLevelDao
 					.findSerialStockLevelsForDateAndCodes(serialCodes, consignment.getOptimizedShippingStartDate(),
@@ -413,8 +464,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 
 		final SourcingLocation sourcingLocation = new SourcingLocation();
 		sourcingLocation.setWarehouse(orderEntryModel.getWarehouse());
-		final Map<String, Long> allocationMap = new HashedMap()
-				;
+		final Map<String, Long> allocationMap = new HashedMap()	;
 		allocationMap.put(orderEntryModel.getProduct().getCode() + BlOrdermanagementConstants.UNDER_SCORE + orderEntryModel.getEntryNumber(), orderEntryModel.getQuantity());
 		sourcingLocation.setAllocatedMap(allocationMap);
 		sourcingLocation.setContext(context);
@@ -488,10 +538,4 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		this.blOrderModificationService = blOrderModificationService;
 	}
 
-	public DefaultBlCSAgentOrderModificationService getBlCSAgentOrderModificationService() {
-		return blCSAgentOrderModificationService;
-	}
-	public void setBlCSAgentOrderModificationService(DefaultBlCSAgentOrderModificationService blCSAgentOrderModificationService) {
-		this.blCSAgentOrderModificationService = blCSAgentOrderModificationService;
-	}
 }

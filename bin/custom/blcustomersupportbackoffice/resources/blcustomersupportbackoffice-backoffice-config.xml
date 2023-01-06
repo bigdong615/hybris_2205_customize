@@ -13,7 +13,7 @@
 		<!--Please check documentation for code snippets for specific components-->
 	<!--</context>-->
 
-	<context merge-by="type" type="OrderEntry" component="create-wizard">
+	<context merge-by="type" type="OrderEntry" component="create-wizard-no-save">
 		<wz:flow id="orderEntryWizard" title="create.title(ctx.TYPE_CODE)">
 			<wz:prepare id="orderEntryPrepare">
 				<wz:initialize property="orderEntry" type="ctx.TYPE_CODE"/>

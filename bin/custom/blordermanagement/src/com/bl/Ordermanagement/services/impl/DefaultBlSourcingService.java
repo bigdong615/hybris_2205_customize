@@ -16,7 +16,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
@@ -79,14 +78,8 @@ public class DefaultBlSourcingService implements BlSourcingService {
 
     if(Objects.nonNull(newOrderEntry)){
           context.setOrderEntries(Arrays.asList(newOrderEntry));
-          context.setNewOrderEntryFromBackoffice(true);
-          //if modified Entry true, then update get allocation for modified quantity(s)
-      boolean isModifiedEntryFromBackoffice = CollectionUtils.isNotEmpty(newOrderEntry.getSerialProducts());
-      context.setModifiedEntryFromBackoffice(isModifiedEntryFromBackoffice);
-      if(isModifiedEntryFromBackoffice) {
-        Long originalValue = newOrderEntry.getItemModelContext().getOriginalValue(OrderEntryModel.QUANTITY);
-        context.setModifiedQuantityForEntry(newOrderEntry.getQuantity() - originalValue);
-      }
+          context.setIsNewOrderEntryFromBackoffice(true);
+
     }
     else {
       final List<AbstractOrderEntryModel> entryListForAllocation = order.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleMainEntry()).collect(
