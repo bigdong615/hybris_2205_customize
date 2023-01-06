@@ -17,12 +17,10 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import org.apache.commons.collections4.CollectionUtils;
@@ -84,7 +82,7 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
             throw new InterceptorException("Item cannot be added to order if Consignment Status = BL_SHIPPED, Order Status = Shipped");
         } else {
             originalSerialProducts= (List<BlProductModel>) originalSerialProducts.stream().map(ogSerial -> ((BlProductModel) ogSerial)).collect(Collectors.toList());
-            performAllocationAndAssignment(orderEntryModel,originalSerialProducts,orderEntryModel.getItemModelContext().getOriginalValue(OrderEntryModel.QUANTITY), orderEntryModel.getItemModelContext().getOriginalValue(OrderEntryModel.UNALLOCATEDQUANTITY),false);
+            performAllocationAndAssignment(orderEntryModel,originalSerialProducts,orderEntryModel.getItemModelContext().getOriginalValue(OrderEntryModel.QUANTITY), orderEntryModel.getItemModelContext().getOriginalValue(OrderEntryModel.UNALLOCATEDQUANTITY),true);
         }
 
     }
@@ -100,7 +98,7 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
     @Override
     public void modifyExistingEntryForQuantity(OrderEntryModel orderEntryModel, InterceptorContext interceptorContext, List originalSerialProducts, boolean isOrderModified) throws InterceptorException {
         originalSerialProducts= (List<BlProductModel>) originalSerialProducts.stream().map(ogSerial -> ((BlProductModel) ogSerial)).collect(Collectors.toList());
-        performAllocationAndAssignment(orderEntryModel,originalSerialProducts,orderEntryModel.getItemModelContext().getOriginalValue(OrderEntryModel.QUANTITY), orderEntryModel.getItemModelContext().getOriginalValue(OrderEntryModel.UNALLOCATEDQUANTITY),true);
+        performAllocationAndAssignment(orderEntryModel,originalSerialProducts,orderEntryModel.getItemModelContext().getOriginalValue(OrderEntryModel.QUANTITY), orderEntryModel.getItemModelContext().getOriginalValue(OrderEntryModel.UNALLOCATEDQUANTITY),false);
 
     }
 
@@ -120,7 +118,7 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
         boolean isSourcingComplete = allocatedQty == orderEntryModel.getQuantity() && !isQtyModified || allocatedQty > 0 ? true: isQtyModified && allocatedQty == (orderEntryModel.getQuantity().intValue() - originalQuantity);        System.out.println("is Sourcing Complete "+ isSourcingComplete +"for modified order : "+ isQtyModified);
 
         if (CollectionUtils.isNotEmpty(sourcingResults.getResults())  && isSourcingComplete) {
-            updateNewOrModifiedOrderEntry(orderEntryModel, sourcingResults, order, originalSerials,originalQuantity,originalUnallocatedQuantity );
+            updateNewOrModifiedOrderEntry(orderEntryModel, sourcingResults, order);
 
         }
         else{
@@ -132,15 +130,11 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
 
     /**
      * Update entry in existing or new consignment or related consignment entry
-     *
      * @param orderEntryModel
      * @param sourcingResults
      * @param order
-     * @param originalSerials
-     * @param originalQuantity
-     * @param originalUnallocatedQuantity
      */
-    private void updateNewOrModifiedOrderEntry(final OrderEntryModel orderEntryModel,final SourcingResults sourcingResults, final OrderModel order,final List<BlProductModel> originalSerials,final Long originalQuantity,final Long originalUnallocatedQuantity) throws InterceptorException {
+    private void updateNewOrModifiedOrderEntry(OrderEntryModel orderEntryModel, SourcingResults sourcingResults, OrderModel order) {
         Set<SourcingResult> sourcingResultSet = sourcingResults.getResults();
 
         for (SourcingResult sourcingResult : sourcingResultSet) {
@@ -158,15 +152,8 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
                 }
             }
         }
-        if(orderEntryModel.getSerialProducts().size()== orderEntryModel.getQuantity()){
-            orderEntryModel.setUpdatedTime(new Date());
-            updateOrderDetailsForModifiedEntry(order);
-        }
-        else{
-            removeOrModifyOrderEntry(orderEntryModel,originalSerials,originalQuantity,originalUnallocatedQuantity);
-            throw new InterceptorException("Not Enough Serials available to allocate");
-        }
-
+        orderEntryModel.setUpdatedTime(new Date());
+        updateOrderDetailsForModifiedEntry(order);
     }
 
     /**
@@ -302,26 +289,12 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
         Map<String,BlProductModel> codeSerialMap = Maps.newHashMap();
         serialProducts.forEach(ser -> codeSerialMap.put(ser.getCode(),ser));
         newSerialCodes.removeIf(oldSerialCodes::contains);
-        serialProducts.removeIf(originalSerialProducts::contains);
 
         ConsignmentModel consignmentModel = orderEntryModel.getOrder().getConsignments().iterator().next();
         newSerialCodes.forEach(serialCode -> {
             BlProductModel blProductModel = codeSerialMap.get(serialCode);
             blOrderModificationService.updateStockForSerial(consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(), blProductModel,false);
         });
-        final List<ConsignmentEntryModel> consignmentEntriesToRemove = new ArrayList<>();
-        final List<ConsignmentModel> consignmentToRemove = new ArrayList<>();
-        final Set<ConsignmentProcessModel> consignmentProcessesToRemove = new HashSet<>();
-        final Set<TaskConditionModel> taskConditions = new HashSet<>();
-        serialProducts.forEach(serialProd ->
-                blOrderModificationService.removeConsignmentEntries(orderEntryModel.getOrder(),(BlSerialProductModel) serialProd,
-                        consignmentEntriesToRemove));
-        modelService.removeAll(consignmentEntriesToRemove);
-        blOrderModificationService.removeConsignment(orderEntryModel.getOrder(), consignmentToRemove,
-                consignmentProcessesToRemove, taskConditions);
-        modelService.removeAll(consignmentToRemove);
-        modelService.removeAll(consignmentProcessesToRemove);
-        modelService.removeAll(taskConditions);
 
     }
 
