@@ -1,5 +1,7 @@
 package com.bl.core.services.consignment.entry;
 
+import de.hybris.platform.commerceservices.search.pagedata.PageableData;
+import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
@@ -53,14 +55,14 @@ public interface BlConsignmentEntryService
 	 *           the serial product models
 	 */
 	void setItemsMapForInternalTransferOrders(final ConsignmentEntryModel entry, final AbstractOrderEntryModel orderEntry);
-	
+
 	/**
 	 * Assign serial and order code on billing charges.
 	 *
 	 * @param consignmentEntryModel the consignment entry model
 	 */
 	void assignSerialAndOrderCodeOnBillingCharges(final ConsignmentEntryModel consignmentEntryModel);
-	
+
 	/**
 	 * Gets the consignment entry from order for serial code.
 	 *
@@ -69,7 +71,7 @@ public interface BlConsignmentEntryService
 	 * @return the consignment entry from order for serial
 	 */
 	ConsignmentEntryModel getConsignmentEntryFromOrderForSerial(final OrderModel order, final String serialCode);
-	
+
 	/**
 	 * Gets the remaining scan subpart names.
 	 *
@@ -77,7 +79,7 @@ public interface BlConsignmentEntryService
 	 * @return the remaining scan subpart names
 	 */
 	public List<String> getRemainingScanSubpartNames(final ConsignmentEntryModel consignmentEntry);
-	
+
 	/**
 	 * Gets the subpart items name list.
 	 *
@@ -85,7 +87,7 @@ public interface BlConsignmentEntryService
 	 * @return the subpart items list
 	 */
 	public List<String> getSubpartItemsList(final ConsignmentEntryModel consignmentEntry);
-	
+
 	/**
 	 * Gets the main items list from given Consignment Entry.
 	 *
@@ -93,4 +95,14 @@ public interface BlConsignmentEntryService
 	 * @return the main items list
 	 */
 	public List<BlSerialProductModel> getMainItemsList(final ConsignmentEntryModel entry);
+
+	/**
+	 * To fetch ConsignmentEntries for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of ConsignmentEntries
+	 */
+	SearchPageData<ConsignmentEntryModel> getConsignmentEntries(final PageableData pageableData);
+
+	SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData);
 }

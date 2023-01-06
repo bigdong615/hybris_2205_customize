@@ -56,7 +56,7 @@
             <div class="row">
                <p class="body14 mb-3"></p>
                <p class="body14 mb-3"></p>
-               <p class="body14 mb-3"><b>CA CO VA CT Residents additional options</b><br> If youare a resident of one of these states and want more data option, <a href="<c:url value='/stateConfirm'/>">Click Here</a></p>
+               <p class="body14 mb-3"><b>CA CO VA CT Residents additional options</b><br> If you are a resident of one of these states and want more data options, <a href="<c:url value='/stateConfirm'/>">Click Here</a></p>
             </div>
          </div>
       </div>
