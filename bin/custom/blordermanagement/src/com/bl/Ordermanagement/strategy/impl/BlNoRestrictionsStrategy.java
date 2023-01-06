@@ -15,11 +15,8 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.sourcing.strategy.AbstractSourcingStrategy;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -56,8 +53,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
 
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "Sourcing is In-complete after tried sourcing from all possible location");
-        updateOrderStatusForSourcingIncomplete(sourcingContext);
-
+      updateOrderStatusForSourcingIncomplete(sourcingContext);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. !!!");
     }
   }
@@ -78,6 +74,8 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
         entry.setUnAllocatedQuantity(entry.getQuantity() - allResultQuantityAllocated);
       }
     });
+
+    modelService.saveAll(sourcingContext.getOrderEntries());
 
     return !allEntrySourceInComplete.isEmpty() && allEntrySourceInComplete.stream()
         .allMatch(AtomicBoolean::get);
@@ -104,10 +102,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     //can not be sourced all the products from all warehouses
     sourcingContext.getResult().setComplete(false);
     AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
-    if(Objects.isNull(sourcingContext.isIsNewOrderEntryFromBackoffice()) || BooleanUtils.isFalse(sourcingContext.isIsNewOrderEntryFromBackoffice())) {
-
-        order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
-      }
+    order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
     modelService.save(order);
 
   }

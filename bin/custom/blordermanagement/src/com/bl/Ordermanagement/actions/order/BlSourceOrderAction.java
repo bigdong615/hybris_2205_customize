@@ -161,7 +161,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
       if (blOrderService.isAquatechProductOrder(order)) {
         results =  getResultsForOrderWithOnlyAquatechProducts(order);
       } else {
-        results = blSourcingService.sourceOrder(order, null);
+        results = blSourcingService.sourceOrder(order);
       }
     } else{
       results = getResultsForUsedGearOrder(order);
