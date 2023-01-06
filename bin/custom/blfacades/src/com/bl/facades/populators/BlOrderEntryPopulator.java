@@ -38,19 +38,25 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	@Override
 	public void populate(final AbstractOrderEntryModel source, final OrderEntryData target)
 	{
-		if(source.isBundleEntry()) {
-      target.setBundleEntry(Boolean.TRUE);
-			addCommon(source, target);
-			addProduct(source,target);
-			addEntryGroups(source, target);
-			addComments(source, target);
-		}else{
-			super.populate(source, target);
-			populateDamageWaiverValues(source, target);
-			populateOptionsValues(source, target);
-			populateSelectedOptions(source, target);
-			populateGiftCartPurcahseValues(source, target);
-			target.setAqautechProduct(BooleanUtils.isTrue(source.getAqautechProduct()));
+		if (source != null)
+		{
+			if (source.isBundleEntry())
+			{
+				target.setBundleEntry(Boolean.TRUE);
+				addCommon(source, target);
+				addProduct(source, target);
+				addEntryGroups(source, target);
+				addComments(source, target);
+			}
+			else
+			{
+				super.populate(source, target);
+				populateDamageWaiverValues(source, target);
+				populateOptionsValues(source, target);
+				populateSelectedOptions(source, target);
+				populateGiftCartPurcahseValues(source, target);
+				target.setAqautechProduct(BooleanUtils.isTrue(source.getAqautechProduct()));
+			}
 		}
 	}
 
