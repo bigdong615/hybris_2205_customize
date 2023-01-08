@@ -171,7 +171,7 @@ public class WebHttpSessionRequestCacheUnitTest
 	}
 
 
-	class DefaultSavedRequestArgumentMatcher extends ArgumentMatcher<DefaultSavedRequest>
+	class DefaultSavedRequestArgumentMatcher implements ArgumentMatcher<DefaultSavedRequest>
 	{
 
 		private final String url;
@@ -181,12 +181,13 @@ public class WebHttpSessionRequestCacheUnitTest
 			this.url = url;
 		}
 
+
 		@Override
-		public boolean matches(final Object argument)
+		public boolean matches(final DefaultSavedRequest argument)
 		{
 			if (argument instanceof DefaultSavedRequest)
 			{
-				final DefaultSavedRequest arg = (DefaultSavedRequest) argument;
+				final DefaultSavedRequest arg = argument;
 				return url.equals(arg.getRedirectUrl());
 			}
 			return false;

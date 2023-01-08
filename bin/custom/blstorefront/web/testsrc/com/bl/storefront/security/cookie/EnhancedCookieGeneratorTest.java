@@ -23,7 +23,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 /**
  *
  */
-public class EnhancedCookieGeneratorTest {
+public class EnhancedCookieGeneratorTest
+{
 
 	private static final String JSESSIONID = "JSESSIONID";
 	private static final int NEVER_EXPIRES = -1;
@@ -133,7 +134,7 @@ public class EnhancedCookieGeneratorTest {
 		Mockito.verify(response, Mockito.times(0)).addHeader(Mockito.anyString(), Mockito.anyString());
 	}
 
-	private class CookieArgumentMatcher extends ArgumentMatcher<Cookie>
+	private class CookieArgumentMatcher implements ArgumentMatcher<Cookie>
 	{
 		private final Cookie expectedCookie;
 
@@ -141,15 +142,17 @@ public class EnhancedCookieGeneratorTest {
 			this.expectedCookie = cookie;
 		}
 
+
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
 		 */
 		@Override
-		public boolean matches(final Object argument) {
+		public boolean matches(final Cookie argument)
+		{
 			if (argument instanceof Cookie) {
-				final Cookie givenCookie = (Cookie) argument;
+				final Cookie givenCookie = argument;
 				if (givenCookie.getSecure() == expectedCookie.getSecure()
 						&& givenCookie.getMaxAge() == expectedCookie.getMaxAge()
 						&& givenCookie.getName().equals(expectedCookie.getName())
@@ -164,5 +167,7 @@ public class EnhancedCookieGeneratorTest {
 			}
 			return false;
 		}
+
+
 	}
 }

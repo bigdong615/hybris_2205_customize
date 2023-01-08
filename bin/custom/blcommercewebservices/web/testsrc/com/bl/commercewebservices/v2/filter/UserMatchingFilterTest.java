@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commerceservices.user.UserMatchingService;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
@@ -26,8 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,6 +40,8 @@ import org.springframework.security.core.GrantedAuthority;
 /**
  * Test suite for {@link UserMatchingFilter}
  */
+@UnitTest
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class UserMatchingFilterTest
 {
 	static final String DEFAULT_REGEXP = "^/[^/]+/users/([^/]+)";
@@ -119,8 +124,6 @@ public class UserMatchingFilterTest
 		given(grantedAuthority.getAuthority()).willReturn(UserMatchingFilter.ROLE_ANONYMOUS);
 		authorities.add(grantedAuthority);
 		given(authentication.getAuthorities()).willReturn(authorities);
-		given(authentication.getPrincipal()).willReturn(ANONYMOUS_UID);
-		given(userService.getUserForUID(ANONYMOUS_UID)).willReturn(anonymousUserModel);
 
 		userMatchingFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 
