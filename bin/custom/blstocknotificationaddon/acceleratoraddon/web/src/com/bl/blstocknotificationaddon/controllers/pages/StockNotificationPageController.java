@@ -4,9 +4,9 @@
 package com.bl.blstocknotificationaddon.controllers.pages;
 
 import com.bl.blstocknotificationaddon.forms.NotificationChannelForm;
-import de.hybris.platform.acceleratorfacades.futurestock.FutureStockFacade;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
+import de.hybris.platform.commercefacades.futurestock.FutureStockFacade;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.FutureStockData;

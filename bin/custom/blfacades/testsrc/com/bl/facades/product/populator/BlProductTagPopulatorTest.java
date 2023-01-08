@@ -1,12 +1,12 @@
 package com.bl.facades.product.populator;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.model.BlProductModel;
-import com.bl.facades.populators.BlProductTagPopulator;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.when;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.product.data.ProductData;
-import de.hybris.platform.core.model.product.ProductModel;
-import org.apache.commons.lang3.StringUtils;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,13 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
+import com.bl.facades.populators.BlProductTagPopulator;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)

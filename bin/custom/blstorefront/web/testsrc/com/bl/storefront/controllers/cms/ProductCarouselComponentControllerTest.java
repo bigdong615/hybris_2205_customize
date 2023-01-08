@@ -85,7 +85,7 @@ public class ProductCarouselComponentControllerTest
 		verify(model).addAttribute(Mockito.same("productData"), Mockito.anyListOf(ProductData.class));
 	}
 
-	class OptionsMatcher extends ArgumentMatcher
+	class OptionsMatcher implements ArgumentMatcher
 	{
 		@Override
 		public boolean matches(final Object object)

@@ -2,9 +2,6 @@ package com.bl.facade;
 
 import static junit.framework.Assert.assertEquals;
 
-import com.bl.core.services.wishlist.BlWishlistService;
-import com.bl.facades.wishlist.data.Wishlist2EntryData;
-import com.bl.facades.wishlist.impl.DefaultBlWishListFacade;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
@@ -18,6 +15,7 @@ import de.hybris.platform.wishlist2.enums.Wishlist2EntryPriority;
 import de.hybris.platform.wishlist2.impl.DefaultWishlist2Service;
 import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
 import de.hybris.platform.wishlist2.model.Wishlist2Model;
+
 import org.apache.poi.ss.formula.functions.T;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,7 +25,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.services.wishlist.BlWishlistService;
+import com.bl.facades.wishlist.data.Wishlist2EntryData;
+import com.bl.facades.wishlist.impl.DefaultBlWishListFacade;
+
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
@@ -88,7 +91,7 @@ public class DefaultBlWishListFacadeTest {
 
   @Test
   public void getWishlistEntries() {
-    PageableData pageableData = new PageableData();
+    final PageableData pageableData = new PageableData();
     pageableData.setCurrentPage(0);
     pageableData.setPageSize(5);
     final SearchPageData<Wishlist2EntryModel> wishlistEntries = blwishlistService

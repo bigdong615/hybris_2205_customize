@@ -11,11 +11,11 @@
 package com.bl.customer360.provider;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.when;
 
 import de.hybris.bootstrap.annotations.UnitTest;
-import com.bl.customer360.GeneralActivityData;
 import de.hybris.platform.commercefacades.order.CartFacade;
 import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
@@ -46,6 +46,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import com.bl.customer360.GeneralActivityData;
+
 
 @UnitTest
 public class GeneralActivityModelProviderTest
@@ -74,7 +76,7 @@ public class GeneralActivityModelProviderTest
 	private BaseStoreService baseStoreService;
 
 	@InjectMocks
-	private GeneralActivityModelProvider provider = new GeneralActivityModelProvider();
+	private final GeneralActivityModelProvider provider = new GeneralActivityModelProvider();
 
 	@Before
 	public void setup()
@@ -100,9 +102,9 @@ public class GeneralActivityModelProviderTest
 		when(baseStoreService.getCurrentBaseStore()).thenReturn(null);
 		when(userService.getCurrentUser()).thenReturn(currentCustomer);
 		when(baseSiteService.getCurrentBaseSite()).thenReturn(null);
-		when(cartFacade.getMiniCart()).thenReturn(sessionCart);
-		when(ticketConverter.convert(any())).thenReturn(new GeneralActivityData());
-		when(commerceCartService.getCartsForSiteAndUser(any(), any())).thenReturn(Collections.singletonList(cartModel));
+		Mockito.lenient().when(cartFacade.getMiniCart()).thenReturn(sessionCart);
+		Mockito.lenient().when(ticketConverter.convert(any())).thenReturn(new GeneralActivityData());
+		when(ticketService.getTicketsForCustomer(anyObject())).thenReturn(Collections.emptyList());
 
 		final SearchPageData<CartModel> cartData = new SearchPageData<>();
 		cartData.setResults(Collections.singletonList(cartModel));
@@ -126,12 +128,13 @@ public class GeneralActivityModelProviderTest
 		final String tId = "123124";
 		final String cardId = "cartId";
 		final Integer cartSize = Integer.valueOf(2);
-		when(sessionCart.getEntries()).thenReturn(null);
-		when(sessionCart.getTotalUnitCount()).thenReturn(cartSize);
-		when(sessionCart.getCode()).thenReturn(cardId);
-		when(currentCustomer.getName()).thenReturn(name);
-		when(currentCustomer.getProfilePicture()).thenReturn(null);
-		when(ticketModel.getTicketID()).thenReturn(tId);
+		Mockito.lenient().when(sessionCart.getEntries()).thenReturn(null);
+		Mockito.lenient().when(sessionCart.getTotalUnitCount()).thenReturn(cartSize);
+		Mockito.lenient().when(sessionCart.getCode()).thenReturn(cardId);
+		Mockito.lenient().when(currentCustomer.getName()).thenReturn(name);
+		Mockito.lenient().when(currentCustomer.getProfilePicture()).thenReturn(null);
+		Mockito.lenient().when(ticketModel.getTicketID()).thenReturn(tId);
+
 		final GeneralActivityData resultCart = provider.getModel(new HashMap<>()).get(1);
 		final GeneralActivityData resultOrder = provider.getModel(new HashMap<>()).get(0);
 

@@ -3,32 +3,29 @@
  */
 package com.bl.storefront.renderer;
 
-import com.sap.security.core.server.csi.XSSEncoder;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.when;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.cms2.enums.LinkTargets;
 import de.hybris.platform.cms2.model.contents.components.CMSLinkComponentModel;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.owasp.html.HtmlPolicyBuilder;
-import org.owasp.html.PolicyFactory;
-import org.owasp.html.Sanitizers;
-import org.springframework.mock.web.MockJspWriter;
-
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.when;
+import javax.servlet.ServletException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.mock.web.MockJspWriter;
 
 /**
  * Created by dan on 19/04/2017.
@@ -70,8 +67,8 @@ public class CMSLinkComponentRendererTest {
         createMockExpectations(componentUrl, linkName, styleAttributes, linkTarget);
 
         componentRenderer.renderComponent(pageContext, component);
-        String actual = stringWriter.toString();
-        String expected = "<a href=\"https://www.somesite.com/page/subpage\" " +
+        final String actual = stringWriter.toString();
+        final String expected = "<a href=\"https://www.somesite.com/page/subpage\" " +
                 "class=\"fsa-logo\" style=\"font-weight: bold\" download=\"download\" " +
                 "rev=\"rev\" hreflang=\"hreflang\" type=\"type\" text=\"text\" " +
                 "accesskey=\"accesskey\" contenteditable=\"contenteditable\" contextmenu=\"contextmenu\" dir=\"dir\" " +
@@ -92,8 +89,8 @@ public class CMSLinkComponentRendererTest {
         createMockExpectations(componentUrl, linkName, styleAttributes, linkTarget);
 
         componentRenderer.renderComponent(pageContext, component);
-        String actual = stringWriter.toString();
-        String expected = "<a href=\"https://www.somesite.com/page/subpage\" " +
+        final String actual = stringWriter.toString();
+        final String expected = "<a href=\"https://www.somesite.com/page/subpage\" " +
                 "class=\"fsa-logo\" style=\"font-weight: bold\">" +
                 "alert(&#39;attacked&#39;) title&#61;&#34;Link Name&#34; &gt;Link Name</a>";
 
@@ -110,8 +107,8 @@ public class CMSLinkComponentRendererTest {
         createMockExpectations(componentUrl, linkName, styleAttributes, linkTarget);
 
         componentRenderer.renderComponent(pageContext, component);
-        String actual = stringWriter.toString();
-        String expected = "<a href=\"https://www.somesite.com/page/subpage\" " +
+        final String actual = stringWriter.toString();
+        final String expected = "<a href=\"https://www.somesite.com/page/subpage\" " +
                 "title=\"Link Name&lt;script&gt;alert(&#39;attacked&#39;)&lt;/script&gt;\">" +
                 "Link Name</a>";
 
@@ -128,8 +125,8 @@ public class CMSLinkComponentRendererTest {
         createMockExpectations(componentUrl, linkName, styleAttributes, linkTarget);
 
         componentRenderer.renderComponent(pageContext, component);
-        String actual = stringWriter.toString();
-        String expected = "<a href=\"https://www.somesite.com/page/subpage\" class=\"fsa-logo\" " +
+        final String actual = stringWriter.toString();
+        final String expected = "<a href=\"https://www.somesite.com/page/subpage\" class=\"fsa-logo\" " +
                 "style=\"font-weight: bold\">" +
                 "alert(&#39;attacked&#39;) title&#61;&#34;Link Name&#34; &gt;Link Name</a>";
 
@@ -146,8 +143,8 @@ public class CMSLinkComponentRendererTest {
         createMockExpectations(componentUrl, linkName, styleAttributes, linkTarget);
 
         componentRenderer.renderComponent(pageContext, component);
-        String actual = stringWriter.toString();
-        String expected = "<span class=\"empty-nav-item\">" +
+        final String actual = stringWriter.toString();
+        final String expected = "<span class=\"empty-nav-item\">" +
                 "Link Name</span>";
 
         Assert.assertEquals(expected, actual);
@@ -163,8 +160,8 @@ public class CMSLinkComponentRendererTest {
         createMockExpectations(componentUrl, linkName, styleAttributes, linkTarget);
 
         componentRenderer.renderComponent(pageContext, component);
-        String actual = stringWriter.toString();
-        String expected = "<span class=\"empty-nav-item\">" +
+        final String actual = stringWriter.toString();
+        final String expected = "<span class=\"empty-nav-item\">" +
                 "Link Name</span>";
 
         Assert.assertEquals(expected, actual);

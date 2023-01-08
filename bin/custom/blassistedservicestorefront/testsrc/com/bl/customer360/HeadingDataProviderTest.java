@@ -10,9 +10,10 @@
  */
 package com.bl.customer360;
 
+import static org.mockito.ArgumentMatchers.anyObject;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.assistedservicefacades.customer360.CustomerViewHeadingData;
-import com.bl.customer360.provider.HeadingDataProvider;
 import de.hybris.platform.commercefacades.order.CartFacade;
 import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
@@ -35,6 +36,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import com.bl.customer360.provider.HeadingDataProvider;
 
 
 @UnitTest
@@ -79,13 +82,13 @@ public class HeadingDataProviderTest
 				ticketService.getTicketsForCustomerOrderByModifiedTime(Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject()))
 				.thenReturn(pageData);
 		final SearchPageData<OrderHistoryData> orderData = new SearchPageData<>();
-		Mockito.when(orderFacade.getPagedOrderHistoryForStatuses(Mockito.anyObject())).thenReturn(orderData);
+		Mockito.when(orderFacade.getPagedOrderHistoryForStatuses(anyObject())).thenReturn(orderData);
 
 		final String name = "name";
 		final String tId = "123124";
 		final String cardId = "cartId";
 		final Integer cartSize = Integer.valueOf(2);
-		Mockito.when(sessionCart.getEntries()).thenReturn(null);
+		Mockito.lenient().when(sessionCart.getEntries()).thenReturn(null);
 		Mockito.when(sessionCart.getTotalUnitCount()).thenReturn(cartSize);
 		Mockito.when(sessionCart.getCode()).thenReturn(cardId);
 		Mockito.when(currentCustomer.getName()).thenReturn(name);
