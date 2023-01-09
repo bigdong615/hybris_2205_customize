@@ -279,7 +279,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 							  entriesList.remove(consignmentEntry);
 							  for (final BlProductModel product : consignmentEntry.getSerialProducts())
 							  {
-								  if (product instanceof BlSerialProductModel)
+								  if ((product instanceof BlSerialProductModel) && !ConsignmentEntryStatusEnum.SHIPPED.equals(consignmentEntry.getConsignmentEntryStatus().get(product.getCode())))
 								  {
 									  serialsCodesToRemove.add(product.getCode());
 								  }
@@ -305,7 +305,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 					  serialProducts.addAll(consignmentEntry.getSerialProducts());
 					  for (final BlProductModel product : consignmentEntry.getSerialProducts())
 					  {
-						  if (product instanceof BlSerialProductModel)
+						  if ((product instanceof BlSerialProductModel) && !ConsignmentEntryStatusEnum.SHIPPED.equals(consignmentEntry.getConsignmentEntryStatus().get(product.getCode())))
 						  {
 							  serialProducts.remove(product);
 							  serialsCodesToRemove.add(product.getCode());
@@ -332,17 +332,18 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 			 final Map<String, ItemStatusEnum> items = new HashMap<String, ItemStatusEnum>();
 			 for (final ConsignmentEntryModel consignmentEntry : consignment.getConsignmentEntries())
 			 {
-				 serials.addAll(consignmentEntry.getSerialProducts());
-				 items.putAll(consignmentEntry.getItems());
+
 				 for (final AbstractOrderEntryModel orderEntry : orderEntries)
 				 {
 					 if (consignmentEntry.getOrderEntry().equals(orderEntry))
 					 {
+             serials.addAll(consignmentEntry.getSerialProducts());
+             items.putAll(consignmentEntry.getItems());
 						 consignmentEntry.setQuantity(consignmentEntry.getQuantity() - orderEntry.getQuantity());
 						 int counter = 0;
 						 for (final BlProductModel serial : consignmentEntry.getSerialProducts())
 						 {
-							 if (serial instanceof BlSerialProductModel)
+							 if ((serial instanceof BlSerialProductModel) && !ConsignmentEntryStatusEnum.SHIPPED.equals(consignmentEntry.getConsignmentEntryStatus().get(serial.getCode())))
 							 {
 								 items.remove(serial.getCode());
 								 serialsCodesToRemove.add(serial.getCode());
