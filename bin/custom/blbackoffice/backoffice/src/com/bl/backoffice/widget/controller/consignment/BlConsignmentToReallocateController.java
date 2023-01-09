@@ -745,7 +745,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
   protected void validateConsignmentEntry(final ConsignmentEntryToReallocateDto entry) {
 
     InputElement quantity;
-    if (entry.getQuantityToReallocate() > entry.getConsignmentEntry().getQuantityPending()) {
+    if (entry.getQuantityToReallocate() > entry.getConsignmentEntry().getMainItemNotScannedCount()) {
 
       quantity = (InputElement) this.targetFieldToApplyValidation(
           entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 4);
