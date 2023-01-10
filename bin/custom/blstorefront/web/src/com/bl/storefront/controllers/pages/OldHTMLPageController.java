@@ -18,9 +18,9 @@ import com.bl.logging.BlLogger;
 
 @Controller
 @RequestMapping(value = "/html/**")
-public class ProductsPageController extends AbstractBlProductPageController {
+public class OldHTMLPageController extends AbstractBlProductPageController {
 
-  private static final Logger LOG = Logger.getLogger(ProductsPageController.class);
+  private static final Logger LOG = Logger.getLogger(OldHTMLPageController.class);
 
   @GetMapping
   public String showProducts(final Model model)
