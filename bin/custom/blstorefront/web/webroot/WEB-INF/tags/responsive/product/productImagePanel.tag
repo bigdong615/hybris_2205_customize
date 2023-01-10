@@ -48,7 +48,7 @@
                        <div class="splide__track">
                            <ul class="splide__list">
                                  <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
-                                    <li class="splide__slide"><img src="${fn:escapeXml(container.product.url)}"></li>
+                                    <li class="splide__slide"><img src="${fn:escapeXml(container.zoom.url)}"></li>
                                  </c:forEach>
                            </ul>
                        </div>
