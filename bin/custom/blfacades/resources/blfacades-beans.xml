@@ -744,6 +744,28 @@
         <property name="upsStoreAddress" type="Boolean"/>
         <property name="url" type="String"/>
         <property name="defaultBillingAddress" type="boolean"/>
+        <property name="createdTS" type="java.util.Date"/>
+	  	<property name="modifiedTS" type="java.util.Date"/>
+	  	<property name="original" type="String"/>
+	  	<property name="duplicate" type="String"/>
+	  	<property name="appartment" type="String"/>
+	  	<property name="building" type="String"/>
+	  	<property name="department" type="String"/>
+	  	<property name="fax" type="String"/>
+	  	<property name="middleName" type="String"/>
+	  	<property name="middleName2" type="String"/>
+	  	<property name="poBox" type="String"/>
+	  	<property name="streetName" type="String"/>
+	  	<property name="streetNumber" type="String"/>
+	  	<property name="gender" type="String"/>
+	  	<property name="dateOfBirth" type="java.util.Date"/>
+	  	<property name="remarks" type="String"/>
+	  	<property name="unloadingAddress" type="boolean"/>
+	  	<property name="contactaAddress" type="boolean"/>
+	  	<property name="zone" type="String"/>
+	  	<property name="latitude" type="java.lang.Double"/>
+	  	<property name="longitude" type="java.lang.Double"/>
+	  	<property name="phone2" type="String"/>
     </bean>
 <!--   	<bean class="de.hybris.platform.warehousingfacades.order.data.PackagingInfoData">
 		<property name="dimension" type="java.lang.String"/>
