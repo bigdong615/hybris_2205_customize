@@ -59,6 +59,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
   public void performUPSScrapeForOrders() {
     final List<AbstractOrderModel> orderModelList = getOrderDao().getOrdersForUPSScrape();
     orderModelList.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel -> {
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Processing order for UPS Scrape job with code : {} and Consignment code: {} ", abstractOrderModel.getCode(), consignmentModel.getCode());
       if (CollectionUtils.isEmpty(consignmentModel.getPackaginginfos()) && BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder())
               && BooleanUtils.isTrue(abstractOrderModel.isIsLatestOrder())) {
         final OrderModel originalOrder = getOrderDao().getOriginalOrderFromExtendedOrderCode(abstractOrderModel.getCode());
@@ -87,6 +88,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
           final String carrierCode = getCarrierType(packagingInfoModel);
           BlLogger.logMessage(LOG, Level.INFO, "Performing UPS Scrape job for carrier ", carrierCode);
           try {
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Performing UPS Scrape for package{} from Order {} ", packagingInfoModel.getPk(), abstractOrderModel.getCode());
             performUPSScrapeService(packagingInfoModel, carrierCode, stringObjectMap, abstractOrderModel);
           } catch (final Exception e) {
             BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error while fetching package{} from Order {} ", e.getMessage(), packagingInfoModel.getPk(), abstractOrderModel.getCode());
@@ -254,15 +256,46 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
       } else if (Objects.nonNull(stringObjectMap.get(BlintegrationConstants.TRACK_EVENTS))) {
         updatePackageDetailsForResponse(stringObjectMap , abstractOrderModel , packagingInfoModel);
       }
+      else if(Objects.nonNull(stringObjectMap.get(BlintegrationConstants.STATUS_CODE)) &&
+          ((String) stringObjectMap.get(BlintegrationConstants.STATUS_CODE)).equalsIgnoreCase(BlintegrationConstants.OT)){
+        String description = (String) stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION);
+        updatePackageDetailsInTransit(packagingInfoModel, abstractOrderModel, description);
+        BlLogger.logMessage(LOG , Level.INFO , "Package not reached warehouse yet");
+      }
+      else if(Objects.nonNull(stringObjectMap.get(BlintegrationConstants.STATUS_CODE)) &&
+          ((String) stringObjectMap.get(BlintegrationConstants.STATUS_CODE)).equalsIgnoreCase(BlintegrationConstants.DS)){
+        String description = (String) stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION);
+        updatePackageDetailsInTransit(packagingInfoModel, abstractOrderModel, description);
+        BlLogger.logMessage(LOG , Level.INFO , "Package is being processed in UPS facility");
+      }
       else if(Objects.nonNull(stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)) &&
           (((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.M)
       || ((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.MV))){
-        BlLogger.logMessage(LOG , Level.INFO , "Package is not shipped yet");
+        String description = (String) stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION);
+        updatePackageDetailsInTransit(packagingInfoModel, abstractOrderModel, description);
+        BlLogger.logMessage(LOG , Level.INFO , "Package is not shipped back yet");
       }
       else {
        updateSerialStatusBasedIfDeliveryIsLateOrNotFound(stringObjectMap , abstractOrderModel , packagingInfoModel);
       }
     }
+  }
+
+  /**
+   * Update Package details
+   * @param packagingInfoModel
+   * @param abstractOrderModel
+   * @param description
+   */
+  private void updatePackageDetailsInTransit(final PackagingInfoModel packagingInfoModel,final AbstractOrderModel abstractOrderModel,final String description) {
+    BlLogger.logFormatMessageInfo(LOG , Level.INFO , "Package {} having Tracking Number {} for Order {} having message from UPS", packagingInfoModel.getPk(),packagingInfoModel.getInBoundTrackingNumber(), abstractOrderModel.getCode(), description);
+    packagingInfoModel.setNumberOfRepetitions(0);
+    packagingInfoModel.setPackageReturnedToWarehouse(Boolean.FALSE);
+    packagingInfoModel.setIsScrapeScanCompleted(Boolean.TRUE);
+    getService().save(packagingInfoModel);
+    getService().refresh(packagingInfoModel);
+    getService().save(abstractOrderModel);
+    getService().refresh(abstractOrderModel);
   }
 
   /**
