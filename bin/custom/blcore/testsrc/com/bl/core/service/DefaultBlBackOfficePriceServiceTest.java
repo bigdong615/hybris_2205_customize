@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.bl.core.service.impl.DefaultBlBackOfficePriceService;
@@ -48,7 +47,7 @@ public class DefaultBlBackOfficePriceServiceTest
   @Test
   public void testGetProductPrice() throws ParseException
   {
-     MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
      final ProductModel productModel = mock(ProductModel.class);
      final PriceRowModel priceRowModel = mock(PriceRowModel.class);
 
@@ -63,7 +62,7 @@ public class DefaultBlBackOfficePriceServiceTest
   @Test
   public void testGetProductPriceWhenProductNull() throws ParseException
   {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     final ProductModel productModel =null ;
     final Date startDate = new Date(2021,03,01);
     final Date returnDate = new Date(2021,03,05);

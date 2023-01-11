@@ -1,6 +1,7 @@
 package com.bl.facade;
 
-import static junit.framework.Assert.assertEquals;
+
+import static org.junit.Assert.assertEquals;
 
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
@@ -24,7 +25,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.bl.core.services.wishlist.BlWishlistService;
@@ -59,7 +59,7 @@ public class DefaultBlWishListFacadeTest {
 
   @Before
   public void setUp() throws InvalidCartException {
-    MockitoAnnotations.initMocks(this);
+	  //MockitoAnnotations.initMocks(this);
     cuurentUser = userService.getUserForUID("user");
     userService.setCurrentUser(cuurentUser);
     product1 = productService.getProductForCode("Canon_50mm_f1.2_L");

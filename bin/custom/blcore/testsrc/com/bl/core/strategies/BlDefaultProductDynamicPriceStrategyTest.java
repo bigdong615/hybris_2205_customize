@@ -10,7 +10,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.bl.core.strategies.impl.BlDefaultProductDynamicPriceStrategy;
@@ -27,7 +26,7 @@ public class BlDefaultProductDynamicPriceStrategyTest
   @Test
   public void testGetPriceRatios()
   {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     final Map<Integer, BigDecimal> priceList = new HashMap<>();
     priceList.put(3,new BigDecimal(10));
     priceList.put(5,new BigDecimal(15));

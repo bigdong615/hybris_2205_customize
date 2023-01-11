@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.bl.core.constants.BlCoreConstants;
@@ -35,7 +34,7 @@ public class BlProductTagPopulatorTest {
 
   @Before
   public void prepare(){
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     productData = new ProductData();
   }
   @Test

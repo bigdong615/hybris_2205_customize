@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.bl.core.dao.BlStandardPricingRatioDao;
@@ -40,7 +39,7 @@ public class BlPriceRatioUtilTest
   @Before
   public void setUp()
   {
-    MockitoAnnotations.initMocks(this);
+	  //MockitoAnnotations.initMocks(this);
     blPriceRatioUtil.setBlStandardPricingRatioDao(blStandardPricingRatioDao);
     blPriceRatioUtil.setEnumerationService(enumerationService);
   }
