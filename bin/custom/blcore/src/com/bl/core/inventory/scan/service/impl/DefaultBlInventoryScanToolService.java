@@ -1,5 +1,6 @@
 package com.bl.core.inventory.scan.service.impl;
 
+import com.bl.core.esp.service.BlESPEventService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -94,6 +95,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	@Resource(name = "warehouseService")
 	private WarehouseService warehouseService;
+	@Resource(name = "blEspEventService")
+	BlESPEventService  blESPEventService;
 
 	/**
 	 * {@inheritDoc}
@@ -2117,6 +2120,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			{
 				final Date unboxingTimestamp = new Date();
 				order.setOrderUnboxingTimestamp(unboxingTimestamp);
+				blESPEventService.sendOrderUnboxed((OrderModel) order);
 				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 						"Setting Order Unboxing Timestamp : {} for Order with code : {}", unboxingTimestamp, order.getCode());
 			}
