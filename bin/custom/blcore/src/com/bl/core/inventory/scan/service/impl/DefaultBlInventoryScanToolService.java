@@ -95,8 +95,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	@Resource(name = "warehouseService")
 	private WarehouseService warehouseService;
+
 	@Resource(name = "blEspEventService")
-	BlESPEventService  blESPEventService;
+	private BlESPEventService  blESPEventService;
 
 	/**
 	 * {@inheritDoc}
