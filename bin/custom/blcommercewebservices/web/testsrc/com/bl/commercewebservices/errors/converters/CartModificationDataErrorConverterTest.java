@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
@@ -60,7 +59,7 @@ public class CartModificationDataErrorConverterTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		cartModificationDataErrorConverter = new CartModificationDataErrorConverter();
 		cartModificationDataErrorConverter.setCommerceCommonI18NService(commerceCommonI18NService);

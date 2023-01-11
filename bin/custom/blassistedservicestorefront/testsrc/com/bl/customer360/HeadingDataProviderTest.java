@@ -10,6 +10,7 @@
  */
 package com.bl.customer360;
 
+
 import static org.mockito.ArgumentMatchers.anyObject;
 
 import de.hybris.bootstrap.annotations.UnitTest;
@@ -32,15 +33,18 @@ import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.bl.customer360.provider.HeadingDataProvider;
 
 
+
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class HeadingDataProviderTest
 {
 	@Mock
@@ -62,7 +66,7 @@ public class HeadingDataProviderTest
 	@Before
 	public void setup()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test
@@ -78,9 +82,9 @@ public class HeadingDataProviderTest
 
 		final SearchPageData<CsTicketModel> pageData = new SearchPageData<>();
 		pageData.setResults(Collections.singletonList(ticketModel));
-		Mockito.when(
-				ticketService.getTicketsForCustomerOrderByModifiedTime(Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject()))
+		Mockito.when(ticketService.getTicketsForCustomerOrderByModifiedTime(anyObject(), anyObject(), anyObject()))
 				.thenReturn(pageData);
+
 		final SearchPageData<OrderHistoryData> orderData = new SearchPageData<>();
 		Mockito.when(orderFacade.getPagedOrderHistoryForStatuses(anyObject())).thenReturn(orderData);
 

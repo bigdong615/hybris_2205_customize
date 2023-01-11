@@ -19,7 +19,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.quality.Strictness;
@@ -66,7 +65,7 @@ public class ClasspathAwareMessageSourceTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		when(baseOccExtensionDir.getPathWithinContext()).thenReturn(OCC_EXT_BASE_DIR_PATH);
 		classpathAwareMessageSource = new ClasspathAwareMessageSource(baseOccExtensionDir);
 		classpathAwareMessageSource.setupMessages();

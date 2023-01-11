@@ -22,14 +22,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 
 /**
  * Test suite for {@link com.bl.commercewebservices.v2.filter.CartMatchingFilter}
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class CartMatchingFilterTest
 {
 	static final String DEFAULT_REGEXP = "^/[^/]+/users/[^/]+/carts/([^/]+)";
@@ -50,7 +52,7 @@ public class CartMatchingFilterTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		cartMatchingFilter = new CartMatchingFilter();
 		cartMatchingFilter.setRegexp(DEFAULT_REGEXP);
 		cartMatchingFilter.setCartLoaderStrategy(cartLoaderStrategy);

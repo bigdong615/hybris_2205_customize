@@ -41,15 +41,17 @@ import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.bl.customer360.GeneralActivityData;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class GeneralActivityModelProviderTest
 {
 	@Mock
@@ -81,7 +83,7 @@ public class GeneralActivityModelProviderTest
 	@Before
 	public void setup()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test

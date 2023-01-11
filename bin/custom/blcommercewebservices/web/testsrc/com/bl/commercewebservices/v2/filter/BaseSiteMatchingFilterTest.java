@@ -24,7 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.bl.commercewebservices.exceptions.InvalidResourceException;
 
@@ -33,6 +35,7 @@ import com.bl.commercewebservices.exceptions.InvalidResourceException;
  * Test suite for {@link BaseSiteMatchingFilter}
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BaseSiteMatchingFilterTest
 {
 	static final String DEFAULT_REGEXP = "^/([^/]+)";
