@@ -5,6 +5,7 @@ import com.bl.core.enums.CarrierEnum;
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.services.upsscrape.UPSScrapeService;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl;
 import com.bl.integration.services.impl.DefaultBlUPSTrackServiceImpl;
@@ -20,10 +21,7 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections.MapUtils;
@@ -288,10 +286,11 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
    * @param description
    */
   private void updatePackageDetailsInTransit(final PackagingInfoModel packagingInfoModel,final AbstractOrderModel abstractOrderModel,final String description) {
-    BlLogger.logFormatMessageInfo(LOG , Level.INFO , "Package {} having Tracking Number {} for Order {} having message from UPS", packagingInfoModel.getPk(),packagingInfoModel.getInBoundTrackingNumber(), abstractOrderModel.getCode(), description);
+    BlLogger.logFormatMessageInfo(LOG , Level.INFO , "Package {} having Tracking Number {} for Order {} having message {} from UPS", packagingInfoModel.getPk(),packagingInfoModel.getInBoundTrackingNumber(), abstractOrderModel.getCode(), description);
     packagingInfoModel.setNumberOfRepetitions(0);
     packagingInfoModel.setPackageReturnedToWarehouse(Boolean.FALSE);
-    packagingInfoModel.setIsScrapeScanCompleted(Boolean.TRUE);
+    packagingInfoModel.setIsScrapeScanCompleted(Boolean.FALSE);
+    packagingInfoModel.setTrackingNotes(description + BlCoreConstants.UNDERSCORE+ new Date());
     getService().save(packagingInfoModel);
     getService().refresh(packagingInfoModel);
     getService().save(abstractOrderModel);
