@@ -1721,6 +1721,431 @@
 		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
 		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
 	</bean>
+	
+	<bean class="com.bl.facades.blSerialLog.data.BlSerialLogData">
+  	  <property name="serialsLogID" type="java.lang.String"/>
+  	  <property name="logUserName" type="java.lang.String"/>
+  	  <property name="serialNumber" type="java.lang.String"/>
+  	  <property name="serialsId" type="java.lang.String"/>
+  	  <property name="itemBarcode" type="java.lang.String"/>
+  	  <property name="logTime" type="java.util.Date"/>
+  	  <property name="willBeActiveOn" type="java.util.Date"/>
+  	  <property name="logChanged" type="java.lang.String"/>
+  	  <property name="serialStatus" type="java.lang.String"/>
+  	  <property name="notes" type="java.lang.String"/>
+  	  <property name="conditions" type="java.lang.String"/>
+  	  <property name="firmwareVersion" type="java.lang.String"/>
+  	  <property name="isAvailableForSale" type="java.lang.Boolean"/>
+  	  <property name="forSalePrice" type="java.math.BigDecimal"/>
+  	  <property name="forSalePricingValue" type="java.math.BigDecimal"/>
+  	  <property name="withOrderId" type="java.lang.String"/>
+  	  <property name="createdTS" type="java.util.Date"/>
+  	  <property name="modifiedTS" type="java.util.Date"/>
+    </bean>  
+    
+    <bean class="com.bl.facades.blSerialLog.dto.BlSerialLogWsDTO">
+      <property name="serialsLogID" type="java.lang.String"/>
+  	  <property name="logUserName" type="java.lang.String"/>
+  	  <property name="serialNumber" type="java.lang.String"/>
+  	  <property name="serialsId" type="java.lang.String"/>
+  	  <property name="itemBarcode" type="java.lang.String"/>
+  	  <property name="logTime" type="java.util.Date"/>
+  	  <property name="willBeActiveOn" type="java.util.Date"/>
+  	  <property name="logChanged" type="java.lang.String"/>
+  	  <property name="serialStatus" type="java.lang.String"/>
+  	  <property name="notes" type="java.lang.String"/>
+  	  <property name="conditions" type="java.lang.String"/>
+  	  <property name="firmwareVersion" type="java.lang.String"/>
+  	  <property name="isAvailableForSale" type="java.lang.Boolean"/>
+  	  <property name="forSalePrice" type="java.math.BigDecimal"/>
+  	  <property name="forSalePricingValue" type="java.math.BigDecimal"/>
+  	  <property name="withOrderId" type="java.lang.String"/>
+  	  <property name="createdTS" type="java.util.Date"/>
+  	  <property name="modifiedTS" type="java.util.Date"/>
+    </bean>
+    
+    <bean class="com.bl.facades.customerNotes.data.CustomerNotesData">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="userId" type="java.lang.String"/>
+      <property name="type" type="java.lang.String"/>
+      <property name="order" type="java.lang.String"/>
+      <property name="customerNoteType" type="java.lang.String"/>
+      <property name="fraud" type="java.lang.Boolean"/>
+      <property name="customer" type="java.lang.String"/>
+      <property name="pk" type="java.lang.String"/>  
+      <property name="note" type="java.lang.String"/>                    
+    </bean>
+    
+    <bean class="com.bl.facades.customerNotes.dto.CustomerNotesWsDTO">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="userId" type="java.lang.String"/>
+      <property name="type" type="java.lang.String"/>
+      <property name="order" type="java.lang.String"/>
+      <property name="customerNoteType" type="java.lang.String"/>
+      <property name="fraud" type="java.lang.Boolean"/>
+      <property name="customer" type="java.lang.String"/>
+      <property name="pk" type="java.lang.String"/>    
+      <property name="note" type="java.lang.String"/>                              
+    </bean>
+    
+    <bean class="com.bl.facades.blRepairLog.data.BlRepairLogData">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="pk" type="java.lang.String"/>                   
+      <property name="serialCode" type="java.lang.String"/>             
+      <property name="itemBarcode" type="java.lang.String"/>             
+      <property name="repairTechsForClaim" type="java.lang.String"/>             
+      <property name="order" type="java.lang.String"/>             
+      <property name="selectedGearGaurd" type="java.lang.String"/>             
+      <property name="recommendToRepair" type="java.lang.Boolean"/>                   
+      <property name="customerResponsible" type="java.lang.String"/>             
+      <property name="lastRepairReturnDay" type="java.util.Date"/>             
+      <property name="costForParts" type="java.lang.Double"/>             
+      <property name="labourHours" type="java.lang.Double"/>             
+      <property name="labourRate" type="java.lang.Double"/>  
+      <property name="costForLabor" type="java.lang.Double"/>                   
+      <property name="totalForPartsAndLaborCost" type="java.lang.Double"/>                   
+      <property name="customerCharged" type="java.lang.String"/>                   
+      <property name="customerCollectionStatus" type="java.lang.String"/>                   
+      <property name="otherDocument" type="java.lang.String"/>                   
+      <property name="repairLogStatus" type="java.lang.String"/>                   
+      <property name="notesForIssue" type="java.lang.String"/>                   
+      <property name="conditionRating" type="java.lang.Double"/>                   
+      <property name="repairReasons" type="java.lang.String"/>                   
+      <property name="otherRepairsReason" type="java.lang.String"/>                   
+      <property name="frequency" type="java.lang.String"/>                   
+      <property name="cause" type="java.lang.String"/>                   
+      <property name="blame" type="java.lang.String"/>                   
+      <property name="issueLocation" type="java.lang.String"/>                   
+      <property name="associatedConsignment" type="java.lang.String"/>                   
+      <property name="consignmentEntry" type="java.lang.String"/>                   
+      <property name="userId" type="java.lang.String"/>                   
+      <property name="lastUserChangedConditionRating" type="java.lang.String"/>                   
+      <property name="assessmentNotes" type="java.lang.String"/>                   
+      <property name="damageWaiverPaid" type="java.lang.Double"/>                   
+      <property name="repairLogId" type="java.lang.String"/>                   
+      <property name="warehouse" type="java.lang.String"/>                   
+      <property name="ocLocation" type="java.lang.String"/>                                                     
+    </bean>  
+    
+    <bean class="com.bl.facades.blRepairLog.dto.BlRepairLogWsDTO">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="pk" type="java.lang.String"/>                   
+      <property name="serialCode" type="java.lang.String"/>             
+      <property name="itemBarcode" type="java.lang.String"/>             
+      <property name="repairTechsForClaim" type="java.lang.String"/>             
+      <property name="order" type="java.lang.String"/>             
+      <property name="selectedGearGaurd" type="java.lang.String"/>             
+      <property name="recommendToRepair" type="java.lang.Boolean"/>                   
+      <property name="customerResponsible" type="java.lang.String"/>             
+      <property name="lastRepairReturnDay" type="java.util.Date"/>             
+      <property name="costForParts" type="java.lang.Double"/>             
+      <property name="labourHours" type="java.lang.Double"/>             
+      <property name="labourRate" type="java.lang.Double"/>  
+      <property name="costForLabor" type="java.lang.Double"/>                   
+      <property name="totalForPartsAndLaborCost" type="java.lang.Double"/>                   
+      <property name="customerCharged" type="java.lang.String"/>                   
+      <property name="customerCollectionStatus" type="java.lang.String"/>                   
+      <property name="otherDocument" type="java.lang.String"/>                   
+      <property name="repairLogStatus" type="java.lang.String"/>                   
+      <property name="notesForIssue" type="java.lang.String"/>                   
+      <property name="conditionRating" type="java.lang.Double"/>                   
+      <property name="repairReasons" type="java.lang.String"/>                   
+      <property name="otherRepairsReason" type="java.lang.String"/>                   
+      <property name="frequency" type="java.lang.String"/>                   
+      <property name="cause" type="java.lang.String"/>                   
+      <property name="blame" type="java.lang.String"/>                   
+      <property name="issueLocation" type="java.lang.String"/>                   
+      <property name="associatedConsignment" type="java.lang.String"/>                   
+      <property name="consignmentEntry" type="java.lang.String"/>                   
+      <property name="userId" type="java.lang.String"/>                   
+      <property name="lastUserChangedConditionRating" type="java.lang.String"/>                   
+      <property name="assessmentNotes" type="java.lang.String"/>                   
+      <property name="damageWaiverPaid" type="java.lang.Double"/>                   
+      <property name="repairLogId" type="java.lang.String"/>                   
+      <property name="warehouse" type="java.lang.String"/>                   
+      <property name="ocLocation" type="java.lang.String"/>                                                     
+    </bean> 
+    
+    <bean class="com.bl.facades.vendorRepairLog.data.VendorRepairLogData" extends="com.bl.facades.blRepairLog.data.BlRepairLogData">
+      <property name="repairVendor" type="java.lang.String"/>
+      <property name="dateSent" type="java.util.Date"/>
+      <property name="estimateCostApproved" type="java.lang.Double"/>
+      <property name="estimateCostDeclined" type="java.lang.Double"/>
+      <property name="estimateNote" type="java.lang.String"/>
+      <property name="dateReturned" type="java.util.Date"/>
+      <property name="trackingNumber" type="java.lang.String"/>  
+    </bean>
+    
+    <bean class="com.bl.facades.vendorRepairLog.dto.VendorRepairLogWsDTO">
+      <property name="repairVendor" type="java.lang.String"/>
+      <property name="dateSent" type="java.util.Date"/>
+      <property name="estimateCostApproved" type="java.lang.Double"/>
+      <property name="estimateCostDeclined" type="java.lang.Double"/>
+      <property name="estimateNote" type="java.lang.String"/>
+      <property name="dateReturned" type="java.util.Date"/>
+      <property name="trackingNumber" type="java.lang.String"/>
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="pk" type="java.lang.String"/>                   
+      <property name="serialCode" type="java.lang.String"/>             
+      <property name="itemBarcode" type="java.lang.String"/>             
+      <property name="repairTechsForClaim" type="java.lang.String"/>             
+      <property name="order" type="java.lang.String"/>             
+      <property name="selectedGearGaurd" type="java.lang.String"/>             
+      <property name="recommendToRepair" type="java.lang.Boolean"/>                   
+      <property name="customerResponsible" type="java.lang.String"/>             
+      <property name="lastRepairReturnDay" type="java.util.Date"/>             
+      <property name="costForParts" type="java.lang.Double"/>             
+      <property name="labourHours" type="java.lang.Double"/>             
+      <property name="labourRate" type="java.lang.Double"/>  
+      <property name="costForLabor" type="java.lang.Double"/>                   
+      <property name="totalForPartsAndLaborCost" type="java.lang.Double"/>                   
+      <property name="customerCharged" type="java.lang.String"/>                   
+      <property name="customerCollectionStatus" type="java.lang.String"/>                   
+      <property name="otherDocument" type="java.lang.String"/>                   
+      <property name="repairLogStatus" type="java.lang.String"/>                   
+      <property name="notesForIssue" type="java.lang.String"/>                   
+      <property name="conditionRating" type="java.lang.Double"/>                   
+      <property name="repairReasons" type="java.lang.String"/>                   
+      <property name="otherRepairsReason" type="java.lang.String"/>                   
+      <property name="frequency" type="java.lang.String"/>                   
+      <property name="cause" type="java.lang.String"/>                   
+      <property name="blame" type="java.lang.String"/>                   
+      <property name="issueLocation" type="java.lang.String"/>                   
+      <property name="associatedConsignment" type="java.lang.String"/>                   
+      <property name="consignmentEntry" type="java.lang.String"/>                   
+      <property name="userId" type="java.lang.String"/>                   
+      <property name="lastUserChangedConditionRating" type="java.lang.String"/>                   
+      <property name="assessmentNotes" type="java.lang.String"/>                   
+      <property name="damageWaiverPaid" type="java.lang.Double"/>                   
+      <property name="repairLogId" type="java.lang.String"/>                   
+      <property name="warehouse" type="java.lang.String"/>                   
+      <property name="ocLocation" type="java.lang.String"/>   
+    </bean>
+    
+    <bean class="com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData" extends="com.bl.facades.blRepairLog.data.BlRepairLogData">
+      <property name="repairVendor" type="java.lang.String"/>
+      <property name="partsStatus" type="java.lang.String"/>
+      <property name="partCost" type="java.lang.Double"/>
+    </bean>
+    
+    <bean class="com.bl.facades.partsNeededRepairLog.dto.PartsNeededRepairLogWsDTO">
+      <property name="repairVendor" type="java.lang.String"/>
+      <property name="partsStatus" type="java.lang.String"/>
+      <property name="partCost" type="java.lang.Double"/>
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="pk" type="java.lang.String"/>                   
+      <property name="serialCode" type="java.lang.String"/>             
+      <property name="itemBarcode" type="java.lang.String"/>             
+      <property name="repairTechsForClaim" type="java.lang.String"/>             
+      <property name="order" type="java.lang.String"/>             
+      <property name="selectedGearGaurd" type="java.lang.String"/>             
+      <property name="recommendToRepair" type="java.lang.Boolean"/>                   
+      <property name="customerResponsible" type="java.lang.String"/>             
+      <property name="lastRepairReturnDay" type="java.util.Date"/>             
+      <property name="costForParts" type="java.lang.Double"/>             
+      <property name="labourHours" type="java.lang.Double"/>             
+      <property name="labourRate" type="java.lang.Double"/>  
+      <property name="costForLabor" type="java.lang.Double"/>                   
+      <property name="totalForPartsAndLaborCost" type="java.lang.Double"/>                   
+      <property name="customerCharged" type="java.lang.String"/>                   
+      <property name="customerCollectionStatus" type="java.lang.String"/>                   
+      <property name="otherDocument" type="java.lang.String"/>                   
+      <property name="repairLogStatus" type="java.lang.String"/>                   
+      <property name="notesForIssue" type="java.lang.String"/>                   
+      <property name="conditionRating" type="java.lang.Double"/>                   
+      <property name="repairReasons" type="java.lang.String"/>                   
+      <property name="otherRepairsReason" type="java.lang.String"/>                   
+      <property name="frequency" type="java.lang.String"/>                   
+      <property name="cause" type="java.lang.String"/>                   
+      <property name="blame" type="java.lang.String"/>                   
+      <property name="issueLocation" type="java.lang.String"/>                   
+      <property name="associatedConsignment" type="java.lang.String"/>                   
+      <property name="consignmentEntry" type="java.lang.String"/>                   
+      <property name="userId" type="java.lang.String"/>                   
+      <property name="lastUserChangedConditionRating" type="java.lang.String"/>                   
+      <property name="assessmentNotes" type="java.lang.String"/>                   
+      <property name="damageWaiverPaid" type="java.lang.Double"/>                   
+      <property name="repairLogId" type="java.lang.String"/>                   
+      <property name="warehouse" type="java.lang.String"/>                   
+      <property name="ocLocation" type="java.lang.String"/> 
+    </bean>
+    
+    <bean class="com.bl.facades.inHouseRepairLog.data.InHouseRepairLogData" extends="com.bl.facades.blRepairLog.data.BlRepairLogData">
+    </bean>
+    
+    <bean class="com.bl.facades.inHouseRepairLog.dto.InHouseRepairLogWsDTO">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="pk" type="java.lang.String"/>                   
+      <property name="serialCode" type="java.lang.String"/>             
+      <property name="itemBarcode" type="java.lang.String"/>             
+      <property name="repairTechsForClaim" type="java.lang.String"/>             
+      <property name="order" type="java.lang.String"/>             
+      <property name="selectedGearGaurd" type="java.lang.String"/>             
+      <property name="recommendToRepair" type="java.lang.Boolean"/>                   
+      <property name="customerResponsible" type="java.lang.String"/>             
+      <property name="lastRepairReturnDay" type="java.util.Date"/>             
+      <property name="costForParts" type="java.lang.Double"/>             
+      <property name="labourHours" type="java.lang.Double"/>             
+      <property name="labourRate" type="java.lang.Double"/>  
+      <property name="costForLabor" type="java.lang.Double"/>                   
+      <property name="totalForPartsAndLaborCost" type="java.lang.Double"/>                   
+      <property name="customerCharged" type="java.lang.String"/>                   
+      <property name="customerCollectionStatus" type="java.lang.String"/>                   
+      <property name="otherDocument" type="java.lang.String"/>                   
+      <property name="repairLogStatus" type="java.lang.String"/>                   
+      <property name="notesForIssue" type="java.lang.String"/>                   
+      <property name="conditionRating" type="java.lang.Double"/>                   
+      <property name="repairReasons" type="java.lang.String"/>                   
+      <property name="otherRepairsReason" type="java.lang.String"/>                   
+      <property name="frequency" type="java.lang.String"/>                   
+      <property name="cause" type="java.lang.String"/>                   
+      <property name="blame" type="java.lang.String"/>                   
+      <property name="issueLocation" type="java.lang.String"/>                   
+      <property name="associatedConsignment" type="java.lang.String"/>                   
+      <property name="consignmentEntry" type="java.lang.String"/>                   
+      <property name="userId" type="java.lang.String"/>                   
+      <property name="lastUserChangedConditionRating" type="java.lang.String"/>                   
+      <property name="assessmentNotes" type="java.lang.String"/>                   
+      <property name="damageWaiverPaid" type="java.lang.Double"/>                   
+      <property name="repairLogId" type="java.lang.String"/>                   
+      <property name="warehouse" type="java.lang.String"/>                   
+      <property name="ocLocation" type="java.lang.String"/> 
+    </bean>   
+    
+    <bean class="com.bl.facades.blSerialLog.data.BlSerialLogListData">
+		<property name="blSerialLogList" type="java.util.List&lt;com.bl.facades.blSerialLog.data.BlSerialLogData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.blSerialLog.dto.BlSerialLogListWsDTO">
+        <description>Representation of an  blSerialLogList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">blSerialLogList</hint>
+        </hints>
+        <property name="blSerialLogList"
+                  type="java.util.List&lt;com.bl.facades.blSerialLog.dto.BlSerialLogWsDTO>">
+            <description>List of blSerialLogList </description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>  
+    
+    <bean class="com.bl.facades.customerNotes.data.CustomerNotesListData">
+		<property name="customerNotesList" type="java.util.List&lt;com.bl.facades.customerNotes.data.CustomerNotesData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.customerNotes.dto.CustomerNotesListWsDTO">
+        <description>Representation of an  customerNotesList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">customerNotesList</hint>
+        </hints>
+        <property name="customerNotesList"
+                  type="java.util.List&lt;com.bl.facades.customerNotes.dto.CustomerNotesWsDTO>">
+            <description>List of customerNotesList </description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
+    <bean class="com.bl.facades.vendorRepairLog.data.VendorRepairLogListData">
+		<property name="vendorRepairLogList" type="java.util.List&lt;com.bl.facades.vendorRepairLog.data.VendorRepairLogData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.vendorRepairLog.dto.VendorRepairLogListWsDTO">
+        <description>Representation of an  vendorRepairLogList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">vendorRepairLogList</hint>
+        </hints>
+        <property name="vendorRepairLogList"
+                  type="java.util.List&lt;com.bl.facades.vendorRepairLog.dto.VendorRepairLogWsDTO>">
+            <description>List of vendorRepairLogList </description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>  
+    
+    <bean class="com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogListData">
+		<property name="partsNeededRepairLogList" type="java.util.List&lt;com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.partsNeededRepairLog.dto.PartsNeededRepairLogListWsDTO">
+        <description>Representation of an  partsNeededRepairLogList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">partsNeededRepairLogList</hint>
+        </hints>
+        <property name="partsNeededRepairLogList"
+                  type="java.util.List&lt;com.bl.facades.partsNeededRepairLog.dto.PartsNeededRepairLogWsDTO>">
+            <description>List of order entries </description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
+    <bean class="com.bl.facades.inHouseRepairLog.data.InHouseRepairLogListData">
+		<property name="inHouseRepairLogList" type="java.util.List&lt;com.bl.facades.inHouseRepairLog.data.InHouseRepairLogData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.inHouseRepairLog.dto.InHouseRepairLogListWsDTO">
+        <description>Representation of an  inHouseRepairLogList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">inHouseRepairLogList</hint>
+        </hints>
+        <property name="inHouseRepairLogList"
+                  type="java.util.List&lt;com.bl.facades.inHouseRepairLog.dto.InHouseRepairLogWsDTO>">
+            <description>List of inHouseRepairLogList</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>  
 		
 <!--  defaultPaymentInfo
 notificationchannels
