@@ -3,6 +3,8 @@
  */
 package com.bl.storefront.security.cookie;
 
+import de.hybris.bootstrap.annotations.UnitTest;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,18 +13,20 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 
 /**
  *
  */
+@UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class EnhancedCookieGeneratorTest
 {
 
@@ -41,7 +45,7 @@ public class EnhancedCookieGeneratorTest
 	@Before
 	public void prepare()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		cookieGenerator.setCookieDomain("what a domain");
 		cookieGenerator.setCookieMaxAge(Integer.valueOf(NEVER_EXPIRES));
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));

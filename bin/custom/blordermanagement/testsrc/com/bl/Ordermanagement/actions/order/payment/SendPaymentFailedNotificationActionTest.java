@@ -45,11 +45,14 @@ import de.hybris.bootstrap.annotations.UnitTest;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import org.mockito.Mockito;
 import static org.hamcrest.MatcherAssert.assertThat;
+import org.mockito.junit.MockitoJUnitRunner;
 
 
 /**
 *
 */
+@UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class SendPaymentFailedNotificationActionTest
 {
 	@InjectMocks
@@ -61,7 +64,7 @@ public class SendPaymentFailedNotificationActionTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	/**

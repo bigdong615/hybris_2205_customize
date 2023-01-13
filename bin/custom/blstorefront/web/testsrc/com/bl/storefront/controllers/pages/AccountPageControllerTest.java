@@ -6,7 +6,6 @@ package com.bl.storefront.controllers.pages;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import com.bl.storefront.forms.BlAddressForm;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.acceleratorservices.config.SiteConfigService;
 import de.hybris.platform.acceleratorservices.storefront.util.PageTitleResolver;
@@ -14,7 +13,6 @@ import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractSearchPageController.ShowMode;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateEmailForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePasswordForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateProfileForm;
@@ -55,7 +53,6 @@ import de.hybris.platform.commerceservices.search.pagedata.PaginationData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.i18n.I18NService;
-import com.bl.storefront.controllers.ControllerConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,19 +63,24 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.support.BindingAwareModelMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.forms.BlAddressForm;
+
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class AccountPageControllerTest
 {
 	private final Model page = Mockito.spy(new BindingAwareModelMap());
@@ -193,7 +195,7 @@ public class AccountPageControllerTest
 	@Before
 	public void prepare() throws CMSItemNotFoundException
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		final Locale locale = new Locale("en");
 		final List breadcrumbsList = new ArrayList();
 		breadcrumbsList.add(breadcrumb);
