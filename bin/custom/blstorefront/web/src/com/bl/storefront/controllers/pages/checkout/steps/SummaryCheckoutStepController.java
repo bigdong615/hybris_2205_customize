@@ -22,10 +22,13 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.payment.AdapterException;
+import de.hybris.platform.servicelayer.session.SessionService;
+
 import com.bl.storefront.controllers.ControllerConstants;
 
 import java.util.Arrays;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +40,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.bl.storefront.controllers.ControllerConstants;
+
 
 @Controller
 @RequestMapping(value = "/checkout/multi/summary")
@@ -45,6 +50,8 @@ public class SummaryCheckoutStepController extends AbstractCheckoutStepControlle
 	private static final Logger LOGGER = Logger.getLogger(SummaryCheckoutStepController.class);
 
 	private static final String SUMMARY = "summary";
+	@Resource
+	private SessionService sessionService;
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	@RequireHardLogIn
@@ -130,6 +137,7 @@ public class SummaryCheckoutStepController extends AbstractCheckoutStepControlle
 		final OrderData orderData;
 		try
 		{
+			sessionService.setAttribute("SHOPPERIP", getShopperIp(request));
 			orderData = getCheckoutFacade().placeOrder();
 		}
 		catch (final Exception e)
@@ -140,6 +148,58 @@ public class SummaryCheckoutStepController extends AbstractCheckoutStepControlle
 		}
 
 		return redirectToOrderConfirmationPage(orderData);
+	}
+
+	private String getShopperIp(final HttpServletRequest request)
+	{
+		final String trueClient = "True-Client-IP";
+		final String cfConnectingIP = "CF-Connecting-IP";
+		final String forwardFor = "X-Forwarded-For";
+		String shopperIP = request.getHeader(trueClient);
+		String headerUsed = trueClient;
+
+		if (shopperIP == null)
+		{
+			headerUsed = cfConnectingIP;
+			shopperIP = request.getHeader(cfConnectingIP);
+		}
+
+		if (shopperIP == null)
+		{
+			headerUsed = forwardFor;
+			final String xfowardedHeader = request.getHeader(forwardFor);
+			// to be extra sure I don't want this to throw an exception for any reason, so I'll add a try catch
+			try
+			{
+				if (StringUtils.isNotBlank(xfowardedHeader))
+				{
+					final String[] headerParts = xfowardedHeader.split(",");
+					if (headerParts.length > 0)
+					{
+						shopperIP = request.getHeader(headerParts[0]);
+					}
+				}
+			}
+			catch (final Exception ex)
+			{
+				LOGGER.info("Could not assign shopper IP from X-Forward-For header ", ex);
+			}
+		}
+
+		if (shopperIP == null)
+		{
+			headerUsed = "Remote Address";
+			shopperIP = request.getRemoteAddr();
+		}
+
+		if (shopperIP == null)
+		{
+			shopperIP = "";
+		}
+		LOGGER.info("Client IP found using " + headerUsed);
+		LOGGER.info("shopperIP " + shopperIP);
+
+		return shopperIP;
 	}
 
 	/**
