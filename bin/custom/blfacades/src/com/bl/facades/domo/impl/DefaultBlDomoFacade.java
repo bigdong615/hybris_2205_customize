@@ -24,10 +24,20 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 
 import com.bl.core.model.BlItemsBillingChargeModel;
+import com.bl.core.model.BlSerialLogModel;
+import com.bl.core.model.CustomerNotesModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.model.InHouseRepairLogModel;
+import com.bl.core.model.PartsNeededRepairLogModel;
+import com.bl.core.model.VendorRepairLogModel;
 import com.bl.core.services.domo.BlDomoService;
+import com.bl.facades.blSerialLog.data.BlSerialLogData;
+import com.bl.facades.customerNotes.data.CustomerNotesData;
 import com.bl.facades.domo.BlDomoFacade;
+import com.bl.facades.inHouseRepairLog.data.InHouseRepairLogData;
+import com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData;
+import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
 
 public class DefaultBlDomoFacade implements BlDomoFacade
 {
@@ -50,6 +60,17 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	private Converter<BlItemsBillingChargeModel, BlItemsBillingChargeData> blItemsBillingChargeConverter;
 
 	private Converter<CustomerModel, CustomerData> blCustomerConverter;
+
+	private Converter<BlSerialLogModel, BlSerialLogData> blSerialLogsConverter;
+
+	private Converter<CustomerNotesModel, CustomerNotesData> blCustomerNotesConverter;
+
+	private Converter<VendorRepairLogModel, VendorRepairLogData> blVendorRepairLogConverter;
+
+	private Converter<PartsNeededRepairLogModel, PartsNeededRepairLogData> blPartsNeededRepairLogConverter;
+
+	private Converter<InHouseRepairLogModel, InHouseRepairLogData> blInHouseRepairLogConverter;
+
 
 	@Override
 	public SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData)
@@ -127,6 +148,132 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 		final SearchPageData<CustomerModel> customers = getBlDomoService().getCustomers(pageableData);
 		return convertPageData(customers, getBlCustomerConverter());
 	}
+
+	@Override
+	public SearchPageData<BlSerialLogData> getBlSerialLogs(final PageableData pageableData)
+	{
+		final SearchPageData<BlSerialLogModel> seriallogs = getBlDomoService().getBlSerialLogs(pageableData);
+		return convertPageData(seriallogs, getBlSerialLogsConverter());
+	}
+
+	@Override
+	public SearchPageData<CustomerNotesData> getCustomerNotes(final PageableData pageableData)
+	{
+		final SearchPageData<CustomerNotesModel> customerNotes = getBlDomoService().getCustomerNotes(pageableData);
+		return convertPageData(customerNotes, getBlCustomerNotesConverter());
+	}
+
+	@Override
+	public SearchPageData<VendorRepairLogData> getVendorRepairLogs(final PageableData pageableData)
+	{
+		final SearchPageData<VendorRepairLogModel> vendorRepairLogs = getBlDomoService().getVendorRepairLogs(pageableData);
+		return convertPageData(vendorRepairLogs, getBlVendorRepairLogConverter());
+	}
+
+	@Override
+	public SearchPageData<PartsNeededRepairLogData> getPartsNeededRepairLogs(final PageableData pageableData)
+	{
+		final SearchPageData<PartsNeededRepairLogModel> partsNeededRepairLogs = getBlDomoService()
+				.getPartsNeededRepairLogs(pageableData);
+		return convertPageData(partsNeededRepairLogs, getBlPartsNeededRepairLogConverter());
+	}
+
+	@Override
+	public SearchPageData<InHouseRepairLogData> getInHouseRepairLogs(final PageableData pageableData)
+	{
+		final SearchPageData<InHouseRepairLogModel> inHouseRepairLogs = getBlDomoService().getInHouseRepairLogs(pageableData);
+		return convertPageData(inHouseRepairLogs, getBlInHouseRepairLogConverter());
+	}
+
+
+	/**
+	 * @return the blSerialLogsConverter
+	 */
+	public Converter<BlSerialLogModel, BlSerialLogData> getBlSerialLogsConverter()
+	{
+		return blSerialLogsConverter;
+	}
+
+	/**
+	 * @param blSerialLogsConverter
+	 *           the blSerialLogsConverter to set
+	 */
+	public void setBlSerialLogsConverter(final Converter<BlSerialLogModel, BlSerialLogData> blSerialLogsConverter)
+	{
+		this.blSerialLogsConverter = blSerialLogsConverter;
+	}
+
+	/**
+	 * @return the blCustomerNotesConverter
+	 */
+	public Converter<CustomerNotesModel, CustomerNotesData> getBlCustomerNotesConverter()
+	{
+		return blCustomerNotesConverter;
+	}
+
+	/**
+	 * @param blCustomerNotesConverter
+	 *           the blCustomerNotesConverter to set
+	 */
+	public void setBlCustomerNotesConverter(final Converter<CustomerNotesModel, CustomerNotesData> blCustomerNotesConverter)
+	{
+		this.blCustomerNotesConverter = blCustomerNotesConverter;
+	}
+
+	/**
+	 * @return the blVendorRepairLogConverter
+	 */
+	public Converter<VendorRepairLogModel, VendorRepairLogData> getBlVendorRepairLogConverter()
+	{
+		return blVendorRepairLogConverter;
+	}
+
+	/**
+	 * @param blVendorRepairLogConverter
+	 *           the blVendorRepairLogConverter to set
+	 */
+	public void setBlVendorRepairLogConverter(
+			final Converter<VendorRepairLogModel, VendorRepairLogData> blVendorRepairLogConverter)
+	{
+		this.blVendorRepairLogConverter = blVendorRepairLogConverter;
+	}
+
+	/**
+	 * @return the blPartsNeededRepairLogConverter
+	 */
+	public Converter<PartsNeededRepairLogModel, PartsNeededRepairLogData> getBlPartsNeededRepairLogConverter()
+	{
+		return blPartsNeededRepairLogConverter;
+	}
+
+	/**
+	 * @param blPartsNeededRepairLogConverter
+	 *           the blPartsNeededRepairLogConverter to set
+	 */
+	public void setBlPartsNeededRepairLogConverter(
+			final Converter<PartsNeededRepairLogModel, PartsNeededRepairLogData> blPartsNeededRepairLogConverter)
+	{
+		this.blPartsNeededRepairLogConverter = blPartsNeededRepairLogConverter;
+	}
+
+	/**
+	 * @return the blInHouseRepairLogConverter
+	 */
+	public Converter<InHouseRepairLogModel, InHouseRepairLogData> getBlInHouseRepairLogConverter()
+	{
+		return blInHouseRepairLogConverter;
+	}
+
+	/**
+	 * @param blInHouseRepairLogConverter
+	 *           the blInHouseRepairLogConverter to set
+	 */
+	public void setBlInHouseRepairLogConverter(
+			final Converter<InHouseRepairLogModel, InHouseRepairLogData> blInHouseRepairLogConverter)
+	{
+		this.blInHouseRepairLogConverter = blInHouseRepairLogConverter;
+	}
+
 
 	/**
 	 * @return the blorderEntryConverter

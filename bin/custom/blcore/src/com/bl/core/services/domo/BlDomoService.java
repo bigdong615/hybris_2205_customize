@@ -13,8 +13,13 @@ import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import com.bl.core.model.BlItemsBillingChargeModel;
+import com.bl.core.model.BlSerialLogModel;
+import com.bl.core.model.CustomerNotesModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.model.InHouseRepairLogModel;
+import com.bl.core.model.PartsNeededRepairLogModel;
+import com.bl.core.model.VendorRepairLogModel;
 
 
 public interface BlDomoService
@@ -83,5 +88,45 @@ public interface BlDomoService
 	 */
 	SearchPageData<CustomerModel> getCustomers(PageableData pageableData);
 
+	/**
+	 * To fetch BlSerialLog for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of BlSerialLog
+	 */
+
+	SearchPageData<BlSerialLogModel> getBlSerialLogs(final PageableData pageableData);
+
+	/**
+	 * To fetch CustomerNote for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of CustomerNote
+	 */
+	SearchPageData<CustomerNotesModel> getCustomerNotes(final PageableData pageableData);
+
+	/**
+	 * To fetch VendorRepairLog for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of VendorRepairLog
+	 */
+	SearchPageData<VendorRepairLogModel> getVendorRepairLogs(final PageableData pageableData);
+
+	/**
+	 * To fetch PartsNeededRepairLog for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of PartsNeededRepairLog
+	 */
+	SearchPageData<PartsNeededRepairLogModel> getPartsNeededRepairLogs(final PageableData pageableData);
+
+	/**
+	 * To fetch InHouseRepair for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of InHouseRepair
+	 */
+	SearchPageData<InHouseRepairLogModel> getInHouseRepairLogs(final PageableData pageableData);
 
 }

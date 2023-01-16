@@ -16,8 +16,13 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import com.bl.core.domo.BlDomoDao;
 import com.bl.core.model.BlItemsBillingChargeModel;
+import com.bl.core.model.BlSerialLogModel;
+import com.bl.core.model.CustomerNotesModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.model.InHouseRepairLogModel;
+import com.bl.core.model.PartsNeededRepairLogModel;
+import com.bl.core.model.VendorRepairLogModel;
 
 
 public class DefaultBlDomoDao implements BlDomoDao
@@ -83,19 +88,55 @@ public class DefaultBlDomoDao implements BlDomoDao
 		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {o.pk} FROM {OrderEntry as o}");
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
-	
+
 	@Override
-	public SearchPageData<BlItemsBillingChargeModel> getBlItemsBillingCharge(PageableData pageableData)
+	public SearchPageData<BlItemsBillingChargeModel> getBlItemsBillingCharge(final PageableData pageableData)
 	{
 		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {b.pk} FROM {BlItemsBillingCharge as b}");
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
 
 	@Override
-	public SearchPageData<CustomerModel> getCustomers(PageableData pageableData)
+	public SearchPageData<CustomerModel> getCustomers(final PageableData pageableData)
 	{
 		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {c.pk} FROM {Customer as c}");
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
+
+	@Override
+	public SearchPageData<BlSerialLogModel> getBlSerialLogs(final PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {b.pk} FROM {BlSerialLog as b}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+
+	@Override
+	public SearchPageData<CustomerNotesModel> getCustomerNotes(final PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {c.pk} FROM {CustomerNotes as c}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+
+	@Override
+	public SearchPageData<VendorRepairLogModel> getVendorRepairLogs(final PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {v.pk} FROM {VendorRepairLog as v}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+
+	@Override
+	public SearchPageData<PartsNeededRepairLogModel> getPartsNeededRepairLogs(final PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {p.pk} FROM {PartsNeededRepairLog as p}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+
+	@Override
+	public SearchPageData<InHouseRepairLogModel> getInHouseRepairLogs(final PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {i.pk} FROM {InHouseRepairLog as i}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+
 
 }
