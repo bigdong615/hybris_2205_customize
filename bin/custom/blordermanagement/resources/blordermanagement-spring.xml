@@ -103,10 +103,6 @@
         <property name="blDatePickerService" ref="blDatePickerService"/>
     </bean>
 
-    <alias name="defaultBlCSAgentOrderModificationService" alias="blCSAgentOrderModificationService" />
-    <bean id="defaultBlCSAgentOrderModificationService" class="com.bl.Ordermanagement.services.impl.DefaultBlCSAgentOrderModificationService"/>
-
-
     <alias name="defaultBlAllocationService" alias="allocationService" />
     <bean id="defaultBlAllocationService" class="com.bl.Ordermanagement.services.impl.DefaultBlAllocationService" parent="defaultAllocationService">
         <property name="blStockLevelDao" ref="blStockLevelDao"/>
