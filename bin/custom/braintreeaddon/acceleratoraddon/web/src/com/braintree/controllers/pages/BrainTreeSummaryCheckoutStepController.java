@@ -288,6 +288,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 				brainTreeCheckoutFacade
 						.storeShipsFromPostalCodeToCart(placeOrderForm.getShipsFromPostalCode());
 			}
+			getSessionService().setAttribute("SHOPPERIP", getShopperIp(request));
 			orderData = getCheckoutFacade().placeOrder();
 			LOG.info("Order has been placed, number/code: " + orderData.getCode());
 
@@ -304,6 +305,58 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		}
 
 		return redirectToOrderConfirmationPage(orderData);
+	}
+	
+	private String getShopperIp(final HttpServletRequest request)
+	{
+		final String trueClient = "True-Client-IP";
+		final String cfConnectingIP = "CF-Connecting-IP";
+		final String forwardFor = "X-Forwarded-For";
+		String shopperIP = request.getHeader(trueClient);
+		String headerUsed = trueClient;
+
+		if (shopperIP == null)
+		{
+			headerUsed = cfConnectingIP;
+			shopperIP = request.getHeader(cfConnectingIP);
+		}
+
+		if (shopperIP == null)
+		{
+			headerUsed = forwardFor;
+			final String xfowardedHeader = request.getHeader(forwardFor);
+			// to be extra sure I don't want this to throw an exception for any reason, so I'll add a try catch
+			try
+			{
+				if (StringUtils.isNotBlank(xfowardedHeader))
+				{
+					final String[] headerParts = xfowardedHeader.split(",");
+					if (headerParts.length > 0)
+					{
+						shopperIP = request.getHeader(headerParts[0]);
+					}
+				}
+			}
+			catch (final Exception ex)
+			{
+				LOG.info("Could not assign shopper IP from X-Forward-For header ", ex);
+			}
+		}
+
+		if (shopperIP == null)
+		{
+			headerUsed = "Remote Address";
+			shopperIP = request.getRemoteAddr();
+		}
+
+		if (shopperIP == null)
+		{
+			shopperIP = "";
+		}
+		LOG.info("Client IP found using BrainTreeSummaryCheckoutStepController " + headerUsed);
+		LOG.info("shopperIP BrainTreeSummaryCheckoutStepController " + shopperIP);
+
+		return shopperIP;
 	}
 
 	/**

@@ -3377,6 +3377,11 @@
                         <modifiers write="false"/>
                         <persistence type="dynamic" attributeHandler="blSumOfGearValueOnOrderHandler"/>
                     </attribute>
+                    <attribute qualifier="shopperIp" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Capture the IP address of the buyer</description>
+                    </attribute>
                 </attributes>
 
             </itemtype>

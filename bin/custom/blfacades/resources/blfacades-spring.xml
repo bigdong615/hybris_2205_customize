@@ -861,7 +861,12 @@
 		<property name="blDomoOrderConverter" ref="blDomoOrderConverter"/>
 		<property name="blorderEntryConverter" ref="blorderEntryConverter"/>
 		<property name="blItemsBillingChargeConverter" ref="blItemsBillingChargeConverter"/>
-		<property name="blCustomerConverter" ref="blCustomerConverter"/>	
+		<property name="blCustomerConverter" ref="blCustomerConverter"/>
+		<property name="blSerialLogsConverter" ref="blSerialLogsConverter"/>
+  		<property name="blCustomerNotesConverter" ref="blCustomerNotesConverter"/>
+  		<property name="blVendorRepairLogConverter" ref="blVendorRepairLogConverter"/>
+  		<property name="blPartsNeededRepairLogConverter" ref="blPartsNeededRepairLogConverter"/>
+  		<property name="blInHouseRepairLogConverter" ref="blInHouseRepairLogConverter"/>			
 	</bean>
 	
 	<alias name="blDomoOrderEntryPopulator" alias="blDomoOrderEntryPopulator"/>
@@ -993,6 +998,72 @@
 		<property name="populators">
 			<list>
 				<ref bean="blCustomerPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+
+	<alias name="blSerialLogsPopulator" alias="blSerialLogsPopulator"/>
+	<bean id="blSerialLogsPopulator" class="com.bl.facades.populators.BlSerialLogsPopulator"></bean>
+	
+	<alias name="blSerialLogsConverter" alias="blSerialLogsConverter"/>
+	<bean id="blSerialLogsConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.blSerialLog.data.BlSerialLogData" />
+		<property name="populators">
+			<list>
+				<ref bean="blSerialLogsPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blDomoCustomerNotesPopulator" alias="blDomoCustomerNotesPopulator"/>
+	<bean id="blDomoCustomerNotesPopulator" class="com.bl.facades.populators.BlDomoCustomerNotesPopulator"></bean>
+	
+	<alias name="blCustomerNotesConverter" alias="blCustomerNotesConverter"/>
+	<bean id="blCustomerNotesConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.customerNotes.data.CustomerNotesData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoCustomerNotesPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blDomoVendorRepairLogPopulator" alias="blDomoVendorRepairLogPopulator"/>
+	<bean id="blDomoVendorRepairLogPopulator" class="com.bl.facades.populators.BlDomoVendorRepairLogPopulator"></bean>
+	
+	<alias name="blVendorRepairLogConverter" alias="blVendorRepairLogConverter"/>
+	<bean id="blVendorRepairLogConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.vendorRepairLog.data.VendorRepairLogData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoVendorRepairLogPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blDomoPartsNeededRepairLogPopulator" alias="blDomoPartsNeededRepairLogPopulator"/>
+	<bean id="blDomoPartsNeededRepairLogPopulator" class="com.bl.facades.populators.BlDomoPartsNeededRepairLogPopulator"></bean>
+	
+	<alias name="blPartsNeededRepairLogConverter" alias="blPartsNeededRepairLogConverter"/>
+	<bean id="blPartsNeededRepairLogConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoPartsNeededRepairLogPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blDomoInHouseRepairLogPopulator" alias="blDomoInHouseRepairLogPopulator"/>
+	<bean id="blDomoInHouseRepairLogPopulator" class="com.bl.facades.populators.BlDomoInHouseRepairLogPopulator"></bean>
+	
+	<alias name="blInHouseRepairLogConverter" alias="blInHouseRepairLogConverter"/>
+	<bean id="blInHouseRepairLogConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.inHouseRepairLog.data.InHouseRepairLogData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoInHouseRepairLogPopulator"/>
 				</list>
 		</property>
 	</bean>

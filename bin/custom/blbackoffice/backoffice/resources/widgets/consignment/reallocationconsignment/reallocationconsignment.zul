@@ -77,7 +77,7 @@
                             <checkbox class="oms-widget-reallocationconsignment-list-container__checkbox"/>
                             <label value="${each.consignmentEntry.orderEntry.product.code}" width="100%"/>
                             <label value="${each.consignmentEntry.orderEntry.product.name}" width="100%"/>
-                            <label value="${each.consignmentEntry.quantityPending}" width="100%" style="text-align: center;"/>
+                            <label value="${each.consignmentEntry.mainItemNotScannedCount}" width="100%" style="text-align: center;"/>
                             <intbox value="${each.quantityToReallocate}" width="50%" style="margin-left:15px;text-align:center;"
                                     constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
                             <combobox xmlns:w="client" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)"

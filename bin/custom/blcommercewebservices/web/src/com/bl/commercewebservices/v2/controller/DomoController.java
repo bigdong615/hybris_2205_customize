@@ -9,7 +9,6 @@ import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovemen
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
-import de.hybris.platform.commercefacades.user.data.CustomerListData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO;
@@ -35,22 +34,37 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bl.facades.blSerialLog.data.BlSerialLogData;
+import com.bl.facades.blSerialLog.data.BlSerialLogListData;
+import com.bl.facades.blSerialLog.dto.BlSerialLogListWsDTO;
 import com.bl.facades.commercefacades.BlItemsBillingChargeListData;
 import com.bl.facades.commercefacades.CustomerListsData;
 import com.bl.facades.commercefacades.giftcard.data.GiftCardListData;
 import com.bl.facades.commercefacades.giftcard.movement.data.GiftCardMovementListData;
+import com.bl.facades.customerNotes.data.CustomerNotesData;
+import com.bl.facades.customerNotes.data.CustomerNotesListData;
+import com.bl.facades.customerNotes.dto.CustomerNotesListWsDTO;
 import com.bl.facades.domo.BlDomoFacade;
 import com.bl.facades.giftcard.dto.GiftCardListWsDTO;
 import com.bl.facades.giftcardmovements.dto.GiftCardMovementListWsDTO;
+import com.bl.facades.inHouseRepairLog.data.InHouseRepairLogData;
+import com.bl.facades.inHouseRepairLog.data.InHouseRepairLogListData;
+import com.bl.facades.inHouseRepairLog.dto.InHouseRepairLogListWsDTO;
 import com.bl.facades.order.data.OrderEntryListData;
 import com.bl.facades.order.data.OrderListData;
 import com.bl.facades.orders.dto.OrderListWsDTO;
 import com.bl.facades.packageinfo.data.PackagingInfoListData;
 import com.bl.facades.packageinfo.dto.PackagingInfoListWsDTO;
+import com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData;
+import com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogListData;
+import com.bl.facades.partsNeededRepairLog.dto.PartsNeededRepairLogListWsDTO;
 import com.bl.facades.paymentTransaction.data.PaymentTransactionEntryListData;
 import com.bl.facades.paymentTransaction.data.PaymentTransactionListData;
 import com.bl.facades.paymentTransaction.dto.PaymentTransactionEntryListWsDTO;
 import com.bl.facades.paymentTransaction.dto.PaymentTransactionListWsDTO;
+import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
+import com.bl.facades.vendorRepairLog.data.VendorRepairLogListData;
+import com.bl.facades.vendorRepairLog.dto.VendorRepairLogListWsDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -301,7 +315,7 @@ public class DomoController extends BaseCommerceController
 
 		return orderEntryListData;
 	}
-	
+
 	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
 	@RequestMapping(value = "/blItemsBillingCharge", method = RequestMethod.GET)
 	@ResponseBody
@@ -333,7 +347,7 @@ public class DomoController extends BaseCommerceController
 
 		return blItemsBillingChargeListData;
 	}
-	
+
 	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
 	@RequestMapping(value = "/customers", method = RequestMethod.GET)
 	@ResponseBody
@@ -365,5 +379,167 @@ public class DomoController extends BaseCommerceController
 
 		return customerListsData;
 	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/serialLogs", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getBlSerialLogs", value = "Get blSerialLogs", notes = "Returns blSerialLogs")
+	@ApiBaseSiteIdAndUserIdParam
+	public BlSerialLogListWsDTO getBlSerialLogs(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final BlSerialLogListData blSerialLogListData;
+		blSerialLogListData = createblSerialLogListData(blDomoFacade.getBlSerialLogs(pageableData));
+		setTotalCountHeader(response, blSerialLogListData.getPagination());
+		return getDataMapper().map(blSerialLogListData, BlSerialLogListWsDTO.class, fields);
+	}
+
+	protected BlSerialLogListData createblSerialLogListData(final SearchPageData<BlSerialLogData> result)
+	{
+		final BlSerialLogListData blSerialLogListData = new BlSerialLogListData();
+
+		blSerialLogListData.setBlSerialLogList(result.getResults());
+		blSerialLogListData.setSorts(result.getSorts());
+		blSerialLogListData.setPagination(result.getPagination());
+
+		return blSerialLogListData;
+	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/customerNotes", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getCustomerNotes", value = "Get customerNotes", notes = "Returns customerNotes")
+	@ApiBaseSiteIdAndUserIdParam
+	public CustomerNotesListWsDTO getCustomerNotes(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final CustomerNotesListData customerNotesListData;
+		customerNotesListData = createCustomerNotesListData(blDomoFacade.getCustomerNotes(pageableData));
+		setTotalCountHeader(response, customerNotesListData.getPagination());
+		return getDataMapper().map(customerNotesListData, CustomerNotesListWsDTO.class, fields);
+	}
+
+	protected CustomerNotesListData createCustomerNotesListData(final SearchPageData<CustomerNotesData> result)
+	{
+		final CustomerNotesListData customerNotesListData = new CustomerNotesListData();
+
+		customerNotesListData.setCustomerNotesList(result.getResults());
+		customerNotesListData.setSorts(result.getSorts());
+		customerNotesListData.setPagination(result.getPagination());
+
+		return customerNotesListData;
+	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/vendorRepairs", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getVendorRepairs", value = "Get vendorRepairs", notes = "Returns vendorRepairs")
+	@ApiBaseSiteIdAndUserIdParam
+	public VendorRepairLogListWsDTO getVendorRepairs(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final VendorRepairLogListData vendorRepairLogListData;
+		vendorRepairLogListData = createVendorRepairsData(blDomoFacade.getVendorRepairLogs(pageableData));
+		setTotalCountHeader(response, vendorRepairLogListData.getPagination());
+		return getDataMapper().map(vendorRepairLogListData, VendorRepairLogListWsDTO.class, fields);
+	}
+
+	protected VendorRepairLogListData createVendorRepairsData(final SearchPageData<VendorRepairLogData> result)
+	{
+		final VendorRepairLogListData vendorRepairLogListData = new VendorRepairLogListData();
+
+		vendorRepairLogListData.setVendorRepairLogList(result.getResults());
+		vendorRepairLogListData.setSorts(result.getSorts());
+		vendorRepairLogListData.setPagination(result.getPagination());
+
+		return vendorRepairLogListData;
+	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/partsNeededRepairLogs", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getPartsNeededRepairLogs", value = "Get partsNeededRepairLog", notes = "Returns partsNeededRepairLog")
+	@ApiBaseSiteIdAndUserIdParam
+	public PartsNeededRepairLogListWsDTO getPartsNeededRepairLogs(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final PartsNeededRepairLogListData partsNeededRepairLogListData;
+		partsNeededRepairLogListData = createPartsNeededRepairLogListData(blDomoFacade.getPartsNeededRepairLogs(pageableData));
+		setTotalCountHeader(response, partsNeededRepairLogListData.getPagination());
+		return getDataMapper().map(partsNeededRepairLogListData, PartsNeededRepairLogListWsDTO.class, fields);
+	}
+
+	protected PartsNeededRepairLogListData createPartsNeededRepairLogListData(
+			final SearchPageData<PartsNeededRepairLogData> result)
+	{
+		final PartsNeededRepairLogListData partsNeededRepairLogListData = new PartsNeededRepairLogListData();
+
+		partsNeededRepairLogListData.setPartsNeededRepairLogList(result.getResults());
+		partsNeededRepairLogListData.setSorts(result.getSorts());
+		partsNeededRepairLogListData.setPagination(result.getPagination());
+
+		return partsNeededRepairLogListData;
+	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/inHouseRepairLogs", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getInHouseRepairLogs", value = "Get inHouseRepairLogs", notes = "Returns inHouseRepairLogs")
+	@ApiBaseSiteIdAndUserIdParam
+	public InHouseRepairLogListWsDTO getInHouseRepairLogs(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final InHouseRepairLogListData inHouseRepairLogListData;
+		inHouseRepairLogListData = createInHouseRepairLogListData(blDomoFacade.getInHouseRepairLogs(pageableData));
+		setTotalCountHeader(response, inHouseRepairLogListData.getPagination());
+		return getDataMapper().map(inHouseRepairLogListData, InHouseRepairLogListWsDTO.class, fields);
+	}
+
+	protected InHouseRepairLogListData createInHouseRepairLogListData(final SearchPageData<InHouseRepairLogData> result)
+	{
+		final InHouseRepairLogListData inHouseRepairLogListData = new InHouseRepairLogListData();
+
+		inHouseRepairLogListData.setInHouseRepairLogList(result.getResults());
+		inHouseRepairLogListData.setSorts(result.getSorts());
+		inHouseRepairLogListData.setPagination(result.getPagination());
+
+		return inHouseRepairLogListData;
+	}
+
 
 }

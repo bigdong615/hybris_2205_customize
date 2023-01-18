@@ -11,6 +11,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -21,6 +23,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
  */
 public class GUIDAuthenticationSuccessHandler implements AuthenticationSuccessHandler
 {
+	private static final Logger LOG = Logger.getLogger(GUIDAuthenticationSuccessHandler.class);
 	private GUIDCookieStrategy guidCookieStrategy;
 	private AuthenticationSuccessHandler authenticationSuccessHandler;
 
@@ -30,6 +33,54 @@ public class GUIDAuthenticationSuccessHandler implements AuthenticationSuccessHa
 	{
 		getGuidCookieStrategy().setCookie(request, response);
 		getAuthenticationSuccessHandler().onAuthenticationSuccess(request, response, authentication);
+		final String userIp = getUserIp(request);
+		LOG.info("Customer with email id :- " + authentication.getPrincipal() + " Logged in successfully with IP address :- "
+				+ userIp);
+	}
+
+	private String getUserIp(final HttpServletRequest request)
+	{
+		final String trueClient = "True-Client-IP";
+		final String cfConnectingIP = "CF-Connecting-IP";
+		final String forwardFor = "X-Forwarded-For";
+		String shopperIP = request.getHeader(trueClient);
+		String headerUsed = trueClient;
+		if (shopperIP == null)
+		{
+			headerUsed = cfConnectingIP;
+			shopperIP = request.getHeader(cfConnectingIP);
+		}
+		if (shopperIP == null)
+		{
+			headerUsed = forwardFor;
+			final String xfowardedHeader = request.getHeader(forwardFor);
+			// to be extra sure I don't want this to throw an exception for any reason, so I'll add a try catch
+			try
+			{
+				if (StringUtils.isNotBlank(xfowardedHeader))
+				{
+					final String[] headerParts = xfowardedHeader.split(",");
+					if (headerParts.length > 0)
+					{
+						shopperIP = request.getHeader(headerParts[0]);
+					}
+				}
+			}
+			catch (final Exception ex)
+			{
+				LOG.info("Could not assign shopper IP from X-Forward-For header ", ex);
+			}
+		}
+		if (shopperIP == null)
+		{
+			headerUsed = "Remote Address";
+			shopperIP = request.getRemoteAddr();
+		}
+		if (shopperIP == null)
+		{
+			shopperIP = "";
+		}
+		return shopperIP;
 	}
 
 	protected GUIDCookieStrategy getGuidCookieStrategy()
