@@ -192,7 +192,7 @@ public class DefaultBlOrderService implements BlOrderService {
 */
 			if(orderStatus.equals(OrderStatus.COMPLETED)) {
 				commitOrderToAvalara(order);
-				getDefaultBlESPEventService().sendOrderUnboxed((OrderModel) order);
+				//getDefaultBlESPEventService().sendOrderUnboxed((OrderModel) order);
 			}
 		}
 		catch (final ModelSavingException exception)

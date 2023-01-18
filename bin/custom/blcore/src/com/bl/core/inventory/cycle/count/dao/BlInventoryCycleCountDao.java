@@ -26,4 +26,13 @@ public interface BlInventoryCycleCountDao {
      * @return lit of all active SKU's
      */
     Collection<BlProductModel> getAllActiveSKUsWithSerialStatus();
+
+    /**
+     * This method will give list of consignments that has particular serial associated
+     *
+     * @param serial
+     *           product
+     * @return list Consignments
+     */
+    Collection<ConsignmentModel> getAllShippedConsignmentForSerial(final String serial);
 }
