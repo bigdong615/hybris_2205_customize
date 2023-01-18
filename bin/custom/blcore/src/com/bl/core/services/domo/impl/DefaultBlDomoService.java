@@ -14,8 +14,13 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import com.bl.core.domo.BlDomoDao;
 import com.bl.core.model.BlItemsBillingChargeModel;
+import com.bl.core.model.BlSerialLogModel;
+import com.bl.core.model.CustomerNotesModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.model.InHouseRepairLogModel;
+import com.bl.core.model.PartsNeededRepairLogModel;
+import com.bl.core.model.VendorRepairLogModel;
 import com.bl.core.services.domo.BlDomoService;
 
 public class DefaultBlDomoService implements BlDomoService
@@ -79,6 +84,36 @@ public class DefaultBlDomoService implements BlDomoService
 		return getBlDomoDao().getCustomers(pageableData);
 	}
 
+	@Override
+	public SearchPageData<BlSerialLogModel> getBlSerialLogs(final PageableData pageableData)
+	{
+		return getBlDomoDao().getBlSerialLogs(pageableData);
+	}
+
+	@Override
+	public SearchPageData<CustomerNotesModel> getCustomerNotes(final PageableData pageableData)
+	{
+		return getBlDomoDao().getCustomerNotes(pageableData);
+	}
+
+	@Override
+	public SearchPageData<VendorRepairLogModel> getVendorRepairLogs(final PageableData pageableData)
+	{
+		return getBlDomoDao().getVendorRepairLogs(pageableData);
+	}
+
+	@Override
+	public SearchPageData<PartsNeededRepairLogModel> getPartsNeededRepairLogs(final PageableData pageableData)
+	{
+		return getBlDomoDao().getPartsNeededRepairLogs(pageableData);
+
+	}
+
+	@Override
+	public SearchPageData<InHouseRepairLogModel> getInHouseRepairLogs(final PageableData pageableData)
+	{
+		return getBlDomoDao().getInHouseRepairLogs(pageableData);
+	}
 
 	/**
 	 * @return the blDomoDao

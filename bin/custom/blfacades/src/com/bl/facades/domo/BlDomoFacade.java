@@ -15,6 +15,12 @@ import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransaction
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 
+import com.bl.facades.blSerialLog.data.BlSerialLogData;
+import com.bl.facades.customerNotes.data.CustomerNotesData;
+import com.bl.facades.inHouseRepairLog.data.InHouseRepairLogData;
+import com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData;
+import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
+
 
 public interface BlDomoFacade
 {
@@ -82,5 +88,44 @@ public interface BlDomoFacade
 	 */
 	SearchPageData<CustomerData> getCustomers(PageableData pageableData);
 
+	/**
+	 * To fetch blSerialLogData for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of blSerialLogData
+	 */
+	SearchPageData<BlSerialLogData> getBlSerialLogs(final PageableData pageableData);
+
+	/**
+	 * To fetch CustomerNotes for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of CustomerNotes
+	 */
+	SearchPageData<CustomerNotesData> getCustomerNotes(final PageableData pageableData);
+
+	/**
+	 * To fetch VendorRepairLogData for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of VendorRepairLogData
+	 */
+	SearchPageData<VendorRepairLogData> getVendorRepairLogs(final PageableData pageableData);
+
+	/**
+	 * To fetch PartsNeededRepairLogData for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of PartsNeededRepairLogData
+	 */
+	SearchPageData<PartsNeededRepairLogData> getPartsNeededRepairLogs(final PageableData pageableData);
+
+	/**
+	 * To fetch InHouseRepairLogData for the pageable data
+	 *
+	 * @param pageableData
+	 * @return SearchPageData of InHouseRepairLogData
+	 */
+	SearchPageData<InHouseRepairLogData> getInHouseRepairLogs(final PageableData pageableData);
 
 }

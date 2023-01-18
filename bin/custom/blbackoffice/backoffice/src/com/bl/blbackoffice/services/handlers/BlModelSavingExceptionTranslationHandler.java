@@ -6,7 +6,6 @@ import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import java.util.List;
 import java.util.Objects;
 
-import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import org.apache.commons.lang3.StringUtils;
 
 import com.bl.core.constants.BlCoreConstants;
@@ -54,7 +53,7 @@ public class BlModelSavingExceptionTranslationHandler extends ModelExceptionTran
 	private boolean isEligibleForCustomMessage(final Throwable exception)
 	{
 		if ((exception instanceof ModelSavingException || exception.getCause() instanceof ModelSavingException)
-				|| exception instanceof ObjectSavingException || exception instanceof InterceptorException)
+				|| exception instanceof ObjectSavingException)
 		{
 			return isExceptionFromValidInterceptor(exception);
 		}
@@ -98,7 +97,6 @@ public class BlModelSavingExceptionTranslationHandler extends ModelExceptionTran
 		customExceptionObjectsList.add(BlCoreConstants.BL_ORDER_VALIDATE_INTERCEPTOR);
 		customExceptionObjectsList.add(BlCoreConstants.BL_REPAIR_LOG_PREPARE_INTERCEPTOR);
 		customExceptionObjectsList.add(BlCoreConstants.BL_GIFT_CARD_LOG_PREPARE_INTERCEPTOR);
-		customExceptionObjectsList.add(BlCoreConstants.BL_ORDER_ENTRY_VALIDATE_INTERCEPTOR);
 		return customExceptionObjectsList;
 	}
 
