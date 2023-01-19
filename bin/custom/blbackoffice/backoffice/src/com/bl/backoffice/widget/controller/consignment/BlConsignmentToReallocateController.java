@@ -245,7 +245,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     final List<ConsignmentEntryModel> entryModels = new ArrayList<>();
     orderModel.getEntries().forEach(entryModel -> {
       entryModel.getConsignmentEntries().forEach(consEntryModel -> {
-        if (Objects.isNull(consEntryModel.getConsignment())) {
+        if (Objects.isNull(consEntryModel.getConsignment()) || (consEntryModel.getQuantity() < 1)) {
           entryModels.add(consEntryModel);
         }
       });
