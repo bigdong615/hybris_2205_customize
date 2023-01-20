@@ -25,6 +25,12 @@
 		<property name="unallocatedMap" type="java.util.Map&lt;String, Long>"/>
 		<property name="primaryLocation"
 			type="de.hybris.platform.warehousing.data.sourcing.SourcingLocation"/>
+		<property name="newOrderEntryFromBackoffice"
+				  type="boolean"/>
+		<property name="modifiedEntryFromBackoffice"
+				  type="boolean"/>
+		<property name="modifiedQuantityForEntry"
+				  type="Long"/>
 	</bean>
 
 	<bean class="de.hybris.platform.warehousing.data.sourcing.SourcingResult">
