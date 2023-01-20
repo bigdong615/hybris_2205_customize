@@ -8,7 +8,9 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -21,8 +23,10 @@ import com.bl.core.model.CustomerNotesModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.InHouseRepairLogModel;
+import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartsNeededRepairLogModel;
 import com.bl.core.model.VendorRepairLogModel;
+import com.braintree.model.BrainTreePaymentInfoModel;
 
 
 public class DefaultBlDomoDao implements BlDomoDao
@@ -113,7 +117,14 @@ public class DefaultBlDomoDao implements BlDomoDao
 	@Override
 	public SearchPageData<CustomerNotesModel> getCustomerNotes(final PageableData pageableData)
 	{
-		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {c.pk} FROM {CustomerNotes as c}");
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {c.pk} FROM {CustomerNotes! as c}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+	
+	@Override
+	public SearchPageData<NotesModel> getNotes(final PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {c.pk} FROM {Notes! as c}");
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
 
@@ -135,6 +146,25 @@ public class DefaultBlDomoDao implements BlDomoDao
 	public SearchPageData<InHouseRepairLogModel> getInHouseRepairLogs(final PageableData pageableData)
 	{
 		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {i.pk} FROM {InHouseRepairLog as i}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+	
+	@Override
+	public SearchPageData<AddressModel> getAddresses(PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {a.pk} FROM {Address as a}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+	@Override
+	public SearchPageData<BrainTreePaymentInfoModel> getBrainTreePaymentInfos(PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {b.pk} FROM {BrainTreePaymentInfo as b}");
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+	@Override
+	public SearchPageData<StockLevelModel> getStockLevels(PageableData pageableData)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {s.pk} FROM {StockLevel as s}");
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
 
