@@ -7,19 +7,19 @@ $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCata
 $lang=en
 
 # Content Pages
-UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]             ; title[lang=$lang]
-                   ;                         ; add-edit-address             ; "Add/Edit Address"
-                   ;                         ; address-book                 ; "Address Book"
-                   ;                         ; orders                       ; "Order History"
-                   ;                         ; updatePassword               ; "Update Forgotten Password"
-                   ;                         ;saved-carts                   ;"Saved Carts"
-                   ;                         ;bookmarks                     ; "Bookmarks"
-                   ;                         ;verificationImages            ; "Verification Images"
-                   ;                         ; creditCarts                  ; "Credit Carts"
-                   ;                         ;update-email                  ;"Update Email Page"
-                   ;						 ; pay-bill					    ;"Bill Payment Page"				 
-				   ;						 ; pay-bill-success			    ;"Bill Payment Success Page"
-				   ;                         ; modify-payment               ;"Modify Payment Page"
-                   ;                         ; deposit-payment         		; "Deposit Payment Page"         
-                   ;                         ; deposit-payment-success 		; "Deposit Payment Success Page" 
-				           		 
+UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]        ; title[lang=$lang]             
+                   ;                         ; add-edit-address        ; "Add/Edit Address"            
+                   ;                         ; address-book            ; "Address Book"                
+                   ;                         ; orders                  ; "Order History"               
+                   ;                         ; updatePassword          ; "Update Forgotten Password"   
+                   ;                         ; saved-carts             ; "Saved Carts"                 
+                   ;                         ; bookmarks               ; "Bookmarks"                   
+                   ;                         ; verificationImages      ; "Verification Images"         
+                   ;                         ; creditCarts             ; "Credit Carts"                
+                   ;                         ; update-email            ; "Update Email Page"           
+                   ;                         ; pay-bill                ; "Bill Payment Page"           
+                   ;                         ; pay-bill-success        ; "Bill Payment Success Page"   
+                   ;                         ; modify-payment          ; "Modify Payment Page"         
+                   ;                         ; deposit-payment         ; "Deposit Payment Page"        
+                   ;                         ; deposit-payment-success ; "Deposit Payment Success Page"
+				           		  

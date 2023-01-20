@@ -4,14 +4,14 @@ $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCata
 # Language
 $lang=en
 
-INSERT_UPDATE BreadcrumbComponent;$contentCV[unique=true];uid[unique=true];name;&componentRef
-                                 ;;breadcrumbComponent;Breadcrumb CMS Component;breadcrumbComponent
+INSERT_UPDATE BreadcrumbComponent ; $contentCV[unique=true] ; uid[unique=true]    ; name                     ; &componentRef      
+                                  ;                         ; breadcrumbComponent ; Breadcrumb CMS Component ; breadcrumbComponent
 
 # CMS ProductReferences Components
-INSERT_UPDATE ProductReferencesComponent;$contentCV[unique=true];uid[unique=true];name        ;productReferenceTypes(code);maximumNumberProducts;&componentRef
-                                        ;                      ;CrossSelling    ;Cross Selling;ACCESSORIES,OTHERS,SIMILAR,CROSSELLING;50;CrossSelling
+INSERT_UPDATE ProductReferencesComponent ; $contentCV[unique=true] ; uid[unique=true] ; name          ; productReferenceTypes(code)            ; maximumNumberProducts ; &componentRef
+                                         ;                         ; CrossSelling     ; Cross Selling ; ACCESSORIES,OTHERS,SIMILAR,CROSSELLING ; 50                    ; CrossSelling 
 
 
-INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid, $contentCV)
-                         ;;BreadcrumbSlot;breadcrumbComponent
-                         ;;CrossSellingSlot;CrossSelling
+INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true] ; cmsComponents(uid, $contentCV)
+                          ;                         ; BreadcrumbSlot   ; breadcrumbComponent           
+                          ;                         ; CrossSellingSlot ; CrossSelling                  
