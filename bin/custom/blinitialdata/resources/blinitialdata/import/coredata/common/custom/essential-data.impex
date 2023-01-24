@@ -194,7 +194,7 @@ INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 ;blOrderBillFeedJob; 0 0 0 * * ?
 ;blReshufflerCronJob; 0 0 0 * * ?
 ;blUsedGearCartAbandonmentCronJob; 0 0/5 * * * ?
-;blVoidAuthTransactionCronJob; 0 0 0 * * ?
+;blVoidAuthTransactionCronJob; 0 0 0 ? * TUE-FRI *
 
 INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
                                     ; VIDEO                                   ; 28               
