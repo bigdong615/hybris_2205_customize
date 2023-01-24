@@ -532,6 +532,7 @@
         <maptype code="ConsignmentEntryStatusMap" argumenttype="java.lang.String" returntype="ConsignmentEntryStatusEnum" />
         <maptype code="BillingChargesMap" argumenttype="java.lang.String" returntype="BlItemCharges" />
         <maptype code="InventoryCycleCountScanSKUDetails" argumenttype="BlProduct" returntype="ModifiedSerialProduct" />
+        <maptype code="IpVelocityCounter" argumenttype="java.lang.String" returntype="java.lang.Integer" />
     </maptypes>
 
 
@@ -4176,6 +4177,10 @@
                 <persistence type="property" />
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                 <description>Price of all the orders which are in status shipped or prior to shipped</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="ipCounter" type="IpVelocityCounter">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
               </attribute>
             </attributes>
             </itemtype>
