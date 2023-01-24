@@ -259,6 +259,9 @@
 	<bean id="loginAuthenticationFailureHandler" class="com.bl.storefront.security.LoginAuthenticationFailureHandler" >
         <property name="bruteForceAttackCounter" ref="bruteForceAttackCounter" />
 		<property name="defaultFailureUrl" value="/login?error=true"/>
+		<property name="configurationService" ref="configurationService" />
+		<property name="modelService" ref="modelService" />
+		<property name="userService" ref="userService" />
 	</bean>
 
 	<bean id="loginCheckoutAuthenticationFailureHandler" class="com.bl.storefront.security.LoginAuthenticationFailureHandler" >
