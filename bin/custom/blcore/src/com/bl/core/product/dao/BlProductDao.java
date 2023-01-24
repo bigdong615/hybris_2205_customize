@@ -57,4 +57,10 @@ public interface BlProductDao extends ProductDao {
 
   public List<StockLevelModel> getStockLevelsForSerial(String serialCode);
 
+  /**
+   * Get Serial by SerialId
+   * @param productId
+   * @return
+   */
+    BlSerialProductModel getSerialByID(final String productId);
 }

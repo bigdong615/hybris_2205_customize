@@ -76,7 +76,13 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
   private static final String GET_USED_PRODUCTS_ON_SALE_QUERY = "SELECT {p.pk} from {blProduct as p JOIN Catalogversion as cv ON {cv.pk}={p.catalogversion} and {cv.version} like ?version JOIN Catalog as c ON {c.pk}={cv.catalog} and {c.id} like ?catalogCode} where {p.forSale} = ?isForSale and {p.isNew} = ?isNew";
 
   private static final String GET_STOCKLEVELS_FOR_SERIAL_QUERY = "SELECT {s.pk} from {stockLevel as s} where {s.serialProductCode} = ?serialCode";
-  /**
+
+  private static final String GET_BLSERIALPRODUCTS_FOR_SERIAL_ID_QUERY = "SELECT {pk} from {" + BlSerialProductModel._TYPECODE
+            + " as p} WHERE {p:" + BlSerialProductModel.PRODUCTID + "} = ?productId" + " AND {p:" + BlSerialProductModel.CATALOGVERSION
+            + "} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE + " as cv} WHERE {cv:" + CatalogVersionModel.CATALOG + "} in ({{SELECT {c:pk} FROM {" + CatalogModel._TYPECODE
+            + " as c} WHERE {c:" + CatalogModel.ID + "} = ?catalog}})}})";
+
+    /**
    * @param typecode
    */
   public DefaultBlProductDao(final String typecode) {
@@ -147,6 +153,26 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 		  return null;
 	  }
 	  return serialProducts.get(0);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public BlSerialProductModel getSerialByID(final String serialID)
+  {
+	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_BLSERIALPRODUCTS_FOR_SERIAL_ID_QUERY);
+	  fQuery.addQueryParameter(BlCoreConstants.PRODUCT_ID, serialID);
+	  fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CATALOG, BlCoreConstants.CATALOG_VALUE);
+	  final SearchResult<BlSerialProductModel> result = getFlexibleSearchService().search(fQuery);
+	  final List<BlSerialProductModel> serialProducts = result.getResult();
+	  if (CollectionUtils.isEmpty(serialProducts))
+	  {
+		  BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No serial product found for serialId: {}",
+				  serialID);
+		  return null;
+	  }
+	  return serialProducts.iterator().next();
   }
 
   /**
