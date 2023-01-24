@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import de.hybris.platform.acceleratorservices.storefront.data.MetaElementData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
@@ -10,10 +11,13 @@ import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.AbstractPageModel;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 
+import java.util.List;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,10 +54,13 @@ public class HomePageController extends AbstractPageController
 	@Resource(name = "blEmailSubscriptionFacade")
 	private BlEmailSubscriptionFacade blEmailSubscriptionFacade;
 
+	@Value("${bl.google.site.verification}")
+	private String googleSiteVerification;
+
 	@GetMapping
 	public String home(@RequestParam(value = WebConstants.CLOSE_ACCOUNT, defaultValue = "false") final boolean closeAcc,
 			@RequestParam(value = LOGOUT, defaultValue = "false") final boolean logout, final Model model,
-			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+			final RedirectAttributes redirectModel,final HttpServletRequest request) throws CMSItemNotFoundException
 	{
 		if (logout)
 		{
@@ -62,6 +69,10 @@ public class HomePageController extends AbstractPageController
 		final ContentPageModel contentPage = getContentPageForLabelOrId(null);
 		storeCmsPageInModel(model, contentPage);
 		setUpMetaDataForContentPage(model, contentPage);
+		if(request.getRequestURL().toString().contains("s1")){
+			final List<MetaElementData> metadata = (List<MetaElementData>) model.getAttribute("metatags");
+			metadata.add(createMetaElement("google-site-verification", googleSiteVerification));
+		}
 		updatePageTitle(model, contentPage);
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
 		final String currentCartType = blCartFacade.identifyCartType();

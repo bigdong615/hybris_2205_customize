@@ -3377,6 +3377,11 @@
                         <modifiers write="false"/>
                         <persistence type="dynamic" attributeHandler="blSumOfGearValueOnOrderHandler"/>
                     </attribute>
+                    <attribute qualifier="shopperIp" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Capture the IP address of the buyer</description>
+                    </attribute>
                 </attributes>
 
             </itemtype>
@@ -4215,6 +4220,27 @@
 					<description>Shipment Package tracking number</description>
 					<persistence type="property" />
 				</attribute>
+
+                    <attribute qualifier="trackingNotes" type="java.lang.String">
+                        <description>tracking Notes for Return</description>
+                        <persistence type="property">
+                            <columntype database="oracle">
+                                <value>CLOB</value>
+                            </columntype>
+                            <columntype database="sap">
+                                <value>NCLOB</value>
+                            </columntype>
+                            <columntype database="mysql">
+                                <value>TEXT</value>
+                            </columntype>
+                            <columntype database="sqlserver">
+                                <value>TEXT</value>
+                            </columntype>
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                    </attribute>
 
 				<attribute qualifier="inBoundGraphicImage" type="java.lang.String">
 					<description>Graphic Image</description>
