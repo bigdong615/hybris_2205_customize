@@ -61,7 +61,7 @@ public class DefaultBlExternalTaxesService extends DefaultExternalTaxesService {
       abstractOrder.setTotalTax(0.0);
       abstractOrder.setAvalaraTaxCalculated(false);
     }
-    BlLogger.logMessage(LOG,Level.INFO,"BlCalculateExternalTaxesStratergy : calculateExternalTaxes : ERROR : All taxes empty-3 " ,abstractOrder.getCode() + " shouldCalculateExternalTaxes: " + getDecideExternalTaxesStrategy().shouldCalculateExternalTaxes);
+    BlLogger.logMessage(LOG,Level.INFO,"BlCalculateExternalTaxesStratergy : calculateExternalTaxes : ERROR : All taxes empty-3 " ,abstractOrder.getCode() + " shouldCalculateExternalTaxes: " + getDecideExternalTaxesStrategy().shouldCalculateExternalTaxes(abstractOrder));
     abstractOrder.setAvalaraTaxCalculated(false);
     abstractOrder.setTotalTax(0.0);
     return false;
