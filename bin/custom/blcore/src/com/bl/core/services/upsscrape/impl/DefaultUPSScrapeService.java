@@ -257,20 +257,20 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
       else if(Objects.nonNull(stringObjectMap.get(BlintegrationConstants.STATUS_CODE)) &&
           ((String) stringObjectMap.get(BlintegrationConstants.STATUS_CODE)).equalsIgnoreCase(BlintegrationConstants.OT)){
         String description = (String) stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION);
-        updatePackageDetailsInTransit(packagingInfoModel, abstractOrderModel, description);
+        updatePackageDetailsInTransit(stringObjectMap, packagingInfoModel, abstractOrderModel, description);
         BlLogger.logMessage(LOG , Level.INFO , "Package not reached warehouse yet");
       }
       else if(Objects.nonNull(stringObjectMap.get(BlintegrationConstants.STATUS_CODE)) &&
           ((String) stringObjectMap.get(BlintegrationConstants.STATUS_CODE)).equalsIgnoreCase(BlintegrationConstants.DS)){
         String description = (String) stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION);
-        updatePackageDetailsInTransit(packagingInfoModel, abstractOrderModel, description);
+        updatePackageDetailsInTransit(stringObjectMap, packagingInfoModel, abstractOrderModel, description);
         BlLogger.logMessage(LOG , Level.INFO , "Package is being processed in UPS facility");
       }
       else if(Objects.nonNull(stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)) &&
           (((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.M)
       || ((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.MV))){
         String description = (String) stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION);
-        updatePackageDetailsInTransit(packagingInfoModel, abstractOrderModel, description);
+        updatePackageDetailsInTransit(stringObjectMap, packagingInfoModel, abstractOrderModel, description);
         BlLogger.logMessage(LOG , Level.INFO , "Package is not shipped back yet");
       }
       else {
@@ -285,16 +285,10 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
    * @param abstractOrderModel
    * @param description
    */
-  private void updatePackageDetailsInTransit(final PackagingInfoModel packagingInfoModel,final AbstractOrderModel abstractOrderModel,final String description) {
+  private void updatePackageDetailsInTransit(final Map<String, Object>  stringObjectMap, final PackagingInfoModel packagingInfoModel,final AbstractOrderModel abstractOrderModel,final String description) {
     BlLogger.logFormatMessageInfo(LOG , Level.INFO , "Package {} having Tracking Number {} for Order {} having message {} from UPS", packagingInfoModel.getPk(),packagingInfoModel.getInBoundTrackingNumber(), abstractOrderModel.getCode(), description);
-    packagingInfoModel.setNumberOfRepetitions(0);
-    packagingInfoModel.setPackageReturnedToWarehouse(Boolean.FALSE);
-    packagingInfoModel.setIsScrapeScanCompleted(Boolean.FALSE);
     packagingInfoModel.setTrackingNotes(description + BlCoreConstants.UNDERSCORE+ new Date());
-    getService().save(packagingInfoModel);
-    getService().refresh(packagingInfoModel);
-    getService().save(abstractOrderModel);
-    getService().refresh(abstractOrderModel);
+    updateSerialStatusBasedIfDeliveryIsLateOrNotFound(stringObjectMap , abstractOrderModel , packagingInfoModel);
   }
 
   /**
