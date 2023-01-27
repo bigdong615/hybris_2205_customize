@@ -106,6 +106,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
           orderModel.setIsOrderSubmit(Boolean.TRUE);
           orderModel.setOrderModifiedDate(new Date());
           getCalculationService().calculateTotals(orderModel, false);
+		  BlLogger.logMessage(LOG,Level.INFO,"DefaultBlCommercePlaceOrderStrategy : placeOrder : Before calculateExternalTaxes " + abstractOrder.getCode());
           getExternalTaxesService().calculateExternalTaxes(orderModel);
         }
         catch (final CalculationException ex)
