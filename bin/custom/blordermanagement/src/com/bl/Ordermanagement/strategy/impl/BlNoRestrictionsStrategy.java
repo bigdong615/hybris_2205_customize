@@ -15,8 +15,10 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.sourcing.strategy.AbstractSourcingStrategy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -68,14 +70,17 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
           allResultQuantityAllocated += result.getAllocation().get(entry);
         }
       }
-
-      if (!isAquatechProductInEntry(entry) && allResultQuantityAllocated < entry.getQuantity()) {
+      Long entryQuantity = BooleanUtils.isTrue(sourcingContext.isModifiedEntryFromBackoffice()) ? sourcingContext.getModifiedQuantityForEntry() : entry.getQuantity();
+      if (!isAquatechProductInEntry(entry) && allResultQuantityAllocated < entryQuantity) {
         allEntrySourceInComplete.add(new AtomicBoolean(true));
-        entry.setUnAllocatedQuantity(entry.getQuantity() - allResultQuantityAllocated);
+        entry.setUnAllocatedQuantity(entryQuantity - allResultQuantityAllocated);
       }
     });
-
-    modelService.saveAll(sourcingContext.getOrderEntries());
+    try{
+      modelService.saveAll(sourcingContext.getOrderEntries());
+    }catch(final Exception ex){
+      BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "An exception occurred while updating OrderEntry Unallocated Quantity ", ex);
+    }
 
     return !allEntrySourceInComplete.isEmpty() && allEntrySourceInComplete.stream()
         .allMatch(AtomicBoolean::get);
@@ -102,7 +107,11 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     //can not be sourced all the products from all warehouses
     sourcingContext.getResult().setComplete(false);
     AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
-    order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
+
+    if(Objects.isNull(sourcingContext.isNewOrderEntryFromBackoffice()) || BooleanUtils.isFalse(sourcingContext.isNewOrderEntryFromBackoffice())) {
+      order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
+    }
+
     modelService.save(order);
 
   }

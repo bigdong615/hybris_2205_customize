@@ -1,11 +1,13 @@
 package com.bl.Ordermanagement.services;
 
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import de.hybris.platform.warehousing.sourcing.SourcingService;
 
 /**
  * This is used to source the order.
+ *  @param newOrderEntry the new order entry
  * @author Sunil
  */
 public interface BlSourcingService extends SourcingService {
@@ -16,7 +18,7 @@ public interface BlSourcingService extends SourcingService {
    *
    * @return SourcingResults The SourcingResults
    */
-  public SourcingResults sourceOrder(final AbstractOrderModel order);
+  public SourcingResults sourceOrder(final AbstractOrderModel order, final AbstractOrderEntryModel newOrderEntry);
 
   /**
    * This method updates the actual rental start date for internal transfer cases.
