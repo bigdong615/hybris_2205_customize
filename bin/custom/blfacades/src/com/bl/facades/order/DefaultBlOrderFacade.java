@@ -590,6 +590,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     isTaxApplicableOnPayBillCharges(isTaxBeApplied, source);
     if(isTaxBeApplied.get()) {
       source.setUnPaidBillPresent(true);
+      BlLogger.logMessage(LOG,Level.INFO,"DefaultBlOrderFacade : applyTaxOnPayBillCharges : Before calculateExternalTaxes " + source.getCode());
       getDefaultBlExternalTaxesService().calculateExternalTaxes(source);
     }
   }

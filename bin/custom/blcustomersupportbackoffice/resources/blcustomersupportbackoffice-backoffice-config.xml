@@ -35,9 +35,11 @@
 				</wz:content>
 				<wz:navigation id="orderEntryStep1.navigation">
 					<wz:cancel/>
+<!--
 					<wz:done>
 						<wz:save property="orderEntry"/>
 					</wz:done>
+-->
 				</wz:navigation>
 			</wz:step>
 		</wz:flow>
