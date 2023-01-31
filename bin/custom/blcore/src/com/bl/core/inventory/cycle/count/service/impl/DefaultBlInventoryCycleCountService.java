@@ -240,9 +240,9 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
         final Collection<ConsignmentModel> shippedConsignments = getBlInventoryCycleCountDao().getAllShippedConsignmentForSerial(serial.getCode());
         if(CollectionUtils.isNotEmpty(shippedConsignments)) {
             for (final ConsignmentModel shippedConsignment : shippedConsignments) {
-                if (DateUtils.isSameDay(Calendar.getInstance().getTime(), shippedConsignment.getOptimizedShippingEndDate())) {
+                if (null != shippedConsignment.getOptimizedShippingEndDate() && DateUtils.isSameDay(Calendar.getInstance().getTime(), shippedConsignment.getOptimizedShippingEndDate())) {
                     missingList.add(serial);
-                } else if (Calendar.getInstance().getTime().before(shippedConsignment.getOptimizedShippingEndDate())) {
+                } else if (null != shippedConsignment.getOptimizedShippingEndDate() && Calendar.getInstance().getTime().before(shippedConsignment.getOptimizedShippingEndDate())) {
                     successScannedSerials.add(serial);
                     modifiedScannedSerials.remove(serial.getBarcode());
                 }
