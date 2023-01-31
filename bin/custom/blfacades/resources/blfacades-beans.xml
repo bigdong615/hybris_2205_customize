@@ -485,6 +485,7 @@
         <property name="userId" type="java.lang.String"/>	
         <property name="entrygroups" type="java.lang.String"/>	
         <property name="totaltaxvaluesinternal" type="java.lang.String"/>
+        <property name="shopperIp" type="java.lang.String"/>
   </bean>
   
   	<bean class="de.hybris.platform.commercefacades.order.data.OrderData" extends="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
@@ -680,6 +681,7 @@
         <property name="userId" type="java.lang.String"/>		
         <property name="entrygroups" type="java.lang.String"/>		
         <property name="totaltaxvaluesinternal" type="java.lang.String"/>
+        <property name="shopperIp" type="java.lang.String"/>
 	</bean>
   
 
