@@ -32,14 +32,16 @@ public class BlTaxServiceResponsePopulator implements Populator<TaxResponse, Ext
       throws ConversionException {
     if (null != source && CollectionUtils.isNotEmpty(source.getTaxLines()))
     {
+   	int index = 0;
       for (final TaxLineResponse taxLineResp : source.getTaxLines())
       {
-        if (shouldConvertLine(source.getTaxLines(), Integer.parseInt(taxLineResp.getLineNumber()), true))
+     	  if (shouldConvertLine(source.getTaxLines(), index, true))
         {
           final int entryNumber = Integer.parseInt(taxLineResp.getLineNumber());
           target.setTaxesForOrderEntry(entryNumber,
               getLineTaxValues(taxLineResp, BltaxapiConstants.USD));
         }
+     	  index ++;
       }
       target.setShippingCostTaxes(
           getDefaultBlTaxValueConversionService().getShippingTaxes(source.getTaxLines(), BltaxapiConstants.USD, true));
