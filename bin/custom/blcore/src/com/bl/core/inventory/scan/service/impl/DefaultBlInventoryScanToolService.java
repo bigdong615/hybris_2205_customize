@@ -906,7 +906,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * method is used to check scanned serials are valid on not i.e entered barcode serial belongs to given consignment and that are not already included serial.
+	 * method is used to check scanned serials are valid on not i.e entered barcode serial belongs to
+	 * given consignment and that are not already included serial.
 	 **/
 	private Map<String, List<BlProductModel>> validateBarcodedSerial(
 			final List<BlSerialProductModel> scannedSerialProduct,
