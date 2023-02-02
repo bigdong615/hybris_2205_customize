@@ -232,7 +232,7 @@ public class BlShippingScanController extends DefaultWidgetController
 		{
 			final Map<String, List<BlProductModel>> scannedBarcodeMap = getBlInventoryScanToolService().verifyShippingScan(barcodes,
 					selectedConsignment);
-			createResponseMsgForShippingScan(scannedBarcodeMap);
+			createResponseMsg(scannedBarcodeMap);
 		}
 		else
 		{
@@ -300,6 +300,47 @@ public class BlShippingScanController extends DefaultWidgetController
 		}
 	}
 
+	private void createResponseMsg(final Map<String, List<BlProductModel>> scannedBarcodeMap) {
+
+		if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.SUCCESS_SERIAL)
+				&& !scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.INCLUDED_SERIAL)
+				&& !scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.OUTSIDER_BARCODE)) {
+			BlLogger
+					.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
+			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
+		} else {
+			final StringBuffer message = new StringBuffer(
+					"Scan result for " + selectedConsignment.getOrder().getCode() + " order");
+			if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.SUCCESS_SERIAL)) {
+				message.append("\nAll successful scan barcode :");
+				createMessage(message, scannedBarcodeMap, BlInventoryScanLoggingConstants.SUCCESS_SERIAL);
+			}
+			if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.INCLUDED_SERIAL)) {
+				message.append("\nAlready included barcode :");
+				createMessage(message, scannedBarcodeMap, BlInventoryScanLoggingConstants.INCLUDED_SERIAL);
+			}
+			if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.OUTSIDER_BARCODE)) {
+				message.append("\nThis barcode not belongs to current consignment :");
+				createMessage(message, scannedBarcodeMap, BlInventoryScanLoggingConstants.OUTSIDER_BARCODE);
+			}
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, message.toString());
+			Messagebox.show(message.toString());
+		}
+
+	}
+
+	private void createMessage(StringBuffer message ,final Map<String, List<BlProductModel>> scannedBarcodeMap ,String key){
+
+		List<BlProductModel> blProduct = scannedBarcodeMap.get(key);
+		blProduct.forEach(blProductModel ->{
+			if(blProductModel instanceof BlSerialProductModel) {
+				message.append(((BlSerialProductModel) blProductModel).getBarcode()).append(", ");
+			}
+		});
+		message.deleteCharAt(message.length()-1);
+		message.deleteCharAt(message.length()-1);
+	}
 	/**
 	 * @param scannedBarcodeMap
 	 */
