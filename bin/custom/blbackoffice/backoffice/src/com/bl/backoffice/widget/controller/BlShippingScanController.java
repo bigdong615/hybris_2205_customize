@@ -300,6 +300,10 @@ public class BlShippingScanController extends DefaultWidgetController
 		}
 	}
 
+	/**
+	 * Create response message for shipping scan
+	 * @param scannedBarcodeMap
+	 */
 	private void createResponseMsg(final Map<String, List<BlProductModel>> scannedBarcodeMap) {
 
 		if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.SUCCESS_SERIAL)
@@ -340,6 +344,7 @@ public class BlShippingScanController extends DefaultWidgetController
 		});
 		message.deleteCharAt(message.length()-1);
 		message.deleteCharAt(message.length()-1);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, message.toString(), blProduct);
 	}
 	/**
 	 * @param scannedBarcodeMap
