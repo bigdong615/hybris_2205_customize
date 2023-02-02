@@ -310,8 +310,7 @@ public class BlShippingScanController extends DefaultWidgetController
 		if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.SUCCESS_SERIAL)
 				&& !scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.INCLUDED_SERIAL)
 				&& !scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.OUTSIDER_BARCODE)) {
-			BlLogger
-					.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
+			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 		} else {
