@@ -848,6 +848,7 @@
 	<bean id="defaultBlConsignmentFacade" class="com.bl.facades.consignment.impl.DefaultBLConsignmentFacade">
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 		<property name="consignmentEntryConverter" ref="consignmentEntryConverter"/>
+		<property name="consignmentConverter" ref="consignmentConverter"/>
 	</bean>
 	
 	<alias name="defaultBlDomoFacade" alias="blDomoFacade"/>
@@ -862,11 +863,15 @@
 		<property name="blorderEntryConverter" ref="blorderEntryConverter"/>
 		<property name="blItemsBillingChargeConverter" ref="blItemsBillingChargeConverter"/>
 		<property name="blCustomerConverter" ref="blCustomerConverter"/>
+		<property name="blNotesConverter" ref="blNotesConverter"/>
 		<property name="blSerialLogsConverter" ref="blSerialLogsConverter"/>
   		<property name="blCustomerNotesConverter" ref="blCustomerNotesConverter"/>
   		<property name="blVendorRepairLogConverter" ref="blVendorRepairLogConverter"/>
   		<property name="blPartsNeededRepairLogConverter" ref="blPartsNeededRepairLogConverter"/>
-  		<property name="blInHouseRepairLogConverter" ref="blInHouseRepairLogConverter"/>			
+  		<property name="blInHouseRepairLogConverter" ref="blInHouseRepairLogConverter"/>
+  		<property name="domoAddressConvertor" ref="domoAddressConvertor"/>
+  		<property name="domoBrainTreePaymentInfoConvertor" ref="domoBrainTreePaymentInfoConvertor"/>
+  		<property name="blStockLevelConvertor" ref="blStockLevelConvertor"/>			
 	</bean>
 	
 	<alias name="blDomoOrderEntryPopulator" alias="blDomoOrderEntryPopulator"/>
@@ -1064,6 +1069,55 @@
 		<property name="populators">
 			<list>
 				<ref bean="blDomoInHouseRepairLogPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<bean id="domoAddressPopulator" class="com.bl.facades.populators.DomoAddressPopulator" parent="defaultBlAddressPopulator"/>
+	
+	<alias name="domoAddressConvertor" alias="domoAddressConvertor"/>
+	<bean id="domoAddressConvertor" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.user.data.AddressData" />
+		<property name="populators">
+			<list>
+				<ref bean="domoAddressPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<bean id="domoBrainTreePaymentInfoPopulator" class="com.bl.facades.populators.DomoBrainTreePaymentInfoPopulator"/>
+	
+	<alias name="domoBrainTreePaymentInfoConvertor" alias="domoBrainTreePaymentInfoConvertor"/>
+	<bean id="domoBrainTreePaymentInfoConvertor" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.braintree.hybris.data.BrainTreePaymentInfoData" />
+		<property name="populators">
+			<list>
+				<ref bean="domoBrainTreePaymentInfoPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<bean id="blStockLevelPopulator" class="com.bl.facades.populators.BlStockLevelPopulator" parent="warehousingStockLevelPopulator"></bean>
+	
+	<alias name="blStockLevelConvertor" alias="blStockLevelConvertor"/>
+	<bean id="blStockLevelConvertor" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.warehousingfacades.product.data.StockLevelData" />
+		<property name="populators">
+			<list>
+				<ref bean="blStockLevelPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blDomoNotesPopulator" alias="blDomoNotesPopulator"/>
+	<bean id="blDomoNotesPopulator" class="com.bl.facades.populators.BlDomoCustomerNotesPopulator"></bean>
+	
+	<alias name="blNotesConverter" alias="blNotesConverter"/>
+	<bean id="blNotesConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.customerNotes.data.NotesData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoNotesPopulator"/>
 				</list>
 		</property>
 	</bean>

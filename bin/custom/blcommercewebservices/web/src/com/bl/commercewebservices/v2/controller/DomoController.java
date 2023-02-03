@@ -8,15 +8,22 @@ import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
+import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.commercefacades.user.data.AddressListData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryListWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoListWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.user.address.AddressListWsDTO;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
+import de.hybris.platform.warehousingfacades.product.data.StockLevelData;
+import de.hybris.platform.warehousingfacades.product.data.StockLevelListData;
+import de.hybris.platform.warehousingwebservices.dto.product.StockLevelListWsDTO;
 import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
@@ -43,7 +50,10 @@ import com.bl.facades.commercefacades.giftcard.data.GiftCardListData;
 import com.bl.facades.commercefacades.giftcard.movement.data.GiftCardMovementListData;
 import com.bl.facades.customerNotes.data.CustomerNotesData;
 import com.bl.facades.customerNotes.data.CustomerNotesListData;
+import com.bl.facades.customerNotes.data.NotesData;
+import com.bl.facades.customerNotes.data.NotesListData;
 import com.bl.facades.customerNotes.dto.CustomerNotesListWsDTO;
+import com.bl.facades.customerNotes.dto.NotesListWsDTO;
 import com.bl.facades.domo.BlDomoFacade;
 import com.bl.facades.giftcard.dto.GiftCardListWsDTO;
 import com.bl.facades.giftcardmovements.dto.GiftCardMovementListWsDTO;
@@ -65,6 +75,8 @@ import com.bl.facades.paymentTransaction.dto.PaymentTransactionListWsDTO;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogListData;
 import com.bl.facades.vendorRepairLog.dto.VendorRepairLogListWsDTO;
+import com.braintree.hybris.data.BrainTreePaymentInfoData;
+import com.braintree.hybris.data.BrainTreePaymentInfoListData;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -541,5 +553,125 @@ public class DomoController extends BaseCommerceController
 		return inHouseRepairLogListData;
 	}
 
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/address", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getAddress", value = "Get Address", notes = "Returns Addresses")
+	@ApiBaseSiteIdAndUserIdParam
+	public AddressListWsDTO getAddress(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final AddressListData addressListData;
+		addressListData = createAddressesListData(blDomoFacade.getAddresses(pageableData));
+		setTotalCountHeader(response, addressListData.getPagination());
+		return getDataMapper().map(addressListData, AddressListWsDTO.class, fields);
+	}
+
+	protected AddressListData createAddressesListData(final SearchPageData<AddressData> result)
+	{
+		final AddressListData addressListData = new AddressListData();
+		addressListData.setAddresses(result.getResults());
+		addressListData.setSorts(result.getSorts());
+		addressListData.setPagination(result.getPagination());
+		return addressListData;
+	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/brainTreePaymentInfo", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getBrainTreePaymentInfoData", value = "Get BrainTree Payment Info", notes = "Returns BrainTree Payment Info Data")
+	@ApiBaseSiteIdAndUserIdParam
+	public BrainTreePaymentInfoListWsDTO getBrainTreePaymentInfoData(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final BrainTreePaymentInfoListData brainTreePaymentInfoListData;
+		brainTreePaymentInfoListData = createBrainTreePaymentInfoListData(blDomoFacade.getBrainTreePaymentInfo(pageableData));
+		setTotalCountHeader(response, brainTreePaymentInfoListData.getPagination());
+		return getDataMapper().map(brainTreePaymentInfoListData, BrainTreePaymentInfoListWsDTO.class, fields);
+	}
+
+	protected BrainTreePaymentInfoListData createBrainTreePaymentInfoListData(
+			final SearchPageData<BrainTreePaymentInfoData> result)
+	{
+		final BrainTreePaymentInfoListData brainTreePaymentInfoListData = new BrainTreePaymentInfoListData();
+		brainTreePaymentInfoListData.setBrainTreePaymentInfo(result.getResults());
+		brainTreePaymentInfoListData.setSorts(result.getSorts());
+		brainTreePaymentInfoListData.setPagination(result.getPagination());
+		return brainTreePaymentInfoListData;
+	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/stockLevels", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getStockLevels", value = "Get StockLevels", notes = "Returns StockLevels")
+	@ApiBaseSiteIdAndUserIdParam
+	public StockLevelListWsDTO getStockLevels(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final StockLevelListData stockLevelListData;
+		stockLevelListData = createstockLevelListData(blDomoFacade.getStockLevels(pageableData));
+		setTotalCountHeader(response, stockLevelListData.getPagination());
+		return getDataMapper().map(stockLevelListData, StockLevelListWsDTO.class, fields);
+	}
+
+	protected StockLevelListData createstockLevelListData(final SearchPageData<StockLevelData> result)
+	{
+		final StockLevelListData stockLevelListData = new StockLevelListData();
+		stockLevelListData.setStockLevels(result.getResults());
+		stockLevelListData.setSorts(result.getSorts());
+		stockLevelListData.setPagination(result.getPagination());
+		return stockLevelListData;
+	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/notes", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getNotes", value = "Get Notes", notes = "Returns Notes")
+	@ApiBaseSiteIdAndUserIdParam
+	public NotesListWsDTO getNotes(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final NotesListData notesListData;
+		notesListData = createNotesListData(blDomoFacade.getNotes(pageableData));
+		setTotalCountHeader(response, notesListData.getPagination());
+		return getDataMapper().map(notesListData, NotesListWsDTO.class, fields);
+	}
+
+	protected NotesListData createNotesListData(final SearchPageData<NotesData> result)
+	{
+		final NotesListData notesListData = new NotesListData();
+		notesListData.setNotesList(result.getResults());
+		notesListData.setSorts(result.getSorts());
+		notesListData.setPagination(result.getPagination());
+		return notesListData;
+	}
 
 }

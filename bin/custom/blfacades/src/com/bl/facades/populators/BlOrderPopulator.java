@@ -302,5 +302,6 @@ public class BlOrderPopulator extends OrderPopulator
 			target.setDeliveryModeCode(source.getDeliveryMode().getCode());
 		}
 		target.setTotaltaxvaluesinternal(source.getTotalTaxValuesInternal());
+		target.setShopperIp(source.getShopperIp());
 	}
 }
