@@ -12,19 +12,15 @@
  */
 package com.bl.Ordermanagement.actions.order;
 
-import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.jalo.JaloSession;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.processengine.action.AbstractProceduralAction;
-import de.hybris.platform.servicelayer.config.ConfigurationService;
-import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.task.RetryLaterException;
 import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.constants.WarehousingConstants;
@@ -33,14 +29,11 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import de.hybris.platform.warehousing.sourcing.SourcingService;
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -56,8 +49,6 @@ public class SourceOrderAction extends AbstractProceduralAction<OrderProcessMode
 	private SourcingService sourcingService;
 	private AllocationService allocationService;
 	private BusinessProcessService businessProcessService;
-
-	private ConfigurationService configurationService;
 
 	@Override
 	public void executeAction(final OrderProcessModel process) throws RetryLaterException, Exception
@@ -80,65 +71,21 @@ public class SourceOrderAction extends AbstractProceduralAction<OrderProcessMode
 		}
 
 		if (results != null)
-			// New Story Implementations
-				if(order != null){
+		{
+			results.getResults().forEach(this::logSourcingInfo);
 
-					double threshouldGearValue = getConfigurationService().getConfiguration().getDouble("blordermanagement.non.subpart.gear.value.threshould",3499);
-					double threshouldGearValueSecond = getConfigurationService().getConfiguration().getDouble("blordermanagement.non.subpart.gear.value.threshould.second=",800);
+			final Collection<ConsignmentModel> consignments = getAllocationService()
+					.createConsignments(process.getOrder(), "cons" + process.getOrder().getCode(), results);
+			LOGGER.debug("Number of consignments created during allocation: {}", consignments.size());
+			startConsignmentSubProcess(consignments, process);
+			order.setStatus(OrderStatus.PENDING);
 
-					Double sumOfGearValue = Double.valueOf(0);
-					if (order.getSumOfGearValueOnOrder() != null) {
-						sumOfGearValue = order.getSumOfGearValueOnOrder();
-					}
-					List<OrderModel> availableOrderForCustomer = new ArrayList<>();
+			partialFulfillment = order.getEntries().stream()
+					.anyMatch(orderEntry -> ((OrderEntryModel) orderEntry).getQuantityUnallocated().longValue() > 0);
+			failedFulfillment = order.getEntries().stream()
+					.allMatch(orderEntry -> ((OrderEntryModel) orderEntry).getQuantityAllocated().longValue() == 0);
+		}
 
-					int completedOrderCount = 0;
-
-					Boolean inCompleteOrLateOrderFlag = Boolean.FALSE;
-
-					if (order.getUser() != null) {
-						CustomerModel customerModel = (CustomerModel) order.getUser();
-						if (CollectionUtils.isNotEmpty(customerModel.getOrders())) {
-							availableOrderForCustomer = (List<OrderModel>) customerModel.getOrders();
-
-							for (OrderModel orderModel : availableOrderForCustomer) {
-								if (orderModel.getStatus() != null && (orderModel.getStatus().equals(OrderStatus.INCOMPLETE)
-												|| orderModel.getStatus().equals(OrderStatus.LATE))) {
-									inCompleteOrLateOrderFlag = Boolean.TRUE;
-									break;
-								}
-							}
-
-							for (OrderModel orderModel : availableOrderForCustomer) {
-								if (orderModel.getStatus().equals(OrderStatus.COMPLETED)) {
-									completedOrderCount = completedOrderCount + 1;
-								}
-							}
-						}
-					}
-
-					// Condition #1
-					if(sumOfGearValue > threshouldGearValue ||
-									(sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0) ||
-									inCompleteOrLateOrderFlag  ||
-									completedOrderCount <= 5){
-						order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
-						final Collection<ConsignmentModel> consignments = getAllocationService().createConsignments(process.getOrder(), "cons" + process.getOrder().getCode(), results);
-						startConsignmentSubProcess(consignments, process, true);
-					}else{
-						results.getResults().forEach(this::logSourcingInfo);
-						final Collection<ConsignmentModel> consignments = getAllocationService()
-										.createConsignments(process.getOrder(), "cons" + process.getOrder().getCode(), results);
-						LOGGER.debug("Number of consignments created during allocation: {}", consignments.size());
-						startConsignmentSubProcess(consignments, process, false);
-						order.setStatus(OrderStatus.PENDING);
-
-						partialFulfillment = order.getEntries().stream()
-												  .anyMatch(orderEntry -> ((OrderEntryModel) orderEntry).getQuantityUnallocated().longValue() > 0);
-						failedFulfillment = order.getEntries().stream()
-												 .allMatch(orderEntry -> ((OrderEntryModel) orderEntry).getQuantityAllocated().longValue() == 0);
-					}
-				}
 		if (results == null || failedFulfillment)
 		{
 			LOGGER.info("Order failed to be sourced");
@@ -164,7 +111,7 @@ public class SourceOrderAction extends AbstractProceduralAction<OrderProcessMode
 	 * @param process
 	 * 		- order process model
 	 */
-	protected void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments, final OrderProcessModel process, boolean gearValueFlag)
+	protected void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments, final OrderProcessModel process)
 	{
 		for (final ConsignmentModel consignment : consignments)
 		{
@@ -172,11 +119,6 @@ public class SourceOrderAction extends AbstractProceduralAction<OrderProcessMode
 					.createProcess(consignment.getCode() + WarehousingConstants.CONSIGNMENT_PROCESS_CODE_SUFFIX,
 							BlOrdermanagementConstants.CONSIGNMENT_SUBPROCESS_NAME);
 			subProcess.setParentProcess(process);
-			if(gearValueFlag){
-				consignment.setStatus(ConsignmentStatus.WAITING);
-				getModelService().save(consignment);
-				getModelService().refresh(consignment);
-			}
 			subProcess.setConsignment(consignment);
 			save(subProcess);
 			LOGGER.info("Start Consignment sub-process: '{}'", subProcess.getCode());
@@ -235,14 +177,6 @@ public class SourceOrderAction extends AbstractProceduralAction<OrderProcessMode
 	public void setBusinessProcessService(final BusinessProcessService businessProcessService)
 	{
 		this.businessProcessService = businessProcessService;
-	}
-
-	public ConfigurationService getConfigurationService() {
-		return configurationService;
-	}
-
-	public void setConfigurationService(ConfigurationService configurationService) {
-		this.configurationService = configurationService;
 	}
 
 }
