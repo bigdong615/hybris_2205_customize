@@ -896,8 +896,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 		}));
 
-		final Map<String, List<BlProductModel>> missingSerial = isValidSerial(barcodes, scannedSerialProduct, serials,
-				scannedSubpartProduct);
+		final Map<String, List<BlProductModel>> missingSerial = validateBarcodedSerial(scannedSerialProduct,scannedSubpartProduct,serials,selectedConsignment);
 
 		for (final ConsignmentEntryModel consignmentEntry : selectedConsignment.getConsignmentEntries())
 		{
@@ -907,50 +906,53 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * method is used to check scanned serials are valid on not i.e scanned serials are same as the serials available on consignment
-	 *
-	 * @param barcodes         as barcodes
-	 * @param consignmentEntry as consignment entry
-	 * @return boolean
-	 */
-	private final Map<String, List<BlProductModel>> isValidSerial(final List<String> barcodes,
-			final List<BlSerialProductModel> scannedSerialProduct, final List<BlProductModel> serials,
-			final List<BlSerialProductModel> scannedSubpartProduct)
-	{
-		final Map<String, List<BlProductModel>> invalidSerials = new HashMap<>();
-		final List<BlProductModel> entryBarcode = new ArrayList<>(serials);
-		final List<BlProductModel> newBarcode = new ArrayList<>(scannedSerialProduct);
-		final List<BlProductModel> lErrorSubParts = new ArrayList<>();
-		final List<String> skuNames = new ArrayList<>();
-		newBarcode.removeIf(entryBarcode::contains);
-		entryBarcode.removeIf(scannedSerialProduct::contains);
-		entryBarcode.removeIf(scannedSubpartProduct::contains);
-		serials.forEach(item -> {
-			if (item.getProductType().equals(ProductTypeEnum.SUBPARTS))
-			{
-				skuNames.add(item.getName());
-			}
-		});
-		scannedSubpartProduct.forEach(subpart -> {
-			if (Objects.nonNull(subpart) && !skuNames.contains(subpart.getName()))
-			{
-				lErrorSubParts.add(subpart);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scanned subParts {} are not available on consignment",
-						lErrorSubParts);
-			}
+	 * method is used to check scanned serials are valid on not i.e entered barcode serial belongs to
+	 * given consignment and that are not already included serial.
+	 **/
+	private Map<String, List<BlProductModel>> validateBarcodedSerial(
+			final List<BlSerialProductModel> scannedSerialProduct,
+			final List<BlSerialProductModel> scannedSubpartProduct, final List<BlProductModel> serials,
+			final ConsignmentModel selectedConsignment) {
+
+		// collecting all serial for given barcode via shipping scan
+		final List<BlProductModel> allEntryBarcodedSerials = new ArrayList<>(scannedSerialProduct);
+		allEntryBarcodedSerials.addAll(scannedSubpartProduct);
+
+		// collecting all the serials which not belongs to current consignment
+		final List<BlProductModel> outsiderSerials = allEntryBarcodedSerials.stream()
+				.filter(blSerialProductModel -> !serials.contains(blSerialProductModel))
+				.collect(Collectors.toList());
+		allEntryBarcodedSerials.removeAll(
+				outsiderSerials); // remove all the serial which not belongs to current consignment.
+
+		final List<BlProductModel> allIncludedEntry = new ArrayList<>();
+		selectedConsignment.getConsignmentEntries().forEach(consEntry -> {
+			Map<String, ItemStatusEnum> items = consEntry.getItems();
+			List<BlProductModel> includedSerials = allEntryBarcodedSerials.stream().filter(
+					blSerialProductModel -> (items.containsKey(blSerialProductModel.getCode()) && items
+							.get(blSerialProductModel.getCode()).equals(ItemStatusEnum.INCLUDED)))
+					.collect(Collectors.toList());
+			allIncludedEntry.addAll(includedSerials);
+			allEntryBarcodedSerials.removeAll(includedSerials);
 		});
 
-		if (CollectionUtils.isEmpty(newBarcode) && CollectionUtils.isEmpty(entryBarcode) && CollectionUtils.isEmpty(lErrorSubParts))
-		{
-			createSuccessResponse(barcodes, scannedSerialProduct, serials, scannedSubpartProduct, invalidSerials);
+		final Map<String, List<BlProductModel>> invalidSerials = new HashMap<>();
+		if (CollectionUtils.isNotEmpty(outsiderSerials)) {
+			invalidSerials.put(BlInventoryScanLoggingConstants.OUTSIDER_BARCODE, outsiderSerials);
 		}
-		else
-		{
-			createErrorResponse(invalidSerials, entryBarcode, newBarcode, lErrorSubParts);
+
+		if (CollectionUtils.isNotEmpty(allIncludedEntry)) {
+			invalidSerials.put(BlInventoryScanLoggingConstants.INCLUDED_SERIAL, allIncludedEntry);
+		}
+
+		if (CollectionUtils.isNotEmpty(allEntryBarcodedSerials)) {
+			invalidSerials.put(BlInventoryScanLoggingConstants.SUCCESS_SERIAL, allEntryBarcodedSerials);
 		}
 
 		return invalidSerials;
 	}
+
+
 	/**
 	 * method will be used to create success response
 	 * @param barcodes
