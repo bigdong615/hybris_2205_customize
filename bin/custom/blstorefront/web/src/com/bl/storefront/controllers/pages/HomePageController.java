@@ -45,17 +45,17 @@ public class HomePageController extends AbstractPageController
 	@Resource(name = "cartFacade")
 	private BlCartFacade blCartFacade;
 
-	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
-	private RentalDateDto getRentalsDuration()
-	{
-		return BlRentalDateUtils.getRentalsDuration();
-	}
-
 	@Resource(name = "blEmailSubscriptionFacade")
 	private BlEmailSubscriptionFacade blEmailSubscriptionFacade;
 
 	@Value("${bl.google.site.verification}")
 	private String googleSiteVerification;
+
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration()
+	{
+		return BlRentalDateUtils.getRentalsDuration();
+	}
 
 	@GetMapping
 	public String home(@RequestParam(value = WebConstants.CLOSE_ACCOUNT, defaultValue = "false") final boolean closeAcc,
@@ -69,7 +69,7 @@ public class HomePageController extends AbstractPageController
 		final ContentPageModel contentPage = getContentPageForLabelOrId(null);
 		storeCmsPageInModel(model, contentPage);
 		setUpMetaDataForContentPage(model, contentPage);
-		if(request.getRequestURL().toString().contains("s1")){
+		if(StringUtils.isNotEmpty(googleSiteVerification)){
 			final List<MetaElementData> metadata = (List<MetaElementData>) model.getAttribute("metatags");
 			metadata.add(createMetaElement("google-site-verification", googleSiteVerification));
 		}
