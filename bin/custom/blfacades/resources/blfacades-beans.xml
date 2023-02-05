@@ -485,6 +485,7 @@
         <property name="userId" type="java.lang.String"/>	
         <property name="entrygroups" type="java.lang.String"/>	
         <property name="totaltaxvaluesinternal" type="java.lang.String"/>
+        <property name="shopperIp" type="java.lang.String"/>
   </bean>
   
   	<bean class="de.hybris.platform.commercefacades.order.data.OrderData" extends="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
@@ -680,6 +681,7 @@
         <property name="userId" type="java.lang.String"/>		
         <property name="entrygroups" type="java.lang.String"/>		
         <property name="totaltaxvaluesinternal" type="java.lang.String"/>
+        <property name="shopperIp" type="java.lang.String"/>
 	</bean>
   
 
@@ -747,7 +749,7 @@
         <property name="createdTS" type="java.util.Date"/>
 	  	<property name="modifiedTS" type="java.util.Date"/>
 	  	<property name="original" type="String"/>
-	  	<property name="duplicate" type="String"/>
+	  	<property name="duplicate" type="boolean"/>
 	  	<property name="appartment" type="String"/>
 	  	<property name="building" type="String"/>
 	  	<property name="department" type="String"/>
@@ -2147,15 +2149,104 @@
         </property>
     </bean>  
 		
-<!--  defaultPaymentInfo
-notificationchannels
-outstandingbills-->
-
-
-
-
+	<bean class="de.hybris.platform.commercefacades.user.data.AddressListData">
+		<property name="addresses" type="java.util.List&lt;de.hybris.platform.commercefacades.user.data.AddressData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
 	
-	    
+	<bean class="com.braintree.hybris.data.BrainTreePaymentInfoData">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="code" type="java.lang.String"/>             
+      <property name="duplicate" type="java.lang.Boolean"/>
+      <property name="user" type="java.lang.String"/>             
+      <property name="saved" type="java.lang.Boolean"/>
+      <property name="billingAddress" type="java.lang.String"/>
+      <property name="paymentProvider" type="java.lang.String"/>
+      <property name="nonce" type="java.lang.String"/>
+      <property name="customerId" type="java.lang.String"/>
+      <property name="deviceData" type="java.lang.String"/>
+      <property name="paymentMethodToken" type="java.lang.String"/>
+      <property name="liabilityShifted" type="java.lang.Boolean"/>
+      <property name="usePaymentMethodToken" type="java.lang.Boolean"/>
+      <property name="expirationMonth" type="java.lang.String"/>
+      <property name="expirationYear" type="java.lang.String"/>
+      <property name="imageSource" type="java.lang.String"/>
+      <property name="threeDSecureConfiguration" type="java.lang.Boolean"/>
+      <property name="advancedFraudTools" type="java.lang.Boolean"/>
+      <property name="isSkip3dSecureLiabilityResult" type="java.lang.Boolean"/>
+      <property name="creditCardStatementName" type="java.lang.String"/>
+      <property name="brainTreeChannel" type="java.lang.String"/>
+      <property name="merchantAccountIdForCurrentSite" type="java.lang.String"/>
+      <property name="paymentInfo" type="java.lang.String"/>
+      <property name="cardholderName" type="java.lang.String"/>
+      <property name="customerLocation" type="java.lang.String"/>
+      <property name="payPalIntent" type="java.lang.String"/>
+      <property name="payer" type="java.lang.String"/>
+      <property name="shipsFromPostalCode" type="java.lang.String"/>
+      <property name="paymentId" type="java.lang.String"/>
+      <property name="depositAmount" type="java.lang.Double"/>
+      <property name="createdAt" type="java.util.Date"/>
+      <property name="updatedAt" type="java.util.Date"/>
+      <property name="shouldBeSaved" type="java.lang.Boolean"/>
+      <property name="newAmount" type="java.lang.Double"/>
+      <property name="isDepositPayment" type="java.lang.Boolean"/>
+      <property name="createNewTransaction" type="java.lang.Boolean"/>
+      <property name="billPayment" type="java.lang.Boolean"/>
+      <property name="modifyPayment" type="java.lang.Boolean"/>
+      <property name="extendOrder" type="java.lang.Boolean"/>
+    </bean>
+    
+     <bean class="com.braintree.hybris.data.BrainTreePaymentInfoListData">
+		<property name="brainTreePaymentInfo" type="java.util.List&lt;com.braintree.hybris.data.BrainTreePaymentInfoData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="de.hybris.platform.warehousingfacades.product.data.StockLevelData">
+	  <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="nextDeliveryTime" type="java.util.Date"/>
+      <property name="date" type="java.util.Date"/>
+      <property name="available" type="java.lang.Integer"/>
+      <property name="reserved" type="java.lang.Integer"/>
+      <property name="overSelling" type="java.lang.Integer"/>
+      <property name="preOrder" type="java.lang.Integer"/>
+      <property name="maxPreOrder" type="java.lang.Integer"/>
+      <property name="maxStockLevelHistoryCount" type="java.lang.Integer"/>
+      <property name="treatNegativeAsZero" type="java.lang.Boolean"/>
+      <property name="reservedStatus" type="java.lang.Boolean"/>
+      <property name="hardAssigned" type="java.lang.Boolean"/>
+      <property name="bufferedInventory" type="java.lang.Boolean"/>
+      <property name="forSale" type="java.lang.Boolean"/>
+      <property name="serialProductCode" type="java.lang.String"/>
+      <property name="order" type="java.lang.String"/>
+      <property name="serialStatus" type="java.lang.String"/>
+	</bean>
+	
+	<bean class="de.hybris.platform.warehousingfacades.product.data.StockLevelListData">
+		<property name="stockLevels" type="java.util.List&lt;de.hybris.platform.warehousingfacades.product.data.StockLevelData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.customerNotes.data.NotesData">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="userId" type="java.lang.String"/>
+      <property name="type" type="java.lang.String"/>
+      <property name="order" type="java.lang.String"/>
+      <property name="note" type="java.lang.String"/>    
+      <property name="consignemnt" type="java.lang.String"/>                 
+    </bean>
+    
+    <bean class="com.bl.facades.customerNotes.data.NotesListData">
+		<property name="notesList" type="java.util.List&lt;com.bl.facades.customerNotes.data.NotesData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+ 
 </beans>
 
 

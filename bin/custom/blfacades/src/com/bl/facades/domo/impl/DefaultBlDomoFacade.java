@@ -8,20 +8,24 @@ import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
+import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.converters.Converters;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
+import de.hybris.platform.warehousingfacades.product.data.StockLevelData;
 
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlSerialLogModel;
@@ -29,15 +33,19 @@ import com.bl.core.model.CustomerNotesModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.InHouseRepairLogModel;
+import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartsNeededRepairLogModel;
 import com.bl.core.model.VendorRepairLogModel;
 import com.bl.core.services.domo.BlDomoService;
 import com.bl.facades.blSerialLog.data.BlSerialLogData;
 import com.bl.facades.customerNotes.data.CustomerNotesData;
+import com.bl.facades.customerNotes.data.NotesData;
 import com.bl.facades.domo.BlDomoFacade;
 import com.bl.facades.inHouseRepairLog.data.InHouseRepairLogData;
 import com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
+import com.braintree.hybris.data.BrainTreePaymentInfoData;
+import com.braintree.model.BrainTreePaymentInfoModel;
 
 public class DefaultBlDomoFacade implements BlDomoFacade
 {
@@ -70,7 +78,14 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	private Converter<PartsNeededRepairLogModel, PartsNeededRepairLogData> blPartsNeededRepairLogConverter;
 
 	private Converter<InHouseRepairLogModel, InHouseRepairLogData> blInHouseRepairLogConverter;
-
+	
+	private Converter<AddressModel, AddressData> domoAddressConvertor;
+	
+	private Converter<BrainTreePaymentInfoModel, BrainTreePaymentInfoData> domoBrainTreePaymentInfoConvertor;
+	
+	private Converter<StockLevelModel, StockLevelData> blStockLevelConvertor;
+	
+	private Converter<NotesModel, NotesData> blNotesConverter;
 
 	@Override
 	public SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData)
@@ -184,6 +199,36 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 		final SearchPageData<InHouseRepairLogModel> inHouseRepairLogs = getBlDomoService().getInHouseRepairLogs(pageableData);
 		return convertPageData(inHouseRepairLogs, getBlInHouseRepairLogConverter());
 	}
+	
+	@Override
+	public SearchPageData<AddressData> getAddresses(final PageableData pageableData)
+	{
+		final SearchPageData<AddressModel> addresses = getBlDomoService().getAddresses(pageableData);
+		return convertPageData(addresses, getDomoAddressConvertor());
+	}
+	
+	@Override
+	public SearchPageData<BrainTreePaymentInfoData> getBrainTreePaymentInfo(final PageableData pageableData)
+	{
+		final SearchPageData<BrainTreePaymentInfoModel> brainTreePaymentInfos = getBlDomoService()
+				.getBrainTreePaymentInfos(pageableData);
+		return convertPageData(brainTreePaymentInfos, getDomoBrainTreePaymentInfoConvertor());
+	}
+	
+	@Override
+	public SearchPageData<StockLevelData> getStockLevels(final PageableData pageableData)
+	{
+		final SearchPageData<StockLevelModel> stockLevels = getBlDomoService().getStockLevels(pageableData);
+		return convertPageData(stockLevels, getBlStockLevelConvertor());
+	}
+	
+	@Override
+	public SearchPageData<NotesData> getNotes(final PageableData pageableData)
+	{
+		final SearchPageData<NotesModel> notes = getBlDomoService().getNotes(pageableData);
+		return convertPageData(notes, getBlNotesConverter());
+	}
+
 
 
 	/**
@@ -446,6 +491,68 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	public void setBlCustomerConverter(final Converter<CustomerModel, CustomerData> blCustomerConverter)
 	{
 		this.blCustomerConverter = blCustomerConverter;
+	}
+	
+	/**
+	 * @return the domoAddressConvertor
+	 */
+	public Converter<AddressModel, AddressData> getDomoAddressConvertor()
+	{
+		return domoAddressConvertor;
+	}
+	/**
+	 * @param domoAddressConvertor
+	 *           the domoAddressConvertor to set
+	 */
+	public void setDomoAddressConvertor(final Converter<AddressModel, AddressData> domoAddressConvertor)
+	{
+		this.domoAddressConvertor = domoAddressConvertor;
+	}
+	/**
+	 * @return the domoBrainTreePaymentInfoConvertor
+	 */
+	public Converter<BrainTreePaymentInfoModel, BrainTreePaymentInfoData> getDomoBrainTreePaymentInfoConvertor()
+	{
+		return domoBrainTreePaymentInfoConvertor;
+	}
+	/**
+	 * @param domoBrainTreePaymentInfoConvertor
+	 *           the domoBrainTreePaymentInfoConvertor to set
+	 */
+	public void setDomoBrainTreePaymentInfoConvertor(
+			final Converter<BrainTreePaymentInfoModel, BrainTreePaymentInfoData> domoBrainTreePaymentInfoConvertor)
+	{
+		this.domoBrainTreePaymentInfoConvertor = domoBrainTreePaymentInfoConvertor;
+	}
+	/**
+	 * @return the blStockLevelConvertor
+	 */
+	public Converter<StockLevelModel, StockLevelData> getBlStockLevelConvertor()
+	{
+		return blStockLevelConvertor;
+	}
+	/**
+	 * @param blStockLevelConvertor
+	 *           the blStockLevelConvertor to set
+	 */
+	public void setBlStockLevelConvertor(final Converter<StockLevelModel, StockLevelData> blStockLevelConvertor)
+	{
+		this.blStockLevelConvertor = blStockLevelConvertor;
+	}
+	
+	/**
+	 * @return the blNotesConverter
+	 */
+	public Converter<NotesModel, NotesData> getBlNotesConverter()
+	{
+		return blNotesConverter;
+	}
+	/**
+	 * @param blNotesConverter the blNotesConverter to set
+	 */
+	public void setBlNotesConverter(Converter<NotesModel, NotesData> blNotesConverter)
+	{
+		this.blNotesConverter = blNotesConverter;
 	}
 
 }

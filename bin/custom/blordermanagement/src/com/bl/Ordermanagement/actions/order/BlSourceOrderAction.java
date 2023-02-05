@@ -12,15 +12,18 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.processengine.action.AbstractProceduralAction;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.task.RetryLaterException;
 import de.hybris.platform.warehousing.allocation.AllocationService;
@@ -54,7 +57,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
   private BlOrderService blOrderService;
 
-
+  private ConfigurationService configurationService;
   private DefaultBlESPEventService defaultBlESPEventService;
 
   /**
@@ -97,12 +100,15 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
                 BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + process.getOrder().getCode(), results);
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
             "Number of consignments created during allocation: {}", consignments.size());
-        startConsignmentSubProcess(consignments, process);
+
         
         // If it went to fruad manual check, we changed logic to assign consignment, serials, so no need to update status again, if its fruad
         if(!order.getStatus().equals(OrderStatus.WAIT_FRAUD_MANUAL_CHECK)) {
         order.setStatus(OrderStatus.PENDING);
         }
+
+        // Gear Value Validations
+        validateGearValueConditions(process, order, consignments);
 
         if (order.getEntries().stream()
             .anyMatch(orderEntry -> orderEntry.getUnAllocatedQuantity().longValue() > 0)) {
@@ -145,6 +151,72 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
       }
     }
 
+  }
+
+  /**
+   * Changed by - Sunil (BLS-57)
+   * Method to implement the Gear Value Conditions
+   *
+   * @param process      Order Process Model
+   * @param order        Order Model
+   * @param consignments Consignments
+   */
+  private void validateGearValueConditions(OrderProcessModel process, OrderModel order,
+                                           Collection<ConsignmentModel> consignments) {
+    if (order.getStatus().equals(OrderStatus.PENDING)) {
+      double threshouldGearValue = getConfigurationService().getConfiguration().getDouble(
+                      "blordermanagement.non.subpart.gear.value.threshould", 3499);  // Threshould for Max Gear Value
+      double threshouldGearValueSecond = getConfigurationService().getConfiguration().getDouble(
+                      "blordermanagement.non.subpart.gear.value.threshould.second=",
+                      800);  // Threshould Secondary for Max Gear Value with Completed Orders
+
+      // Total Gear Value from Order
+      Double sumOfGearValue = Double.valueOf(0);
+      if (order.getSumOfGearValueOnOrder() != null) {
+        sumOfGearValue = order.getSumOfGearValueOnOrder();
+      }
+
+      List<OrderModel> availableOrderForCustomer = new ArrayList<>();
+      int completedOrderCount = 0;
+      Boolean inCompleteOrLateOrderFlag = Boolean.FALSE;
+
+      if (order.getUser() != null) {
+        CustomerModel customerModel = (CustomerModel) order.getUser();
+        if (CollectionUtils.isNotEmpty(customerModel.getOrders())) {
+          availableOrderForCustomer = (List<OrderModel>) customerModel.getOrders();
+
+          for (OrderModel orderModel : availableOrderForCustomer) {
+            if (orderModel.getStatus() != null && (orderModel.getStatus().equals(OrderStatus.INCOMPLETE)
+                            || orderModel.getStatus().equals(OrderStatus.LATE))) {
+              inCompleteOrLateOrderFlag = Boolean.TRUE;
+              break;
+            }
+          }
+
+          for (OrderModel orderModel : availableOrderForCustomer) {
+            if (orderModel.getStatus().equals(OrderStatus.COMPLETED)) {
+              completedOrderCount = completedOrderCount + 1;
+            }
+          }
+        }
+      }
+      // Condition #1
+
+      long durationValue = 0l;
+      if (order.getRentalEndDate() != null && order.getRentalStartDate() != null) {
+        durationValue = order.getRentalEndDate().getTime() - order.getRentalStartDate().getTime();
+      }
+
+      if (sumOfGearValue > threshouldGearValue ||
+                      (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0) ||
+                      inCompleteOrLateOrderFlag ||
+                      (durationValue <= 3 && completedOrderCount <= 5)) {
+        order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
+        startConsignmentSubProcess(consignments, process, true);
+      }
+    } else {
+      startConsignmentSubProcess(consignments, process, false);
+    }
   }
 
   /**
@@ -311,7 +383,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    * @param process      - order process model
    */
   public void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
-      final OrderProcessModel process) {
+      final OrderProcessModel process, boolean gearValueFlag) {
 
     for (final ConsignmentModel consignment : consignments) {
       final ConsignmentProcessModel subProcess = getBusinessProcessService()
@@ -319,7 +391,14 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
               consignment.getCode() + WarehousingConstants.CONSIGNMENT_PROCESS_CODE_SUFFIX,
               BlOrdermanagementConstants.CONSIGNMENT_SUBPROCESS_NAME);
       subProcess.setParentProcess(process);
+
+      if(gearValueFlag){
+        consignment.setStatus(ConsignmentStatus.WAITING);
+        modelService.save(consignment);
+        modelService.refresh(consignment);
+      }
       subProcess.setConsignment(consignment);
+
       save(subProcess);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Starting Consignment sub-process: '{}'",
           subProcess.getCode());
@@ -378,6 +457,21 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     this.defaultBlESPEventService = defaultBlESPEventService;
   }
 
+  /**
+   * Getter Method for the Configuration Service
+   * @return ConfigurationService
+   */
+  public ConfigurationService getConfigurationService() {
+    return configurationService;
+  }
+
+  /**
+   * Setter Method for the Configuration Service
+   * @param configurationService
+   */
+  public void setConfigurationService(ConfigurationService configurationService) {
+    this.configurationService = configurationService;
+  }
 
 
 }
