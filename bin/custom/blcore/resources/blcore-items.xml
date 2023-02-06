@@ -39,6 +39,8 @@
         <collectiontype code="ModifiedOrderGCPaymentList" elementtype="GiftCard" type="list"/>
 
         <collectiontype code="ShippingLabelHistoryList" elementtype="ShippingLabelHistory" type="list"/>
+        
+        <collectiontype code="IpVelocityList" elementtype="java.lang.String" type="list"/> 
 
     </collectiontypes>
 
@@ -3969,6 +3971,11 @@
                     <persistence type="property"/>
                     <description>It is end range to compare with gear value to set verification level accordingly</description>
                   </attribute>
+                  <attribute qualifier="blockedIpList" type="IpVelocityList">
+                      <description>Blocked Ip List</description>
+                      <modifiers read="true" write="true" search="false" optional="true" />
+                       <persistence type="property" />
+                 </attribute> 
                 </attributes>
             </itemtype>
         </typegroup>
@@ -8002,6 +8009,46 @@ new Integer(0)
 			          <persistence type="property" />
 			          <defaultvalue>Boolean.FALSE</defaultvalue>
 			        </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+        
+        <!-- BLS-51 -->
+        <typegroup name="IpVelocityFilter">
+            <itemtype code="IpVelocityFilter" autocreate="true" generate="true">
+                <description>Ip Velocity Filter</description>
+                <deployment table="ipVelocityFilter" typecode="12246"/>
+                <attributes>
+                    <attribute qualifier="userIp" type="java.lang.String">
+                        <modifiers read="true" write="true" optional="false" unique="true"/>
+                        <description>Users Ip</description>
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="userId" type="java.lang.String">
+                        <modifiers read="true" write="true" optional="false" unique="true" />
+                        <description>Users Id</description>
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="loginCounter" type="java.lang.Integer">
+                        <modifiers read="true" write="true" optional="false" />
+                        <description>Users login Counter</description>
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="successfulLogin" type="java.lang.Integer">
+                        <modifiers read="true" write="true" optional="false" />
+                        <description>Users successful login Counter</description>
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="unSuccessfulLogin" type="java.lang.Integer">
+                        <modifiers read="true" write="true" optional="false" />
+                        <description>Users unsuccessful login Counter</description>
+                        <persistence type="property" />
+                    </attribute>                    
+                    <attribute qualifier="lastLoginTimeStamp" type="java.util.Date">
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Users Last Login time</description>
+                        <persistence type="property" />
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>

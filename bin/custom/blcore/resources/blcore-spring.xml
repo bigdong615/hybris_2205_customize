@@ -2215,5 +2215,18 @@
 	<bean id="defaultBlDomoService" class="com.bl.core.services.domo.impl.DefaultBlDomoService">
 		<property name="blDomoDao" ref="blDomoDao"/>
 	</bean>
+	
+	<alias name="defaultBlIpVelocityService" alias="blIpVelocityService"/>
+	<bean id="defaultBlIpVelocityService" class="com.bl.core.service.ipVelocity.impl.DefaultBlIpVelocityService">
+		<property name="blIpVelocityDao" ref="blIpVelocityDao"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="configurationService" ref="configurationService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+	</bean>
+	
+	<alias name="defaultBlIpVelocityDao" alias="blIpVelocityDao"/>
+	<bean id="defaultBlIpVelocityDao" class="com.bl.core.dao.ipVelocity.impl.DefaultBlIpVelocityDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
 
 </beans>

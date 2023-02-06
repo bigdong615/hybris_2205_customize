@@ -23,6 +23,9 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
+import com.bl.core.model.IpVelocityFilterModel;
+import com.bl.core.service.ipVelocity.BlIpVelocityService;
+
 
 public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler
 {
@@ -31,6 +34,7 @@ public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
 	private ConfigurationService configurationService;
 	private ModelService modelService;
 	private UserService userService;
+	private BlIpVelocityService blIpVelocityService;
 
 	public static final String IP_ADDRESS_RESTRICT_DURATION = "bl.ipaddress.restrict.duration";
 	public static final int MAX_LOGIN_FAILURES = 5;
@@ -48,6 +52,12 @@ public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
 		registerLoginFailureForIpAddress(request.getParameter("j_username"), userIp, ipAddressRestrictDuration);
 		// Store the j_username in the session
 		request.getSession().setAttribute("SPRING_SECURITY_LAST_USERNAME", request.getParameter("j_username"));
+		
+		final IpVelocityFilterModel velocityFilterModel = getBlIpVelocityService().getUserData(userIp, request.getParameter("j_username"));
+		if (velocityFilterModel != null)
+		{
+			getBlIpVelocityService().updateDetails(velocityFilterModel, false);
+		}
 
 		super.onAuthenticationFailure(request, response, exception);
 	}
@@ -162,6 +172,22 @@ public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
 	public void setModelService(ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+	
+	/**
+	 * @return the blIpVelocityService
+	 */
+	public BlIpVelocityService getBlIpVelocityService()
+	{
+		return blIpVelocityService;
+	}
+	/**
+	 * @param blIpVelocityService
+	 *           the blIpVelocityService to set
+	 */
+	public void setBlIpVelocityService(final BlIpVelocityService blIpVelocityService)
+	{
+		this.blIpVelocityService = blIpVelocityService;
 	}
 
 }
