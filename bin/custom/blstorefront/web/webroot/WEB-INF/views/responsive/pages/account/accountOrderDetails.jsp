@@ -98,7 +98,7 @@
                                     </div>
                                     <div class="col-6">
                                         <p class="gray80 body14">
-                                            ${orderData.status}<br>
+                                            ${orderData.orderStatus}<br>
                                             ${orderData.orderedFormatDate}<br>
                                             ${fn:escapeXml(orderData.code)}<br>
 
