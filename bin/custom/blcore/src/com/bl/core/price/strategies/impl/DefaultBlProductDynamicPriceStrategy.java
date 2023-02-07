@@ -1,6 +1,6 @@
 package com.bl.core.price.strategies.impl;
 
-import de.hybris.platform.europe1.jalo.PriceRow;
+import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.jalo.order.price.PriceInformation;
 import de.hybris.platform.util.PriceValue;
 
@@ -278,10 +278,17 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 	public PriceInformation createNewPriceInformation(final PriceInformation defaultPriceInformation,
 			final BigDecimal priceForNumberOfDays)
 	{
-		final PriceRow priceRow = ((PriceRow) defaultPriceInformation.getQualifiers().get(BlCoreConstants.PRICE_ROW));
+		//  Commented 2105 code
+		//		final PriceRow priceRow = ((PriceRow) defaultPriceInformation.getQualifiers().get(BlCoreConstants.PRICE_ROW));
+		//		final String isoCode = priceRow.getCurrency().getIsocode();
+		//		final boolean netAsPrimitive = priceRow.isNetAsPrimitive();
+		//		final PriceValue newPricevalue = new PriceValue(isoCode, priceForNumberOfDays.doubleValue(), netAsPrimitive);
+
+		final PriceRowModel priceRow = ((PriceRowModel) defaultPriceInformation.getQualifiers().get(BlCoreConstants.PRICE_ROW));
 		final String isoCode = priceRow.getCurrency().getIsocode();
-		final boolean netAsPrimitive = priceRow.isNetAsPrimitive();
+		final boolean netAsPrimitive = priceRow.getNet();
 		final PriceValue newPricevalue = new PriceValue(isoCode, priceForNumberOfDays.doubleValue(), netAsPrimitive);
+
 		return new PriceInformation(defaultPriceInformation.getQualifiers(), newPricevalue);
 	}
 
