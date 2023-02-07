@@ -98,7 +98,15 @@
                                     </div>
                                     <div class="col-6">
                                         <p class="gray80 body14">
-                                            ${orderData.orderStatus}<br>
+	                                        <c:choose>
+	                                         <c:when test="${not empty orderData.orderStatus}">
+	                                         	${orderData.orderStatus}
+	                                         </c:when>
+	                                         <c:otherwise>
+	                                         	${orderData.status}
+	                                         </c:otherwise>
+	                                        </c:choose>
+                                            <br>
                                             ${orderData.orderedFormatDate}<br>
                                             ${fn:escapeXml(orderData.code)}<br>
 
