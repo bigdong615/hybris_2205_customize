@@ -59,7 +59,7 @@ public class DefaultBlIpVelocityService implements BlIpVelocityService
 			newModel.setSuccessfulLogin(1);
 			newModel.setUnSuccessfulLogin(0);
 			newModel.setLoginCounter(1);
-			newModel.setLastLoginTimeStamp(new Date());
+			newModel.setLastLoginAttemptedTimeStamp(new Date());
 			getModelService().save(newModel);
 		}
 		catch (final ModelSavingException exception)
@@ -78,19 +78,19 @@ public class DefaultBlIpVelocityService implements BlIpVelocityService
 				.parseInt(getConfigurationService().getConfiguration().getString(IP_ADDRESS_RESTRICT_DURATION));
 		if (isSuccess)
 		{
-			if ((new Date().getTime() - velocityFilterModel.getLastLoginTimeStamp().getTime())
+			if ((new Date().getTime() - velocityFilterModel.getLastLoginAttemptedTimeStamp().getTime())
 					/ MILLI_TO_HOUR > ipAddressRestrictDuration)
 			{
 				velocityFilterModel.setLoginCounter(1);
 				velocityFilterModel.setSuccessfulLogin(1);
 				velocityFilterModel.setUnSuccessfulLogin(0);
-				velocityFilterModel.setLastLoginTimeStamp(new Date());
+				velocityFilterModel.setLastLoginAttemptedTimeStamp(new Date());
 			}
 			else
 			{
 				velocityFilterModel.setSuccessfulLogin(velocityFilterModel.getSuccessfulLogin() + 1);
 				velocityFilterModel.setLoginCounter(velocityFilterModel.getLoginCounter() + 1);
-				velocityFilterModel.setLastLoginTimeStamp(new Date());
+				velocityFilterModel.setLastLoginAttemptedTimeStamp(new Date());
 
 			}
 		}
@@ -98,7 +98,7 @@ public class DefaultBlIpVelocityService implements BlIpVelocityService
 		{
 			velocityFilterModel.setUnSuccessfulLogin(velocityFilterModel.getUnSuccessfulLogin() + 1);
 			velocityFilterModel.setLoginCounter(velocityFilterModel.getLoginCounter() + 1);
-			//velocityFilterModel.setLastLoginTimeStamp(new Date());
+			velocityFilterModel.setLastLoginAttemptedTimeStamp(new Date());
 		}
 		try
 		{

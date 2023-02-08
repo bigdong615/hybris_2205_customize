@@ -43,7 +43,7 @@ public class IpVelocityFilter extends OncePerRequestFilter
 			if (CollectionUtils.isNotEmpty(ipList) && ipList.contains(userIp))
 			{
 
-				response.sendError(HttpServletResponse.SC_FORBIDDEN, "That means goodbye forever!");
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Your IP address is blocked due to suspicious activity.");
 
 			}
 		}
