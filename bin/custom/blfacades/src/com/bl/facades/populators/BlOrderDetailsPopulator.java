@@ -124,106 +124,109 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
  */
 private void populateUpdatedOrderStatus(OrderModel source, OrderData target)
 {
-	switch (source.getStatus())
+	if(null != source && null != source.getStatus()) 
 	{
-		case INCOMPLETE_BALANCE_DUE:
-			
-			target.setOrderStatus("INCOMPLETE - BALANCE DUE");
-			break;
-
-		case INCOMPLETE_ITEMS_IN_REPAIR:
-			
-			target.setOrderStatus("INCOMPLETE - BALANCE DUE");
-			break;
-
-		case INCOMPLETE_LOST_IN_TRANSIT:
-			
-			target.setOrderStatus("INCOMPLETE");
-			break;
-
-		case INCOMPLETE_MISSING_ITEMS:
-			
-			target.setOrderStatus("INCOMPLETE - ITEM(S) MISSING");
-			break;
-
-		case INCOMPLETE_STOLEN:
-			
-			target.setOrderStatus("INCOMPLETE");
-			break;
-
-		case LATE:
-			
-			target.setOrderStatus("ORDER NOT RETURNED");
-			break;
-
-		case PAYMENT_CAPTURED:
-			
-			target.setOrderStatus("ORDER PLACED");
-			break;
-
-		case PAYMENT_NOT_AUTHORIZED:
-			
-			target.setOrderStatus("CONTACT CUSTOMER SERVICE");
-			break;
-
-		case PENDING:
-			
-			target.setOrderStatus("ORDER PLACED");
-			break;
-
-		case RECEIVED_IN_VERIFICATION:
-			
-			target.setOrderStatus("VERIFICATION REQUIRED");
-			break;
-
-		case RECEIVED_PAYMENT_DECLINED:
-			
-			target.setOrderStatus("CONTACT CUSTOMER SERVICE");
-			break;
-
-		case RECEIVED_READY_FOR_PICKUP:
-			
-			target.setOrderStatus("READY FOR PICKUP");
-			break;
-
-		case SOLD:
-			
-			target.setOrderStatus("SOLD - ORDER PLACED");
-			break;
-
-		case SOLD_SHIPPED:
-			
-			target.setOrderStatus("SOLD - ORDER SHIPPED");
-			break;
-
-		case SUSPENDED:
-			
-			target.setOrderStatus("CONTACT CUSTOMER SERVICE");
-			break;
-
-		case UNBOXED_COMPLETELY:
-			
-			target.setOrderStatus("RETURNED TO WAREHOUSE");
-			break;
-
-		case UNBOXED_PARTIALLY:
-			
-			target.setOrderStatus("RETURNED TO WAREHOUSE");
-			break;
-
-		case VERIFICATION_REQUIRED:
-			
-			target.setOrderStatus("VERIFICATION REQUIRED");
-			break;
-
-		case WAIT_FRAUD_MANUAL_CHECK:
-			
-			target.setOrderStatus("VERIFICATION REQUIRED");
-			break;
-
-			
-		default:
-			break;
+   	switch (source.getStatus())
+   	{
+   		case INCOMPLETE_BALANCE_DUE:
+   			
+   			target.setOrderStatus("INCOMPLETE - BALANCE DUE");
+   			break;
+   
+   		case INCOMPLETE_ITEMS_IN_REPAIR:
+   			
+   			target.setOrderStatus("INCOMPLETE - BALANCE DUE");
+   			break;
+   
+   		case INCOMPLETE_LOST_IN_TRANSIT:
+   			
+   			target.setOrderStatus("INCOMPLETE");
+   			break;
+   
+   		case INCOMPLETE_MISSING_ITEMS:
+   			
+   			target.setOrderStatus("INCOMPLETE - ITEM(S) MISSING");
+   			break;
+   
+   		case INCOMPLETE_STOLEN:
+   			
+   			target.setOrderStatus("INCOMPLETE");
+   			break;
+   
+   		case LATE:
+   			
+   			target.setOrderStatus("ORDER NOT RETURNED");
+   			break;
+   
+   		case PAYMENT_CAPTURED:
+   			
+   			target.setOrderStatus("ORDER PLACED");
+   			break;
+   
+   		case PAYMENT_NOT_AUTHORIZED:
+   			
+   			target.setOrderStatus("CONTACT CUSTOMER SERVICE");
+   			break;
+   
+   		case PENDING:
+   			
+   			target.setOrderStatus("ORDER PLACED");
+   			break;
+   
+   		case RECEIVED_IN_VERIFICATION:
+   			
+   			target.setOrderStatus("VERIFICATION REQUIRED");
+   			break;
+   
+   		case RECEIVED_PAYMENT_DECLINED:
+   			
+   			target.setOrderStatus("CONTACT CUSTOMER SERVICE");
+   			break;
+   
+   		case RECEIVED_READY_FOR_PICKUP:
+   			
+   			target.setOrderStatus("READY FOR PICKUP");
+   			break;
+   
+   		case SOLD:
+   			
+   			target.setOrderStatus("SOLD - ORDER PLACED");
+   			break;
+   
+   		case SOLD_SHIPPED:
+   			
+   			target.setOrderStatus("SOLD - ORDER SHIPPED");
+   			break;
+   
+   		case SUSPENDED:
+   			
+   			target.setOrderStatus("CONTACT CUSTOMER SERVICE");
+   			break;
+   
+   		case UNBOXED_COMPLETELY:
+   			
+   			target.setOrderStatus("RETURNED TO WAREHOUSE");
+   			break;
+   
+   		case UNBOXED_PARTIALLY:
+   			
+   			target.setOrderStatus("RETURNED TO WAREHOUSE");
+   			break;
+   
+   		case VERIFICATION_REQUIRED:
+   			
+   			target.setOrderStatus("VERIFICATION REQUIRED");
+   			break;
+   
+   		case WAIT_FRAUD_MANUAL_CHECK:
+   			
+   			target.setOrderStatus("VERIFICATION REQUIRED");
+   			break;
+   
+   			
+   		default:
+   			break;
+   	}
 	}
 	
 }
