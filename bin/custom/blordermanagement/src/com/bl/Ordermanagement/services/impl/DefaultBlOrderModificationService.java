@@ -339,7 +339,7 @@ public class DefaultBlOrderModificationService
 		order.getOrderProcess().forEach(orderProcess -> {
 			if(BlOrdermanagementConstants.ORDER_PROCESS.equals(orderProcess.getProcessDefinitionName()))
 			{
-				getBlSourceOrderAction().startConsignmentSubProcess(Collections.singletonList(consignment), orderProcess);
+				getBlSourceOrderAction().startConsignmentSubProcess(Collections.singletonList(consignment), orderProcess, false);
 			}
 
 		});

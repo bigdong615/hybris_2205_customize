@@ -7,7 +7,9 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -19,9 +21,11 @@ import com.bl.core.model.CustomerNotesModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.InHouseRepairLogModel;
+import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartsNeededRepairLogModel;
 import com.bl.core.model.VendorRepairLogModel;
 import com.bl.core.services.domo.BlDomoService;
+import com.braintree.model.BrainTreePaymentInfoModel;
 
 public class DefaultBlDomoService implements BlDomoService
 {
@@ -114,6 +118,31 @@ public class DefaultBlDomoService implements BlDomoService
 	{
 		return getBlDomoDao().getInHouseRepairLogs(pageableData);
 	}
+
+	@Override
+	public SearchPageData<AddressModel> getAddresses(final PageableData pageableData)
+	{
+		return getBlDomoDao().getAddresses(pageableData);
+	}
+
+	@Override
+	public SearchPageData<BrainTreePaymentInfoModel> getBrainTreePaymentInfos(final PageableData pageableData)
+	{
+		return getBlDomoDao().getBrainTreePaymentInfos(pageableData);
+	}
+
+	@Override
+	public SearchPageData<StockLevelModel> getStockLevels(final PageableData pageableData)
+	{
+		return getBlDomoDao().getStockLevels(pageableData);
+	}
+
+	@Override
+	public SearchPageData<NotesModel> getNotes(final PageableData pageableData)
+	{
+		return getBlDomoDao().getNotes(pageableData);
+	}
+
 
 	/**
 	 * @return the blDomoDao

@@ -12,9 +12,15 @@ public class BlItemsBillingChargePopulator implements Populator<BlItemsBillingCh
 	@Override
 	public void populate(final BlItemsBillingChargeModel source, final BlItemsBillingChargeData target) throws ConversionException
 	{
-		target.setBillChargeType(source.getBillChargeType().getCode());
+		if (source.getBillChargeType() != null)
+		{
+			target.setBillChargeType(source.getBillChargeType().getCode());
+		}
 		target.setBillPaid(source.isBillPaid());
-		target.setBillStatus(source.getBillStatus().getCode());
+		if (source.getBillStatus() != null)
+		{
+			target.setBillStatus(source.getBillStatus().getCode());
+		}
 		target.setChargedAmount(source.getChargedAmount());
 		target.setCode(source.getCode());
 		target.setCreatedTS(source.getCreationtime());
