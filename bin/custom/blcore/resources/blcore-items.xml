@@ -283,7 +283,6 @@
           <value code="RECEIVED" />
           <value code="RECEIVED_PICKED_UP" />
           <value code="PENDING" />
-          <value code="VERIFICATION_REQUIRED" />
         </enumtype>
 
 

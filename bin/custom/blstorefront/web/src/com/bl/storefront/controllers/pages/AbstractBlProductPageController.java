@@ -7,6 +7,7 @@ import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ProductBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.FutureStockForm;
@@ -65,6 +66,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
@@ -456,6 +459,10 @@ public class AbstractBlProductPageController extends AbstractPageController
 		 model.addAttribute(WebConstants.MULTI_DIMENSIONAL_PRODUCT,
 				 Boolean.valueOf(CollectionUtils.isNotEmpty(productData.getVariantMatrix())));
 	 }
+
+		if( ProductTypeEnum.SUBPARTS.equals(((BlProductModel)productModel).getProductType())){
+			model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		}
 	}
 
 	protected void populateProductData(final ProductData productData, final Model model)
