@@ -10,11 +10,15 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.Abstrac
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
+
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +34,7 @@ import org.springframework.web.util.UrlPathHelper;
 @Controller
 public class DefaultPageController extends AbstractPageController
 {
+	private static final Logger LOG = Logger.getLogger(DefaultPageController.class);
 	private static final String ERROR_CMS_PAGE = "notFound";
 
 	private final UrlPathHelper urlPathHelper = new UrlPathHelper();
@@ -54,18 +59,16 @@ public class DefaultPageController extends AbstractPageController
 			return getViewForPage(pageForRequest);
 		}
 
-		// No page found - display the notFound page with error from controller
-		final ContentPageModel errorPage = getContentPageForLabelOrId(ERROR_CMS_PAGE);
-		storeCmsPageInModel(model, errorPage);
-		setUpMetaDataForContentPage(model, errorPage);
-
-		model.addAttribute(WebConstants.MODEL_KEY_ADDITIONAL_BREADCRUMB,
+		// No page found - display the homepage page with error from controller
+		BlLogger.logMessage(LOG, Level.ERROR, "Page Not found for URI  "+urlPathHelper.getLookupPathForRequest(request));
+		return REDIRECT_PREFIX + ROOT;
+		/*model.addAttribute(WebConstants.MODEL_KEY_ADDITIONAL_BREADCRUMB,
 				resourceBreadcrumbBuilder.getBreadcrumbs("breadcrumb.not.found"));
 		GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
 
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
-		return ControllerConstants.Views.Pages.Error.ErrorNotFoundPage;
+		return ControllerConstants.Views.Pages.Error.ErrorNotFoundPage;*/
 	}
 
 	/**
