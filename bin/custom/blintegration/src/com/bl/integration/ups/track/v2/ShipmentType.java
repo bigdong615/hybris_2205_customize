@@ -88,7 +88,8 @@ import javax.xml.bind.annotation.XmlType;
     "fileNumber",
     "appointment",
     "_package",
-    "additionalAttribute"
+    "additionalAttribute",
+    "isSignatureRequired"
 })
 public class ShipmentType {
 
@@ -152,8 +153,10 @@ public class ShipmentType {
     protected List<PackageType> _package;
     @XmlElement(name = "AdditionalAttribute")
     protected List<AdditionalCodeDescriptionValueType> additionalAttribute;
+    @XmlElement(name = "IsSignatureRequired")
+    protected Boolean isSignatureRequired;
 
-    /**
+	/**
      * Gets the value of the inquiryNumber property.
      * 
      * @return
@@ -864,6 +867,22 @@ public class ShipmentType {
     public void setAppointment(AppointmentType value) {
         this.appointment = value;
     }
+    
+    /**
+ 	 * @return the isSignatureRequired
+ 	 */
+ 	public Boolean getIsSignatureRequired()
+ 	{
+ 		return isSignatureRequired;
+ 	}
+
+ 	/**
+ 	 * @param isSignatureRequired the isSignatureRequired to set
+ 	 */
+ 	public void setIsSignatureRequired(Boolean isSignatureRequired)
+ 	{
+ 		this.isSignatureRequired = isSignatureRequired;
+ 	}
 
     /**
      * Gets the value of the package property.

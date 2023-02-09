@@ -21,6 +21,7 @@ import com.bl.facades.shipment.data.UpsPaymentInformation;
 import com.bl.facades.shipment.data.UpsShipmentServiceData;
 import com.bl.facades.shipment.data.UpsShippingRequestData;
 import com.bl.integration.constants.BlintegrationConstants;
+import com.bl.integration.ups.track.v2.ShipmentType;
 import com.ups.xmlschema.xoltws.common.v1.RequestType;
 import com.ups.xmlschema.xoltws.common.v1.TransactionReferenceType;
 
@@ -104,6 +105,8 @@ public class BLUPSShipmentCreateRequestPopulator
 			returnServiceType.setDescription(returnServiceData.getDescription());
 			shipmentType.setReturnService(returnServiceType);
 		}
+		
+		shipmentType.setIsSignatureRequired(shipmentData.getIsSignatureRequired());
 
 		/** Creating Package **/
 
