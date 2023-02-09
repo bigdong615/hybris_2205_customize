@@ -185,7 +185,6 @@
 	<bean id="loginGuidAuthenticationSuccessHandler" class="com.bl.storefront.security.GUIDAuthenticationSuccessHandler" >
 		<property name="authenticationSuccessHandler" ref="loginAuthenticationSuccessHandler" />
 		<property name="guidCookieStrategy" ref="guidCookieStrategy" />
-		<property name="blIpVelocityService" ref="blIpVelocityService"/>
 	</bean>
 
 	<alias name="defaultLoginAuthenticationSuccessHandler" alias="loginAuthenticationSuccessHandler"/>
@@ -221,7 +220,6 @@
 	<bean id="loginCheckoutGuidAuthenticationSuccessHandler" class="com.bl.storefront.security.GUIDAuthenticationSuccessHandler" >
 		<property name="authenticationSuccessHandler" ref="loginCheckoutAuthenticationSuccessHandler" />
 		<property name="guidCookieStrategy" ref="guidCookieStrategy" />
-		<property name="blIpVelocityService" ref="blIpVelocityService"/>
 	</bean>
 
 	<alias name="defaultLoginCheckoutAuthenticationSuccessHandler" alias="loginCheckoutAuthenticationSuccessHandler"/>
@@ -264,7 +262,6 @@
 		<property name="configurationService" ref="configurationService" />
 		<property name="modelService" ref="modelService" />
 		<property name="userService" ref="userService" />
-		<property name="blIpVelocityService" ref="blIpVelocityService"/>
 	</bean>
 
 	<bean id="loginCheckoutAuthenticationFailureHandler" class="com.bl.storefront.security.LoginAuthenticationFailureHandler" >

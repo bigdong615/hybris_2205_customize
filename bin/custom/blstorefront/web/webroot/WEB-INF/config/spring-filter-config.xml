@@ -76,8 +76,6 @@
 		<ref bean="customerLocationRestorationFilter"/>
 		
 		<ref bean="blDatePickerFilter"/>
-		
-		<ref bean="ipVelocityFilter"/>
 
 	</util:list>
 	
@@ -254,10 +252,5 @@
 	<bean id="blDatePickerFilter" class="com.bl.storefront.filters.BlDatePickerFilter" >
 		<property name="blDatePickerService" ref="blDatePickerService"/>	
 		<property name="blCartService" ref="cartService"/>
-	</bean>
-	
-	<bean id="ipVelocityFilter" class="com.bl.storefront.filters.IpVelocityFilter" >
-			
-		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 </beans>
