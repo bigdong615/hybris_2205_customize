@@ -1927,7 +1927,7 @@
            var orderCode = $("#orderCode").val(); // To Get Order Code
 
            startDate.setDate(startDate.getDate() + 89); // To add max days from existing order startDate
-		  const disallowedDatesForExendOrder = [['2001-01-01', today], '2023-01-16', '2023-02-20','2023-05-29', '2023-07-04', '2023-09-04', '2023-11-23', '2023-11-24', '2023-12-25', '2023-12-26', '2023-12-29', '2024-01-01'];
+		  const disallowedDatesForExendOrder = [['2001-01-01', endDate], '2023-01-16', '2023-02-20','2023-05-29', '2023-07-04', '2023-09-04', '2023-11-23', '2023-11-24', '2023-12-25', '2023-12-26', '2023-12-29', '2024-01-01'];
                                        const extendRentalDatePicker = new Litepicker({
                                       element: document.getElementById('rental-litepicker'),
                                   //    plugins: ['mobilefriendly'],
