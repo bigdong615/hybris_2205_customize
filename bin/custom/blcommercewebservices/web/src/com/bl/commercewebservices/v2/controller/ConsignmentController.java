@@ -11,6 +11,7 @@ import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,6 +55,9 @@ public class ConsignmentController extends BaseCommerceController
 	public ConsignmentEntryListWsDTO getConsignmentEntries(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -61,7 +66,7 @@ public class ConsignmentController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final ConsignmentEntryListData consignmentEntryListData;
-		consignmentEntryListData = createConsignmentEntryListData(blconsignmentFacade.getConsignmentEntries(pageableData));
+		consignmentEntryListData = createConsignmentEntryListData(blconsignmentFacade.getConsignmentEntries(pageableData, date));
 		setTotalCountHeader(response, consignmentEntryListData.getPagination());
 		return getDataMapper().map(consignmentEntryListData, ConsignmentEntryListWsDTO.class, fields);
 	}
@@ -74,6 +79,9 @@ public class ConsignmentController extends BaseCommerceController
 	public ConsignmentListWsDTO getConsignments(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -82,7 +90,7 @@ public class ConsignmentController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final ConsignmentListData consignmentListData;
-		consignmentListData = createConsignmentListData(blconsignmentFacade.getConsignments(pageableData));
+		consignmentListData = createConsignmentListData(blconsignmentFacade.getConsignments(pageableData, date));
 		setTotalCountHeader(response, consignmentListData.getPagination());
 		return getDataMapper().map(consignmentListData, ConsignmentListWsDTO.class, fields);
 	}

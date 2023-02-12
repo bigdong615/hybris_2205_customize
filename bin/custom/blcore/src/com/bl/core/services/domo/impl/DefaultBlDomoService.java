@@ -14,6 +14,8 @@ import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.util.Date;
+
 import com.bl.core.domo.BlDomoDao;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlSerialLogModel;
@@ -27,120 +29,122 @@ import com.bl.core.model.VendorRepairLogModel;
 import com.bl.core.services.domo.BlDomoService;
 import com.braintree.model.BrainTreePaymentInfoModel;
 
+
 public class DefaultBlDomoService implements BlDomoService
 {
 	private BlDomoDao blDomoDao;
 
 	@Override
-	public SearchPageData<PackagingInfoModel> getPackagingInfos(final PageableData pageableData)
+	public SearchPageData<PackagingInfoModel> getPackagingInfos(final PageableData pageableData, final Date date)
 	{
 
-		return getBlDomoDao().getPackagingInfos(pageableData);
+		return getBlDomoDao().getPackagingInfos(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<PaymentTransactionModel> getPaymentTransactions(final PageableData pageableData)
+	public SearchPageData<PaymentTransactionModel> getPaymentTransactions(final PageableData pageableData, final Date date)
 	{
 
-		return getBlDomoDao().getPaymentTransactions(pageableData);
+		return getBlDomoDao().getPaymentTransactions(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<PaymentTransactionEntryModel> getPaymentTransactionEntries(final PageableData pageableData)
+	public SearchPageData<PaymentTransactionEntryModel> getPaymentTransactionEntries(final PageableData pageableData,
+			final Date date)
 	{
 
-		return getBlDomoDao().getPaymentTransactionEntries(pageableData);
+		return getBlDomoDao().getPaymentTransactionEntries(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<GiftCardModel> getGiftCards(final PageableData pageableData)
+	public SearchPageData<GiftCardModel> getGiftCards(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getGiftCards(pageableData);
+		return getBlDomoDao().getGiftCards(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<GiftCardMovementModel> getGiftCardMovements(final PageableData pageableData)
+	public SearchPageData<GiftCardMovementModel> getGiftCardMovements(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getGiftCardMovements(pageableData);
+		return getBlDomoDao().getGiftCardMovements(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<OrderModel> getOrders(final PageableData pageableData)
+	public SearchPageData<OrderModel> getOrders(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getOrders(pageableData);
+		return getBlDomoDao().getOrders(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<OrderEntryModel> getOrderEntries(final PageableData pageableData)
+	public SearchPageData<OrderEntryModel> getOrderEntries(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getOrderEntries(pageableData);
+		return getBlDomoDao().getOrderEntries(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<BlItemsBillingChargeModel> getBlItemsBillingCharge(final PageableData pageableData)
+	public SearchPageData<BlItemsBillingChargeModel> getBlItemsBillingCharge(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getBlItemsBillingCharge(pageableData);
+		return getBlDomoDao().getBlItemsBillingCharge(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<CustomerModel> getCustomers(final PageableData pageableData)
+	public SearchPageData<CustomerModel> getCustomers(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getCustomers(pageableData);
+		return getBlDomoDao().getCustomers(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<BlSerialLogModel> getBlSerialLogs(final PageableData pageableData)
+	public SearchPageData<BlSerialLogModel> getBlSerialLogs(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getBlSerialLogs(pageableData);
+		return getBlDomoDao().getBlSerialLogs(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<CustomerNotesModel> getCustomerNotes(final PageableData pageableData)
+	public SearchPageData<CustomerNotesModel> getCustomerNotes(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getCustomerNotes(pageableData);
+		return getBlDomoDao().getCustomerNotes(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<VendorRepairLogModel> getVendorRepairLogs(final PageableData pageableData)
+	public SearchPageData<VendorRepairLogModel> getVendorRepairLogs(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getVendorRepairLogs(pageableData);
+		return getBlDomoDao().getVendorRepairLogs(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<PartsNeededRepairLogModel> getPartsNeededRepairLogs(final PageableData pageableData)
+	public SearchPageData<PartsNeededRepairLogModel> getPartsNeededRepairLogs(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getPartsNeededRepairLogs(pageableData);
+		return getBlDomoDao().getPartsNeededRepairLogs(pageableData, date);
 
 	}
 
 	@Override
-	public SearchPageData<InHouseRepairLogModel> getInHouseRepairLogs(final PageableData pageableData)
+	public SearchPageData<InHouseRepairLogModel> getInHouseRepairLogs(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getInHouseRepairLogs(pageableData);
+		return getBlDomoDao().getInHouseRepairLogs(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<AddressModel> getAddresses(final PageableData pageableData)
+	public SearchPageData<AddressModel> getAddresses(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getAddresses(pageableData);
+		return getBlDomoDao().getAddresses(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<BrainTreePaymentInfoModel> getBrainTreePaymentInfos(final PageableData pageableData)
+	public SearchPageData<BrainTreePaymentInfoModel> getBrainTreePaymentInfos(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getBrainTreePaymentInfos(pageableData);
+		return getBlDomoDao().getBrainTreePaymentInfos(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<StockLevelModel> getStockLevels(final PageableData pageableData)
+	public SearchPageData<StockLevelModel> getStockLevels(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getStockLevels(pageableData);
+		return getBlDomoDao().getStockLevels(pageableData, date);
 	}
 
 	@Override
-	public SearchPageData<NotesModel> getNotes(final PageableData pageableData)
+	public SearchPageData<NotesModel> getNotes(final PageableData pageableData, final Date date)
 	{
-		return getBlDomoDao().getNotes(pageableData);
+		return getBlDomoDao().getNotes(pageableData, date);
 	}
 
 
