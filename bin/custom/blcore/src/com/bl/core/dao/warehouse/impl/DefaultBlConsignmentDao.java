@@ -31,93 +31,96 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 
+
 /**
  * It is used to get consignments.
  *
  * @author Sunil
  */
-public class DefaultBlConsignmentDao implements BlConsignmentDao {
+public class DefaultBlConsignmentDao implements BlConsignmentDao
+{
 
-  private static final Logger LOG = Logger.getLogger(DefaultBlConsignmentDao.class);
-  private FlexibleSearchService flexibleSearchService;
+	private static final Logger LOG = Logger.getLogger(DefaultBlConsignmentDao.class);
+	private FlexibleSearchService flexibleSearchService;
 
-  private PagedFlexibleSearchService pagedFlexibleSearchService;
+	private PagedFlexibleSearchService pagedFlexibleSearchService;
 
-  private static final String DATE_PARAM = "} BETWEEN ?startDate AND ?endDate ";
-  private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE = "SELECT {pk} FROM {Consignment as con},{Order as o} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = ?status1 OR {cs:CODE} = ?status2}})" +
-			" AND {con:optimizedShippingStartDate"+ DATE_PARAM + "AND {o.pk} = {con.order} AND {o:versionID} IS NULL";
+	private static final String DATE_PARAM = "} BETWEEN ?startDate AND ?endDate ";
+	private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE = "SELECT {pk} FROM {Consignment as con},{Order as o} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = ?status1 OR {cs:CODE} = ?status2}})"
+			+ " AND {con:optimizedShippingStartDate" + DATE_PARAM + "AND {o.pk} = {con.order} AND {o:versionID} IS NULL";
 
-  private static final String CONSIGNMENT_FOR_RETURN_DATE_QUERY = "SELECT {con:" + ItemModel.PK + "} FROM {"
-		  + ConsignmentModel._TYPECODE + " as con} WHERE {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE +"} = ?returnDate";
+	private static final String CONSIGNMENT_FOR_RETURN_DATE_QUERY = "SELECT {con:" + ItemModel.PK + "} FROM {"
+			+ ConsignmentModel._TYPECODE + " as con} WHERE {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} = ?returnDate";
 
-  private static final String CONSIGNMENT_ENTRY_FOR_SERIAL_AND_FROM_DATE = "SELECT {ce:" + ItemModel.PK + "} from {"
-			+ ConsignmentEntryModel._TYPECODE + " as ce}, {"
-			+ ConsignmentModel._TYPECODE + " as con} where {ce:" + ConsignmentEntryModel.SERIALPRODUCTS
-			+ "} LIKE CONCAT('%',CONCAT(?serial,'%'))" + " and {con:" + ItemModel.PK + "} = {ce:"
-			+ ConsignmentEntryModel.CONSIGNMENT + "} and {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} >= ?fromDate";
+	private static final String CONSIGNMENT_ENTRY_FOR_SERIAL_AND_FROM_DATE = "SELECT {ce:" + ItemModel.PK + "} from {"
+			+ ConsignmentEntryModel._TYPECODE + " as ce}, {" + ConsignmentModel._TYPECODE + " as con} where {ce:"
+			+ ConsignmentEntryModel.SERIALPRODUCTS + "} LIKE CONCAT('%',CONCAT(?serial,'%'))" + " and {con:" + ItemModel.PK
+			+ "} = {ce:" + ConsignmentEntryModel.CONSIGNMENT + "} and {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE
+			+ "} >= ?fromDate";
 
-  /**
-   * Get consignments
-   *
-   * @return ConsignmentModels
-   */
-  @Override
-  public List<ConsignmentModel> getReadyToShipConsignmentsForDate(final Date shipDate) {
+	/**
+	 * Get consignments
+	 *
+	 * @return ConsignmentModels
+	 */
+	@Override
+	public List<ConsignmentModel> getReadyToShipConsignmentsForDate(final Date shipDate)
+	{
 
-    final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE);
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE);
 
-    final List<ConsignmentStatus> statusList = new ArrayList<>();
-    statusList.add(ConsignmentStatus.CANCELLED);
-    statusList.add(ConsignmentStatus.BL_SHIPPED);
+		final List<ConsignmentStatus> statusList = new ArrayList<>();
+		statusList.add(ConsignmentStatus.CANCELLED);
+		statusList.add(ConsignmentStatus.BL_SHIPPED);
 
-    addQueryParameter(shipDate, statusList, fQuery);
+		addQueryParameter(shipDate, statusList, fQuery);
 
-    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-        "Flexible query for getting consignments to ship for date {} is  - {}", shipDate, fQuery.toString());
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Flexible query for getting consignments to ship for date {} is  - {}",
+				shipDate, fQuery.toString());
 
-    final SearchResult<ConsignmentModel> result = getFlexibleSearchService().search(fQuery);
-    final List<ConsignmentModel> consignmentModels = result.getResult();
+		final SearchResult<ConsignmentModel> result = getFlexibleSearchService().search(fQuery);
+		final List<ConsignmentModel> consignmentModels = result.getResult();
 
 
-    if (CollectionUtils.isEmpty(consignmentModels))
-    {
-      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-          "No Consignments available to ship for date {}", shipDate);
-      return Collections.emptyList();
-    }
+		if (CollectionUtils.isEmpty(consignmentModels))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No Consignments available to ship for date {}", shipDate);
+			return Collections.emptyList();
+		}
 
-    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-        "No of consignments available = {} to ship for date {}", consignmentModels.size(), shipDate);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No of consignments available = {} to ship for date {}",
+				consignmentModels.size(), shipDate);
 
-    return consignmentModels;
-  }
+		return consignmentModels;
+	}
 
-  /**
-   * It adds the parameters value into query
-   * @param shipDate
-   * @param statusList
-   * @param fQuery
-   */
-  private void addQueryParameter(final Date shipDate, final List<ConsignmentStatus> statusList,
-      final FlexibleSearchQuery fQuery) {
+	/**
+	 * It adds the parameters value into query
+	 *
+	 * @param shipDate
+	 * @param statusList
+	 * @param fQuery
+	 */
+	private void addQueryParameter(final Date shipDate, final List<ConsignmentStatus> statusList, final FlexibleSearchQuery fQuery)
+	{
 
-    final SimpleDateFormat simpleformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		final SimpleDateFormat simpleformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(shipDate);
-    fQuery.addQueryParameter(BlCoreConstants.START_DATE, simpleformat.format(startDate.getTime()));
+		final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(shipDate);
+		fQuery.addQueryParameter(BlCoreConstants.START_DATE, simpleformat.format(startDate.getTime()));
 
-    final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(shipDate);
-    fQuery.addQueryParameter(BlCoreConstants.END_DATE, simpleformat.format(endDate.getTime()));
+		final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(shipDate);
+		fQuery.addQueryParameter(BlCoreConstants.END_DATE, simpleformat.format(endDate.getTime()));
 
-    fQuery.addQueryParameter(BlCoreConstants.STATUS1, statusList.get(0).getCode());
-    fQuery.addQueryParameter(BlCoreConstants.STATUS2, statusList.get(1).getCode());
+		fQuery.addQueryParameter(BlCoreConstants.STATUS1, statusList.get(0).getCode());
+		fQuery.addQueryParameter(BlCoreConstants.STATUS2, statusList.get(1).getCode());
 
-  }
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public List<ConsignmentModel> getConsignmentForReturnDate(final Date returnDate)
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_FOR_RETURN_DATE_QUERY);
@@ -182,26 +185,31 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"DefaultBlConsignmentDao : getConsignmentEntriesForSerialCodeAndDate : No ConsignmentEntry found for serial : {}",serialCode);
+					"DefaultBlConsignmentDao : getConsignmentEntriesForSerialCodeAndDate : No ConsignmentEntry found for serial : {}",
+					serialCode);
 			return null;
 		}
 		final List<ConsignmentModel> result = search.getResult();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry found : {} for serial : {}", result,serialCode);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry found : {} for serial : {}", result, serialCode);
 		return result.get(0);
 
 	}
 
 	@Override
-	public SearchPageData<ConsignmentEntryModel> getConsignmentEntries(final PageableData pageableData)
+	public SearchPageData<ConsignmentEntryModel> getConsignmentEntries(final PageableData pageableData, final Date date)
 	{
-		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {ce.pk} FROM {ConsignmentEntry as ce}");
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery(
+				"SELECT distinct {ce.pk} FROM {ConsignmentEntry as ce} where {modifiedtime} >= ?date");
+		fQ.addQueryParameter("date", date);
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
 
 	@Override
-	public SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData)
+	public SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData, final Date date)
 	{
-		final FlexibleSearchQuery fQ = new FlexibleSearchQuery("SELECT distinct {c.pk} FROM {Consignment as c}");
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery(
+				"SELECT distinct {c.pk} FROM {Consignment as c} where {modifiedtime} >= ?date");
+		fQ.addQueryParameter("date", date);
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
 

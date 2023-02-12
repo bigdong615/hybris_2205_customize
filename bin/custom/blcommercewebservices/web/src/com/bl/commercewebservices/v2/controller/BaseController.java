@@ -43,6 +43,7 @@ public class BaseController
 {
 	protected static final String DEFAULT_PAGE_SIZE = "20";
 	protected static final String DEFAULT_CURRENT_PAGE = "0";
+	protected static final String DEFAULT_DATE = "1000-01-01";
 	protected static final String BASIC_FIELD_SET = FieldSetLevelHelper.BASIC_LEVEL;
 	protected static final String DEFAULT_FIELD_SET = FieldSetLevelHelper.DEFAULT_LEVEL;
 	protected static final String HEADER_TOTAL_COUNT = "X-Total-Count";
@@ -75,7 +76,8 @@ public class BaseController
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	@ResponseBody
-	@ExceptionHandler({ ModelNotFoundException.class })
+	@ExceptionHandler(
+	{ ModelNotFoundException.class })
 	public ErrorListWsDTO handleModelNotFoundException(final Exception ex)
 	{
 		LOG.info("Handling Exception for this request - {} - {}", ex.getClass().getSimpleName(), sanitize(ex.getMessage()));
@@ -151,7 +153,8 @@ public class BaseController
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	@ResponseBody
-	@ExceptionHandler({ DuplicateUidException.class })
+	@ExceptionHandler(
+	{ DuplicateUidException.class })
 	public ErrorListWsDTO handleDuplicateUidException(final DuplicateUidException ex)
 	{
 		LOG.debug("DuplicateUidException", ex);
@@ -160,7 +163,8 @@ public class BaseController
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	@ResponseBody
-	@ExceptionHandler({ HttpMessageNotReadableException.class })
+	@ExceptionHandler(
+	{ HttpMessageNotReadableException.class })
 	public ErrorListWsDTO handleHttpMessageNotReadableException(final Exception ex)
 	{
 		LOG.debug(INVALID_REQUEST_BODY_ERROR_MESSAGE, ex);
