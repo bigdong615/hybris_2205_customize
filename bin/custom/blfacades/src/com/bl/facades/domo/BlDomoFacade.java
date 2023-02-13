@@ -17,6 +17,8 @@ import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransaction
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 import de.hybris.platform.warehousingfacades.product.data.StockLevelData;
 
+import java.util.Date;
+
 import com.bl.facades.blSerialLog.data.BlSerialLogData;
 import com.bl.facades.customerNotes.data.CustomerNotesData;
 import com.bl.facades.customerNotes.data.NotesData;
@@ -34,7 +36,7 @@ public interface BlDomoFacade
 	 * @param pageableData
 	 * @return SearchPageData of PackagingInfos
 	 */
-	SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData);
+	SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData, final Date date);
 
 	/**
 	 * To fetch PackagingInfos for the pageable data
@@ -42,7 +44,7 @@ public interface BlDomoFacade
 	 * @param pageableData
 	 * @return SearchPageData of PackagingInfos
 	 */
-	SearchPageData<PaymentTransactionData> getPaymentTransactions(final PageableData pageableData);
+	SearchPageData<PaymentTransactionData> getPaymentTransactions(final PageableData pageableData, final Date date);
 
 	/**
 	 * To fetch PackagingInfos for the pageable data
@@ -50,19 +52,19 @@ public interface BlDomoFacade
 	 * @param pageableData
 	 * @return SearchPageData of PackagingInfos
 	 */
-	SearchPageData<PaymentTransactionEntryData> getPaymentTransactionEntries(final PageableData pageableData);
+	SearchPageData<PaymentTransactionEntryData> getPaymentTransactionEntries(final PageableData pageableData, final Date date);
 
 	/**
 	 * @param pageableData
 	 * @return
 	 */
-	SearchPageData<GiftCardData> getGiftCards(PageableData pageableData);
+	SearchPageData<GiftCardData> getGiftCards(PageableData pageableData, Date date);
 
 	/**
 	 * @param pageableData
 	 * @return
 	 */
-	SearchPageData<GiftCardMovementData> getGiftCardMovements(PageableData pageableData);
+	SearchPageData<GiftCardMovementData> getGiftCardMovements(PageableData pageableData, Date date);
 
 	/**
 	 * To fetch orders for the pageable data
@@ -70,7 +72,7 @@ public interface BlDomoFacade
 	 * @param pageableData
 	 * @return SearchPageData of orders
 	 */
-	SearchPageData<OrderData> getOrders(final PageableData pageableData);
+	SearchPageData<OrderData> getOrders(final PageableData pageableData, final Date date);
 
 	/**
 	 * To fetch orderentries for the pageable data
@@ -78,19 +80,19 @@ public interface BlDomoFacade
 	 * @param pageableData
 	 * @return SearchPageData of orderentries
 	 */
-	SearchPageData<OrderEntryData> getOrderEntries(final PageableData pageableData);
+	SearchPageData<OrderEntryData> getOrderEntries(final PageableData pageableData, final Date date);
 
 	/**
 	 * @param pageableData
 	 * @return
 	 */
-	SearchPageData<BlItemsBillingChargeData> getBlItemsBillingCharge(PageableData pageableData);
+	SearchPageData<BlItemsBillingChargeData> getBlItemsBillingCharge(PageableData pageableData, Date date);
 
 	/**
 	 * @param pageableData
 	 * @return
 	 */
-	SearchPageData<CustomerData> getCustomers(PageableData pageableData);
+	SearchPageData<CustomerData> getCustomers(PageableData pageableData, Date date);
 
 	/**
 	 * To fetch blSerialLogData for the pageable data
@@ -98,7 +100,7 @@ public interface BlDomoFacade
 	 * @param pageableData
 	 * @return SearchPageData of blSerialLogData
 	 */
-	SearchPageData<BlSerialLogData> getBlSerialLogs(final PageableData pageableData);
+	SearchPageData<BlSerialLogData> getBlSerialLogs(final PageableData pageableData, final Date date);
 
 	/**
 	 * To fetch CustomerNotes for the pageable data
@@ -106,7 +108,7 @@ public interface BlDomoFacade
 	 * @param pageableData
 	 * @return SearchPageData of CustomerNotes
 	 */
-	SearchPageData<CustomerNotesData> getCustomerNotes(final PageableData pageableData);
+	SearchPageData<CustomerNotesData> getCustomerNotes(final PageableData pageableData, final Date date);
 
 	/**
 	 * To fetch VendorRepairLogData for the pageable data
@@ -114,7 +116,7 @@ public interface BlDomoFacade
 	 * @param pageableData
 	 * @return SearchPageData of VendorRepairLogData
 	 */
-	SearchPageData<VendorRepairLogData> getVendorRepairLogs(final PageableData pageableData);
+	SearchPageData<VendorRepairLogData> getVendorRepairLogs(final PageableData pageableData, final Date date);
 
 	/**
 	 * To fetch PartsNeededRepairLogData for the pageable data
@@ -122,7 +124,7 @@ public interface BlDomoFacade
 	 * @param pageableData
 	 * @return SearchPageData of PartsNeededRepairLogData
 	 */
-	SearchPageData<PartsNeededRepairLogData> getPartsNeededRepairLogs(final PageableData pageableData);
+	SearchPageData<PartsNeededRepairLogData> getPartsNeededRepairLogs(final PageableData pageableData, final Date date);
 
 	/**
 	 * To fetch InHouseRepairLogData for the pageable data
@@ -130,22 +132,22 @@ public interface BlDomoFacade
 	 * @param pageableData
 	 * @return SearchPageData of InHouseRepairLogData
 	 */
-	SearchPageData<InHouseRepairLogData> getInHouseRepairLogs(final PageableData pageableData);
+	SearchPageData<InHouseRepairLogData> getInHouseRepairLogs(final PageableData pageableData, final Date date);
 
 	/**
 	 * @param pageableData
 	 * @return
 	 */
-	SearchPageData<AddressData> getAddresses(PageableData pageableData);
+	SearchPageData<AddressData> getAddresses(PageableData pageableData, Date date);
 
-	SearchPageData<BrainTreePaymentInfoData> getBrainTreePaymentInfo(PageableData pageableData);
+	SearchPageData<BrainTreePaymentInfoData> getBrainTreePaymentInfo(PageableData pageableData, Date date);
 
-	SearchPageData<StockLevelData> getStockLevels(PageableData pageableData);
+	SearchPageData<StockLevelData> getStockLevels(PageableData pageableData, Date date);
 
 	/**
 	 * @param pageableData
 	 * @return
 	 */
-	SearchPageData<NotesData> getNotes(PageableData pageableData);
+	SearchPageData<NotesData> getNotes(PageableData pageableData, Date date);
 
 }

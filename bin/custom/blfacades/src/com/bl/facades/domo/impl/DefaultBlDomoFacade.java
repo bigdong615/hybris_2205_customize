@@ -27,6 +27,8 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 import de.hybris.platform.warehousingfacades.product.data.StockLevelData;
 
+import java.util.Date;
+
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlSerialLogModel;
 import com.bl.core.model.CustomerNotesModel;
@@ -46,6 +48,7 @@ import com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
 import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import com.braintree.model.BrainTreePaymentInfoModel;
+
 
 public class DefaultBlDomoFacade implements BlDomoFacade
 {
@@ -78,19 +81,19 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	private Converter<PartsNeededRepairLogModel, PartsNeededRepairLogData> blPartsNeededRepairLogConverter;
 
 	private Converter<InHouseRepairLogModel, InHouseRepairLogData> blInHouseRepairLogConverter;
-	
+
 	private Converter<AddressModel, AddressData> domoAddressConvertor;
-	
+
 	private Converter<BrainTreePaymentInfoModel, BrainTreePaymentInfoData> domoBrainTreePaymentInfoConvertor;
-	
+
 	private Converter<StockLevelModel, StockLevelData> blStockLevelConvertor;
-	
+
 	private Converter<NotesModel, NotesData> blNotesConverter;
 
 	@Override
-	public SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData)
+	public SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<PackagingInfoModel> packaginginfos = getBlDomoService().getPackagingInfos(pageableData);
+		final SearchPageData<PackagingInfoModel> packaginginfos = getBlDomoService().getPackagingInfos(pageableData, date);
 		return convertPageData(packaginginfos, getBlpackagingInfoConverter());
 	}
 
@@ -107,125 +110,127 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	}
 
 	@Override
-	public SearchPageData<PaymentTransactionData> getPaymentTransactions(final PageableData pageableData)
+	public SearchPageData<PaymentTransactionData> getPaymentTransactions(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<PaymentTransactionModel> paymentTransactions = getBlDomoService().getPaymentTransactions(pageableData);
+		final SearchPageData<PaymentTransactionModel> paymentTransactions = getBlDomoService().getPaymentTransactions(pageableData,
+				date);
 		return convertPageData(paymentTransactions, getBlpaymentTransactionConverter());
 	}
 
 	@Override
-	public SearchPageData<PaymentTransactionEntryData> getPaymentTransactionEntries(final PageableData pageableData)
+	public SearchPageData<PaymentTransactionEntryData> getPaymentTransactionEntries(final PageableData pageableData,
+			final Date date)
 	{
 		final SearchPageData<PaymentTransactionEntryModel> paymentTransactionEntries = getBlDomoService()
-				.getPaymentTransactionEntries(pageableData);
+				.getPaymentTransactionEntries(pageableData, date);
 		return convertPageData(paymentTransactionEntries, getBlpaymentTransactionEntryConverter());
 	}
 
 	@Override
-	public SearchPageData<GiftCardData> getGiftCards(final PageableData pageableData)
+	public SearchPageData<GiftCardData> getGiftCards(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<GiftCardModel> giftCards = getBlDomoService().getGiftCards(pageableData);
+		final SearchPageData<GiftCardModel> giftCards = getBlDomoService().getGiftCards(pageableData, date);
 		return convertPageData(giftCards, getBlGiftCardConverter());
 	}
 
 	@Override
-	public SearchPageData<GiftCardMovementData> getGiftCardMovements(final PageableData pageableData)
+	public SearchPageData<GiftCardMovementData> getGiftCardMovements(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<GiftCardMovementModel> giftCardMovements = getBlDomoService().getGiftCardMovements(pageableData);
+		final SearchPageData<GiftCardMovementModel> giftCardMovements = getBlDomoService().getGiftCardMovements(pageableData, date);
 		return convertPageData(giftCardMovements, getBlGiftCardMovementConverter());
 	}
 
 	@Override
-	public SearchPageData<OrderData> getOrders(final PageableData pageableData)
+	public SearchPageData<OrderData> getOrders(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<OrderModel> orders = getBlDomoService().getOrders(pageableData);
+		final SearchPageData<OrderModel> orders = getBlDomoService().getOrders(pageableData, date);
 		return convertPageData(orders, getBlDomoOrderConverter());
 	}
 
 	@Override
-	public SearchPageData<OrderEntryData> getOrderEntries(final PageableData pageableData)
+	public SearchPageData<OrderEntryData> getOrderEntries(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<OrderEntryModel> orderEntries = getBlDomoService().getOrderEntries(pageableData);
+		final SearchPageData<OrderEntryModel> orderEntries = getBlDomoService().getOrderEntries(pageableData, date);
 		return convertPageData(orderEntries, getBlorderEntryConverter());
 	}
 
 	@Override
-	public SearchPageData<BlItemsBillingChargeData> getBlItemsBillingCharge(final PageableData pageableData)
+	public SearchPageData<BlItemsBillingChargeData> getBlItemsBillingCharge(final PageableData pageableData, final Date date)
 	{
 		final SearchPageData<BlItemsBillingChargeModel> blItemsBillingCharges = getBlDomoService()
-				.getBlItemsBillingCharge(pageableData);
+				.getBlItemsBillingCharge(pageableData, date);
 		return convertPageData(blItemsBillingCharges, getBlItemsBillingChargeConverter());
 	}
 
 	@Override
-	public SearchPageData<CustomerData> getCustomers(final PageableData pageableData)
+	public SearchPageData<CustomerData> getCustomers(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<CustomerModel> customers = getBlDomoService().getCustomers(pageableData);
+		final SearchPageData<CustomerModel> customers = getBlDomoService().getCustomers(pageableData, date);
 		return convertPageData(customers, getBlCustomerConverter());
 	}
 
 	@Override
-	public SearchPageData<BlSerialLogData> getBlSerialLogs(final PageableData pageableData)
+	public SearchPageData<BlSerialLogData> getBlSerialLogs(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<BlSerialLogModel> seriallogs = getBlDomoService().getBlSerialLogs(pageableData);
+		final SearchPageData<BlSerialLogModel> seriallogs = getBlDomoService().getBlSerialLogs(pageableData, date);
 		return convertPageData(seriallogs, getBlSerialLogsConverter());
 	}
 
 	@Override
-	public SearchPageData<CustomerNotesData> getCustomerNotes(final PageableData pageableData)
+	public SearchPageData<CustomerNotesData> getCustomerNotes(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<CustomerNotesModel> customerNotes = getBlDomoService().getCustomerNotes(pageableData);
+		final SearchPageData<CustomerNotesModel> customerNotes = getBlDomoService().getCustomerNotes(pageableData, date);
 		return convertPageData(customerNotes, getBlCustomerNotesConverter());
 	}
 
 	@Override
-	public SearchPageData<VendorRepairLogData> getVendorRepairLogs(final PageableData pageableData)
+	public SearchPageData<VendorRepairLogData> getVendorRepairLogs(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<VendorRepairLogModel> vendorRepairLogs = getBlDomoService().getVendorRepairLogs(pageableData);
+		final SearchPageData<VendorRepairLogModel> vendorRepairLogs = getBlDomoService().getVendorRepairLogs(pageableData, date);
 		return convertPageData(vendorRepairLogs, getBlVendorRepairLogConverter());
 	}
 
 	@Override
-	public SearchPageData<PartsNeededRepairLogData> getPartsNeededRepairLogs(final PageableData pageableData)
+	public SearchPageData<PartsNeededRepairLogData> getPartsNeededRepairLogs(final PageableData pageableData, final Date date)
 	{
 		final SearchPageData<PartsNeededRepairLogModel> partsNeededRepairLogs = getBlDomoService()
-				.getPartsNeededRepairLogs(pageableData);
+				.getPartsNeededRepairLogs(pageableData, date);
 		return convertPageData(partsNeededRepairLogs, getBlPartsNeededRepairLogConverter());
 	}
 
 	@Override
-	public SearchPageData<InHouseRepairLogData> getInHouseRepairLogs(final PageableData pageableData)
+	public SearchPageData<InHouseRepairLogData> getInHouseRepairLogs(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<InHouseRepairLogModel> inHouseRepairLogs = getBlDomoService().getInHouseRepairLogs(pageableData);
+		final SearchPageData<InHouseRepairLogModel> inHouseRepairLogs = getBlDomoService().getInHouseRepairLogs(pageableData, date);
 		return convertPageData(inHouseRepairLogs, getBlInHouseRepairLogConverter());
 	}
-	
+
 	@Override
-	public SearchPageData<AddressData> getAddresses(final PageableData pageableData)
+	public SearchPageData<AddressData> getAddresses(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<AddressModel> addresses = getBlDomoService().getAddresses(pageableData);
+		final SearchPageData<AddressModel> addresses = getBlDomoService().getAddresses(pageableData, date);
 		return convertPageData(addresses, getDomoAddressConvertor());
 	}
-	
+
 	@Override
-	public SearchPageData<BrainTreePaymentInfoData> getBrainTreePaymentInfo(final PageableData pageableData)
+	public SearchPageData<BrainTreePaymentInfoData> getBrainTreePaymentInfo(final PageableData pageableData, final Date date)
 	{
 		final SearchPageData<BrainTreePaymentInfoModel> brainTreePaymentInfos = getBlDomoService()
-				.getBrainTreePaymentInfos(pageableData);
+				.getBrainTreePaymentInfos(pageableData, date);
 		return convertPageData(brainTreePaymentInfos, getDomoBrainTreePaymentInfoConvertor());
 	}
-	
+
 	@Override
-	public SearchPageData<StockLevelData> getStockLevels(final PageableData pageableData)
+	public SearchPageData<StockLevelData> getStockLevels(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<StockLevelModel> stockLevels = getBlDomoService().getStockLevels(pageableData);
+		final SearchPageData<StockLevelModel> stockLevels = getBlDomoService().getStockLevels(pageableData, date);
 		return convertPageData(stockLevels, getBlStockLevelConvertor());
 	}
-	
+
 	@Override
-	public SearchPageData<NotesData> getNotes(final PageableData pageableData)
+	public SearchPageData<NotesData> getNotes(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<NotesModel> notes = getBlDomoService().getNotes(pageableData);
+		final SearchPageData<NotesModel> notes = getBlDomoService().getNotes(pageableData, date);
 		return convertPageData(notes, getBlNotesConverter());
 	}
 
@@ -435,7 +440,8 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	}
 
 	/**
-	 * @param blGiftCardConverter the blGiftCardConverter to set
+	 * @param blGiftCardConverter
+	 *           the blGiftCardConverter to set
 	 */
 	public void setBlGiftCardConverter(final Converter<GiftCardModel, GiftCardData> blGiftCardConverter)
 	{
@@ -451,9 +457,11 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	}
 
 	/**
-	 * @param blGiftCardMovementConverter the blGiftCardMovementConverter to set
+	 * @param blGiftCardMovementConverter
+	 *           the blGiftCardMovementConverter to set
 	 */
-	public void setBlGiftCardMovementConverter(final Converter<GiftCardMovementModel, GiftCardMovementData> blGiftCardMovementConverter)
+	public void setBlGiftCardMovementConverter(
+			final Converter<GiftCardMovementModel, GiftCardMovementData> blGiftCardMovementConverter)
 	{
 		this.blGiftCardMovementConverter = blGiftCardMovementConverter;
 	}
@@ -492,7 +500,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	{
 		this.blCustomerConverter = blCustomerConverter;
 	}
-	
+
 	/**
 	 * @return the domoAddressConvertor
 	 */
@@ -500,6 +508,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	{
 		return domoAddressConvertor;
 	}
+
 	/**
 	 * @param domoAddressConvertor
 	 *           the domoAddressConvertor to set
@@ -508,6 +517,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	{
 		this.domoAddressConvertor = domoAddressConvertor;
 	}
+
 	/**
 	 * @return the domoBrainTreePaymentInfoConvertor
 	 */
@@ -515,6 +525,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	{
 		return domoBrainTreePaymentInfoConvertor;
 	}
+
 	/**
 	 * @param domoBrainTreePaymentInfoConvertor
 	 *           the domoBrainTreePaymentInfoConvertor to set
@@ -524,6 +535,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	{
 		this.domoBrainTreePaymentInfoConvertor = domoBrainTreePaymentInfoConvertor;
 	}
+
 	/**
 	 * @return the blStockLevelConvertor
 	 */
@@ -531,6 +543,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	{
 		return blStockLevelConvertor;
 	}
+
 	/**
 	 * @param blStockLevelConvertor
 	 *           the blStockLevelConvertor to set
@@ -539,7 +552,7 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	{
 		this.blStockLevelConvertor = blStockLevelConvertor;
 	}
-	
+
 	/**
 	 * @return the blNotesConverter
 	 */
@@ -547,10 +560,12 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	{
 		return blNotesConverter;
 	}
+
 	/**
-	 * @param blNotesConverter the blNotesConverter to set
+	 * @param blNotesConverter
+	 *           the blNotesConverter to set
 	 */
-	public void setBlNotesConverter(Converter<NotesModel, NotesData> blNotesConverter)
+	public void setBlNotesConverter(final Converter<NotesModel, NotesData> blNotesConverter)
 	{
 		this.blNotesConverter = blNotesConverter;
 	}
