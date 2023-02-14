@@ -538,5 +538,194 @@
             <description>Pagination items</description>
         </property>
 	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.user.AddressWsDTO">
+        <property name="addressType" type="String"/>
+        <property name="openingDaysDetails" type="java.util.Map&lt;String, String>"/>
+        <property name="pickStoreAddress" type="Boolean"/>
+        <property name="upsStoreAddress" type="Boolean"/>
+        <property name="url" type="String"/>
+        <property name="braintreeaddressid" type="String"/>
+        <property name="defaultBillingAddress" type="boolean"/>
+        <property name="createdTS" type="java.util.Date"/>
+	  	<property name="modifiedTS" type="java.util.Date"/>
+	  	<property name="original" type="String"/>
+	  	<property name="duplicate" type="boolean"/>
+	  	<property name="appartment" type="String"/>
+	  	<property name="building" type="String"/>
+	  	<property name="department" type="String"/>
+	  	<property name="fax" type="String"/>
+	  	<property name="middleName" type="String"/>
+	  	<property name="middleName2" type="String"/>
+	  	<property name="poBox" type="String"/>
+	  	<property name="streetName" type="String"/>
+	  	<property name="streetNumber" type="String"/>
+	  	<property name="gender" type="String"/>
+	  	<property name="dateOfBirth" type="java.util.Date"/>
+	  	<property name="remarks" type="String"/>
+	  	<property name="unloadingAddress" type="boolean"/>
+	  	<property name="contactaAddress" type="boolean"/>
+	  	<property name="zone" type="String"/>
+	  	<property name="latitude" type="java.lang.Double"/>
+	  	<property name="longitude" type="java.lang.Double"/>
+	  	<property name="phone2" type="String"/>
+    </bean>
+    
+    <bean class="de.hybris.platform.commercewebservicescommons.dto.user.address.AddressListWsDTO">
+		<description>Representation of an Address List</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">Address List</hint>
+        </hints>
+        <property name="addresses"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.user.AddressWsDTO>">
+            <description>List of Addresses</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoWsDTO">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="code" type="java.lang.String"/>             
+      <property name="duplicate" type="java.lang.Boolean"/>
+      <property name="user" type="java.lang.String"/>             
+      <property name="saved" type="java.lang.Boolean"/>
+      <property name="billingAddress" type="java.lang.String"/>
+      <property name="paymentProvider" type="java.lang.String"/>
+      <property name="nonce" type="java.lang.String"/>
+      <property name="customerId" type="java.lang.String"/>
+      <property name="deviceData" type="java.lang.String"/>
+      <property name="paymentMethodToken" type="java.lang.String"/>
+      <property name="liabilityShifted" type="java.lang.Boolean"/>
+      <property name="usePaymentMethodToken" type="java.lang.Boolean"/>
+      <property name="expirationMonth" type="java.lang.String"/>
+      <property name="expirationYear" type="java.lang.String"/>
+      <property name="imageSource" type="java.lang.String"/>
+      <property name="threeDSecureConfiguration" type="java.lang.Boolean"/>
+      <property name="advancedFraudTools" type="java.lang.Boolean"/>
+      <property name="isSkip3dSecureLiabilityResult" type="java.lang.Boolean"/>
+      <property name="creditCardStatementName" type="java.lang.String"/>
+      <property name="brainTreeChannel" type="java.lang.String"/>
+      <property name="merchantAccountIdForCurrentSite" type="java.lang.String"/>
+      <property name="paymentInfo" type="java.lang.String"/>
+      <property name="cardholderName" type="java.lang.String"/>
+      <property name="customerLocation" type="java.lang.String"/>
+      <property name="payPalIntent" type="java.lang.String"/>
+      <property name="payer" type="java.lang.String"/>
+      <property name="shipsFromPostalCode" type="java.lang.String"/>
+      <property name="paymentId" type="java.lang.String"/>
+      <property name="depositAmount" type="java.lang.Double"/>
+      <property name="createdAt" type="java.util.Date"/>
+      <property name="updatedAt" type="java.util.Date"/>
+      <property name="shouldBeSaved" type="java.lang.Boolean"/>
+      <property name="newAmount" type="java.lang.Double"/>
+      <property name="isDepositPayment" type="java.lang.Boolean"/>
+      <property name="createNewTransaction" type="java.lang.Boolean"/>
+      <property name="billPayment" type="java.lang.Boolean"/>
+      <property name="modifyPayment" type="java.lang.Boolean"/>
+      <property name="extendOrder" type="java.lang.Boolean"/>
+      <property name="isDefault" type="java.lang.Boolean"/>
+      <property name="cardType" type="java.lang.String"/>
+      <property name="cardNumber" type="java.lang.String"/>
+    </bean>
+    
+    <bean class="de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoListWsDTO">
+		<description>Representation of an BrainTreePaymentInfo List</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">BrainTreePaymentInfo List</hint>
+        </hints>
+        <property name="brainTreePaymentInfo"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoWsDTO>">
+            <description>List of BrainTreePaymentInfo</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+	</bean>
+	
+	<bean class="de.hybris.platform.warehousingwebservices.dto.product.StockLevelWsDto">
+	  <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="nextDeliveryTime" type="java.util.Date"/>
+      <property name="date" type="java.util.Date"/>
+      <property name="available" type="java.lang.Integer"/>
+      <property name="reserved" type="java.lang.Integer"/>
+      <property name="overSelling" type="java.lang.Integer"/>
+      <property name="preOrder" type="java.lang.Integer"/>
+      <property name="maxPreOrder" type="java.lang.Integer"/>
+      <property name="maxStockLevelHistoryCount" type="java.lang.Integer"/>
+      <property name="treatNegativeAsZero" type="java.lang.Boolean"/>
+      <property name="reservedStatus" type="java.lang.Boolean"/>
+      <property name="hardAssigned" type="java.lang.Boolean"/>
+      <property name="bufferedInventory" type="java.lang.Boolean"/>
+      <property name="forSale" type="java.lang.Boolean"/>
+      <property name="serialProductCode" type="java.lang.String"/>
+      <property name="order" type="java.lang.String"/>
+      <property name="serialStatus" type="java.lang.String"/>
+	</bean>
+    
+    <bean class="de.hybris.platform.warehousingwebservices.dto.product.StockLevelListWsDTO">
+		<description>Representation of an Stocklevel List</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">Stocklevel List</hint>
+        </hints>
+        <property name="stockLevels"
+                  type="java.util.List&lt;de.hybris.platform.warehousingwebservices.dto.product.StockLevelWsDto>">
+            <description>List of Stocklevels</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+	</bean>
+	
+	<bean class="com.bl.facades.customerNotes.dto.NotesWsDTO">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="userId" type="java.lang.String"/>
+      <property name="type" type="java.lang.String"/>
+      <property name="order" type="java.lang.String"/>
+      <property name="note" type="java.lang.String"/>    
+      <property name="consignemnt" type="java.lang.String"/>                              
+    </bean>
+    
+    <bean class="com.bl.facades.customerNotes.dto.NotesListWsDTO">
+        <description>Representation of an  notesList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">notesList</hint>
+        </hints>
+        <property name="notesList"
+                  type="java.util.List&lt;com.bl.facades.customerNotes.dto.NotesWsDTO>">
+            <description>List of NotesList </description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
 
 </beans>

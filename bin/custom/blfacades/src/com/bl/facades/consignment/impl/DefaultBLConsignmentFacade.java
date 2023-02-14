@@ -12,6 +12,8 @@ import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 
+import java.util.Date;
+
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.facades.consignment.BLConsignmentFacade;
 
@@ -29,16 +31,17 @@ public class DefaultBLConsignmentFacade implements BLConsignmentFacade
 	private Converter<ConsignmentModel, ConsignmentData> consignmentConverter;
 
 	@Override
-	public SearchPageData<ConsignmentEntryData> getConsignmentEntries(final PageableData pageableData)
+	public SearchPageData<ConsignmentEntryData> getConsignmentEntries(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<ConsignmentEntryModel> entries = getBlConsignmentEntryService().getConsignmentEntries(pageableData);
+		final SearchPageData<ConsignmentEntryModel> entries = getBlConsignmentEntryService().getConsignmentEntries(pageableData,
+				date);
 		return convertPageData(entries, getConsignmentEntryConverter());
 	}
 
 	@Override
-	public SearchPageData<ConsignmentData> getConsignments(final PageableData pageableData)
+	public SearchPageData<ConsignmentData> getConsignments(final PageableData pageableData, final Date date)
 	{
-		final SearchPageData<ConsignmentModel> consignments = getBlConsignmentEntryService().getConsignments(pageableData);
+		final SearchPageData<ConsignmentModel> consignments = getBlConsignmentEntryService().getConsignments(pageableData, date);
 		return convertConsignmentPageData(consignments, getConsignmentConverter());
 	}
 

@@ -8,6 +8,8 @@ import de.hybris.platform.commercefacades.order.data.ConsignmentEntryData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 
+import java.util.Date;
+
 
 public interface BLConsignmentFacade
 {
@@ -17,11 +19,11 @@ public interface BLConsignmentFacade
 	 * @param pageableData
 	 * @return SearchPageData of ConsignmentEntries
 	 */
-	SearchPageData<ConsignmentEntryData> getConsignmentEntries(final PageableData pageableData);
+	SearchPageData<ConsignmentEntryData> getConsignmentEntries(final PageableData pageableData, final Date date);
 
 	/**
 	 * @param pageableData
 	 * @return
 	 */
-	SearchPageData<ConsignmentData> getConsignments(PageableData pageableData);
+	SearchPageData<ConsignmentData> getConsignments(PageableData pageableData, Date date);
 }

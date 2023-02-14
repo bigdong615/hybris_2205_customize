@@ -83,7 +83,7 @@
             <map>
                 <entry key="BASIC" value="id"/>
                 <entry key="DEFAULT" value="BASIC,firstName,lastName,email,titleCode,phone,cellphone,line1,line2,postalCode,country,region,district,town,defaultAddress"/>
-                <entry key="FULL" value="DEFAULT,companyName,country(FULL),region(FULL),title,visibleInAddressBook,formattedAddress,shippingAddress"/>
+                <entry key="FULL" value="createdTS,modifiedTS,original,duplicate,appartment,building,department,fax,middleName,middleName2,poBox,streetName,streetNumber,gender,dateOfBirth,remarks,unloadingAddress,contactAddress,zone,latitude,longitude,phone2,addressId,title,firstName,lastName,company,town,postalCode,region,district,phone1,cellPhone,country,email,shippingAddress,billingAddress,visibleInAddressBook,braintreeAddressId,addressType,openingDaysDetails,pickStoreAddress,upsStoreAddress,url"/>
             </map>
         </property>
     </bean>
@@ -1680,6 +1680,95 @@
                 <entry key="BASIC" value="pagination,blItemsBillingChargeData,sorts"/>
                 <entry key="DEFAULT" value="pagination(DEFAULT),blItemsBillingChargeData(DEFAULT),sorts(DEFAULT)"/>
                 <entry key="FULL" value="pagination(FULL),blItemsBillingChargeData(FULL),sorts(FULL)"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="addressesListWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.user.address.AddressListWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="pagination,addresses,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),addresses(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),addresses(FULL),sorts(FULL)"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="brainTreePaymentInfoWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="createdTS,modifiedTS,code"/>
+                <entry key="DEFAULT"
+                       value="createdTS,modifiedTS,code"/>
+                <entry key="FULL" 
+                	   value="createdTS,modifiedTS,code,duplicate,user,saved,billingAddress,paymentProvider,nonce,customerId,deviceData,paymentMethodToken,liabilityShifted,usePaymentMethodToken,expirationMonth,expirationYear,imageSource,threeDSecureConfiguration,advancedFraudTools,isSkip3dSecureLiabilityResult,creditCardStatementName,brainTreeChannel,merchantAccountIdForCurrentSite,paymentInfo,cardholderName,customerLocation,payPalIntent,payer,shipsFromPostalCode,paymentId,depositAmount,createdAt,updatedAt,shouldBeSaved,newAmount,isDepositPayment,createNewTransaction,billPayment,modifyPayment,extendOrder,isDefault,cardType,cardNumber"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="brainTreePaymentInfoListWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoListWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="pagination,brainTreePaymentInfo,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),brainTreePaymentInfo(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),brainTreePaymentInfo(FULL),sorts(FULL)"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="stockLevelWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.warehousingwebservices.dto.product.StockLevelWsDto"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="createdTS,modifiedTS,date"/>
+                <entry key="DEFAULT"
+                       value="createdTS,modifiedTS,date"/>
+                <entry key="FULL" 
+                	   value="createdTS,modifiedTS,available,nextDeliveryTime,reserved,overSelling,preOrder,maxPreOrder,treatNegativeAsZero,maxStocklevelHistoryCount,asnEntry,date,serialProductCode,reservedStatus,order,hardAssigned,bufferedInventory,serialStatus,forSale,productCode,bin,releaseDate,inStockStatus,warehouse"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="stockLevelListWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.warehousingwebservices.dto.product.StockLevelListWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="pagination,stockLevels,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),stockLevels(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),stockLevels(FULL),sorts(FULL)"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="notesWsDTOFieldSetLevelMapping">
+        <property name="dtoClass" value="com.bl.facades.customerNotes.dto.NotesWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="createdTS,modifiedTS,userId"/>
+                <entry key="DEFAULT"
+                       value="createdTS,modifiedTS,userId"/>
+                <entry key="FULL" 
+                	   value="createdTS,modifiedTS,userId,type,order,consignment,note"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean parent="fieldSetLevelMapping" id="notesListWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="com.bl.facades.customerNotes.dto.NotesListWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="pagination,notesList,sorts"/>
+                <entry key="DEFAULT" value="pagination(DEFAULT),notesList(DEFAULT),sorts(DEFAULT)"/>
+                <entry key="FULL" value="pagination(FULL),notesList(FULL),sorts(FULL)"/>
             </map>
         </property>
     </bean>
