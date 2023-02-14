@@ -1660,7 +1660,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				if(model instanceof BlSerialProductModel)
 				{
 					final BlSerialProductModel serialProductModel = ((BlSerialProductModel) model);
-					serialProductModel.setAssociatedConsignment(consignmentModel);
+					setAssociatedConsignment(consignmentModel,serialProductModel);
 					serialProductModel.setAssociatedOrder(
 							consignmentModel.getOrder() instanceof OrderModel ? ((OrderModel) consignmentModel.getOrder()) : null);
 					serialProductModel
@@ -2791,5 +2791,16 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			serialsByBarcodesAndVersion.forEach(serial -> updateLocationOnItem(serial, getBlInventoryLocation(), Boolean.FALSE));
 		}
 		return errors;
+	}
+
+	/**
+	 * Method to set the Associate Consignment
+	 * @param consignmentModel  Consignmnet Model
+	 * @param serialProductModel Serial Product Model
+	 */
+	private void setAssociatedConsignment(ConsignmentModel consignmentModel, BlSerialProductModel serialProductModel) {
+		serialProductModel.setAssociatedConsignment(consignmentModel);
+		modelService.save(serialProductModel);
+		modelService.refresh(serialProductModel);
 	}
 }
