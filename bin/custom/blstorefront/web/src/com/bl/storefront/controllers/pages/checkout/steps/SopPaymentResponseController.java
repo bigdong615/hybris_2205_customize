@@ -161,7 +161,11 @@ public class SopPaymentResponseController extends PaymentMethodCheckoutStepContr
 			sopPaymentDetailsForm.setBillTo_street1(deliveryAddress.getLine1());
 			sopPaymentDetailsForm.setBillTo_street2(deliveryAddress.getLine2());
 			sopPaymentDetailsForm.setBillTo_city(deliveryAddress.getTown());
-			sopPaymentDetailsForm.setBillTo_postalCode(deliveryAddress.getPostalCode());
+			if(StringUtils.isNotEmpty(deliveryAddress.getPostalCode()) && deliveryAddress.getPostalCode().contains("-")){
+				sopPaymentDetailsForm.setBillTo_postalCode((deliveryAddress.getPostalCode().split("-"))[0]);
+			}else {
+				sopPaymentDetailsForm.setBillTo_postalCode(deliveryAddress.getPostalCode());
+			}
 			sopPaymentDetailsForm.setBillTo_country(deliveryAddress.getCountry().getIsocode());
 			sopPaymentDetailsForm.setBillTo_email(deliveryAddress.getEmail());
 			sopPaymentDetailsForm.setBillTo_phoneNumber(deliveryAddress.getPhone());
