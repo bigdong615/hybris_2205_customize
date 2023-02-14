@@ -67,4 +67,12 @@ public interface BLShipmentCreationService
 	 */
 	Map<String, Integer> getSequenceNumber(final Map<String, Integer> sequenceMap, final List<PackagingInfoModel> packages,
 			final int packageCount);
+	
+	
+	/**
+	 * This method is used to check Order and Consignment status for hiding the shipment modules
+	 * @param consignment
+	 * @return
+	 */
+	boolean checkOrderAndConsignmentStatus(final ConsignmentModel consignment);
 }
