@@ -54,6 +54,8 @@ public class BlDeliveryStateSourcingLocationFilter {
       	
       }else if (null != order.getDeliveryAddress() && null != order.getDeliveryAddress().getPostalcode()) {
       	String postalCode = order.getDeliveryAddress().getPostalcode();
+      	postalCode = postalCode.replaceFirst("^0+(?!$)", "");
+      	
       	final String carrierID = ((ZoneDeliveryModeModel) order.getDeliveryMode()).getCarrier().getCode();
       	
       	Integer carrierIDVal = carrierID.equalsIgnoreCase(UPS) ? TWO : ONE;
@@ -75,7 +77,6 @@ public class BlDeliveryStateSourcingLocationFilter {
          if (CollectionUtils.isNotEmpty(blShippingOptimizationModels) && blShippingOptimizationModels.size() == 1 && null != blShippingOptimizationModels.get(0)) {
          	
          	String warehouseCode = ONE.equals(blShippingOptimizationModels.get(0).getHomeBaseID()) ? CA : MA ;
-         	
          	foundLocation = warehouseService.getWarehouseForCode(warehouseCode);
          	
          	BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
