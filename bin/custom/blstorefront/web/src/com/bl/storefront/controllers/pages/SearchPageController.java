@@ -165,14 +165,8 @@ public class SearchPageController extends AbstractSearchPageController
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,blPageType);
-		final String currentCartType = blCartFacade.identifyCartType();
-		if(StringUtils.isNotEmpty(currentCartType)){
-			model.addAttribute(currentCartType,true);
-		}
-		else
-		{
-			model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
-		}
+		model.addAttribute(blCartFacade.identifyCartType(),true);
+
 		final String metaDescription = MetaSanitizerUtil
 				.sanitizeDescription(getMessageSource().getMessage(SEARCH_META_DESCRIPTION_RESULTS, null,
 						SEARCH_META_DESCRIPTION_RESULTS, getI18nService().getCurrentLocale()) + " " + searchText + " "
@@ -223,14 +217,8 @@ public class SearchPageController extends AbstractSearchPageController
 
 		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(searchText);
 		setUpMetaData(model, metaKeywords, metaDescription);
-		final String currentCartType = blCartFacade.identifyCartType();
-		if(StringUtils.isNotEmpty(currentCartType)){
-			model.addAttribute(currentCartType,true);
-		}
-		else
-		{
-			model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
-		}
+		model.addAttribute(blCartFacade.identifyCartType(),true);
+
 		return getViewForPage(model);
 	}
 
