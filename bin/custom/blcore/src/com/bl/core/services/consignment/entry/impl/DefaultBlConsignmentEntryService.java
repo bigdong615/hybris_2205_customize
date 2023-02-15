@@ -93,7 +93,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				changeStatusOnConsignment(consignment);
 				final AbstractOrderModel order = consignment.getOrder();
 				changeStatusOnOrder(order);
-				if(CollectionUtils.isEmpty(updatedSerialList))
+				if (CollectionUtils.isEmpty(updatedSerialList))
 				{
 					getModelService().remove(consignmentEntry);
 					getModelService().refresh(consignment);
@@ -108,7 +108,8 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 * @param orderEntry
 	 *           the order entry
 	 */
-	private void updateUnallotedQuantityOnOrderEntry(final AbstractOrderEntryModel orderEntry, final Set<BlSerialProductModel> updatedSerialList)
+	private void updateUnallotedQuantityOnOrderEntry(final AbstractOrderEntryModel orderEntry,
+			final Set<BlSerialProductModel> updatedSerialList)
 	{
 		if (Objects.nonNull(orderEntry))
 		{
@@ -225,17 +226,17 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setItemsMapForInternalTransferOrders(final ConsignmentEntryModel entry,
-			final AbstractOrderEntryModel orderEntry) {
+	public void setItemsMapForInternalTransferOrders(final ConsignmentEntryModel entry, final AbstractOrderEntryModel orderEntry)
+	{
 
-		final Map<String, ItemStatusEnum> itemsMap =
-				null == entry.getItems() ? new HashMap<>() : entry.getItems();
+		final Map<String, ItemStatusEnum> itemsMap = null == entry.getItems() ? new HashMap<>() : entry.getItems();
 
 		itemsMap.put(orderEntry.getProduct().getCode(), ItemStatusEnum.NOT_INCLUDED);
 
 		final List<BlProductModel> products = new ArrayList<>();
 
-		for (int i = 0; i < entry.getQuantity(); i++) {
+		for (int i = 0; i < entry.getQuantity(); i++)
+		{
 			products.add((BlProductModel) orderEntry.getProduct());
 		}
 
@@ -262,11 +263,12 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 		{
 			if (null != allSerialSubPartProductMap.get(subpartModel.getSubpartProduct()))
 			{
-				allSerialSubPartProductMap.put(subpartModel.getSubpartProduct(),allSerialSubPartProductMap.get(subpartModel.getSubpartProduct()) + subpartModel.getQuantity());
+				allSerialSubPartProductMap.put(subpartModel.getSubpartProduct(),
+						allSerialSubPartProductMap.get(subpartModel.getSubpartProduct()) + subpartModel.getQuantity());
 			}
 			else
 			{
-				allSerialSubPartProductMap.put(subpartModel.getSubpartProduct(),subpartModel.getQuantity());
+				allSerialSubPartProductMap.put(subpartModel.getSubpartProduct(), subpartModel.getQuantity());
 			}
 		}
 		allSerialSubPartProductMap.entrySet().forEach(mapEntry -> {
@@ -280,6 +282,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 
 	/**
 	 * This method is used to update item map.
+	 *
 	 * @param consignmentEntry
 	 * @param itemsMap
 	 * @param mapEntry
@@ -287,14 +290,12 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 * @param isBarcodedSubpart
 	 */
 	private void updateItemMap(final ConsignmentEntryModel consignmentEntry, final Map<String, ItemStatusEnum> itemsMap,
-			final Entry<BlProductModel, Integer> mapEntry, final BlProductModel subPartProduct,
-			final boolean isBarcodedSubpart)
+			final Entry<BlProductModel, Integer> mapEntry, final BlProductModel subPartProduct, final boolean isBarcodedSubpart)
 	{
 		if (mapEntry.getValue() == 1)
 		{
-			addSubPartsOnItemMap(subPartProduct.getName(),
-					isBarcodedSubpart ? ItemStatusEnum.NOT_INCLUDED : ItemStatusEnum.INCLUDED, itemsMap, consignmentEntry,
-					subPartProduct);
+			addSubPartsOnItemMap(subPartProduct.getName(), isBarcodedSubpart ? ItemStatusEnum.NOT_INCLUDED : ItemStatusEnum.INCLUDED,
+					itemsMap, consignmentEntry, subPartProduct);
 		}
 		else
 		{
@@ -309,6 +310,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 
 	/**
 	 * This method is used to add subpart on item map
+	 *
 	 * @param productName
 	 * @param enumStatus
 	 * @param itemsMap
@@ -351,18 +353,24 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 
 	/**
 	 * This method used to map subpart and its total count for particular serial.
+	 *
 	 * @param allSerialSubPartProducts
 	 * @param subPartsForGivenSerial
 	 */
-	private void addingSubpartToMap(final Map<BlProductModel, Integer> allSerialSubPartProducts,final Map<BlProductModel, Integer> subPartsForGivenSerial){
-		subPartsForGivenSerial.forEach( (productKey,quantity) ->{
-		if(allSerialSubPartProducts.containsKey(productKey)){
-			final Integer existingQuantity =allSerialSubPartProducts.get(productKey);
-			allSerialSubPartProducts.put(productKey,existingQuantity+quantity);
-		}else{
-			allSerialSubPartProducts.put(productKey,quantity);
-		}
-	} );
+	private void addingSubpartToMap(final Map<BlProductModel, Integer> allSerialSubPartProducts,
+			final Map<BlProductModel, Integer> subPartsForGivenSerial)
+	{
+		subPartsForGivenSerial.forEach((productKey, quantity) -> {
+			if (allSerialSubPartProducts.containsKey(productKey))
+			{
+				final Integer existingQuantity = allSerialSubPartProducts.get(productKey);
+				allSerialSubPartProducts.put(productKey, existingQuantity + quantity);
+			}
+			else
+			{
+				allSerialSubPartProducts.put(productKey, quantity);
+			}
+		});
 	}
 
 	/**
@@ -634,7 +642,8 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 		if (CollectionUtils.isEmpty(entry.getSerialProducts()))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-					"DefaultBlConsignmentEntryService :: getSubpartItemsList :: Serial Products is Empty for ConsignmentEntry : {}", entry.getPk());
+					"DefaultBlConsignmentEntryService :: getSubpartItemsList :: Serial Products is Empty for ConsignmentEntry : {}",
+					entry.getPk());
 			return Lists.newArrayList();
 		}
 		final List<String> subPartItemsList = Lists.newArrayList();
@@ -711,16 +720,16 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	}
 
 	@Override
-	public SearchPageData<ConsignmentEntryModel> getConsignmentEntries(final PageableData pageableData)
+	public SearchPageData<ConsignmentEntryModel> getConsignmentEntries(final PageableData pageableData, final Date date)
 	{
-		return getBlConsignmentDao().getConsignmentEntries(pageableData);
+		return getBlConsignmentDao().getConsignmentEntries(pageableData, date);
 
 	}
-	
+
 	@Override
-	public SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData)
+	public SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData, final Date date)
 	{
-		return getBlConsignmentDao().getConsignments(pageableData);
+		return getBlConsignmentDao().getConsignments(pageableData, date);
 
 	}
 

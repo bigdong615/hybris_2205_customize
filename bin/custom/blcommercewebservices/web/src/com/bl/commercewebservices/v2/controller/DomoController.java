@@ -14,10 +14,8 @@ import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoListWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.user.address.AddressListWsDTO;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
@@ -28,6 +26,7 @@ import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -35,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -75,6 +75,8 @@ import com.bl.facades.paymentTransaction.dto.PaymentTransactionListWsDTO;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogListData;
 import com.bl.facades.vendorRepairLog.dto.VendorRepairLogListWsDTO;
+import com.bl.integration.dto.AddressListWsDTO;
+import com.bl.integration.dto.UsersListWsDTO;
 import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import com.braintree.hybris.data.BrainTreePaymentInfoListData;
 
@@ -102,6 +104,9 @@ public class DomoController extends BaseCommerceController
 	public PackagingInfoListWsDTO getPackagingInfos(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -110,7 +115,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final PackagingInfoListData packagingInfoListData;
-		packagingInfoListData = createPackginfInfoListData(blDomoFacade.getPackagingInfos(pageableData));
+		packagingInfoListData = createPackginfInfoListData(blDomoFacade.getPackagingInfos(pageableData, date));
 		setTotalCountHeader(response, packagingInfoListData.getPagination());
 		return getDataMapper().map(packagingInfoListData, PackagingInfoListWsDTO.class, fields);
 	}
@@ -143,6 +148,9 @@ public class DomoController extends BaseCommerceController
 	public PaymentTransactionListWsDTO getpaymnetTransactions(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -151,7 +159,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final PaymentTransactionListData paymentTransactionListData;
-		paymentTransactionListData = createTransListData(blDomoFacade.getPaymentTransactions(pageableData));
+		paymentTransactionListData = createTransListData(blDomoFacade.getPaymentTransactions(pageableData, date));
 		setTotalCountHeader(response, paymentTransactionListData.getPagination());
 		return getDataMapper().map(paymentTransactionListData, PaymentTransactionListWsDTO.class, fields);
 	}
@@ -164,6 +172,9 @@ public class DomoController extends BaseCommerceController
 	public PaymentTransactionEntryListWsDTO getpaymnetTransactionEntries(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -172,7 +183,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final PaymentTransactionEntryListData paymentTransactionEntryListData;
-		paymentTransactionEntryListData = createTransEntryListData(blDomoFacade.getPaymentTransactionEntries(pageableData));
+		paymentTransactionEntryListData = createTransEntryListData(blDomoFacade.getPaymentTransactionEntries(pageableData, date));
 		setTotalCountHeader(response, paymentTransactionEntryListData.getPagination());
 		return getDataMapper().map(paymentTransactionEntryListData, PaymentTransactionEntryListWsDTO.class, fields);
 	}
@@ -207,6 +218,9 @@ public class DomoController extends BaseCommerceController
 	public GiftCardListWsDTO getGiftCards(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -215,7 +229,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final GiftCardListData giftCardListData;
-		giftCardListData = createGiftCardListData(blDomoFacade.getGiftCards(pageableData));
+		giftCardListData = createGiftCardListData(blDomoFacade.getGiftCards(pageableData, date));
 		setTotalCountHeader(response, giftCardListData.getPagination());
 		return getDataMapper().map(giftCardListData, GiftCardListWsDTO.class, fields);
 	}
@@ -240,6 +254,9 @@ public class DomoController extends BaseCommerceController
 	public GiftCardMovementListWsDTO getGiftCardMovements(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -248,7 +265,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final GiftCardMovementListData giftCardMovementListData;
-		giftCardMovementListData = createGiftCardMovementListData(blDomoFacade.getGiftCardMovements(pageableData));
+		giftCardMovementListData = createGiftCardMovementListData(blDomoFacade.getGiftCardMovements(pageableData, date));
 		setTotalCountHeader(response, giftCardMovementListData.getPagination());
 		return getDataMapper().map(giftCardMovementListData, GiftCardMovementListWsDTO.class, fields);
 	}
@@ -272,6 +289,9 @@ public class DomoController extends BaseCommerceController
 	public OrderListWsDTO getOrders(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -280,7 +300,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final OrderListData orderListData;
-		orderListData = createOrderListData(blDomoFacade.getOrders(pageableData));
+		orderListData = createOrderListData(blDomoFacade.getOrders(pageableData, date));
 		setTotalCountHeader(response, orderListData.getPagination());
 		return getDataMapper().map(orderListData, OrderListWsDTO.class, fields);
 	}
@@ -304,6 +324,9 @@ public class DomoController extends BaseCommerceController
 	public OrderEntryListWsDTO getOrderEntries(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -312,7 +335,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final OrderEntryListData orderEntryListData;
-		orderEntryListData = createOrderEntryListData(blDomoFacade.getOrderEntries(pageableData));
+		orderEntryListData = createOrderEntryListData(blDomoFacade.getOrderEntries(pageableData, date));
 		setTotalCountHeader(response, orderEntryListData.getPagination());
 		return getDataMapper().map(orderEntryListData, OrderEntryListWsDTO.class, fields);
 	}
@@ -336,6 +359,9 @@ public class DomoController extends BaseCommerceController
 	public BlItemsBillingChargeListWsDTO getBlItemsBillingCharge(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -344,12 +370,13 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final BlItemsBillingChargeListData blItemsBillingChargeListData;
-		blItemsBillingChargeListData = createBlItemsBillingChargeListData(blDomoFacade.getBlItemsBillingCharge(pageableData));
+		blItemsBillingChargeListData = createBlItemsBillingChargeListData(blDomoFacade.getBlItemsBillingCharge(pageableData, date));
 		setTotalCountHeader(response, blItemsBillingChargeListData.getPagination());
 		return getDataMapper().map(blItemsBillingChargeListData, BlItemsBillingChargeListWsDTO.class, fields);
 	}
 
-	protected BlItemsBillingChargeListData createBlItemsBillingChargeListData(final SearchPageData<BlItemsBillingChargeData> searchPageData)
+	protected BlItemsBillingChargeListData createBlItemsBillingChargeListData(
+			final SearchPageData<BlItemsBillingChargeData> searchPageData)
 	{
 		final BlItemsBillingChargeListData blItemsBillingChargeListData = new BlItemsBillingChargeListData();
 
@@ -368,6 +395,9 @@ public class DomoController extends BaseCommerceController
 	public UsersListWsDTO getCustomers(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -376,7 +406,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final CustomerListsData customerListsData;
-		customerListsData = createCustomerListsData(blDomoFacade.getCustomers(pageableData));
+		customerListsData = createCustomerListsData(blDomoFacade.getCustomers(pageableData, date));
 		setTotalCountHeader(response, customerListsData.getPagination());
 		return getDataMapper().map(customerListsData, UsersListWsDTO.class, fields);
 	}
@@ -400,6 +430,9 @@ public class DomoController extends BaseCommerceController
 	public BlSerialLogListWsDTO getBlSerialLogs(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -408,7 +441,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final BlSerialLogListData blSerialLogListData;
-		blSerialLogListData = createblSerialLogListData(blDomoFacade.getBlSerialLogs(pageableData));
+		blSerialLogListData = createblSerialLogListData(blDomoFacade.getBlSerialLogs(pageableData, date));
 		setTotalCountHeader(response, blSerialLogListData.getPagination());
 		return getDataMapper().map(blSerialLogListData, BlSerialLogListWsDTO.class, fields);
 	}
@@ -432,6 +465,9 @@ public class DomoController extends BaseCommerceController
 	public CustomerNotesListWsDTO getCustomerNotes(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -440,7 +476,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final CustomerNotesListData customerNotesListData;
-		customerNotesListData = createCustomerNotesListData(blDomoFacade.getCustomerNotes(pageableData));
+		customerNotesListData = createCustomerNotesListData(blDomoFacade.getCustomerNotes(pageableData, date));
 		setTotalCountHeader(response, customerNotesListData.getPagination());
 		return getDataMapper().map(customerNotesListData, CustomerNotesListWsDTO.class, fields);
 	}
@@ -464,6 +500,9 @@ public class DomoController extends BaseCommerceController
 	public VendorRepairLogListWsDTO getVendorRepairs(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -472,7 +511,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final VendorRepairLogListData vendorRepairLogListData;
-		vendorRepairLogListData = createVendorRepairsData(blDomoFacade.getVendorRepairLogs(pageableData));
+		vendorRepairLogListData = createVendorRepairsData(blDomoFacade.getVendorRepairLogs(pageableData, date));
 		setTotalCountHeader(response, vendorRepairLogListData.getPagination());
 		return getDataMapper().map(vendorRepairLogListData, VendorRepairLogListWsDTO.class, fields);
 	}
@@ -496,6 +535,9 @@ public class DomoController extends BaseCommerceController
 	public PartsNeededRepairLogListWsDTO getPartsNeededRepairLogs(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -504,7 +546,8 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final PartsNeededRepairLogListData partsNeededRepairLogListData;
-		partsNeededRepairLogListData = createPartsNeededRepairLogListData(blDomoFacade.getPartsNeededRepairLogs(pageableData));
+		partsNeededRepairLogListData = createPartsNeededRepairLogListData(
+				blDomoFacade.getPartsNeededRepairLogs(pageableData, date));
 		setTotalCountHeader(response, partsNeededRepairLogListData.getPagination());
 		return getDataMapper().map(partsNeededRepairLogListData, PartsNeededRepairLogListWsDTO.class, fields);
 	}
@@ -529,6 +572,9 @@ public class DomoController extends BaseCommerceController
 	public InHouseRepairLogListWsDTO getInHouseRepairLogs(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -537,7 +583,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final InHouseRepairLogListData inHouseRepairLogListData;
-		inHouseRepairLogListData = createInHouseRepairLogListData(blDomoFacade.getInHouseRepairLogs(pageableData));
+		inHouseRepairLogListData = createInHouseRepairLogListData(blDomoFacade.getInHouseRepairLogs(pageableData, date));
 		setTotalCountHeader(response, inHouseRepairLogListData.getPagination());
 		return getDataMapper().map(inHouseRepairLogListData, InHouseRepairLogListWsDTO.class, fields);
 	}
@@ -561,6 +607,9 @@ public class DomoController extends BaseCommerceController
 	public AddressListWsDTO getAddress(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -569,7 +618,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final AddressListData addressListData;
-		addressListData = createAddressesListData(blDomoFacade.getAddresses(pageableData));
+		addressListData = createAddressesListData(blDomoFacade.getAddresses(pageableData, date));
 		setTotalCountHeader(response, addressListData.getPagination());
 		return getDataMapper().map(addressListData, AddressListWsDTO.class, fields);
 	}
@@ -591,6 +640,9 @@ public class DomoController extends BaseCommerceController
 	public BrainTreePaymentInfoListWsDTO getBrainTreePaymentInfoData(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -599,7 +651,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final BrainTreePaymentInfoListData brainTreePaymentInfoListData;
-		brainTreePaymentInfoListData = createBrainTreePaymentInfoListData(blDomoFacade.getBrainTreePaymentInfo(pageableData));
+		brainTreePaymentInfoListData = createBrainTreePaymentInfoListData(blDomoFacade.getBrainTreePaymentInfo(pageableData, date));
 		setTotalCountHeader(response, brainTreePaymentInfoListData.getPagination());
 		return getDataMapper().map(brainTreePaymentInfoListData, BrainTreePaymentInfoListWsDTO.class, fields);
 	}
@@ -622,6 +674,9 @@ public class DomoController extends BaseCommerceController
 	public StockLevelListWsDTO getStockLevels(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -630,7 +685,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final StockLevelListData stockLevelListData;
-		stockLevelListData = createstockLevelListData(blDomoFacade.getStockLevels(pageableData));
+		stockLevelListData = createstockLevelListData(blDomoFacade.getStockLevels(pageableData, date));
 		setTotalCountHeader(response, stockLevelListData.getPagination());
 		return getDataMapper().map(stockLevelListData, StockLevelListWsDTO.class, fields);
 	}
@@ -652,6 +707,9 @@ public class DomoController extends BaseCommerceController
 	public NotesListWsDTO getNotes(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -660,7 +718,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final NotesListData notesListData;
-		notesListData = createNotesListData(blDomoFacade.getNotes(pageableData));
+		notesListData = createNotesListData(blDomoFacade.getNotes(pageableData, date));
 		setTotalCountHeader(response, notesListData.getPagination());
 		return getDataMapper().map(notesListData, NotesListWsDTO.class, fields);
 	}

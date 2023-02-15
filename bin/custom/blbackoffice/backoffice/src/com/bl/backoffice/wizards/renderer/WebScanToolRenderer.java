@@ -100,6 +100,7 @@ public class WebScanToolRenderer extends DefaultCustomViewRenderer {
         if(webScanToolRenderer != null) {
             final InputElement barcodeInput = webScanToolRenderer.getNewPwdInput();
             if(barcodeInput != null) {
+                barcodeInput.setFocus(Boolean.TRUE);
                 barcodeInput.setText(StringUtils.EMPTY);
                 webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInput, webScanToolData);
                 webScanToolRenderer.setNewPwdInput(barcodeInput);

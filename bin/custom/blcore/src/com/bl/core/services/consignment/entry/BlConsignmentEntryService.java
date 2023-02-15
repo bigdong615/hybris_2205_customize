@@ -7,6 +7,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -49,6 +50,7 @@ public interface BlConsignmentEntryService
 
 	/**
 	 * Created Map to display Shipper what all items are attached to the consignment.
+	 *
 	 * @param entry
 	 *           the entry
 	 * @param orderEntry
@@ -59,15 +61,18 @@ public interface BlConsignmentEntryService
 	/**
 	 * Assign serial and order code on billing charges.
 	 *
-	 * @param consignmentEntryModel the consignment entry model
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
 	 */
 	void assignSerialAndOrderCodeOnBillingCharges(final ConsignmentEntryModel consignmentEntryModel);
 
 	/**
 	 * Gets the consignment entry from order for serial code.
 	 *
-	 * @param order the order
-	 * @param serialCode the serial code
+	 * @param order
+	 *           the order
+	 * @param serialCode
+	 *           the serial code
 	 * @return the consignment entry from order for serial
 	 */
 	ConsignmentEntryModel getConsignmentEntryFromOrderForSerial(final OrderModel order, final String serialCode);
@@ -75,7 +80,8 @@ public interface BlConsignmentEntryService
 	/**
 	 * Gets the remaining scan subpart names.
 	 *
-	 * @param consignmentEntry the consignment entry
+	 * @param consignmentEntry
+	 *           the consignment entry
 	 * @return the remaining scan subpart names
 	 */
 	public List<String> getRemainingScanSubpartNames(final ConsignmentEntryModel consignmentEntry);
@@ -83,7 +89,8 @@ public interface BlConsignmentEntryService
 	/**
 	 * Gets the subpart items name list.
 	 *
-	 * @param consignmentEntry the consignment entry
+	 * @param consignmentEntry
+	 *           the consignment entry
 	 * @return the subpart items list
 	 */
 	public List<String> getSubpartItemsList(final ConsignmentEntryModel consignmentEntry);
@@ -91,7 +98,8 @@ public interface BlConsignmentEntryService
 	/**
 	 * Gets the main items list from given Consignment Entry.
 	 *
-	 * @param entry the entry
+	 * @param entry
+	 *           the entry
 	 * @return the main items list
 	 */
 	public List<BlSerialProductModel> getMainItemsList(final ConsignmentEntryModel entry);
@@ -102,7 +110,7 @@ public interface BlConsignmentEntryService
 	 * @param pageableData
 	 * @return SearchPageData of ConsignmentEntries
 	 */
-	SearchPageData<ConsignmentEntryModel> getConsignmentEntries(final PageableData pageableData);
+	SearchPageData<ConsignmentEntryModel> getConsignmentEntries(final PageableData pageableData, final Date date);
 
-	SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData);
+	SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData, final Date date);
 }

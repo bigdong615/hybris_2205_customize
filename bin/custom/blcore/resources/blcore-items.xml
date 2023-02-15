@@ -39,8 +39,6 @@
         <collectiontype code="ModifiedOrderGCPaymentList" elementtype="GiftCard" type="list"/>
 
         <collectiontype code="ShippingLabelHistoryList" elementtype="ShippingLabelHistory" type="list"/>
-        
-        <collectiontype code="IpVelocityList" elementtype="java.lang.String" type="list"/> 
 
     </collectiontypes>
 
@@ -534,7 +532,6 @@
         <maptype code="ConsignmentEntryStatusMap" argumenttype="java.lang.String" returntype="ConsignmentEntryStatusEnum" />
         <maptype code="BillingChargesMap" argumenttype="java.lang.String" returntype="BlItemCharges" />
         <maptype code="InventoryCycleCountScanSKUDetails" argumenttype="BlProduct" returntype="ModifiedSerialProduct" />
-        <maptype code="IpVelocityCounter" argumenttype="java.lang.String" returntype="java.lang.Integer" />
     </maptypes>
 
 
@@ -3594,6 +3591,11 @@
                         <persistence type="property"/>
                         <description>Ground shipping inbound (IN/OUT) code</description>
                     </attribute>
+                    <attribute type="java.lang.String" qualifier="zipText">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                        <description>zip text code</description>
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -3971,11 +3973,6 @@
                     <persistence type="property"/>
                     <description>It is end range to compare with gear value to set verification level accordingly</description>
                   </attribute>
-                  <attribute qualifier="blockedIpList" type="IpVelocityList">
-                      <description>Blocked Ip List</description>
-                      <modifiers read="true" write="true" search="false" optional="true" />
-                       <persistence type="property" />
-                 </attribute> 
                 </attributes>
             </itemtype>
         </typegroup>
@@ -4184,10 +4181,6 @@
                 <persistence type="property" />
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                 <description>Price of all the orders which are in status shipped or prior to shipped</description>
-              </attribute>
-              <attribute autocreate="true" qualifier="ipCounter" type="IpVelocityCounter">
-                <modifiers read="true" write="true" search="true" optional="true" />
-                <persistence type="property" />
               </attribute>
             </attributes>
             </itemtype>
@@ -8009,46 +8002,6 @@ new Integer(0)
 			          <persistence type="property" />
 			          <defaultvalue>Boolean.FALSE</defaultvalue>
 			        </attribute>
-                </attributes>
-            </itemtype>
-        </typegroup>
-        
-        <!-- BLS-51 -->
-        <typegroup name="IpVelocityFilter">
-            <itemtype code="IpVelocityFilter" autocreate="true" generate="true">
-                <description>Ip Velocity Filter</description>
-                <deployment table="ipVelocityFilter" typecode="12246"/>
-                <attributes>
-                    <attribute qualifier="userIp" type="java.lang.String">
-                        <modifiers read="true" write="true" optional="false" unique="true"/>
-                        <description>Users Ip</description>
-                        <persistence type="property" />
-                    </attribute>
-                    <attribute qualifier="userId" type="java.lang.String">
-                        <modifiers read="true" write="true" optional="false" unique="true" />
-                        <description>Users Id</description>
-                        <persistence type="property" />
-                    </attribute>
-                    <attribute qualifier="loginCounter" type="java.lang.Integer">
-                        <modifiers read="true" write="true" optional="false" />
-                        <description>Users login Counter</description>
-                        <persistence type="property" />
-                    </attribute>
-                    <attribute qualifier="successfulLogin" type="java.lang.Integer">
-                        <modifiers read="true" write="true" optional="false" />
-                        <description>Users successful login Counter</description>
-                        <persistence type="property" />
-                    </attribute>
-                    <attribute qualifier="unSuccessfulLogin" type="java.lang.Integer">
-                        <modifiers read="true" write="true" optional="false" />
-                        <description>Users unsuccessful login Counter</description>
-                        <persistence type="property" />
-                    </attribute>                    	
-                    <attribute qualifier="lastLoginAttemptedTimeStamp" type="java.util.Date">
-                        <modifiers read="true" write="true" optional="false"/>
-                        <description>Users Last Login time</description>
-                        <persistence type="property" />
-                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>

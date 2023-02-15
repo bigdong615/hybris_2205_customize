@@ -441,19 +441,9 @@ public class AbstractBlProductPageController extends AbstractPageController
 			model.addAttribute(WebConstants.BREADCRUMBS_KEY,
 					productBreadcrumbBuilder.getBreadcrumbs(productCode));
 		}
-    final String currentCartType = blCartFacade.identifyCartType();
-	 if (StringUtils.isNotEmpty(currentCartType))
-	 {
-		 model.addAttribute(currentCartType, true);
-	 }
-	 else if (productData.isRetailGear())
-	 {
-		 model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
-	 }
-	 else
-	 {
-		 model.addAttribute(BlFacadesConstants.USED_GEAR_CART, true);
-	 }
+
+			model.addAttribute(blCartFacade.identifyCartType(), true);
+
 	 if (CollectionUtils.isNotEmpty(productData.getVariantMatrix()))
 	 {
 		 model.addAttribute(WebConstants.MULTI_DIMENSIONAL_PRODUCT,
