@@ -53,6 +53,10 @@
                 <textbox sclass="oms-widget-updateorder__template-reason" readonly="true" id="destinationState"
                          style=""/>
       </row>
+      <row>
+                   <label value="Signature Reuired" width="50%" />
+                <checkbox id="signatureSelection" class="oms-widget-signature-list-container__checkbox"/>
+      </row>
     </rows>
   </grid>
   
