@@ -1,5 +1,6 @@
 package com.bl.backoffice.actions;
 
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
@@ -52,11 +53,12 @@ public class CreateShippingScanAction extends AbstractComponentWidgetAdapterAwar
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
 		return new ActionResult(BlintegrationConstants.SUCCESS);
 	}
-	
+
 	// TO DO : We may remove this method and use the once which is present in service getBlShipmentCreationService().checkOrderStatus(consignment), if confirmed that we do not need to show scan button for cancelled order
-	
+
 	/**
 	 * method will used to check the order status for shipment
+	 *
 	 * @param consignment
 	 * @return
 	 */
@@ -65,8 +67,9 @@ public class CreateShippingScanAction extends AbstractComponentWidgetAdapterAwar
 		if (consignment.getOrder() != null)
 		{
 			final OrderStatus status = consignment.getOrder().getStatus();
-			if (status.equals(OrderStatus.CHECKED_INVALID)
-					|| status.equals(OrderStatus.PAYMENT_NOT_AUTHORIZED) || status.equals(OrderStatus.RECEIVED_PAYMENT_DECLINED))
+			final ConsignmentStatus consignmentStatus = consignment.getStatus();
+			if (BlintegrationConstants.ORDERS_AND_CONSIGNMENT_STATUS.contains(status)
+					|| BlintegrationConstants.ORDERS_AND_CONSIGNMENT_STATUS.contains(consignmentStatus))
 			{
 				return false;
 			}

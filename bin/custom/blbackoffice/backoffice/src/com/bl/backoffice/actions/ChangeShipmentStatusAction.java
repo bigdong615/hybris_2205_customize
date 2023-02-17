@@ -81,7 +81,7 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 	{
 		final ConsignmentModel consignmentmodel = actionContext.getData();
 
-		return (consignmentmodel != null && getBlShipmentCreationService().checkOrderStatus(consignmentmodel));
+		return (consignmentmodel != null && getBlShipmentCreationService().checkOrderAndConsignmentStatus(consignmentmodel));
 	}
 
 	/**

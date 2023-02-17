@@ -30,10 +30,10 @@ public interface BlCreateShipmentFacade
 	 * @throws ParseException as Exception
 	 * @throws IOException 
 	 */
-	boolean createBlShipmentPackages(PackagingInfoModel packagingInfo,final int packageCount, final Map<String, Integer> sequenceMap) throws ParseException, IOException;
+	boolean createBlShipmentPackages(PackagingInfoModel packagingInfo,final int packageCount, final Map<String, Integer> sequenceMap, boolean isSignatureRequired) throws ParseException, IOException;
 
 	boolean createBlShipmentPackages(PackagingInfoModel packagingInfo, final int packageCount, final Map<String, Integer> sequenceMap,
-			final CarrierEnum shippingType, final OptimizedShippingMethodModel optimizedShippingMethod)
+			final CarrierEnum shippingType, final OptimizedShippingMethodModel optimizedShippingMethod, boolean isSignatureRequired)
 			throws ParseException, IOException;
 
 

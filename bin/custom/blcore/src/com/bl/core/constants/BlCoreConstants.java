@@ -686,6 +686,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CHECKED_INVALID ="CHECKED_INVALID" ;
 	public static final String CHECKED_VALID = "CHECKED_VALID";
 
+	public static final String POSTAL_CODE = "postalCode";
+	public static final String CARRIER_ID = "carrierID";
+
 	private BlCoreConstants()
 	{
 		//empty
