@@ -29,6 +29,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Checkbox;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
@@ -62,6 +63,8 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	private Textbox deliveryDate;
 	@Wire
 	private Textbox destinationState;
+	@Wire
+	private Checkbox signatureSelection;
 
 	protected static final String OUT_CONFIRM = "confirmOutput";
 	protected static final String COMPLETE = "completed";
@@ -185,11 +188,12 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		final boolean isOptimizedShippingMethodChanged = StringUtils.isNotBlank(selectedShippingType)
 				&& BooleanUtils.isFalse(selectedShippingType.equals(BlintegrationConstants.DEFAULT_SHIPPING_CODE))
 				&& Objects.nonNull(carrier) && Objects.nonNull(selectedOptimizedShippingMethodModel);
+		final boolean isSignatureRequired = getSignatureRequired();
 		final List<String> errorPackages = Lists.newArrayList();
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
 			processLabelCreation(packageCount, sequenceNumber, carrier, selectedOptimizedShippingMethodModel,
-					isOptimizedShippingMethodChanged, errorPackages, packagingInfoModel);
+					isOptimizedShippingMethodChanged, errorPackages, packagingInfoModel, isSignatureRequired);
 		}
 		if (CollectionUtils.isNotEmpty(errorPackages))
 		{
@@ -205,14 +209,14 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 
 	private void processLabelCreation(final int packageCount, final Map<String, Integer> sequenceNumber, final CarrierEnum carrier,
 			final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged,
-			final List<String> errorPackages, final PackagingInfoModel packagingInfoModel)
+			final List<String> errorPackages, final PackagingInfoModel packagingInfoModel, boolean isSignatureRequired)
 	{
 		try
 		{
 			if (isOptimizedShippingMethodChanged)
 			{
 				final boolean isSuccess = getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel, packageCount,
-						sequenceNumber, carrier, selectedOptimizedShippingMethodModel);
+						sequenceNumber, carrier, selectedOptimizedShippingMethodModel, isSignatureRequired);
 				if (BooleanUtils.isFalse(isSuccess))
 				{
 					errorPackages.add(packagingInfoModel.getPackageId());
@@ -221,7 +225,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 			else
 			{
 				final boolean isSuccess = getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel, packageCount,
-						sequenceNumber);
+						sequenceNumber, isSignatureRequired);
 				if (BooleanUtils.isFalse(isSuccess))
 				{
 					errorPackages.add(packagingInfoModel.getPackageId());
@@ -239,6 +243,11 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		return Objects.nonNull(this.optimizedShippingMethodComboBox.getSelectedItem())
 				? this.optimizedShippingMethodComboBox.getSelectedItem().getValue()
 				: StringUtils.EMPTY;
+	}
+	
+	private boolean getSignatureRequired()
+	{
+		return this.signatureSelection.isChecked();
 	}
 
 	private String getSelectedShippingType()
@@ -436,6 +445,19 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	public void setDestinationState(Textbox destinationState)
 	{
 		this.destinationState = destinationState;
+	}
+	
+	public Checkbox getSignatureSelection()
+	{
+		return signatureSelection;
+	}
+
+	/**
+	 * @param signatureSelection the signatureSelection to set
+	 */
+	public void setSignatureSelection(Checkbox signatureSelection)
+	{
+		this.signatureSelection = signatureSelection;
 	}
 
 }

@@ -185,13 +185,14 @@ public class DefaultBlOrderService implements BlOrderService {
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing order status to : {} for order code : {}",
 					orderStatus,order.getCode());
 
-			// To call Order Unboxed ESP event service
+		/*	// To call Order Unboxed ESP event service
 			if(OrderStatus.UNBOXED_COMPLETELY.equals(orderStatus)) {
 				getDefaultBlESPEventService().sendOrderUnboxed((OrderModel) order);
 			}
-
+*/
 			if(orderStatus.equals(OrderStatus.COMPLETED)) {
 				commitOrderToAvalara(order);
+				//getDefaultBlESPEventService().sendOrderUnboxed((OrderModel) order);
 			}
 		}
 		catch (final ModelSavingException exception)

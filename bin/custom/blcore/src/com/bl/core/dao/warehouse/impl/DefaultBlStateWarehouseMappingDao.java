@@ -12,6 +12,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlStateWarehouseMappingDao;
 import com.bl.core.model.BlStateWarehouseMappingModel;
 import com.bl.core.model.BoxSizesModel;
+import com.bl.core.model.ShippingOptimizationModel;
 
 
 /**
@@ -26,6 +27,10 @@ public class DefaultBlStateWarehouseMappingDao implements BlStateWarehouseMappin
 	private static final String FIND_BL_STATE_WAREHOUSE_BY_STATE_CODE = "SELECT {pk} FROM {"
 			+ BlStateWarehouseMappingModel._TYPECODE + "} WHERE {" + BlStateWarehouseMappingModel.CODE
 			+ "} IN ({{SELECT {reg:PK} FROM {Region as reg} WHERE {reg:isoCodeShort} =  ?isoCodeShort }})";
+
+	private static final String FIND_BL_WAREHOUSE_BY_POSTAL_CODE = "SELECT {pk} FROM {" + ShippingOptimizationModel._TYPECODE
+			+ "} WHERE {" + ShippingOptimizationModel.ZIP + "} = ?postalCode AND {" + ShippingOptimizationModel.CARRIERID
+			+ "} = ?carrierID";
 
 	private static final String FIND_BOX_DIMENSIONS = "SELECT {pk} FROM {" + BoxSizesModel._TYPECODE + "}";
 
@@ -66,5 +71,19 @@ public class DefaultBlStateWarehouseMappingDao implements BlStateWarehouseMappin
 		this.flexibleSearchService = flexibleSearchService;
 	}
 
+	@Override
+	public List<ShippingOptimizationModel> getWarehouseForPostalCode(final String postalCode, final Integer carrierID)
+	{
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(FIND_BL_WAREHOUSE_BY_POSTAL_CODE);
+		query.addQueryParameter(BlCoreConstants.POSTAL_CODE, postalCode);
+		query.addQueryParameter(BlCoreConstants.CARRIER_ID, carrierID);
+		final SearchResult<ShippingOptimizationModel> result = getFlexibleSearchService().search(query);
+		if (null != result && CollectionUtils.isNotEmpty(result.getResult()))
+		{
+			return result.getResult();
+		}
+
+		return null;
+	}
 
 }

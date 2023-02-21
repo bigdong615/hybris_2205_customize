@@ -176,7 +176,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addSaleAndRentQuery(target);
     } else {
       addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
-		if (getSessionService().getAttribute("isApliCall") == null)
+		if (getSessionService().getAttribute("isApiCall") == null)
 		{
 			addQueryForCategory(target, BlCoreConstants.IS_DISCONTINUED, BlCoreConstants.FALSE);
 		}
@@ -240,7 +240,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    * this method is created for adding itemType to solr query
    */
   private void addSaleAndRentQuery(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
-	  if (getSessionService().getAttribute("isApliCall") == null)
+	  if (getSessionService().getAttribute("isApiCall") == null)
 	  {
 		  target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
 		  target.getSearchQuery().addFilterQuery("productTypeExclusion", BlCoreConstants.FALSE);

@@ -41,8 +41,52 @@
 	</div>
 	<section id="theProcess">
 		<div class="container">
-			<div class="row justify-content-center">
+			<!-- BL-52 : HomePage Featured Gear section -->
+			<div class="page-loader-new-layout">
+				<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+			</div>
+			<div id="stories" class="row justify-content-center">
 				<div class="col-lg-11 col-xl-9">
+					<h5>
+						<cms:pageSlot position="HomePageFeaturedStoriesTitleSlot"
+									  var="feature">
+							<cms:component component="${feature}" />
+						</cms:pageSlot>
+					</h5>
+					<div id="blog-slider" class="splide mt-4">
+						<div class="splide__track">
+							<ul class="splide__list">
+								<cms:pageSlot position="HomePageFeaturedStoriesSectionSlot"
+											  var="feature">
+									<cms:component component="${feature}" />
+								</cms:pageSlot>
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div id="featured" class="row justify-content-center">
+				<div class="col-lg-11 col-xl-9">
+					<c:choose>
+						<c:when test="${allowAddToCart || isRentalCart}">
+							<div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+							</div>
+						</c:when>
+						<c:otherwise>
+							<div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
+							</div>
+						</c:otherwise>
+					</c:choose>
+					<cms:pageSlot position="HomePageFeaturedGearSectionSlot" var="feature">
+						<cms:component component="${feature}" />
+					</cms:pageSlot>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-11 col-xl-9 mt-5">
 					<h5>
 						<cms:pageSlot position="HomePageRentingGearIsEasyTitleSlot"
 							var="feature">
@@ -57,7 +101,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="row justify-content-center my-5">
+			<div class="row justify-content-center my-4">
 				<div class="divider col-xl-10"></div>
 			</div>
 		</div>
@@ -117,29 +161,6 @@
 			<div class="row justify-content-center my-5">
 				<div class="divider col-xl-10"></div>
 			</div>
-			<!-- BL-52 : HomePage Featured Gear section -->
-			<div class="page-loader-new-layout">
-           <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
-      </div>
-			<div id="featured" class="row justify-content-center">
-				<div class="col-lg-11 col-xl-9">
-				  <c:choose>
-             <c:when test="${allowAddToCart || isRentalCart}">
-                <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-                     <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
-                </div>
-             </c:when>
-             <c:otherwise>
-                <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-                     <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
-                </div>
-             </c:otherwise>
-          </c:choose>
-          <cms:pageSlot position="HomePageFeaturedGearSectionSlot" var="feature">
-						<cms:component component="${feature}" />
-					</cms:pageSlot>
-				</div>
-			</div>
 		</div>
 	</section>
 	<section id="whyBorrow">
@@ -183,28 +204,7 @@
 			</div>
 			<div class="row justify-content-center my-5">
 				<div class="divider col-xl-10"></div>
-			</div> -->	
-			<div id="stories" class="row justify-content-center">
-				<div class="col-lg-11 col-xl-9">
-					<h5>
-						<cms:pageSlot position="HomePageFeaturedStoriesTitleSlot"
-							var="feature">
-							<cms:component component="${feature}" />
-						</cms:pageSlot>
-					</h5>
-					<div id="blog-slider" class="splide mt-4">
-						<div class="splide__track">
-							<ul class="splide__list">
-								<cms:pageSlot position="HomePageFeaturedStoriesSectionSlot"
-									var="feature">
-									<cms:component component="${feature}" />
-					</cms:pageSlot>
-							</ul>
-						</div>
-					</div>
-
-				</div>
-			</div>
+			</div> -->
 		</div>
 	</section>
 

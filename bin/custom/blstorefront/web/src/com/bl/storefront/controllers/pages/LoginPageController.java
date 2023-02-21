@@ -92,9 +92,14 @@ public class LoginPageController extends AbstractBlLoginPageController
 			final HttpServletRequest request, final HttpServletResponse response, final HttpSession session)
 			throws CMSItemNotFoundException
 	{
+		String userIp = getUserIp(request);
 		if (!loginError)
 		{
 			storeReferer(referer, request, response);
+			LOG.info("Customer with email id :- "+(String) session.getAttribute(SPRING_SECURITY_LAST_USERNAME)+ " Logged in successfully with IP address :- "+ userIp);
+		}
+		else {
+			LOG.info("Customer with email id :- "+(String) session.getAttribute(SPRING_SECURITY_LAST_USERNAME)+ " Login was unsuccessfull with IP address :- "+ userIp);
 		}
 		final LoginForm loginForm = new LoginForm();
 		model.addAttribute(loginForm);
@@ -135,6 +140,51 @@ public class LoginPageController extends AbstractBlLoginPageController
 			}
 		}
 		return ControllerConstants.Views.Fragments.Login.LoginPopup;
+	}
+	
+	private String getUserIp(final HttpServletRequest request)
+	{
+		final String trueClient = "True-Client-IP";
+		final String cfConnectingIP = "CF-Connecting-IP";
+		final String forwardFor = "X-Forwarded-For";
+		String shopperIP = request.getHeader(trueClient);
+		String headerUsed = trueClient;
+		if (shopperIP == null)
+		{
+			headerUsed = cfConnectingIP;
+			shopperIP = request.getHeader(cfConnectingIP);
+		}
+		if (shopperIP == null)
+		{
+			headerUsed = forwardFor;
+			final String xfowardedHeader = request.getHeader(forwardFor);
+			// to be extra sure I don't want this to throw an exception for any reason, so I'll add a try catch
+			try
+			{
+				if (StringUtils.isNotBlank(xfowardedHeader))
+				{
+					final String[] headerParts = xfowardedHeader.split(",");
+					if (headerParts.length > 0)
+					{
+						shopperIP = request.getHeader(headerParts[0]);
+					}
+				}
+			}
+			catch (final Exception ex)
+			{
+				LOG.info("Could not assign shopper IP from X-Forward-For header ", ex);
+			}
+		}
+		if (shopperIP == null)
+		{
+			headerUsed = "Remote Address";
+			shopperIP = request.getRemoteAddr();
+		}
+		if (shopperIP == null)
+		{
+			shopperIP = "";
+		}
+		return shopperIP;
 	}
 
 	protected void storeReferer(final String referer, final HttpServletRequest request, final HttpServletResponse response)

@@ -98,7 +98,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
 			setLastUserChangedConditionRating(blSerialProduct, ctx);
 			setFlagForBufferedInventoryOnSerial(blSerialProduct);
-
 			updateStockRecordsOnSerialCodeUpdate(blSerialProduct, ctx);
 		}
 	}
@@ -299,6 +298,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 						.isInactiveStatus((SerialStatusEnum) initialValue)){
 					blSerialProduct.setIsSyncRequired(true);
 					blSerialProduct.setHardAssigned(false);
+					blSerialProduct.setSoftAssigned(false);
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, false);
 				}
 				 else if(getBlStockService().isInactiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
@@ -308,6 +308,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					createStockRecordsForNewProducts(blSerialProduct, initialValue);
 				}
 			}
+			
 		} catch(final Exception ex) {
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
 					"Exception occurred while updating the stock records on serial status change event of serial product {} ",

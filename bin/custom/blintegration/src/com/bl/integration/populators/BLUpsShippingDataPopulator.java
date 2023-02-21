@@ -63,6 +63,9 @@ public class BLUpsShippingDataPopulator
 	@Value("${blintegration.ups.shipment.shipper.attension.name}")
 	private String shipperAttensionName;
 
+	@Value("${blintegration.ups.shipment.shipper.company.name}")
+	private String shipperCompanyName;
+
 	@Value("${blintegration.ups.shipment.payment.information.type}")
 	private String paymentInfoType;
 
@@ -93,12 +96,12 @@ public class BLUpsShippingDataPopulator
 	 * @param packagingInfo
 	 * @return
 	 */
-	public UpsShippingRequestData populateUPSShipmentRequest(final PackagingInfoModel packagingInfo, final OptimizedShippingMethodModel om)
+	public UpsShippingRequestData populateUPSShipmentRequest(final PackagingInfoModel packagingInfo, final OptimizedShippingMethodModel om, boolean isSignatureRequired)
 	{
 		final UpsShippingRequestData upsRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
 
-		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, null, false, om);
+		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, null, false, om, isSignatureRequired);
 		upsRequestData.setShipment(upsShipmentData);
 		return upsRequestData;
 
@@ -116,7 +119,7 @@ public class BLUpsShippingDataPopulator
 		final UpsShippingRequestData upsReturnRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
 
-		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel, true, null);
+		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel, true, null, false);
 
 		/** Creating return service Data **/
 
@@ -138,7 +141,7 @@ public class BLUpsShippingDataPopulator
 	 * @param shipmentData
 	 */
 	private ShipmentData populateUpsShipmentRequestData(final PackagingInfoModel packagingInfo, final ShipmentData shipmentData,
-			final WarehouseModel stateWarehouse, final boolean isRSLabel, final OptimizedShippingMethodModel om)
+			final WarehouseModel stateWarehouse, final boolean isRSLabel, final OptimizedShippingMethodModel om,boolean isSignatureRequired)
 	{
 		/** Creating UPS Payment Data **/
 		final UpsPaymentInformation upsPaymentInformation = new UpsPaymentInformation();
@@ -212,6 +215,7 @@ public class BLUpsShippingDataPopulator
 		shipmentData.setService(upsShipmentServiceData);
 		shipmentData.setPaymentInformation(upsPaymentInformation);
 		shipmentData.setShipmentPackage(packageDataList);
+		shipmentData.setIsSignatureRequired(isSignatureRequired);
 
 		return shipmentData;
 	}

@@ -104,10 +104,13 @@ public class BlShareASaleJob extends AbstractJobPerformable<CronJobModel> {
           if (makeHttpConnectionToShareASale(url, date, authHash)) {
             continue;
           }
-
-          abstractOrderModel.setShareASaleSent(Boolean.TRUE);
-          modelService.save(abstractOrderModel);
-          modelService.refresh(abstractOrderModel);
+         try {
+           abstractOrderModel.setShareASaleSent(Boolean.TRUE);
+           modelService.save(abstractOrderModel);
+           modelService.refresh(abstractOrderModel);
+         }catch(final Exception e){
+             BlLogger.logFormattedMessage(LOGGER,Level.ERROR,"Some error occur while updating order :{} from shareAsale Job"+ e.getMessage(),abstractOrderModel.getCode());
+         }
         }
 
       }

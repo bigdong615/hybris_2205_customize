@@ -20,7 +20,7 @@ public class BlReturnOrderPopulator implements Populator<List<OrderModel>, List<
 			final ReturnOrderData orderData = new ReturnOrderData();
 			orderData.setCustomerName(order.getUser().getName());
 			orderData.setEmail(order.getUser().getUid());
-			orderData.setOrderNumber(order.getOrderID());
+			orderData.setOrderNumber(order.getCode());
 			if(order.getCreationtime()!=null) {
 				orderData.setOrderPlacedDate(formatter.format(order.getCreationtime()));
 			}

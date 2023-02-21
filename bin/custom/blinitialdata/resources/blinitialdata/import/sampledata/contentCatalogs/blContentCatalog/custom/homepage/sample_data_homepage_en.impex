@@ -23,14 +23,7 @@ INSERT_UPDATE Media ; $contentCV[unique=true] ; code[unique=true]             ; 
                     ;                         ; /images/theme/img-blog-1.jpg  ; img-blog-1.jpg  ; $siteResource/images/theme/img-blog-1.jpg                                  ; image/jpg+xml                 ;         ;                                     
                     ;                         ; /images/theme/img-blog-2.jpg  ; img-blog-2.jpg  ; $siteResource/images/theme/img-blog-2.jpg                                  ; image/jpg+xml                 ;         ;                                     
                     ;                         ; /images/theme/img-blog-3.jpg  ; img-blog-3.jpg  ; $siteResource/images/theme/img-blog-3.jpg                                  ; image/jpg+xml                 ;         ;                                     
-                    
-INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]               ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ; realfilename       ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;  
-                    ;                        ; /images/logo-netflix1.svg       ; $siteResource/images/logo-netflix.svg                                                       ; logo-canon.svg     ;         ; image/svg+xml              ;                         ;                                   
-                    ;                        ; /images/logo-disney1.svg        ; $siteResource/images/logo-disney.svg                                                        ; logo-sony.svg      ;         ; image/svg+xml              ;                         ;                                   
-                    ;                        ; /images/logo-hbo1.svg           ; $siteResource/images/logo-hbo.svg                                                           ; logo-nikon.svg     ;         ; image/svg+xml              ;                         ;                                   
-                    ;                        ; /images/logo-animal-planet1.svg ; $siteResource/images/logo-animal-planet.svg                                                 ; logo-dji.svg       ;         ; image/svg+xml              ;                         ;                                   
-                    ;                        ; /images/logo-al-jazeera1.svg    ; $siteResource/images/logo-al-jazeera.svg                                                    ; logo-panasonic.svg ;         ; image/svg+xml              ;                         ;                                   
-                    
+
                     
 INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]                ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ; realfilename                 ; altText ; mime[] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;  
                     ;                        ; pexels-taryn-elliott-5271713.mp4 ; $siteResource/images/pexels-taryn-elliott-5271713.mp4                                       ; pexels-taryn-elliott-5271713 ;         ;        
@@ -112,12 +105,12 @@ UPDATE CustomFeaturedStoriesComponent ; $contentCV[unique=true] ; uid[unique=tru
                                       ;                         ; HomePageFeaturedStoriesComponent5 ; /images/theme/img-blog-2.jpg ;  
                                       ;                         ; HomePageFeaturedStoriesComponent6 ; /images/theme/img-blog-3.jpg ;  
                                       
-UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; $picture[lang=$lang]            
-                             ;                         ; CustomBorrowComponent1 ; /images/logo-netflix1.svg       
-                             ;                         ; CustomBorrowComponent2 ; /images/logo-disney1.svg        
-                             ;                         ; CustomBorrowComponent3 ; /images/logo-hbo1.svg           
-                             ;                         ; CustomBorrowComponent4 ; /images/logo-animal-planet1.svg 
-                             ;                         ; CustomBorrowComponent5 ; /images/logo-al-jazeera1.svg    
+UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; $picture[lang=$lang]            ;visible
+                             ;                         ; CustomBorrowComponent1 ; /images/logo-netflix1.svg       ;false 	
+                             ;                         ; CustomBorrowComponent2 ; /images/logo-disney1.svg        ;false
+                             ;                         ; CustomBorrowComponent3 ; /images/logo-hbo1.svg           ;false
+                             ;                         ; CustomBorrowComponent4 ; /images/logo-animal-planet1.svg ;false
+                             ;                         ; CustomBorrowComponent5 ; /images/logo-al-jazeera1.svg    ;false
                              
 UPDATE RotatingHomePageImagesComponent ; $contentCV[unique=true] ; uid[unique=true]                 ; $picture[lang=$lang]             
                                        ;                         ; RotatingHomePageImagesComponent1 ; pexels-taryn-elliott-5271713.mp4 

@@ -188,12 +188,544 @@
 		<property name="erpGroupSupplier" type="java.lang.String"/>
 		<property name="deliveryTime" type="double"/>
 		<property name="priceQuantity" type="double"/>
+		<property name="bufferedInventoryPercentage" type="double"/>
 		<property name="minOrderQuantity" type="java.lang.Integer"/>
 		<property name="maxOrderQuantity" type="java.lang.Integer"/>
 		<property name="orderQuantityInterval" type="java.lang.Integer"/>
 		<property name="startLineNumber" type="java.lang.Integer"/>
 		<property name="endLineNumber" type="java.lang.Integer"/>
 		<property name="reviewCount" type="java.lang.Integer"/>
+		<property name="weight" type="java.math.BigDecimal"/>
+		<property name="height" type="java.lang.Integer"/>
+		<property name="width" type="java.lang.Integer"/>
+		<property name="length" type="java.lang.Integer"/>
+		<property name="level1Required" type="boolean"/>
+		<property name="level2Required" type="boolean"/>
+		<property name="mostPopular" type="boolean"/>
+		<property name="onSale" type="boolean"/>
+		<property name="retailGear" type="boolean"/>
+		<property name="scheduled" type="boolean"/>
+		<property name="staffPick" type="boolean"/>
+		<property name="visibleOnStoreFront" type="boolean"/>
+		<property name="bufferInvPercChangedManually" type="boolean"/>
+		<property name="retailGearInStock" type="boolean"/>
+		<property name="constrained" type="boolean"/>
+		<property name="forRent" type="boolean"/>
+		<property name="forSale" type="boolean"/>
+		<property name="greatValue" type="boolean"/>
+		<property name="isAccounting" type="boolean"/>
+		<property name="isNew" type="boolean"/>
+		<property name="isVideo" type="boolean"/>
+		<property name="hardAssigned" type="boolean"/>
+		<property name="soldIndividually" type="boolean"/>
+		<property name="gearRated" type="boolean"/>
+		<property name="dirtyPriorityStatus" type="boolean"/>
+		<property name="softAssigned" type="boolean"/>
+		<property name="isSyncRequired" type="boolean"/>
+		<property name="isBufferedInventory" type="boolean"/>
+		<property name="discontinued" type="boolean"/>
+		<property name="bundleProduct" type="boolean"/>
+		<property name="assetNumber" type="java.lang.String"/>
+		<property name="assetstatus" type="java.lang.String"/>
+		<property name="barcode" type="java.lang.String"/>
+		<property name="conditions" type="java.lang.String"/>
+		<property name="inventoryLocationID" type="java.lang.String"/>
+		<property name="invoiceNumber" type="java.lang.String"/>
+		<property name="invoiceNumberRecord" type="java.lang.String"/>
+		<property name="lastLocationScanParent" type="java.lang.String"/>
+		<property name="notes" type="java.lang.String"/>
+		<property name="ocLocation" type="java.lang.String"/>
+		<property name="orderNumberRecord" type="java.lang.String"/>
+		<property name="otherRepairsReason" type="java.lang.String"/>
+		<property name="ownedBy" type="java.lang.String"/>
+		<property name="purchaseOrder" type="java.lang.String"/>
+		<property name="serialNumber" type="java.lang.String"/>
+		<property name="skuFirmwareVersion" type="java.lang.String"/>
+		<property name="userChangedConditionRating" type="java.lang.String"/>
+		<property name="withOrderID" type="java.lang.String"/>
+		<property name="alternativeProduct" type="java.lang.String"/>
+		<property name="displayName" type="java.lang.String"/>
+		<property name="displayNotes" type="java.lang.String"/>
+		<property name="firmwareVersion" type="java.lang.String"/>
+		<property name="lrLink" type="java.lang.String"/>
+		<property name="mpn" type="java.lang.String"/>
+		<property name="primaryCategoryID" type="java.lang.String"/>
+		<property name="procurementID" type="java.lang.String"/>
+		<property name="procurementSource" type="java.lang.String"/>
+		<property name="productId" type="java.lang.String"/>
+		<property name="productStatus" type="java.lang.String"/>
+		<property name="purchaseNotes" type="java.lang.String"/>
+		<property name="rentalIncludes" type="java.lang.String"/>
+		<property name="shortDescription" type="java.lang.String"/>
+		<property name="specifications" type="java.lang.String"/>
+		<property name="techEngNotes" type="java.lang.String"/>
+		<property name="titleTag" type="java.lang.String"/>
+		<property name="upc" type="java.lang.String"/>
+		<property name="usedDescription" type="java.lang.String"/>
+		<property name="usedIncludes" type="java.lang.String"/>
+		<property name="articleStatus" type="java.lang.String"/>
+		<property name="remarks" type="java.lang.String"/>
+		<property name="ean" type="java.lang.String"/>
+		<property name="manufacturerAID" type="java.lang.String"/>
+		<property name="manufacturerName" type="java.lang.String"/>
+		<property name="manufacturerTypeDescription" type="java.lang.String"/>
+		<property name="segment" type="java.lang.String"/>
+		<property name="specialTreatmentClasses" type="java.lang.String"/>
+		<property name="xmlcontent" type="java.lang.String"/>
+		<property name="isSealed" type="boolean"/>
+		<property name="discounted" type="Boolean"/>
+		<property name="numberContentUnits" type="double"/>
+		<property name="reviewRating" type="double"/>
+		<property name="sequenceId" type="long"/>
+		<property name="forSaleDiscount" type="java.lang.Integer"/>
+		<property name="retailPrice" type="double"/>
+		<property name="forSaleBasePrice" type="java.math.BigDecimal"/>
+		<property name="forRetailGearPrice" type="java.math.BigDecimal"/>
+		<property name="forFinalSalePrice" type="java.math.BigDecimal"/>
+		<property name="incentivizedPrice" type="java.math.BigDecimal"/>
+		<property name="procurementCost" type="java.math.BigDecimal"/>
+		<property name="noDaysInTransit" type="long"/>
+		<property name="noDaysNotInService" type="long"/>
+		<property name="noDaysRented" type="long"/>
+		<property name="testingStatus" type="java.lang.String"/>
+		<property name="repairLogType" type="java.lang.String"/>
+		<property name="repairReasons" type="java.lang.String"/>
+		<property name="cosmeticRatings" type="java.lang.String"/>
+		<property name="functionalRatings" type="java.lang.String"/>
+		<property name="approvalStatus" type="java.lang.String"/>
+		<property name="batteryMaterial" type="java.lang.String"/>
+		<property name="numberSystem" type="java.lang.String"/>
+		<property name="serialStatusses" type="java.lang.String"/>
+		<property name="order" type="java.lang.Integer"/>
+		<property name="unit" type="java.lang.String"/>
+		<property name="catalogVersion" type="java.lang.String"/>
+		<property name="contentUnit" type="java.lang.String"/>
+		<property name="productOrderLimit" type="java.lang.String"/>
+		<property name="rentalVideosLinks" type="java.lang.String"/>
+		<property name="usedGearVideosLinks" type="java.lang.String"/>
+		<property name="trackingNumber" type="java.lang.String"/>
+		<property name="warehouseLocation" type="java.lang.String"/>
+		<property name="serialHomeLocation" type="java.lang.String"/>
+		<property name="ocLocationDetails" type="java.lang.String"/>
+		<property name="associatedConsignment" type="java.lang.String"/>
+		<property name="associatedOrder" type="java.lang.String"/>
+		<property name="associatedShippedConsignment" type="java.lang.String"/>
+		<property name="consignmentEntry" type="java.lang.String"/>
+		<property name="lastUnboxedOcLocationHistory" type="java.lang.String"/>
+		<property name="blProduct" type="java.lang.String"/>
+		<property name="associatedUsedGearConsignment" type="java.lang.String"/>
+		<property name="associatedUsedGearOrder" type="java.lang.String"/>
+		<property name="europe1PriceFactory_PDG" type="java.lang.String"/>
+		<property name="europe1PriceFactory_PPG" type="java.lang.String"/>
+		<property name="europe1PriceFactory_PTG" type="java.lang.String"/>
 	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentWsDTO">
+	    <property name="createdTS" type="java.util.Date"/>
+		<property name="nameddeliverydate" type="java.util.Date"/>
+		<property name="optimizedShippingStartDate" type="java.util.Date"/>
+		<property name="optimizedshippingenddate" type="java.util.Date"/>
+		<property name="modifiedTS" type="java.util.Date"/>
+		<property name="actualShippingDateToCustomer" type="java.util.Date"/>
+		<property name="shipmentBlShippedStatusDate" type="java.util.Date"/>
+		<property name="taskAssignmentWorkflow" type="String" />
+		<property name="optimizedshippingtype" type="String" />
+		<property name="carrier" type="String" />
+		<property name="optimizedShippingMethodType" type="String" />
+		<property name="cleanCompleteConsignment" type="java.lang.Boolean" />
+		<property name="threeDayGroundAvailability" type="java.lang.Boolean" />
+		<property name="internalTransferConsignment" type="java.lang.Boolean" />
+		<property name="ordertransferconsignment" type="java.lang.Boolean" />
+		<property name="optimizedRentalEndDateChangedByJob" type="java.lang.Boolean" />	
+		<property name="rentalEndDate" type="java.util.Date"/>
+		<property name="rentalStartDate" type="java.util.Date"/>
+		<property name="orderNotes" type="String" />
+	</bean>
+	
+	<bean class="com.bl.facades.consignment.dto.ConsignmentListWsDTO">
+        <description>Representation of an ConsignmentList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">ConsignmentList</hint>
+        </hints>
+        <property name="consignments"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentWsDTO>">
+            <description>List of Consignments history items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
+    
+    <bean class="de.hybris.platform.commercewebservicescommons.dto.giftcard.GiftCardWsDTO">
+   	  <property name="createdTS" type="java.util.Date"/>
+	  <property name="modifiedTS" type="java.util.Date"/>
+	  <property name="code" type="String" />
+	  <property name="amount" type="double"/>
+	  <property name="currency" type="String"/>
+	  <property name="startDate" type="java.util.Date"/>
+	  <property name="endDate" type="java.util.Date"/>
+	  <property name="active" type="java.lang.Boolean" />
+	  <property name="email" type="java.lang.Boolean" />
+	  <property name="issuer" type="String" />
+	  <property name="balance" type="double"/>
+	  <property name="isPurchased" type="java.lang.Boolean" />
+	  <property name="customerEmail" type="String" />
+	  <property name="name" type="String" />
+	  <property name="message" type="String" />
+	  <property name="discountID" type="String" />
+	  <property name="order" type="java.util.List&lt;String>" />
+	  <property name="customer" type="String" />
+	</bean>
+	
+	<bean class="com.bl.facades.giftcard.dto.GiftCardListWsDTO">
+        <description>Representation of an GiftCardList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">GiftCardList</hint>
+        </hints>
+        <property name="giftCards"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.giftcard.GiftCardWsDTO>">
+            <description>List of GiftCard history items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.giftcard.movement.GiftCardMovementWsDTO">
+   	  <property name="createdTS" type="java.util.Date"/>
+	  <property name="modifiedTS" type="java.util.Date"/>
+	  <property name="transactionId" type="String" />
+	  <property name="amount" type="double"/>
+	  <property name="currency" type="String"/>
+	  <property name="redeemDate" type="java.util.Date"/>
+	  <property name="committed" type="java.lang.Boolean" />
+	  <property name="balanceAmount" type="double"/>
+	  <property name="order" type="String" />
+	  <property name="giftCard" type="String" />
+	</bean>
+	
+	<bean class="com.bl.facades.giftcardmovements.dto.GiftCardMovementListWsDTO">
+        <description>Representation of an GiftCardMovementList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">GiftCardMovementList</hint>
+        </hints>
+        <property name="giftCardMovements"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.giftcard.movement.GiftCardMovementWsDTO>">
+            <description>List of GiftCard Movement history items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
+    
+    <bean class="de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeWsDTO">
+   	  <property name="createdTS" type="java.util.Date"/>
+	  <property name="modifiedTS" type="java.util.Date"/>
+	  <property name="billChargeType" type="String" />
+	  <property name="chargedAmount" type="java.math.BigDecimal"/>
+	  <property name="taxAmount" type="java.math.BigDecimal"/>
+	  <property name="billPaid" type="java.lang.Boolean" />
+	  <property name="unPaidBillNotes" type="String" />
+	  <property name="code" type="String" />
+	  <property name="serialCode" type="String" />
+	  <property name="orderCode" type="String" />
+	  <property name="customer" type="String" />
+	  <property name="updatedBillTime" type="java.util.Date" />
+	  <property name="billStatus" type="String" />
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO">
+		<description>Representation of an BlItemsBillingChargeList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">BlItemsBillingChargeList</hint>
+        </hints>
+        <property name="blItemsBillingChargeData"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeWsDTO>">
+            <description>List of BlItems Billing Charge items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.user.UserWsDTO"
+	      extends="de.hybris.platform.commercewebservicescommons.dto.user.PrincipalWsDTO">
+		<property name="defaultPaymentAddress" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
+		<property name="createdTS" type="java.util.Date"/>
+	  	<property name="modifiedTS" type="java.util.Date"/>
+		<property name="description" type="String"/>
+		<property name="passwordAnswer" type="String"/>
+		<property name="passwordQuestion" type="String"/>
+		<property name="retentionState" type="String"/>
+		<property name="taxExemptNumber" type="String"/>
+		<property name="taxExemptState" type="String"/>
+		<property name="lastLogin" type="java.util.Date"/>
+		<property name="coiExpirationDate" type="java.util.Date"/>
+		<property name="taxExemptExpiry" type="java.util.Date"/>
+		<property name="backofficeLoginDisabled" type="java.lang.Boolean" />
+		<property name="loginDisabled" type="java.lang.Boolean" />
+		<property name="authorizedToUnlockPages" type="java.lang.Boolean" />
+		<property name="isTaxExempt" type="java.lang.Boolean" />
+		<property name="hmcLoginDisabled" type="java.lang.Boolean" />
+		<property name="emailPreference" type="java.lang.Boolean" />
+		<property name="smsPreference" type="java.lang.Boolean" />
+		<property name="poEnabled" type="java.lang.Boolean" />
+		<property name="vip" type="java.lang.Boolean" />
+		<property name="coiVerified" type="java.lang.Boolean" />
+		<property name="employee" type="java.lang.Boolean" />
+		<property name="originalUid" type="String"/>
+		<property name="type" type="String"/>
+		<property name="braintreeCustomerId" type="String"/>
+		<property name="badBehaviorTag" type="String"/>
+		<property name="coiCoverageAmount" type="java.math.BigDecimal"/>
+		<property name="kycScore" type="java.lang.Double"/>
+		<property name="vipType" type="String"/>
+		<property name="verificationLinkSource" type="String"/>
+		<property name="photoOrVideo" type="String"/>
+		<property name="badBehaviorNotes" type="String"/>
+		<property name="verificationNotes" type="String"/>
+		<property name="verificationLink" type="String"/>
+		<property name="accountNotes" type="String"/>
+		<property name="orderCount" type="java.lang.Integer"/>
+		<property name="completedOrderCount" type="java.lang.Integer"/>
+		<property name="inprocessOrderCount" type="java.lang.Integer"/>
+		<property name="totalAmountPastDue" type="java.math.BigDecimal"/>
+		<property name="blRewards" type="java.math.BigDecimal"/>
+		<property name="averageGearOrderValue" type="java.lang.Double"/>
+		<property name="gearvalueordersinprogress" type="java.lang.Double"/>
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO">
+		<description>Representation of an Customers List</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">Customers List</hint>
+        </hints>
+        <property name="customers"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.user.UserWsDTO>">
+            <description>List of Customers</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.user.AddressWsDTO">
+        <property name="addressType" type="String"/>
+        <property name="openingDaysDetails" type="java.util.Map&lt;String, String>"/>
+        <property name="pickStoreAddress" type="Boolean"/>
+        <property name="upsStoreAddress" type="Boolean"/>
+        <property name="url" type="String"/>
+        <property name="braintreeaddressid" type="String"/>
+        <property name="defaultBillingAddress" type="boolean"/>
+        <property name="createdTS" type="java.util.Date"/>
+	  	<property name="modifiedTS" type="java.util.Date"/>
+	  	<property name="original" type="String"/>
+	  	<property name="duplicate" type="boolean"/>
+	  	<property name="appartment" type="String"/>
+	  	<property name="building" type="String"/>
+	  	<property name="department" type="String"/>
+	  	<property name="fax" type="String"/>
+	  	<property name="middleName" type="String"/>
+	  	<property name="middleName2" type="String"/>
+	  	<property name="poBox" type="String"/>
+	  	<property name="streetName" type="String"/>
+	  	<property name="streetNumber" type="String"/>
+	  	<property name="gender" type="String"/>
+	  	<property name="dateOfBirth" type="java.util.Date"/>
+	  	<property name="remarks" type="String"/>
+	  	<property name="unloadingAddress" type="boolean"/>
+	  	<property name="contactaAddress" type="boolean"/>
+	  	<property name="zone" type="String"/>
+	  	<property name="latitude" type="java.lang.Double"/>
+	  	<property name="longitude" type="java.lang.Double"/>
+	  	<property name="phone2" type="String"/>
+    </bean>
+    
+    <bean class="de.hybris.platform.commercewebservicescommons.dto.user.address.AddressListWsDTO">
+		<description>Representation of an Address List</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">Address List</hint>
+        </hints>
+        <property name="addresses"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.user.AddressWsDTO>">
+            <description>List of Addresses</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoWsDTO">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="code" type="java.lang.String"/>             
+      <property name="duplicate" type="java.lang.Boolean"/>
+      <property name="user" type="java.lang.String"/>             
+      <property name="saved" type="java.lang.Boolean"/>
+      <property name="billingAddress" type="java.lang.String"/>
+      <property name="paymentProvider" type="java.lang.String"/>
+      <property name="nonce" type="java.lang.String"/>
+      <property name="customerId" type="java.lang.String"/>
+      <property name="deviceData" type="java.lang.String"/>
+      <property name="paymentMethodToken" type="java.lang.String"/>
+      <property name="liabilityShifted" type="java.lang.Boolean"/>
+      <property name="usePaymentMethodToken" type="java.lang.Boolean"/>
+      <property name="expirationMonth" type="java.lang.String"/>
+      <property name="expirationYear" type="java.lang.String"/>
+      <property name="imageSource" type="java.lang.String"/>
+      <property name="threeDSecureConfiguration" type="java.lang.Boolean"/>
+      <property name="advancedFraudTools" type="java.lang.Boolean"/>
+      <property name="isSkip3dSecureLiabilityResult" type="java.lang.Boolean"/>
+      <property name="creditCardStatementName" type="java.lang.String"/>
+      <property name="brainTreeChannel" type="java.lang.String"/>
+      <property name="merchantAccountIdForCurrentSite" type="java.lang.String"/>
+      <property name="paymentInfo" type="java.lang.String"/>
+      <property name="cardholderName" type="java.lang.String"/>
+      <property name="customerLocation" type="java.lang.String"/>
+      <property name="payPalIntent" type="java.lang.String"/>
+      <property name="payer" type="java.lang.String"/>
+      <property name="shipsFromPostalCode" type="java.lang.String"/>
+      <property name="paymentId" type="java.lang.String"/>
+      <property name="depositAmount" type="java.lang.Double"/>
+      <property name="createdAt" type="java.util.Date"/>
+      <property name="updatedAt" type="java.util.Date"/>
+      <property name="shouldBeSaved" type="java.lang.Boolean"/>
+      <property name="newAmount" type="java.lang.Double"/>
+      <property name="isDepositPayment" type="java.lang.Boolean"/>
+      <property name="createNewTransaction" type="java.lang.Boolean"/>
+      <property name="billPayment" type="java.lang.Boolean"/>
+      <property name="modifyPayment" type="java.lang.Boolean"/>
+      <property name="extendOrder" type="java.lang.Boolean"/>
+      <property name="isDefault" type="java.lang.Boolean"/>
+      <property name="cardType" type="java.lang.String"/>
+      <property name="cardNumber" type="java.lang.String"/>
+    </bean>
+    
+    <bean class="de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoListWsDTO">
+		<description>Representation of an BrainTreePaymentInfo List</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">BrainTreePaymentInfo List</hint>
+        </hints>
+        <property name="brainTreePaymentInfo"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoWsDTO>">
+            <description>List of BrainTreePaymentInfo</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+	</bean>
+	
+	<bean class="de.hybris.platform.warehousingwebservices.dto.product.StockLevelWsDto">
+	  <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="nextDeliveryTime" type="java.util.Date"/>
+      <property name="date" type="java.util.Date"/>
+      <property name="available" type="java.lang.Integer"/>
+      <property name="reserved" type="java.lang.Integer"/>
+      <property name="overSelling" type="java.lang.Integer"/>
+      <property name="preOrder" type="java.lang.Integer"/>
+      <property name="maxPreOrder" type="java.lang.Integer"/>
+      <property name="maxStockLevelHistoryCount" type="java.lang.Integer"/>
+      <property name="treatNegativeAsZero" type="java.lang.Boolean"/>
+      <property name="reservedStatus" type="java.lang.Boolean"/>
+      <property name="hardAssigned" type="java.lang.Boolean"/>
+      <property name="bufferedInventory" type="java.lang.Boolean"/>
+      <property name="forSale" type="java.lang.Boolean"/>
+      <property name="serialProductCode" type="java.lang.String"/>
+      <property name="order" type="java.lang.String"/>
+      <property name="serialStatus" type="java.lang.String"/>
+	</bean>
+    
+    <bean class="de.hybris.platform.warehousingwebservices.dto.product.StockLevelListWsDTO">
+		<description>Representation of an Stocklevel List</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">Stocklevel List</hint>
+        </hints>
+        <property name="stockLevels"
+                  type="java.util.List&lt;de.hybris.platform.warehousingwebservices.dto.product.StockLevelWsDto>">
+            <description>List of Stocklevels</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+	</bean>
+	
+	<bean class="com.bl.facades.customerNotes.dto.NotesWsDTO">
+      <property name="createdTS" type="java.util.Date"/>
+      <property name="modifiedTS" type="java.util.Date"/>
+      <property name="userId" type="java.lang.String"/>
+      <property name="type" type="java.lang.String"/>
+      <property name="order" type="java.lang.String"/>
+      <property name="note" type="java.lang.String"/>    
+      <property name="consignemnt" type="java.lang.String"/>                              
+    </bean>
+    
+    <bean class="com.bl.facades.customerNotes.dto.NotesListWsDTO">
+        <description>Representation of an  notesList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">notesList</hint>
+        </hints>
+        <property name="notesList"
+                  type="java.util.List&lt;com.bl.facades.customerNotes.dto.NotesWsDTO>">
+            <description>List of NotesList </description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
 
 </beans>

@@ -112,4 +112,5 @@ public interface BlStockService
 	 *           the status of of the serial product
 	 */
 	public void findAndUpdateStockRecordsForSerialCode(final BlSerialProductModel blSerialProduct, String intialCode);
+
 }

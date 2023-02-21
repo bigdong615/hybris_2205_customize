@@ -897,7 +897,15 @@
 	</bean>
 
 	<bean id="giftCardbalance" class="com.bl.core.attributes.BlGiftCardBalanceHandler" />
-
+	
+	<bean id="blStockLevelForSaleHandler" class="com.bl.core.attributes.BlStockLevelForSaleHandler">
+		<property name="productDao" ref="productDao"/>
+	</bean>
+	
+	<bean id="blVisibleOnStorefrontHandler" class="com.bl.core.attributes.BlVisibleOnStorefrontHandler">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
+	
 	<alias alias="commerceCartCalculationStrategy" name="defaultBlCheckoutCartCalculationStrategy" />
 	<bean id="defaultBlCheckoutCartCalculationStrategy"
 		class="com.bl.core.services.order.impl.DefaultBlCommerceCartCalculationStrategy"
@@ -1086,6 +1094,7 @@
 	<alias name="defaultBlConsignmentDao" alias="blConsignmentDao"/>
 	<bean id="defaultBlConsignmentDao" class="com.bl.core.dao.warehouse.impl.DefaultBlConsignmentDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
 
 	<alias name="defaultBlReadyToShipOrderItemDao" alias="blReadyToShipOrderItemDao"/>
@@ -1734,6 +1743,7 @@
 		<property name="orderDao" ref="orderDao"/>
 		<property name="defaultBlUPSTrackServiceImpl" ref="defaultBlUPSTrackServiceImpl"/>
 		<property name="service" ref="modelService"/>
+		<property name="configurationService" ref="configurationService"/>
 	</bean>
 
 	<bean id="defaultBlUpdateSerialService" class="com.bl.core.services.upsscrape.impl.BlUpdateSerialService">
@@ -1743,6 +1753,7 @@
 		<property name="userService" ref="userService"/>
 		<property name="orderDao" ref="orderDao"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="configurationService" ref="configurationService"/>
 	</bean>
 
 	<!--BL-803 UPS Scrape Ends-->
@@ -2050,7 +2061,114 @@
 	<bean id="blProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
-
+	<bean id="blBigDecimalValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BigDecimalValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
+	<bean id="weightValueProvider" parent="blBigDecimalValueProvider" >
+		<property name="field" value="weight"/>
+	</bean>
+	
+	<bean id="saleBasePriceValueProvider" parent="blBigDecimalValueProvider" >
+		<property name="field" value="forSaleBasePrice"/>
+	</bean>
+	
+	<bean id="retailGearPriceValueProvider" parent="blBigDecimalValueProvider" >
+		<property name="field" value="retailGearPrice"/>
+	</bean>
+	
+	<bean id="finalSalePriceValueProvider" parent="blBigDecimalValueProvider" >
+		<property name="field" value="finalSalePrice"/>
+	</bean>
+	
+	<bean id="incentivizedPriceValueProvider" parent="blBigDecimalValueProvider" >
+		<property name="field" value="incentivizedPrice"/>
+	</bean>
+	
+	<bean id="procurementCostValueProvider" parent="blBigDecimalValueProvider" >
+		<property name="field" value="procurementCost"/>
+	</bean>
+	
+	<bean id="blModelToStringValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.ModelToStringValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
+	<bean id="unitValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="unit"/>
+	</bean>
+	
+	<bean id="catalogVersionValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="catalogVersion"/>
+	</bean>
+	
+	<bean id="contentUnitValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="contentUnit"/>
+	</bean>
+	
+	<bean id="productOrderLimitValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="productOrderLimit"/>
+	</bean>
+	
+	<bean id="rentalVideosLinkValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="rentalVideosLink"/>
+	</bean>
+	
+	<bean id="usedGearVideosLinkValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="usedGearVideosLink"/>
+	</bean>
+	
+	<bean id="trackingNumberValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="trackingNumber"/>
+	</bean>
+	
+	<bean id="warehouseLocationValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="warehouseLocation"/>
+	</bean>
+	
+	<bean id="serialHomeLocationValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="serialHomeLocation"/>
+	</bean>
+	
+	<bean id="ocLocationDetailsValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="ocLocationDetails"/>
+	</bean>
+	
+	<bean id="associatedConsignmentValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="associatedConsignment"/>
+	</bean>
+	
+	<bean id="associatedOrderValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="associatedOrder"/>
+	</bean>
+	
+	<bean id="associatedShippedConsignmentValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="associatedShippedConsignment"/>
+	</bean>
+	
+	<bean id="consignmentEntryValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="consignmentEntry"/>
+	</bean>
+	
+	<bean id="lastUnboxedOcLocationHistoryValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="lastUnboxedOcLocationHistory"/>
+	</bean>
+	
+	<bean id="blProductValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="blProduct"/>
+	</bean>
+	
+	<bean id="associatedUsedGearConsignmentValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="associatedUsedGearConsignment"/>
+	</bean>
+	
+	<bean id="associatedUsedGearOrderValueProvider" parent="blModelToStringValueProvider" >
+		<property name="model" value="associatedUsedGearOrder"/>
+	</bean>
+	
+	<bean id="visibleOnStoreFrontValueProvider" parent="blModelToStringValueProvider" >
+  		<property name="model" value="visibleOnStoreFront"/>
+	</bean>
+	
     <bean id="blProductTypeExclusionVP" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductTypeExclusionValueProvider"
           parent="abstractPropertyFieldValueProvider">
         <property name="modelService"  ref="modelService" />
@@ -2086,6 +2204,16 @@
 	<bean id="blPackagingInfoPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
 		<property name="interceptor" ref="blPackagingInfoPrepareInterceptor"/>
 		<property name="typeCode" value="PackagingInfo"/>
+	</bean>
+	
+	<alias name="defaultBlDomoDao" alias="blDomoDao"/>
+	<bean id="defaultBlDomoDao" class="com.bl.core.domo.impl.DefaultBlDomoDao">
+		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
+	</bean>
+
+	<alias name="defaultBlDomoService" alias="blDomoService"/>
+	<bean id="defaultBlDomoService" class="com.bl.core.services.domo.impl.DefaultBlDomoService">
+		<property name="blDomoDao" ref="blDomoDao"/>
 	</bean>
 
 </beans>

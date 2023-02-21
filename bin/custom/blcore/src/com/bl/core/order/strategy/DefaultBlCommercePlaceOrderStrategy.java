@@ -3,11 +3,6 @@ package com.bl.core.order.strategy;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
 import de.hybris.platform.catalog.model.ProductReferenceModel;
-
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.product.service.impl.DefaultBlProductService;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommercePlaceOrderStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
@@ -20,17 +15,25 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.promotions.model.PromotionResultModel;
+import de.hybris.platform.servicelayer.session.SessionService;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.impl.DefaultBlProductService;
+import com.bl.logging.BlLogger;
 
 /**
  * @author Manikandan
@@ -39,6 +42,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOrderStrategy {
 
 	private DefaultBlProductService defaultBlProductService;
+
+	@Resource
+	private SessionService sessionService;
 
   private static final Logger LOG = Logger.getLogger(DefaultBlCommercePlaceOrderStrategy.class);
 
@@ -71,7 +77,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
         orderModel.setSite(getBaseSiteService().getCurrentBaseSite());
         orderModel.setStore(getBaseStoreService().getCurrentBaseStore());
         orderModel.setLanguage(getCommonI18NService().getCurrentLanguage());
-
+		  orderModel.setShopperIp(sessionService.getAttribute("SHOPPERIP"));
         if (parameter.getSalesApplication() != null)
         {
           orderModel.setSalesApplication(parameter.getSalesApplication());
@@ -100,6 +106,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
           orderModel.setIsOrderSubmit(Boolean.TRUE);
           orderModel.setOrderModifiedDate(new Date());
           getCalculationService().calculateTotals(orderModel, false);
+		  BlLogger.logMessage(LOG,Level.INFO,"DefaultBlCommercePlaceOrderStrategy : placeOrder : Before calculateExternalTaxes " + orderModel.getCode());
           getExternalTaxesService().calculateExternalTaxes(orderModel);
         }
         catch (final CalculationException ex)
@@ -147,7 +154,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
       getModelService().refresh(deliveryAddress);
     }
   }
-  
+
 	/**
 	 * This method is used to check if order is video order or not
 	 *
@@ -187,9 +194,9 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 			}
 		}
 	}
-	
+
 	/**
-	 * This method will mark bundle order as video order 
+	 * This method will mark bundle order as video order
 	 * @param orderModel
 	 * @param newCreatedMainBundleEntry
 	 */
@@ -241,7 +248,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 	/**
 	 * @param defaultBlProductService the defaultBlProductService to set
 	 */
-	public void setDefaultBlProductService(DefaultBlProductService defaultBlProductService)
+	public void setDefaultBlProductService(final DefaultBlProductService defaultBlProductService)
 	{
 		this.defaultBlProductService = defaultBlProductService;
 	}

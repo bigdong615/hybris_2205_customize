@@ -3,11 +3,14 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.model.BlProductModel;
 import de.hybris.platform.acceleratorfacades.futurestock.FutureStockFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ProductBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.FutureStockForm;
@@ -438,24 +441,18 @@ public class AbstractBlProductPageController extends AbstractPageController
 			model.addAttribute(WebConstants.BREADCRUMBS_KEY,
 					productBreadcrumbBuilder.getBreadcrumbs(productCode));
 		}
-    final String currentCartType = blCartFacade.identifyCartType();
-	 if (StringUtils.isNotEmpty(currentCartType))
-	 {
-		 model.addAttribute(currentCartType, true);
-	 }
-	 else if (productData.isRetailGear())
-	 {
-		 model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
-	 }
-	 else
-	 {
-		 model.addAttribute(BlFacadesConstants.USED_GEAR_CART, true);
-	 }
+
+			model.addAttribute(blCartFacade.identifyCartType(), true);
+
 	 if (CollectionUtils.isNotEmpty(productData.getVariantMatrix()))
 	 {
 		 model.addAttribute(WebConstants.MULTI_DIMENSIONAL_PRODUCT,
 				 Boolean.valueOf(CollectionUtils.isNotEmpty(productData.getVariantMatrix())));
 	 }
+
+		if( ProductTypeEnum.SUBPARTS.equals(((BlProductModel)productModel).getProductType())){
+			model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		}
 	}
 
 	protected void populateProductData(final ProductData productData, final Model model)

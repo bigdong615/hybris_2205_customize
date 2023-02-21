@@ -65,7 +65,7 @@ public class BlOrderUnboxedRequestPopulator  extends ESPEventCommonPopulator<Ord
       orderUnBoxedData.setOldorderid(StringUtils.EMPTY);
       orderUnBoxedData.setTemplate(getRequestValue(getConfigurationService().getConfiguration()
           .getString(BlCoreConstants.ORDER_UNBOXED_EVENT_TEMPLATE)));
-      orderUnBoxedData.setStatus(getRequestValue(BlCoreConstants.UN_BOXED));
+      orderUnBoxedData.setStatus(getRequestValue(BlCoreConstants.ORDER_COMPLETED));
       orderUnBoxedData.setType(BooleanUtils.isTrue(order.getIsRentalOrder()) ? BlCoreConstants.RENTAL
           : BlCoreConstants.USED_GEAR);
       orderUnBoxedData.setDateplaced(formatter.format(order.getDate()));

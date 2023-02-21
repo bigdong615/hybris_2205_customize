@@ -1,5 +1,6 @@
 package com.bl.integration.services.impl;
 
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.catalog.model.CatalogUnawareMediaModel;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -436,6 +437,25 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 
 	}
 
+	/**
+	 *
+	 * @param consignment
+	 * @return
+	 */
+	@Override
+	public boolean checkOrderAndConsignmentStatus(final ConsignmentModel consignment)
+	{
+		if (consignment.getOrder() != null)
+		{
+			final OrderStatus status = consignment.getOrder().getStatus();
+			final ConsignmentStatus consignmentStatus= consignment.getStatus();
+			if (status.equals(OrderStatus.CANCELLED) || BlintegrationConstants.ORDERS_AND_CONSIGNMENT_STATUS.contains(status) || BlintegrationConstants.ORDERS_AND_CONSIGNMENT_STATUS.contains(consignmentStatus))
+		    {
+				return false;
+			}
+		}
+		return true;
+	}
 	/**
 	 * @return the blUPSShipmentCreateRequestPopulator
 	 */

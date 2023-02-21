@@ -236,6 +236,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
 		}
 
+		BlLogger.logMessage(LOG,Level.INFO,"DefaultBlCalculationService : calculateTotalsForCart : Before calculateExternalTaxes " + order.getCode());
 		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 		final double totalRoundedTaxes = getDefaultCommonI18NService().roundCurrency(order.getTotalTax(), digits);
 		order.setTotalTax(totalRoundedTaxes);
@@ -390,7 +391,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 
 		if (!PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product)
 				&& PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product) && BooleanUtils.isFalse(
-				ProductTypeEnum.GIFTCARD.equals(((BlProductModel) product).getProductType())) && BooleanUtils.isFalse(
+				ProductTypeEnum.GIFTCARD.equals(((BlProductModel) product).getProductType().getCode())) && BooleanUtils.isFalse(
 				((BlProductModel) product).getRetailGear()))
 		{
 			LOG.debug("Inside DynamicBasePriceForRentalSKU");
@@ -640,6 +641,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		order.setTotalPrice(totalPriceWithDamageWaiverCost);
 		order.setDeliveryCost(0.0);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}", totalPriceWithDamageWaiverCost);
+		BlLogger.logMessage(LOG,Level.INFO,"DefaultBlCalculationService : calculateEntriesForExtendOrder : Before calculateExternalTaxes " + order.getCode());
 		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 	}
 
@@ -731,6 +733,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		order.setTotalPrice(totalPriceWithDamageWaiverCost);
 		order.setDeliveryCost(0.0);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.TOTAL_PRICE, totalPriceWithDamageWaiverCost);
+		BlLogger.logMessage(LOG,Level.INFO,"DefaultBlCalculationService : calculateEntriesForTax : Before calculateExternalTaxes " + order.getCode());
 		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 	}
 

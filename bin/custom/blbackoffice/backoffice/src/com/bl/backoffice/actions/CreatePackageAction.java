@@ -43,7 +43,7 @@ public class CreatePackageAction extends AbstractComponentWidgetAdapterAware
 		final ConsignmentModel consigment = actionContext.getData();
 
 		return (consigment != null && CollectionUtils.isNotEmpty(consigment.getConsignmentEntries())
-				&& getBlShipmentCreationService().checkOrderStatus(consigment));
+				&& getBlShipmentCreationService().checkOrderAndConsignmentStatus(consigment));
 	}
 
 	/**

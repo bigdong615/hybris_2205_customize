@@ -157,7 +157,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int CONDITION_RATING_MEDIUM = 8;
 	public static final int CONDITION_RATING_LOW = 7;
 
-
 	public static final int CONDITION_RATING_TEN = 10;
 	public static final int CONDITION_RATING_NINE = 9;
 	public static final int CONDITION_RATING_EIGHT = 8;
@@ -558,6 +557,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BL_ORDER_VALIDATE_INTERCEPTOR = "BlOrderValidateInterceptor";
 	public static final String BL_REPAIR_LOG_PREPARE_INTERCEPTOR = "BlRepairLogPrepareInterceptor";
 	public static final String BL_GIFT_CARD_LOG_PREPARE_INTERCEPTOR = "BlGiftCardPrepareInterceptor";
+	public static final String BL_ORDER_ENTRY_VALIDATE_INTERCEPTOR = "BlOrderEntryValidateInterceptor";
 
 	public static final String ACTIVE_STATUS = "ACTIVE";
 	public static final String PARTIALLY_UNBOXED = "PARTIALLY_UNBOXED";
@@ -673,6 +673,20 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final List<String> UPS_ROUND_TRIP = Arrays
 			.asList(new String[]{"UPS_STANDARD_ROUND_TRIP", "UPS_STORE_STANDARD_ROUND_TRIP"});
 
+	public static final String UPS_SCRAPE_JOB_NO_OF_REPETITIONS_KEY = "ups.scrape.job.no.of.repetitions";
+	public static final String UPS_SCRAPE_JOB_NO_OF_ADDED_DAYS_KEY = "ups.scrape.job.days.to.add.number";
+    public static final String PRODUCT_ID = "productId";
+	
+	public static final String PREVIOUS_YEAR_END_DATE = "previousYearEndDate";
+	public static final String FRAUD_CHECKED = "FRAUD_CHECKED";
+	public static final String PARTIAL_CAPTURE = "PARTIAL_CAPTURE";
+	public static final String SUSPENDED = "SUSPENDED";
+	public static final String PAYMENT_NOT_AUTHORIZED ="PAYMENT_NOT_AUTHORIZED" ;
+	public static final String CHECKED_INVALID ="CHECKED_INVALID" ;
+	public static final String CHECKED_VALID = "CHECKED_VALID";
+
+	public static final String POSTAL_CODE = "postalCode";
+	public static final String CARRIER_ID = "carrierID";
 
 	private BlCoreConstants()
 	{

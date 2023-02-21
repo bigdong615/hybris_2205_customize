@@ -98,7 +98,15 @@
                                     </div>
                                     <div class="col-6">
                                         <p class="gray80 body14">
-                                            ${orderData.status}<br>
+	                                        <c:choose>
+	                                         <c:when test="${not empty orderData.orderStatus}">
+	                                         	${orderData.orderStatus}
+	                                         </c:when>
+	                                         <c:otherwise>
+	                                         	${orderData.status}
+	                                         </c:otherwise>
+	                                        </c:choose>
+                                            <br>
                                             ${orderData.orderedFormatDate}<br>
                                             ${fn:escapeXml(orderData.code)}<br>
 
@@ -110,7 +118,12 @@
                                            <c:forEach items="${orderData.trackingNumber}" var="trackingInfo">
                                              <c:if test="${trackingInfo.key ne null}">
                                                <c:url value="${trackingInfo.value}" var="trackingUrl" />
-                                                <a class="tracking-info" href="${trackingUrl}" target="_new"> ${trackingInfo.key}</a></br>
+                                                 <c:if test="${fn:containsIgnoreCase(trackingInfo.value ,'ups') == 'true'}">
+                                                     <a class="tracking-info" href="https://www.ups.com/track?loc=en_US&tracknum=${trackingInfo.key}" target="_new"> ${trackingInfo.key}</a></br>
+                                                 </c:if>
+                                                 <c:if test="${fn:containsIgnoreCase(trackingInfo.value ,'fedex') == 'true'}">
+                                                     <a class="tracking-info" href="https://www.fedex.com/fedextrack/?trknbr=${trackingInfo.key}" target="_new"> ${trackingInfo.key}</a></br>
+                                                 </c:if>
                                              </c:if>
                                             </c:forEach>
                                           </c:when>

@@ -384,6 +384,11 @@ public class BlInventoryScanLoggingConstants {
 
 	 public static final String BULK_SCAN_TOOL_SUCCESS_MSG = "Serials updated successfully.";
 	 public static final String BULK_SCAN_TOOL_PLS_SELECT_MSG = "Please select atleast one.";
+	 public static final String OUTSIDER_BARCODE="barcode_not_present_on_consignment";
+	 public static final String INCLUDED_SERIAL=  "already_included_serial";
+	 public static final String SUCCESS_SERIAL = "succesfully_scan_serial";
+	 public static final String PACKAGE_SCAN_ERROR_KEY = "blbackoffice.package.scan.error.message";
+
 
     private BlInventoryScanLoggingConstants() { }
 

@@ -36,6 +36,14 @@ public class BlSerialProductValidateInterceptor implements ValidateInterceptor<B
 				validateConditionalRatings(blSerialProductModel, interceptorContext);
 			}
 
+			if(StringUtils.isNotBlank(blSerialProductModel.getProductId()) && interceptorContext.isModified(blSerialProductModel,BlSerialProductModel.PRODUCTID)){
+				final BlSerialProductModel serialProductModel = getProductDao().getSerialByID(blSerialProductModel.getProductId());
+                if(Objects.nonNull(serialProductModel) && !serialProductModel.getCode().equals(blSerialProductModel.getCode())){
+					throw new InterceptorException("SerialID should be unique!");
+
+				}
+			}
+
 			if (StringUtils.isNotBlank(blSerialProductModel.getBarcode()) && interceptorContext.isModified(blSerialProductModel,
 					BlSerialProductModel.BARCODE)) {
 				final BlSerialProductModel serialProductModel = getProductDao().getSerialByBarcode(blSerialProductModel.getBarcode());

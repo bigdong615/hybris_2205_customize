@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +40,8 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
+
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
 /**
  * Default implementation of {@link SimpleSuggestionDao}.
@@ -95,7 +98,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ " AND {o:status} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED'}})";
 
 	private static final String GET_COMPLETED_RENTAL_ORDERS_FOR_SHARE_A_SALE = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALORDER + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALORDER + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:"+OrderModel.RENTALENDDATE + "} >= ?previousYearEndDate  and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
 			+ " as type} where {type:code} = ?code}})";
 
 	private static final String GET_ONE_YEAR_OLD_COMPLETED_ORDERS = "SELECT {" + ItemModel.PK + "} FROM {"
@@ -103,11 +106,11 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ OrderModel.USER + "} IN ({{SELECT {" + ItemModel.PK + "} FROM {" + CustomerModel._TYPECODE + "} WHERE {"
 			+ CustomerModel.UID + "} = ?uid}})";
 
-	private static final String ORDERS_TO_BE_UPS_SCRAPE = "SELECT DISTINCT {" + ItemModel.PK + BlintegrationConstants.FROM
-			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
-			+ ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?optimizedShippingStartDate AND ?optimizedShippingEndDate ";
-
-	private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.PK + BlintegrationConstants.FROM
+	private static final String ORDERS_TO_BE_UPS_SCRAPE =  "SELECT distinct{" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.RENTALENDDATE + "} <= ?endDate AND {o:"
+			+ OrderModel.ISLATESTORDER	+ "} = 1  AND {o:" + OrderModel.ISSAPORDER+ "} = 1  AND {" + OrderModel.STATUS + "} IN "
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})";
+private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.PK + BlintegrationConstants.FROM
 			+ PackagingInfoModel._TYPECODE + "}" + "WHERE {" + PackagingInfoModel.PACKAGERETURNEDTOWAREHOUSE + "} = ?packageReturnedToWarehouse AND {"
 			+ PackagingInfoModel.ISSCRAPESCANCOMPLETED + "} = ?isScrapeScanCompleted AND {"
 			+ PackagingInfoModel.LATEPACKAGEDATE + "} BETWEEN ?startDate AND ?endDate ";
@@ -165,6 +168,8 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private static final String RETURN_ORDERS_FEED_QUERY = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE
 			+ " AS o} WHERE {o:" + OrderModel.RENTALENDDATE
 			+ "} BETWEEN ?returnOrderBefore AND ?returnOrderAfter and {o:status} NOT IN ({{select {se:pk} from {OrderStatus as se} where {se:code} IN (?orderStatuses)}})";
+
+	private static final String ORIGINAL_ORDER_BY_CODE = "SELECT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.VERSIONID  + "} IS NULL AND {" + OrderModel.CODE+ "} = ?code";
 
 	/**
  	* {@inheritDoc}
@@ -307,6 +312,10 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		query.addQueryParameter(BlCoreConstants.RENTAL_ORDER, Boolean.TRUE);
 		query.addQueryParameter(BlCoreConstants.SHARE_A_SALE, Boolean.FALSE);
 		query.addQueryParameter(BlCoreConstants.ORDER_STATUS, OrderStatus.COMPLETED.getCode());
+		final Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.YEAR, -1);
+		final Date previousYear = cal.getTime();
+    query.addQueryParameter(BlCoreConstants.PREVIOUS_YEAR_END_DATE,previousYear);
 		final SearchResult<AbstractOrderModel> result = getFlexibleSearchService().search(query);
 		final List<AbstractOrderModel> abstractOrderModelList = result.getResult();
 		if (CollectionUtils.isEmpty(abstractOrderModelList)) {
@@ -344,13 +353,12 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	public List<AbstractOrderModel> getOrdersForUPSScrape()
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_BE_UPS_SCRAPE);
-		fQuery.addQueryParameter(BlintegrationConstants.OPTIMIZED_SHIPPING_START_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
-		fQuery.addQueryParameter( BlintegrationConstants.OPTIMIZED_SHIPPING_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
+		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<AbstractOrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders)) {
-			BlLogger.logMessage(LOG , Level.INFO , "No Results found for UPS Scrape service which optimizedShippingEndDate has ",
-					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+			BlLogger.logMessage(LOG , Level.INFO , "No Results found for UPS Scrape service which is same or before rental end date has ",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
 		return orders;
@@ -636,5 +644,25 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			return Collections.emptyList();
 		}
 		return orders;
+	}
+
+	/**
+	 * get Original order from extended order
+	 *
+	 * @param code
+	 * @return
+	 */
+	@Override
+	public OrderModel getOriginalOrderFromExtendedOrderCode(String code) {
+		validateParameterNotNull(code, "code must not be null");
+
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORIGINAL_ORDER_BY_CODE);
+		fQuery.addQueryParameter(OrderModel.CODE, code);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (orders.isEmpty()) {
+			BlLogger.logMessage(LOG , Level.ERROR , "Cannot find order with code: " + code);
+		}
+		return orders.size() == 1 ? orders.get(0) : null;
 	}
 }

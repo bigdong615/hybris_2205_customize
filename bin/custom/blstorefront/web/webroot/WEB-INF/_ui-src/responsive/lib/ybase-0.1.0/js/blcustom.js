@@ -1412,6 +1412,11 @@ $( ".forcolor-change" ).addClass( 'hide-error');
 			"00D1I000002xB0t"
 			);
 		}
+	 /* $("#privacyConsentLink").on('click', function(interaction) {
+		  var consentOptions = airgap.getConsent().purposes;
+		  console.log(JSON.stringify(consent, null, 2));
+		  airgap.setConsent(interaction, consentOptions);
+	  });*/
 });
 
 $(document).ready(function() {
@@ -1474,4 +1479,6 @@ const formatToPhone = (event) => {
 	}, 2000);
 
 });
+
+
 

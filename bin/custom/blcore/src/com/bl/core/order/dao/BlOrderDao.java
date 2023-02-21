@@ -146,4 +146,11 @@ public interface BlOrderDao extends OrderDao
 
 	List<OrderModel> getOrdersReadyForReturn() throws ParseException;
 
+	/**
+	 * get Original order from extended order
+	 * @param code
+	 * @return
+	 */
+	OrderModel getOriginalOrderFromExtendedOrderCode(final String code);
+
 }

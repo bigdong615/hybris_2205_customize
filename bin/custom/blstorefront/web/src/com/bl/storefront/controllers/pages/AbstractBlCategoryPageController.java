@@ -167,25 +167,11 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
 
         if(BlCoreConstants.NEW_GEAR.equals(category.getCode())){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
-            final String currentCartType = blCartFacade.identifyCartType();
-            if(StringUtils.isNotEmpty(currentCartType)){
-                model.addAttribute(currentCartType,true);
-				 }
-				 else
-				 {
-					 model.addAttribute(BlFacadesConstants.NEW_GEAR_CART, true);
-            }
+                model.addAttribute(blCartFacade.identifyCartType(),true);
         }
         else if(category.isRentalCategory()){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
-            final String currentCartType = blCartFacade.identifyCartType();
-            if(StringUtils.isNotEmpty(currentCartType)){
-                model.addAttribute(currentCartType,true);
-				 }
-				 else
-				 {
-					 model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
-            }
+                model.addAttribute(blCartFacade.identifyCartType(),true);
         }
         else {
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
@@ -370,10 +356,6 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      */
     private void populateModelForRentalAndUsedGearCategory(final Model model , final CategoryModel category , final String searchQuery) {
 
-        if (searchQuery != null)
-        {
-            model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.INDEX_FOLLOW);
-        }
         // If its rental gear
         if(category.isRentalCategory() && category.isFacetedCategory()) {
             addClearAllModelAttribute(model);

@@ -79,12 +79,15 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]     
 INSERT_UPDATE FooterNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]          ; wrapAfter ; &componentRef             ; showLanguageCurrency ; navigationNode(&nodeRef) 
                                         ;                         ; FooterNavigationComponent ; 6         ; FooterNavigationComponent ; false                ; FooterNavNode            ;  
                                         
-INSERT_UPDATE CustomFooterCopyRightComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                                       ; &componentRef                ; footerCopyRight                                             ; footerLinks
-                                             ;                         ; CopyRightParagraphComponent1 ; Copy Right Paragraph Component for footer1 ; CopyRightParagraphComponent1 ; "BorrowLenses.com" ; "<p class="body14 text-end"><a href="https://www.shutterflyinc.com/privacy" target="_blank">Privacy Policy</a></p>"
-                                             
-                                             
-                                             
-                                             
+INSERT_UPDATE CustomFooterCopyRightComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                                               ; &componentRef                 ; footerCopyRight                                             ; footerLinks
+                                             ;                         ; CopyRightParagraphComponent1 ; Copy Right Paragraph Component for footer1 ; CopyRightParagraphComponent1 ; "BorrowLenses.com" ; ""
+                                             ;                         ; CopyRightParagraphComponent2 ; Do not share personal information component ; CopyRightParagraphComponent2 ;                   ; "<p class=""body14""><a  data-bs-target=""#privacyconsent"" href=""#"" data-bs-toggle=""modal"">Do Not Sell Or Share My Personal Information</a></p>"
+                                             ;                         ; CopyRightParagraphComponent3 ; Privacy policy Component                  ; CopyRightParagraphComponent3 ;                     ; "<p class=""body14""><a href=""https://www.shutterflyinc.com/privacy"" target=""_blank"">Privacy Policy</a></p>"
+                                             ;                         ; CopyRightParagraphComponent4 ; Terms of use Component                    ; CopyRightParagraphComponent4 ;                     ; "<p class=""body14""><a href=""https://shutterflyinc.com/terms-of-use/ "" target=""_blank"">Terms of Use</a></P>"
+
+
+
+
 INSERT_UPDATE CustomFooterSubscriptionComponent ; $contentCV[unique=true] ; uid[unique=true]            ; name                          ; &componentRef               ; placeHolder         ; footerAddress                                                                                                                                                                                                              
                                                 ;                         ; FooterSubscriptionComponent ; Footer Subscription Component ; FooterSubscriptionComponent ; "Get email updates" ; "<p><b>BorrowLenses</b>San Francisco, CA<br>Boston, MA</p><p class=""links""><a href=""tel:844.853.6737"">844.853.6737</a><br><a href=""mailto:info@borrowlenses.com"" class=""email-link"">info@borrowlenses.com</a></p>"
 
@@ -92,6 +95,6 @@ INSERT_UPDATE CustomFooterSubscriptionComponent ; $contentCV[unique=true] ; uid[
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]       ; cmsComponents(uid,$contentCV) 
                    ;                         ; FooterSlot             ; FooterNavigationComponent     
-                   ;                         ; FooterCopyRightslot    ; CopyRightParagraphComponent1  
+                   ;                         ; FooterCopyRightslot    ; CopyRightParagraphComponent1  ,CopyRightParagraphComponent2,CopyRightParagraphComponent3,CopyRightParagraphComponent4
                    ;                         ; FooterSubscriptionSlot ; FooterSubscriptionComponent
                    ;                         ; SocialMediaSectionSlot     ; 

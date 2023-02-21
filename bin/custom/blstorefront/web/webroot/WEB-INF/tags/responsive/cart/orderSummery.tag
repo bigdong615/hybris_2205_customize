@@ -9,6 +9,8 @@
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="checkout" tagdir="/WEB-INF/tags/responsive/checkout/multi" %>
+
 
 <spring:url value="/cart/voucher/remove" var="removeVoucherAction"
 	htmlEscape="false" />
@@ -167,7 +169,6 @@
 			</tr>
 		</tbody>
 	</table>
-
 <c:choose>
 	 <c:when test="${isReplacementOrderCart eq true}">
 	 </c:when>
@@ -294,9 +295,18 @@
                </sec:authorize>
             </c:when>
             <c:otherwise>
+            <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+                  <a class="btn btn-block btn-primary mt-4 js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#"
+                     data-bs-toggle="modal" data-bs-target="#signIn">
+                     <spring:theme code="general.continue.button" />
+                     <input type="hidden" value="${pageType}" class="js-page-type"/>
+                  </a>
+               </sec:authorize>
+               <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
                <a href="${cartDeliveryOrPickupAction}" class="btn btn-block btn-primary mt-4">
                   <spring:theme code="general.continue.button" />
                </a>
+                 </sec:authorize>
             </c:otherwise>
          </c:choose>
       </c:when>

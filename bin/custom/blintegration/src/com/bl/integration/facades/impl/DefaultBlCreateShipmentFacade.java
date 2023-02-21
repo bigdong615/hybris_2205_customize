@@ -81,32 +81,32 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 */
 	@Override
 	public boolean createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
-			final Map<String, Integer> sequenceMap) throws IOException
+			final Map<String, Integer> sequenceMap, boolean isSignatureRequired) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.UPS_SHIPMENT_MSG);
 
 		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
 		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
-		return processLabelGeneration(packagingInfo, packageCount, delivertCarrier, sequenceMap, null);
+		return processLabelGeneration(packagingInfo, packageCount, delivertCarrier, sequenceMap, null, isSignatureRequired);
 	}
 
 	@Override
 	public boolean createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
 			final Map<String, Integer> sequenceMap, final CarrierEnum shippingType,
-			final OptimizedShippingMethodModel optimizedShippingMethod) throws IOException
+			final OptimizedShippingMethodModel optimizedShippingMethod, boolean isSignatureRequired) throws IOException
 	{
-		return processLabelGeneration(packagingInfo, packageCount, shippingType, sequenceMap, optimizedShippingMethod);
+		return processLabelGeneration(packagingInfo, packageCount, shippingType, sequenceMap, optimizedShippingMethod, isSignatureRequired);
 	}
 
 	private boolean processLabelGeneration(final PackagingInfoModel packagingInfo, final int packageCount,
 			final CarrierEnum delivertCarrier, final Map<String, Integer> sequenceMap,
-			final OptimizedShippingMethodModel optimizedShippingMethod) throws IOException
+			final OptimizedShippingMethodModel optimizedShippingMethod, boolean isSignatureRequired) throws IOException
 	{
 		if (StringUtils.isNotBlank(delivertCarrier.getCode())
 				&& CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService().createUPSShipment(
-					getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo, optimizedShippingMethod), packagingInfo);
+					getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo, optimizedShippingMethod, isSignatureRequired), packagingInfo);
 			if (upsResponse != null)
 			{
 				saveResponseOnOutboundPackage(upsResponse, packagingInfo, delivertCarrier, optimizedShippingMethod);
