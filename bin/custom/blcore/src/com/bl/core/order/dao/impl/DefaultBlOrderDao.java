@@ -147,6 +147,8 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ "{o:" + OrderModel.ISRETAILGEARORDER + "} =?isNewGearOrder AND "
 			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},current_timestamp) > ?timer";
 
+	private static final String GHOST_ORDERS  = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISEXTENDEDORDER + "} =?isExtendedOrder";
 	private static final String GET_ALL_RENTAL_LEGACY_ORDERS_QUERY = "SELECT {o:" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE "
 					+ "{o:" + AbstractOrderModel.STATUS + "} = ({{SELECT {os:" + ItemModel.PK + "} from {"+ OrderStatus._TYPECODE + " AS os} where {os:code} = ?orderStatus}}) AND "
@@ -519,7 +521,22 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		}
 		return orders;
 	}
-
+	/**
+	 * This method created to get ExtendedOrder.
+	 *
+	 */
+	@Override
+	public List<OrderModel> getGhostOrders(){
+		final FlexibleSearchQuery flexibleSearchQuery = new FlexibleSearchQuery(GHOST_ORDERS);
+		flexibleSearchQuery.addQueryParameter(BlCoreConstants.IS_EXTENDED_ORDER, Boolean.TRUE);
+		final SearchResult result = getFlexibleSearchService().search(flexibleSearchQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logMessage(LOG , Level.INFO , "No orders found to void $1 authorization transactions");
+			return Collections.emptyList();
+		}
+		return orders;
+	}
 	/**
 	 * This method created to convert date into specific format
 	 * @param dateToConvert the date which required to convert

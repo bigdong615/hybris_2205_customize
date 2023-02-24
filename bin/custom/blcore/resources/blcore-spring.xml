@@ -2216,4 +2216,14 @@
 		<property name="blDomoDao" ref="blDomoDao"/>
 	</bean>
 
+	<!-- BLS-102 Start-->
+	<bean id="GhostOrderRemovalJob" class="com.bl.core.job.GhostOrderRemovalJob"
+		  parent="abstractJobPerformable">
+		<property name="ghostOrderRemovalJobService" ref="ghostOrderRemovalJobService"/>
+	</bean>
+	<bean id="ghostOrderRemovalJobService" class="com.bl.core.ghostorderremovaljob.Impl.GhostOrderRemovalJobServiceImpl">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	<!-- BLS-102 END-->
 </beans>
