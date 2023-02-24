@@ -60,36 +60,36 @@
                 									<a href="${viewOrderAction}">
                 										<spring:theme code="text.myaccount.order.view" /> </a>
                 								</li>
+               								<c:if test="${order.rentalCart}">
                 								<li>
-                								<c:if test="${order.rentalCart}">
                 								
                 								 <c:url value="/rent/product/${order.productCode}" var="rentOrderAction" />
                                  <a href="${rentOrderAction}">
                                                         <spring:theme code="order.gift.card.myaccount.order.another"/> </a>
-                							  </c:if>
                 								</li>
-                								<li>
+                							  </c:if>
 
                 								<c:if test="${not empty agent.uid && (order.isChangePayment eq true) && (order.isCaptured eq false) }">
+	                								<li>
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                  <a href="${modifyPaymentAction}">
                                                         <spring:theme code="order.myaccount.modify.payment"/> </a>
+	                								</li>
                 							  </c:if>
-                								</li>
-                								<li>
-                									<c:if test="${not empty agent.uid && order.isChargeDeposit eq true}">
+               									<c:if test="${not empty agent.uid && order.isChargeDeposit eq true}">
+	                								<li>
                 								 <c:url value="/my-account/${order.code}/depositPayment" var="depositPaymentAction" />
                                  <a href="${depositPaymentAction}">
                                                         <spring:theme code="order.myaccount.deposit.payment"/> </a>
-                							  </c:if>
                 								</li>
+                							  </c:if>
+               									<c:if test="${not empty agent.uid && order.isModifyOrderPayment eq true}">
                 								<li>
-                									<c:if test="${not empty agent.uid && order.isModifyOrderPayment eq true}">
                 								 <c:url value="/my-account/${order.code}/modifiedOrderPayment" var="modifiedOrderPayment" />
                                  <a href="${modifiedOrderPayment}">
                                                         <spring:theme code="order.myaccount.modified.order.payment"/> </a>
-                							  </c:if>
                 								</li>
+                							  </c:if>
                 							</ul>
                 						</div>
                 					</div>
@@ -187,40 +187,40 @@
                 									<a href="${viewOrderAction}">
                 										<spring:theme code="text.myaccount.order.view" /> </a>
                 								</li>
-                								<li>
                 								<c:if test="${order.rentalCart}">
+                								<li>
                 								 <c:url value="/my-account/order/${order.code}" var="rentOrderAction" />
                                                    <a href="${rentOrderAction}">
                                                         <spring:theme code="text.myaccount.order.rent.again"/> </a>
-                							  </c:if>
                 								</li>
+                							  </c:if>
                 								
                 								
                 						
                 								<c:if test="${not empty agent.uid && (order.isChangePayment eq true) && (order.isCaptured eq false) }">
-													<li></li>
+													<li>
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                                       <a href="${modifyPaymentAction}">
                                                         <spring:theme code="order.myaccount.modify.payment"/> </a>
 													</li>
-                							  </c:if>
+        	        							  </c:if>
                 								
                 								
-                									<c:if test="${not empty agent.uid && order.isChargeDeposit eq true }">
-														<li>
+               									<c:if test="${not empty agent.uid && order.isChargeDeposit eq true }">
+													<li>
                 								 <c:url value="/my-account/${order.code}/depositPayment" var="depositPaymentAction" />
                                               <a href="${depositPaymentAction}">
                                                         <spring:theme code="order.myaccount.deposit.payment"/> </a>
 													</li>
-													</c:if>
+												</c:if>
 
+               									<c:if test="${not empty agent.uid && order.isModifyOrderPayment eq true }">
 													<li>
-                									<c:if test="${not empty agent.uid && order.isModifyOrderPayment eq true }">
                 								 <c:url value="/my-account/${order.code}/modifiedOrderPayment" var="modifiedOrderPayment" />
                                  <a href="${modifiedOrderPayment}">
                                                         <spring:theme code="order.myaccount.modified.order.payment"/> </a>
+	                								</li>
                 							  </c:if>
-                								</li>
                 								 
                 							</ul>
                 						</div>
