@@ -90,7 +90,7 @@
                 <rows >
                     <template name="model">
                         <row>
-                            <checkbox style="margin-left:20px;" class="oms-widget-reassignserial-list-container__checkbox"/>
+                            <checkbox style="margin-left:20px;" class="oms-widget-reassignserial-list-container__checkbox" disabled="${not each.isSubPart}" />
                             <label value="${each.serialProductId}" width="100%"/>
                             <label value="${each.serialProductName}" width="100%"/>
                             <label value="${each.orderNumber}" width="100%"/>

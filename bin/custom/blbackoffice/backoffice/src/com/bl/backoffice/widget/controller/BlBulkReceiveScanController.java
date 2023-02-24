@@ -179,6 +179,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				});
 
 				final BulkReceiveRespData bulkReceiveRespData = new BulkReceiveRespData();
+				bulkReceiveRespData.setIsSubPart(Boolean.FALSE);
 				bulkReceiveRespData.setSerialProductId(blSerialProductModel.getCode());
 				bulkReceiveRespData.setSerialProductName(blSerialProductModel.getBlProduct().getName());
 				bulkReceiveRespData.setProductType(blSerialProductModel.getProductType().getCode());
@@ -237,6 +238,14 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 					for (final BlSubpartsModel blSubPartModel : blSerialProductModel.getBlProduct().getSubpartProducts())
 					{
 						final BulkReceiveRespData bulkSubpartReceiveRespData = new BulkReceiveRespData();
+						if (CollectionUtils.isEmpty(blSubPartModel.getSubpartProduct().getSerialProducts()))
+						{
+							bulkSubpartReceiveRespData.setIsSubPart(Boolean.TRUE);
+						}
+						else
+						{
+							bulkSubpartReceiveRespData.setIsSubPart(Boolean.FALSE);
+						}
 						bulkSubpartReceiveRespData.setSerialProductId(blSubPartModel.getSubpartProduct().getCode());
 						bulkSubpartReceiveRespData.setSerialProductName(blSubPartModel.getSubpartProduct().getName());
 						bulkSubpartReceiveRespData.setProductType(blSubPartModel.getSubpartProduct().getProductType().getCode());
@@ -334,6 +343,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 
 				selectedSerials.add(bulkReceiveData);
 			}
+			
 		}
 		updateSerialStatus(selectedSerials);
 
