@@ -23,9 +23,12 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -66,7 +69,17 @@ public class BlUpdateSerialService implements UpdateSerialService {
       notesModel.setNote("Order is not returned on expected time stamp .. So marking order as late");
       notesModel.setUserID(orderModel.getUser().getUid());
       getModelService().save(notesModel);
-      orderModel.setOrderNotes(Lists.newArrayList(notesModel));
+      //BLS-107
+      if (CollectionUtils.isNotEmpty(orderModel.getOrderNotes()))
+		{
+			final List<NotesModel> allOrderNotes = new ArrayList<>(orderModel.getOrderNotes());
+			allOrderNotes.add(notesModel);
+			orderModel.setOrderNotes(allOrderNotes);
+		}
+		else
+		{
+			orderModel.setOrderNotes(Lists.newArrayList(notesModel));
+		}
       saveAndRefreshOrderModel(orderModel);
       performSerialUpdate(orderModel, packagingInfoModel, numberOfRepetition, upsDeliveryDate,trackDate);
       BlLogger.logFormattedMessage(LOG , Level.INFO , "Finished Performing Update serial products for order{} -> package {} -> number of repetitions  {} "
