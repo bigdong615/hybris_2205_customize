@@ -40,7 +40,7 @@
                                             <div class="col-12 col-md-7">
 							                <p class="mb-0">
 								               <b>${order.orderDate}</b>
-							                </p>
+								            </p>
 							               <p class="body14">
 								               ${fn:escapeXml(order.total.formattedValue)} &nbsp;
 								<spring:theme
@@ -69,22 +69,22 @@
                 							  </c:if>
                 								</li>
                 								<li>
-                						
-                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending') && (order.isCaptured eq false) }">
+
+                								<c:if test="${not empty agent.uid && (order.isChangePayment eq true) && (order.isCaptured eq false) }">
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                  <a href="${modifyPaymentAction}">
                                                         <spring:theme code="order.myaccount.modify.payment"/> </a>
                 							  </c:if>
                 								</li>
                 								<li>
-                									<c:if test="${not empty agent.uid && order.orderStatus eq 'Pending' }">
+                									<c:if test="${not empty agent.uid && order.isChargeDeposit eq true}">
                 								 <c:url value="/my-account/${order.code}/depositPayment" var="depositPaymentAction" />
                                  <a href="${depositPaymentAction}">
                                                         <spring:theme code="order.myaccount.deposit.payment"/> </a>
                 							  </c:if>
                 								</li>
                 								<li>
-                									<c:if test="${not empty agent.uid && order.orderStatus eq 'Shipped' }">
+                									<c:if test="${not empty agent.uid && order.isModifyOrderPayment eq true}">
                 								 <c:url value="/my-account/${order.code}/modifiedOrderPayment" var="modifiedOrderPayment" />
                                  <a href="${modifiedOrderPayment}">
                                                         <spring:theme code="order.myaccount.modified.order.payment"/> </a>
@@ -101,7 +101,7 @@
 										<spring:theme code="text.myaccount.order.rental.total.cost" />
 										<br>
 										<spring:theme code="text.myaccount.order" />
-									</p>
+										</p>
 									</p>
 								</div>
 								<div class="col-8 col-md-10">
@@ -197,7 +197,7 @@
                 								
                 								
                 						
-                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending' || order.orderStatus eq 'Sold') && (order.isCaptured eq false) }">
+                								<c:if test="${not empty agent.uid && (order.isChangePayment eq true) && (order.isCaptured eq false) }">
 													<li></li>
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                                       <a href="${modifyPaymentAction}">
@@ -206,15 +206,16 @@
                 							  </c:if>
                 								
                 								
-                									<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending') }">
+                									<c:if test="${not empty agent.uid && order.isChargeDeposit eq true }">
 														<li>
                 								 <c:url value="/my-account/${order.code}/depositPayment" var="depositPaymentAction" />
                                               <a href="${depositPaymentAction}">
                                                         <spring:theme code="order.myaccount.deposit.payment"/> </a>
 													</li>
 													</c:if>
+
 													<li>
-                									<c:if test="${not empty agent.uid && order.orderStatus eq 'Shipped' }">
+                									<c:if test="${not empty agent.uid && order.isModifyOrderPayment eq true }">
                 								 <c:url value="/my-account/${order.code}/modifiedOrderPayment" var="modifiedOrderPayment" />
                                  <a href="${modifiedOrderPayment}">
                                                         <spring:theme code="order.myaccount.modified.order.payment"/> </a>
