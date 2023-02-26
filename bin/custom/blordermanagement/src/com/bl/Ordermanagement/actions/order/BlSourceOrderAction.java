@@ -225,9 +225,16 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         durationValue = order.getRentalEndDate().getTime() - order.getRentalStartDate().getTime();
       }
 
-      if (((sumOfGearValue > threshouldGearValue) && ApproveOrderFlag && RecentOrderFlag) ||
-              (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0) || (sumOfGearValue >= threshouldGearValueThird) ||
-              LateOrderFlag || (durationValue <= 3 && completedOrderCount <= 2 && ApproveOrderFlag && RecentOrderFlag)) {
+      if(sumOfGearValue >= threshouldGearValueThird)
+      {
+        order.setStatus(OrderStatus.VERIFICATION_REQUIRED);
+        startConsignmentSubProcess(consignments, process, true);
+      }
+      else if
+      (((sumOfGearValue > threshouldGearValue) && ApproveOrderFlag && RecentOrderFlag) ||
+              (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0) ||
+              LateOrderFlag || (durationValue <= 3 && completedOrderCount <= 2 && ApproveOrderFlag && RecentOrderFlag))
+      {
         order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
         startConsignmentSubProcess(consignments, process, true);
       }
