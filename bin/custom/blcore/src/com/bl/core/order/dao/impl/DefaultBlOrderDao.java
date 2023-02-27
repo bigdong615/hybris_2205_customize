@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -338,7 +339,37 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
-		return orders;
+		List<AbstractOrderModel> OrdersToBeScraped = new ArrayList<>();
+		orders.forEach(orderModel -> {
+			 Date finalRentalEndDate = null;
+			 Date nextDayDate = new Date(orderModel.getRentalEndDate().getTime() + (1000 * 60 * 60 * 24)); //orderModel.getRentalEndDate();
+			 if(isWeekend(nextDayDate)) {
+				 finalRentalEndDate = new Date(nextDayDate.getTime() + (1000 * 60 * 60 * 24) + (1000 * 60 * 60 * 24) );
+			 }
+			 else {
+				 finalRentalEndDate = nextDayDate;
+			 }
+			
+			if(BlDateTimeUtils.getFormattedEndDay(finalRentalEndDate).getTime().before(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime())) {
+				OrdersToBeScraped.add(orderModel);
+			}
+		}); 
+		
+		return OrdersToBeScraped;
+	}
+
+	/**
+	 * @param tomorrowDate
+	 * @return
+	 */
+	private boolean isWeekend(Date tomorrowDate)
+	{
+
+		Calendar cal = Calendar.getInstance();
+      cal.setTime(tomorrowDate);
+
+      int day = cal.get(Calendar.DAY_OF_WEEK);
+      return day == Calendar.SATURDAY || day == Calendar.SUNDAY;
 	}
 
 	/**
