@@ -151,4 +151,10 @@ public interface BlOrderDao extends OrderDao
 	 */
 	OrderModel getOriginalOrderFromExtendedOrderCode(final String code);
 
+	/**
+	 * To get the ghost orders
+	 * @return list of orders
+	 */
+	public List<OrderModel> getGhostOrders();
+
 }
