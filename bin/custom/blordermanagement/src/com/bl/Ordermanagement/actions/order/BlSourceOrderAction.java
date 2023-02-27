@@ -200,7 +200,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
             }
           }
           for (OrderModel orderModel : availableOrderForCustomer) {
-            if (orderModel.getStatus() != null && !(orderModel.getVerificationStatus().equals(VerificationStatusEnum.APPROVE))) {
+            if (orderModel.isIsLatestOrder() && orderModel.getVerificationStatus() != null && !(orderModel.getVerificationStatus()==VerificationStatusEnum.APPROVE)) {
               ApproveOrderFlag = Boolean.TRUE;
             }
           }
