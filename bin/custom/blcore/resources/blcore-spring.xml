@@ -2061,6 +2061,23 @@
 	<bean id="blProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
+	
+	<bean id="blCameraProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlCameraProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
+    <bean id="blLenseProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlLenseProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
+    <bean id="blBatteriesProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlBatteriesProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
+    <bean id="blOtherProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlOtherProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
 	<bean id="blBigDecimalValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BigDecimalValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
@@ -2215,5 +2232,7 @@
 	<bean id="defaultBlDomoService" class="com.bl.core.services.domo.impl.DefaultBlDomoService">
 		<property name="blDomoDao" ref="blDomoDao"/>
 	</bean>
+	
+	
 
 </beans>
