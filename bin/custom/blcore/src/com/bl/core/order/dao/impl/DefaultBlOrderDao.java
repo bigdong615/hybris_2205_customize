@@ -339,7 +339,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		else {
 			finalRentalEndDate = pastDayDate;
 		}
-		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(pastDayDate));
+		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(pastDayDate)));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<AbstractOrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders)) {
