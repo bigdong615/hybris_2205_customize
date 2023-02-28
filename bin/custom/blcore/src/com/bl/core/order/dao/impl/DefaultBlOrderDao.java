@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -153,6 +154,8 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ "{o:" + OrderModel.ISRETAILGEARORDER + "} =?isNewGearOrder AND "
 			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},current_timestamp) > ?timer";
 
+	private static final String GHOST_ORDERS  = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISEXTENDEDORDER + "} =?isExtendedOrder";
 	private static final String GET_ALL_RENTAL_LEGACY_ORDERS_QUERY = "SELECT {o:" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE "
 					+ "{o:" + AbstractOrderModel.STATUS + "} = ({{SELECT {os:" + ItemModel.PK + "} from {"+ OrderStatus._TYPECODE + " AS os} where {os:code} = ?orderStatus}}) AND "
@@ -361,7 +364,37 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
-		return orders;
+		List<AbstractOrderModel> OrdersToBeScraped = new ArrayList<>();
+		orders.forEach(orderModel -> {
+			 Date finalRentalEndDate = null;
+			 Date nextDayDate = new Date(orderModel.getRentalEndDate().getTime() + (1000 * 60 * 60 * 24)); //orderModel.getRentalEndDate();
+			 if(isWeekend(nextDayDate)) {
+				 finalRentalEndDate = new Date(nextDayDate.getTime() + (1000 * 60 * 60 * 24) + (1000 * 60 * 60 * 24) );
+			 }
+			 else {
+				 finalRentalEndDate = nextDayDate;
+			 }
+			
+			if(BlDateTimeUtils.getFormattedEndDay(finalRentalEndDate).getTime().before(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime())) {
+				OrdersToBeScraped.add(orderModel);
+			}
+		}); 
+		
+		return OrdersToBeScraped;
+	}
+
+	/**
+	 * @param tomorrowDate
+	 * @return
+	 */
+	private boolean isWeekend(Date tomorrowDate)
+	{
+
+		Calendar cal = Calendar.getInstance();
+      cal.setTime(tomorrowDate);
+
+      int day = cal.get(Calendar.DAY_OF_WEEK);
+      return day == Calendar.SATURDAY || day == Calendar.SUNDAY;
 	}
 
 	/**
@@ -542,7 +575,22 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		}
 		return orders;
 	}
-
+	/**
+	 * This method created to get ExtendedOrder.
+	 *
+	 */
+	@Override
+	public List<OrderModel> getGhostOrders(){
+		final FlexibleSearchQuery flexibleSearchQuery = new FlexibleSearchQuery(GHOST_ORDERS);
+		flexibleSearchQuery.addQueryParameter(BlCoreConstants.IS_EXTENDED_ORDER, Boolean.TRUE);
+		final SearchResult result = getFlexibleSearchService().search(flexibleSearchQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logMessage(LOG , Level.INFO , "No orders found to void $1 authorization transactions");
+			return Collections.emptyList();
+		}
+		return orders;
+	}
 	/**
 	 * This method created to convert date into specific format
 	 * @param dateToConvert the date which required to convert
