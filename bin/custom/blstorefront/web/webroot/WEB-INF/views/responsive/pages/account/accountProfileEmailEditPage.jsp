@@ -12,7 +12,7 @@
    <c:set var="errormsgvalid" value="error"/>
 </c:if> 
 <div id="accountContent" class="col-lg-8 offset-lg-1">
-                    <h1><spring:theme code="text.account.update.email.address"/></h1>
+                    <h3><spring:theme code="text.account.update.email.address"/></h3>
                     <hr>
                     <div class="row">
                         <div class="col-lg-7">

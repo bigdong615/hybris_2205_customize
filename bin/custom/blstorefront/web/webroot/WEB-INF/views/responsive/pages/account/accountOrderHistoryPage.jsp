@@ -12,7 +12,7 @@
 								<c:url var="homepageUrl" value="/" />
                 <c:if test="${empty searchPageData.results}">
                 	<div id="accountContent" class="col-lg-8 offset-lg-1">
-                		<h1><spring:theme code="text.myaccount.recent.order"/></h1>
+                		<h3><spring:theme code="text.myaccount.recent.order"/></h3>
                 		<hr>
                 		<div class="notification no-orders">
                 			<p><strong>
@@ -31,7 +31,7 @@
                 </c:if>
                 <c:if test="${not empty searchPageData.results}">
                 	<div id="accountContent" class="col-lg-8 offset-lg-1">
-                		<h1><spring:theme code="text.myaccount.recent.order"/></h1>
+                		<h3><spring:theme code="text.myaccount.recent.order"/></h3>
                 		<c:forEach items="${searchPageData.results}" var="order">
                 		<div class="order-block">
                 				<div class="row">

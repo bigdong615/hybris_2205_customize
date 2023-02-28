@@ -19,9 +19,9 @@
 </c:choose>
 
 <div id="accountContent" class="col-lg-8 offset-lg-1 accountAddressAdd">
-   <h1>
+   <h3>
       <spring:theme code="text.address.header"/>
-   </h1>
+   </h3>
    <hr>
    <div class="row">
       <div class="col-lg-7">

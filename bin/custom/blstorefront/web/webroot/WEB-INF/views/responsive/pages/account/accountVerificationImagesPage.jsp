@@ -16,9 +16,9 @@
         </div>
 <div id="accountContent" class="col-lg-8 offset-lg-1">
 
-	<h1>
+	<h3>
 		<spring:theme code="bl.verification.document.page.title" />
-	</h1>
+	</h3>
 	<hr>
 	<p>
 		<spring:theme code="bl.verification.document.page.text" />
