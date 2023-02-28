@@ -3623,6 +3623,11 @@
                         <persistence type="property"/>
                         <description>OptimizedShippingMethod service type description if any </description>
                     </attribute>
+                    <attribute type="java.lang.String" qualifier="signatureServiceTypeCode">
+                        <modifiers read="true" write="true" unique="false" optional="true"/>
+                        <persistence type="property"/>
+                        <description>OptimizedShippingMethod for Signature Required if any </description>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
