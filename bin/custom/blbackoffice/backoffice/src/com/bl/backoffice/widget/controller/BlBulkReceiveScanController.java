@@ -242,7 +242,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 					for (final BlSubpartsModel blSubPartModel : blSerialProductModel.getBlProduct().getSubpartProducts())
 					{
 						final BulkReceiveRespData bulkSubpartReceiveRespData = new BulkReceiveRespData();
-						if (CollectionUtils.isEmpty(blSubPartModel.getSubpartProduct().getSerialProducts()))
+						if (Objects.nonNull(blSubPartModel) && Objects.nonNull(blSubPartModel.getSubpartProduct()) && 
+								CollectionUtils.isEmpty(blSubPartModel.getSubpartProduct().getSerialProducts()))
 						{
 							bulkSubpartReceiveRespData.setIsSubPart(Boolean.TRUE);
 						}
