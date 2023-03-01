@@ -1110,7 +1110,7 @@
 	</bean>
 	
 	<alias name="blDomoNotesPopulator" alias="blDomoNotesPopulator"/>
-	<bean id="blDomoNotesPopulator" class="com.bl.facades.populators.BlDomoCustomerNotesPopulator"></bean>
+	<bean id="blDomoNotesPopulator" class="com.bl.facades.populators.BlDomoNotesPopulator"></bean>
 	
 	<alias name="blNotesConverter" alias="blNotesConverter"/>
 	<bean id="blNotesConverter" parent="abstractPopulatingConverter">

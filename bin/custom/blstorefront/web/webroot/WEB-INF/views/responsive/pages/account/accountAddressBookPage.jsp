@@ -12,9 +12,9 @@
 </c:if>
 
 <div id="accountContent" class="col-lg-8 offset-lg-1">
-<h1>
+<h3>
    <spring:theme code="text.address.header"/>
-</h1>
+</h3>
 <hr>
 <c:if test="${empty addressData}">
 <div class="notification no-orders">

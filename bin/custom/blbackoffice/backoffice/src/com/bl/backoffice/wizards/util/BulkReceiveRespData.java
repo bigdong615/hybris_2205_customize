@@ -42,6 +42,8 @@ public class BulkReceiveRespData
 
 	private String orderNotes;
 
+	private Boolean isSubPart;
+
 	/**
 	 * @return the cosmeticRating
 	 */
@@ -299,6 +301,21 @@ public class BulkReceiveRespData
 		this.mainProductId = mainProductId;
 	}
 
+	/**
+	 * @return the isSubPart
+	 */
+	public Boolean getIsSubPart()
+	{
+		return isSubPart;
+	}
+
+	/**
+	 * @param isSubPart the isSubPart to set
+	 */
+	public void setIsSubPart(Boolean isSubPart)
+	{
+		this.isSubPart = isSubPart;
+	}
 
 
 }

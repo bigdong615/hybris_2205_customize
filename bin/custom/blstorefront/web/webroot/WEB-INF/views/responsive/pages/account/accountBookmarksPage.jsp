@@ -13,7 +13,7 @@
 <c:url value="/bookmark/addtorental" var="addToCartAndRemoveUrl"/>
 
 <div id="accountContent" class="col-lg-8 offset-lg-1">
-                    <h1><spring:theme code="text.account.bookmarkpage"/></h1>
+                    <h3><spring:theme code="text.account.bookmarkpage"/></h3>
                     <c:choose>
                       	<c:when test="${empty searchPageData.results}">                          
                                               <hr>

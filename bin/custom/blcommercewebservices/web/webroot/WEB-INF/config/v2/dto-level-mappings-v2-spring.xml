@@ -83,7 +83,7 @@
             <map>
                 <entry key="BASIC" value="id"/>
                 <entry key="DEFAULT" value="BASIC,firstName,lastName,email,titleCode,phone,cellphone,line1,line2,postalCode,country,region,district,town,defaultAddress"/>
-                <entry key="FULL" value="createdTS,modifiedTS,original,duplicate,appartment,building,department,fax,middleName,middleName2,poBox,streetName,streetNumber,gender,dateOfBirth,remarks,unloadingAddress,contactAddress,zone,latitude,longitude,phone2,addressId,title,firstName,lastName,company,town,postalCode,region,district,phone1,cellPhone,country,email,shippingAddress,billingAddress,visibleInAddressBook,braintreeAddressId,addressType,openingDaysDetails,pickStoreAddress,upsStoreAddress,url"/>
+                <entry key="FULL" value="createdTS,modifiedTS,original,duplicate,appartment,building,department,fax,middleName,middleName2,poBox,streetName,streetNumber,gender,dateOfBirth,remarks,unloadingAddress,zone,latitude,longitude,phone2,title,firstName,lastName,town,postalCode,region,district,country,email,shippingAddress,visibleInAddressBook,addressType,openingDaysDetails,pickStoreAddress,upsStoreAddress,url"/>
             </map>
         </property>
     </bean>
@@ -1756,7 +1756,7 @@
                 <entry key="DEFAULT"
                        value="createdTS,modifiedTS,userId"/>
                 <entry key="FULL" 
-                	   value="createdTS,modifiedTS,userId,type,order,consignment,note"/>
+                	   value="createdTS,modifiedTS,userId,type,order,note"/>
             </map>
         </property>
     </bean>
