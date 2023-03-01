@@ -118,3 +118,12 @@ INSERT_UPDATE Trigger;cronJob(code)[unique=true];cronExpression
                      ;ghostOrderRemovalJob;* * 1 ? * * *
 
 #BLS-102 End
+
+#BLS-9 Start
+INSERT_UPDATE ServicelayerJob ; code[unique=true]      ; springId[unique=true]
+                              ; blOptimizeSerialsInLateOrdersJob ; blOptimizeSerialsInLateOrders
+
+INSERT_UPDATE CronJob ; code[unique=true]               ; job(code)               ; sessionLanguage(isocode) ; active
+                      ; optimizeSerialsInLateOrdersJob ; blOptimizeSerialsInLateOrdersJob  ; en     ; true
+
+#BLS-9 End
