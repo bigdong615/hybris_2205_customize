@@ -356,31 +356,23 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 	public List<AbstractOrderModel> getOrdersForUPSScrape()
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_BE_UPS_SCRAPE);
-		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
+		Date finalRentalEndDate = null;
+		Date pastDayDate = new Date((new Date()).getTime() - (1000 * 60 * 60 * 24)); //orderModel.getRentalEndDate();
+	    if(isWeekend(pastDayDate)) {
+			finalRentalEndDate = new Date(pastDayDate.getTime() - (1000 * 60 * 60 * 24) - (1000 * 60 * 60 * 24) );
+		}
+		else {
+			finalRentalEndDate = pastDayDate;
+		}
+		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(finalRentalEndDate).getTime()));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<AbstractOrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders)) {
 			BlLogger.logMessage(LOG , Level.INFO , "No Results found for UPS Scrape service which is same or before rental end date has ",
-					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(finalRentalEndDate).getTime()));
 			return Collections.emptyList();
 		}
-		List<AbstractOrderModel> OrdersToBeScraped = new ArrayList<>();
-		orders.forEach(orderModel -> {
-			 Date finalRentalEndDate = null;
-			 Date nextDayDate = new Date(orderModel.getRentalEndDate().getTime() + (1000 * 60 * 60 * 24)); //orderModel.getRentalEndDate();
-			 if(isWeekend(nextDayDate)) {
-				 finalRentalEndDate = new Date(nextDayDate.getTime() + (1000 * 60 * 60 * 24) + (1000 * 60 * 60 * 24) );
-			 }
-			 else {
-				 finalRentalEndDate = nextDayDate;
-			 }
-			
-			if(BlDateTimeUtils.getFormattedEndDay(finalRentalEndDate).getTime().before(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime())) {
-				OrdersToBeScraped.add(orderModel);
-			}
-		}); 
-		
-		return OrdersToBeScraped;
+		return orders;
 	}
 
 	/**

@@ -14,7 +14,7 @@
   <c:set var="errormsgvalidates" value="error" />
 </c:if>
  <div id="accountContent" class="col-lg-8 offset-lg-1">
-                    <h1><spring:theme code="text.account.profile.updatePasswordForm"/></h1>
+                    <h3><spring:theme code="text.account.profile.updatePasswordForm"/></h3>
                     <hr>
                     <div class="row">
                         <div class="col-lg-7">

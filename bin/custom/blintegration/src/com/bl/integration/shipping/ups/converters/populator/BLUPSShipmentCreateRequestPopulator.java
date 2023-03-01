@@ -115,14 +115,6 @@ public class BLUPSShipmentCreateRequestPopulator
 		codeDescriptionForPackagingType.setDescription(packageType.getPackagingType().getDescription());
 
 		final PackageType pkg1 = new PackageType();
-		if(shipmentData.getIsSignatureRequired()) {
-		final DeliveryConfirmationType deliveryConfirmation = new DeliveryConfirmationType();
-			deliveryConfirmation.setDCISType(BlintegrationConstants.DELIVERY_CONFIRMATION_SIGNATURE);
-			final ShipmentType.ShipmentServiceOptions shipmentServiceOptions = new ShipmentType.ShipmentServiceOptions();
-			shipmentServiceOptions.setDeliveryConfirmation(deliveryConfirmation);
-			shipmentType.setShipmentServiceOptions(shipmentServiceOptions);
-		}
-		
 
 		final ShipUnitOfMeasurementType shipUnitOfMeasurementType = new ShipUnitOfMeasurementType();
 		shipUnitOfMeasurementType.setCode(packageType.getDimensions().getUnitOfMeasurement().getCode());
