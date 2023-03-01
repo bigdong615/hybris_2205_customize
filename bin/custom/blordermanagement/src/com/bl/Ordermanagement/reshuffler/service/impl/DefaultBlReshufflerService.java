@@ -278,7 +278,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
    */
   private boolean checkFulfillmentFromSingleWH(final AbstractOrderModel order, final WarehouseModel warehouse,
       final WarehouseModel preferredWH, final Set<String> productCodes) {
-    final Set<String> modifiedProductCodes = getBlOptimizeShippingFromWHService().modifyProductCodes(order, warehouse); // collect all the serial product code for given warehouse consignment.
+    final Set<String> modifiedProductCodes = getBlOptimizeShippingFromWHService().modifyProductCodes(order, warehouse);
     modifiedProductCodes.addAll(productCodes);
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
         "list of products {} to fulfill from preferred warehouse {} for the order {}",
