@@ -162,16 +162,19 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
             final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
             //It filters the orders which needs to be processed and ignore the orders which contains the SKU (when total number
             // of sku needed for orders, will ship on same day, is not sufficient to fulfill from main and buffer inventory
-            filterOrdersForProcessingSoftAssignedSerials(finalSortedOrders);
-            final Map<AbstractOrderModel, Set<String>> filteredOrders = filterOrdersForProcessingLateSerials(
+          final Map<AbstractOrderModel, Set<String>> filteredOrdersForSoftAssignSerialInRepair =filterOrdersForProcessingSoftAssignedSerials(finalSortedOrders);
+            final Map<AbstractOrderModel, Set<String>> filteredOrderForLateSerial = filterOrdersForProcessingLateSerials(
                     finalSortedOrders,
                     warehouses, currentDate, isPresentDay);
-            processOrders(filteredOrders, warehouses);
+            filteredOrderForLateSerial.putAll(filteredOrdersForSoftAssignSerialInRepair);
+            processOrders(filteredOrderForLateSerial, warehouses);
         }
     }
 
-  private void filterOrdersForProcessingSoftAssignedSerials(List<AbstractOrderModel> todayOrdersToBeProcessed) {
+  private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessingSoftAssignedSerials(List<AbstractOrderModel> todayOrdersToBeProcessed) {
+    Map<AbstractOrderModel, Set<String>> mapOfRepairOrders = new HashMap<>();
     for (AbstractOrderModel order: todayOrdersToBeProcessed) {
+      Set<String> productSet = new HashSet<>();
       for(AbstractOrderEntryModel entryModel: order.getEntries())
       {
         if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
@@ -183,13 +186,19 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                       serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_AWAITING_QUOTES) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_PARTS_NEEDED) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_SEND_TO_VENDOR) ||
                       serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_IN_HOUSE))) {
                 entryModel.setSerialProducts(Collections.emptyList());
+                productSet.add(entryModel.getProduct().getCode());
                 modelService.save(entryModel);
+                break;
               }
             }
           }
         }
       }
+      if (!productSet.isEmpty()){
+        mapOfRepairOrders.put(order, productSet);
+      }
     }
+    return mapOfRepairOrders;
   }
 
   /**
@@ -269,7 +278,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
    */
   private boolean checkFulfillmentFromSingleWH(final AbstractOrderModel order, final WarehouseModel warehouse,
       final WarehouseModel preferredWH, final Set<String> productCodes) {
-    final Set<String> modifiedProductCodes = getBlOptimizeShippingFromWHService().modifyProductCodes(order, warehouse);
+    final Set<String> modifiedProductCodes = getBlOptimizeShippingFromWHService().modifyProductCodes(order, warehouse); // collect all the serial product code for given warehouse consignment.
     modifiedProductCodes.addAll(productCodes);
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
         "list of products {} to fulfill from preferred warehouse {} for the order {}",
@@ -317,6 +326,12 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
       getModelService().save(order);
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "All the unallocated products are fulfilled for the order {}, hence the status is set to {} ",
+          order.getCode(), order.getStatus().getCode());
+    }else{
+      order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
+      getModelService().save(order);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          "Some of the product are unallocated for the order {}, hence the status is set to {} ",
           order.getCode(), order.getStatus().getCode());
     }
   }
@@ -677,21 +692,25 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                                                                            final List<WarehouseModel> warehouses, final Date currentDate, final boolean isPresentDay) {
 
     Map<AbstractOrderModel, Set<String>> mapOfLateOrders = new HashMap<>();
-    Set<String> productSet = new HashSet<>();
     for (AbstractOrderModel order: todayOrdersToBeProcessed) {
+      Set<String> productSet = new HashSet<>();
             for(AbstractOrderEntryModel entryModel: order.getEntries())
             {
                 if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
                   for (BlProductModel serialProductModel : entryModel.getSerialProducts()) {
                     if (serialProductModel instanceof BlSerialProductModel && ((BlSerialProductModel) serialProductModel).getSerialStatus().equals(SerialStatusEnum.LATE)) {
                         entryModel.setSerialProducts(Collections.emptyList());
+                        productSet.add(entryModel.getProduct().getCode());
                         modelService.save(entryModel);
                         modelService.refresh(order);
-                        mapOfLateOrders.put(order, productSet);
+                       break;
                     }
                   }
                 }
             }
+         if (!productSet.isEmpty()){
+          mapOfLateOrders.put(order, productSet);
+          }
         }
     return mapOfLateOrders;
     }
