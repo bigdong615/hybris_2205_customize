@@ -1756,7 +1756,7 @@
                 <entry key="DEFAULT"
                        value="createdTS,modifiedTS,userId"/>
                 <entry key="FULL" 
-                	   value="createdTS,modifiedTS,userId,type,order,consignment,note"/>
+                	   value="createdTS,modifiedTS,userId,type,order,note"/>
             </map>
         </property>
     </bean>
