@@ -11,7 +11,7 @@
  <c:choose>
 <c:when test="${empty braintreePaymentInfos}">
 		<div id="accountContent" class="col-lg-8 offset-lg-1">
-			<h3>Credit Cards</h3>
+			<h1>Credit Cards</h1>
 			<hr>
 			<div class="notification no-orders">
 				<p>

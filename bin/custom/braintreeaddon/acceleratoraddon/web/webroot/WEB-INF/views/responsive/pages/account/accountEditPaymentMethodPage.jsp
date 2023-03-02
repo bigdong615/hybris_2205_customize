@@ -13,7 +13,7 @@
 
 <c:if test="${not empty ccPaymentInfo}">
 	<div id="accountContent" class="col-lg-8 offset-lg-1">
-		<h3>Credit Card</h3>
+		<h1>Credit Card</h1>
 		<hr>
 		<div class="row">
 			<div class="col-lg-7">
