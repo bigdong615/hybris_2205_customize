@@ -200,8 +200,15 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
             }
           }
           for (OrderModel orderModel : availableOrderForCustomer) {
-            if (orderModel.isIsLatestOrder() && orderModel.getVerificationStatus() != null && !(orderModel.getVerificationStatus()==VerificationStatusEnum.APPROVE)) {
+            if (orderModel.getVerificationStatus() != null && ((orderModel.getVerificationStatus().equals(VerificationStatusEnum.NA)|| (orderModel.getVerificationStatus().equals(VerificationStatusEnum.DENY)))))
+            {
               ApproveOrderFlag = Boolean.TRUE;
+            }
+
+            else
+            {
+              ApproveOrderFlag = Boolean.FALSE;
+              break;
             }
           }
           for (OrderModel orderModel : availableOrderForCustomer) {
@@ -231,6 +238,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         startConsignmentSubProcess(consignments, process, true);
       }
       else if
+
       (((sumOfGearValue > threshouldGearValue) && ApproveOrderFlag && RecentOrderFlag) ||
               (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0) ||
               LateOrderFlag || (durationValue <= 3 && completedOrderCount <= 2 && ApproveOrderFlag && RecentOrderFlag))
