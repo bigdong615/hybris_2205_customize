@@ -267,6 +267,27 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
         BlLogger.logMessage(LOG , Level.INFO , "Package is being processed in UPS facility");
       }
       else if(Objects.nonNull(stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)) &&
+            (((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.I)
+                  && ((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.DP))) {
+      	 String description = (String) stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION);
+          updatePackageDetailsInTransit(stringObjectMap, packagingInfoModel, abstractOrderModel, description);
+          BlLogger.logMessage(LOG , Level.INFO , "Package Departed from Facility");
+      }
+      else if(Objects.nonNull(stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)) &&
+            (((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.I)
+                  && ((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.OR))) {
+      	 String description = (String) stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION);
+          updatePackageDetailsInTransit(stringObjectMap, packagingInfoModel, abstractOrderModel, description);
+          BlLogger.logMessage(LOG , Level.INFO , "package is in Origin Scan");
+      }
+      else if(Objects.nonNull(stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)) &&
+            (((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.I)
+                  && ((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.XD))) {
+      	 String description = (String) stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION);
+          updatePackageDetailsInTransit(stringObjectMap, packagingInfoModel, abstractOrderModel, description);
+          BlLogger.logMessage(LOG , Level.INFO , "package is Drop-Off");
+      }
+      else if(Objects.nonNull(stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)) &&
           (((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.M)
       || ((String) stringObjectMap.get(BlintegrationConstants.STATUS_TYPE)).equalsIgnoreCase(BlintegrationConstants.MV))){
         String description = (String) stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION);
@@ -299,10 +320,20 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
    */
   private void updateSerialStatusBasedIfDeliveryIsLateOrNotFound(final Map<String, Object> stringObjectMap,
       final AbstractOrderModel abstractOrderModel, final PackagingInfoModel packagingInfoModel) {
+	  Date estimatedDeliveryTime = null;
+	  
+	  if(!Objects.isNull(stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP))) {
+		  estimatedDeliveryTime = (Date)stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP);
+	  }
+	  else if(!Objects.isNull(stringObjectMap.get(BlintegrationConstants.SCHEDULED_DELIVERY_TIME_STAMP))) {
+		  estimatedDeliveryTime = (Date)stringObjectMap.get(BlintegrationConstants.SCHEDULED_DELIVERY_TIME_STAMP);
+	  }
+	  else {
+		  estimatedDeliveryTime = new Date();
+	  }
     getBlUpdateSerialService().updateSerialProducts(Objects.isNull(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER))
             ? StringUtils.EMPTY : String.valueOf(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER)),
-        abstractOrderModel.getCode(), Objects.isNull(stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP))
-            ? new Date(): (Date)stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP),
+        abstractOrderModel.getCode(),estimatedDeliveryTime,
         Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) ? 0 : packagingInfoModel.getNumberOfRepetitions(),
         packagingInfoModel,(Date)stringObjectMap.get(BlintegrationConstants.ACTIVITY_TIME_STAMP));
   }
