@@ -14,6 +14,7 @@ import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoListWsDTO;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
@@ -76,7 +77,6 @@ import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogListData;
 import com.bl.facades.vendorRepairLog.dto.VendorRepairLogListWsDTO;
 import com.bl.integration.dto.AddressListWsDTO;
-import com.bl.integration.dto.UsersListWsDTO;
 import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import com.braintree.hybris.data.BrainTreePaymentInfoListData;
 
