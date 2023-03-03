@@ -160,7 +160,7 @@ private void populateUpdatedOrderStatus(OrderModel source, OrderData target)
    
    		case PAYMENT_CAPTURED:
    			
-   			target.setOrderStatus("ORDER PLACED");
+   			target.setOrderStatus("PAYMENT CAPTURED");
    			break;
    
    		case PAYMENT_NOT_AUTHORIZED:

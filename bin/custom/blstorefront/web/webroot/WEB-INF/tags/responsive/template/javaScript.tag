@@ -461,7 +461,7 @@
   	</c:if>
 
   	<!-- This js is used for rental search box component-->
-  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalgear') || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'contactUsPage' || cmsPage.uid eq 'shipOrPickupPage' ||  isRentalPage eq true}">
+  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalgear') || isRentalPage eq true || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'contactUsPage' || cmsPage.uid eq 'shipOrPickupPage' || cmsPage.uid eq 'productDetails'}">
   	<script type="text/javascript">
 
             if ($(window).width() < 400 ) {
