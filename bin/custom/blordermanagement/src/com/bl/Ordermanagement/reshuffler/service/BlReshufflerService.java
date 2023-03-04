@@ -11,4 +11,6 @@ public interface BlReshufflerService
 	 * It processes incomplete orders
 	 */
 	void processIncompleteOrders();
+
+	void processSerialsInLateOrders();
 }
