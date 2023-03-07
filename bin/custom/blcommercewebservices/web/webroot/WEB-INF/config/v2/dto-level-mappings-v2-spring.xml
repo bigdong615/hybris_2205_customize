@@ -1731,7 +1731,7 @@
                 <entry key="DEFAULT"
                        value="createdTS,modifiedTS,date"/>
                 <entry key="FULL" 
-                	   value="createdTS,modifiedTS,available,nextDeliveryTime,reserved,overSelling,preOrder,maxPreOrder,treatNegativeAsZero,maxStocklevelHistoryCount,asnEntry,date,serialProductCode,reservedStatus,order,hardAssigned,bufferedInventory,serialStatus,forSale,productCode,bin,releaseDate,inStockStatus,warehouse"/>
+                	   value="createdTS,modifiedTS,available,nextDeliveryTime,reserved,overSelling,preOrder,maxPreOrder,treatNegativeAsZero,asnEntry,date,serialProductCode,reservedStatus,order,hardAssigned,bufferedInventory,serialStatus,forSale,productCode,bin,releaseDate,inStockStatus,warehouseCode"/>
             </map>
         </property>
     </bean>

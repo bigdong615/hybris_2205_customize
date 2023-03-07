@@ -5,6 +5,7 @@ import com.bl.Ordermanagement.reshuffler.service.BlOptimizeShippingFromWHService
 import com.bl.Ordermanagement.reshuffler.service.BlReshufflerService;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -16,6 +17,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -84,6 +86,23 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     }
   }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void processSerialsInLateOrders() {
+        final Date currentDate = Date
+                .from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        final Date endDate = DateUtils.addDays(currentDate, 3);
+        for (Date startDate = currentDate; startDate.before(endDate); startDate = DateUtils.addDays(startDate, 1)) {
+            processOrdersSoonToBeTransitByDay(startDate, startDate.equals(currentDate));
+            if(startDate.equals(currentDate)) {
+                getBlOptimizeShippingFromWHService()
+                        .optimizeShipFormWHForOrders(startDate);
+            }
+        }
+    }
+
   /**
    * It processed the orders day wise
    * @param currentDate the date
@@ -120,6 +139,66 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
           warehouses, currentDate, isPresentDay);
          processOrders(filteredOrders, warehouses);
     }
+  }
+
+
+    public void processOrdersSoonToBeTransitByDay(final Date currentDate, final boolean isPresentDay) {
+        final List<AbstractOrderModel> ordersToBeProcessed = getOrderDao()
+                .getOrdersToBeShippedSoon(currentDate);
+        if(CollectionUtils.isNotEmpty(ordersToBeProcessed)) {
+            //Sorted by delivery mode
+            final Set<AbstractOrderModel> removeDuplicateOrders = new HashSet<>(ordersToBeProcessed);
+            final List<AbstractOrderModel> remainingOrders = new ArrayList<>(removeDuplicateOrders);
+            //Sort the orders by order total price
+            final List<AbstractOrderModel> ordersSortedByTotalPrice = remainingOrders.stream()
+                    .sorted(Comparator.comparing(AbstractOrderModel::getTotalPrice).reversed())
+                    .collect(Collectors.toList());
+          final List<AbstractOrderModel> finalSortedOrders = new ArrayList<>(ordersSortedByTotalPrice);
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                    "List of orders to fulfill {} for the day {} ", finalSortedOrders.toString(), currentDate);
+            final BaseStoreModel baseStoreModel = getBaseStoreService()
+                    .getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+            //Get all warehouses
+            final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
+            //It filters the orders which needs to be processed and ignore the orders which contains the SKU (when total number
+            // of sku needed for orders, will ship on same day, is not sufficient to fulfill from main and buffer inventory
+          final Map<AbstractOrderModel, Set<String>> filteredOrdersForSoftAssignSerialInRepair =filterOrdersForProcessingSoftAssignedSerials(finalSortedOrders);
+            final Map<AbstractOrderModel, Set<String>> filteredOrderForLateSerial = filterOrdersForProcessingLateSerials(
+                    finalSortedOrders,
+                    warehouses, currentDate, isPresentDay);
+            filteredOrderForLateSerial.putAll(filteredOrdersForSoftAssignSerialInRepair);
+            processOrders(filteredOrderForLateSerial, warehouses);
+        }
+    }
+
+  private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessingSoftAssignedSerials(List<AbstractOrderModel> todayOrdersToBeProcessed) {
+    Map<AbstractOrderModel, Set<String>> mapOfRepairOrders = new HashMap<>();
+    for (AbstractOrderModel order: todayOrdersToBeProcessed) {
+      Set<String> productSet = new HashSet<>();
+      for(AbstractOrderEntryModel entryModel: order.getEntries())
+      {
+        if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
+          for (BlProductModel productModel : entryModel.getSerialProducts()) {
+            if (productModel instanceof BlSerialProductModel) {
+              OrderModel orderModel = ((BlSerialProductModel)productModel).getAssociatedOrder();
+              BlSerialProductModel serialProductModel = (BlSerialProductModel) productModel;
+              if (Objects.nonNull(orderModel) && serialProductModel.getSoftAssigned() && (serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_NEEDED) ||
+                      serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_AWAITING_QUOTES) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_PARTS_NEEDED) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_SEND_TO_VENDOR) ||
+                      serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_IN_HOUSE))) {
+                entryModel.setSerialProducts(Collections.emptyList());
+                productSet.add(entryModel.getProduct().getCode());
+                modelService.save(entryModel);
+                break;
+              }
+            }
+          }
+        }
+      }
+      if (!productSet.isEmpty()){
+        mapOfRepairOrders.put(order, productSet);
+      }
+    }
+    return mapOfRepairOrders;
   }
 
   /**
@@ -247,6 +326,12 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
       getModelService().save(order);
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "All the unallocated products are fulfilled for the order {}, hence the status is set to {} ",
+          order.getCode(), order.getStatus().getCode());
+    }else{
+      order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
+      getModelService().save(order);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          "Some of the product are unallocated for the order {}, hence the status is set to {} ",
           order.getCode(), order.getStatus().getCode());
     }
   }
@@ -517,8 +602,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 	 * @param isPresentDay
    * @return order with associated unallocated products
 	 */
-  private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessing(
-      final List<AbstractOrderModel> todayOrdersToBeProcessed,
+  private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessing(final List<AbstractOrderModel> todayOrdersToBeProcessed,
       final List<WarehouseModel> warehouses, final Date currentDate, final boolean isPresentDay) {
     //This map will contain order id with unallocated products
     final Map<AbstractOrderModel, Set<String>> ordersWithUnallocatedProducts = new LinkedHashMap<>();
@@ -602,6 +686,34 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 		//The orders which will not be considered in reshuffler job, will be in manual review only
     return ordersWithUnallocatedProducts;
   }
+
+
+    private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessingLateSerials(final List<AbstractOrderModel> todayOrdersToBeProcessed,
+                                                                           final List<WarehouseModel> warehouses, final Date currentDate, final boolean isPresentDay) {
+
+    Map<AbstractOrderModel, Set<String>> mapOfLateOrders = new HashMap<>();
+    for (AbstractOrderModel order: todayOrdersToBeProcessed) {
+      Set<String> productSet = new HashSet<>();
+            for(AbstractOrderEntryModel entryModel: order.getEntries())
+            {
+                if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
+                  for (BlProductModel serialProductModel : entryModel.getSerialProducts()) {
+                    if (serialProductModel instanceof BlSerialProductModel && ((BlSerialProductModel) serialProductModel).getSerialStatus().equals(SerialStatusEnum.LATE)) {
+                        entryModel.setSerialProducts(Collections.emptyList());
+                        productSet.add(entryModel.getProduct().getCode());
+                        modelService.save(entryModel);
+                        modelService.refresh(order);
+                       break;
+                    }
+                  }
+                }
+            }
+         if (!productSet.isEmpty()){
+          mapOfLateOrders.put(order, productSet);
+          }
+        }
+    return mapOfLateOrders;
+    }
 
   public BlOrderDao getOrderDao() {
     return orderDao;

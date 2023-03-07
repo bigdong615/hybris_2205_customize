@@ -18,6 +18,7 @@ $contentCatalogsCustomProductPagePath = /blinitialdata/import/coredata/contentCa
 $contentCatalogsCustomCatalogPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/catalog
 $contentCatalogsCustomShippingPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/shipping
 $contentCatalogsCustomOrderPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/order
+$contentCatalogsCustomNotFoundPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/notfound
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
 

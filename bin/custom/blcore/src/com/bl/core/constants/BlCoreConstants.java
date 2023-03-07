@@ -169,7 +169,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int CONDITION_RATING_ONE = 1;
 	public static final int CONDITION_RATING_ZERO = 0;
 
-
 	public static final String PRICE_ASC = "price-asc";
 	public static final String PRICE_DESC = "price-desc";
 	public static final String MIN_SERIAL_PRICE = "minSerialfinalSalePrice";

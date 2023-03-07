@@ -676,6 +676,8 @@
       <property name="serialProductCode" type="java.lang.String"/>
       <property name="order" type="java.lang.String"/>
       <property name="serialStatus" type="java.lang.String"/>
+      <property name="asnEntry" type="java.lang.String"/>
+      <property name="warehouseCode" type="java.lang.String"/>
 	</bean>
     
     <bean class="de.hybris.platform.warehousingwebservices.dto.product.StockLevelListWsDTO">

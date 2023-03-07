@@ -168,6 +168,10 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
                 int packageCount = 0;
                 int activityCount = 0;
                 convertResponseFromResults(shipmentType , packageCount , activityCount ,stringObjectMap);
+                for (final DeliveryDetailType deliveryDetail : shipmentType.getDeliveryDetail()) {
+                   convertDeliveryDetailsFromResponse(deliveryDetail , stringObjectMap);
+                 }
+                
                 stringObjectMap.put(BlintegrationConstants.PACKAGE_COUNT, packageCount);
                 stringObjectMap.put(BlintegrationConstants.ACTIVITY_COUNT, activityCount);
               }
