@@ -461,7 +461,7 @@
   	</c:if>
 
   	<!-- This js is used for rental search box component-->
-  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalGear') || isRentalPage eq true || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'productDetails' || cmsPage.uid eq 'contactUsPage' || cmsPage.uid eq 'shipOrPickupPage'}">
+  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalGear') || isRentalPage eq true || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'productDetails'|| cmsPage.uid eq 'contactUsPage' || cmsPage.uid eq 'shipOrPickupPage'}">
   	<script type="text/javascript">
 
             if ($(window).width() < 400 ) {
@@ -633,7 +633,7 @@
   	</c:if>
 
   <!-- This js will load on rental PDP  and it is required for all rental pdp component to make it work -->
-	<c:if test="${cmsPage.uid eq 'productDetails' && IsRentalPage eq 'true' && product.forRent eq 'true'}">
+	<c:if test="${cmsPage.uid eq 'productDetails' && product.forRent eq 'true'}">
                                 		 <script>
                                         // Mobile Menu styles - #my-menu is required for ALL pages
                                              document.addEventListener(
