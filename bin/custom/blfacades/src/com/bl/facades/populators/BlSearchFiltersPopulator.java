@@ -20,6 +20,7 @@ import de.hybris.platform.solrfacetsearch.search.SearchQuery;
 import de.hybris.platform.util.Config;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -244,6 +245,13 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
 	  {
 		  target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
 		  target.getSearchQuery().addFilterQuery("productTypeExclusion", BlCoreConstants.FALSE);
+	  }
+	  else
+	  {
+		  final Date currentDate = new Date();
+		  target.getSearchQuery().addFilterRawQuery("modifiedTimeinSec_long:" + "["
+				  + getSessionService().getAttribute("apirequestTime") + " " + "TO" + " " + currentDate.getTime() + "]");
+
 	  }
   }
 
