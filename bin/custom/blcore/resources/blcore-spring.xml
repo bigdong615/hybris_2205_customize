@@ -2058,6 +2058,10 @@
 		<property name="mediaService" ref="mediaService"/>
 	</bean>
 	
+	<bean id="blProductModifiedTimeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductModifiedTimeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
 	<bean id="blProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
