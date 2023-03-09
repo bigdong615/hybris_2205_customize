@@ -144,7 +144,7 @@
 	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
 	                                 	<c:when test="${empty nextAvailabilityDate }">
-	                                 		<span class="arrival nextAvailDate"><spring:theme code="This item has been out of stock" arguments="${nextAvailabilityDate}" /></span>
+	                                 		<span class="arrival nextAvailDate"><spring:theme code="Not Available on Selected Dates" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
 	                                 </c:choose>
 	                                 <a href="#" class="pickupDeliveryLink" data-bs-toggle="modal" data-bs-target="#pickup-delivery-options"><spring:theme code="pdp.pickup.section.text"/></a>
