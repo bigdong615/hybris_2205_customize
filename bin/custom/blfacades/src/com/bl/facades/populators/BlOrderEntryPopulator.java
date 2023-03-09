@@ -104,6 +104,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 
 	/**
 	 * Populate gift cart purchase value from order entry
+	 *
 	 * @param source
 	 *           the source
 	 * @param target
@@ -119,6 +120,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 
 	/**
 	 * Populate options from order entry
+	 *
 	 * @param source
 	 *           the source
 	 * @param target
@@ -177,17 +179,21 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	protected void addProduct(final AbstractOrderEntryModel orderEntry, final OrderEntryData entry)
 	{
 		final ProductModel product = orderEntry.getProduct();
-		entry.setProduct(getProductConverter().convert(
-				Objects.nonNull(product) && product instanceof BlSerialProductModel ? ((BlSerialProductModel) product).getBlProduct()
-						: product));
-		if (product != null)
+		if (getSessionService().getAttribute("isApiCall") == null)
 		{
-			populatingBlProductSpecificData(product, entry.getProduct());
+			entry.setProduct(getProductConverter().convert(Objects.nonNull(product) && product instanceof BlSerialProductModel
+					? ((BlSerialProductModel) product).getBlProduct()
+					: product));
+			if (product != null)
+			{
+				populatingBlProductSpecificData(product, entry.getProduct());
+			}
 		}
 	}
 
 	/**
 	 * This method used for populating BlProduct specific data for OrderEntry.
+	 *
 	 * @param productModel
 	 * @param productData
 	 */
@@ -203,6 +209,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 
 	/**
 	 * This method is used for populating all sku name for single bundle product.
+	 *
 	 * @param blProductModel
 	 * @param productData
 	 */
@@ -235,7 +242,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 			target.setSelectedOptions(source.getOptions().get(0).getName());
 		}
 	}
-	
+
 	public SessionService getSessionService()
 	{
 		return sessionService;
