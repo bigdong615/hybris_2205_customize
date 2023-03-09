@@ -62,29 +62,34 @@ public class BlUpdateSerialService implements UpdateSerialService {
     BlLogger.logFormattedMessage(LOG , Level.INFO , "Started Performing Update serial products for order {} -> package {} -> number of repetitions  {}"
         , orderCode , packageCode , numberOfRepetition);
     final AbstractOrderModel orderModel = getOrderDao().getOrderByCode(orderCode);
-    if (Objects.nonNull(orderModel)) {
-      orderModel.setStatus(OrderStatus.LATE);
-      final NotesModel notesModel = getModelService().create(NotesModel.class);
-      notesModel.setType(NotesEnum.LATE_NOTES);
-      notesModel.setNote("Order is not returned on expected time stamp .. So marking order as late");
-      notesModel.setUserID(orderModel.getUser().getUid());
-      getModelService().save(notesModel);
-      //BLS-107
-      if (CollectionUtils.isNotEmpty(orderModel.getOrderNotes()))
-		{
-			final List<NotesModel> allOrderNotes = new ArrayList<>(orderModel.getOrderNotes());
-			allOrderNotes.add(notesModel);
-			orderModel.setOrderNotes(allOrderNotes);
-		}
-		else
-		{
-			orderModel.setOrderNotes(Lists.newArrayList(notesModel));
-		}
-      saveAndRefreshOrderModel(orderModel);
-      performSerialUpdate(orderModel, packagingInfoModel, numberOfRepetition, upsDeliveryDate,trackDate);
-      BlLogger.logFormattedMessage(LOG , Level.INFO , "Finished Performing Update serial products for order{} -> package {} -> number of repetitions  {} "
-          , orderCode , packageCode , numberOfRepetition);
-    }
+	 if (Objects.nonNull(orderModel))
+	 {
+		 orderModel.setStatus(OrderStatus.LATE);
+		 if (!orderModel.getOrderNotes().stream().anyMatch(note -> note.getType().equals(NotesEnum.LATE_NOTES)))
+		 {
+			 final NotesModel notesModel = getModelService().create(NotesModel.class);
+			 notesModel.setType(NotesEnum.LATE_NOTES);
+			 notesModel.setNote("Order is not returned on expected time stamp .. So marking order as late");
+			 notesModel.setUserID(orderModel.getUser().getUid());
+			 getModelService().save(notesModel);
+			 //BLS-107
+			 if (CollectionUtils.isNotEmpty(orderModel.getOrderNotes()))
+			 {
+				 final List<NotesModel> allOrderNotes = new ArrayList<>(orderModel.getOrderNotes());
+				 allOrderNotes.add(notesModel);
+				 orderModel.setOrderNotes(allOrderNotes);
+			 }
+			 else
+			 {
+				 orderModel.setOrderNotes(Lists.newArrayList(notesModel));
+			 }
+		 }
+		 saveAndRefreshOrderModel(orderModel);
+		 performSerialUpdate(orderModel, packagingInfoModel, numberOfRepetition, upsDeliveryDate, trackDate);
+		 BlLogger.logFormattedMessage(LOG, Level.INFO,
+				 "Finished Performing Update serial products for order{} -> package {} -> number of repetitions  {} ", orderCode,
+				 packageCode, numberOfRepetition);
+	 }
   }
 
 
