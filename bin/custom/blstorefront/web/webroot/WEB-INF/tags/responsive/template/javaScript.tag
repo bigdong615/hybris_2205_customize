@@ -463,7 +463,7 @@
   	<!-- This js is used for rental search box component-->
   	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalGear') || isRentalPage eq true || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'productDetails'|| cmsPage.uid eq 'contactUsPage' || cmsPage.uid eq 'shipOrPickupPage'}">
   	<script type="text/javascript">
-
+console.log("First start");
             if ($(window).width() < 400 ) {
                 $("input#litepicker").attr("placeholder","Dates...");
             }
@@ -629,6 +629,7 @@
                       //Change the defaul button values
                          buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
             });
+            console.log("First End");
         </script>
   	</c:if>
 
@@ -637,6 +638,7 @@
                                 		 <script>
                                 		 console.log("product.forRent "+ ${product.forRent} +"--blPageType"+${fn:containsIgnoreCase(blPageType, 'rentalGear')}+"-----"${isRentalPage});
                                 		 
+                                		 console.log("Second start");
                                         // Mobile Menu styles - #my-menu is required for ALL pages
                                              document.addEventListener(
                                                  "DOMContentLoaded", () => {
@@ -945,14 +947,15 @@
                                                      },
                                                      keyboard: false,
                                                  } ).mount());
-                                          
+                                          console.log("Second End");
                                          </script>
 
                                 		</c:if>
 
 <!-- This js will load on usedGear PDP  and it is required for all usedGear pdp component to make it work -->
-<c:if test="${cmsPage.uid eq 'productDetails' && IsRentalPage eq 'false' && product.forSale eq 'true'}">
+<c:if test="${cmsPage.uid eq 'productDetailss' && IsRentalPage eq 'false' && product.forSale eq 'true'}">
 		 <script>
+		 console.log("3 start");
 		  // Expand Used Gear Items
           var swap = document.getElementById("showmore");
            $(swap).click(function (event) {
@@ -1095,7 +1098,7 @@
             },
             keyboard: false,
         } ).mount());
-
+console.log("3 end");
          </script>
 
 		</c:if>
@@ -1103,6 +1106,7 @@
 <!-- This js will load on new gear PDP  and it is required for all new gear pdp component to make it work -->
 <c:if test="${cmsPage.uid eq 'productDetails' && IsRentalPage eq 'false' && product.retailGear eq true}">
 		 <script>
+		 console.log("4 start");
              // Mobile Menu styles - #my-menu is required for ALL pages
              document.addEventListener(
                  "DOMContentLoaded", () => {
@@ -1197,6 +1201,7 @@
             },
             keyboard: false,
         } ).mount());
+        console.log("4 end");
          </script>
 		</c:if>
 
