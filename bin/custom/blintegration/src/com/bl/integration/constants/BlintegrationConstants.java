@@ -137,7 +137,11 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String STATUS_TYPE = "StatusType";
 	public static final String M = "M";
 	public static final String MV = "MV";
-	public static final String REQUEST_OPTION_NUMBER = "1";
+	public static final String I = "I";
+	public static final String DP = "DP";
+	public static final String OR = "OR";
+	public static final String XD = "XD";
+	public static final String REQUEST_OPTION_NUMBER = "0";
 	public static final String TRACKING_OPTION = "02";
 	public static final String SERVICE_TYPE = "ServiceType";
 	public static final String SERVICE_DESCRIPTION = "ServiceDescription";

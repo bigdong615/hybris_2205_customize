@@ -205,6 +205,10 @@
 	<bean id="blReshufflerJob" class="com.bl.Ordermanagement.job.BlReshufflerJob" parent="abstractJobPerformable">
 		<property name="blReshufflerService" ref="blReshufflerService"/>
 	</bean>
+
+    <bean id="blOptimizeSerialsInLateOrders" class="com.bl.Ordermanagement.job.BlOptimizeSerialsInLateOrdersJob" parent="abstractJobPerformable">
+        <property name="blReshufflerService" ref="blReshufflerService"/>
+    </bean>
 	
 	<alias alias="blReshufflerService" name="defaultBlReshufflerService"/>
 	<bean id="defaultBlReshufflerService" class="com.bl.Ordermanagement.reshuffler.service.impl.DefaultBlReshufflerService">

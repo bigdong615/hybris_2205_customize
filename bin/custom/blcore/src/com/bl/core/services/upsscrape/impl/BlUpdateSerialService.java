@@ -165,6 +165,10 @@ public class BlUpdateSerialService implements UpdateSerialService {
     if(packagingInfoModel.getNumberOfRepetitions() == getRepetitions()){
       updateStolenSerialStatus(blSerialProductModel, packagingInfoModel);
     }
+    else if(packagingInfoModel.getNumberOfRepetitions() < getRepetitions() && consignmentModel.getOrder().getStatus().equals(OrderStatus.LATE)) {
+   	 blSerialProductModel.setSerialStatus(SerialStatusEnum.LATE);
+       BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.LATE);
+    }
     getModelService().save(packagingInfoModel);
     getModelService().refresh(packagingInfoModel);
   }
