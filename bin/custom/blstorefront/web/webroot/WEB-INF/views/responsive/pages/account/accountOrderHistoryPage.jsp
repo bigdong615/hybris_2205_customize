@@ -166,8 +166,10 @@
 
                 							<c:when test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true && order.orderReturnedToWarehouse eq false && order.orderStatus ne 'Canceled') || (not empty agent.uid && order.orderReturnedToWarehouse eq false && order.orderStatus ne 'Canceled')}">
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
+                							<c:if test="${order.isRentalActive}">
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
+                								</c:if>
                 								<c:if test="${order.orderStatus ne null && order.orderStatus eq 'Shipped'}">
                 								 <p class="my-2">${order.orderStatus}</p>
                 								 </c:if>
