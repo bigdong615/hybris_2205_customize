@@ -633,8 +633,10 @@
   	</c:if>
 
   <!-- This js will load on rental PDP  and it is required for all rental pdp component to make it work -->
-	<c:if test="${cmsPage.uid eq 'productDetails' && product.forRent eq 'true'}">
+	<c:if test="${cmsPage.uid eq 'productDetails'}">
                                 		 <script>
+                                		 console.log("product.forRent "+ ${product.forRent} +"--blPageType"+${fn:containsIgnoreCase(blPageType, 'rentalGear')}+"-----"${isRentalPage});
+                                		 
                                         // Mobile Menu styles - #my-menu is required for ALL pages
                                              document.addEventListener(
                                                  "DOMContentLoaded", () => {
