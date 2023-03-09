@@ -382,7 +382,9 @@
 
 	<!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
     <alias name="defaultBlOrderEntryPopulator" alias="orderEntryPopulator"/>
-    <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator"/>
+    <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator">
+    	<property name="sessionService" ref="sessionService" />
+    </bean>
 
 	<!--Shipping-->
 	<!--BlShippingGroupDataPopulatorConverter-->
