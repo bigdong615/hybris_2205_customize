@@ -90,7 +90,12 @@
                                                         <spring:theme code="order.myaccount.modified.order.payment"/> </a>
                 								</li>
                 							  </c:if>
-                							</ul>
+
+										<li><c:url value="/my-account/${order.code}/printInvoice"
+												var="printInvoice" /> <a href="${printInvoice}"
+											target="_blank"> <spring:theme
+													code="order.myaccount.print.invoice" /></a></li>
+									</ul>
                 						</div>
                 					</div>
 						<div class="col-12 mt-4">
@@ -223,8 +228,12 @@
                                                         <spring:theme code="order.myaccount.modified.order.payment"/> </a>
 	                								</li>
                 							  </c:if>
-                								 
-                							</ul>
+										<li><c:url value="/my-account/${order.code}/printInvoice"
+												var="printInvoice" /> <a href="${printInvoice}"
+											target="_blank"> <spring:theme
+													code="order.myaccount.print.invoice" />
+										</a></li>
+									</ul>
                 						</div>
                 					</div>
                 					<div class="col-12 mt-4">

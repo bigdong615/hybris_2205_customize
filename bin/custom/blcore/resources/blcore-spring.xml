@@ -2249,4 +2249,10 @@
 		<property name="modelService" ref="modelService"/>
 	</bean>
 	<!-- BLS-102 END-->
+	
+	<alias name="defaultGenerateInvoicePdfService" alias="generateInvoicePdfService"/>
+	<bean id="defaultGenerateInvoicePdfService" class="com.bl.core.service.invoice.impl.DefaultBlGenerateInvoicePdfService">
+
+	</bean>
+	
 </beans>
