@@ -58,6 +58,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -137,23 +138,33 @@ public class ProductsController extends BaseController
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(nickname = "getProducts", value = "Get a list of products and additional data", notes =
-			"Returns a list of products and additional data, such as available facets, "
-					+ "available sorting, and pagination options. It can also include spelling suggestions. To make spelling suggestions work, you need to make sure "
-					+ "that \"enableSpellCheck\" on the SearchQuery is set to \"true\" (by default, it should already be set to \"true\"). You also need to have indexed "
-					+ "properties configured to be used for spellchecking.")
+	@ApiOperation(nickname = "getProducts", value = "Get a list of products and additional data", notes = "Returns a list of products and additional data, such as available facets, "
+			+ "available sorting, and pagination options. It can also include spelling suggestions. To make spelling suggestions work, you need to make sure "
+			+ "that \"enableSpellCheck\" on the SearchQuery is set to \"true\" (by default, it should already be set to \"true\"). You also need to have indexed "
+			+ "properties configured to be used for spellchecking.")
 	@ApiBaseSiteIdParam
 	public ProductSearchPageWsDTO getProducts(
-			@ApiParam(value = "Serialized query, free text search, facets. The format of a serialized query: freeTextSearch:sort:facetKey1:facetValue1:facetKey2:facetValue2") @RequestParam(required = false) final String query,
-			@ApiParam(value = "The current result page requested.") @RequestParam(defaultValue = DEFAULT_CURRENT_PAGE) final int currentPage,
-			@ApiParam(value = "The number of results returned per page.") @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) final int pageSize,
-			@ApiParam(value = "Sorting method applied to the return results.") @RequestParam(required = false) final String sort,
-			@ApiParam(value = "The context to be used in the search query.") @RequestParam(required = false) final String searchQueryContext,
-			@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields, final HttpServletResponse response)
+			@ApiParam(value = "Serialized query, free text search, facets. The format of a serialized query: freeTextSearch:sort:facetKey1:facetValue1:facetKey2:facetValue2")
+			@RequestParam(required = false)
+			final String query, @ApiParam(value = "The current result page requested.")
+			@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+			final int currentPage, @ApiParam(value = "The number of results returned per page.")
+			@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+			final int pageSize, @DateTimeFormat(pattern = "yyyy-MM-dd")
+			@ApiParam(value = "Sorting method applied to the return results.")
+			@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+			final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+			@RequestParam(required = false)
+			final String sort, @ApiParam(value = "The context to be used in the search query.")
+			@RequestParam(required = false)
+			final String searchQueryContext, @ApiFieldsParam
+			@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+			final String fields, final HttpServletResponse response)
 	{
 		sessionService.setAttribute("isApiCall", true);
-		final ProductSearchPageWsDTO result = productsHelper
-				.searchProducts(query, currentPage, pageSize, sort, addPaginationField(fields), searchQueryContext);
+		sessionService.setAttribute("apirequestTime", date.getTime());
+		final ProductSearchPageWsDTO result = productsHelper.searchProducts(query, currentPage, pageSize, sort,
+				addPaginationField(fields), searchQueryContext);
 		setTotalCountHeader(response, result.getPagination());
 		return result;
 	}

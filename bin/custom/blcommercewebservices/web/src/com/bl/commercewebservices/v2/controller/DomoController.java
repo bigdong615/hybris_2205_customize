@@ -14,10 +14,12 @@ import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoListWsDTO;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 import de.hybris.platform.warehousingfacades.product.data.StockLevelData;
 import de.hybris.platform.warehousingfacades.product.data.StockLevelListData;
@@ -76,7 +78,6 @@ import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogListData;
 import com.bl.facades.vendorRepairLog.dto.VendorRepairLogListWsDTO;
 import com.bl.integration.dto.AddressListWsDTO;
-import com.bl.integration.dto.UsersListWsDTO;
 import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import com.braintree.hybris.data.BrainTreePaymentInfoListData;
 
@@ -94,6 +95,9 @@ public class DomoController extends BaseCommerceController
 
 	@Resource(name = "blDomoFacade")
 	private BlDomoFacade blDomoFacade;
+
+	@Resource(name = "sessionService")
+	private SessionService sessionService;
 
 
 	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
@@ -298,6 +302,7 @@ public class DomoController extends BaseCommerceController
 	final String fields, @RequestParam
 	final Map<String, String> params, final HttpServletResponse response)
 	{
+		sessionService.setAttribute("isApiCall", true);
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final OrderListData orderListData;
 		orderListData = createOrderListData(blDomoFacade.getOrders(pageableData, date));

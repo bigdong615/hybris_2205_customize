@@ -1,26 +1,27 @@
 package com.bl.facades.populators;
 
-import com.bl.core.model.BlOptionsModel;
-import com.bl.core.model.BlProductModel;
-
-import com.bl.facades.product.data.BlBundleReferenceData;
-import com.bl.facades.product.data.BlOptionData;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderEntryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.servicelayer.session.SessionService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+
+import com.bl.core.model.BlOptionsModel;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
-import de.hybris.platform.core.model.product.ProductModel;
+import com.bl.facades.product.data.BlBundleReferenceData;
+import com.bl.facades.product.data.BlOptionData;
 
 
 /**
@@ -31,6 +32,7 @@ import de.hybris.platform.core.model.product.ProductModel;
  */
 public class BlOrderEntryPopulator extends OrderEntryPopulator
 {
+	private SessionService sessionService;
 
 	/**
 	 * {@inheritDoc}
@@ -44,7 +46,10 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 			{
 				target.setBundleEntry(Boolean.TRUE);
 				addCommon(source, target);
-				addProduct(source, target);
+				if (getSessionService().getAttribute("isApiCall") == null)
+				{
+					addProduct(source, target);
+				}
 				addEntryGroups(source, target);
 				addComments(source, target);
 			}
@@ -72,30 +77,34 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	{
 		final Long quantity = source.getQuantity();
 		final Double gearGuardWaiverPrice = source.getGearGuardWaiverPrice();
-		target.setGearGuardWaiverPrice(
-				createPrice(source, Objects.nonNull(gearGuardWaiverPrice) ? getDamageWaiverPrice(gearGuardWaiverPrice, quantity) : Double.valueOf(0.0d)));
+		target.setGearGuardWaiverPrice(createPrice(source,
+				Objects.nonNull(gearGuardWaiverPrice) ? getDamageWaiverPrice(gearGuardWaiverPrice, quantity) : Double.valueOf(0.0d)));
 		final Double gearGuardProFullWaiverPrice = source.getGearGuardProFullWaiverPrice();
 		target.setGearGuardProFullWaiverPrice(createPrice(source,
-				Objects.nonNull(gearGuardProFullWaiverPrice) ? getDamageWaiverPrice(gearGuardProFullWaiverPrice, quantity) : Double.valueOf(0.0d)));
+				Objects.nonNull(gearGuardProFullWaiverPrice) ? getDamageWaiverPrice(gearGuardProFullWaiverPrice, quantity)
+						: Double.valueOf(0.0d)));
 		target.setNoDamageWaiverSelected(BooleanUtils.toBoolean(source.getNoDamageWaiverSelected()));
 		target.setGearGuardWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardWaiverSelected()));
 		target.setGearGuardProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardProFullWaiverSelected()));
 	}
-	
+
 	/**
 	 * Gets the damage waiver price.
 	 *
-	 * @param gearGuardWaiverPrice the gear guard waiver price
-	 * @param quantity the quantity
+	 * @param gearGuardWaiverPrice
+	 *           the gear guard waiver price
+	 * @param quantity
+	 *           the quantity
 	 * @return the damage waiver price
 	 */
 	private Double getDamageWaiverPrice(final Double gearGuardWaiverPrice, final Long quantity)
 	{
 		return gearGuardWaiverPrice * quantity;
 	}
-	
+
 	/**
 	 * Populate gift cart purchase value from order entry
+	 *
 	 * @param source
 	 *           the source
 	 * @param target
@@ -104,13 +113,14 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 
 	private void populateGiftCartPurcahseValues(final AbstractOrderEntryModel source, final OrderEntryData target)
 	{
-			target.setRecipientEmail(source.getRecipientEmail());
-			target.setRecipientName(source.getRecipientName());
-			target.setRecipientMessage(source.getRecipientMessage());
+		target.setRecipientEmail(source.getRecipientEmail());
+		target.setRecipientName(source.getRecipientName());
+		target.setRecipientMessage(source.getRecipientMessage());
 	}
-	
+
 	/**
 	 * Populate options from order entry
+	 *
 	 * @param source
 	 *           the source
 	 * @param target
@@ -137,9 +147,9 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 					optionsDataList.add(blOptionData);
 				});
 				target.setOption(optionsDataList);
-				if(CollectionUtils.isNotEmpty(options.iterator().next().getOptions()))
+				if (CollectionUtils.isNotEmpty(options.iterator().next().getOptions()))
 				{
-				target.setMainOptionName(options.iterator().next().getOptions().get(0).getName());
+					target.setMainOptionName(options.iterator().next().getOptions().get(0).getName());
 				}
 			}
 			if (CollectionUtils.isNotEmpty(source.getOptions()))
@@ -156,7 +166,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		}
 	}
 
-	
+
 	/**
 	 * Adds the product data.
 	 *
@@ -169,21 +179,27 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	protected void addProduct(final AbstractOrderEntryModel orderEntry, final OrderEntryData entry)
 	{
 		final ProductModel product = orderEntry.getProduct();
-		entry.setProduct(getProductConverter().convert(Objects.nonNull(product) && product instanceof BlSerialProductModel
-				? ((BlSerialProductModel) product).getBlProduct() : product));
-		if(product!= null) {
-			populatingBlProductSpecificData(product,entry.getProduct());
+		if (getSessionService().getAttribute("isApiCall") == null)
+		{
+			entry.setProduct(getProductConverter().convert(Objects.nonNull(product) && product instanceof BlSerialProductModel
+					? ((BlSerialProductModel) product).getBlProduct()
+					: product));
+			if (product != null)
+			{
+				populatingBlProductSpecificData(product, entry.getProduct());
+			}
 		}
 	}
 
 	/**
 	 * This method used for populating BlProduct specific data for OrderEntry.
+	 *
 	 * @param productModel
 	 * @param productData
 	 */
-	private void populatingBlProductSpecificData(final ProductModel productModel,
-			final ProductData productData) {
-		BlProductModel blProductModel = (BlProductModel) productModel;
+	private void populatingBlProductSpecificData(final ProductModel productModel, final ProductData productData)
+	{
+		final BlProductModel blProductModel = (BlProductModel) productModel;
 		productData.setProductId(blProductModel.getProductId());
 		productData.setIsVideo(blProductModel.getIsVideo());
 		productData.setIsBundle(blProductModel.isBundleProduct());
@@ -193,19 +209,19 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 
 	/**
 	 * This method is used for populating all sku name for single bundle product.
+	 *
 	 * @param blProductModel
 	 * @param productData
 	 */
-	private void populateBundleEntryData(final BlProductModel blProductModel,
-			final ProductData productData) {
-		List<ProductReferenceModel> referenceModel = blProductModel.getProductReferences().stream()
-				.filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType()))
-				.collect(
-						Collectors.toList());
-		if (CollectionUtils.isNotEmpty(referenceModel)) {
-			List<BlBundleReferenceData> bundleProductReference = new ArrayList<>();
+	private void populateBundleEntryData(final BlProductModel blProductModel, final ProductData productData)
+	{
+		final List<ProductReferenceModel> referenceModel = blProductModel.getProductReferences().stream()
+				.filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType())).collect(Collectors.toList());
+		if (CollectionUtils.isNotEmpty(referenceModel))
+		{
+			final List<BlBundleReferenceData> bundleProductReference = new ArrayList<>();
 			referenceModel.forEach(productReferenceModel -> {
-				BlBundleReferenceData blBundleReferenceData = new BlBundleReferenceData();
+				final BlBundleReferenceData blBundleReferenceData = new BlBundleReferenceData();
 				blBundleReferenceData.setProductReferenceName(productReferenceModel.getTarget().getName());
 				bundleProductReference.add(blBundleReferenceData);
 			});
@@ -225,6 +241,16 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		{
 			target.setSelectedOptions(source.getOptions().get(0).getName());
 		}
+	}
+
+	public SessionService getSessionService()
+	{
+		return sessionService;
+	}
+
+	public void setSessionService(final SessionService sessionService)
+	{
+		this.sessionService = sessionService;
 	}
 
 }

@@ -43,6 +43,8 @@ public interface BlOrderDao extends OrderDao
    * @param currentDate the current date
 	 */
 	public List<AbstractOrderModel> getIncompleteOrdersToBeProcessed(final Date currentDate);
+
+	public List<AbstractOrderModel> getOrdersToBeShippedSoon(final Date currentDate);
 	/**
 	 * It gets the rental orders which are completed and shareASale value is false.
 	 * @return list of orders
