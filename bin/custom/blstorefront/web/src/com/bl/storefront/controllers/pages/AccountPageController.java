@@ -6,6 +6,7 @@ package com.bl.storefront.controllers.pages;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.VerificationDocumentMediaModel;
+import com.bl.core.service.invoice.GenerateInvoicePdfService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlExtendOrderUtils;
@@ -304,6 +305,9 @@ public class AccountPageController extends AbstractSearchPageController
 	
 	@Resource(name = "blPasswordValidator")
 	private BlPasswordValidator blPasswordValidator;
+	
+	@Resource(name="generateInvoicePdfService")
+	private GenerateInvoicePdfService generateInvoicePdfService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -1595,6 +1599,20 @@ public class AccountPageController extends AbstractSearchPageController
 		blReturnOrderFacade.createReturnRequest(order, productList);
 		return REDIRECT_PREFIX + ROOT;
 	}
+	
+	
+	@GetMapping(value = "/{orderCode}/printInvoice")
+	@RequireHardLogIn
+	public void printInvoice(@PathVariable(value = "orderCode", required = false)
+	final String orderCode, final Model model, final HttpServletRequest request, final HttpServletResponse response,
+			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+	{
+
+		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		
+		getGenerateInvoicePdfService().generateInvoicePdf(orderDetails, request, response);
+
+	}
 
 	/**
 	 * @return the blPasswordValidator
@@ -1610,5 +1628,21 @@ public class AccountPageController extends AbstractSearchPageController
 	public void setBlPasswordValidator(BlPasswordValidator blPasswordValidator)
 	{
 		this.blPasswordValidator = blPasswordValidator;
+	}
+	
+	/**
+	 * @return the generateInvoicePdfService
+	 */
+	public GenerateInvoicePdfService getGenerateInvoicePdfService()
+	{
+		return generateInvoicePdfService;
+	}
+
+	/**
+	 * @param generateInvoicePdfService the generateInvoicePdfService to set
+	 */
+	public void setGenerateInvoicePdfService(GenerateInvoicePdfService generateInvoicePdfService)
+	{
+		this.generateInvoicePdfService = generateInvoicePdfService;
 	}
 }
