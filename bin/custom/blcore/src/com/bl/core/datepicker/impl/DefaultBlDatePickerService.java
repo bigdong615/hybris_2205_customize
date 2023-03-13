@@ -124,7 +124,6 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	{
 		final Map<String, String> rentalDate = getSessionService().getAttribute(BlCoreConstants.SELECTED_DATE_MAP);
 		final Map<String, String> selectedDuration = getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
-		BlLogger.logMessage(LOG, Level.INFO, "From session" + rentalDate.get("startDate") + "-------" + rentalDate.get("endDate"));
 		if (null != rentalDate)
 		{
 			final RentalDateDto date = new RentalDateDto();
