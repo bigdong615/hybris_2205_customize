@@ -68,7 +68,6 @@ public class BlAddressDataUtil extends AddressDataUtil {
     public void convert(final AddressData source, final AddressForm target)
     {
         super.convert(source, target);
-        target.setPostcode(StringUtils.substring(source.getPostalCode(),0,5));
        fillExtendedAttributesToAddressForm(source,target);
     }
 
