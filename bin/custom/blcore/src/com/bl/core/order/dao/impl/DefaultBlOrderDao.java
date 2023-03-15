@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -174,6 +175,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 
 	private static final String ORIGINAL_ORDER_BY_CODE = "SELECT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.VERSIONID  + "} IS NULL AND {" + OrderModel.CODE+ "} = ?code";
 
+	final List<OrderStatus> statuses = Arrays.asList(OrderStatus.LATE,OrderStatus.SHIPPED, OrderStatus.UNBOXED_PARTIALLY);
 	/**
  	* {@inheritDoc}
  	*/
@@ -408,7 +410,16 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
-		return packagingInfoModels;
+		
+      final List<PackagingInfoModel> updatedPackgeInfoList = new ArrayList<>();
+		
+		packagingInfoModels.forEach(pkgInfo -> {
+			if(statuses.contains(pkgInfo.getConsignment().getOrder().getStatus())) {	
+				updatedPackgeInfoList.add(pkgInfo);
+			}
+		});
+		
+		return updatedPackgeInfoList.size() > 0 ? updatedPackgeInfoList : Collections.emptyList();
 	}
 
 
@@ -430,7 +441,16 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
-		return packagingInfoModels;
+		
+      final List<PackagingInfoModel> updatedPackgeInfoList = new ArrayList<>();
+		
+		packagingInfoModels.forEach(pkgInfo -> {
+			if(statuses.contains(pkgInfo.getConsignment().getOrder().getStatus())) {	
+				updatedPackgeInfoList.add(pkgInfo);
+			}
+		});
+		
+		return updatedPackgeInfoList.size() > 0 ? updatedPackgeInfoList : Collections.emptyList();
 	}
 
 	/**
