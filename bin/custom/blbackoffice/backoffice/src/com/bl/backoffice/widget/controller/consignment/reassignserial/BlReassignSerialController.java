@@ -184,21 +184,19 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 				  productEntries.add(serial);
 				  serialsCodesToRemove.add(oldSerialCode);
 				  serialsCodesToAdd.add(serial.getCode());
-
-				  //for BLS-34
-				  /*if (blReallocationService.reAssignSerialReserveStocksForSerialProducts(new HashSet<>(serialsCodesToAdd),
+				  if (blReallocationService.reAssignSerialReserveStocksForSerialProducts(new HashSet<>(serialsCodesToAdd),
 						  consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.FALSE,
 						  consignment.getWarehouse(), consignment.getOrder().getCode()))
-				  {*/
+				  {
 					  blReallocationService.removeReserveStocksForSerialProducts(new HashSet<>(serialsCodesToRemove),
 							  consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.TRUE,
 							  consignment.getWarehouse());
-				  /*}
+				  }
 				  else
 				  {
 					  throw new WrongValueException((row.getChildren().get(4)),
 							  this.getLabel("warehousingbackoffice.reassignserial.validation.rentaldate.notavailable"));
-				  }*/
+				  }
 			  }
 			  else
 			  {
