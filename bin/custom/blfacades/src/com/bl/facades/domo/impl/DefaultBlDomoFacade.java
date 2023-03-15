@@ -10,9 +10,11 @@ import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
+import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.converters.Converters;
+import de.hybris.platform.core.model.c2l.RegionModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -89,6 +91,8 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	private Converter<StockLevelModel, StockLevelData> blStockLevelConvertor;
 
 	private Converter<NotesModel, NotesData> blNotesConverter;
+
+	private Converter<RegionModel, RegionData> blRegionConverter;
 
 	@Override
 	public SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData, final Date date)
@@ -234,6 +238,12 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 		return convertPageData(notes, getBlNotesConverter());
 	}
 
+	@Override
+	public SearchPageData<RegionData> getRegions(final PageableData pageableData, final Date date)
+	{
+		final SearchPageData<RegionModel> regions = getBlDomoService().getRegions(pageableData, date);
+		return convertPageData(regions, getBlRegionConverter());
+	}
 
 
 	/**
@@ -568,6 +578,23 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	public void setBlNotesConverter(final Converter<NotesModel, NotesData> blNotesConverter)
 	{
 		this.blNotesConverter = blNotesConverter;
+	}
+
+	/**
+	 * @return the blRegionConverter
+	 */
+	public Converter<RegionModel, RegionData> getBlRegionConverter()
+	{
+		return blRegionConverter;
+	}
+
+	/**
+	 * @param blRegionConverter
+	 *           the blRegionConverter to set
+	 */
+	public void setBlRegionConverter(final Converter<RegionModel, RegionData> blRegionConverter)
+	{
+		this.blRegionConverter = blRegionConverter;
 	}
 
 }

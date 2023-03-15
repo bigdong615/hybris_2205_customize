@@ -6,6 +6,7 @@ package com.bl.core.domo.impl;
 import de.hybris.platform.commerceservices.search.flexiblesearch.PagedFlexibleSearchService;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.core.model.c2l.RegionModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -209,5 +210,13 @@ public class DefaultBlDomoDao implements BlDomoDao
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
 
+	@Override
+	public SearchPageData<RegionModel> getRegions(final PageableData pageableData, final Date date)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery(
+				"SELECT distinct {r.pk} FROM {Region as r} where {modifiedtime} >= ?date");
+		fQ.addQueryParameter("date", date);
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
 
 }

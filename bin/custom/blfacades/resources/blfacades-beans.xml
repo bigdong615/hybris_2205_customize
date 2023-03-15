@@ -2251,6 +2251,46 @@
 		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
 		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
 	</bean>
+	
+	<bean class="de.hybris.platform.commercefacades.user.data.RegionData">
+	    <property name="createdTS" type="java.util.Date"/>
+        <property name="modifiedTS" type="java.util.Date"/>
+        <property name="comments" type="java.lang.String"/>
+        <property name="active" type="java.lang.Boolean"/>
+    </bean>
+    
+     <bean class="com.bl.facades.regions.data.RegionsData">
+		<property name="regions" type="java.util.List&lt;de.hybris.platform.commercefacades.user.data.RegionData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
+	</bean>
+	
+	<bean class="de.hybris.platform.commercewebservicescommons.dto.user.RegionWsDTO">
+		<property name="createdTS" type="java.util.Date"/>
+        <property name="modifiedTS" type="java.util.Date"/>
+        <property name="comments" type="java.lang.String"/>
+        <property name="active" type="java.lang.Boolean"/>
+    </bean>
+    
+    <bean class="de.hybris.platform.commercewebservicescommons.dto.user.RegionsWsDTO">
+        <description>Representation of an  ConsignmentEntryList</description>
+        <hints>
+            <hint name="wsRelated"/>
+            <hint name="alias">RegionsList</hint>
+        </hints>
+        <property name="regions"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.user.RegionWsDTO>">
+            <description>List of order history items</description>
+        </property>
+        <property name="sorts"
+                  type="java.util.List&lt;de.hybris.platform.commercewebservicescommons.dto.search.pagedata.SortWsDTO>">
+            <description>List of sorts</description>
+        </property>
+        <property name="pagination"
+                  type="de.hybris.platform.commercewebservicescommons.dto.search.pagedata.PaginationWsDTO">
+            <description>Pagination items</description>
+        </property>
+    </bean>
  
 </beans>
 
