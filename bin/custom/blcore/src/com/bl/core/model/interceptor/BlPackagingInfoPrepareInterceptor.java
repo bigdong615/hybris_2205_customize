@@ -1,5 +1,6 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.enums.CarrierEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Package Interceptor to perform custom logic on attribute before saving
@@ -21,6 +23,12 @@ import org.apache.log4j.Logger;
 public class BlPackagingInfoPrepareInterceptor implements PrepareInterceptor<PackagingInfoModel>
 {
     private static final Logger LOG = Logger.getLogger(BlPackagingInfoPrepareInterceptor.class);
+
+    @Value("${blintegration.ups.shipment.label.url}")
+    private String upsShipmentURL;
+
+    @Value("${blintegration.fedex.shipment.label.url}")
+    private String fedExShipmentURL;
 
     @Override
     public void onPrepare(final PackagingInfoModel packagingInfoModel,final InterceptorContext ctx) throws InterceptorException {
@@ -41,6 +49,12 @@ public class BlPackagingInfoPrepareInterceptor implements PrepareInterceptor<Pac
             });
         }
 
+        if (Objects.nonNull(packagingInfoModel.getCarrier()) && StringUtils
+            .isNotEmpty(packagingInfoModel.getOutBoundTrackingNumber()) &&
+            (StringUtils.isEmpty(packagingInfoModel.getLabelURL()) || ctx.isModified(packagingInfoModel,PackagingInfoModel.CARRIER))) {
+            String ocLocalURL = CarrierEnum.UPS.equals(packagingInfoModel.getCarrier()) ? upsShipmentURL : fedExShipmentURL;
+            packagingInfoModel.setLabelURL(ocLocalURL + packagingInfoModel.getOutBoundTrackingNumber());
+        }
     }
 
     /**

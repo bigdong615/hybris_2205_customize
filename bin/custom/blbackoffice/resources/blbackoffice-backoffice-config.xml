@@ -1532,6 +1532,7 @@
                     <editorArea:attribute qualifier="totalShippingPrice"/>
                     <editorArea:attribute qualifier="shipmentIdentificationNumber"/>
                     <editorArea:attribute qualifier="outBoundTrackingNumber"/>
+									  <editorArea:attribute qualifier="carrier"/>
                     <editorArea:attribute qualifier="inBoundTrackingNumber"/>
                     <editorArea:attribute qualifier="inBoundGraphicImage"/>
                    	<editorArea:attribute qualifier="outBoundGraphicImage"/>
