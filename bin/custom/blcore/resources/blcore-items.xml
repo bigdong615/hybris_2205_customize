@@ -8031,6 +8031,14 @@
                 </attributes>
             </itemtype>
         </typegroup>
-        <!-- BLS-102 Start-->
+        <!-- BLS-102 End-->
+
+        <!-- BLS-120 Start-->
+        <typegroup name="AssigningTrackingNumberCronJob" >
+            <itemtype code="AssigningTrackingNumberCronJob" extends="CronJob"
+                      autocreate="true" generate="true">
+            </itemtype>
+        </typegroup>
+        <!-- BLS-120 Start-->
     </itemtypes>
 </items>
