@@ -2254,5 +2254,18 @@
 	<bean id="defaultGenerateInvoicePdfService" class="com.bl.core.service.invoice.impl.DefaultBlGenerateInvoicePdfService">
 
 	</bean>
+
+	<!--BLS-120 START-->
+	<bean id="AssigningTrackingNumberJob" class="com.bl.blbackoffice.job.AssigningTrackingNumberJob"
+		  parent="abstractJobPerformable">
+		<property name="assigningTrackingNumberService" ref="assigningTrackingNumberService"/>
+	</bean>
+
+	<bean id="assigningTrackingNumberService" class="com.bl.core.assigningTrackingNumber.impl.AssigningTrackingNumberServiceImpl">
+		<property name="blInventoryScanToolDao" ref="blInventoryScanToolDao"/>
+		<property name="deliveryTrackingIdStrategy" ref="deliveryTrackingIdStrategy"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	<!-- BLS-120 END-->
 	
 </beans>
