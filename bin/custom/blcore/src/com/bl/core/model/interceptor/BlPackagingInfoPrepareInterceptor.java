@@ -52,13 +52,9 @@ public class BlPackagingInfoPrepareInterceptor implements PrepareInterceptor<Pac
         if (StringUtils.isNotEmpty(packagingInfoModel.getOutBoundTrackingNumber()) && StringUtils
             .isEmpty(packagingInfoModel.getLabelURL()) && Objects
             .isNull(packagingInfoModel.getCarrier())) {
-            final ZoneDeliveryModeModel deliveryModeModel;
-            if (packagingInfoModel.getConsignment()
-                .getDeliveryMode() instanceof ZoneDeliveryModeModel) {
-                deliveryModeModel = (ZoneDeliveryModeModel) packagingInfoModel.getConsignment()
-                    .getDeliveryMode();
-                packagingInfoModel.setCarrier(deliveryModeModel.getCarrier());
-            }
+            final ZoneDeliveryModeModel deliveryModeModel = (ZoneDeliveryModeModel) packagingInfoModel
+                .getConsignment().getDeliveryMode();
+            packagingInfoModel.setCarrier(deliveryModeModel.getCarrier());
         }
         if (Objects.nonNull(packagingInfoModel.getCarrier()) && StringUtils
             .isNotEmpty(packagingInfoModel.getOutBoundTrackingNumber()) &&
