@@ -3,6 +3,7 @@ package com.bl.core.model.interceptor;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
@@ -48,12 +49,26 @@ public class BlPackagingInfoPrepareInterceptor implements PrepareInterceptor<Pac
                 }
             });
         }
-
+        if (StringUtils.isNotEmpty(packagingInfoModel.getOutBoundTrackingNumber()) && StringUtils
+            .isEmpty(packagingInfoModel.getLabelURL()) && Objects
+            .isNull(packagingInfoModel.getCarrier())) {
+            final ZoneDeliveryModeModel deliveryModeModel;
+            if (packagingInfoModel.getConsignment()
+                .getDeliveryMode() instanceof ZoneDeliveryModeModel) {
+                deliveryModeModel = (ZoneDeliveryModeModel) packagingInfoModel.getConsignment()
+                    .getDeliveryMode();
+                packagingInfoModel.setCarrier(deliveryModeModel.getCarrier());
+            }
+        }
         if (Objects.nonNull(packagingInfoModel.getCarrier()) && StringUtils
             .isNotEmpty(packagingInfoModel.getOutBoundTrackingNumber()) &&
-            (StringUtils.isEmpty(packagingInfoModel.getLabelURL()) || ctx.isModified(packagingInfoModel,PackagingInfoModel.CARRIER))) {
-            String ocLocalURL = CarrierEnum.UPS.equals(packagingInfoModel.getCarrier()) ? upsShipmentURL : fedExShipmentURL;
-            packagingInfoModel.setLabelURL(ocLocalURL + packagingInfoModel.getOutBoundTrackingNumber());
+            (StringUtils.isEmpty(packagingInfoModel.getLabelURL()) || ctx
+                .isModified(packagingInfoModel, PackagingInfoModel.CARRIER))) {
+            String ocLocalURL =
+                CarrierEnum.UPS.equals(packagingInfoModel.getCarrier()) ? upsShipmentURL
+                    : fedExShipmentURL;
+            packagingInfoModel
+                .setLabelURL(ocLocalURL + packagingInfoModel.getOutBoundTrackingNumber());
         }
     }
 
