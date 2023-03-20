@@ -4226,6 +4226,11 @@
                         <description>Shipment Package tracking number</description>
                         <persistence type="property" />
                     </attribute>
+                    <!-- For BL-145-->
+                    <attribute qualifier="carrier" type="CarrierEnum" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" />
+                    </attribute>
 
                     <attribute qualifier="inBoundTrackingNumber" type="java.lang.String">
                         <description>Shipment Package tracking number</description>
