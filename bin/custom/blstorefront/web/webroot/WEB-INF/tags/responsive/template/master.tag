@@ -59,7 +59,7 @@
 	<generatedVariables:generatedVariables/>
 	<script src='https://www.dwin1.com/19038.js' type='text/javascript' defer='defer'></script>
    <%-- BLS-78 --%>
-	<c:if test="${cmsPage.uid eq 'productGrid' || cmsPage.uid eq 'search' || cmsPage.uid eq 'searchEmpty' || cmsPage.uid eq   'productDetails'}">
+	<c:if test="${cmsPage.uid eq 'productGrid' || cmsPage.uid eq 'search' || cmsPage.uid eq 'searchEmpty' || cmsPage.uid eq 'productDetails'}">
   <link rel="canonical" href="https://www.borrowlenses.com/" />
 	</c:if>
 
