@@ -10,6 +10,7 @@ import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
+import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
@@ -149,5 +150,11 @@ public interface BlDomoFacade
 	 * @return
 	 */
 	SearchPageData<NotesData> getNotes(PageableData pageableData, Date date);
+
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<RegionData> getRegions(PageableData pageableData, Date date);
 
 }

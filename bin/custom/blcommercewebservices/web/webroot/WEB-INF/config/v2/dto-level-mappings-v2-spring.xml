@@ -107,9 +107,9 @@
                   value="de.hybris.platform.commercewebservicescommons.dto.user.RegionWsDTO"/>
         <property name="levelMapping">
             <map>
-                <entry key="BASIC" value="isocode"/>
-                <entry key="DEFAULT" value="BASIC,name"/>
-                <entry key="FULL" value="name,isocode,countryIso,isocodeShort"/>
+                <entry key="BASIC" value="name,isocode,countryIso,isocodeShort,createdTS,modifiedTS,comments,active"/>
+                <entry key="DEFAULT" value="name,isocode,countryIso,isocodeShort,createdTS,modifiedTS,comments,active"/>
+                <entry key="FULL" value="name,isocode,countryIso,isocodeShort,createdTS,modifiedTS,comments,active"/>
             </map>
         </property>
     </bean>

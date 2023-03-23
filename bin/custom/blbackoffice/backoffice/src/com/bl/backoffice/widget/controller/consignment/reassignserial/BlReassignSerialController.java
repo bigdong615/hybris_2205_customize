@@ -149,16 +149,13 @@ public class BlReassignSerialController  extends DefaultWidgetController {
   }
 
   protected void applyToRow(final ConsignmentEntryModel entry, final String barCode, final String oldSerialCode,
-		  final Component row)
-  {
+		  final Component row) {
 	  final BlSerialProductModel serial = this.getDefaultBlProductDao().getSerialByBarcode(barCode);
-	  if(Objects.isNull(serial))
-	  {
+	  if (Objects.isNull(serial)) {
 		  throw new WrongValueException((row.getChildren().get(4)),
 				  this.getLabel("warehousingbackoffice.reassignserial.validation.incorrect.barcode"));
 	  }
-	  if(Objects.isNull(serial.getWarehouseLocation()) || BooleanUtils.isFalse(serial.getWarehouseLocation().getCode().equals(entry.getConsignment().getWarehouse().getCode())))
-	  {
+	  if (Objects.isNull(serial.getWarehouseLocation()) || BooleanUtils.isFalse(serial.getWarehouseLocation().getCode().equals(entry.getConsignment().getWarehouse().getCode()))) {
 		  throw new WrongValueException((row.getChildren().get(4)),
 				  "provided serial barcode warehouse doesn't matched the shipment warehouse");
 	  }
@@ -168,15 +165,11 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 	  productEntries.addAll(entry.getSerialProducts());
 	  final Map<String, ItemStatusEnum> newItems = new HashMap<String, ItemStatusEnum>();
 	  newItems.putAll(entry.getItems());
-	  for (final BlProductModel productEntry : entry.getSerialProducts())
-	  {
-		  if (productEntry instanceof BlSerialProductModel && productEntry.getCode().equals(oldSerialCode))
-		  {
+	  for (final BlProductModel productEntry : entry.getSerialProducts()) {
+		  if (productEntry instanceof BlSerialProductModel && productEntry.getCode().equals(oldSerialCode)) {
 			  final BlSerialProductModel serialProduct = (BlSerialProductModel) productEntry;
-			  if (serial != null && serialProduct.getBlProduct().equals(serial.getBlProduct()))
-			  {
-				  if (entry.getItems().containsKey(serialProduct.getCode()))
-				  {
+			  if (serial != null && serialProduct.getBlProduct().equals(serial.getBlProduct())) {
+				  if (entry.getItems().containsKey(serialProduct.getCode())) {
 					  newItems.remove(serialProduct.getCode());
 					  newItems.put(serial.getCode(), entry.getItems().get(serialProduct.getCode()));
 				  }
@@ -184,21 +177,24 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 				  productEntries.add(serial);
 				  serialsCodesToRemove.add(oldSerialCode);
 				  serialsCodesToAdd.add(serial.getCode());
-
-				  //for BLS-34
-				  /*if (blReallocationService.reAssignSerialReserveStocksForSerialProducts(new HashSet<>(serialsCodesToAdd),
+				  //BLS-34
+				  /*
+				  if (blReallocationService.reAssignSerialReserveStocksForSerialProducts(new HashSet<>(serialsCodesToAdd),
 						  consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.FALSE,
 						  consignment.getWarehouse(), consignment.getOrder().getCode()))
 				  {*/
+				  {
 					  blReallocationService.removeReserveStocksForSerialProducts(new HashSet<>(serialsCodesToRemove),
 							  consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.TRUE,
 							  consignment.getWarehouse());
 				  /*}
+				  }
 				  else
 				  {
 					  throw new WrongValueException((row.getChildren().get(4)),
 							  this.getLabel("warehousingbackoffice.reassignserial.validation.rentaldate.notavailable"));
 				  }*/
+				  }
 			  }
 			  else
 			  {
@@ -215,7 +211,6 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 	  getModelService().save(entry);
 	  updateConsignmentEntryQuantity(entry);
   }
-
   /**
    * @param entry
    */
