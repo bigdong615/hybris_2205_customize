@@ -238,6 +238,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 			trackingNumber = completedShipmentDetails.getMasterTrackingId().getTrackingNumber();
 			packagingInfo.setOutBoundTrackingNumber(trackingNumber);
 			labelTypeEnum = ShippingLabelTypeEnum.OUTBOUND;
+			packagingInfo.setLabelURL(fedExShipmentURL + completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
 		}
 		else
 		{
@@ -245,7 +246,6 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 			packagingInfo.setInBoundTrackingNumber(trackingNumber);
 			labelTypeEnum = ShippingLabelTypeEnum.INBOUND;
 		}
-		packagingInfo.setLabelURL(fedExShipmentURL + completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
 		setTotalChargesOnPackage(completedShipmentDetails.getShipmentRating(), packagingInfo);
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
@@ -314,6 +314,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	{
 		final StringBuilder buffer = new StringBuilder();
 		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo, buffer);
+		packagingInfo.setLabelURL(upsShipmentURL + shipmentPackage.getTrackingNumber());
 		packagingInfo.setOutBoundShippingLabel(buffer.toString());
 		packagingInfo.setOutBoundTrackingNumber(shipmentPackage.getTrackingNumber());
 		packagingInfo.setOutBoundGraphicImage(shipmentPackage.getGraphicImage());
@@ -346,11 +347,9 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipment generated for package {} with tracking id {}", packagingInfo,
 				shipmentPackage.getTrackingNumber());
-		packagingInfo.setLabelURL(upsResponse.getLabelURL());
 		packagingInfo.setShipmentIdentificationNumber(upsResponse.getShipmentIdentificationNumber());
 		packagingInfo.setTotalShippingPrice(upsResponse.getTotalCharges());
 		packagingInfo.setHTMLImage(shipmentPackage.getHTMLImage());
-		packagingInfo.setLabelURL(upsShipmentURL + shipmentPackage.getTrackingNumber());
 		try
 		{
 			convertImage(shipmentPackage.getGraphicImage(), packagingInfo, buffer);
