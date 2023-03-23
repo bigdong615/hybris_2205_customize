@@ -16,10 +16,11 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.bl.core.stock.BlStockLevelDao;
 
@@ -29,6 +30,7 @@ import com.bl.core.stock.BlStockLevelDao;
  * @author Moumita
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultBlCommerceStockServiceTest
 {
 	private static final String productCode = "Canon_24-105mm_f4_IS";
@@ -60,7 +62,7 @@ public class DefaultBlCommerceStockServiceTest
 	@Before
 	public void setup()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		warehouseModels = new ArrayList<>();
 		stocks = new ArrayList<>();
 		stock1 = new StockLevelModel();
@@ -80,7 +82,7 @@ public class DefaultBlCommerceStockServiceTest
 		warehouseModels.add(external_Matsudo_warehouse);
 		warehouseModels.add(warehouse_e);
 		warehouseModels.add(warehouse_s);
-		Calendar calendar = Calendar.getInstance();
+		final Calendar calendar = Calendar.getInstance();
 		calendar.set(2021, 03, 26);
 		startDate = calendar.getTime();
 		calendar.set(2021, 03, 27);
@@ -113,7 +115,7 @@ public class DefaultBlCommerceStockServiceTest
 	@Test
 	public void testGetStockForDateForOOS()
 	{
-		StockLevelStatus status = blCommerceStockService.getStockLevelStatus(warehouseModels, productCode, startDate, endDate);
+		final StockLevelStatus status = blCommerceStockService.getStockLevelStatus(warehouseModels, productCode, startDate, endDate);
 		Assert.assertEquals(StockLevelStatus.OUTOFSTOCK, status);
 	}
 
@@ -128,7 +130,7 @@ public class DefaultBlCommerceStockServiceTest
 		stocks.add(stock2);
 		Mockito.when(blStockLevelDao.findStockLevelForDate(productCode, warehouseModels, startDate, endDate))
 				.thenReturn(stocks);
-		StockLevelStatus status = blCommerceStockService.getStockLevelStatus(warehouseModels, productCode, startDate, endDate);
+		final StockLevelStatus status = blCommerceStockService.getStockLevelStatus(warehouseModels, productCode, startDate, endDate);
 		Assert.assertEquals(StockLevelStatus.OUTOFSTOCK, status);
 	}
 
@@ -149,7 +151,7 @@ public class DefaultBlCommerceStockServiceTest
 		stocks.add(stock10);
 		Mockito.when(blStockLevelDao.findStockLevelForDate(productCode, warehouseModels, startDate, endDate))
 				.thenReturn(stocks);
-		StockLevelStatus status = blCommerceStockService.getStockLevelStatus(warehouseModels, productCode, startDate, endDate);
+		final StockLevelStatus status = blCommerceStockService.getStockLevelStatus(warehouseModels, productCode, startDate, endDate);
 		Assert.assertEquals(StockLevelStatus.LOWSTOCK, status);
 	}
 
@@ -164,7 +166,7 @@ public class DefaultBlCommerceStockServiceTest
 		stocks.add(stock6);
 		Mockito.when(blStockLevelDao.findStockLevelForDate(productCode, warehouseModels, startDate, endDate))
 				.thenReturn(stocks);
-		StockLevelStatus status = blCommerceStockService.getStockLevelStatus(warehouseModels, productCode, startDate, endDate);
+		final StockLevelStatus status = blCommerceStockService.getStockLevelStatus(warehouseModels, productCode, startDate, endDate);
 		Assert.assertEquals(StockLevelStatus.INSTOCK, status);
 	}
 

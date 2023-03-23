@@ -4,46 +4,48 @@
 package com.bl.storefront.filters;
 
 
+import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
+import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_WITHDRAWN;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.AdditionalAnswers.delegatesTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.consent.AnonymousConsentFacade;
 import de.hybris.platform.commercefacades.consent.data.AnonymousConsentData;
 import de.hybris.platform.commercefacades.user.UserFacade;
-
-import javax.servlet.FilterChain;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.FilterChain;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
-import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_WITHDRAWN;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.AdditionalAnswers.delegatesTo;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class ConsentFilterTest
 {
 	public static final String TEMPLATE_CODE_GIVEN = "templateCodeGiven";
@@ -74,7 +76,7 @@ public class ConsentFilterTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		// anonymous consent data setup
 		final AnonymousConsentData given = createAnonymousConsent(TEMPLATE_CODE_GIVEN, 1, CONSENT_GIVEN);

@@ -3,6 +3,15 @@
  */
 package com.bl.commercewebservices.errors.converters;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
@@ -16,19 +25,14 @@ import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CartModificationDataErrorConverterTest
 {
 	private static final String OTHER_ERROR = "OtherError";
@@ -55,7 +59,7 @@ public class CartModificationDataErrorConverterTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		cartModificationDataErrorConverter = new CartModificationDataErrorConverter();
 		cartModificationDataErrorConverter.setCommerceCommonI18NService(commerceCommonI18NService);
@@ -68,14 +72,15 @@ public class CartModificationDataErrorConverterTest
 		given(entry.getProduct()).willReturn(product);
 		given(entry.getEntryNumber()).willReturn(ENTRY_NUMBER);
 		given(product.getCode()).willReturn(PRODUCT_CODE);
-		given(messageSource.getMessage(eq(NO_STOCK_MESSAGE), any(Object[].class), any(Locale.class))).willReturn(NO_STOCK_MESSAGE);
-		given(messageSource.getMessage(eq(LOW_STOCK_MESSAGE), any(Object[].class), any(Locale.class)))
-				.willReturn(LOW_STOCK_MESSAGE);
-		given(messageSource.getMessage(eq(NO_STOCK_MESSAGE), any(Object[].class), anyString(), any(Locale.class)))
+		lenient().when(messageSource.getMessage(eq(NO_STOCK_MESSAGE), any(Object[].class), nullable(Locale.class)))
+				.thenReturn(NO_STOCK_MESSAGE);
+		lenient().when(messageSource.getMessage(eq(LOW_STOCK_MESSAGE), any(Object[].class), nullable(Locale.class)))
+				.thenReturn(LOW_STOCK_MESSAGE);
+		given(messageSource.getMessage(eq(NO_STOCK_MESSAGE), any(Object[].class), anyString(), nullable(Locale.class)))
 				.willReturn(NO_STOCK_MESSAGE);
-		given(messageSource.getMessage(eq(LOW_STOCK_MESSAGE), any(Object[].class), anyString(), any(Locale.class)))
+		given(messageSource.getMessage(eq(LOW_STOCK_MESSAGE), any(Object[].class), anyString(), nullable(Locale.class)))
 				.willReturn(LOW_STOCK_MESSAGE);
-		given(messageSource.getMessage(eq(OTHER_MESSAGE), any(Object[].class), anyString(), any(Locale.class)))
+		given(messageSource.getMessage(eq(OTHER_MESSAGE), any(Object[].class), anyString(), nullable(Locale.class)))
 				.willReturn(OTHER_MESSAGE);
 	}
 

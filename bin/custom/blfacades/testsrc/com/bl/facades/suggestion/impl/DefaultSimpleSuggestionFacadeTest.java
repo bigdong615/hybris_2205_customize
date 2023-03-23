@@ -21,25 +21,28 @@ import de.hybris.platform.converters.impl.AbstractPopulatingConverter;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.user.UserService;
-import com.bl.core.suggestion.SimpleSuggestionService;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.math.NumberUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.suggestion.SimpleSuggestionService;
+
 
 
 /**
  * Unit test for {@link DefaultSimpleSuggestionFacade}.
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultSimpleSuggestionFacadeTest
 {
 	@Mock
@@ -68,7 +71,7 @@ public class DefaultSimpleSuggestionFacadeTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		defaultSimpleSuggestionFacade = new DefaultSimpleSuggestionFacade();
 		defaultSimpleSuggestionFacade.setUserService(userService);
 		defaultSimpleSuggestionFacade.setCategoryService(categoryService);

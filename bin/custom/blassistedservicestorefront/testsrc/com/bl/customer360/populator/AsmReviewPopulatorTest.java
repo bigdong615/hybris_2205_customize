@@ -11,8 +11,6 @@
 package com.bl.customer360.populator;
 
 import de.hybris.bootstrap.annotations.UnitTest;
-import com.bl.customer360.ReviewData;
-import com.bl.customer360.populators.ReviewDataPopulator;
 import de.hybris.platform.commerceservices.url.UrlResolver;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.customerreview.enums.CustomerReviewApprovalType;
@@ -23,13 +21,18 @@ import java.util.Date;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.customer360.ReviewData;
+import com.bl.customer360.populators.ReviewDataPopulator;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class AsmReviewPopulatorTest
 {
 	@InjectMocks
@@ -41,7 +44,7 @@ public class AsmReviewPopulatorTest
 	@Before
 	public void setup()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test

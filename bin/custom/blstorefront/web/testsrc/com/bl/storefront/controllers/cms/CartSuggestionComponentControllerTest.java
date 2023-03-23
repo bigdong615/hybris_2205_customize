@@ -18,8 +18,6 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.order.impl.DefaultCartFacade;
 import de.hybris.platform.commercefacades.product.data.ProductData;
-import com.bl.facades.suggestion.SimpleSuggestionFacade;
-import com.bl.storefront.controllers.ControllerConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,22 +27,26 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.Model;
+
+import com.bl.facades.suggestion.SimpleSuggestionFacade;
+import com.bl.storefront.controllers.ControllerConstants;
 
 
 /**
  * Unit test for {@link CartSuggestionComponentController}
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class CartSuggestionComponentControllerTest
 {
 	private static final String COMPONENT_UID = "componentUid";
@@ -82,7 +84,7 @@ public class CartSuggestionComponentControllerTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		cartSuggestionComponentController = new CartSuggestionComponentController();
 		cartSuggestionComponentController.setCmsComponentService(cmsComponentService);

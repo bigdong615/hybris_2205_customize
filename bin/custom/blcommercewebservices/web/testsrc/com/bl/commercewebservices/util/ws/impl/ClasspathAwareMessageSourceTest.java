@@ -3,24 +3,27 @@
  */
 package com.bl.commercewebservices.util.ws.impl;
 
-import de.hybris.bootstrap.annotations.UnitTest;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.core.io.ContextResource;
-import org.springframework.core.io.FileSystemResource;
-
 import static com.bl.commercewebservices.util.ws.impl.ClasspathAwareMessageSource.classpathResourceMapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.core.io.support.ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX;
+
+import de.hybris.bootstrap.annotations.UnitTest;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import org.mockito.quality.Strictness;
+import org.springframework.core.io.ContextResource;
+import org.springframework.core.io.FileSystemResource;
 
 
 /**
@@ -39,9 +42,13 @@ public class ClasspathAwareMessageSourceTest
 	private final String absolutePathToPropertiesFile;
 	private final String relativePathToPropertiesFile;
 
+	@Rule
+	public MockitoRule rule = MockitoJUnit.rule().strictness(Strictness.STRICT_STUBS);
+
 	@Mock
 	private ContextResource baseOccExtensionDir;
-	private final ClasspathAwareMessageSource classpathAwareMessageSource = new ClasspathAwareMessageSource(baseOccExtensionDir);
+
+	private ClasspathAwareMessageSource classpathAwareMessageSource;
 
 	public ClasspathAwareMessageSourceTest(final String fileName)
 	{
@@ -58,8 +65,10 @@ public class ClasspathAwareMessageSourceTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		when(baseOccExtensionDir.getPathWithinContext()).thenReturn(OCC_EXT_BASE_DIR_PATH);
+		classpathAwareMessageSource = new ClasspathAwareMessageSource(baseOccExtensionDir);
+		classpathAwareMessageSource.setupMessages();
 	}
 
 	@Test

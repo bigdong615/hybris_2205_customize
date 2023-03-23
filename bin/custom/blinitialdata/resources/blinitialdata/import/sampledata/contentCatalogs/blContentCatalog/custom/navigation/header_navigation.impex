@@ -21,23 +21,23 @@ $mediaContainer=media(qualifier, $contentCV);
 $siteUid=bl
 $lang=en
  
-INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name ; children(uid,$contentCV)[mode=append] 
-                                ; root             ;                         ; root ;                                       ;  
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name ; children(uid,$contentCV)[mode=append]
+                                ; root             ;                         ; root ;                                      ;  
                                 
 ## level 1. SiteRoot ##         
-INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name           ; parent(uid, $contentCV) ; links(&componentRef) ; &nodeRef       
-                                ; BLSiteRootNode   ;                         ; BLSiteRootNode ; root                    ;                      ; BLSiteRootNode 
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name           ; parent(uid, $contentCV) ; links(&componentRef) ; &nodeRef      
+                                ; BLSiteRootNode   ;                         ; BLSiteRootNode ; root                    ;                      ; BLSiteRootNode
                                 
                                 
-INSERT_UPDATE CMSNavigationNode ; uid[unique=true]          ; $contentCV[unique=true] ; name                        ; parent(uid, $contentCV) ; &nodeRef                  ; children(uid,$contentCV) 
-                                ; BLNavNode                 ;                         ; BL Site                     ; BLSiteRootNode          ; BLNavNode                 ;                          
-                                ; BLCategoryNavNode         ;                         ; BL Category Navigation Node ; BLNavNode               ; BLCategoryNavNode         ;                          
-                                ; BLMobileNavNode           ;                         ; BL Mobile Nodes             ; BLNavNode               ; BLMobileNavNode           ;
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]  ; $contentCV[unique=true] ; name                        ; parent(uid, $contentCV) ; &nodeRef          ; children(uid,$contentCV)
+                                ; BLNavNode         ;                         ; BL Site                     ; BLSiteRootNode          ; BLNavNode         ;                         
+                                ; BLCategoryNavNode ;                         ; BL Category Navigation Node ; BLNavNode               ; BLCategoryNavNode ;                         
+                                ; BLMobileNavNode   ;                         ; BL Mobile Nodes             ; BLNavNode               ; BLMobileNavNode   ;                         
                                 
                                 
-INSERT_UPDATE CategoryNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                             ; styleClass ; &componentRef          ; navigationNode(&nodeRef) ; wrapAfter 
-                                          ;                         ; BLCategoryNavComponent ; BL Category Navigation Component ;            ; BLCategoryNavComponent ; BLCategoryNavNode        ; 6         
-                                          ;                         ; BLMobileNavComponent   ; BL Mobile Navigation Component   ;            ; BLMobileNavComponent   ; BLMobileNavNode          ; 6         
+INSERT_UPDATE CategoryNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                             ; styleClass ; &componentRef          ; navigationNode(&nodeRef) ; wrapAfter
+                                          ;                         ; BLCategoryNavComponent ; BL Category Navigation Component ;            ; BLCategoryNavComponent ; BLCategoryNavNode        ; 6        
+                                          ;                         ; BLMobileNavComponent   ; BL Mobile Navigation Component   ;            ; BLMobileNavComponent   ; BLMobileNavNode          ; 6        
 
 
                                           

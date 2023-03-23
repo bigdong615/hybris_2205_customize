@@ -2,8 +2,6 @@ package com.bl.facades.product.populator;
 
 import static org.mockito.BDDMockito.given;
 
-import com.bl.facades.populators.BlWishlistEntryPopulator;
-import com.bl.facades.wishlist.data.Wishlist2EntryData;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -11,14 +9,19 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.core.PK;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
+
 import java.util.Arrays;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.facades.populators.BlWishlistEntryPopulator;
+import com.bl.facades.wishlist.data.Wishlist2EntryData;
+
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)

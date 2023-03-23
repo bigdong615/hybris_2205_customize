@@ -5,15 +5,15 @@ $contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 
 # Import config properties into impex macros for modulegen
-UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor];pk[unique=true]
-$emailResource=$config-emailResourceValue
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true]
+$emailResource=$config-emailResourceValue                                                                  
 
-# Language
-$lang=en
+# Language                                                                                                 
+$lang=en                                                                                                   
 
-INSERT_UPDATE RendererTemplate;code[unique=true];contextClass;rendererType(code)[default='velocity']
-                              ;bl-CMSParagraphComponent-template;java.util.Map
+INSERT_UPDATE RendererTemplate ; code[unique=true]                 ; contextClass ; rendererType(code)[default='velocity']
+                               ; bl-CMSParagraphComponent-template ; java.util.Map
 
 # CMS components and Email velocity templates
-UPDATE RendererTemplate;code[unique=true];description[lang=$lang];templateScript[lang=$lang,translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
-                    ;bl-CMSParagraphComponent-template;"CMSParagraphComponent Template";$emailResource/email-cmsParagraphComponentTemplate.vm
+UPDATE RendererTemplate ; code[unique=true]                 ; description[lang=$lang]          ; templateScript[lang=$lang,translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
+                        ; bl-CMSParagraphComponent-template ; "CMSParagraphComponent Template" ; $emailResource/email-cmsParagraphComponentTemplate.vm                                                         

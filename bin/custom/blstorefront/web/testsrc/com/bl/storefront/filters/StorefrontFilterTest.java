@@ -21,15 +21,17 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.util.CookieGenerator;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class StorefrontFilterTest
 {
 	private static final String REQUESTEDURL = "http://requestedurl.hybris.de";
@@ -69,7 +71,7 @@ public class StorefrontFilterTest
 	@Before
 	public void initFilter()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		filter = new StorefrontFilter();
 		filter.setBrowseHistory(browseHistory);
 		filter.setStoreSessionFacade(storeSessionFacade);

@@ -26,11 +26,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ui.Model;
 
 
@@ -38,6 +39,7 @@ import org.springframework.ui.Model;
  * Unit test for {@link ProductCarouselComponentController}
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class ProductCarouselComponentControllerTest
 {
 	private static final String CODE_CATEGORIES = "codeProdCategories";
@@ -57,7 +59,7 @@ public class ProductCarouselComponentControllerTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test
@@ -85,7 +87,7 @@ public class ProductCarouselComponentControllerTest
 		verify(model).addAttribute(Mockito.same("productData"), Mockito.anyListOf(ProductData.class));
 	}
 
-	class OptionsMatcher extends ArgumentMatcher
+	class OptionsMatcher implements ArgumentMatcher
 	{
 		@Override
 		public boolean matches(final Object object)

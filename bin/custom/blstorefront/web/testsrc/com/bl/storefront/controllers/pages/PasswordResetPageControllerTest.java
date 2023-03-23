@@ -21,11 +21,12 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.support.BindingAwareModelMap;
@@ -34,6 +35,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.bl.storefront.forms.BlUpdatePwdForm;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class PasswordResetPageControllerTest {
     @InjectMocks
     private final PasswordResetPageController passwordResetPageController = Mockito.spy(new PasswordResetPageController());
@@ -80,7 +82,7 @@ public class PasswordResetPageControllerTest {
     @Before
     public void prepare()
     {
-        MockitoAnnotations.initMocks(this);
+		 // MockitoAnnotations.initMocks(this);
         bindingResult= Mockito.spy(BindingResult.class);
     }
 

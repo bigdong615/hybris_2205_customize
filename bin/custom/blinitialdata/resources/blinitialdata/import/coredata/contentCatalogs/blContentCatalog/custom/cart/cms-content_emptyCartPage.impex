@@ -5,57 +5,57 @@ $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCata
 
 # Import modulegen config properties into impex macros
 UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true]
-$jarResourceCms=$config-jarResourceCmsValue
+$jarResourceCms=$config-jarResourceCmsValue                                                                
 
-###  Page Template For Borrow Lenses Empty Cart Page ###
+###  Page Template For Borrow Lenses Empty Cart Page ###                                                   
 
-INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true] ; name               ; frontendTemplateName ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true]
-                           ;                         ; EmptyCartPageTemplate ; Empty Cart Page Template ; cart/emptyCartPage      ; $jarResourceCms/structure-view/structure_EmptyCartPageTemplate.vm                                          ; CategoryPage,ContentPage
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]      ; name                     ; frontendTemplateName ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true]
+                           ;                         ; EmptyCartPageTemplate ; Empty Cart Page Template ; cart/emptyCartPage   ; $jarResourceCms/structure-view/structure_EmptyCartPageTemplate.vm                                     ; CategoryPage,ContentPage  
 
 ###  Define Content SlotNames  ###
-INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='EmptyCartPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
-                              ; PromoBannerSlot                    ;                                                                   ;                           ; wide
-                              ; SiteLogoHeaderSlot                 ;                                                                   ;                           ; logo
-                              ; HeaderLinkForSupportSlot           ;                                                                   ;                           ; headerlink
-                              ; HeaderLinkForShipOrPickupSlot      ;                                                                   ;                           ; headerlink
-                              ; NavigationPromoSlot                ;                                                                   ;                           ; logo
-                              ; NavigationBarSlot                  ;                                                                   ;                           ; navigation
-                              ; NavigationBarMobileSlot            ;                                                                   ;                           ; navigation
-                              ; HomePageFeaturedGearSectionSlot    ;                                                                   ;                           ; wide
-                              ; MiniCartSlot                       ;                                                                   ;                           ; minicart
-                              ; FooterSlot                         ;                                                                   ;                           ; footer
-                              ; FooterSubscriptionSlot             ;                                                                   ;                           ; wide
-                              ; FooterCopyRightslot                ;                                                                   ;                           ; wide
-                              ; SocialMediaSectionSlot           ;                                                                     ;                           ; wide
-                              ; TopHeaderSlot                 ;                                                                                    ;                          ; wide
-                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
-                              ; MobileMiniCartSlot                ;                                                                  ;                           ; minicart
+INSERT_UPDATE ContentSlotName ; name[unique=true]               ; template(uid,$contentCV)[unique=true][default='EmptyCartPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                 ;                                                                        ;                           ; wide               
+                              ; SiteLogoHeaderSlot              ;                                                                        ;                           ; logo               
+                              ; HeaderLinkForSupportSlot        ;                                                                        ;                           ; headerlink         
+                              ; HeaderLinkForShipOrPickupSlot   ;                                                                        ;                           ; headerlink         
+                              ; NavigationPromoSlot             ;                                                                        ;                           ; logo               
+                              ; NavigationBarSlot               ;                                                                        ;                           ; navigation         
+                              ; NavigationBarMobileSlot         ;                                                                        ;                           ; navigation         
+                              ; HomePageFeaturedGearSectionSlot ;                                                                        ;                           ; wide               
+                              ; MiniCartSlot                    ;                                                                        ;                           ; minicart           
+                              ; FooterSlot                      ;                                                                        ;                           ; footer             
+                              ; FooterSubscriptionSlot          ;                                                                        ;                           ; wide               
+                              ; FooterCopyRightslot             ;                                                                        ;                           ; wide               
+                              ; SocialMediaSectionSlot          ;                                                                        ;                           ; wide               
+                              ; TopHeaderSlot                   ;                                                                        ;                           ; wide               
+                              ; MyAccountSlot                   ;                                                                        ;                           ; navigation         
+                              ; MobileMiniCartSlot              ;                                                                        ;                           ; minicart           
 
 
 ###  Define ContentSlot For Template  ###
-INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='EmptyCartPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
-                                     ;                         ; PromoBannerSlot-EmptyCartPage               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true
-                                     ;                         ; SiteLogoHeaderSlot-EmptyCartPage            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true
-                                     ;                         ; NavigationPromoSlot-EmptyCartPage           ; NavigationPromoSlot           ;                                                                           ; NavigationPromoSlot                      ; true
-                                     ;                         ; NavigationBarSlot-EmptyCartPage             ; NavigationBarSlot             ;                                                                           ; NavigationBarSlot                        ; true
-                                     ;                         ; NavigationBarMobileSlot-EmptyCartPage       ; NavigationBarMobileSlot       ;                                                                           ; NavigationBarMobileSlot                  ; true
-                                     ;                         ; HeaderLinkForSupportSlot-EmptyCartPage      ; HeaderLinkForSupportSlot      ;                                                                           ; HeaderLinkForSupportSlot                 ; true
-                                     ;                         ; HeaderLinkForShipOrPickupSlot-EmptyCartPage ; HeaderLinkForShipOrPickupSlot ;                                                                           ; HeaderLinkForShipOrPickupSlot            ; true
-                                     ;                         ; MiniCartSlot-EmptyCartPage                  ; MiniCartSlot                  ;                                                                           ; MiniCartSlot                             ; true
-                                     ;                         ; FooterSlot-EmptyCartPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true
-                                     ;                         ; FooterSubscriptionSlot-EmptyCartPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true
-                                     ;                         ; FooterCopyRightslot-EmptyCartPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true
-                                     ;                         ; SocialMediaSectionSlot-EmptyCartPage        ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
-                                     ;                          ; TopHeaderSlot-EmptyCartPage          ; TopHeaderSlot                 ;                                                                                        ; TopHeaderSlot                              ; true
-                                     ;                         ; MyAccountSlot-EmptyCartPage                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
-                                     ;                         ; MobileMiniCartSlot-EmptyCartPage             ; MobileMiniCartSlot            ;                                                                           ; MobileMiniCartSlot                             ; true
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                            ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='EmptyCartPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
+                                     ;                         ; PromoBannerSlot-EmptyCartPage               ; PromoBannerSlot               ;                                                                            ; PromoBannerSlot                          ; true          
+                                     ;                         ; SiteLogoHeaderSlot-EmptyCartPage            ; SiteLogoHeaderSlot            ;                                                                            ; SiteLogoHeaderSlot                       ; true          
+                                     ;                         ; NavigationPromoSlot-EmptyCartPage           ; NavigationPromoSlot           ;                                                                            ; NavigationPromoSlot                      ; true          
+                                     ;                         ; NavigationBarSlot-EmptyCartPage             ; NavigationBarSlot             ;                                                                            ; NavigationBarSlot                        ; true          
+                                     ;                         ; NavigationBarMobileSlot-EmptyCartPage       ; NavigationBarMobileSlot       ;                                                                            ; NavigationBarMobileSlot                  ; true          
+                                     ;                         ; HeaderLinkForSupportSlot-EmptyCartPage      ; HeaderLinkForSupportSlot      ;                                                                            ; HeaderLinkForSupportSlot                 ; true          
+                                     ;                         ; HeaderLinkForShipOrPickupSlot-EmptyCartPage ; HeaderLinkForShipOrPickupSlot ;                                                                            ; HeaderLinkForShipOrPickupSlot            ; true          
+                                     ;                         ; MiniCartSlot-EmptyCartPage                  ; MiniCartSlot                  ;                                                                            ; MiniCartSlot                             ; true          
+                                     ;                         ; FooterSlot-EmptyCartPage                    ; FooterSlot                    ;                                                                            ; FooterSlot                               ; true          
+                                     ;                         ; FooterSubscriptionSlot-EmptyCartPage        ; FooterSubscriptionSlot        ;                                                                            ; FooterSubscriptionSlot                   ; true          
+                                     ;                         ; FooterCopyRightslot-EmptyCartPage           ; FooterCopyRightslot           ;                                                                            ; FooterCopyRightslot                      ; true          
+                                     ;                         ; SocialMediaSectionSlot-EmptyCartPage        ; SocialMediaSectionSlot        ;                                                                            ; SocialMediaSectionSlot                   ; true          
+                                     ;                         ; TopHeaderSlot-EmptyCartPage                 ; TopHeaderSlot                 ;                                                                            ; TopHeaderSlot                            ; true          
+                                     ;                         ; MyAccountSlot-EmptyCartPage                 ; MyAccountSlot                 ;                                                                            ; MyAccountSlot                            ; true          
+                                     ;                         ; MobileMiniCartSlot-EmptyCartPage            ; MobileMiniCartSlot            ;                                                                            ; MobileMiniCartSlot                       ; true          
 
 
 
 ########################### Define Content slots for page######################
-INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                               ; position[unique=true]              ; page(uid,$contentCV)[unique=true][default='emptyCartPage'] ; contentSlot(uid,$contentCV)[unique=true]
-                                 ;                         ;HomePageFeaturedGearSectionSlot-EmptyCartPage   ;HomePageFeaturedGearSectionSlot     ;                                                            ; HomePageFeaturedGearSectionSlot          ; true
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                              ; position[unique=true]           ; page(uid,$contentCV)[unique=true][default='emptyCartPage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; HomePageFeaturedGearSectionSlot-EmptyCartPage ; HomePageFeaturedGearSectionSlot ;                                                            ; HomePageFeaturedGearSectionSlot         ; true
 
 ###  Create Content Page (Empty Cart Page)  ###
-INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true] ; name      ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
-                          ;                    ; emptyCartPage; Empty Cart Page ;EmptyCartPageTemplate; emptyCart
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true] ; name            ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
+                          ;                         ; emptyCartPage    ; Empty Cart Page ; EmptyCartPageTemplate          ; emptyCart

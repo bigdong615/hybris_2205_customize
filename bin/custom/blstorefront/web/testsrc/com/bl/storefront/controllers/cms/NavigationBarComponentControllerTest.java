@@ -12,26 +12,28 @@ import de.hybris.platform.acceleratorcms.model.components.NavigationBarComponent
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.servicelayer.services.impl.DefaultCMSComponentService;
-import com.bl.storefront.controllers.ControllerConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ui.Model;
+
+import com.bl.storefront.controllers.ControllerConstants;
 
 
 /**
  * Unit test for {@link NavigationBarComponentController}
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class NavigationBarComponentControllerTest
 {
 	private static final String COMPONENT = "component";
@@ -61,7 +63,7 @@ public class NavigationBarComponentControllerTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		navigationBarComponentController = new NavigationBarComponentController();
 		navigationBarComponentController.setCmsComponentService(cmsComponentService);
