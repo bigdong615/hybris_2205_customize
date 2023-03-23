@@ -71,7 +71,6 @@ public class BlCategoryCodeValueResolver extends
                         for (final CategoryModel superCategory : superCategories) {
                             if (!BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getCode())) {
                                 inputDocument.addField(indexedProperty, getPropertyValue(category));
-                                inputDocument.addField(indexedProperty, getPropertyValue(category));
                             }
                         }
                     }
