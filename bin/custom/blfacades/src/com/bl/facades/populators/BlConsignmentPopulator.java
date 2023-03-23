@@ -28,7 +28,7 @@ public class BlConsignmentPopulator extends ConsignmentPopulator
 	 * @param deliveryModeConverter
 	 *           the deliveryModeConverter to set
 	 */
-	public void setDeliveryModeConverter(Converter<DeliveryModeModel, DeliveryModeData> deliveryModeConverter)
+	public void setDeliveryModeConverter(final Converter<DeliveryModeModel, DeliveryModeData> deliveryModeConverter)
 	{
 		this.deliveryModeConverter = deliveryModeConverter;
 	}
@@ -37,11 +37,20 @@ public class BlConsignmentPopulator extends ConsignmentPopulator
 	public void populate(final ConsignmentModel source, final ConsignmentData target) throws ConversionException
 	{
 		super.populate(source, target);
-		target.setDeliveryMode(getDeliveryModeConverter().convert(source.getDeliveryMode()));
+		if (source.getDeliveryMode() != null)
+		{
+			target.setDeliveryMode(getDeliveryModeConverter().convert(source.getDeliveryMode()));
+		}
 		target.setNameddeliverydate(source.getNamedDeliveryDate());
 		target.setCarrier(source.getCarrier());
-		target.setWarehouseCode(source.getWarehouse().getCode());
-		target.setOrderCode(source.getOrder().getCode());
+		if (source.getWarehouse() != null)
+		{
+			target.setWarehouseCode(source.getWarehouse().getCode());
+		}
+		if (source.getOrder() != null)
+		{
+			target.setOrderCode(source.getOrder().getCode());
+		}
 		target.setStatusDisplay(source.getStatusDisplay());
 		//target.setCarrierDetails(source.getCarrierDetails());
 		//target.setPackagingInfo(source.getPackagingInfo());
