@@ -49,24 +49,36 @@ public class BlCategoryCodeValueResolver extends
         final Collection<CategoryModel> categories = getCategorySource().getCategoriesForConfigAndProperty(indexConfig,
                 indexedProperty, blProductModel);
 
-        if (CollectionUtils.isNotEmpty(categories)) {
-            for (final CategoryModel category : categories) {
-                if (!BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName()) && !BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(category.getCode())) {
-//          BLS-59 - Remove brands from category filter
-                    if (CollectionUtils.isNotEmpty(category.getSupercategories())) {
+//BLS-59 Changes "Remove brands from category filter"
+        if ("brand".equals(indexedProperty.getName())) {
+            if (CollectionUtils.isNotEmpty(categories)) {
+                for (final CategoryModel category : categories) {
+                    if (!BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName()) && !BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(category.getCode())) {
                         final Collection<CategoryModel> superCategories = category.getSupercategories();
                         for (final CategoryModel superCategory : superCategories) {
-                            if (!BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getCode())) {
+                            if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getCode())) {
                                 inputDocument.addField(indexedProperty, getPropertyValue(category));
                             }
                         }
                     }
                 }
-
+            }
+        } else {
+            if (CollectionUtils.isNotEmpty(categories)) {
+                for (final CategoryModel category : categories) {
+                    if (!BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName()) && !BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(category.getCode())) {
+                        final Collection<CategoryModel> superCategories = category.getSupercategories();
+                        for (final CategoryModel superCategory : superCategories) {
+                            if (!BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getCode())) {
+                                inputDocument.addField(indexedProperty, getPropertyValue(category));
+                                inputDocument.addField(indexedProperty, getPropertyValue(category));
+                            }
+                        }
+                    }
+                }
             }
         }
     }
-
 
     protected Object getPropertyValue(final Object model) {
         return getPropertyValue(model, BlCoreConstants.CODE);
