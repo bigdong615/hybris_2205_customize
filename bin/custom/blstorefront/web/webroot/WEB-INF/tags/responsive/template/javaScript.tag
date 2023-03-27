@@ -637,7 +637,7 @@ console.log("First start");
 	<c:if test="${cmsPage.uid eq 'productDetails'}">
                                 		 <script>
                                 		 console.log("product.forRent "+ ${product.forRent} +"--blPageType"+${fn:containsIgnoreCase(blPageType, 'rentalGear')}+"-----"${isRentalPage});
-                                		 
+                                		 alert("isRentalPage-->"+${IsRentalPage});
                                 		 console.log("Second start");
                                         // Mobile Menu styles - #my-menu is required for ALL pages
                                              document.addEventListener(
@@ -953,8 +953,9 @@ console.log("First start");
                                 		</c:if>
 
 <!-- This js will load on usedGear PDP  and it is required for all usedGear pdp component to make it work -->
-<c:if test="${cmsPage.uid eq 'productDetailss' && IsRentalPage eq 'false' && product.forSale eq 'true'}">
+<c:if test="${cmsPage.uid eq 'productDetails' && isRentalPage eq 'false' || product.forSale eq 'true'}">
 		 <script>
+		
 		 console.log("3 start");
 		  // Expand Used Gear Items
           var swap = document.getElementById("showmore");
