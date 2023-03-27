@@ -1907,7 +1907,7 @@
 				</wz:content>
 				<wz:navigation id="step1.navigation">
 					<wz:cancel/>
-					<wz:custom label="blbackoffice.web.scan.tool.btn.scan" handler="defaultUnboxingScanToolHandler">
+					<wz:custom label="blbackoffice.web.scan.tool.btn.scan" handler="defaultUnboxingScanToolHandler" align="left">
 						<wz:parameter>
 							<wz:name>webScanToolDataModelKey</wz:name>
 							<wz:value>webScanToolData</wz:value>
