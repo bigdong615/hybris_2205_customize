@@ -125,4 +125,12 @@ public interface BlInventoryScanToolDao {
 		 */
 		public Collection<BlSerialProductModel> getSerialsByBarcodesAndVersion(final Collection<String> barcodes,
 				final String version);
+		
+		
+		
+		/**
+		 * @param barcode
+		 * @return
+		 */
+		BlSerialProductModel getBlSerialProductByBarcode(String barcode);
 }
