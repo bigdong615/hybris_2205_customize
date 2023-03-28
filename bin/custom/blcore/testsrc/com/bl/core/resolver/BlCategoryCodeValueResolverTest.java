@@ -1,10 +1,8 @@
 package com.bl.core.resolver;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.bl.core.model.BlProductModel;
-import com.bl.core.resolvers.BlCategoryCodeValueResolver;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.provider.CategorySource;
@@ -20,20 +18,27 @@ import de.hybris.platform.solrfacetsearch.config.exceptions.FieldValueProviderEx
 import de.hybris.platform.solrfacetsearch.indexer.IndexerBatchContext;
 import de.hybris.platform.solrfacetsearch.indexer.spi.InputDocument;
 import de.hybris.platform.solrfacetsearch.provider.QualifierProvider;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.model.BlProductModel;
+import com.bl.core.resolvers.BlCategoryCodeValueResolver;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BlCategoryCodeValueResolverTest {
 
   private static final String INDEXED_PROPERTY_NAME = "category";
@@ -71,7 +76,7 @@ public class BlCategoryCodeValueResolverTest {
 
   @Before
   public void startUp() {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     indexedProperty = new IndexedProperty();
     indexedProperty.setName(INDEXED_PROPERTY_NAME);
     indexedProperty.setValueProviderParameters(new HashMap<>());
@@ -99,8 +104,8 @@ public class BlCategoryCodeValueResolverTest {
   public void resolveWhenCategoryIsNotEmpty() throws FieldValueProviderException {
     final Collection<CategoryModel> categories = new ArrayList<>();
     final CategoryModel categoryModel = new CategoryModel();
-    LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
-    ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
+    final LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
+    final ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
     itemModelContext.setLocaleProvider(localeProvider);
     categoryModel.setCode(CATEGORY_CODE);
     categoryModel.setName(CATEGORY_NAME);
@@ -114,8 +119,8 @@ public class BlCategoryCodeValueResolverTest {
   public void resolveWhenCategory() throws FieldValueProviderException {
     final Collection<CategoryModel> categories = new ArrayList<>();
     final CategoryModel categoryModel = new CategoryModel();
-    LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
-    ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
+    final LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
+    final ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
     itemModelContext.setLocaleProvider(localeProvider);
     categoryModel.setCode(CATEGORY_CODE1);
     categoryModel.setName(CATEGORY_NAME1);
@@ -132,10 +137,10 @@ public class BlCategoryCodeValueResolverTest {
     final CategoryModel categoryModel = new CategoryModel();
     final CategoryModel categoryModel1 = new CategoryModel();
     final CategoryModel categoryModel2 = new CategoryModel();
-    LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
-    ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
-    ItemModelContextImpl itemModelContext1 = (ItemModelContextImpl) categoryModel1.getItemModelContext();
-    ItemModelContextImpl itemModelContext2 = (ItemModelContextImpl) categoryModel2.getItemModelContext();
+    final LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
+    final ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
+    final ItemModelContextImpl itemModelContext1 = (ItemModelContextImpl) categoryModel1.getItemModelContext();
+    final ItemModelContextImpl itemModelContext2 = (ItemModelContextImpl) categoryModel2.getItemModelContext();
     itemModelContext.setLocaleProvider(localeProvider);
     itemModelContext1.setLocaleProvider(localeProvider);
     itemModelContext2.setLocaleProvider(localeProvider);

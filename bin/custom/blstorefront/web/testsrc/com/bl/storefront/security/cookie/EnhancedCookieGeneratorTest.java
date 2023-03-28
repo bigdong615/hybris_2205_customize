@@ -3,6 +3,8 @@
  */
 package com.bl.storefront.security.cookie;
 
+import de.hybris.bootstrap.annotations.UnitTest;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,19 +13,22 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 
 /**
  *
  */
-public class EnhancedCookieGeneratorTest {
+@UnitTest
+@RunWith(MockitoJUnitRunner.class)
+public class EnhancedCookieGeneratorTest
+{
 
 	private static final String JSESSIONID = "JSESSIONID";
 	private static final int NEVER_EXPIRES = -1;
@@ -40,7 +45,7 @@ public class EnhancedCookieGeneratorTest {
 	@Before
 	public void prepare()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		cookieGenerator.setCookieDomain("what a domain");
 		cookieGenerator.setCookieMaxAge(Integer.valueOf(NEVER_EXPIRES));
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
@@ -133,7 +138,7 @@ public class EnhancedCookieGeneratorTest {
 		Mockito.verify(response, Mockito.times(0)).addHeader(Mockito.anyString(), Mockito.anyString());
 	}
 
-	private class CookieArgumentMatcher extends ArgumentMatcher<Cookie>
+	private class CookieArgumentMatcher implements ArgumentMatcher<Cookie>
 	{
 		private final Cookie expectedCookie;
 
@@ -141,15 +146,17 @@ public class EnhancedCookieGeneratorTest {
 			this.expectedCookie = cookie;
 		}
 
+
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
 		 */
 		@Override
-		public boolean matches(final Object argument) {
+		public boolean matches(final Cookie argument)
+		{
 			if (argument instanceof Cookie) {
-				final Cookie givenCookie = (Cookie) argument;
+				final Cookie givenCookie = argument;
 				if (givenCookie.getSecure() == expectedCookie.getSecure()
 						&& givenCookie.getMaxAge() == expectedCookie.getMaxAge()
 						&& givenCookie.getName().equals(expectedCookie.getName())
@@ -164,5 +171,7 @@ public class EnhancedCookieGeneratorTest {
 			}
 			return false;
 		}
+
+
 	}
 }

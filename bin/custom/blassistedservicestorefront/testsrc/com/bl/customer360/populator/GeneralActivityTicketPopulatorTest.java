@@ -11,27 +11,29 @@
 package com.bl.customer360.populator;
 
 import de.hybris.bootstrap.annotations.UnitTest;
-import com.bl.customer360.GeneralActivityData;
-import com.bl.customer360.populators.GeneralActivityTicketPopulator;
+import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.ticket.enums.CsTicketCategory;
 import de.hybris.platform.ticket.enums.CsTicketState;
 import de.hybris.platform.ticket.model.CsTicketModel;
-import de.hybris.platform.site.BaseSiteService;
+
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
-import java.util.Date;
+import com.bl.customer360.GeneralActivityData;
+import com.bl.customer360.populators.GeneralActivityTicketPopulator;
 
 @UnitTest
+
 public class GeneralActivityTicketPopulatorTest
 {
     @InjectMocks
-    private GeneralActivityTicketPopulator populator = new GeneralActivityTicketPopulator();
+    private final GeneralActivityTicketPopulator populator = new GeneralActivityTicketPopulator();
 
     @Mock
     private BaseSiteService baseSiteService;
@@ -39,7 +41,7 @@ public class GeneralActivityTicketPopulatorTest
     @Before
     public void setup()
     {
-        MockitoAnnotations.initMocks(this);
+		 // MockitoAnnotations.initMocks(this);
     }
 
     @Test

@@ -32,7 +32,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class SourceOrderActionTest
 	public void setup()
 	{
 		orderEntryModel = spy(new OrderEntryModel());
-		when(orderEntryModel.getQuantity()).thenReturn(Long.valueOf(10L));
+		Mockito.lenient().when(orderEntryModel.getQuantity()).thenReturn(Long.valueOf(10L));
 		List<AbstractOrderEntryModel> orderEntriesModel = new ArrayList<>();
 		orderEntriesModel.add(orderEntryModel);
 

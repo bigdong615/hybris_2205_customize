@@ -16,15 +16,17 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.braintree.enums.BrainTreeCardType;
 import com.braintree.model.BrainTreePaymentInfoModel;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BrainTreePaymentInfoPopulatorTest
 {
 	public static final long ID = 1234567890L;
@@ -54,7 +56,7 @@ public class BrainTreePaymentInfoPopulatorTest
 	@Before
 	public void init()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test

@@ -14,18 +14,19 @@ import de.hybris.platform.servicelayer.session.SessionService;
 
 import java.util.Collections;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class MultiStepCheckoutControllerTest
 {
 
@@ -47,7 +48,7 @@ public class MultiStepCheckoutControllerTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test

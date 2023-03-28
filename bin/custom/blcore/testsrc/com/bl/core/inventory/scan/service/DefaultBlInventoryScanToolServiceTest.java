@@ -1,25 +1,29 @@
 package com.bl.core.inventory.scan.service;
 
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
-import com.bl.core.inventory.scan.dao.impl.DefaultBlInventoryScanToolDao;
-import com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService;
+import static org.mockito.Mockito.mock;
+
 import de.hybris.bootstrap.annotations.UnitTest;
-import org.apache.commons.lang.StringUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
+import com.bl.core.inventory.scan.dao.impl.DefaultBlInventoryScanToolDao;
+import com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultBlInventoryScanToolServiceTest {
 
     @Mock
@@ -32,7 +36,7 @@ public class DefaultBlInventoryScanToolServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+		 //  MockitoAnnotations.initMocks(this);
         blDefaultInventoryScanToolService = new DefaultBlInventoryScanToolService();
         blInventoryScanToolDao = mock(DefaultBlInventoryScanToolDao.class);
         blDefaultInventoryScanToolService.setBlInventoryScanToolDao(blInventoryScanToolDao);

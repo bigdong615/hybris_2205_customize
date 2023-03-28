@@ -30,50 +30,50 @@ $lang=en
 #### Navigation Node  ####
 #####################################################################
 
-INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name              ; &nodeRef        ; children(uid,$contentCV) ; links(&linkRef) ;
-                                ; NewGearNavNode  ;                         ; NewGear Nav Node ; NewGearNavNode ;
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name             ; &nodeRef       ; children(uid,$contentCV) ; links(&linkRef) ;  
+                                ; NewGearNavNode   ;                         ; NewGear Nav Node ; NewGearNavNode ;                          
 #####################################################################
-#### Navigation Node ENtry ####
+#### Navigation Node ENtry #### 
 #####################################################################
-INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]     ; $contentCV[unique=true] ; name                ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;
-                                 ; NewGearNavNodeEntry ;                         ; NewGear Node Entry ; NewGearNavNode          ; NewGearLink                                           ;
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]    ; $contentCV[unique=true] ; name               ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+                                 ; NewGearNavNodeEntry ;                         ; NewGear Node Entry ; NewGearNavNode           ; NewGearLink                                            ;  
 #####################################################################
-#### Navigation Node Link  ####
+#### Navigation Node Link  ####  
 #####################################################################
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name               ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow']
-                               ;                         ; NewGearLink     ; NewGear Node Link ; "#" ; newgear                                     ;          ;               ; New Gear            ;
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name              ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow']
+                               ;                         ; NewGearLink      ; NewGear Node Link ; "#" ; newgear                                      ;          ;               ; New Gear             ;                                   
 
 
 #####################################################################
 ######################  Level 2 Navigation Data #####################
 #####################################################################
 #####################################################################
-#### Navigation Node  ####
+#### Navigation Node  ####     
 #####################################################################
-INSERT_UPDATE CMSNavigationNode ; uid[unique=true]             ; $contentCV[unique=true] ; name                  ; &nodeRef                     ; links(&linkRef) ;
-# NewGear -- all new gear
-                                ; AllNewGearNavNode           ;                         ; All NewGear Link     ; AllNewGearNavNode
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]  ; $contentCV[unique=true] ; name             ; &nodeRef         ; links(&linkRef) ;  
+# NewGear -- all new gear       
+                                ; AllNewGearNavNode ;                         ; All NewGear Link ; AllNewGearNavNode
 
 #####################################################################
 #####################################################################
-#### Navigation Node  ####
+#### Navigation Node  ####      
 #####################################################################
-UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name          ; parent(uid, $contentCV) ; &nodeRef        ; children(uid,$contentCV)
-                         ; NewGearNavNode  ;                         ; NewGearLinks ; BLCategoryNavNode       ; NewGearNavNode ; AllNewGearNavNode
+UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name         ; parent(uid, $contentCV) ; &nodeRef       ; children(uid,$contentCV)
+                         ; NewGearNavNode   ;                         ; NewGearLinks ; BLCategoryNavNode       ; NewGearNavNode ; AllNewGearNavNode       
 
 #####################################################################
 #### Navigation Node ENtry ####
 #####################################################################
 
-INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                 ; $contentCV[unique=true] ; name                                  ; navigationNode(&nodeRef)     ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;
-# NewGear -- all new gear
-                                 ; AllNewGearNavNodeEntry          ;                         ; All NewGear Navigation Node Entry    ; AllNewGearNavNode           ; AllNewGearLink
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]       ; $contentCV[unique=true] ; name                              ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+# NewGear -- all new gear        
+                                 ; AllNewGearNavNodeEntry ;                         ; All NewGear Navigation Node Entry ; AllNewGearNavNode        ; AllNewGearLink                                         
 
-INSERT_UPDATE AssistedServiceSessionRestriction;$contentCV[unique=true];uid[unique=true];name;&uid;components(&componentRef)
-                                               ;;ASMCategoryRestriction;ASM Category Restriction;NewGearLink
+INSERT_UPDATE AssistedServiceSessionRestriction ; $contentCV[unique=true] ; uid[unique=true]       ; name                     ; &uid       ; components(&componentRef)
+                                                ;                         ; ASMCategoryRestriction ; ASM Category Restriction ; NewGearLink
 #####################################################################
-#### Navigation Node Link  ####
+#### Navigation Node Link  ####                 
 #####################################################################
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                  ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang] ;
-# NewGear -- all new gear
-                               ;                         ; AllNewGearLink           ; AllNewGear Link      ; "/buy/category/newgear" ; newgear                          ;                                    ; All New Gear        ;
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url                     ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang] ;  
+# NewGear -- all new gear      
+                               ;                         ; AllNewGearLink   ; AllNewGear Link ; "/buy/category/newgear" ; newgear                    ;                                    ; All New Gear         ;  

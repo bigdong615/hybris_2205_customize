@@ -5,7 +5,14 @@ package com.bl.commercewebservices.v2.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,18 +24,14 @@ import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.CartModificationDataList;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationStatus;
-import de.hybris.platform.commercewebservicescommons.errors.exceptions.CartEntryGroupException;
-import com.bl.commercewebservices.stock.CommerceStockFacade;
 import de.hybris.platform.commercewebservicescommons.dto.order.CartModificationListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.order.CartModificationWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.product.ProductWsDTO;
+import de.hybris.platform.commercewebservicescommons.errors.exceptions.CartEntryGroupException;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.webservicescommons.mapping.DataMapper;
 import de.hybris.platform.webservicescommons.mapping.FieldSetLevelHelper;
-import com.bl.commercewebservices.stock.CommerceStockFacade;
-import com.bl.commercewebservices.validation.data.CartVoucherValidationData;
-import com.bl.commercewebservices.validator.CartVoucherValidator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,23 +48,16 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.Validator;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.bl.commercewebservices.stock.CommerceStockFacade;
+import com.bl.commercewebservices.validation.data.CartVoucherValidationData;
+import com.bl.commercewebservices.validator.CartVoucherValidator;
 
 
 @UnitTest
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CartsControllerTest
 {
 	private static final String REJECTED_VOUCHER_CODE_1 = "123-abc";
@@ -101,7 +97,7 @@ public class CartsControllerTest
 		final CartData cart = new CartData();
 		cart.setAppliedVouchers(voucherList);
 		given(cartFacade.getSessionCart()).willReturn(cart);
-		when(dataMapper.map(data, CartModificationWsDTO.class, FIELDS)).thenReturn(wsDTO);
+		lenient().when(dataMapper.map(data, CartModificationWsDTO.class, FIELDS)).thenReturn(wsDTO);
 	}
 
 	@Test
@@ -289,7 +285,7 @@ public class CartsControllerTest
 		return data;
 	}
 
-	private class CartValidationArgumentMatcher extends ArgumentMatcher<CartModificationDataList>
+	private static class CartValidationArgumentMatcher implements ArgumentMatcher<CartModificationDataList>
 	{
 		private final Predicate<CartModificationDataList> filter;
 
@@ -298,10 +294,11 @@ public class CartsControllerTest
 			this.filter = allMatchFilter;
 		}
 
+
 		@Override
-		public boolean matches(final Object argument)
+		public boolean matches(final CartModificationDataList argument)
 		{
-			return (argument instanceof CartModificationDataList) ? filter.test((CartModificationDataList) argument) : false;
+			return (argument instanceof CartModificationDataList) ? filter.test(argument) : false;
 		}
 	}
 }

@@ -3,8 +3,8 @@
  */
 package com.braintree.customer.dao;
 
-import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -20,14 +20,16 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.braintree.model.BrainTreePaymentInfoModel;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BrainTreeCustomerAccountDaoTest
 {
 	private static final String CUSTOMER_ID = "CUSTOMER_ID";
@@ -67,7 +69,7 @@ public class BrainTreeCustomerAccountDaoTest
 	@Before
 	public void init()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test

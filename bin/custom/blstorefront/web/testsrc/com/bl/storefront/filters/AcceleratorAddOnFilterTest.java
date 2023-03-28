@@ -17,15 +17,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class AcceleratorAddOnFilterTest
 {
 	private static final String ADDONTWO = "addontwo";
@@ -48,7 +50,7 @@ public class AcceleratorAddOnFilterTest
 	@Before
 	public void prepare() throws FileNotFoundException
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		Mockito.doReturn("/addons/").when(request).getAttribute("javax.servlet.include.servlet_path");
 	}
 

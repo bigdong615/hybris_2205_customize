@@ -1,34 +1,39 @@
 package com.bl.blbackoffice;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.when;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import com.bl.blbackoffice.actions.BlGiftCardEmailAndMovementAction;
-import com.bl.core.event.BlGiftCardEmailEvent;
-import com.bl.core.model.GiftCardModel;
-import com.bl.core.model.GiftCardMovementModel;
-import com.hybris.cockpitng.actions.ActionContext;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.servicelayer.event.EventService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.blbackoffice.actions.BlGiftCardEmailAndMovementAction;
+import com.bl.core.event.BlGiftCardEmailEvent;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
+import com.hybris.cockpitng.actions.ActionContext;
+
 
 /**
  * Test class of {@link BlGiftCardEmailAndMovementAction}.
  * @author Neeraj Singh
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BlGiftCardEmailAndMovementActionTest {
 
   @Spy
@@ -64,8 +69,8 @@ public class BlGiftCardEmailAndMovementActionTest {
   @Before
   public void setup() {
 
-    MockitoAnnotations.initMocks(this);
-    CurrencyModel currencyModel = mock(CurrencyModel.class);
+	  //  MockitoAnnotations.initMocks(this);
+    final CurrencyModel currencyModel = mock(CurrencyModel.class);
     giftCardModel.setCode(GIFTCARD_CODE);
     giftCardModel.setActive(Boolean.TRUE);
     giftCardModel.setAmount(100d);
@@ -88,7 +93,7 @@ public class BlGiftCardEmailAndMovementActionTest {
   public void giftCardModelNotNull() {
 
     Assert.assertNotEquals(0, 100d);
-    GiftCardMovementModel movements = new GiftCardMovementModel();
+    final GiftCardMovementModel movements = new GiftCardMovementModel();
     Assert.assertNotNull(movements);
     movements.setAmount(giftCardModel.getAmount());
     movements.setCommitted(Boolean.TRUE);

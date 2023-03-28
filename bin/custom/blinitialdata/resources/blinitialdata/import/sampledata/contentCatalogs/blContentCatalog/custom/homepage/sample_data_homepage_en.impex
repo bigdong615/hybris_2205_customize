@@ -12,17 +12,17 @@ $backimage=backgroundImage(code, $contentCV);
 $lang=en
  
  
-INSERT_UPDATE Media ; $contentCV[unique=true] ; code[unique=true]             ; realfilename    ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='image/svg+xml'] ; altText ; folder(qualifier)[default='images'] 
-                    ;                         ; /images/theme/bl-logo@2x.png  ; bl-logo@2x.png  ; $siteResource/images/theme/bl-logo@2x.png                                  ; image/png+xml                 ;         ;                                     
-                    ;                         ; /images/theme/promo430x95.png ; promo430x95.png ; $siteResource/images/theme/promo430x95.png                                 ; image/png+xml                 ;         ;                                     
+INSERT_UPDATE Media ; $contentCV[unique=true] ; code[unique=true]             ; realfilename    ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='image/svg+xml'] ; altText ; folder(qualifier)[default='images']
+                    ;                         ; /images/theme/bl-logo@2x.png  ; bl-logo@2x.png  ; $siteResource/images/theme/bl-logo@2x.png                                  ; image/png+xml                 ;         ;                                    
+                    ;                         ; /images/theme/promo430x95.png ; promo430x95.png ; $siteResource/images/theme/promo430x95.png                                 ; image/png+xml                 ;         ;                                    
                     
-                    ;                         ; /images/theme/img-test-01.jpg ; img-test-01.jpg ; $siteResource/images/theme/img-test-01.jpg                                 ; image/jpg+xml                 ;         ;                                     
-                    ;                         ; /images/theme/img-test-02.jpg ; img-test-01.jpg ; $siteResource/images/theme/img-test-01.jpg                                 ; image/jpg+xml                 ;         ;                                     
-                    ;                         ; /images/theme/img-test-03.jpg ; img-test-01.jpg ; $siteResource/images/theme/img-test-01.jpg                                 ; image/jpg+xml                 ;         ;                                     
+                    ;                         ; /images/theme/img-test-01.jpg ; img-test-01.jpg ; $siteResource/images/theme/img-test-01.jpg                                 ; image/jpg+xml                 ;         ;                                    
+                    ;                         ; /images/theme/img-test-02.jpg ; img-test-01.jpg ; $siteResource/images/theme/img-test-01.jpg                                 ; image/jpg+xml                 ;         ;                                    
+                    ;                         ; /images/theme/img-test-03.jpg ; img-test-01.jpg ; $siteResource/images/theme/img-test-01.jpg                                 ; image/jpg+xml                 ;         ;                                    
                     
-                    ;                         ; /images/theme/img-blog-1.jpg  ; img-blog-1.jpg  ; $siteResource/images/theme/img-blog-1.jpg                                  ; image/jpg+xml                 ;         ;                                     
-                    ;                         ; /images/theme/img-blog-2.jpg  ; img-blog-2.jpg  ; $siteResource/images/theme/img-blog-2.jpg                                  ; image/jpg+xml                 ;         ;                                     
-                    ;                         ; /images/theme/img-blog-3.jpg  ; img-blog-3.jpg  ; $siteResource/images/theme/img-blog-3.jpg                                  ; image/jpg+xml                 ;         ;                                     
+                    ;                         ; /images/theme/img-blog-1.jpg  ; img-blog-1.jpg  ; $siteResource/images/theme/img-blog-1.jpg                                  ; image/jpg+xml                 ;         ;                                    
+                    ;                         ; /images/theme/img-blog-2.jpg  ; img-blog-2.jpg  ; $siteResource/images/theme/img-blog-2.jpg                                  ; image/jpg+xml                 ;         ;                                    
+                    ;                         ; /images/theme/img-blog-3.jpg  ; img-blog-3.jpg  ; $siteResource/images/theme/img-blog-3.jpg                                  ; image/jpg+xml                 ;         ;                                    
 
                     
 INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]                ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ; realfilename                 ; altText ; mime[] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;  
@@ -47,25 +47,25 @@ INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ; @me
                     ;                        ; /images/logo-panasonic1.svg ; $siteResource/images/logo-panasonic.svg                                                     ; logo-panasonic.svg ;         ; image/svg+xml              ;                         ;                                   
                     
                     
-INSERT_UPDATE Media ; $contentCV[unique=true] ; code[unique=true]            ; realfilename   ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='image/jpg+xml'] ; altText ; folder(qualifier)[default='images'] 
-                    ;                         ; /images/theme/img-blog-1.jpg ; img-blog-1.jpg ; $siteResource/images/theme/img-blog-1.jpg                                  ; image/jpg+xml                 ;         ;                                     
-                    ;                         ; /images/theme/img-blog-2.jpg ; img-blog-2.jpg ; $siteResource/images/theme/img-blog-2.jpg                                  ; image/jpg+xml                 ;         ;                                     
-                    ;                         ; /images/theme/img-blog-3.jpg ; img-blog-3.jpg ; $siteResource/images/theme/img-blog-3.jpg                                  ; image/jpg+xml                 ;         ;
+INSERT_UPDATE Media ; $contentCV[unique=true] ; code[unique=true]            ; realfilename   ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='image/jpg+xml'] ; altText ; folder(qualifier)[default='images']
+                    ;                         ; /images/theme/img-blog-1.jpg ; img-blog-1.jpg ; $siteResource/images/theme/img-blog-1.jpg                                  ; image/jpg+xml                 ;         ;                                    
+                    ;                         ; /images/theme/img-blog-2.jpg ; img-blog-2.jpg ; $siteResource/images/theme/img-blog-2.jpg                                  ; image/jpg+xml                 ;         ;                                    
+                    ;                         ; /images/theme/img-blog-3.jpg ; img-blog-3.jpg ; $siteResource/images/theme/img-blog-3.jpg                                  ; image/jpg+xml                 ;         ;                                    
 
 
-INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ;description                                 ; realfilename                 ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;
-                    ;                        ; /images/theme/inspected123.png     ; $siteResource/images/theme/icon-used-inspected.png                                   ;Inspected & cleaned by our experts          ; icon-used-inspected          ;         ;image/png+xml
-                    ;                        ; /images/theme/guarantee123.png     ; $siteResource/images/theme/icon-used-guarantee.png                                   ;We guarantee your gear will work perfectly  ; icon-used-guarantee          ;         ;image/png+xml
-                    ;                        ; /images/theme/condition123.png     ; $siteResource/images/theme/icon-used-condition.png                                   ;Know what to expect with condition details  ;icon-used-condition           ;         ;image/png+xml
-                    ;                        ; /images/theme/returns123.png       ; $siteResource/images/theme/icon-used-returns.png                                   ;Try it yourself with easy returns           ; icon-used-returns            ;         ;image/png+xml
+INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]              ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ; description                                ; realfilename        ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;  
+                    ;                        ; /images/theme/inspected123.png ; $siteResource/images/theme/icon-used-inspected.png                                          ; Inspected & cleaned by our experts         ; icon-used-inspected ;         ; image/png+xml              
+                    ;                        ; /images/theme/guarantee123.png ; $siteResource/images/theme/icon-used-guarantee.png                                          ; We guarantee your gear will work perfectly ; icon-used-guarantee ;         ; image/png+xml              
+                    ;                        ; /images/theme/condition123.png ; $siteResource/images/theme/icon-used-condition.png                                          ; Know what to expect with condition details ; icon-used-condition ;         ; image/png+xml              
+                    ;                        ; /images/theme/returns123.png   ; $siteResource/images/theme/icon-used-returns.png                                            ; Try it yourself with easy returns          ; icon-used-returns   ;         ; image/png+xml              
 
-INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ;redirectUrl                                         ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ; realfilename           ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;
-                    ;                        ; /images/logo-youtube1.svg    ;https://www.youtube.com/user/BorrowLenses/featured  ; $siteResource/images/icon-youtube.svg                                                         ; logo-youtube.svg     ;         ; image/svg+xml              ;                         ;
-                    ;                        ; /images/logo-instagram1.svg  ;https://instagram.com/borrowlenses                  ; $siteResource/images/icon-instagram.svg                                                       ; logo-instagram.svg   ;         ; image/svg+xml              ;                         ;
-                    ;                        ; /images/logo-facebook1.svg   ;http://facebook.com/Borrowlenses                   ; $siteResource/images/icon-facebook.svg                                                        ; logo-facebook.svg    ;         ; image/svg+xml              ;                         ;
+INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ; redirectUrl                                        ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ; realfilename       ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;  
+                    ;                        ; /images/logo-youtube1.svg   ; https://www.youtube.com/user/BorrowLenses/featured ; $siteResource/images/icon-youtube.svg                                                       ; logo-youtube.svg   ;         ; image/svg+xml              ;                         ;                                   
+                    ;                        ; /images/logo-instagram1.svg ; https://instagram.com/borrowlenses                 ; $siteResource/images/icon-instagram.svg                                                     ; logo-instagram.svg ;         ; image/svg+xml              ;                         ;                                   
+                    ;                        ; /images/logo-facebook1.svg  ; http://facebook.com/Borrowlenses                   ; $siteResource/images/icon-facebook.svg                                                      ; logo-facebook.svg  ;         ; image/svg+xml              ;                         ;                                   
 
 
-UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; $picture[lang=$lang]
+UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; $picture[lang=$lang]         
                                ;                         ; BLSiteLogoComponent ; /images/theme/bl-logo@2x.png ;  
                                
 UPDATE CustomNavigationPromoComponent ; $contentCV[unique=true] ; uid[unique=true]            ; $picture[lang=$lang]          
@@ -73,21 +73,21 @@ UPDATE CustomNavigationPromoComponent ; $contentCV[unique=true] ; uid[unique=tru
                                       ;                         ; BLNavigationPromoComponent2 ; /images/theme/promo430x95.png ;  
                                       
                                       
-UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique=true]     ; content[lang=$lang]                                                                                                                                                                                                                            
-                                   ;                         ; PromoBannerComponent ; "<p id=""desktopMessage"" class=""body14 d-none d-md-block""><a href=""#"">Black Friday</a>  •  20% off all rentals  •  Use code FRIDAY</p><p id=""mobileMessage"" class=""body14 d-block d-md-none"">20% off rentals  •  Use code FRIDAY</p>" 
+UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique=true]     ; content[lang=$lang]                                                                                                                                                                                                                           
+                                   ;                         ; PromoBannerComponent ; "<p id=""desktopMessage"" class=""body14 d-none d-md-block""><a href=""#"">Black Friday</a>  •  20% off all rentals  •  Use code FRIDAY</p><p id=""mobileMessage"" class=""body14 d-block d-md-none"">20% off rentals  •  Use code FRIDAY</p>"
                                    
                                    
-UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]               ; mode[lang=$lang] ; title[lang=$lang]  ; content[lang=$lang]                           
-                                  ;                         ; PickUpOrDeliveryLinkComponent1 ; Fast             ; Ship to an address ; "Free 2-day shipping on orders $149+"         
-                                  ;                         ; PickUpOrDeliveryLinkComponent2 ; Faster           ; BL pickup          ; "Lorem ipsum waeoim awoi mawe awefwea aweoim" 
-                                  ;                         ; PickUpOrDeliveryLinkComponent3 ; Fastest          ; Ship to an address ; "Lorem ipsum waeoim awoi mawe awefwea aweoim" 
-                                  ;                         ; PickUpOrDeliveryLinkComponent4 ; Lightning Speed  ; Ship to an address ; "Lorem ipsum waeoim awoi mawe awefwea aweoim" 
+UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]               ; mode[lang=$lang] ; title[lang=$lang]  ; content[lang=$lang]                          
+                                  ;                         ; PickUpOrDeliveryLinkComponent1 ; Fast             ; Ship to an address ; "Free 2-day shipping on orders $149+"        
+                                  ;                         ; PickUpOrDeliveryLinkComponent2 ; Faster           ; BL pickup          ; "Lorem ipsum waeoim awoi mawe awefwea aweoim"
+                                  ;                         ; PickUpOrDeliveryLinkComponent3 ; Fastest          ; Ship to an address ; "Lorem ipsum waeoim awoi mawe awefwea aweoim"
+                                  ;                         ; PickUpOrDeliveryLinkComponent4 ; Lightning Speed  ; Ship to an address ; "Lorem ipsum waeoim awoi mawe awefwea aweoim"
                                   
-UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]      ; title[lang=$lang] ; content[lang=$lang]                                                                                                                                  
-                                  ;                         ; SupportLinkComponent1 ; How It Works      ; "We make it easy to rent the right gear every time."                                                                                                 
-                                  ;                         ; SupportLinkComponent2 ; FAQs              ; "Check out our FAQs for info on just about everything."                                                                                              
-                                  ;                         ; SupportLinkComponent3 ; Ask a Gearhead    ; "Need advice on putting together your kit? We are standing by to help."                                                                              
-                                  ;                         ; SupportLinkComponent4 ; Customer Support  ; "<a href=""mailto:Help@BorrowLenses.com"">Help@BorrowLenses.com</a><br>Live Chat: Daily 9am-3pmEST<br><a href=""tel:844-853-6737"">844-853-6737</a>" 
+UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]      ; title[lang=$lang] ; content[lang=$lang]                                                                                                                                 
+                                  ;                         ; SupportLinkComponent1 ; How It Works      ; "We make it easy to rent the right gear every time."                                                                                                
+                                  ;                         ; SupportLinkComponent2 ; FAQs              ; "Check out our FAQs for info on just about everything."                                                                                             
+                                  ;                         ; SupportLinkComponent3 ; Ask a Gearhead    ; "Need advice on putting together your kit? We are standing by to help."                                                                             
+                                  ;                         ; SupportLinkComponent4 ; Customer Support  ; "<a href=""mailto:Help@BorrowLenses.com"">Help@BorrowLenses.com</a><br>Live Chat: Daily 9am-3pmEST<br><a href=""tel:844-853-6737"">844-853-6737</a>"
                                   
                                   
                                   
@@ -105,30 +105,30 @@ UPDATE CustomFeaturedStoriesComponent ; $contentCV[unique=true] ; uid[unique=tru
                                       ;                         ; HomePageFeaturedStoriesComponent5 ; /images/theme/img-blog-2.jpg ;  
                                       ;                         ; HomePageFeaturedStoriesComponent6 ; /images/theme/img-blog-3.jpg ;  
                                       
-UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; $picture[lang=$lang]            ;visible
-                             ;                         ; CustomBorrowComponent1 ; /images/logo-netflix1.svg       ;false 	
-                             ;                         ; CustomBorrowComponent2 ; /images/logo-disney1.svg        ;false
-                             ;                         ; CustomBorrowComponent3 ; /images/logo-hbo1.svg           ;false
-                             ;                         ; CustomBorrowComponent4 ; /images/logo-animal-planet1.svg ;false
-                             ;                         ; CustomBorrowComponent5 ; /images/logo-al-jazeera1.svg    ;false
+UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; $picture[lang=$lang]            ; visible
+                             ;                         ; CustomBorrowComponent1 ; /images/logo-netflix1.svg       ; false  
+                             ;                         ; CustomBorrowComponent2 ; /images/logo-disney1.svg        ; false  
+                             ;                         ; CustomBorrowComponent3 ; /images/logo-hbo1.svg           ; false  
+                             ;                         ; CustomBorrowComponent4 ; /images/logo-animal-planet1.svg ; false  
+                             ;                         ; CustomBorrowComponent5 ; /images/logo-al-jazeera1.svg    ; false  
                              
-UPDATE RotatingHomePageImagesComponent ; $contentCV[unique=true] ; uid[unique=true]                 ; $picture[lang=$lang]             
-                                       ;                         ; RotatingHomePageImagesComponent1 ; pexels-taryn-elliott-5271713.mp4 
-                                       ;                         ; RotatingHomePageImagesComponent2 ; production_ID_49119834.mp4       
-                                       ;                         ; RotatingHomePageImagesComponent3 ; pexels-cottonbro-59671434.mp4    
+UPDATE RotatingHomePageImagesComponent ; $contentCV[unique=true] ; uid[unique=true]                 ; $picture[lang=$lang]            
+                                       ;                         ; RotatingHomePageImagesComponent1 ; pexels-taryn-elliott-5271713.mp4
+                                       ;                         ; RotatingHomePageImagesComponent2 ; production_ID_49119834.mp4      
+                                       ;                         ; RotatingHomePageImagesComponent3 ; pexels-cottonbro-59671434.mp4   
                                        
-UPDATE HomePageCategoriesCarouselComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; $picture[lang=$lang] ; urlLink                         ; imagetitle[lang=$lang] 
-                                           ;                         ; HomePageCategoriesCarouselComponent1 ; /cat-cameras.png     ; "/rent/category/cameras"            ; Camera
-                                           ;                         ; HomePageCategoriesCarouselComponent2 ; /cat-lenses.png      ; "/rent/category/brands/Sony"           ; Sony
-                                           ;                         ; HomePageCategoriesCarouselComponent3 ; /cat-lighting.png    ; "/rent/category/brands/Panasonic" ; Panasonic
-                                           ;                         ; HomePageCategoriesCarouselComponent4 ; /cat-support.png     ; "/rent/category/brands/nikon"         ; Nikon
-                                           ;                         ; HomePageCategoriesCarouselComponent5 ; /img-blog-1.jpg      ; "/rent/category/brands/canon"         ; Kodak
-                                           ;                         ; HomePageCategoriesCarouselComponent6 ; /img-blog-2.jpg      ; "/rent/category/cameras"            ; Camera
+UPDATE HomePageCategoriesCarouselComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; $picture[lang=$lang] ; urlLink                           ; imagetitle[lang=$lang]
+                                           ;                         ; HomePageCategoriesCarouselComponent1 ; /cat-cameras.png     ; "/rent/category/cameras"          ; Camera                
+                                           ;                         ; HomePageCategoriesCarouselComponent2 ; /cat-lenses.png      ; "/rent/category/brands/Sony"      ; Sony                  
+                                           ;                         ; HomePageCategoriesCarouselComponent3 ; /cat-lighting.png    ; "/rent/category/brands/Panasonic" ; Panasonic             
+                                           ;                         ; HomePageCategoriesCarouselComponent4 ; /cat-support.png     ; "/rent/category/brands/nikon"     ; Nikon                 
+                                           ;                         ; HomePageCategoriesCarouselComponent5 ; /img-blog-1.jpg      ; "/rent/category/brands/canon"     ; Kodak                 
+                                           ;                         ; HomePageCategoriesCarouselComponent6 ; /img-blog-2.jpg      ; "/rent/category/cameras"          ; Camera                
                                            
-UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; $picture[lang=$lang]        ; urlLink                  ; brandImageTitle[lang=$lang] 
-                             ;                         ; CustomBrandsComponent1 ; /images/logo-canon.svg      ; "/rent/category/brands/canon"         ; Canon
-                             ;                         ; CustomBrandsComponent2 ; /images/logo-sony.svg       ; "/rent/category/brands/Sony"           ; Sony
-                             ;                         ; CustomBrandsComponent3 ; /images/logo-nikon1.svg     ; "/rent/category/brands/nikon"         ; Nikon
-                             ;                         ; CustomBrandsComponent4 ; /images/logo-dji1.svg       ; "/rent/category/brands/DJI"             ; DJI
-                             ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg ; "/rent/category/brands/Panasonic" ; Panasonic
+UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; $picture[lang=$lang]        ; urlLink                           ; brandImageTitle[lang=$lang]
+                             ;                         ; CustomBrandsComponent1 ; /images/logo-canon.svg      ; "/rent/category/brands/canon"     ; Canon                      
+                             ;                         ; CustomBrandsComponent2 ; /images/logo-sony.svg       ; "/rent/category/brands/Sony"      ; Sony                       
+                             ;                         ; CustomBrandsComponent3 ; /images/logo-nikon1.svg     ; "/rent/category/brands/nikon"     ; Nikon                      
+                             ;                         ; CustomBrandsComponent4 ; /images/logo-dji1.svg       ; "/rent/category/brands/DJI"       ; DJI                        
+                             ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg ; "/rent/category/brands/Panasonic" ; Panasonic                  
 

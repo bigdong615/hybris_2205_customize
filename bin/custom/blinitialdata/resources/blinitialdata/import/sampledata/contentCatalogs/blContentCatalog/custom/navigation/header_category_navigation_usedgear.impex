@@ -44,8 +44,8 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]     ; $contentCV[unique=true
 #####################################################################
 #### Navigation Node Link  ####  
 #####################################################################
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name               ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow'] 
-                               ;                         ; UsedGearLink     ; UsedGear Node Link ; "#" ; usedgear                                     ;          ;               ; Used Gear            ;                                    
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name               ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow']
+                               ;                         ; UsedGearLink     ; UsedGear Node Link ; "#" ; usedgear                                     ;          ;               ; Used Gear            ;                                   
                                
                                
 #####################################################################
@@ -54,22 +54,22 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; na
 #####################################################################
 #### Navigation Node  ####     
 #####################################################################
-INSERT_UPDATE CMSNavigationNode ; uid[unique=true]             ; $contentCV[unique=true] ; name                  ; &nodeRef                     ; links(&linkRef) ;  
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]             ; $contentCV[unique=true] ; name                  ; &nodeRef                    ; links(&linkRef) ;  
 # Cameras -- all brands         
-                                ; AllUsedGearNavNode           ;                         ; All UsedGear Link     ; AllUsedGearNavNode           
-                                ; NewArrivalsNavNode_UsedGears ;                         ; New Arrivals Link     ; NewArrivalsNavNode_UsedGears 
-                                ; UsedLensesNavNode            ;                         ; Used Lenses Link      ; UsedLensesNavNode            
-                                ; UsedCamerasNavNode           ;                         ; Used Cameras Link     ; UsedCamerasNavNode           
-                                ; UsedLightingNavNode          ;                         ; Used Lighting Link    ; UsedLightingNavNode          
-                                ; UsedVideoGearNavNode         ;                         ; Used Video Gear Link  ; UsedVideoGearNavNode         
-                                ; UsedAccessoriesNavNode       ;                         ; Used Accessories Link ; UsedAccessoriesNavNode       
+                                ; AllUsedGearNavNode           ;                         ; All UsedGear Link     ; AllUsedGearNavNode          
+                                ; NewArrivalsNavNode_UsedGears ;                         ; New Arrivals Link     ; NewArrivalsNavNode_UsedGears
+                                ; UsedLensesNavNode            ;                         ; Used Lenses Link      ; UsedLensesNavNode           
+                                ; UsedCamerasNavNode           ;                         ; Used Cameras Link     ; UsedCamerasNavNode          
+                                ; UsedLightingNavNode          ;                         ; Used Lighting Link    ; UsedLightingNavNode         
+                                ; UsedVideoGearNavNode         ;                         ; Used Video Gear Link  ; UsedVideoGearNavNode        
+                                ; UsedAccessoriesNavNode       ;                         ; Used Accessories Link ; UsedAccessoriesNavNode      
                                 
 #####################################################################
 #####################################################################
 #### Navigation Node  ####      
 #####################################################################
-UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name          ; parent(uid, $contentCV) ; &nodeRef        ; children(uid,$contentCV)                                                                                                                             
-                         ; UsedGearNavNode  ;                         ; UsedGearLinks ; BLCategoryNavNode       ; UsedGearNavNode ; AllUsedGearNavNode,NewArrivalsNavNode_UsedGears,UsedLensesNavNode,UsedCamerasNavNode,UsedLightingNavNode,UsedVideoGearNavNode,UsedAccessoriesNavNode 
+UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name          ; parent(uid, $contentCV) ; &nodeRef        ; children(uid,$contentCV)                                                                                                                            
+                         ; UsedGearNavNode  ;                         ; UsedGearLinks ; BLCategoryNavNode       ; UsedGearNavNode ; AllUsedGearNavNode,NewArrivalsNavNode_UsedGears,UsedLensesNavNode,UsedCamerasNavNode,UsedLightingNavNode,UsedVideoGearNavNode,UsedAccessoriesNavNode
                          
 #####################################################################
 #### Navigation Node ENtry ####
@@ -88,15 +88,15 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                 ; $contentCV
 #####################################################################
 #### Navigation Node Link  ####  
 #####################################################################
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                  ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang] ;  
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                  ; url                              ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang] ;  
 # Cameras -- all cameras       
-                               ;                         ; AllUsedGearLink           ; AllUsedGear Link      ; "/buy/category/usedgear" ;                            ;                                    ; All Used Gear        ;
-                               ;                         ; NewArrivalsLink_UsedGears ; NewArrivals Link      ; "/buy/category/Used-NewArrivals" ;                            ;                                    ; New Arrivals         ;
-                               ;                         ; UsedLensesLink            ; Used Lenses Link      ; "/buy/category/Used-Lenses" ;                            ;                                    ; Used Lenses          ;
-                               ;                         ; UsedCamerasLink           ; Used Cameras Link     ; "/buy/category/Used-Cameras" ;                            ;                                    ; Used Cameras         ;
-                               ;                         ; UsedLightingLink          ; Used Lighting Link    ; "/buy/category/Used-Lighting" ;                            ;                                    ; Used Lighting        ;
-                               ;                         ; UsedVideoGearLink         ; Used VideoGear Link   ; "/buy/category/Used-Video" ;                            ;                                    ; Used Video Gear      ;
-                               ;                         ; UsedAccessoriesLink       ; Used Accessories Link ; "/buy/category/Used-Accessories" ;                            ;                                    ; Used Accessories     ;
+                               ;                         ; AllUsedGearLink           ; AllUsedGear Link      ; "/buy/category/usedgear"         ;                            ;                                    ; All Used Gear        ;  
+                               ;                         ; NewArrivalsLink_UsedGears ; NewArrivals Link      ; "/buy/category/Used-NewArrivals" ;                            ;                                    ; New Arrivals         ;  
+                               ;                         ; UsedLensesLink            ; Used Lenses Link      ; "/buy/category/Used-Lenses"      ;                            ;                                    ; Used Lenses          ;  
+                               ;                         ; UsedCamerasLink           ; Used Cameras Link     ; "/buy/category/Used-Cameras"     ;                            ;                                    ; Used Cameras         ;  
+                               ;                         ; UsedLightingLink          ; Used Lighting Link    ; "/buy/category/Used-Lighting"    ;                            ;                                    ; Used Lighting        ;  
+                               ;                         ; UsedVideoGearLink         ; Used VideoGear Link   ; "/buy/category/Used-Video"       ;                            ;                                    ; Used Video Gear      ;  
+                               ;                         ; UsedAccessoriesLink       ; Used Accessories Link ; "/buy/category/Used-Accessories" ;                            ;                                    ; Used Accessories     ;  
                                
                                
 #                              ; BLCategoryNavNode       ;                           ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode

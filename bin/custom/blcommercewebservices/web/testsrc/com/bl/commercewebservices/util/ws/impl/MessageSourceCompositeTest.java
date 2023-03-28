@@ -3,6 +3,10 @@
  */
 package com.bl.commercewebservices.util.ws.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 
 import org.junit.Before;
@@ -10,18 +14,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.internal.util.collections.Sets;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import org.mockito.junit.MockitoJUnitRunner;
 
 
 /**
  * Test suite for {@link MessageSourceComposite}
  */
 @UnitTest
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class MessageSourceCompositeTest
 {
 	private static final String TEST_OCC_EXT_MESSAGES_BUNDLE_RELATIVE_PATH = "classpath:/occ/v2/testocc/messages/base";

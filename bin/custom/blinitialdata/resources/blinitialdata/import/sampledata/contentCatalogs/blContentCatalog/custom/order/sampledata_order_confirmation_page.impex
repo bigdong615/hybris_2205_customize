@@ -20,6 +20,6 @@ $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCata
  
  
 ###  Assign Components to the Slots  ###
-UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                                ; cmsComponents(uid,$contentCV)                                                                                                                                                                               
-                   ;                         ; OrderConfirmationPageFeaturedStoriesTitleSlot   ; FeatureStoryTitleComponent                                                                                                                                                                                  
-                   ;                         ; OrderConfirmationPageFeaturedStoriesSectionSlot ; HomePageFeaturedStoriesComponent1,HomePageFeaturedStoriesComponent2,HomePageFeaturedStoriesComponent3,HomePageFeaturedStoriesComponent4,HomePageFeaturedStoriesComponent5,HomePageFeaturedStoriesComponent6 
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                                ; cmsComponents(uid,$contentCV)                                                                                                                                                                              
+                   ;                         ; OrderConfirmationPageFeaturedStoriesTitleSlot   ; FeatureStoryTitleComponent                                                                                                                                                                                 
+                   ;                         ; OrderConfirmationPageFeaturedStoriesSectionSlot ; HomePageFeaturedStoriesComponent1,HomePageFeaturedStoriesComponent2,HomePageFeaturedStoriesComponent3,HomePageFeaturedStoriesComponent4,HomePageFeaturedStoriesComponent5,HomePageFeaturedStoriesComponent6
