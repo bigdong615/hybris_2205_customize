@@ -203,12 +203,12 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
             if (orderModel.getVerificationStatus() != null && ((orderModel.getVerificationStatus().equals(VerificationStatusEnum.NA)|| (orderModel.getVerificationStatus().equals(VerificationStatusEnum.DENY)))))
             {
               ApproveOrderFlag = Boolean.TRUE;
+              break;
             }
 
             else
             {
               ApproveOrderFlag = Boolean.FALSE;
-              break;
             }
           }
           for (OrderModel orderModel : availableOrderForCustomer) {
@@ -227,25 +227,23 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
       }
       // Condition #1
 
-      long durationValue = 0l;
-      if (order.getRentalEndDate() != null && order.getRentalStartDate() != null) {
-        durationValue = order.getRentalEndDate().getTime() - order.getRentalStartDate().getTime();
-      }
+		if (sumOfGearValue >= threshouldGearValueThird)
+		{
+			order.setStatus(OrderStatus.VERIFICATION_REQUIRED);
+			startConsignmentSubProcess(consignments, process, true);
+		}
+		else if
 
-      if(sumOfGearValue >= threshouldGearValueThird)
-      {
-        order.setStatus(OrderStatus.VERIFICATION_REQUIRED);
-        startConsignmentSubProcess(consignments, process, true);
-      }
-      else if
-
-      (((sumOfGearValue > threshouldGearValue) && ApproveOrderFlag && RecentOrderFlag) ||
-              (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0) ||
-              LateOrderFlag || (durationValue <= 3 && completedOrderCount <= 2 && ApproveOrderFlag && RecentOrderFlag))
-      {
-        order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
-        startConsignmentSubProcess(consignments, process, true);
-      }
+		(((sumOfGearValue > threshouldGearValue) && ApproveOrderFlag && RecentOrderFlag)
+				|| (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0) || LateOrderFlag)
+		{
+			order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
+			startConsignmentSubProcess(consignments, process, true);
+		}
+		else
+		{
+			startConsignmentSubProcess(consignments, process, false);
+		}
     } else {
       startConsignmentSubProcess(consignments, process, false);
     }
