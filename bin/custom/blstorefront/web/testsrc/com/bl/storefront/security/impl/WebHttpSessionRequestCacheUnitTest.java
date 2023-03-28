@@ -14,19 +14,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.ArgumentMatcher;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class WebHttpSessionRequestCacheUnitTest
 {
 	//
@@ -49,7 +51,7 @@ public class WebHttpSessionRequestCacheUnitTest
 	@Before
 	public void prepare()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 
@@ -171,7 +173,7 @@ public class WebHttpSessionRequestCacheUnitTest
 	}
 
 
-	class DefaultSavedRequestArgumentMatcher extends ArgumentMatcher<DefaultSavedRequest>
+	class DefaultSavedRequestArgumentMatcher implements ArgumentMatcher<DefaultSavedRequest>
 	{
 
 		private final String url;
@@ -181,12 +183,13 @@ public class WebHttpSessionRequestCacheUnitTest
 			this.url = url;
 		}
 
+
 		@Override
-		public boolean matches(final Object argument)
+		public boolean matches(final DefaultSavedRequest argument)
 		{
 			if (argument instanceof DefaultSavedRequest)
 			{
-				final DefaultSavedRequest arg = (DefaultSavedRequest) argument;
+				final DefaultSavedRequest arg = argument;
 				return url.equals(arg.getRedirectUrl());
 			}
 			return false;

@@ -29,7 +29,7 @@
 					data-options="${fn:escapeXml(optionsJson)}">
 
 				<input type="text" id="litepicker" class="form-control"
-					placeholder="<spring:theme code="text.hero.banner.searchbox.datepicker.placeholder" />">
+					placeholder="<spring:theme code="text.hero.banner.searchbox.datepicker.placeholder" />" autocomplete="off">
 			</c:if>
 			<c:if test="${positionAttribute == 'MobileHomePageBannerSearchBoxSlot'}">
 				<input type="text" id="js-site-search-input-mob"

@@ -3,8 +3,8 @@
  */
 package com.braintree.method.impl;
 
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Matchers.anyObject;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,9 +33,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.braintree.command.request.BrainTreeAuthorizationRequest;
 import com.braintree.command.request.BrainTreeCloneTransactionRequest;
@@ -61,6 +62,7 @@ import com.braintreegateway.exceptions.NotFoundException;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BrainTreePaymentServiceImplTest
 {
 	public static final String CUSTOMER_ID = "CUSTOMER_ID";
@@ -99,7 +101,7 @@ public class BrainTreePaymentServiceImplTest
 	@Before
 	public void init()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test

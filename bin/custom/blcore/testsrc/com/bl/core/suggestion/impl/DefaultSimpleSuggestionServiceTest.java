@@ -7,7 +7,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import de.hybris.bootstrap.annotations.UnitTest;
-import com.bl.core.suggestion.dao.impl.DefaultSimpleSuggestionDao;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -16,19 +15,23 @@ import de.hybris.platform.core.model.user.UserModel;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.math.NumberUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.suggestion.dao.impl.DefaultSimpleSuggestionDao;
+
 
 
 /**
  * JUnit test suite for {@link DefaultSimpleSuggestionServiceTest}
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultSimpleSuggestionServiceTest
 {
 	@Mock
@@ -38,7 +41,7 @@ public class DefaultSimpleSuggestionServiceTest
 	@Before
 	public void setUp() throws Exception
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		defaultSimpleSuggestionService = new DefaultSimpleSuggestionService();
 		defaultSimpleSuggestionService.setSimpleSuggestionDao(simpleSuggestionDao);
 	}

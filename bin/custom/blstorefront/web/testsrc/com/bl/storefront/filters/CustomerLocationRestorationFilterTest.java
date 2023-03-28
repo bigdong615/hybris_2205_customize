@@ -3,8 +3,8 @@
  */
 package com.bl.storefront.filters;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -13,7 +13,6 @@ import static org.mockito.Mockito.verify;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.acceleratorfacades.customerlocation.CustomerLocationFacade;
 import de.hybris.platform.acceleratorservices.store.data.UserLocationData;
-import com.bl.storefront.security.cookie.CustomerLocationCookieGenerator;
 
 import java.io.IOException;
 
@@ -25,12 +24,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.storefront.security.cookie.CustomerLocationCookieGenerator;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class CustomerLocationRestorationFilterTest
 {
 
@@ -58,7 +61,7 @@ public class CustomerLocationRestorationFilterTest
 	@Before
 	public void setup()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		final Cookie cookie = mock(Cookie.class);
 		given(cookie.getName()).willReturn(COOKIE_NAME);
 		final Cookie[] cookies = { cookie };

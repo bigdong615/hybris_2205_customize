@@ -13,54 +13,54 @@ $lang=en
 
 
 # Create Email page Template
-INSERT_UPDATE EmailPageTemplate	;$contentCV[unique=true];uid[unique=true]		      ;name           ;active	;frontendTemplateName	;subject(code)							;htmlTemplate(code)		;restrictedPageTypes(code)
-                                   ;        ;ProductNotifyMeEmailTemplate;Product Out of Stock Email Template;true  ;ProductNotifyMeEmailTemplate ;bl_Email_Product_Notify_Me_Subject;bl_Email_Product_Notify_Me_Body ;EmailPage
-                                   ;        ;ProductBackInStockNotificationEmailTemplate;Product Back In Stock Email Template;true;productBackInStockNotificationEmailTemplate;bl_Email_Product_Back_In_Stock_Subject;bl_Email_Product_Back_In_Stock_Body;EmailPage
+INSERT_UPDATE EmailPageTemplate ; $contentCV[unique=true] ; uid[unique=true]                            ; name                                 ; active ; frontendTemplateName                        ; subject(code)                          ; htmlTemplate(code)                  ; restrictedPageTypes(code)
+                                ;                         ; ProductNotifyMeEmailTemplate                ; Product Out of Stock Email Template  ; true   ; ProductNotifyMeEmailTemplate                ; bl_Email_Product_Notify_Me_Subject     ; bl_Email_Product_Notify_Me_Body     ; EmailPage                
+                                ;                         ; ProductBackInStockNotificationEmailTemplate ; Product Back In Stock Email Template ; true   ; productBackInStockNotificationEmailTemplate ; bl_Email_Product_Back_In_Stock_Subject ; bl_Email_Product_Back_In_Stock_Body ; EmailPage                
 
 
-INSERT_UPDATE ContentSlotName;name[unique=true];template(uid,$contentCV)[unique=true][default='ProductNotifyMeEmailTemplate'];validComponentTypes(code)
-                             ;BlSiteLogo;;$wideContent;
-                             ;BlBottomSocialLink;;$wideContent;
-                             ;BlBottomContent;;$wideContent;
+INSERT_UPDATE ContentSlotName ; name[unique=true]  ; template(uid,$contentCV)[unique=true][default='ProductNotifyMeEmailTemplate'] ; validComponentTypes(code)
+                              ; BlSiteLogo         ;                                                                               ; $wideContent             ;  
+                              ; BlBottomSocialLink ;                                                                               ; $wideContent             ;  
+                              ; BlBottomContent    ;                                                                               ; $wideContent             ;  
 
-INSERT_UPDATE ContentSlotName;name[unique=true];template(uid,$contentCV)[unique=true][default='ProductBackInStockNotificationEmailTemplate'];validComponentTypes(code)
-                             ;BlSiteLogo;;$wideContent;
-                             ;BlBottomSocialLink;;$wideContent;
-                             ;BlBottomContent;;$wideContent;
+INSERT_UPDATE ContentSlotName ; name[unique=true]  ; template(uid,$contentCV)[unique=true][default='ProductBackInStockNotificationEmailTemplate'] ; validComponentTypes(code)
+                              ; BlSiteLogo         ;                                                                                              ; $wideContent             ;  
+                              ; BlBottomSocialLink ;                                                                                              ; $wideContent             ;  
+                              ; BlBottomContent    ;                                                                                              ; $wideContent             ;  
 
-INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active
-                         ;;BlSiteLogoSlot;BlSiteLogo Slot;true
-                         ;;BlBottomSocialLinkSlot; BlBottomSocialLink slot ;true
-                         ;;BlBottomContentSlot;BlBottomContent Slot;true
-
-# Bind Content Slots to Email Page Templates
-INSERT_UPDATE ContentSlotForTemplate;$contentCV[unique=true];uid[unique=true];position[unique=true];pageTemplate(uid,$contentCV)[unique=true][default='ProductNotifyMeEmailTemplate'];contentSlot(uid,$contentCV)[unique=true];allowOverwrite
-                                    ;;BlSiteLogo-ProductNotifyMeEmail;BlSiteLogo;;BlSiteLogoSlot;true
-                                    ;;BlBottomSocialLink-ProductNotifyMeEmail ;BlBottomSocialLink;;BlBottomSocialLinkSlot;true
-                                    ;;BlBottomContent-ProductNotifyMeEmail;BlBottomContent;;BlBottomContentSlot;true
+INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]       ; name                    ; active
+                          ;                         ; BlSiteLogoSlot         ; BlSiteLogo Slot         ; true  
+                          ;                         ; BlBottomSocialLinkSlot ; BlBottomSocialLink slot ; true  
+                          ;                         ; BlBottomContentSlot    ; BlBottomContent Slot    ; true  
 
 # Bind Content Slots to Email Page Templates
-INSERT_UPDATE ContentSlotForTemplate;$contentCV[unique=true];uid[unique=true];position[unique=true];pageTemplate(uid,$contentCV)[unique=true][default='ProductBackInStockNotificationEmailTemplate'];contentSlot(uid,$contentCV)[unique=true];allowOverwrite
-                                    ;;BlSiteLogo-ProductBackInStockNotificationEmail;BlSiteLogo;;BlSiteLogoSlot;true
-                                    ;;BlBottomSocialLink-ProductBackInStockNotificationEmail ;BlBottomSocialLink;;BlBottomSocialLinkSlot;true
-                                    ;;BlBottomContent-ProductBackInStockNotificationEmail;BlBottomContent;;BlBottomContentSlot;true
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                        ; position[unique=true] ; pageTemplate(uid,$contentCV)[unique=true][default='ProductNotifyMeEmailTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
+                                     ;                         ; BlSiteLogo-ProductNotifyMeEmail         ; BlSiteLogo            ;                                                                                   ; BlSiteLogoSlot                           ; true          
+                                     ;                         ; BlBottomSocialLink-ProductNotifyMeEmail ; BlBottomSocialLink    ;                                                                                   ; BlBottomSocialLinkSlot                   ; true          
+                                     ;                         ; BlBottomContent-ProductNotifyMeEmail    ; BlBottomContent       ;                                                                                   ; BlBottomContentSlot                      ; true          
+
+# Bind Content Slots to Email Page Templates
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                                       ; position[unique=true] ; pageTemplate(uid,$contentCV)[unique=true][default='ProductBackInStockNotificationEmailTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
+                                     ;                         ; BlSiteLogo-ProductBackInStockNotificationEmail         ; BlSiteLogo            ;                                                                                                  ; BlSiteLogoSlot                           ; true          
+                                     ;                         ; BlBottomSocialLink-ProductBackInStockNotificationEmail ; BlBottomSocialLink    ;                                                                                                  ; BlBottomSocialLinkSlot                   ; true          
+                                     ;                         ; BlBottomContent-ProductBackInStockNotificationEmail    ; BlBottomContent       ;                                                                                                  ; BlBottomContentSlot                      ; true          
 
 
-# Create Email Page
-INSERT_UPDATE EmailPage	;$contentCV[unique=true];uid[unique=true]	      ; name                        ;masterTemplate(uid,$contentCV)           ; defaultPage;approvalStatus(code)[default='approved'];
-                           ;              ;ProductNotifyMeEmail; Product notify me email page;ProductNotifyMeEmailTemplate;true; ;
-                          ;;ProductBackInStockNotificationEmail;Product Back In Stock Notification Email;ProductBackInStockNotificationEmailTemplate;true; ;
+# Create Email Page                  
+INSERT_UPDATE EmailPage ; $contentCV[unique=true] ; uid[unique=true]                    ; name                                     ; masterTemplate(uid,$contentCV)              ; defaultPage ; approvalStatus(code)[default='approved'] ;  
+                        ;                         ; ProductNotifyMeEmail                ; Product notify me email page             ; ProductNotifyMeEmailTemplate                ; true        ;                                          ;  
+                        ;                         ; ProductBackInStockNotificationEmail ; Product Back In Stock Notification Email ; ProductBackInStockNotificationEmailTemplate ; true        ;                                          ;  
 
 # Create Template Renderers
-INSERT_UPDATE RendererTemplate	;code[unique=true]			         ;contextClass								;templateScript[lang=en,translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator];rendererType(code)[default='velocity']
-                                  ;bl_Email_Product_Notify_Me_Body      ;$emailPackageName.ProductNotifyMeEmailContext ;$emailResource/email-productNotifyMeBody.vm
-                                  ;bl_Email_Product_Notify_Me_Subject   ;$emailPackageName.ProductNotifyMeEmailContext ;$emailResource/email-productNotifyMeSubject.vm
+INSERT_UPDATE RendererTemplate ; code[unique=true]                  ; contextClass                                  ; templateScript[lang=en,translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; rendererType(code)[default='velocity']
+                               ; bl_Email_Product_Notify_Me_Body    ; $emailPackageName.ProductNotifyMeEmailContext ; $emailResource/email-productNotifyMeBody.vm                                                                 
+                               ; bl_Email_Product_Notify_Me_Subject ; $emailPackageName.ProductNotifyMeEmailContext ; $emailResource/email-productNotifyMeSubject.vm                                                              
 
-# Email velocity templates
-INSERT_UPDATE RendererTemplate;code[unique=true];contextClass;rendererType(code)[default='velocity']
-                              ;bl_Email_Product_Back_In_Stock_Body;$emailPackageName.BlBackInStockNotificationEmailContext
-                              ;bl_Email_Product_Back_In_Stock_Subject;$emailPackageName.BlBackInStockNotificationEmailContext
+# Email velocity templates     
+INSERT_UPDATE RendererTemplate ; code[unique=true]                      ; contextClass                                           ; rendererType(code)[default='velocity']
+                               ; bl_Email_Product_Back_In_Stock_Body    ; $emailPackageName.BlBackInStockNotificationEmailContext
+                               ; bl_Email_Product_Back_In_Stock_Subject ; $emailPackageName.BlBackInStockNotificationEmailContext
 
-UPDATE RendererTemplate;code[unique=true];templateScript[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
-                       ;bl_Email_Product_Back_In_Stock_Body;$emailResource/email-productBackInStockBody.vm
-                       ;bl_Email_Product_Back_In_Stock_Subject;$emailResource/email-productBackInStockSubject.vm
+UPDATE RendererTemplate ; code[unique=true]                      ; templateScript[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
+                        ; bl_Email_Product_Back_In_Stock_Body    ; $emailResource/email-productBackInStockBody.vm                                                     
+                        ; bl_Email_Product_Back_In_Stock_Subject ; $emailResource/email-productBackInStockSubject.vm                                                  

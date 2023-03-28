@@ -2,8 +2,6 @@ package com.bl.facades.product.populator;
 
 import static de.hybris.platform.testframework.Assert.assertEquals;
 
-import com.bl.core.model.BlProductModel;
-import com.bl.facades.populators.BlWishlistOptionsPopulator;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -13,14 +11,18 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.wishlist2.Wishlist2Service;
 import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
 import de.hybris.platform.wishlist2.model.Wishlist2Model;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.util.ObjectUtils;
+
+import com.bl.core.model.BlProductModel;
+import com.bl.facades.populators.BlWishlistOptionsPopulator;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)

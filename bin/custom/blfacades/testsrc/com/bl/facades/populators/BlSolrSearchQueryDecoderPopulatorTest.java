@@ -6,14 +6,18 @@ import de.hybris.platform.commerceservices.enums.SearchQueryContext;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchQueryData;
 import de.hybris.platform.commerceservices.util.ConverterFactory;
 import de.hybris.platform.converters.impl.AbstractPopulatingConverter;
+
 import java.util.Collections;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BlSolrSearchQueryDecoderPopulatorTest {
 
   @InjectMocks
@@ -31,7 +35,7 @@ public class BlSolrSearchQueryDecoderPopulatorTest {
 
   @Before
   public void startUp() {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
   }
 
   // If Source is Null

@@ -3,7 +3,6 @@ package com.bl.storefront.controllers.pages;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.bl.storefront.validator.BlRegistrationValidator;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.acceleratorservices.config.SiteConfigService;
 import de.hybris.platform.acceleratorservices.storefront.util.PageTitleResolver;
@@ -21,18 +20,22 @@ import de.hybris.platform.commercefacades.user.data.RegisterData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.site.BaseSiteService;
+
 import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.ui.Model;
@@ -41,7 +44,10 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.support.BindingAwareModelMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.bl.storefront.validator.BlRegistrationValidator;
+
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class LoginPageControllerTest {
   @InjectMocks
   private final LoginPageController loginPageController = Mockito.spy(new LoginPageController());
@@ -92,7 +98,7 @@ public class LoginPageControllerTest {
   private SiteConfigService siteConfigService;
   @Mock
   private BaseSiteService baseSiteService;
-  private Locale locale =new Locale("en");
+  private final Locale locale =new Locale("en");
   @Mock
   private MessageSource messageSource;
   @Mock
@@ -103,7 +109,7 @@ public class LoginPageControllerTest {
   RegisterData data ;
   @Before
   public void prepare() throws CMSItemNotFoundException {
-    MockitoAnnotations.initMocks(this);
+	  //MockitoAnnotations.initMocks(this);
     data = new RegisterData();
     bindingResult= Mockito.spy(BindingResult.class);
     registerFormValidator= Mockito.spy(BlRegistrationValidator.class);

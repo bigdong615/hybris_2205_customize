@@ -46,8 +46,8 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]   ; $contentCV[unique=true] 
 #####################################################################
 #### Navigation Node Link  ####  
 #####################################################################
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name             ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow'] 
-                               ;                         ; BrandsLink       ; Brands Node Link ; "/Brands/c/brands" ; brands                                       ;          ;               ; Brands               ;
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name             ; url                ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow']
+                               ;                         ; BrandsLink       ; Brands Node Link ; "/Brands/c/brands" ; brands                                       ;          ;               ; Brands               ;                                   
                                
                                
 #####################################################################
@@ -56,30 +56,30 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; na
 #####################################################################
 #### Navigation Node  ####     
 #####################################################################
-INSERT_UPDATE CMSNavigationNode ; uid[unique=true]  ; $contentCV[unique=true] ; name            ; &nodeRef          ; links(&linkRef) ;  
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]  ; $contentCV[unique=true] ; name            ; &nodeRef         ; links(&linkRef) ;  
 # Brands -- all brands          
-                                ; CanonNavNode      ;                         ; Canon Link      ; CanonNavNode      
-                                ; SonyNavNode       ;                         ; Sony Link       ; SonyNavNode       
-                                ; NikonNavNode      ;                         ; Nikon Link      ; NikonNavNode      
-                                ; PanasonicNavNode  ;                         ; Panasonic Link  ; PanasonicNavNode  
-                                ; DJINavNode        ;                         ; DJI Link        ; DJINavNode        
-                                ; REDNavNode        ;                         ; DJI Link        ; REDNavNode        
-                                ; FujiNavNode       ;                         ; Fuji Link       ; FujiNavNode       
-                                ; ZeissNavNode      ;                         ; Zeiss Link      ; ZeissNavNode      
-                                ; ARRINavNode       ;                         ; ARRI Link       ; ARRINavNode       
-                                ; GoProNavNode      ;                         ; GoPro Link      ; GoProNavNode      
-                                ; SigmaNavNode      ;                         ; Sigma Link      ; SigmaNavNode      
-                                ; BlackmagicNavNode ;                         ; Blackmagic Link ; BlackmagicNavNode 
-                                ; ProfotoNavNode    ;                         ; Profoto Link    ; ProfotoNavNode    
-                                ; HasselbladNavNode ;                         ; Hasselblad Link ; HasselbladNavNode 
-                                ; AtomosNavNode     ;                         ; Atomos Link     ; AtomosNavNode     
+                                ; CanonNavNode      ;                         ; Canon Link      ; CanonNavNode     
+                                ; SonyNavNode       ;                         ; Sony Link       ; SonyNavNode      
+                                ; NikonNavNode      ;                         ; Nikon Link      ; NikonNavNode     
+                                ; PanasonicNavNode  ;                         ; Panasonic Link  ; PanasonicNavNode 
+                                ; DJINavNode        ;                         ; DJI Link        ; DJINavNode       
+                                ; REDNavNode        ;                         ; DJI Link        ; REDNavNode       
+                                ; FujiNavNode       ;                         ; Fuji Link       ; FujiNavNode      
+                                ; ZeissNavNode      ;                         ; Zeiss Link      ; ZeissNavNode     
+                                ; ARRINavNode       ;                         ; ARRI Link       ; ARRINavNode      
+                                ; GoProNavNode      ;                         ; GoPro Link      ; GoProNavNode     
+                                ; SigmaNavNode      ;                         ; Sigma Link      ; SigmaNavNode     
+                                ; BlackmagicNavNode ;                         ; Blackmagic Link ; BlackmagicNavNode
+                                ; ProfotoNavNode    ;                         ; Profoto Link    ; ProfotoNavNode   
+                                ; HasselbladNavNode ;                         ; Hasselblad Link ; HasselbladNavNode
+                                ; AtomosNavNode     ;                         ; Atomos Link     ; AtomosNavNode    
                                 
 #####################################################################
 #####################################################################
 #### Navigation Node  ####      
 #####################################################################
-UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name       ; parent(uid, $contentCV) ; &nodeRef      ; children(uid,$contentCV)                                                                                                                                                                                     
-                         ; BrandsNavNode    ;                         ; BrandLinks ; BLCategoryNavNode       ; BrandsNavNode ; CanonNavNode,SonyNavNode,NikonNavNode,PanasonicNavNode,DJINavNode,REDNavNode,FujiNavNode,ZeissNavNode,ARRINavNode,GoProNavNode,SigmaNavNode,BlackmagicNavNode,ProfotoNavNode,HasselbladNavNode,AtomosNavNode 
+UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name       ; parent(uid, $contentCV) ; &nodeRef      ; children(uid,$contentCV)                                                                                                                                                                                    
+                         ; BrandsNavNode    ;                         ; BrandLinks ; BLCategoryNavNode       ; BrandsNavNode ; CanonNavNode,SonyNavNode,NikonNavNode,PanasonicNavNode,DJINavNode,REDNavNode,FujiNavNode,ZeissNavNode,ARRINavNode,GoProNavNode,SigmaNavNode,BlackmagicNavNode,ProfotoNavNode,HasselbladNavNode,AtomosNavNode
                          
                          
 #####################################################################
@@ -107,23 +107,23 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]          ; $contentCV[unique
 #####################################################################
 #### Navigation Node Link  ####  
 #####################################################################
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=en] ;  
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url                                ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=en] ;  
 # Brands -- all brands         
-;                         ; CanonLink        ; Canon Link      ; "/rent/category/brands/canon" ; canon                      ;                                    ; Canon             ;
-;                         ; SonyLink         ; Sony Link       ; "/rent/category/brands/Sony" ; Sony                       ;                                    ; Sony              ;
-;                         ; NikonLink        ; Nikon Link      ; "/rent/category/brands/nikon" ; nikon                      ;                                    ; Nikon             ;
-;                         ; PanasonicLink    ; Panasonic Link  ; "/rent/category/brands/Panasonic" ; Panasonic                  ;                                    ; Panasonic         ;
-;                         ; DJILink          ; DJI Link        ; "/rent/category/brands/DJI" ; DJI                        ;                                    ; DJI               ;
-;                         ; REDLink          ; RED Link        ; "/rent/category/brands/RED" ; RED                        ;                                    ; RED               ;
-;                         ; FujiLink         ; Fuji Link       ; "/rent/category/brands/Fuji" ; Fuji                       ;                                    ; Fuji              ;
-;                         ; ZeissLink        ; Zeiss Link      ; "/rent/category/brands/Zeiss" ; Zeiss                      ;                                    ; Zeiss             ;
-;                         ; ARRILink         ; ARRI Link       ; "/rent/category/brands/ARRI" ; ARRI                       ;                                    ; ARRI              ;
-;                         ; GoProLink        ; GoPro Link      ; "/rent/category/brands/GoPro" ; GoPro                      ;                                    ; GoPro             ;
-;                         ; SigmaLink        ; Sigma Link      ; "/rent/category/brands/Sigma" ; Sigma                      ;                                    ; Sigma             ;
-;                         ; BlackmagicLink   ; Blackmagic Link ; "/rent/category/brands/Blackmagic" ; Blackmagic                 ;                                    ; Blackmagic        ;
-;                         ; ProfotoLink      ; Profoto Link    ; "/rent/category/brands/Profoto" ; Profoto                    ;                                    ; Profoto           ;
-;                         ; HasselbladLink   ; Hasselblad Link ; "/rent/category/brands/Hasselblad" ; Hasselblad                 ;                                    ; Hasselblad        ;
-;                         ; AtomosLink       ; Atomos Link     ; "/rent/category/brands/Atomos" ;Atomos                            ;                                    ; Atomos            ;
+                               ;                         ; CanonLink        ; Canon Link      ; "/rent/category/brands/canon"      ; canon                      ;                                    ; Canon             ;  
+                               ;                         ; SonyLink         ; Sony Link       ; "/rent/category/brands/Sony"       ; Sony                       ;                                    ; Sony              ;  
+                               ;                         ; NikonLink        ; Nikon Link      ; "/rent/category/brands/nikon"      ; nikon                      ;                                    ; Nikon             ;  
+                               ;                         ; PanasonicLink    ; Panasonic Link  ; "/rent/category/brands/Panasonic"  ; Panasonic                  ;                                    ; Panasonic         ;  
+                               ;                         ; DJILink          ; DJI Link        ; "/rent/category/brands/DJI"        ; DJI                        ;                                    ; DJI               ;  
+                               ;                         ; REDLink          ; RED Link        ; "/rent/category/brands/RED"        ; RED                        ;                                    ; RED               ;  
+                               ;                         ; FujiLink         ; Fuji Link       ; "/rent/category/brands/Fuji"       ; Fuji                       ;                                    ; Fuji              ;  
+                               ;                         ; ZeissLink        ; Zeiss Link      ; "/rent/category/brands/Zeiss"      ; Zeiss                      ;                                    ; Zeiss             ;  
+                               ;                         ; ARRILink         ; ARRI Link       ; "/rent/category/brands/ARRI"       ; ARRI                       ;                                    ; ARRI              ;  
+                               ;                         ; GoProLink        ; GoPro Link      ; "/rent/category/brands/GoPro"      ; GoPro                      ;                                    ; GoPro             ;  
+                               ;                         ; SigmaLink        ; Sigma Link      ; "/rent/category/brands/Sigma"      ; Sigma                      ;                                    ; Sigma             ;  
+                               ;                         ; BlackmagicLink   ; Blackmagic Link ; "/rent/category/brands/Blackmagic" ; Blackmagic                 ;                                    ; Blackmagic        ;  
+                               ;                         ; ProfotoLink      ; Profoto Link    ; "/rent/category/brands/Profoto"    ; Profoto                    ;                                    ; Profoto           ;  
+                               ;                         ; HasselbladLink   ; Hasselblad Link ; "/rent/category/brands/Hasselblad" ; Hasselblad                 ;                                    ; Hasselblad        ;  
+                               ;                         ; AtomosLink       ; Atomos Link     ; "/rent/category/brands/Atomos"     ; Atomos                     ;                                    ; Atomos            ;  
 
 
 #                              ; BLCategoryNavNode       ;                  ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode

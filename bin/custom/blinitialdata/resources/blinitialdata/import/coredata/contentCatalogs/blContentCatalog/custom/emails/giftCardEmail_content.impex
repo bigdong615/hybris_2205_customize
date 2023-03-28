@@ -15,52 +15,52 @@ $emailResource=jar:com.bl.core.setup.CoreSystemSetup&/blcore/import/emails
 
 
 # Import config properties into impex macros
-UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor];pk[unique=true]
-$jarResourceCms=$config-jarResourceCmsValue
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true]
+$jarResourceCms=$config-jarResourceCmsValue                                                                
 
 
-#GiftCard US Email Template
-INSERT_UPDATE EmailPageTemplate; $contentCV[unique = true]; uid[unique = true]    ; name                       ; active; frontendTemplateName; subject(code)         ; htmlTemplate(code) ; restrictedPageTypes(code)
-                               ;                          ; GiftCardEmailTemplate ; GiftCard Us Email Template ; true  ; giftCardEmail       ; email-giftCardSubject ; email-giftCardBody ; EmailPage
+#GiftCard US Email Template                                                                                
+INSERT_UPDATE EmailPageTemplate ; $contentCV[unique = true] ; uid[unique = true]    ; name                       ; active ; frontendTemplateName ; subject(code)         ; htmlTemplate(code) ; restrictedPageTypes(code)
+                                ;                           ; GiftCardEmailTemplate ; GiftCard Us Email Template ; true   ; giftCardEmail        ; email-giftCardSubject ; email-giftCardBody ; EmailPage                
 
-UPDATE EmailPageTemplate; $contentCV[unique = true]; uid[unique = true]    ; velocityTemplate[translator = de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
-                        ;                          ; GiftCardEmailTemplate ; $jarResourceCms/structure-view/structure_giftCardEmailTemplate.vm
+UPDATE EmailPageTemplate ; $contentCV[unique = true] ; uid[unique = true]    ; velocityTemplate[translator = de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
+                         ;                           ; GiftCardEmailTemplate ; $jarResourceCms/structure-view/structure_giftCardEmailTemplate.vm                                      
 
-INSERT_UPDATE ContentSlotName; name[unique = true]; template(uid, $contentCV)[unique = true][default = 'GiftCardEmailTemplate']; validComponentTypes(code)
-                             ; SiteLogo           ;                                                                            ;              ; logo
-                             ; TopContent         ;                                                                            ; $wideContent ;
-                             ; BottomContent      ;                                                                            ; $wideContent ;
+INSERT_UPDATE ContentSlotName ; name[unique = true] ; template(uid, $contentCV)[unique = true][default = 'GiftCardEmailTemplate'] ; validComponentTypes(code)
+                              ; SiteLogo            ;                                                                             ;                          ; logo
+                              ; TopContent          ;                                                                             ; $wideContent             ;     
+                              ; BottomContent       ;                                                                             ; $wideContent             ;     
 
-# Create Content Slots
-INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]; name                      ; active
-                         ;                          ; EmailTopSlot      ; Default Email Top Slot    ; true
-                         ;                          ; EmailBottomSlot   ; Default Email Bottom Slot ; true
-                         ;                          ; EmailSiteLogoSlot ; Default Email Site Slot   ; true
-                         ;                          ; EmailHeaderSlot   ; Default Email Header Slot ; true
+# Create Content Slots        
+INSERT_UPDATE ContentSlot ; $contentCV[unique = true] ; uid[unique = true] ; name                      ; active
+                          ;                           ; EmailTopSlot       ; Default Email Top Slot    ; true  
+                          ;                           ; EmailBottomSlot    ; Default Email Bottom Slot ; true  
+                          ;                           ; EmailSiteLogoSlot  ; Default Email Site Slot   ; true  
+                          ;                           ; EmailHeaderSlot    ; Default Email Header Slot ; true  
 
 
-INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]          ; position[unique = true]; pageTemplate(uid, $contentCV)[unique = true][default = 'GiftCardEmailTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
-                                    ;                          ; SiteLogo-GiftCardEmail      ; SiteLogo               ;                                                                                ; EmailSiteLogoSlot                          ; true
-                                    ;                          ; TopContent-GiftCardEmail    ; TopContent             ;                                                                                ; EmailTopSlot                               ; true
-                                    ;                          ; BottomContent-GiftCardEmail ; BottomContent          ;                                                                                ; EmailBottomSlot                            ; true
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique = true] ; uid[unique = true]          ; position[unique = true] ; pageTemplate(uid, $contentCV)[unique = true][default = 'GiftCardEmailTemplate'] ; contentSlot(uid, $contentCV)[unique = true] ; allowOverwrite
+                                     ;                           ; SiteLogo-GiftCardEmail      ; SiteLogo                ;                                                                                 ; EmailSiteLogoSlot                           ; true          
+                                     ;                           ; TopContent-GiftCardEmail    ; TopContent              ;                                                                                 ; EmailTopSlot                                ; true          
+                                     ;                           ; BottomContent-GiftCardEmail ; BottomContent           ;                                                                                 ; EmailBottomSlot                             ; true          
 
-INSERT_UPDATE EmailPage; $contentCV[unique = true]; uid[unique = true]; fromEmail[lang = $lang];fromName[lang = $lang]; name           ; masterTemplate(uid, $contentCV); defaultPage; approvalStatus(code)[default = 'approved']
-                       ;                          ; GiftCardEmail     ;"no-reply@borrowLenses.com";"Borrow Lenses Customer Service Team";GiftCard Email ; GiftCardEmailTemplate          ; true       ;
+INSERT_UPDATE EmailPage ; $contentCV[unique = true] ; uid[unique = true] ; fromEmail[lang = $lang]     ; fromName[lang = $lang]                ; name           ; masterTemplate(uid, $contentCV) ; defaultPage ; approvalStatus(code)[default = 'approved']
+                        ;                           ; GiftCardEmail      ; "no-reply@borrowLenses.com" ; "Borrow Lenses Customer Service Team" ; GiftCard Email ; GiftCardEmailTemplate           ; true        ;                                           
 
 # Email velocity templates
-INSERT_UPDATE RendererTemplate; code[unique = true]   ; contextClass; rendererType(code)[default = 'velocity']
-                              ; email-giftCardBody    ; com.bl.facades.process.email.context.BlGiftCardEmailContext
-                              ; email-giftCardSubject ; com.bl.facades.process.email.context.BlGiftCardEmailContext
+INSERT_UPDATE RendererTemplate ; code[unique = true]   ; contextClass                                               ; rendererType(code)[default = 'velocity']
+                               ; email-giftCardBody    ; com.bl.facades.process.email.context.BlGiftCardEmailContext
+                               ; email-giftCardSubject ; com.bl.facades.process.email.context.BlGiftCardEmailContext
 
 #UPDATE EmailPage; $contentCV[unique = true]; uid[unique = true]; previewImage(code, $contentCV)
 #                ;                          ; GiftCardEmail     ; EmailPageModel_preview
 
-UPDATE EmailPage; $contentCV[unique = true]; uid[unique = true]
-                ;                          ; GiftCardEmail
+UPDATE EmailPage ; $contentCV[unique = true] ; uid[unique = true]
+                 ;                           ; GiftCardEmail     
 
 
-UPDATE RendererTemplate; code[unique = true]   ; description[lang = $lang]; templateScript[lang = $lang, translator = de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
-                       ; email-giftCardBody    ; "GiftCard Body"          ; $emailResource/email-giftCardBody.vm
-                       ; email-giftCardSubject ; "GiftCard Subject"       ; $emailResource/email-giftCardSubject.vm
+UPDATE RendererTemplate ; code[unique = true]   ; description[lang = $lang] ; templateScript[lang = $lang, translator = de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
+                        ; email-giftCardBody    ; "GiftCard Body"           ; $emailResource/email-giftCardBody.vm                                                                               
+                        ; email-giftCardSubject ; "GiftCard Subject"        ; $emailResource/email-giftCardSubject.vm                                                                            
 
 #End GiftCard Email Template

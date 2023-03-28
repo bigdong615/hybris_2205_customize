@@ -15,7 +15,7 @@
 <c:choose>
  <c:when test = "${fn:contains(orderData.user.name, ' ')}">
 	<c:set var = "firstName" value = "${fn:split(orderData.user.name, ' ')[0]}"/>
-    <c:set var = "lastName" value = "${fn:split(orderData.user.lastName, ' ')[1]}"/>
+  <%--  <c:set var = "lastName" value = "${fn:split(orderData.user.lastName, ' ')[1]}"/> --%>
  </c:when>
 <c:otherwise>
 	<c:set var = "firstName" value = "${orderData.user.name}"/>

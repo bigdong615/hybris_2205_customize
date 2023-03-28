@@ -10,16 +10,18 @@ import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ui.Model;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class AbstractSearchPageControllerUnitTest
 {
 
@@ -43,7 +45,7 @@ public class AbstractSearchPageControllerUnitTest
 	@Before
 	public void prepare()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 

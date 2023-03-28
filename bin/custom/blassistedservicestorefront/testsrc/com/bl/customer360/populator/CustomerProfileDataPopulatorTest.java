@@ -10,6 +10,8 @@
  */
 package com.bl.customer360.populator;
 
+import static org.mockito.ArgumentMatchers.anyObject;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 import com.bl.customer360.CustomerProfileData;
 import com.bl.customer360.populators.CustomerProfileDataPopulator;
@@ -67,7 +69,7 @@ public class CustomerProfileDataPopulatorTest
         Mockito.when(defaultBillingAddress.getPhone1()).thenReturn(null);
         Mockito.when(customerModel.getDefaultPaymentInfo()).thenReturn(paymentInfoModel);
 
-        Mockito.when(addressConverter.convert(Mockito.anyObject())).thenReturn(addressData);
+		  Mockito.when(addressConverter.convert(anyObject())).thenReturn(addressData);
 
         final CustomerProfileData profileData = new CustomerProfileData();
         customerProfileDataPopulator.populate(customerModel, profileData);
