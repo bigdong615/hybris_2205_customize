@@ -45,7 +45,7 @@
                               <hr>
                               <p>
                                 <b><spring:theme code="text.rental.cart.date"/></b>&emsp;
-                                <input type="text" class="form-control cart-picker" id="litepicker" placeholder="<spring:theme code="text.rental.cart.select.date"/>">
+                                <input type="text" class="form-control cart-picker" id="litepicker" placeholder="<spring:theme code="text.rental.cart.select.date"/>" autocomplete="off">
                               </p>
                               <c:forEach items="${cartData.entries}" var="entry">
                                  <cart:blRentalCartItem entry="${entry}" cartData="${cartData}" />

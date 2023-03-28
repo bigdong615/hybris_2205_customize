@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.bl.backoffice.wizards.renderer.WebScanToolRenderer;
+import com.bl.backoffice.wizards.util.WebScanToolUtil;
+import de.hybris.platform.core.Registry;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +30,8 @@ import com.hybris.cockpitng.config.jaxb.wizard.CustomType;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.hybris.cockpitng.widgets.configurableflow.FlowActionHandler;
 import com.hybris.cockpitng.widgets.configurableflow.FlowActionHandlerAdapter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.zul.impl.InputElement;
 
 
 /**
@@ -44,6 +49,9 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	private static final NotificationEvent.Level NOTIFICATION_LEVEL_WARNING = NotificationEvent.Level.WARNING;
 	private static final NotificationEvent.Level NOTIFICATION_LEVEL_SUCCESS = NotificationEvent.Level.SUCCESS;
 	private Boolean allowSuccessMsgDisplay;
+
+	@Autowired
+	private WebScanToolUtil webScanToolUtil;
 
 	/**
 	 * This OOB method which will perform actions on input barcodes form backoffice wizard
@@ -86,6 +94,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 				});
 				createResponseForScanResult(filteredBarcode);
 			}
+			this.triggerClear(webScanToolData, this.getWebScanToolUtil());
 		}
 	}
 
@@ -655,4 +664,35 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	{
 		this.allowSuccessMsgDisplay = allowSuccessMsgDisplay;
 	}
+
+	/**
+	 * javadoc
+	 *
+	 * This method will clear text box contents and set updated list to the WebScanToolData
+	 *
+	 * @param webScanToolData data
+	 * @param webScanToolUtil util
+	 */
+	public void triggerClear(final WebScanToolData webScanToolData, final WebScanToolUtil webScanToolUtil) {
+		final WebScanToolRenderer webScanToolRenderer = Registry.getApplicationContext().getBean("defaultWebScanToolRenderer",
+				WebScanToolRenderer.class);
+		if(webScanToolRenderer != null) {
+			final InputElement barcodeInput = webScanToolRenderer.getNewPwdInput();
+			if(barcodeInput != null) {
+				barcodeInput.setFocus(Boolean.TRUE);
+				barcodeInput.setText(StringUtils.EMPTY);
+				webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInput, webScanToolData);
+				webScanToolRenderer.setNewPwdInput(barcodeInput);
+			}
+		}
+	}
+
+	public WebScanToolUtil getWebScanToolUtil() {
+		return webScanToolUtil;
+	}
+
+	public void setWebScanToolUtil(WebScanToolUtil webScanToolUtil) {
+		this.webScanToolUtil = webScanToolUtil;
+	}
+
 }

@@ -56,7 +56,7 @@
                             <p>
                                 <b><spring:theme code="text.rental.cart.date"/></b>&emsp;
                                 <input type="text" class="form-control cart-picker" id="litepicker"
-                                placeholder="<spring:theme code="text.rental.cart.select.date"/>">
+                                placeholder="<spring:theme code="text.rental.cart.select.date"/>" autocomplete="off">
                             </p>
                             </c:if>
                             <input type="hidden" value="${shippingMethod}" id="shippingMethod">
