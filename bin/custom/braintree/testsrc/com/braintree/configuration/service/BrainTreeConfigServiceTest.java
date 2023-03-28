@@ -26,12 +26,14 @@ import java.util.Map;
 import org.apache.commons.configuration.Configuration;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BrainTreeConfigServiceTest
 {
 	private static final String PAYMENT_METHOD1 = "PAYMENT_METHOD1";
@@ -58,7 +60,7 @@ public class BrainTreeConfigServiceTest
 	@Before
 	public void init()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test

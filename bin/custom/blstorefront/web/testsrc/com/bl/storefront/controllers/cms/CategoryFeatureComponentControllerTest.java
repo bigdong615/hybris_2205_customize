@@ -14,27 +14,29 @@ import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.servicelayer.services.impl.DefaultCMSComponentService;
 import de.hybris.platform.commercefacades.product.data.CategoryData;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-import com.bl.storefront.controllers.ControllerConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.Model;
+
+import com.bl.storefront.controllers.ControllerConstants;
 
 
 /**
  * Unit test for {@link CategoryFeatureComponentController}
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class CategoryFeatureComponentControllerTest
 {
 	private static final String COMPONENT_UID = "componentUid";
@@ -68,7 +70,7 @@ public class CategoryFeatureComponentControllerTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		categoryFeatureComponentController = new CategoryFeatureComponentController();
 		categoryFeatureComponentController.setCmsComponentService(cmsComponentService);

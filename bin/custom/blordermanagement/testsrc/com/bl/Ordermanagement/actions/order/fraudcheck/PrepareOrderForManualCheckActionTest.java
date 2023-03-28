@@ -12,6 +12,7 @@
  */
 package com.bl.Ordermanagement.actions.order.fraudcheck;
 
+import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
@@ -22,9 +23,13 @@ import de.hybris.platform.task.RetryLaterException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
+@UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class PrepareOrderForManualCheckActionTest {
 
 	private PrepareOrderForManualCheckAction prepareOrderForManualCheck;
@@ -35,7 +40,7 @@ public class PrepareOrderForManualCheckActionTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		prepareOrderForManualCheck = new PrepareOrderForManualCheckAction();
 		prepareOrderForManualCheck.setModelService(modelService);
 		prepareOrderForManualCheck.setEventService(eventService);

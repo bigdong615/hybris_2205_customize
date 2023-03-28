@@ -3,8 +3,8 @@
  */
 package com.bl.storefront.filters;
 
+import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
-import com.bl.storefront.filters.AcceleratorAddOnFilter.ExtensionAccessor;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,15 +18,20 @@ import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.storefront.filters.AcceleratorAddOnFilter.ExtensionAccessor;
 
 
+@UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractAddOnFilterTest
 {
 	private static final Logger LOG = Logger.getLogger(AbstractAddOnFilterTest.class);
@@ -58,7 +63,7 @@ public abstract class AbstractAddOnFilterTest
 	public void prepare() throws IOException
 	{
 		//log("Starting ...");
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		webTargetResource = createWebTargetDir();
 		addOnSourceResource = new File(rootSandboxDir, ADDONTWO_NAME + "/acceleratoraddon" + getFolder());

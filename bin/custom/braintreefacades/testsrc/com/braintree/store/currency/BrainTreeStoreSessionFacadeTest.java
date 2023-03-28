@@ -21,17 +21,19 @@ import de.hybris.platform.servicelayer.model.ModelService;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.model.BrainTreePaymentInfoModel;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BrainTreeStoreSessionFacadeTest
 {
 
@@ -70,7 +72,7 @@ public class BrainTreeStoreSessionFacadeTest
 	@Before
 	public void init()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		final CurrencyModel currencyModel = mock(CurrencyModel.class);
 		when(commonI18NService.getCurrentCurrency()).thenReturn(currencyModel);
 		when(currencyConverter.convert(currencyModel)).thenReturn(currencyData);

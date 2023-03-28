@@ -1,5 +1,8 @@
 package com.bl.core.services.cart.impl;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceCartService;
@@ -9,21 +12,25 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.servicelayer.model.ModelService;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.*;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * @author Neeraj Singh
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultBlCartServiceTest {
 
   @InjectMocks
@@ -45,14 +52,14 @@ public class DefaultBlCartServiceTest {
 
   @Mock
   private CalculationService calculationService;
-  
-  private Date rentalStartDate = new Date();
-  
-  private Date rentalEndDate = new Date();
+
+  private final Date rentalStartDate = new Date();
+
+  private final Date rentalEndDate = new Date();
 
   @Before
   public void setup() {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     commerceCartService.setCommerceCartCalculationStrategy(cartCalculationStrategy);
     commerceCartService.setCommerceRemoveEntriesStrategy(commerceRemoveEntriesStrategy);
   }
@@ -70,7 +77,7 @@ public class DefaultBlCartServiceTest {
     commerceCartService.removeAllEntries(parameter);
     Mockito.verify(modelService, Mockito.times(1)).removeAll(entries);
   }
-  
+
   @Test
   public void testSetRentalDatesOnCart()
   {

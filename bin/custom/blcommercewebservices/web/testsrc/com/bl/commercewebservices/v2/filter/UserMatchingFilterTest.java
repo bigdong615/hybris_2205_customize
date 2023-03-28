@@ -3,6 +3,11 @@
  */
 package com.bl.commercewebservices.v2.filter;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commerceservices.user.UserMatchingService;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
@@ -10,32 +15,32 @@ import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.servlet.DispatcherType;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 
 /**
  * Test suite for {@link UserMatchingFilter}
  */
+@UnitTest
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class UserMatchingFilterTest
 {
 	static final String DEFAULT_REGEXP = "^/[^/]+/users/([^/]+)";
@@ -71,7 +76,7 @@ public class UserMatchingFilterTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		userMatchingFilter = new UserMatchingFilter()
 		{
 			@Override
@@ -86,6 +91,7 @@ public class UserMatchingFilterTest
 		userMatchingFilter.setSessionService(sessionService);
 		authorities = new ArrayList<>();
 		given(userService.getAnonymousUser()).willReturn(anonymousUserModel);
+		given(httpServletRequest.getDispatcherType()).willReturn(DispatcherType.REQUEST);
 	}
 
 	public void createAuthority(final String role, final String principal)
@@ -117,8 +123,6 @@ public class UserMatchingFilterTest
 		given(grantedAuthority.getAuthority()).willReturn(UserMatchingFilter.ROLE_ANONYMOUS);
 		authorities.add(grantedAuthority);
 		given(authentication.getAuthorities()).willReturn(authorities);
-		given(authentication.getPrincipal()).willReturn(ANONYMOUS_UID);
-		given(userService.getUserForUID(ANONYMOUS_UID)).willReturn(anonymousUserModel);
 
 		userMatchingFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 

@@ -12,17 +12,20 @@ import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.commerceservices.util.ConverterFactory;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-import com.bl.commercewebservices.queues.data.ProductExpressUpdateElementData;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.commercewebservices.queues.data.ProductExpressUpdateElementData;
 
 
 @SuppressWarnings("deprecation")
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class ProductExpressUpdateElementPopulatorTest
 {
 	private static final String PRODUCT_CODE = "productCode";
@@ -39,7 +42,7 @@ public class ProductExpressUpdateElementPopulatorTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		final ProductExpressUpdateElementPopulator productExpressUpdateElementPopulator = new ProductExpressUpdateElementPopulator();
 		productExpressUpdateElementConverter = new ConverterFactory<ProductModel, ProductExpressUpdateElementData, ProductExpressUpdateElementPopulator>()

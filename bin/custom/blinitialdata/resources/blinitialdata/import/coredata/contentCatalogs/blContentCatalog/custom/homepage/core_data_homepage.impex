@@ -18,161 +18,161 @@ $contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
  
 # Import modulegen config properties into impex macros
-UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true] 
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true]
 $jarResourceCms=$config-jarResourceCmsValue                                                                
                                                                                                            
 ###  Page Template For Borrow Lenses Home Page  ###                                                        
                                                                                                            
-INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; name                    ; frontendTemplateName      ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true] 
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; name                    ; frontendTemplateName      ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true]
                            ;                         ; LandingPage2Template ; Landing Page 2 Template ; layout/landingLayout2Page ; $jarResourceCms/structure-view/structure_landingPage2Template.vm                                      ; CategoryPage,ContentPage  
                            
                            
 ###  Define Content SlotNames  ###
-INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='LandingPage2Template'] ; validComponentTypes(code) ; compTypeGroup(code) 
-                              ; PromoBannerSlot                    ;                                                                       ;                           ; wide                
-                              ; SiteLogoHeaderSlot                 ;                                                                       ;                           ; logo                
-                              ; HeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink          
-                              ; HeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink          
-                              ; NavigationPromoSlot                ;                                                                       ;                           ; logo                
-                              ; NavigationBarSlot                  ;                                                                       ;                           ; navigation          
-                              ; NavigationBarMobileSlot            ;                                                                       ;                           ; navigation          
-                              ; MiniCartSlot                       ;                                                                       ;                           ; minicart            
-                              ; FooterSlot                         ;                                                                       ;                           ; footer              
-                              ; FooterSubscriptionSlot             ;                                                                       ;                           ; wide                
-                              ; FooterCopyRightslot                ;                                                                       ;                           ; wide                
-                              ; HomePageHeroBannerSlot             ;                                                                       ;                           ; wide                
-                              ; HomePageRentingGearSectionSlot     ;                                                                       ;                           ; wide                
-                              ; HomePageCategorySectionSlot        ;                                                                       ;                           ; wide                
-                              ; HomePageBrandSectionSlot           ;                                                                       ;                           ; wide                
-                              ; HomePageFeaturedGearSectionSlot    ;                                                                       ;                           ; wide                
-                              ; HomePageWhyBorrowLensesSectionSlot ;                                                                       ;                           ; wide                
-                              ; HomePageBorrowFromUsSectionSlot    ;                                                                       ;                           ; wide                
-                              ; HomePageFeaturedStoriesSectionSlot ;                                                                       ;                           ; wide                
-                              ; HomePageFeaturedStoriesTitleSlot   ;                                                                       ;                           ; wide                
-                              ; HomePageBrandTitleSlot             ;                                                                       ;                           ; wide                
-                              ; HomePageRentingGearIsEasyTitleSlot ;                                                                       ;                           ; wide                
-                              ; HomePageCategoriesTitleSlot        ;                                                                       ;                           ; wide                
-                              ; HomePageTheyBorrowFromUsTitleSlot  ;                                                                       ;                           ; wide                
-                              ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
-                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
-                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
-                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
-                              ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart                                                                                    
-                              ; HomePageBannerSearchBoxSlot              ;                                                                       ;                           ; searchbox            
-                              ; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox
-                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
-                              ; TopHeaderSlot                    ;                                                                             ;                           ; wide
+INSERT_UPDATE ContentSlotName ; name[unique=true]                   ; template(uid,$contentCV)[unique=true][default='LandingPage2Template'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                     ;                                                                       ;                           ; wide               
+                              ; SiteLogoHeaderSlot                  ;                                                                       ;                           ; logo               
+                              ; HeaderLinkForSupportSlot            ;                                                                       ;                           ; headerlink         
+                              ; HeaderLinkForShipOrPickupSlot       ;                                                                       ;                           ; headerlink         
+                              ; NavigationPromoSlot                 ;                                                                       ;                           ; logo               
+                              ; NavigationBarSlot                   ;                                                                       ;                           ; navigation         
+                              ; NavigationBarMobileSlot             ;                                                                       ;                           ; navigation         
+                              ; MiniCartSlot                        ;                                                                       ;                           ; minicart           
+                              ; FooterSlot                          ;                                                                       ;                           ; footer             
+                              ; FooterSubscriptionSlot              ;                                                                       ;                           ; wide               
+                              ; FooterCopyRightslot                 ;                                                                       ;                           ; wide               
+                              ; HomePageHeroBannerSlot              ;                                                                       ;                           ; wide               
+                              ; HomePageRentingGearSectionSlot      ;                                                                       ;                           ; wide               
+                              ; HomePageCategorySectionSlot         ;                                                                       ;                           ; wide               
+                              ; HomePageBrandSectionSlot            ;                                                                       ;                           ; wide               
+                              ; HomePageFeaturedGearSectionSlot     ;                                                                       ;                           ; wide               
+                              ; HomePageWhyBorrowLensesSectionSlot  ;                                                                       ;                           ; wide               
+                              ; HomePageBorrowFromUsSectionSlot     ;                                                                       ;                           ; wide               
+                              ; HomePageFeaturedStoriesSectionSlot  ;                                                                       ;                           ; wide               
+                              ; HomePageFeaturedStoriesTitleSlot    ;                                                                       ;                           ; wide               
+                              ; HomePageBrandTitleSlot              ;                                                                       ;                           ; wide               
+                              ; HomePageRentingGearIsEasyTitleSlot  ;                                                                       ;                           ; wide               
+                              ; HomePageCategoriesTitleSlot         ;                                                                       ;                           ; wide               
+                              ; HomePageTheyBorrowFromUsTitleSlot   ;                                                                       ;                           ; wide               
+                              ; MobileHeaderLinkForShipOrPickupSlot ;                                                                       ;                           ; headerlink         
+                              ; MobileHeaderLinkForSupportSlot      ;                                                                       ;                           ; headerlink         
+                              ; MobileHeaderLinkForAccountSlot      ;                                                                       ;                           ; headerlink         
+                              ; MobileHeaderBottomInfo              ;                                                                       ;                           ; wide               
+                              ; MobileMiniCartSlot                  ;                                                                       ;                           ; minicart           
+                              ; HomePageBannerSearchBoxSlot         ;                                                                       ;                           ; searchbox          
+                              ; MobileHomePageBannerSearchBoxSlot   ;                                                                       ;                           ; searchbox          
+                              ; SocialMediaSectionSlot              ;                                                                       ;                           ; wide               
+                              ; TopHeaderSlot                       ;                                                                       ;                           ; wide               
 
 
-INSERT_UPDATE ComponentTypeGroup ; code[unique=true] 
-                                 ; logo              
-                                 ; searchbox         
-                                 ; minicart          
-                                 ; headerlink        
-                                 ; wide              
-                                 ; narrow            
-                                 ; footer            
-                                 ; navigation        
-                                 ; mobile            
+INSERT_UPDATE ComponentTypeGroup ; code[unique=true]
+                                 ; logo             
+                                 ; searchbox        
+                                 ; minicart         
+                                 ; headerlink       
+                                 ; wide             
+                                 ; narrow           
+                                 ; footer           
+                                 ; navigation       
+                                 ; mobile           
                                  
-INSERT_UPDATE ComponentTypeGroups2ComponentType ; source(code)[unique=true] ; target(code)[unique=true]            
-                                                ; wide                      ; CustomPromoMessageComponent          
-                                                ; wide                      ; CustomBLParagraphComponent           
-                                                ; wide                      ; PickUpOrDeliveryNavigationComponent  
-                                                ; wide                      ; CustomWhyBorrowLensesBannerComponent 
-                                                ; wide                      ; CustomFeaturedStoriesComponent       
-                                                ; wide                      ; CustomBrandsComponent                
-                                                ; wide                      ; RentingGearIsEasyComponent           
-                                                ; headerlinks               ; PickUpOrDeliveryNavigationComponent  
-                                                ; headerlinks               ; SupportNavigationComponent           
-                                                ; wide                      ; RotatingHomePageImagesComponent      
-                                                ; logo                      ; CustomSiteLogoComponent              
-                                                ; wide                      ; HomePageCategoriesCarouselComponent  
-                                                ; footer                    ; CMSLinkComponent                     
-                                                ; minicart                  ; MiniCartComponent                    
-                                                ; navigation                ; CustomNavigationPromoComponent       
-                                                ; navigation                ; CategoryNavigationComponent          
+INSERT_UPDATE ComponentTypeGroups2ComponentType ; source(code)[unique=true] ; target(code)[unique=true]           
+                                                ; wide                      ; CustomPromoMessageComponent         
+                                                ; wide                      ; CustomBLParagraphComponent          
+                                                ; wide                      ; PickUpOrDeliveryNavigationComponent 
+                                                ; wide                      ; CustomWhyBorrowLensesBannerComponent
+                                                ; wide                      ; CustomFeaturedStoriesComponent      
+                                                ; wide                      ; CustomBrandsComponent               
+                                                ; wide                      ; RentingGearIsEasyComponent          
+                                                ; headerlinks               ; PickUpOrDeliveryNavigationComponent 
+                                                ; headerlinks               ; SupportNavigationComponent          
+                                                ; wide                      ; RotatingHomePageImagesComponent     
+                                                ; logo                      ; CustomSiteLogoComponent             
+                                                ; wide                      ; HomePageCategoriesCarouselComponent 
+                                                ; footer                    ; CMSLinkComponent                    
+                                                ; minicart                  ; MiniCartComponent                   
+                                                ; navigation                ; CustomNavigationPromoComponent      
+                                                ; navigation                ; CategoryNavigationComponent         
                                                 
                                                 
 ###  Define Content Slots  ###                  
-INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; name                                   ; active[default=true] 
-                          ;                         ; PromoBannerSlot                    ; Promo Banner Slot                      
-                          ;                         ; SiteLogoHeaderSlot                 ; Site Logo Header Slot                  
-                          ;                         ; NavigationPromoSlot                ; Navigation Promo Slot                  
-                          ;                         ; NavigationBarSlot                  ; Navigation Bar Slot                    
-                          ;                         ; NavigationBarMobileSlot            ; Navigation Bar Mobile Slot             
-                          ;                         ; HeaderLinkForSupportSlot           ; Header Link For Support Slot           
-                          ;                         ; HeaderLinkForShipOrPickupSlot      ; Header Link for ShipOrPickup Slot      
-                          ;                         ; MiniCartSlot                       ; Mini Cart Slot                         
-                          ;                         ; FooterSlot                         ; Footer Slot                            
-                          ;                         ; FooterSubscriptionSlot             ; Footer Subscription Slot               
-                          ;                         ; FooterCopyRightslot                ; Footer CopyRight slot                  
-                          ;                         ; HomePageHeroBannerSlot             ; HomePage Hero Banner Slot              
-                          ;                         ; HomePageBannerSearchBoxSlot        ; HomePage Banner Search Box Slot        
-                          ;                         ; HomePageBannerTextSlot             ; HomePage Banner Text Slot              
-                          ;                         ; HomePageRentingGearSectionSlot     ; Home & PDP Renting Gear is Easy Slot
-                          ;                         ; HomePageCategorySectionSlot        ; HomePage Category Section slot         
-                          ;                         ; HomePageBrandSectionSlot           ; HomePage Brand Section Slot            
-                          ;                         ; HomePageFeaturedGearSectionSlot    ; HomePage FeaturedGear Section Slot     
-                          ;                         ; HomePageWhyBorrowLensesSectionSlot ; HomePage Why BorrowLenses Section Slot 
-                          ;                         ; HomePageBorrowFromUsSectionSlot    ; HomePage BorrowFromUs Section Slot     
-                          ;                         ; HomePageFeaturedStoriesSectionSlot ; HomePage FeaturedStories Section Slot  
-                          ;                         ; HomePageFeaturedStoriesTitleSlot   ; HomePage FeaturedStories Title Slot    
-                          ;                         ; HomePageBrandTitleSlot             ; HomePage BrandTitle Slot               
-                          ;                         ; HomePageRentingGearIsEasyTitleSlot ; Home & PDP Renting Gear is Easy Title Slot
-                          ;                         ; HomePageCategoriesTitleSlot        ; HomePage Categories Title Slot         
-                          ;                         ; HomePageTheyBorrowFromUsTitleSlot  ; HomePage TheyBorrowFromUs Title Slot   
-                          ;                         ; MobileHeaderLinkForShipOrPickupSlot      ; Mobile Header Link for ShipOrPickup Slot;
-                          ;                         ; MobileHeaderLinkForSupportSlot           ; Mobile Header Link For Support Slot;
-                          ;                         ; MobileHeaderLinkForAccountSlot           ; Mobile Header Link For Account Slot;
-                          ;                         ; MobileHeaderBottomInfo             ; Mobile Header Bottom Info              ;           
-                          ;                         ; MobileMiniCartSlot                 ; Mobile Mini Cart Slot                                                   
-                          ;                         ; MobileHomePageBannerSearchBoxSlot  ; Mobile HomePage Banner Search Box Slot;
-                          ;                         ; SocialMediaSectionSlot             ; Social Media Section Slot
-                          ;                         ; TopHeaderSlot             ; Top HeaderSlot for ASM
+INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                    ; name                                      ; active[default=true]
+                          ;                         ; PromoBannerSlot                     ; Promo Banner Slot                         
+                          ;                         ; SiteLogoHeaderSlot                  ; Site Logo Header Slot                     
+                          ;                         ; NavigationPromoSlot                 ; Navigation Promo Slot                     
+                          ;                         ; NavigationBarSlot                   ; Navigation Bar Slot                       
+                          ;                         ; NavigationBarMobileSlot             ; Navigation Bar Mobile Slot                
+                          ;                         ; HeaderLinkForSupportSlot            ; Header Link For Support Slot              
+                          ;                         ; HeaderLinkForShipOrPickupSlot       ; Header Link for ShipOrPickup Slot         
+                          ;                         ; MiniCartSlot                        ; Mini Cart Slot                            
+                          ;                         ; FooterSlot                          ; Footer Slot                               
+                          ;                         ; FooterSubscriptionSlot              ; Footer Subscription Slot                  
+                          ;                         ; FooterCopyRightslot                 ; Footer CopyRight slot                     
+                          ;                         ; HomePageHeroBannerSlot              ; HomePage Hero Banner Slot                 
+                          ;                         ; HomePageBannerSearchBoxSlot         ; HomePage Banner Search Box Slot           
+                          ;                         ; HomePageBannerTextSlot              ; HomePage Banner Text Slot                 
+                          ;                         ; HomePageRentingGearSectionSlot      ; Home & PDP Renting Gear is Easy Slot      
+                          ;                         ; HomePageCategorySectionSlot         ; HomePage Category Section slot            
+                          ;                         ; HomePageBrandSectionSlot            ; HomePage Brand Section Slot               
+                          ;                         ; HomePageFeaturedGearSectionSlot     ; HomePage FeaturedGear Section Slot        
+                          ;                         ; HomePageWhyBorrowLensesSectionSlot  ; HomePage Why BorrowLenses Section Slot    
+                          ;                         ; HomePageBorrowFromUsSectionSlot     ; HomePage BorrowFromUs Section Slot        
+                          ;                         ; HomePageFeaturedStoriesSectionSlot  ; HomePage FeaturedStories Section Slot     
+                          ;                         ; HomePageFeaturedStoriesTitleSlot    ; HomePage FeaturedStories Title Slot       
+                          ;                         ; HomePageBrandTitleSlot              ; HomePage BrandTitle Slot                  
+                          ;                         ; HomePageRentingGearIsEasyTitleSlot  ; Home & PDP Renting Gear is Easy Title Slot
+                          ;                         ; HomePageCategoriesTitleSlot         ; HomePage Categories Title Slot            
+                          ;                         ; HomePageTheyBorrowFromUsTitleSlot   ; HomePage TheyBorrowFromUs Title Slot      
+                          ;                         ; MobileHeaderLinkForShipOrPickupSlot ; Mobile Header Link for ShipOrPickup Slot  ;                     
+                          ;                         ; MobileHeaderLinkForSupportSlot      ; Mobile Header Link For Support Slot       ;                     
+                          ;                         ; MobileHeaderLinkForAccountSlot      ; Mobile Header Link For Account Slot       ;                     
+                          ;                         ; MobileHeaderBottomInfo              ; Mobile Header Bottom Info                 ;                     
+                          ;                         ; MobileMiniCartSlot                  ; Mobile Mini Cart Slot                     
+                          ;                         ; MobileHomePageBannerSearchBoxSlot   ; Mobile HomePage Banner Search Box Slot    ;                     
+                          ;                         ; SocialMediaSectionSlot              ; Social Media Section Slot                 
+                          ;                         ; TopHeaderSlot                       ; Top HeaderSlot for ASM                    
 
 ###  Define ContentSlot For Template  ###
-INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='LandingPage2Template'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
-                                     ;                         ; PromoBannerSlot-LandingPage               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true           
-                                     ;                         ; SiteLogoHeaderSlot-LandingPage            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true           
-                                     ;                         ; NavigationPromoSlot-LandingPage           ; NavigationPromoSlot           ;                                                                           ; NavigationPromoSlot                      ; true           
-                                     ;                         ; NavigationBarSlot-LandingPage             ; NavigationBarSlot             ;                                                                           ; NavigationBarSlot                        ; true           
-                                     ;                         ; NavigationBarMobileSlot-LandingPage       ; NavigationBarMobileSlot       ;                                                                           ; NavigationBarMobileSlot                  ; true           
-                                     ;                         ; HeaderLinkForSupportSlot-LandingPage      ; HeaderLinkForSupportSlot      ;                                                                           ; HeaderLinkForSupportSlot                 ; true           
-                                     ;                         ; HeaderLinkForShipOrPickupSlot-LandingPage ; HeaderLinkForShipOrPickupSlot ;                                                                           ; HeaderLinkForShipOrPickupSlot            ; true           
-                                     ;                         ; MiniCartSlot-LandingPage                  ; MiniCartSlot                  ;                                                                           ; MiniCartSlot                             ; true           
-                                     ;                         ; FooterSlot-LandingPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true           
-                                     ;                         ; FooterSubscriptionSlot-LandingPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true           
-                                     ;                         ; FooterCopyRightslot-LandingPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true           
-                                     ;                         ; MobileHeaderLinkForShipOrPickupSlot-LandingPage ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
-                                     ;                         ; MobileHeaderLinkForSupportSlot-LandingPage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
-                                     ;                         ; MobileHeaderLinkForAccountSlot-LandingPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
-                                     ;                         ; MobileHeaderBottomInfo-LandingPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
-                                     ;                         ; MobileMiniCartSlot-LandingPage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
-                                     ;                         ; SocialMediaSectionSlot-LandingPage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
-                                     ;                         ; TopHeaderSlot-LandingPage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                                ; position[unique=true]               ; pageTemplate(uid,$contentCV)[unique=true][default='LandingPage2Template'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
+                                     ;                         ; PromoBannerSlot-LandingPage                     ; PromoBannerSlot                     ;                                                                           ; PromoBannerSlot                          ; true          
+                                     ;                         ; SiteLogoHeaderSlot-LandingPage                  ; SiteLogoHeaderSlot                  ;                                                                           ; SiteLogoHeaderSlot                       ; true          
+                                     ;                         ; NavigationPromoSlot-LandingPage                 ; NavigationPromoSlot                 ;                                                                           ; NavigationPromoSlot                      ; true          
+                                     ;                         ; NavigationBarSlot-LandingPage                   ; NavigationBarSlot                   ;                                                                           ; NavigationBarSlot                        ; true          
+                                     ;                         ; NavigationBarMobileSlot-LandingPage             ; NavigationBarMobileSlot             ;                                                                           ; NavigationBarMobileSlot                  ; true          
+                                     ;                         ; HeaderLinkForSupportSlot-LandingPage            ; HeaderLinkForSupportSlot            ;                                                                           ; HeaderLinkForSupportSlot                 ; true          
+                                     ;                         ; HeaderLinkForShipOrPickupSlot-LandingPage       ; HeaderLinkForShipOrPickupSlot       ;                                                                           ; HeaderLinkForShipOrPickupSlot            ; true          
+                                     ;                         ; MiniCartSlot-LandingPage                        ; MiniCartSlot                        ;                                                                           ; MiniCartSlot                             ; true          
+                                     ;                         ; FooterSlot-LandingPage                          ; FooterSlot                          ;                                                                           ; FooterSlot                               ; true          
+                                     ;                         ; FooterSubscriptionSlot-LandingPage              ; FooterSubscriptionSlot              ;                                                                           ; FooterSubscriptionSlot                   ; true          
+                                     ;                         ; FooterCopyRightslot-LandingPage                 ; FooterCopyRightslot                 ;                                                                           ; FooterCopyRightslot                      ; true          
+                                     ;                         ; MobileHeaderLinkForShipOrPickupSlot-LandingPage ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot      ; true          
+                                     ;                         ; MobileHeaderLinkForSupportSlot-LandingPage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot           ; true          
+                                     ;                         ; MobileHeaderLinkForAccountSlot-LandingPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot           ; true          
+                                     ;                         ; MobileHeaderBottomInfo-LandingPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                   ; true          
+                                     ;                         ; MobileMiniCartSlot-LandingPage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                       ; true          
+                                     ;                         ; SocialMediaSectionSlot-LandingPage              ; SocialMediaSectionSlot              ;                                                                           ; SocialMediaSectionSlot                   ; true          
+                                     ;                         ; TopHeaderSlot-LandingPage                       ; TopHeaderSlot                       ;                                                                           ; TopHeaderSlot                            ; true          
 
 
 ########################### Define Content slots for page######################
-INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                               ; position[unique=true]              ; page(uid,$contentCV)[unique=true][default='homepage'] ; contentSlot(uid,$contentCV)[unique=true] 
-                                 ;                         ; HomePageHeroBannerSlot-LandingPage             ; HomePageHeroBannerSlot             ;                                                       ; HomePageHeroBannerSlot                   ; true 
-                                 ;                         ; HomePageBannerSearchBoxSlot-LandingPage        ; HomePageBannerSearchBoxSlot        ;                                                       ; HomePageBannerSearchBoxSlot              ; true 
-                                 ;                         ; HomePageBannerTextSlot-LandingPage             ; HomePageBannerTextSlot             ;                                                       ; HomePageBannerTextSlot                   ; true 
-                                 ;                         ; HomePageRentingGearSectionSlot-LandingPage     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true 
-                                 ;                         ; HomePageCategorySectionSlot-LandingPage        ; HomePageCategorySectionSlot        ;                                                       ; HomePageCategorySectionSlot              ; true 
-                                 ;                         ; HomePageBrandSectionSlot-LandingPage           ; HomePageBrandSectionSlot           ;                                                       ; HomePageBrandSectionSlot                 ; true 
-                                 ;                         ; HomePageFeaturedGearSectionSlot-LandingPage    ; HomePageFeaturedGearSectionSlot    ;                                                       ; HomePageFeaturedGearSectionSlot          ; true 
-                                 ;                         ; HomePageWhyBorrowLensesSectionSlot-LandingPage ; HomePageWhyBorrowLensesSectionSlot ;                                                       ; HomePageWhyBorrowLensesSectionSlot       ; true 
-                                 ;                         ; HomePageBorrowFromUsSectionSlot-LandingPage    ; HomePageBorrowFromUsSectionSlot    ;                                                       ; HomePageBorrowFromUsSectionSlot          ; true 
-                                 ;                         ; HomePageFeaturedStoriesSectionSlot-LandingPage ; HomePageFeaturedStoriesSectionSlot ;                                                       ; HomePageFeaturedStoriesSectionSlot       ; true 
-                                 ;                         ; HomePageFeaturedStoriesTitleSlot-LandingPage   ; HomePageFeaturedStoriesTitleSlot   ;                                                       ; HomePageFeaturedStoriesTitleSlot         ; true 
-                                 ;                         ; HomePageBrandTitleSlot-LandingPage             ; HomePageBrandTitleSlot             ;                                                       ; HomePageBrandTitleSlot                   ; true 
-                                 ;                         ; HomePageRentingGearIsEasyTitleSlot-LandingPage ; HomePageRentingGearIsEasyTitleSlot ;                                                       ; HomePageRentingGearIsEasyTitleSlot       ; true 
-                                 ;                         ; HomePageCategoriesTitleSlot-LandingPage        ; HomePageCategoriesTitleSlot        ;                                                       ; HomePageCategoriesTitleSlot              ; true 
-                                 ;                         ; HomePageTheyBorrowFromUsTitleSlot-LandingPage  ; HomePageTheyBorrowFromUsTitleSlot  ;                                                       ; HomePageTheyBorrowFromUsTitleSlot        ; true 
-								 ;                         ; MobileHomePageBannerSearchBoxSlot-LandingPage  ; MobileHomePageBannerSearchBoxSlot  ;                                                       ; MobileHomePageBannerSearchBoxSlot              
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                               ; position[unique=true]              ; page(uid,$contentCV)[unique=true][default='homepage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; HomePageHeroBannerSlot-LandingPage             ; HomePageHeroBannerSlot             ;                                                       ; HomePageHeroBannerSlot                  ; true
+                                 ;                         ; HomePageBannerSearchBoxSlot-LandingPage        ; HomePageBannerSearchBoxSlot        ;                                                       ; HomePageBannerSearchBoxSlot             ; true
+                                 ;                         ; HomePageBannerTextSlot-LandingPage             ; HomePageBannerTextSlot             ;                                                       ; HomePageBannerTextSlot                  ; true
+                                 ;                         ; HomePageRentingGearSectionSlot-LandingPage     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot          ; true
+                                 ;                         ; HomePageCategorySectionSlot-LandingPage        ; HomePageCategorySectionSlot        ;                                                       ; HomePageCategorySectionSlot             ; true
+                                 ;                         ; HomePageBrandSectionSlot-LandingPage           ; HomePageBrandSectionSlot           ;                                                       ; HomePageBrandSectionSlot                ; true
+                                 ;                         ; HomePageFeaturedGearSectionSlot-LandingPage    ; HomePageFeaturedGearSectionSlot    ;                                                       ; HomePageFeaturedGearSectionSlot         ; true
+                                 ;                         ; HomePageWhyBorrowLensesSectionSlot-LandingPage ; HomePageWhyBorrowLensesSectionSlot ;                                                       ; HomePageWhyBorrowLensesSectionSlot      ; true
+                                 ;                         ; HomePageBorrowFromUsSectionSlot-LandingPage    ; HomePageBorrowFromUsSectionSlot    ;                                                       ; HomePageBorrowFromUsSectionSlot         ; true
+                                 ;                         ; HomePageFeaturedStoriesSectionSlot-LandingPage ; HomePageFeaturedStoriesSectionSlot ;                                                       ; HomePageFeaturedStoriesSectionSlot      ; true
+                                 ;                         ; HomePageFeaturedStoriesTitleSlot-LandingPage   ; HomePageFeaturedStoriesTitleSlot   ;                                                       ; HomePageFeaturedStoriesTitleSlot        ; true
+                                 ;                         ; HomePageBrandTitleSlot-LandingPage             ; HomePageBrandTitleSlot             ;                                                       ; HomePageBrandTitleSlot                  ; true
+                                 ;                         ; HomePageRentingGearIsEasyTitleSlot-LandingPage ; HomePageRentingGearIsEasyTitleSlot ;                                                       ; HomePageRentingGearIsEasyTitleSlot      ; true
+                                 ;                         ; HomePageCategoriesTitleSlot-LandingPage        ; HomePageCategoriesTitleSlot        ;                                                       ; HomePageCategoriesTitleSlot             ; true
+                                 ;                         ; HomePageTheyBorrowFromUsTitleSlot-LandingPage  ; HomePageTheyBorrowFromUsTitleSlot  ;                                                       ; HomePageTheyBorrowFromUsTitleSlot       ; true
+                                 ;                         ; MobileHomePageBannerSearchBoxSlot-LandingPage  ; MobileHomePageBannerSearchBoxSlot  ;                                                       ; MobileHomePageBannerSearchBoxSlot       
                                  
 ###  Create Content Page (HomePage)  ###
 # Site-wide Homepage             
-INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true] ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='true'] 
-                          ;                         ; homepage         ; Homepage ; LandingPage2Template           ; homepage 
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true] ; name     ; masterTemplate(uid,$contentCV) ; label   ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='true']
+                          ;                         ; homepage         ; Homepage ; LandingPage2Template           ; homepage

@@ -18,107 +18,107 @@ $contentCatalog = blContentCatalog
 $contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]), CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 
 # Import config properties into impex macros
-UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor]; pk[unique = true]
-$jarResourceCms = $config-jarResourceCmsValue
+UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique = true]
+$jarResourceCms = $config-jarResourceCmsValue                                                                
 
 
 
-INSERT_UPDATE PageTemplate; $contentCV[unique = true]; uid[unique = true]      ; name                       ; frontendTemplateName     ; restrictedPageTypes(code); active[default = true]
-                          ;                          ; ProductGridPageTemplate ; Product Grid Page Template ; category/productGridPage ; CategoryPage
+INSERT_UPDATE PageTemplate ; $contentCV[unique = true] ; uid[unique = true]      ; name                       ; frontendTemplateName     ; restrictedPageTypes(code) ; active[default = true]
+                           ;                           ; ProductGridPageTemplate ; Product Grid Page Template ; category/productGridPage ; CategoryPage              
 
 
-INSERT_UPDATE PageTemplate; $contentCV[unique = true]; uid[unique = true]      ; velocityTemplate[translator = de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
-                          ;                          ; ProductGridPageTemplate ; $jarResourceCms/structure-view/structure_ProductGridPageTemplate.vm
-
-
-
-# Create Content Slots
-INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]     ; name                            ; active
-                         ;                          ; SiteLogoSlot           ; Default Site Logo Slot          ; true
-                         ;                          ; HomepageNavLinkSlot    ; Default Homepage Link           ; true
-                         ;                          ; MiniCartSlot           ; Mini Cart                       ; true
-                         ;                          ; NavigationBarSlot      ; Navigation Bar                  ; true
-                         ;                          ; FooterSlot             ; Footer                          ; true
-                         ;                          ; HeaderLinksSlot        ; Header links                    ; true
-                         ;                          ; SearchBoxBl            ; Search Box                      ; true
-                         ;                          ; BlRentalGearBanner     ; Rental Gear Banner              ; true
-                         ;                          ; BlUsedGearBanner       ; Used Gear Banner                ; true
-                         ;                          ; TopHeaderSlot          ; Top Header                      ; true
-                         ;                          ; BottomHeaderSlot       ; Bottom Header                   ; true
-                         ;                          ; ProductLeftRefinements ; Refinements                     ; true
-                         ;                          ; ProductGridSlot        ; Product List                    ; true
-                         ;                          ; PlaceholderContentSlot ; Placeholder for Addon tag files ; true
-                         ;                         ; SocialMediaSectionSlot  ; Social Media Section Slot       ; true
-                         ;                         ; MobileMiniCartSlot      ;                                 ; true
+INSERT_UPDATE PageTemplate ; $contentCV[unique = true] ; uid[unique = true]      ; velocityTemplate[translator = de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
+                           ;                           ; ProductGridPageTemplate ; $jarResourceCms/structure-view/structure_ProductGridPageTemplate.vm                                    
 
 
 
-INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate']; validComponentTypes(code); compTypeGroup(code)
-                             ; SiteLogo                      ;                                                                              ;                          ; logo
-                             ; HeaderLinks                   ;                                                                              ;                          ; headerlinks
-                             ; SearchBoxBl                   ;                                                                              ;                          ; searchbox
-                             ; BlRentalGearBanner            ;                                                                              ;                          ; 
-                             ; BlUsedGearBanner              ;                                                                              ;                          ; 
-                             ; MiniCart                      ;                                                                              ;                          ; minicart
-                             ; NavigationBar                 ;                                                                              ;                          ; navigation
-                             ; Section1                      ;                                                                              ;                          ; wide
-                             ; ProductLeftRefinements        ;                                                                              ;                          ; narrow
-                             ; ProductGridSlot               ;                                                                              ;                          ; wide
-                             ; Footer                        ;                                                                              ;                          ; footer
-                             ; TopHeaderSlot                 ;                                                                              ;                          ; wide
-                             ; BottomHeaderSlot              ;                                                                              ;                          ; wide
-                             ; PlaceholderContentSlot        ;                                                                              ;                          ;
-                             ; PromoBannerSlot               ;                                                                              ;                          ; wide
-                             ; SiteLogoHeaderSlot            ;                                                                              ;                          ; logo
-                             ; HeaderLinkForSupportSlot      ;                                                                              ;                          ; headerlink
-                             ; HeaderLinkForShipOrPickupSlot ;                                                                              ;                          ; headerlink
-                             ; NavigationPromoSlot           ;                                                                              ;                          ; logo
-                             ; NavigationBarSlot             ;                                                                              ;                          ; navigation
-                             ; NavigationBarMobileSlot       ;                                                                              ;                          ; navigation
-                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
-                             ; MyAccountSlot                      ;                                                                       ;                           ; navigation
-                             ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
-  							  ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
-                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
-                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
-                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
-                          
-
-INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid                                       ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
-                                    ;                          ; SiteLogo-productGridPage                  ; SiteLogo                      ;                                                                                  ; SiteLogoSlot                               ; true
-                                    ;                          ; HomepageLink-productGridPage              ; HomepageNavLink               ;                                                                                  ; HomepageNavLinkSlot                        ; true
-                                    ;                          ; MiniCart-productGridPage                  ; MiniCart                      ;                                                                                  ; MiniCartSlot                               ; true
-                                    ;                          ; NavigationBar-productGridPage             ; NavigationBar                 ;                                                                                  ; NavigationBarSlot                          ; true
-                                    ;                          ; Footer-productGridPage                    ; Footer                        ;                                                                                  ; FooterSlot                                 ; true
-                                    ;                          ; HeaderLinks-productGridPage               ; HeaderLinks                   ;                                                                                  ; HeaderLinksSlot                            ; true
-                                    ;                          ; SearchBox-productGridPage                 ; SearchBoxBl                   ;                                                                                  ; SearchBoxBl                                ; true
-                                    ;                          ; RentalGearBanner-productGridPage   	   ; BlRentalGearBanner            ;                                                                                  ; BlRentalGearBanner                         ; true
-                                    ;                          ; UsedGearBanner-productGridPage     	   ; BlUsedGearBanner              ;                                                                                  ; BlUsedGearBanner                           ; true
-                                    ;                          ; TopHeaderSlot-productGridPage             ; TopHeaderSlot                 ;                                                                                  ; TopHeaderSlot                              ; true
-                                    ;                          ; BottomHeaderSlot-productGridPage          ; BottomHeaderSlot              ;                                                                                  ; BottomHeaderSlot                           ; true
-                                    ;                          ; ProductLeftRefinemnts-productGridPage     ; ProductLeftRefinements        ;                                                                                  ; ProductLeftRefinements                     ; true
-                                    ;                          ; ProductGridSlot-productGridPage           ; ProductGridSlot               ;                                                                                  ; ProductGridSlot                            ; true
-                                    ;                          ; PlaceholderContentSlot-productGridPage    ; PlaceholderContentSlot        ;                                                                                  ; PlaceholderContentSlot                     ; true
-                                    ;                          ; PromoBannerSlot-productGrid               ; PromoBannerSlot               ;                                                                                  ; PromoBannerSlot                            ; true
-                                    ;                          ; SiteLogoHeaderSlot-productGrid            ; SiteLogoHeaderSlot            ;                                                                                  ; SiteLogoHeaderSlot                         ; true
-                                    ;                          ; NavigationPromoSlot-productGrid           ; NavigationPromoSlot           ;                                                                                  ; NavigationPromoSlot                        ; true
-                                    ;                          ; NavigationBarSlot-productGrid             ; NavigationBarSlot             ;                                                                                  ; NavigationBarSlot                          ; true
-                                    ;                          ; NavigationBarMobileSlot-productGrid       ; NavigationBarMobileSlot       ;                                                                                  ; NavigationBarMobileSlot                    ; true
-                                    ;                          ; HeaderLinkForSupportSlot-productGrid      ; HeaderLinkForSupportSlot      ;                                                                                  ; HeaderLinkForSupportSlot                   ; true
-                                    ;                          ; HeaderLinkForShipOrPickupSlot-productGrid ; HeaderLinkForShipOrPickupSlot ;                                                                                  ; HeaderLinkForShipOrPickupSlot              ; true
-                                    ;                          ; MiniCartSlot-productGrid                  ; MiniCartSlot                  ;                                                                                  ; MiniCartSlot                               ; true
-                                    ;                          ; FooterSlot-productGrid                    ; FooterSlot                    ;                                                                                  ; FooterSlot                                 ; true
-                                    ;                          ; FooterSubscriptionSlot-productGrid        ; FooterSubscriptionSlot        ;                                                                                  ; FooterSubscriptionSlot                     ; true
-                                    ;                          ; FooterCopyRightslot-productGrid           ; FooterCopyRightslot           ;                                                                                  ; FooterCopyRightslot                        ; true
-                                    ;                         ; SocialMediaSectionSlot-productGrid         ; SocialMediaSectionSlot        ;                                                                                  ; SocialMediaSectionSlot                   ; true
-                                    ;                         ; MyAccountSlot-productGrid                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
-                                    ;                         ; MobileMiniCartSlot-productGrid             ; MobileMiniCartSlot            ;                                                                           ; MobileMiniCartSlot                             ; true
-									 ;                         ; MobileHeaderLinkForShipOrPickupSlot-productGrid ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
-                                     ;                         ; MobileHeaderLinkForSupportSlot-productGrid      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
-                                     ;                         ; MobileHeaderLinkForAccountSlot-productGrid      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
-                                     ;                         ; MobileHeaderBottomInfo-productGrid              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
-                                 
+# Create Content Slots     
+INSERT_UPDATE ContentSlot ; $contentCV[unique = true] ; uid[unique = true]     ; name                            ; active
+                          ;                           ; SiteLogoSlot           ; Default Site Logo Slot          ; true  
+                          ;                           ; HomepageNavLinkSlot    ; Default Homepage Link           ; true  
+                          ;                           ; MiniCartSlot           ; Mini Cart                       ; true  
+                          ;                           ; NavigationBarSlot      ; Navigation Bar                  ; true  
+                          ;                           ; FooterSlot             ; Footer                          ; true  
+                          ;                           ; HeaderLinksSlot        ; Header links                    ; true  
+                          ;                           ; SearchBoxBl            ; Search Box                      ; true  
+                          ;                           ; BlRentalGearBanner     ; Rental Gear Banner              ; true  
+                          ;                           ; BlUsedGearBanner       ; Used Gear Banner                ; true  
+                          ;                           ; TopHeaderSlot          ; Top Header                      ; true  
+                          ;                           ; BottomHeaderSlot       ; Bottom Header                   ; true  
+                          ;                           ; ProductLeftRefinements ; Refinements                     ; true  
+                          ;                           ; ProductGridSlot        ; Product List                    ; true  
+                          ;                           ; PlaceholderContentSlot ; Placeholder for Addon tag files ; true  
+                          ;                           ; SocialMediaSectionSlot ; Social Media Section Slot       ; true  
+                          ;                           ; MobileMiniCartSlot     ;                                 ; true  
 
 
-INSERT_UPDATE CategoryPage; $contentCV[unique = true]; uid[unique = true]; name         ; masterTemplate(uid, $contentCV); defaultPage; approvalStatus(code)[default = 'approved']
-                          ;                          ; productGrid       ; Product Grid ; ProductGridPageTemplate        ; true       ;
+
+INSERT_UPDATE ContentSlotName ; name[unique = true]                 ; template(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; SiteLogo                            ;                                                                               ;                           ; logo               
+                              ; HeaderLinks                         ;                                                                               ;                           ; headerlinks        
+                              ; SearchBoxBl                         ;                                                                               ;                           ; searchbox          
+                              ; BlRentalGearBanner                  ;                                                                               ;                           ;                    
+                              ; BlUsedGearBanner                    ;                                                                               ;                           ;                    
+                              ; MiniCart                            ;                                                                               ;                           ; minicart           
+                              ; NavigationBar                       ;                                                                               ;                           ; navigation         
+                              ; Section1                            ;                                                                               ;                           ; wide               
+                              ; ProductLeftRefinements              ;                                                                               ;                           ; narrow             
+                              ; ProductGridSlot                     ;                                                                               ;                           ; wide               
+                              ; Footer                              ;                                                                               ;                           ; footer             
+                              ; TopHeaderSlot                       ;                                                                               ;                           ; wide               
+                              ; BottomHeaderSlot                    ;                                                                               ;                           ; wide               
+                              ; PlaceholderContentSlot              ;                                                                               ;                           ;                    
+                              ; PromoBannerSlot                     ;                                                                               ;                           ; wide               
+                              ; SiteLogoHeaderSlot                  ;                                                                               ;                           ; logo               
+                              ; HeaderLinkForSupportSlot            ;                                                                               ;                           ; headerlink         
+                              ; HeaderLinkForShipOrPickupSlot       ;                                                                               ;                           ; headerlink         
+                              ; NavigationPromoSlot                 ;                                                                               ;                           ; logo               
+                              ; NavigationBarSlot                   ;                                                                               ;                           ; navigation         
+                              ; NavigationBarMobileSlot             ;                                                                               ;                           ; navigation         
+                              ; SocialMediaSectionSlot              ;                                                                               ;                           ; wide               
+                              ; MyAccountSlot                       ;                                                                               ;                           ; navigation         
+                              ; MobileMiniCartSlot                  ;                                                                               ;                           ; minicart           
+                              ; MobileHeaderLinkForShipOrPickupSlot ;                                                                               ;                           ; headerlink         
+                              ; MobileHeaderLinkForSupportSlot      ;                                                                               ;                           ; headerlink         
+                              ; MobileHeaderLinkForAccountSlot      ;                                                                               ;                           ; headerlink         
+                              ; MobileHeaderBottomInfo              ;                                                                               ;                           ; wide               
+                              
+
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV ; uid                                             ; position[unique = true]             ; pageTemplate(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate'] ; contentSlot(uid, $contentCV)[unique = true] ; allowOverwrite
+                                     ;            ; SiteLogo-productGridPage                        ; SiteLogo                            ;                                                                                   ; SiteLogoSlot                                ; true          
+                                     ;            ; HomepageLink-productGridPage                    ; HomepageNavLink                     ;                                                                                   ; HomepageNavLinkSlot                         ; true          
+                                     ;            ; MiniCart-productGridPage                        ; MiniCart                            ;                                                                                   ; MiniCartSlot                                ; true          
+                                     ;            ; NavigationBar-productGridPage                   ; NavigationBar                       ;                                                                                   ; NavigationBarSlot                           ; true          
+                                     ;            ; Footer-productGridPage                          ; Footer                              ;                                                                                   ; FooterSlot                                  ; true          
+                                     ;            ; HeaderLinks-productGridPage                     ; HeaderLinks                         ;                                                                                   ; HeaderLinksSlot                             ; true          
+                                     ;            ; SearchBox-productGridPage                       ; SearchBoxBl                         ;                                                                                   ; SearchBoxBl                                 ; true          
+                                     ;            ; RentalGearBanner-productGridPage                ; BlRentalGearBanner                  ;                                                                                   ; BlRentalGearBanner                          ; true          
+                                     ;            ; UsedGearBanner-productGridPage                  ; BlUsedGearBanner                    ;                                                                                   ; BlUsedGearBanner                            ; true          
+                                     ;            ; TopHeaderSlot-productGridPage                   ; TopHeaderSlot                       ;                                                                                   ; TopHeaderSlot                               ; true          
+                                     ;            ; BottomHeaderSlot-productGridPage                ; BottomHeaderSlot                    ;                                                                                   ; BottomHeaderSlot                            ; true          
+                                     ;            ; ProductLeftRefinemnts-productGridPage           ; ProductLeftRefinements              ;                                                                                   ; ProductLeftRefinements                      ; true          
+                                     ;            ; ProductGridSlot-productGridPage                 ; ProductGridSlot                     ;                                                                                   ; ProductGridSlot                             ; true          
+                                     ;            ; PlaceholderContentSlot-productGridPage          ; PlaceholderContentSlot              ;                                                                                   ; PlaceholderContentSlot                      ; true          
+                                     ;            ; PromoBannerSlot-productGrid                     ; PromoBannerSlot                     ;                                                                                   ; PromoBannerSlot                             ; true          
+                                     ;            ; SiteLogoHeaderSlot-productGrid                  ; SiteLogoHeaderSlot                  ;                                                                                   ; SiteLogoHeaderSlot                          ; true          
+                                     ;            ; NavigationPromoSlot-productGrid                 ; NavigationPromoSlot                 ;                                                                                   ; NavigationPromoSlot                         ; true          
+                                     ;            ; NavigationBarSlot-productGrid                   ; NavigationBarSlot                   ;                                                                                   ; NavigationBarSlot                           ; true          
+                                     ;            ; NavigationBarMobileSlot-productGrid             ; NavigationBarMobileSlot             ;                                                                                   ; NavigationBarMobileSlot                     ; true          
+                                     ;            ; HeaderLinkForSupportSlot-productGrid            ; HeaderLinkForSupportSlot            ;                                                                                   ; HeaderLinkForSupportSlot                    ; true          
+                                     ;            ; HeaderLinkForShipOrPickupSlot-productGrid       ; HeaderLinkForShipOrPickupSlot       ;                                                                                   ; HeaderLinkForShipOrPickupSlot               ; true          
+                                     ;            ; MiniCartSlot-productGrid                        ; MiniCartSlot                        ;                                                                                   ; MiniCartSlot                                ; true          
+                                     ;            ; FooterSlot-productGrid                          ; FooterSlot                          ;                                                                                   ; FooterSlot                                  ; true          
+                                     ;            ; FooterSubscriptionSlot-productGrid              ; FooterSubscriptionSlot              ;                                                                                   ; FooterSubscriptionSlot                      ; true          
+                                     ;            ; FooterCopyRightslot-productGrid                 ; FooterCopyRightslot                 ;                                                                                   ; FooterCopyRightslot                         ; true          
+                                     ;            ; SocialMediaSectionSlot-productGrid              ; SocialMediaSectionSlot              ;                                                                                   ; SocialMediaSectionSlot                      ; true          
+                                     ;            ; MyAccountSlot-productGrid                       ; MyAccountSlot                       ;                                                                                   ; MyAccountSlot                               ; true          
+                                     ;            ; MobileMiniCartSlot-productGrid                  ; MobileMiniCartSlot                  ;                                                                                   ; MobileMiniCartSlot                          ; true          
+                                     ;            ; MobileHeaderLinkForShipOrPickupSlot-productGrid ; MobileHeaderLinkForShipOrPickupSlot ;                                                                                   ; MobileHeaderLinkForShipOrPickupSlot         ; true          
+                                     ;            ; MobileHeaderLinkForSupportSlot-productGrid      ; MobileHeaderLinkForSupportSlot      ;                                                                                   ; MobileHeaderLinkForSupportSlot              ; true          
+                                     ;            ; MobileHeaderLinkForAccountSlot-productGrid      ; MobileHeaderLinkForAccountSlot      ;                                                                                   ; MobileHeaderLinkForAccountSlot              ; true          
+                                     ;            ; MobileHeaderBottomInfo-productGrid              ; MobileHeaderBottomInfo              ;                                                                                   ; MobileHeaderBottomInfo                      ; true          
+                                     
+
+
+INSERT_UPDATE CategoryPage ; $contentCV[unique = true] ; uid[unique = true] ; name         ; masterTemplate(uid, $contentCV) ; defaultPage ; approvalStatus(code)[default = 'approved']
+                           ;                           ; productGrid        ; Product Grid ; ProductGridPageTemplate         ; true        ;                                           

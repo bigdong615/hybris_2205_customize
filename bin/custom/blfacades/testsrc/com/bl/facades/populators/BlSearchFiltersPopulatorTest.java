@@ -19,6 +19,7 @@ import de.hybris.platform.solrfacetsearch.config.IndexedTypeSort;
 import de.hybris.platform.solrfacetsearch.config.IndexedTypeSortField;
 import de.hybris.platform.solrfacetsearch.search.QueryField;
 import de.hybris.platform.solrfacetsearch.search.SearchQuery;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,14 +27,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BlSearchFiltersPopulatorTest {
 
   private static final String KEY1 = "key1";
@@ -76,7 +80,7 @@ public class BlSearchFiltersPopulatorTest {
 
   @Before
   public void startUp() {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     blSearchFiltersPopulator = new BlSearchFiltersPopulator<FacetSearchConfig, IndexedTypeSort>();
     blSearchFiltersPopulator.setCommerceCategoryService(commerceCategoryService);
   }
@@ -84,17 +88,17 @@ public class BlSearchFiltersPopulatorTest {
   // When category code is rental
   @Test
   public void testPopulate() {
-    Set<String> strings = Collections.singleton(CATEGORY_CODE);
+    final Set<String> strings = Collections.singleton(CATEGORY_CODE);
     final SearchQueryPageableData<SolrSearchQueryData> source = null;
     final SolrSearchRequest<FacetSearchConfig, IndexedType, IndexedProperty, SearchQuery, IndexedTypeSort> target = populateTarget();
-    CategoryModel categoryModel = new CategoryModel();
+    final CategoryModel categoryModel = new CategoryModel();
     categoryModel.setCode(CATEGORY_CODE);
     categoryModel.setRentalCategory(true);
     when(commerceCategoryService.getCategoryForCode(CATEGORY_CODE)).thenReturn(categoryModel);
     blSearchFiltersPopulator.populate(source, target);
     Assert.assertEquals(CATEGORY_CODE,target.getSearchQueryData().getCategoryCode());
 
-    for(QueryField values : target.getSearchQuery().getFilterQueries()) {
+    for(final QueryField values : target.getSearchQuery().getFilterQueries()) {
       if(ALL_CATEGORIES.equalsIgnoreCase(values.getField())) {
         Assert.assertEquals(ALL_CATEGORIES,values.getField());
         Assert.assertEquals(strings,values.getValues());
@@ -124,7 +128,7 @@ public class BlSearchFiltersPopulatorTest {
     blSearchFiltersPopulator.populate(source, target);
     Assert.assertEquals(USED_CATEGORY_CODE,target.getSearchQueryData().getCategoryCode());
 
-    for(QueryField values : target.getSearchQuery().getFilterQueries()) {
+    for(final QueryField values : target.getSearchQuery().getFilterQueries()) {
       if(IS_NEW.equalsIgnoreCase(values.getField())) {
         Assert.assertEquals(IS_NEW,values.getField());
         Assert.assertTrue(values.getValues().contains(TRUE));
@@ -151,7 +155,7 @@ public class BlSearchFiltersPopulatorTest {
     target.getSearchQueryData().setBlPage(USED_PAGE);
     blSearchFiltersPopulator.populate(source, target);
     Assert.assertNull(target.getSearchQueryData().getCategoryCode());
-    for(QueryField values : target.getSearchQuery().getFilterQueries()) {
+    for(final QueryField values : target.getSearchQuery().getFilterQueries()) {
       if(FOR_SALE.equalsIgnoreCase(values.getField())) {
         Assert.assertEquals(FOR_SALE,values.getField());
         Assert.assertTrue(values.getValues().contains(TRUE));
@@ -173,7 +177,7 @@ public class BlSearchFiltersPopulatorTest {
     target.getSearchQueryData().setBlPage(RENTAL_PAGE);
     blSearchFiltersPopulator.populate(source, target);
     Assert.assertNull(target.getSearchQueryData().getCategoryCode());
-    for(QueryField values : target.getSearchQuery().getFilterQueries()) {
+    for(final QueryField values : target.getSearchQuery().getFilterQueries()) {
       if(FOR_RENT.equalsIgnoreCase(values.getField())) {
         Assert.assertEquals(FOR_RENT,values.getField());
         Assert.assertTrue(values.getValues().contains(TRUE));
@@ -190,22 +194,22 @@ public class BlSearchFiltersPopulatorTest {
   // When category code is rental and have sort as price-asc
   @Test
   public void testPopulatewhenpriceasc() {
-    Set<String> strings = Collections.singleton(CATEGORY_CODE);
+    final Set<String> strings = Collections.singleton(CATEGORY_CODE);
     final SearchQueryPageableData<SolrSearchQueryData> source = null;
     final SolrSearchRequest<FacetSearchConfig, IndexedType, IndexedProperty, SearchQuery, IndexedTypeSort> target = populateTarget();
-    CategoryModel categoryModel = new CategoryModel();
+    final CategoryModel categoryModel = new CategoryModel();
     categoryModel.setCode(CATEGORY_CODE);
     categoryModel.setRentalCategory(true);
     when(commerceCategoryService.getCategoryForCode(CATEGORY_CODE)).thenReturn(categoryModel);
-    PageableData pageableData = new PageableData();
+    final PageableData pageableData = new PageableData();
     pageableData.setSort(SORT_CODE_PRICE_ASC);
     target.setPageableData(pageableData);
     final List<IndexedTypeSort> sorts = new ArrayList<>();
-    IndexedTypeSort indexedTypeSort = new IndexedTypeSort();
+    final IndexedTypeSort indexedTypeSort = new IndexedTypeSort();
     indexedTypeSort.setCode(SORT_CODE_PRICE_ASC);
     indexedTypeSort.setName(SORT_CODE_PRICE_ASC);
     final List<IndexedTypeSortField> field = new ArrayList<>();
-    IndexedTypeSortField indexedTypeSortField = new IndexedTypeSortField();
+    final IndexedTypeSortField indexedTypeSortField = new IndexedTypeSortField();
     indexedTypeSortField.setFieldName(SORT_CODE_PRICE_ASC);
     indexedTypeSortField.setAscending(true);
     field.add(indexedTypeSortField);
@@ -216,7 +220,7 @@ public class BlSearchFiltersPopulatorTest {
     blSearchFiltersPopulator.populate(source, target);
     Assert.assertEquals(CATEGORY_CODE,target.getSearchQueryData().getCategoryCode());
 
-    for(QueryField values : target.getSearchQuery().getFilterQueries()) {
+    for(final QueryField values : target.getSearchQuery().getFilterQueries()) {
       if(ALL_CATEGORIES.equalsIgnoreCase(values.getField())) {
         Assert.assertEquals(ALL_CATEGORIES,values.getField());
         Assert.assertEquals(strings,values.getValues());
@@ -232,7 +236,7 @@ public class BlSearchFiltersPopulatorTest {
 
     }
 
-    for(IndexedTypeSort sort :target.getSearchQuery().getIndexedType().getSorts()) {
+    for(final IndexedTypeSort sort :target.getSearchQuery().getIndexedType().getSorts()) {
       Assert.assertEquals(SORT_CODE_PRICE_ASC , sort.getCode());
       Assert.assertEquals(PRICE_VALUE , sort.getFields().get(0).getFieldName());
       Assert.assertTrue(sort.getFields().get(0).isAscending());
@@ -250,15 +254,15 @@ public class BlSearchFiltersPopulatorTest {
     category.setCode(USED_CATEGORY_CODE);
     when(commerceCategoryService.getCategoryForCode(USED_CATEGORY_CODE)).thenReturn(category);
 
-    PageableData pageableData = new PageableData();
+    final PageableData pageableData = new PageableData();
     pageableData.setSort(SORT_CODE_PRICE_DESC);
     target.setPageableData(pageableData);
     final List<IndexedTypeSort> sorts = new ArrayList<>();
-    IndexedTypeSort indexedTypeSort = new IndexedTypeSort();
+    final IndexedTypeSort indexedTypeSort = new IndexedTypeSort();
     indexedTypeSort.setCode(SORT_CODE_PRICE_DESC);
     indexedTypeSort.setName(SORT_CODE_PRICE_DESC);
     final List<IndexedTypeSortField> field = new ArrayList<>();
-    IndexedTypeSortField indexedTypeSortField = new IndexedTypeSortField();
+    final IndexedTypeSortField indexedTypeSortField = new IndexedTypeSortField();
     indexedTypeSortField.setFieldName(SORT_CODE_PRICE_DESC);
     indexedTypeSortField.setAscending(false);
     field.add(indexedTypeSortField);
@@ -270,7 +274,7 @@ public class BlSearchFiltersPopulatorTest {
     blSearchFiltersPopulator.populate(source, target);
     Assert.assertEquals(USED_CATEGORY_CODE,target.getSearchQueryData().getCategoryCode());
 
-    for(QueryField values : target.getSearchQuery().getFilterQueries()) {
+    for(final QueryField values : target.getSearchQuery().getFilterQueries()) {
       if(IS_NEW.equalsIgnoreCase(values.getField())) {
         Assert.assertEquals(IS_NEW,values.getField());
         Assert.assertTrue(values.getValues().contains(TRUE));
@@ -286,7 +290,7 @@ public class BlSearchFiltersPopulatorTest {
 
     }
 
-    for(IndexedTypeSort sort :target.getSearchQuery().getIndexedType().getSorts()) {
+    for(final IndexedTypeSort sort :target.getSearchQuery().getIndexedType().getSorts()) {
       Assert.assertEquals(SORT_CODE_PRICE_DESC , sort.getCode());
       Assert.assertEquals(MIN_SERIAL_PRICE , sort.getFields().get(0).getFieldName());
       Assert.assertFalse(sort.getFields().get(0).isAscending());
@@ -315,7 +319,7 @@ public class BlSearchFiltersPopulatorTest {
     solrSearchQueryTermData4.setKey(KEY4);
     solrSearchQueryTermData4.setValue(VALUE4);
 
-    List<SolrSearchQueryTermData> filterTerms = new ArrayList<>();
+    final List<SolrSearchQueryTermData> filterTerms = new ArrayList<>();
     filterTerms.add(solrSearchQueryTermData1);
     filterTerms.add(solrSearchQueryTermData2);
     filterTerms.add(solrSearchQueryTermData3);
@@ -350,11 +354,11 @@ public class BlSearchFiltersPopulatorTest {
     solrSearchRequest.setSearchQuery(searchQuery);
 
     solrSearchRequest.setIndexedType(indexedType);
-    PageableData pageableData = new PageableData();
+    final PageableData pageableData = new PageableData();
     pageableData.setSort(SORT_CODE_NEWEST);
     solrSearchRequest.setPageableData(pageableData);
     final List<IndexedTypeSort> sorts = new ArrayList<>();
-    IndexedTypeSort indexedTypeSort = new IndexedTypeSort();
+    final IndexedTypeSort indexedTypeSort = new IndexedTypeSort();
     indexedTypeSort.setCode(SORT_CODE_NEWEST);
     indexedTypeSort.setName(SORT_CODE_NEWEST);
     sorts.add(indexedTypeSort);

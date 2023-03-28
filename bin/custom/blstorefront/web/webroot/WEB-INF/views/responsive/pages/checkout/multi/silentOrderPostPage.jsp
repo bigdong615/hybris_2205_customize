@@ -494,7 +494,7 @@
                         <div id="order" class="col-lg-7">
                             <h1>Payment</h1>
                             <hr>
-                            <p><b>Dates</b>&emsp;<input type="text" class="form-control cart-picker" id="litepicker" placeholder="Apr 20 - Apr 23"></p>
+                            <p><b>Dates</b>&emsp;<input type="text" class="form-control cart-picker" id="litepicker" placeholder="Apr 20 - Apr 23" autocomplete="off"></p>
                             <cart:blGiftCard cartData="${cartData}"/>
                             <p class="overline">Pay With</p>
                             <ycommerce:testId code="paymentDetailsForm">

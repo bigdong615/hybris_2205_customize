@@ -1,40 +1,36 @@
 package com.bl.core.services;
 
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.mock;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.dao.calculation.BlPricingDao;
-import com.bl.core.dao.pricingratio.BlPricingRatioDao;
-import com.bl.core.enums.DurationEnum;
-import com.bl.core.enums.PricingTierEnum;
-import com.bl.core.enums.ProductTypeEnum;
-import com.bl.core.model.BlPricingLogicModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.services.calculation.BlPricingService;
-import com.bl.core.services.calculation.impl.DefaultBlPricingService;
 import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.configurablebundleservices.model.BundleTemplateModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.product.UnitService;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao;
 import de.hybris.platform.servicelayer.model.ModelService;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Matchers;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.enums.PricingTierEnum;
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.model.BlPricingLogicModel;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.services.calculation.impl.DefaultBlPricingService;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultBlPricingServiceTest {
 
   private DefaultBlPricingService blPricingService;
@@ -61,7 +57,7 @@ public class DefaultBlPricingServiceTest {
   @Before
   public void setUp()
   {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     blPricingDao = new DefaultGenericDao(BlPricingLogicModel._TYPECODE);
     blPricingService= new DefaultBlPricingService();
     blPricingService.setEnumerationService(enumerationService);
@@ -101,7 +97,7 @@ public class DefaultBlPricingServiceTest {
     blProductModel.setRetailPrice(2000.00);
     priceRowModel.setPrice(100.00);
 
-    PriceRowModel sevenDayPrice = blPricingService.createOrUpdateSevenDayPrice(blProductModel,blProductModel.getRetailPrice(),true);
+    final PriceRowModel sevenDayPrice = blPricingService.createOrUpdateSevenDayPrice(blProductModel,blProductModel.getRetailPrice(),true);
     Assert.assertEquals(priceRowModel.getPrice(),sevenDayPrice.getPrice());
   }
 
@@ -111,7 +107,7 @@ public class DefaultBlPricingServiceTest {
     blProductModel.setRetailPrice(900.00);
     priceRowModel.setPrice(63.00);
 
-    PriceRowModel sevenDayPrice = blPricingService.createOrUpdateSevenDayPrice(blProductModel,blProductModel.getRetailPrice(),true);
+    final PriceRowModel sevenDayPrice = blPricingService.createOrUpdateSevenDayPrice(blProductModel,blProductModel.getRetailPrice(),true);
     Assert.assertEquals(priceRowModel.getPrice(),sevenDayPrice.getPrice());
   }
   @Test
@@ -120,7 +116,7 @@ public class DefaultBlPricingServiceTest {
     blProductModel.setRetailPrice(400.00);
     priceRowModel.setPrice(40.00);
 
-    PriceRowModel sevenDayPrice = blPricingService.createOrUpdateSevenDayPrice(blProductModel,blProductModel.getRetailPrice(),true);
+    final PriceRowModel sevenDayPrice = blPricingService.createOrUpdateSevenDayPrice(blProductModel,blProductModel.getRetailPrice(),true);
     Assert.assertEquals(priceRowModel.getPrice(),sevenDayPrice.getPrice());
   }
 
@@ -128,7 +124,7 @@ public class DefaultBlPricingServiceTest {
   public void testGetUpdatedSevenDayPriceForCameraProductFromTier1()
   {
     blProductModel.setRetailPrice(1000.00);
-    PriceRowModel sevenDayPrice = blPricingService.createOrUpdateSevenDayPrice(blProductModel,blProductModel.getRetailPrice(),false);
+    final PriceRowModel sevenDayPrice = blPricingService.createOrUpdateSevenDayPrice(blProductModel,blProductModel.getRetailPrice(),false);
     Assert.assertEquals(priceRowModel.getPrice(),sevenDayPrice.getPrice());
   }
 

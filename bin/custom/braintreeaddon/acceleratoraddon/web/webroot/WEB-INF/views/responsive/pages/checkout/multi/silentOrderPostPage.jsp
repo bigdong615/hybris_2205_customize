@@ -78,7 +78,7 @@
 							<c:if test="${cartData.isRentalCart && cartData.isRetailGearOrder eq false}">
 							  <p><b>Dates</b>&emsp;<input type="text"
 									class="form-control cart-picker" id="litepicker"
-									placeholder="<spring:theme code="text.rental.cart.select.date"/>">
+									placeholder="<spring:theme code="text.rental.cart.select.date"/>" autocomplete="off">
 							  </p>
 							  </c:if>
 							</c:if>

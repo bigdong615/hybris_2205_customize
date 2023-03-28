@@ -15,8 +15,6 @@ import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.servicelayer.services.impl.DefaultCMSComponentService;
 import de.hybris.platform.commercefacades.product.data.ProductData;
-import com.bl.facades.suggestion.SimpleSuggestionFacade;
-import com.bl.storefront.controllers.ControllerConstants;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,22 +23,25 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.Model;
 
+import com.bl.facades.suggestion.SimpleSuggestionFacade;
+import com.bl.storefront.controllers.ControllerConstants;
 
 /**
  * Unit test for {@link PurchasedCategorySuggestionComponentController}
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class PurchasedCategorySuggestionComponentControllerTest
 {
 	private static final String COMPONENT_UID = "componentUid";
@@ -78,7 +79,7 @@ public class PurchasedCategorySuggestionComponentControllerTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		purchasedCategorySuggestionComponentController = new PurchasedCategorySuggestionComponentController();
 		purchasedCategorySuggestionComponentController.setCmsComponentService(cmsComponentService);
