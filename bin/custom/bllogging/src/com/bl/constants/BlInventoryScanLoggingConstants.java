@@ -231,6 +231,7 @@ public class BlInventoryScanLoggingConstants {
  	public static final String ON_CHANGE_EVENT = "onChange";
  	public static final String ON_CLICK_EVENT = "onClick";
  	public static final String CANCEL_EVENT = "cancel";
+ 	public static final String CANCEL_EVENT_WEB_SCAN_CONSOL = "cancelWebScan";
 	public static final String CANCEL_BTN_EVENT = "cancelBtn";
  	public static final String VERIFY_SCAN_EVENT = "verifyScan";
  	public static final String SOCKET_ID = "inputObject";
