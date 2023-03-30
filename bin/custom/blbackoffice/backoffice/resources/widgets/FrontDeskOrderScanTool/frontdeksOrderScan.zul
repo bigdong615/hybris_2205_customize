@@ -24,7 +24,7 @@
       </row>
       <row>
         <hlayout>
-          <textbox id="scanningArea" width="300px" height="150px" multiline="true"/>
+          <textbox id="scanningArea" width="300px" height="150px" multiline="true" onCreate="self.focus()"/>
         </hlayout>
       </row>
     </rows>
