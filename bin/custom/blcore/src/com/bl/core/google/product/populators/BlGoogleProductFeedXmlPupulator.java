@@ -2,15 +2,15 @@ package com.bl.core.google.product.populators;
 
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
-import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-
+import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -49,10 +49,24 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 		{
 			final Item item = new Item();
 			final Shipping shipping = new Shipping();
-			item.setId(product.getCode());
+			if (product.getCode().length() > 50)
+			{
+				item.setId(product.getCode().substring(0, 49));
+			}
+			else
+			{
+				item.setId(product.getCode());
+			}
 			item.setTitle(product.getName());
 			item.setLink(target.getLink() + "/buy/product/" + product.getCode());
-			item.setDescription(product.getDescription());
+			if (product.getDescription().length() > 5000)
+			{
+				item.setDescription(product.getDescription().substring(0, 4999));
+			}
+			else
+			{
+				item.setDescription(product.getDescription());
+			}
 			item.setCondition("Used");
 			item.setAvailability("in_stock");
 			item.setBrand(product.getManufacturerName());
@@ -90,7 +104,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
    			price = zoneDeliveryModeModelList.stream().findFirst().get().getValues().stream().findFirst().get().getValue();
    		}
 		}
-		catch(Exception e)
+		catch(final Exception e)
 		{
 			LOG.info("Shipping Price calculation for Google Product Feed went wrong "+ e.getMessage());
 		}
