@@ -3577,6 +3577,8 @@
 				<advanced-search:field name="pickUpPersonFirstName" />
 				<advanced-search:field name="pickUpPersonLastName" />
 				<advanced-search:field name="verificationStatus" />
+				<advanced-search:field name="actualRentalStartDate" />
+				<advanced-search:field name="isReplacementOrder" />
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
