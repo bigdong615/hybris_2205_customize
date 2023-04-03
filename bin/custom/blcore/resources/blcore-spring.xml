@@ -2268,5 +2268,12 @@
 		<property name="modelService" ref="modelService"/>
 	</bean>
 	<!-- BLS-120 END-->
-	
+
+	<!--BLS-183 START-->
+	<bean id ="blProductRemoveInterceptor" class="com.bl.core.interceptor.BlProductRemoveInterceptor"/>
+	<bean id="blProductRemoveInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blProductRemoveInterceptor"/>
+		<property name="typeCode" value="Product"/>
+	</bean>
+	<!-- BLS-183 END-->
 </beans>
