@@ -235,7 +235,8 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 		else if
 
 		(((sumOfGearValue > threshouldGearValue) && ApproveOrderFlag && RecentOrderFlag)
-				|| (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0) || LateOrderFlag)
+			//	|| (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0)
+        	|| LateOrderFlag)
 		{
 			order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
 			startConsignmentSubProcess(consignments, process, true);
