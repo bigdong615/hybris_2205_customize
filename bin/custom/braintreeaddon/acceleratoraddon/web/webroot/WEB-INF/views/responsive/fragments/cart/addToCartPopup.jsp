@@ -11,7 +11,7 @@
 <c:set var="productName" value="${fn:escapeXml(product.name)}" />
 <c:url value="/cart/updateQuantity" var="cartUpdateFormAction"/>
 <c:url value="/cart" var="viewCartUrl"/>
-<c:url value="/cart/add" var="addToCartUrl"/>
+<c:url value="/cart/addproduct" var="addToCartUrl"/>
 
 {"quickOrderErrorData": [
 <c:forEach items="${quickOrderErrorData}" var="quickOrderEntry" varStatus="status">
@@ -163,13 +163,33 @@
                                                                               
                                                                                 <c:choose>
                                                                                       <c:when test="${productReference.target.isDiscontinued || productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                                                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                                             <button type="submit" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text"/> </button>
                                                                                       </c:when>
                                                                                       <c:when test="${productReference.target.isUpcoming}">
+                                                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                                            <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
                                                                                       </c:when>
                                                                                        <c:otherwise>
                                                                                             <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                                                                                 <spring:theme code="text.quantity"/>
+                                                                                                      <div class="quantity">
+                                                                                                        <div class="input-group">
+                                                                                                         <span class="input-group-btn">
+                                                                                                           <button type="button" class="btn btn-default btn-number"
+                                                                                                            data-type="minus" data-field="quant[2]">
+                                                                                                            <span class="glyphicon glyphicon-minus"></span>
+                                                                                                           </button>
+                                                                                                           </span> <input type="text" name="quant[2]" id="qty" class="form-control input-number"
+                                                                                                                 value="1" min="1" max="99">
+                                                                                                            <span class="input-group-btn">
+                                                                                                            <button type="button"  class="btn btn-default btn-number"
+                                                                                                              data-type="plus" data-field="quant[2]" >
+                                                                                                           <span class="glyphicon glyphicon-plus"></span>
+                                                                                                         </button>
+                                                                                                       </span>
+                                                                                                      </div>
+                                                                                                     </div>
                                                                                                 <button type="button" class="btn btn-primary btn-block js-add-to-cart-popup" id="modalCard-${loopindex.index}" data-bs-toggle="modal"
                                                                                                    data-bs-target="#addToCart" data-product-code="${productReference.target.code}">
                                                                                                   <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
