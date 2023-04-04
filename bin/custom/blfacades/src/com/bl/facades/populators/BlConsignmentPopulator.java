@@ -75,6 +75,6 @@ public class BlConsignmentPopulator extends ConsignmentPopulator
 		target.setRentalStartDate(source.getRentalStartDate());
 		target.setRentalEndDate(source.getRentalEndDate());
 		//target.setOrderNotes(source.getOrderNotes());
-
+		target.setPrimaryKey(source.getPk().toString());
 	}
 }

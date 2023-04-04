@@ -40,6 +40,7 @@ public class BlPaymentTransactionPopulator implements Populator<PaymentTransacti
 		{
 			target.setPaymentInfoCode(source.getInfo().getCode());
 		}
+		target.setPrimaryKey(source.getPk().toString());
 	}
 
 }

@@ -92,5 +92,6 @@ public class DomoBrainTreePaymentInfoPopulator implements Populator<BrainTreePay
 		target.setBillPayment(source.isBillPayment());
 		target.setModifyPayment(source.isModifyPayment());
 		target.setExtendOrder(source.isExtendOrder());
-	 }
+		target.setPrimaryKey(source.getPk().toString());
+	}
 }

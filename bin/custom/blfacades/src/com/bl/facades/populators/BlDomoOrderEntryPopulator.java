@@ -110,6 +110,7 @@ public class BlDomoOrderEntryPopulator implements Populator<OrderEntryModel, Ord
 		{
 			target.setDeliveryaddress(source.getDeliveryAddress().getAddressID());
 		}
+		target.setPrimaryKey(source.getPk().toString());
 	}
 
 }

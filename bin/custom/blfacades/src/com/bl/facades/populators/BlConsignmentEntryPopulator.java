@@ -40,11 +40,11 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		target.setQuantity(source.getQuantity());
 		target.setShippedQuantity(source.getShippedQuantity());
 		target.setConsignment(source.getConsignment() != null ? source.getConsignment().getCode() : StringUtils.EMPTY);
-		target.setPK(source.getPk().getLongValueAsString());
 		target.setShippedQuantity(source.getShippedQuantity());
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setGearrated(source.isGearRated());
+		target.setPrimaryKey(source.getPk().toString());
 
 		final List<String> items = new ArrayList<>();
 		if (!source.getItems().isEmpty())

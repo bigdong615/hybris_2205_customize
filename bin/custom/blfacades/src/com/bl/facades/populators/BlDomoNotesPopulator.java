@@ -25,5 +25,6 @@ public class BlDomoNotesPopulator implements Populator<NotesModel, NotesData>
 		}
 
 		target.setNote(source.getNote());
+		target.setPrimaryKey(source.getPk().toString());
 	}
 }

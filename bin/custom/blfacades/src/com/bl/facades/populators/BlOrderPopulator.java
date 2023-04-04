@@ -303,5 +303,6 @@ public class BlOrderPopulator extends OrderPopulator
 		}
 		target.setTotaltaxvaluesinternal(source.getTotalTaxValuesInternal());
 		target.setShopperIp(source.getShopperIp());
+		target.setPrimaryKey(source.getPk().toString());
 	}
 }

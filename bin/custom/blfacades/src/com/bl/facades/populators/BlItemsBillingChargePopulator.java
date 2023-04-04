@@ -34,6 +34,7 @@ public class BlItemsBillingChargePopulator implements Populator<BlItemsBillingCh
 		target.setTaxAmount(source.getTaxAmount());
 		target.setUnPaidBillNotes(source.getUnPaidBillNotes());
 		target.setUpdatedBillTime(source.getUpdatedBillTime());
+		target.setPrimaryKey(source.getPk().toString());
 	}
 
 }

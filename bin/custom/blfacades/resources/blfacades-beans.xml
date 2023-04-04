@@ -257,7 +257,7 @@
 	<property name="noDamageWaiverSelected" type="java.lang.Boolean"/>
 	<property name="availabilityMessage" type="com.bl.facades.product.data.AvailabilityMessage"/>
 	<property name="recipientEmail" type="java.lang.String"/>
-    <property name="recipientName" type="java.lang.String" />
+    <property name="recipientName" type="java.lang.String"/>
     <property name="recipientMessage" type="java.lang.String"/>
     <property name="messages" type="java.util.List&lt;com.bl.facades.product.data.AvailabilityMessage>"/>
 	<property name="option" type="java.util.List&lt;com.bl.facades.product.data.BlOptionData>"/>
@@ -300,10 +300,11 @@
  	<property name="rejected" type="boolean"/>
  	<property name="entryGroupNumberCodes" type="java.lang.String"/>
  	<property name="quantitystatus" type="java.lang.String"/>
- 	<property name="productCode" type="java.lang.String" />
+ 	<property name="productCode" type="java.lang.String"/>
  	<property name="options" type="java.lang.String"/>	
     <property name="deliveryaddress" type="java.lang.String"/>	
-    <property name="info" type="java.lang.String"/>  
+    <property name="info" type="java.lang.String"/>
+    <property name="primaryKey" type="java.lang.String"/>  
   </bean>
   
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
@@ -362,11 +363,11 @@
         <property name="giftCardCost" type="java.lang.Double"/>
         <property name="hasGiftCart" type="java.lang.Boolean"/>
         <property name="recipientEmail" type="java.lang.String"/>
-        <property name="recipientName" type="java.lang.String" />
+        <property name="recipientName" type="java.lang.String"/>
         <property name="orderReturnedToWarehouse" type="java.lang.Boolean" />
         <property name="extensionBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="orderStatus" type="java.lang.String"/>
-	  	<property name="replacementFor" type="java.lang.String" />
+	  	<property name="replacementFor" type="java.lang.String"/>
 	  	<property name="isReplacementOrder " type="java.lang.Boolean"/>
 	  	<property name="isUnPaidBillPresent" type="java.lang.Boolean"/>
         <property name="totalPayBillTax" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
@@ -486,6 +487,7 @@
         <property name="entrygroups" type="java.lang.String"/>	
         <property name="totaltaxvaluesinternal" type="java.lang.String"/>
         <property name="shopperIp" type="java.lang.String"/>
+        <property name="primaryKey" type="java.lang.String"/>
   </bean>
   
   	<bean class="de.hybris.platform.commercefacades.order.data.OrderData" extends="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
@@ -556,11 +558,11 @@
 		<property name="giftCardCost" type="java.lang.Double"/>
 		<property name="hasGiftCart" type="java.lang.Boolean"/>
 		<property name="recipientEmail" type="java.lang.String"/>
-		<property name="recipientName" type="java.lang.String" />
+		<property name="recipientName" type="java.lang.String"/>
 		<property name="orderReturnedToWarehouse" type="java.lang.Boolean" />
 		<property name="extensionBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="orderStatus" type="java.lang.String"/>
-		<property name="replacementFor" type="java.lang.String" />
+		<property name="replacementFor" type="java.lang.String"/>
 		<property name="isReplacementOrder " type="java.lang.Boolean"/>
 		<property name="isUnPaidBillPresent" type="java.lang.Boolean"/>
 		<property name="totalPayBillTax" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
@@ -682,6 +684,7 @@
         <property name="entrygroups" type="java.lang.String"/>		
         <property name="totaltaxvaluesinternal" type="java.lang.String"/>
         <property name="shopperIp" type="java.lang.String"/>
+        <property name="primaryKey" type="java.lang.String"/>
 	</bean>
   
 
@@ -768,6 +771,7 @@
 	  	<property name="latitude" type="java.lang.Double"/>
 	  	<property name="longitude" type="java.lang.Double"/>
 	  	<property name="phone2" type="String"/>
+	  	<property name="primaryKey" type="java.lang.String"/>
     </bean>
 <!--   	<bean class="de.hybris.platform.warehousingfacades.order.data.PackagingInfoData">
 		<property name="dimension" type="java.lang.String"/>
@@ -850,7 +854,7 @@
 			<property name="isNoDamageWaiverSelected" type="java.lang.Boolean"/>
             <property name="giftCardAmount" type="java.lang.Double"/>
             <property name="recipientEmail" type="java.lang.String"/>
-            <property name="recipientName" type="java.lang.String" />
+            <property name="recipientName" type="java.lang.String"/>
             <property name="recipientMessage" type="java.lang.String"/>
       <property name="retailGear" type="java.lang.Boolean"/>
 		<property name="aqautechProduct" type="boolean"/>
@@ -866,12 +870,12 @@
       <property name="redeemamount" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
       <property name="balanceamount" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
       <property name="reedemDate" type="java.util.Date" />
-      <property name="cartId" type="String" />
-      <property name="url" type="String" />
+      <property name="cartId" type="java.lang.String"/>
+      <property name="url" type="java.lang.String"/>
       <property name="currency" type="de.hybris.platform.commercefacades.storesession.data.CurrencyData" />
       <property name="amountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
       <property name="balanceamountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
-      <property name="indicator" type="String" />
+      <property name="indicator" type="java.lang.String"/>
   </bean>
 
   <!--[Bl-643]: Custom Promotions-->
@@ -915,7 +919,7 @@
 	</bean>	
 	
 	<bean class="com.bl.facades.shipment.data.ShipperData">
-		<property name="name" type="String" />
+		<property name="name" type="java.lang.String"/>
 		<property name="shipperNumber" type="String"/>
 		<property name="attentionName" type="String"/>
 		<property name="phone" type="com.bl.facades.shipment.data.ShipmentPhoneData"/>
@@ -923,14 +927,14 @@
 	</bean>
 	
 	<bean class="com.bl.facades.shipment.data.ShipToData">
-		<property name="name" type="String" />
+		<property name="name" type="java.lang.String"/>
 		<property name="attentionName" type="String"/>
 		<property name="phone" type="com.bl.facades.shipment.data.ShipmentPhoneData"/>
 		<property name="address" type="de.hybris.platform.commercefacades.user.data.AddressData" />
 	</bean>
 	
 	<bean class="com.bl.facades.shipment.data.ShipFromData">
-		<property name="name" type="String" />
+		<property name="name" type="java.lang.String"/>
 		<property name="attentionName" type="String"/>
 		<property name="phone" type="com.bl.facades.shipment.data.ShipmentPhoneData"/>
 		<property name="address" type="de.hybris.platform.commercefacades.user.data.AddressData" />
@@ -970,8 +974,8 @@
 	</bean>
 	
 	<bean class="com.bl.shipment.data.UPSShipmentCreateResponse">
-		<property name="labelURL" type="String" />
-		<property name="shipmentIdentificationNumber" type="String" />
+		<property name="labelURL" type="java.lang.String"/>
+		<property name="shipmentIdentificationNumber" type="java.lang.String"/>
 		<property name="totalCharges" type="Double" />
 		<property name="packages" type="java.util.List&lt;com.bl.shipment.data.UPSShipmentPackageResult>" />
 		<property name="statusCode" type="String"/>
@@ -980,9 +984,9 @@
 	</bean>
 	
 	<bean class="com.bl.shipment.data.UPSShipmentPackageResult">
-		<property name="trackingNumber" type="String" />
-		<property name="graphicImage" type="String" />
-		<property name="hTMLImage" type="String" />
+		<property name="trackingNumber" type="java.lang.String"/>
+		<property name="graphicImage" type="java.lang.String"/>
+		<property name="hTMLImage" type="java.lang.String"/>
 	</bean>
 	
 	<!-- Creating Request Data for FedEx Shipment -->
@@ -1153,7 +1157,7 @@
 		<property name="productCode" type="String"/>
 		<property name="payBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="orderStatus" type="java.lang.String"/>
-		<property name="replacementFor" type="java.lang.String" />
+		<property name="replacementFor" type="java.lang.String"/>
 		<property name="isReplacementOrder " type="java.lang.Boolean"/>
 		<property name="isCaptured" type="java.lang.Boolean"/>
 		<property name="isChangePayment" type="java.lang.Boolean"/>
@@ -1181,35 +1185,35 @@
 	</bean>
 
 	<bean class="de.hybris.platform.acceleratorservices.sitemap.data.SiteMapUrlData">
-		<property name="lastmod" type="String" />
+		<property name="lastmod" type="java.lang.String"/>
 		<property name="forRent" type="java.lang.Boolean" />
 		<property name="forBuy" type="java.lang.Boolean" />
 	</bean>
 	
 	<bean class="de.hybris.platform.order.ReturnOrderData">
-		<property name="customerName" type="String" />
-		<property name="email" type="String" />
-		<property name="orderNumber" type="String" />
-		<property name="orderPlacedDate" type="String" />
-		<property name="returnOrderDate" type="String" />
-		<property name="actualReturnOrderDate" type="String" />
+		<property name="customerName" type="java.lang.String"/>
+		<property name="email" type="java.lang.String"/>
+		<property name="orderNumber" type="java.lang.String"/>
+		<property name="orderPlacedDate" type="java.lang.String"/>
+		<property name="returnOrderDate" type="java.lang.String"/>
+		<property name="actualReturnOrderDate" type="java.lang.String"/>
 	</bean>
 
 	<bean class="de.hybris.platform.commercefacades.order.data.ConsignmentEntryData">
 	    <property name="createdTS" type="java.util.Date"/>
 		<property name="modifiedTS" type="java.util.Date"/>
-		<property name="typePkString" type="String" />
-		<property name="ownerPkString" type="String" />
-		<property name="pK" type="String" />
-		<property name="consignment" type="String" />
+		<property name="typePkString" type="java.lang.String"/>
+		<property name="ownerPkString" type="java.lang.String"/>
+        <property name="primaryKey" type="java.lang.String"/>
+		<property name="consignment" type="java.lang.String"/>
 		<property name="gearrated" type="java.lang.Boolean" />
-		<property name="testingstatus" type="String" />
-		<property name="consignmententrystatus" type="String" />
-		<property name="billingcharges" type="String" />
-		<property name="options" type="String" />
-		<property name="items" type="String" />
-		<property name="order_entry" type="String" />
-		<property name="serialproducts" type="String" />	
+		<property name="testingstatus" type="java.lang.String"/>
+		<property name="consignmententrystatus" type="java.lang.String"/>
+		<property name="billingcharges" type="java.lang.String"/>
+		<property name="options" type="java.lang.String"/>
+		<property name="items" type="java.lang.String"/>
+		<property name="order_entry" type="java.lang.String"/>
+		<property name="serialproducts" type="java.lang.String"/>	
 		<property name="mainItemNotScannedCount" type="java.lang.Integer"/>
 		<property name="subpartsNotScannedCount" type="java.lang.Integer"/>	
 	</bean>
@@ -1217,18 +1221,18 @@
 	<bean class="de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentEntryWsDTO">
 	    <property name="createdTS" type="java.util.Date"/>
 		<property name="modifiedTS" type="java.util.Date"/>
-		<property name="typePkString" type="String" />
-		<property name="ownerPkString" type="String" />
-		<property name="pK" type="String" />
-		<property name="consignment" type="String" />
+		<property name="typePkString" type="java.lang.String"/>
+		<property name="ownerPkString" type="java.lang.String"/>
+        <property name="primaryKey" type="java.lang.String"/>
+		<property name="consignment" type="java.lang.String"/>
 		<property name="gearrated" type="java.lang.Boolean" />
-		<property name="testingstatus" type="String" />
-		<property name="consignmententrystatus" type="String" />
-		<property name="billingcharges" type="String" />
-		<property name="options" type="String" />
-		<property name="items" type="String" />
-		<property name="serialproducts" type="String" />
-		<property name="order_entry" type="String" />	
+		<property name="testingstatus" type="java.lang.String"/>
+		<property name="consignmententrystatus" type="java.lang.String"/>
+		<property name="billingcharges" type="java.lang.String"/>
+		<property name="options" type="java.lang.String"/>
+		<property name="items" type="java.lang.String"/>
+		<property name="serialproducts" type="java.lang.String"/>
+		<property name="order_entry" type="java.lang.String"/>	
 		<property name="mainItemNotScannedCount" type="java.lang.Integer"/>
 		<property name="subpartsNotScannedCount" type="java.lang.Integer"/>		
 	</bean>
@@ -1296,12 +1300,12 @@
 		<property name="shippingLabelHistoryLogs" type="java.lang.String"/>
 		<property name="createdTS" type="java.util.Date"/>
 		<property name="modifiedTS" type="java.util.Date"/>
-		<property name="typePkString" type="String" />
-		<property name="ownerPkString" type="String" />
-		<property name="pK" type="String" />
-		<property name="sealed" type="String" />
-		<property name="consignmentpos" type="String" />
-		<property name="graphicimage" type="String" />
+		<property name="typePkString" type="java.lang.String"/>
+		<property name="ownerPkString" type="java.lang.String"/>
+		<property name="primaryKey" type="java.lang.String"/>
+		<property name="sealed" type="java.lang.String"/>
+		<property name="consignmentpos" type="java.lang.String"/>
+		<property name="graphicimage" type="java.lang.String"/>
 	</bean>
 	
 	 <bean class="de.hybris.platform.warehousingwebservices.dto.order.PackagingInfoWsDTO">
@@ -1338,12 +1342,12 @@
 		<property name="shippingLabelHistoryLogs" type="java.lang.String"/>
 		<property name="createdTS" type="java.util.Date"/>
 		<property name="modifiedTS" type="java.util.Date"/>
-		<property name="typePkString" type="String" />
-		<property name="ownerPkString" type="String" />
-		<property name="pK" type="String" />
-		<property name="sealed" type="String" />
-		<property name="consignmentpos" type="String" />
-		<property name="graphicimage" type="String" />
+		<property name="typePkString" type="java.lang.String"/>
+		<property name="ownerPkString" type="java.lang.String"/>
+		<property name="primaryKey" type="java.lang.String"/>
+		<property name="sealed" type="java.lang.String"/>
+		<property name="consignmentpos" type="java.lang.String"/>
+		<property name="graphicimage" type="java.lang.String"/>
 	</bean>
 	
 	<bean class="com.bl.facades.packageinfo.data.PackagingInfoListData">
@@ -1380,10 +1384,10 @@
 	  <property name="modifiedTS" type="java.util.Date"/>
 	  <property name="actualShippingDateToCustomer" type="java.util.Date"/>
 	  <property name="shipmentBlShippedStatusDate" type="java.util.Date"/>
-	  <property name="taskAssignmentWorkflow" type="String" />
-	  <property name="optimizedshippingtype" type="String" />
-	  <property name="carrier" type="String" />
-	  <property name="optimizedShippingMethodType" type="String" />
+	  <property name="taskAssignmentWorkflow" type="java.lang.String"/>
+	  <property name="optimizedshippingtype" type="java.lang.String"/>
+	  <property name="carrier" type="java.lang.String"/>
+	  <property name="optimizedShippingMethodType" type="java.lang.String"/>
 	  <property name="cleanCompleteConsignment" type="java.lang.Boolean" />
 	  <property name="threeDayGroundAvailability" type="java.lang.Boolean" />
 	  <property name="internalTransferConsignment" type="java.lang.Boolean" />
@@ -1391,7 +1395,8 @@
 	  <property name="optimizedRentalEndDateChangedByJob" type="java.lang.Boolean" />	
 	  <property name="rentalEndDate" type="java.util.Date"/>
 	  <property name="rentalStartDate" type="java.util.Date"/>
-	  <property name="orderNotes" type="String" />
+	  <property name="orderNotes" type="java.lang.String"/>
+	  <property name="primaryKey" type="java.lang.String"/>
 	</bean>
 	
 	
@@ -1411,6 +1416,7 @@
 		<property name="aCLTS" type="java.lang.String"/>
 		<property name="propTS" type="java.lang.String"/>
 		<property name="paymentInfoCode" type="java.lang.String"/>
+		<property name="primaryKey" type="java.lang.String"/>
 	</bean>
 
 	<bean class="de.hybris.platform.ordermanagementwebservices.dto.payment.PaymentTransactionWsDTO">
@@ -1422,6 +1428,7 @@
 		<property name="aCLTS" type="java.lang.String"/>
 		<property name="propTS" type="java.lang.String"/>
 		<property name="paymentInfoCode" type="java.lang.String"/>
+        <property name="primaryKey" type="java.lang.String"/>		
 	</bean>
 	
 	<bean class="com.bl.facades.paymentTransaction.data.PaymentTransactionListData">
@@ -1453,7 +1460,8 @@
 		<property name="paymentTransaction" type="java.lang.String"/>
 		<property name="refundedamount" type="java.math.BigDecimal"/>
 		<property name="submittedforsettlementamount" type="java.math.BigDecimal"/>
-		<property name="consignment" type="java.lang.String"/>		
+		<property name="consignment" type="java.lang.String"/>	
+		<property name="primaryKey" type="java.lang.String"/>	
     </bean>
     
     <bean class="de.hybris.platform.ordermanagementwebservices.dto.payment.PaymentTransactionEntryWsDTO">
@@ -1462,7 +1470,8 @@
 		<property name="paymentTransaction" type="java.lang.String"/>
 		<property name="refundedamount" type="java.math.BigDecimal"/>
 		<property name="submittedforsettlementamount" type="java.math.BigDecimal"/>
-		<property name="consignment" type="java.lang.String"/>	
+		<property name="consignment" type="java.lang.String"/>
+		<property name="primaryKey" type="java.lang.String"/>	
     </bean>
     
     <bean class="com.bl.facades.paymentTransaction.data.PaymentTransactionEntryListData">
@@ -1495,22 +1504,23 @@
     <bean class="de.hybris.platform.commercefacades.giftcard.data.GiftCardData">
    	  <property name="createdTS" type="java.util.Date"/>
 	  <property name="modifiedTS" type="java.util.Date"/>
-	  <property name="code" type="String" />
+	  <property name="code" type="java.lang.String"/>
 	  <property name="amount" type="double"/>
 	  <property name="currency" type="String"/>
 	  <property name="startDate" type="java.util.Date"/>
 	  <property name="endDate" type="java.util.Date"/>
 	  <property name="active" type="java.lang.Boolean" />
 	  <property name="email" type="java.lang.Boolean" />
-	  <property name="issuer" type="String" />
+	  <property name="issuer" type="java.lang.String"/>
 	  <property name="balance" type="double"/>
 	  <property name="isPurchased" type="java.lang.Boolean" />
-	  <property name="customerEmail" type="String" />
-	  <property name="name" type="String" />
-	  <property name="message" type="String" />
-	  <property name="discountID" type="String" />
+	  <property name="customerEmail" type="java.lang.String"/>
+	  <property name="name" type="java.lang.String"/>
+	  <property name="message" type="java.lang.String"/>
+	  <property name="discountID" type="java.lang.String"/>
 	  <property name="order" type="java.util.List&lt;String>" />
-	  <property name="customer" type="String" />
+	  <property name="customer" type="java.lang.String"/>
+	  <property name="primaryKey" type="java.lang.String"/>
 	</bean>
 	
 	<bean class="com.bl.facades.commercefacades.giftcard.data.GiftCardListData">
@@ -1523,14 +1533,15 @@
 	<bean class="de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData">
    	  <property name="createdTS" type="java.util.Date"/>
 	  <property name="modifiedTS" type="java.util.Date"/>
-	  <property name="transactionId" type="String" />
+	  <property name="transactionId" type="java.lang.String"/>
 	  <property name="amount" type="double"/>
 	  <property name="currency" type="String"/>
 	  <property name="redeemDate" type="java.util.Date"/>
 	  <property name="committed" type="java.lang.Boolean" />
 	  <property name="balanceAmount" type="double"/>
-	  <property name="order" type="String" />
-	  <property name="giftCard" type="String" />
+	  <property name="order" type="java.lang.String"/>
+	  <property name="giftCard" type="java.lang.String"/>
+	  <property name="primaryKey" type="java.lang.String"/>
 	</bean>
 	
 	<bean class="com.bl.facades.commercefacades.giftcard.movement.data.GiftCardMovementListData">
@@ -1575,7 +1586,7 @@
 	<property name="noDamageWaiverSelected" type="java.lang.Boolean"/>
 	<property name="availabilityMessage" type="com.bl.facades.product.data.AvailabilityMessage"/>
 	<property name="recipientEmail" type="java.lang.String"/>
-    <property name="recipientName" type="java.lang.String" />
+    <property name="recipientName" type="java.lang.String"/>
     <property name="recipientMessage" type="java.lang.String"/>
     <property name="messages" type="java.util.List&lt;com.bl.facades.product.data.AvailabilityMessage>"/>
 	<property name="option" type="java.util.List&lt;com.bl.facades.product.data.BlOptionData>"/>
@@ -1618,10 +1629,11 @@
  	<property name="entryGroupNumberCodes" type="java.lang.String"/>
  	<property name="quantitystatus" type="java.lang.String"/>
    	<property name="avalaralinetax" type="java.lang.Double"/>
-   	<property name="productCode" type="java.lang.String" />
+   	<property name="productCode" type="java.lang.String"/>
    	<property name="options" type="java.lang.String"/>	
    	<property name="deliveryaddress" type="java.lang.String"/>	
     <property name="info" type="java.lang.String"/>
+    <property name="primaryKey" type="java.lang.String"/>
   </bean>
 
     <bean class="com.bl.facades.order.data.OrderEntryListData">
@@ -1653,17 +1665,18 @@
     <bean class="de.hybris.platform.commercefacades.BlItemsBillingChargeData">
    	  <property name="createdTS" type="java.util.Date"/>
 	  <property name="modifiedTS" type="java.util.Date"/>
-	  <property name="billChargeType" type="String" />
+	  <property name="billChargeType" type="java.lang.String"/>
 	  <property name="chargedAmount" type="java.math.BigDecimal"/>
 	  <property name="taxAmount" type="java.math.BigDecimal"/>
 	  <property name="billPaid" type="java.lang.Boolean" />
-	  <property name="unPaidBillNotes" type="String" />
-	  <property name="code" type="String" />
-	  <property name="serialCode" type="String" />
-	  <property name="orderCode" type="String" />
-	  <property name="customer" type="String" />
+	  <property name="unPaidBillNotes" type="java.lang.String"/>
+	  <property name="code" type="java.lang.String"/>
+	  <property name="serialCode" type="java.lang.String"/>
+	  <property name="orderCode" type="java.lang.String"/>
+	  <property name="customer" type="java.lang.String"/>
 	  <property name="updatedBillTime" type="java.util.Date" />
-	  <property name="billStatus" type="String" />
+	  <property name="billStatus" type="java.lang.String"/>
+	  <property name="primaryKey" type="java.lang.String"/>
 	</bean>
 	
 	<bean class="com.bl.facades.commercefacades.BlItemsBillingChargeListData">
@@ -1718,6 +1731,7 @@
 		<property name="blRewards" type="java.math.BigDecimal"/>
 		<property name="averageGearOrderValue" type="java.lang.Double"/>
 		<property name="gearvalueordersinprogress" type="java.lang.Double"/>
+		<property name="primaryKey" type="java.lang.String"/>
 	</bean>
 	
 	<bean class="com.bl.facades.commercefacades.CustomerListsData">
@@ -1746,6 +1760,7 @@
   	  <property name="withOrderId" type="java.lang.String"/>
   	  <property name="createdTS" type="java.util.Date"/>
   	  <property name="modifiedTS" type="java.util.Date"/>
+  	  <property name="primaryKey" type="java.lang.String"/>
     </bean>  
     
     <bean class="com.bl.facades.blSerialLog.dto.BlSerialLogWsDTO">
@@ -1767,6 +1782,7 @@
   	  <property name="withOrderId" type="java.lang.String"/>
   	  <property name="createdTS" type="java.util.Date"/>
   	  <property name="modifiedTS" type="java.util.Date"/>
+  	  <property name="primaryKey" type="java.lang.String"/>
     </bean>
     
     <bean class="com.bl.facades.customerNotes.data.CustomerNotesData">
@@ -1778,8 +1794,8 @@
       <property name="customerNoteType" type="java.lang.String"/>
       <property name="fraud" type="java.lang.Boolean"/>
       <property name="customer" type="java.lang.String"/>
-      <property name="pk" type="java.lang.String"/>  
-      <property name="note" type="java.lang.String"/>                    
+      <property name="note" type="java.lang.String"/>
+      <property name="primaryKey" type="java.lang.String"/>                    
     </bean>
     
     <bean class="com.bl.facades.customerNotes.dto.CustomerNotesWsDTO">
@@ -1791,14 +1807,14 @@
       <property name="customerNoteType" type="java.lang.String"/>
       <property name="fraud" type="java.lang.Boolean"/>
       <property name="customer" type="java.lang.String"/>
-      <property name="pk" type="java.lang.String"/>    
-      <property name="note" type="java.lang.String"/>                              
+      <property name="primaryKey" type="java.lang.String"/>    
+      <property name="note" type="java.lang.String"/>
     </bean>
     
     <bean class="com.bl.facades.blRepairLog.data.BlRepairLogData">
       <property name="createdTS" type="java.util.Date"/>
       <property name="modifiedTS" type="java.util.Date"/>
-      <property name="pk" type="java.lang.String"/>                   
+      <property name="primaryKey" type="java.lang.String"/>                   
       <property name="serialCode" type="java.lang.String"/>             
       <property name="itemBarcode" type="java.lang.String"/>             
       <property name="repairTechsForClaim" type="java.lang.String"/>             
@@ -1832,13 +1848,13 @@
       <property name="damageWaiverPaid" type="java.lang.Double"/>                   
       <property name="repairLogId" type="java.lang.String"/>                   
       <property name="warehouse" type="java.lang.String"/>                   
-      <property name="ocLocation" type="java.lang.String"/>                                                     
+      <property name="ocLocation" type="java.lang.String"/>
     </bean>  
     
     <bean class="com.bl.facades.blRepairLog.dto.BlRepairLogWsDTO">
       <property name="createdTS" type="java.util.Date"/>
       <property name="modifiedTS" type="java.util.Date"/>
-      <property name="pk" type="java.lang.String"/>                   
+      <property name="primaryKey" type="java.lang.String"/>                   
       <property name="serialCode" type="java.lang.String"/>             
       <property name="itemBarcode" type="java.lang.String"/>             
       <property name="repairTechsForClaim" type="java.lang.String"/>             
@@ -1895,7 +1911,7 @@
       <property name="trackingNumber" type="java.lang.String"/>
       <property name="createdTS" type="java.util.Date"/>
       <property name="modifiedTS" type="java.util.Date"/>
-      <property name="pk" type="java.lang.String"/>                   
+      <property name="primaryKey" type="java.lang.String"/>                   
       <property name="serialCode" type="java.lang.String"/>             
       <property name="itemBarcode" type="java.lang.String"/>             
       <property name="repairTechsForClaim" type="java.lang.String"/>             
@@ -1944,7 +1960,7 @@
       <property name="partCost" type="java.lang.Double"/>
       <property name="createdTS" type="java.util.Date"/>
       <property name="modifiedTS" type="java.util.Date"/>
-      <property name="pk" type="java.lang.String"/>                   
+      <property name="primaryKey" type="java.lang.String"/>                   
       <property name="serialCode" type="java.lang.String"/>             
       <property name="itemBarcode" type="java.lang.String"/>             
       <property name="repairTechsForClaim" type="java.lang.String"/>             
@@ -1987,7 +2003,7 @@
     <bean class="com.bl.facades.inHouseRepairLog.dto.InHouseRepairLogWsDTO">
       <property name="createdTS" type="java.util.Date"/>
       <property name="modifiedTS" type="java.util.Date"/>
-      <property name="pk" type="java.lang.String"/>                   
+      <property name="primaryKey" type="java.lang.String"/>                   
       <property name="serialCode" type="java.lang.String"/>             
       <property name="itemBarcode" type="java.lang.String"/>             
       <property name="repairTechsForClaim" type="java.lang.String"/>             
@@ -2199,6 +2215,7 @@
       <property name="billPayment" type="java.lang.Boolean"/>
       <property name="modifyPayment" type="java.lang.Boolean"/>
       <property name="extendOrder" type="java.lang.Boolean"/>
+      <property name="primaryKey" type="java.lang.String"/>
     </bean>
     
      <bean class="com.braintree.hybris.data.BrainTreePaymentInfoListData">
@@ -2228,6 +2245,7 @@
       <property name="serialStatus" type="java.lang.String"/>
       <property name="asnEntry" type="java.lang.String"/>
       <property name="warehouseCode" type="java.lang.String"/>
+      <property name="primaryKey" type="java.lang.String"/>
 	</bean>
 	
 	<bean class="de.hybris.platform.warehousingfacades.product.data.StockLevelListData">
@@ -2243,7 +2261,8 @@
       <property name="type" type="java.lang.String"/>
       <property name="order" type="java.lang.String"/>
       <property name="note" type="java.lang.String"/>    
-      <property name="consignemnt" type="java.lang.String"/>                 
+      <property name="consignemnt" type="java.lang.String"/>   
+      <property name="primaryKey" type="java.lang.String"/>              
     </bean>
     
     <bean class="com.bl.facades.customerNotes.data.NotesListData">
@@ -2257,6 +2276,7 @@
         <property name="modifiedTS" type="java.util.Date"/>
         <property name="comments" type="java.lang.String"/>
         <property name="active" type="java.lang.Boolean"/>
+        <property name="primaryKey" type="java.lang.String"/>
     </bean>
     
      <bean class="com.bl.facades.regions.data.RegionsData">
@@ -2270,6 +2290,7 @@
         <property name="modifiedTS" type="java.util.Date"/>
         <property name="comments" type="java.lang.String"/>
         <property name="active" type="java.lang.Boolean"/>
+        <property name="primaryKey" type="java.lang.String"/>
     </bean>
     
     <bean class="de.hybris.platform.commercewebservicescommons.dto.user.RegionsWsDTO">

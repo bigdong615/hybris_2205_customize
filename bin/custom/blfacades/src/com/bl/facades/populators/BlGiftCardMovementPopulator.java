@@ -19,7 +19,8 @@ public class BlGiftCardMovementPopulator implements Populator<GiftCardMovementMo
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setTransactionId(source.getTransactionId());
-		if(source.getAmount()!=null) {
+		if (source.getAmount() != null)
+		{
 			target.setAmount(source.getAmount());
 		}
 		if (source.getCurrency() != null)
@@ -31,7 +32,7 @@ public class BlGiftCardMovementPopulator implements Populator<GiftCardMovementMo
 			target.setOrder(source.getOrder().getCode());
 		}
 		target.setRedeemDate(source.getRedeemDate());
-		if(source.getBalanceAmount()!=null)
+		if (source.getBalanceAmount() != null)
 		{
 			target.setBalanceAmount(source.getBalanceAmount());
 		}
@@ -40,6 +41,7 @@ public class BlGiftCardMovementPopulator implements Populator<GiftCardMovementMo
 		{
 			target.setGiftCard(source.getGiftCard().getCode());
 		}
+		target.setPrimaryKey(source.getPk().toString());
 	}
 
 }
