@@ -285,7 +285,7 @@
 																	 data-address-id="${deliveryAddress.id}"></div>
 																   	<b class="mt-4 mb-3">Add Your Billing Address</b>
 																   	<c:if test="${!cartData.hasGiftCart}">
-																   	<input type="checkbox" class="form-control ${hideUseShipping}" id="ccUseDeliveryAddress" name="useDeliveryAddress"/>
+																   	<input type="checkbox" checked class="form-control ${hideUseShipping}" id="ccUseDeliveryAddress" name="useDeliveryAddress"/>
 																   	<label for="ccUseDeliveryAddress" class="${hideUseShipping}">
 																   		<span class="gray80"><spring:theme code="checkout.multi.sop.useMyDeliveryAddress" /></span>
 																   	</label>    
