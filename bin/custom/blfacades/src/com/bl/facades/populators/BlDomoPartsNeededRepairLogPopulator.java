@@ -100,6 +100,8 @@ public class BlDomoPartsNeededRepairLogPopulator implements Populator<PartsNeede
 			target.setPartsStatus(source.getPartsStatus().getCode());
 		}
 		target.setPartCost(source.getPartCost());
+		target.setPrimaryKey(source.getPk().toString());
+
 	}
 
 }

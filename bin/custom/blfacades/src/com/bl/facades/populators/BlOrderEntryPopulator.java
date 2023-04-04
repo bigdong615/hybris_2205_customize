@@ -62,6 +62,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 				populateGiftCartPurcahseValues(source, target);
 				target.setAqautechProduct(BooleanUtils.isTrue(source.getAqautechProduct()));
 			}
+			target.setPrimaryKey(source.getPk().toString());
 		}
 	}
 

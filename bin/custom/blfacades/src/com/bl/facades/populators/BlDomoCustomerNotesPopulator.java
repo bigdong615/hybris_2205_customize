@@ -41,6 +41,7 @@ public class BlDomoCustomerNotesPopulator implements Populator<CustomerNotesMode
 			target.setCustomer(source.getCustomer().getUid());
 		}
 		target.setNote(source.getNote());
+		target.setPrimaryKey(source.getPk().toString());
 	}
 
 }

@@ -24,5 +24,8 @@ public class BlDomoRegionPopulator implements Populator<RegionModel, RegionData>
 			target.setCountryIso(source.getCountry().getIsocode());
 		}
 		target.setComments(source.getComments().stream().map(String::valueOf).collect(Collectors.joining(",")));
+		target.setPrimaryKey(source.getPk().toString());
+
+
 	}
 }
