@@ -73,11 +73,11 @@
                                 <div class="accordion-item shipProduct">
                                     <checkout:faster/>
                                 </div>
-                            <c:if test="${cartData.isRetailGearOrder eq false && cartData.isRentalCart}">
+                           <%-- <c:if test="${cartData.isRetailGearOrder eq false && cartData.isRentalCart}">
                                 <div class="accordion-item shipProduct">
                                     <checkout:fastest/>
                                 </div>
-                            </c:if>
+                            </c:if> --%>
 
                             </div><!-- End Accordion -->
                             <div id="showErrorForInputValidation">

@@ -145,7 +145,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
 
 	private static final String USED_GEAR_ABANDONED_CARTS  = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ CartEntryModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartEntryModel.CREATIONTIME + "},current_timestamp) > ?timer";
+			+ CartEntryModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartEntryModel.CREATIONTIME + "},?currentTime) > ?timer";
 
 	private static final String GET_ORDERS_TO_VOID_TRANSACTION  = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISAUTHORIZATIONVOIDED +
@@ -153,7 +153,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ "{o:" + OrderModel.ISREPLACEMENTORDER + "} =?isReplacementOrder AND "
 			+ "{o:" + OrderModel.GIFTCARDORDER + "} =?isGiftCardOrder AND "
 			+ "{o:" + OrderModel.ISRETAILGEARORDER + "} =?isNewGearOrder AND "
-			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},current_timestamp) > ?timer";
+			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},?currentTime) > ?timer";
 
 	private static final String GHOST_ORDERS  = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISEXTENDEDORDER + "} =?isExtendedOrder";
@@ -558,12 +558,16 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		// Added 8 seconds buffer, so that cron job will never clear the carts before it gets cleared from front end
 		fQuery.addQueryParameter(TIMER, Integer.valueOf(baseStore.getUsedGearCartTimer())
 				+ BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS);
+		Date currentDate = new Date();
+		fQuery.addQueryParameter("currentTime",currentDate);
+		BlLogger.logMessage(LOG, Level.DEBUG, "Getting all abandoned cart entry from current time:"+currentDate);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<CartEntryModel> cartEntries = result.getResult();
 		if (CollectionUtils.isEmpty(cartEntries)) {
 			BlLogger.logMessage(LOG, Level.INFO, "No abandoned carts found for for used gear products");
 			return Collections.emptyList();
 		}
+		cartEntries.forEach(cartEntryModel -> BlLogger.logMessage(LOG, Level.DEBUG, "Creation time :"+cartEntryModel.getCreationtime()+" Current time :"+currentDate +" for entry :"+cartEntryModel.getPk()));
 		return cartEntries;
 	}
 
@@ -578,6 +582,9 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		fQuery.addQueryParameter(IS_REPLACEMENT_ORDER, Boolean.FALSE);
 		fQuery.addQueryParameter(IS_GIFT_CARD_ORDER, Boolean.FALSE);
 		fQuery.addQueryParameter(IS_NEW_GEAR_ORDER, Boolean.FALSE);
+		Date currentDate = new Date();
+		fQuery.addQueryParameter("currentTime",currentDate);
+		BlLogger.logMessage(LOG, Level.DEBUG, "Getting all void transaction order from current time:"+currentDate);
 		fQuery.addQueryParameter(TIMER, getConfigurationService().getConfiguration().getInt(DELAY_VOID_TRANSACTION_BY_TIME));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<OrderModel> orders = result.getResult();
@@ -585,6 +592,8 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			BlLogger.logMessage(LOG , Level.INFO , "No orders found to void $1 authorization transactions");
 			return Collections.emptyList();
 		}
+		orders.forEach(orderModel -> BlLogger.logMessage(LOG, Level.DEBUG, "Creation time :"+orderModel.getCreationtime()+" Current time :"+currentDate +" for order :"+orderModel.getCode()));
+
 		return orders;
 	}
 	/**

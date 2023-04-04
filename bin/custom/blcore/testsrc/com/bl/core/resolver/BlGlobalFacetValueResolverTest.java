@@ -1,10 +1,8 @@
 package com.bl.core.resolver;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.bl.core.model.BlProductModel;
-import com.bl.core.resolvers.BlGlobalFacetValueResolver;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.jalo.JaloSession;
@@ -18,20 +16,27 @@ import de.hybris.platform.solrfacetsearch.config.exceptions.FieldValueProviderEx
 import de.hybris.platform.solrfacetsearch.indexer.IndexerBatchContext;
 import de.hybris.platform.solrfacetsearch.indexer.spi.InputDocument;
 import de.hybris.platform.solrfacetsearch.provider.QualifierProvider;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.model.BlProductModel;
+import com.bl.core.resolvers.BlGlobalFacetValueResolver;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BlGlobalFacetValueResolverTest {
 
   private static final String INDEXED_PROPERTY_NAME = "store";
@@ -73,7 +78,7 @@ public class BlGlobalFacetValueResolverTest {
 
   @Before
   public void startUp() {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     indexedProperty = new IndexedProperty();
     indexedProperty.setName(INDEXED_PROPERTY_NAME);
     indexedProperty.setValueProviderParameters(new HashMap<>());
@@ -104,13 +109,13 @@ public class BlGlobalFacetValueResolverTest {
     final Collection<CategoryModel> categories = new ArrayList<>();
     final List<CategoryModel> superCategories = new ArrayList<>();
     final CategoryModel categoryModel = new CategoryModel();
-    LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
-    ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
+    final LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
+    final ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
     itemModelContext.setLocaleProvider(localeProvider);
     categoryModel.setCode(CATEGORY_CODE);
     categoryModel.setName(CATEGORY_NAME);
     final CategoryModel superCategory = new CategoryModel();
-    ItemModelContextImpl itemModelContext1 = (ItemModelContextImpl) superCategory.getItemModelContext();
+    final ItemModelContextImpl itemModelContext1 = (ItemModelContextImpl) superCategory.getItemModelContext();
     itemModelContext1.setLocaleProvider(localeProvider);
     superCategory.setCode(CATEGORY_CODE3);
     superCategory.setName(CATEGORY_NAME3);
@@ -130,13 +135,13 @@ public class BlGlobalFacetValueResolverTest {
     final Collection<CategoryModel> categories = new ArrayList<>();
     final List<CategoryModel> superCategories = new ArrayList<>();
     final CategoryModel categoryModel = new CategoryModel();
-    LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
-    ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
+    final LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
+    final ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
     itemModelContext.setLocaleProvider(localeProvider);
     categoryModel.setCode(CATEGORY_CODE1);
     categoryModel.setName(CATEGORY_NAME1);
     final CategoryModel superCategory = new CategoryModel();
-    ItemModelContextImpl itemModelContext1 = (ItemModelContextImpl) superCategory.getItemModelContext();
+    final ItemModelContextImpl itemModelContext1 = (ItemModelContextImpl) superCategory.getItemModelContext();
     itemModelContext1.setLocaleProvider(localeProvider);
     superCategory.setCode(CATEGORY_CODE);
     superCategory.setName(CATEGORY_NAME);
@@ -163,11 +168,11 @@ public class BlGlobalFacetValueResolverTest {
     final CategoryModel categoryModel1 = new CategoryModel();
     final CategoryModel categoryModel2 = new CategoryModel();
     final CategoryModel categoryModel3 = new CategoryModel();
-    LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
-    ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
-    ItemModelContextImpl itemModelContext1 = (ItemModelContextImpl) categoryModel1.getItemModelContext();
-    ItemModelContextImpl itemModelContext2 = (ItemModelContextImpl) categoryModel2.getItemModelContext();
-    ItemModelContextImpl itemModelContext3 = (ItemModelContextImpl) categoryModel3.getItemModelContext();
+    final LocaleProvider localeProvider = new StubLocaleProvider(Locale.ENGLISH);
+    final ItemModelContextImpl itemModelContext = (ItemModelContextImpl) categoryModel.getItemModelContext();
+    final ItemModelContextImpl itemModelContext1 = (ItemModelContextImpl) categoryModel1.getItemModelContext();
+    final ItemModelContextImpl itemModelContext2 = (ItemModelContextImpl) categoryModel2.getItemModelContext();
+    final ItemModelContextImpl itemModelContext3 = (ItemModelContextImpl) categoryModel3.getItemModelContext();
     itemModelContext.setLocaleProvider(localeProvider);
     itemModelContext1.setLocaleProvider(localeProvider);
     itemModelContext2.setLocaleProvider(localeProvider);
@@ -181,28 +186,28 @@ public class BlGlobalFacetValueResolverTest {
     categoryModel3.setCode(CATEGORY_CODE3);
     categoryModel3.setName(CATEGORY_NAME3);
     final CategoryModel superCategory = new CategoryModel();
-    ItemModelContextImpl itemModelContext4 = (ItemModelContextImpl) superCategory.getItemModelContext();
+    final ItemModelContextImpl itemModelContext4 = (ItemModelContextImpl) superCategory.getItemModelContext();
     itemModelContext4.setLocaleProvider(localeProvider);
     superCategory.setCode(CATEGORY_CODE4);
     superCategory.setName(CATEGORY_NAME4);
     superCategories.add(superCategory);
 
     final CategoryModel superCategory1 = new CategoryModel();
-    ItemModelContextImpl itemModelContext5 = (ItemModelContextImpl) superCategory1.getItemModelContext();
+    final ItemModelContextImpl itemModelContext5 = (ItemModelContextImpl) superCategory1.getItemModelContext();
     itemModelContext5.setLocaleProvider(localeProvider);
     superCategory1.setCode(CATEGORY_CODE4);
     superCategory1.setName(CATEGORY_NAME4);
     superCategories1.add(superCategory1);
 
     final CategoryModel superCategory2 = new CategoryModel();
-    ItemModelContextImpl itemModelContext6 = (ItemModelContextImpl) superCategory2.getItemModelContext();
+    final ItemModelContextImpl itemModelContext6 = (ItemModelContextImpl) superCategory2.getItemModelContext();
     itemModelContext6.setLocaleProvider(localeProvider);
     superCategory2.setCode(CATEGORY_CODE5);
     superCategory2.setName(CATEGORY_NAME5);
     superCategories2.add(superCategory2);
 
     final CategoryModel superCategory3 = new CategoryModel();
-    ItemModelContextImpl itemModelContext7 = (ItemModelContextImpl) superCategory3.getItemModelContext();
+    final ItemModelContextImpl itemModelContext7 = (ItemModelContextImpl) superCategory3.getItemModelContext();
     itemModelContext7.setLocaleProvider(localeProvider);
     superCategory3.setCode(CATEGORY_CODE6);
     superCategory3.setName(CATEGORY_NAME6);

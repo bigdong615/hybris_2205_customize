@@ -18,9 +18,10 @@ import de.hybris.platform.store.services.BaseStoreService;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import com.braintree.method.BrainTreePaymentService;
@@ -29,6 +30,7 @@ import com.braintree.paypal.converters.impl.BrainTreePaymentInfoDataConverter;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BrainTreePaymentFacadeImplTest
 {
 
@@ -58,7 +60,7 @@ public class BrainTreePaymentFacadeImplTest
 	@Before
 	public void init()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test

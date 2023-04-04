@@ -33,12 +33,13 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
+import org.mockito.junit.MockitoJUnitRunner;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class ASMCMSUserGroupRestrictionEvaluatorTest
 {
 	@Mock
@@ -48,12 +49,12 @@ public class ASMCMSUserGroupRestrictionEvaluatorTest
 	private SessionService sessionService;
 
 	@InjectMocks
-	private ASMCMSUserGroupRestrictionEvaluator evaluator = new ASMCMSUserGroupRestrictionEvaluator();
+	private final ASMCMSUserGroupRestrictionEvaluator evaluator = new ASMCMSUserGroupRestrictionEvaluator();
 
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 

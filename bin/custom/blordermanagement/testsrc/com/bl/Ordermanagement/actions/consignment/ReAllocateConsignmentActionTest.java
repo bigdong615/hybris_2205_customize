@@ -38,8 +38,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -159,7 +161,7 @@ public class ReAllocateConsignmentActionTest
 		manualEntry.setReason(DeclineReason.DAMAGED);
 
 		when(originalWarehouse.isExternal()).thenReturn(false);
-		when(orderBusinessProcessService.getProcess(ORDER_PROCESS_CODE)).thenReturn(orderProcessModel);
+		Mockito.lenient().when(orderBusinessProcessService.getProcess(ORDER_PROCESS_CODE)).thenReturn(orderProcessModel);
 		when(orderBusinessProcessService
 				.createProcess(anyString(), eq(BlOrdermanagementConstants.CONSIGNMENT_SUBPROCESS_NAME)))
 				.thenReturn(newConsignmentProcessModel);

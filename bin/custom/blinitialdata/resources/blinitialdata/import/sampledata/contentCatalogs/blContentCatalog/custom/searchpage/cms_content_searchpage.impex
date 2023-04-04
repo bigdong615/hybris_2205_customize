@@ -4,27 +4,27 @@ $contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCa
 
 #### SearchResultGridPage
 
-INSERT_UPDATE SearchResultsGridComponent; $contentCV[unique = true]; uid[unique = true]; name                         ; actions(uid, $contentCV); &componentRef
-                                        ;                          ; SearchResultsGrid ; Search Result Grid Component ; ListAddToCartAction     ; SearchResultsGrid
+INSERT_UPDATE SearchResultsGridComponent ; $contentCV[unique = true] ; uid[unique = true] ; name                         ; actions(uid, $contentCV) ; &componentRef    
+                                         ;                           ; SearchResultsGrid  ; Search Result Grid Component ; ListAddToCartAction      ; SearchResultsGrid
 
-UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]    ; cmsComponents(&componentRef); ; ;
-                  ;                          ; SearchResultsGridSlot ; SearchResultsGrid           ; ; ;
+UPDATE ContentSlot ; $contentCV[unique = true] ; uid[unique = true]    ; cmsComponents(&componentRef) ;  ;  ;  
+                   ;                           ; SearchResultsGridSlot ; SearchResultsGrid            ;  ;  ;  
 
-INSERT_UPDATE SearchBoxComponent; $contentCV[unique = true]; uid[unique = true]; name       ; &componentRef
-                                ;                          ; BlSearchBox       ; Search Box ; BlSearchBox
+INSERT_UPDATE SearchBoxComponent ; $contentCV[unique = true] ; uid[unique = true] ; name       ; &componentRef
+                                 ;                           ; BlSearchBox        ; Search Box ; BlSearchBox  
 
-INSERT_UPDATE ListAddToCartAction; $contentCV[unique = true]; uid[unique = true]  ; url       ; name                            ; &actionRef
-                                 ;                          ; ListAddToCartAction ; /cart/add ; Product Add To Cart Action List ; ListAddToCartAction
-
-
-INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid,$contentCV)
-                         ;;SearchBoxBl;BlSearchBox
-
-INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid,$contentCV)
-                         ;;ProductLeftRefinements;RefinementFacetComponent
+INSERT_UPDATE ListAddToCartAction ; $contentCV[unique = true] ; uid[unique = true]  ; url       ; name                            ; &actionRef         
+                                  ;                           ; ListAddToCartAction ; /cart/add ; Product Add To Cart Action List ; ListAddToCartAction
 
 
-INSERT_UPDATE ProductRefinementComponent;$contentCV[unique=true];uid[unique=true];name;&componentRef
-                                        ;;RefinementFacetComponent;Product Refinement Facet Component;RefinementFacetComponent
+INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true] ; cmsComponents(uid,$contentCV)
+                          ;                         ; SearchBoxBl      ; BlSearchBox                  
+
+INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]       ; cmsComponents(uid,$contentCV)
+                          ;                         ; ProductLeftRefinements ; RefinementFacetComponent     
+
+
+INSERT_UPDATE ProductRefinementComponent ; $contentCV[unique=true] ; uid[unique=true]         ; name                               ; &componentRef           
+                                         ;                         ; RefinementFacetComponent ; Product Refinement Facet Component ; RefinementFacetComponent
 
 

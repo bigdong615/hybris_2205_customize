@@ -1,20 +1,24 @@
 package com.bl.integration.populator;
 
-import com.bl.facades.locator.data.UPSLocatorRequestData;
-import com.bl.integration.populators.BlLocatorRequestPopulator;
-import com.bl.integration.request.jaxb.LocatorRequest;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.facades.locator.data.UPSLocatorRequestData;
+import com.bl.integration.populators.BlLocatorRequestPopulator;
+import com.bl.integration.request.jaxb.LocatorRequest;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BlLocatorRequestPopulatorTest {
 
   @InjectMocks
@@ -31,7 +35,7 @@ public class BlLocatorRequestPopulatorTest {
 
   @Before
   public void prepare() {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     locatorRequest = new LocatorRequest();
     BDDMockito.given(locatorFormDTO.getZipcode()).willReturn(ZIPCODE);
     BDDMockito.given(locatorFormDTO.getCountryCode()).willReturn(COUNTRY_CODE);

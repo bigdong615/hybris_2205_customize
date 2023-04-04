@@ -5223,7 +5223,7 @@
                 <custom-properties>
                     <property name="query">
                         <value>
-                            "SELECT {order:code} as orderNumber,{order:rentalEndDate} as rentalEndDate, {cs.code} as consignmentStatus, {order.pickUpPersonFirstName} as FirstNameOfPickUpPerson, {order.pickUpPersonLastName} as LastNameOfPickUpPerson FROM {Consignment as c},{ConsignmentStatus as cs},{Order as order},{OrderTypeEnum as ot} where {ot.code} = 'FD' AND {order:orderType} = {ot:pk} AND {c:order} = {order:pk} AND {cs:pk} = {c:status} AND (CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) OR {c:optimizedShippingStartDate} >= ?optimizedShippingStartDate) AND {c.warehouse} =?warehouse"
+                            "SELECT {order:code} as orderNumber,{order:rentalEndDate} as rentalEndDate, {cs.code} as consignmentStatus, {order.pickUpPersonFirstName} as FirstNameOfPickUpPerson, {order.pickUpPersonLastName} as LastNameOfPickUpPerson FROM {Consignment as c},{ConsignmentStatus as cs},{Order as order},{OrderTypeEnum as ot} where {ot.code} = 'FD' AND {order:orderType} = {ot:pk} AND {c:order} = {order:pk} AND {cs:pk} = {c:status} AND {c:optimizedShippingStartDate} >= ?optimizedShippingStartDate AND {c.warehouse} =?warehouse"
                         </value>
                     </property>
                 </custom-properties>

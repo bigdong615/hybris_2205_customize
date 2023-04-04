@@ -693,6 +693,7 @@
           class="de.hybris.platform.warehousing.cancellation.strategy.impl.WarehousingOrderCancelStateMappingStrategy"
           scope="prototype" parent="defaultOrderCancelStateMappingStrategy">
         <property name="confirmedConsignmentStatus" ref="warehousingConfirmedConsignmentStatus"/>
+         <property name="modelService" ref="modelService"/>
     </bean>
 
     <util:list id="warehousingConfirmedConsignmentStatus" value-type="de.hybris.platform.basecommerce.enums.ConsignmentStatus">
@@ -995,6 +996,7 @@
           class="de.hybris.platform.warehousing.returns.strategy.impl.WarehousingOrderEntryBasedReturnableCheck">
         <property name="returnService" ref="returnService"/>
         <property name="invalidReturnStatusForIncompleteReturns" ref="invalidReturnStatusForIncompleteReturns"/>
+        <property name="modelService" ref="modelService"/>
     </bean>
 
     <alias alias="returnService" name="warehousingReturnService"/>

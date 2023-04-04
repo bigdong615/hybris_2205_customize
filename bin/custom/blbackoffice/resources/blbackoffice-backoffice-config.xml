@@ -2405,6 +2405,7 @@
 				<n:type-node code="UPSScrapeSerialView" id="blnventoryscan_UPS_Scrape_completed_and_Shipped_serial"/>
 				<n:type-node code="UPSScrapeSerialReturningView" id="blnventoryscan_UPS_Scrape_completed_serial"/>
 			</n:navigation-node>
+			<n:navigation-node id="OrderConsolidationTool" code="OrderConsolidationTool"/>
 			<n:type-node code="CronJob" id="CronJob"/>
 		</n:explorer-tree>
 	</context>
@@ -2711,7 +2712,8 @@
 			<n:type-node id="Order" code="Order"/>    
 			<n:navigation-node id="blinventoryscan_name">
 				<n:navigation-node id="WebScanTool"/>
-			</n:navigation-node>        
+			</n:navigation-node>
+			<n:navigation-node id="OrderConsolidationTool" code="OrderConsolidationTool"/>        
         </n:explorer-tree>
     </context>
     
@@ -3577,6 +3579,8 @@
 				<advanced-search:field name="pickUpPersonFirstName" />
 				<advanced-search:field name="pickUpPersonLastName" />
 				<advanced-search:field name="verificationStatus" />
+				<advanced-search:field name="actualRentalStartDate" />
+				<advanced-search:field name="isReplacementOrder" />
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>

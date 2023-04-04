@@ -9,19 +9,20 @@ import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.commercefacades.order.data.CartRestorationData;
 import de.hybris.platform.servicelayer.session.SessionService;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class CartPageControllerTest
 {
 
@@ -41,7 +42,7 @@ public class CartPageControllerTest
 	@Before
 	public void prepare()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		//
 		BDDMockito.given(controller.getSiteConfigService()).willReturn(service);
 		restorationData = Mockito.mock(CartRestorationData.class);

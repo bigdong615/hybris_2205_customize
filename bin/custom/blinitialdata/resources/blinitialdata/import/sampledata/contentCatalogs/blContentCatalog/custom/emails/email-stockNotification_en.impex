@@ -11,65 +11,65 @@ $emailResource=jar:com.bl.blstocknotificationaddon.constants.Blstocknotification
 $lang=en
 
 # Email Pages
-UPDATE EmailPage;$contentCV[unique=true];uid[unique=true];fromEmail[lang=$lang];fromName[lang=$lang]
-                ;;ProductNotifyMeEmail;"customerservices@hybris.com";"Customer Services Team"
+UPDATE EmailPage ; $contentCV[unique=true] ; uid[unique=true]     ; fromEmail[lang=$lang]         ; fromName[lang=$lang]    
+                 ;                         ; ProductNotifyMeEmail ; "customerservices@hybris.com" ; "Customer Services Team"
 
-UPDATE EmailPage;$contentCV[unique=true];uid[unique=true];fromEmail[lang=$lang];fromName[lang=$lang]
-                ;;ProductBackInStockNotificationEmail;"customerservices@hybris.com";"Customer Services Team"
+UPDATE EmailPage ; $contentCV[unique=true] ; uid[unique=true]                    ; fromEmail[lang=$lang]         ; fromName[lang=$lang]    
+                 ;                         ; ProductBackInStockNotificationEmail ; "customerservices@hybris.com" ; "Customer Services Team"
 
 
-INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]
-                                   ;; BlSiteLogoEmailComponent ;  "<tr style=""valign: bottom;"">
- <td width=""50%"" rowspan=""2""><a href=""${ctx.secureBaseUrl}""><img border=""0"" width=""100%"" alt=""Borrow Lenses"" src=""https://cdn.static-bl.com/images/newsletter/logo.png"" style=""display: block; width: 100%;"" border=""0""></a></td>
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]            ; content[lang=$lang]                                        
+                                    ;                         ; BlSiteLogoEmailComponent    ; "<tr style=""valign: bottom                                ; "">              
+<td width=""50%"" rowspan=""2""><a href=""${ctx.secureBaseUrl}""><img border=""0"" width=""100%"" alt=""Borrow Lenses"" src=""https://cdn.static-bl.com/images/newsletter/logo.png"" style=""display: block; width: 100%             ; "" border=""0""></a></td>   
  <td width=""50%""><img src=""https://cdn.static-bl.com/images/newsletter/spc.png"" height=""40""></td></tr>
- <tr><td style=""font-family: Tahoma, Arial, sans-serif; font-size: 10px; text-align: right; display: block; width: 100%; valign: bottom;"">&nbsp;</td>
-</tr>"
+<tr><td style=""font-family: Tahoma, Arial, sans-serif; font-size: 10px         ; text-align: right           ; display: block                                             ; width: 100%      ; valign: bottom                          ; "">&nbsp           ; </td>                     
+</tr>"                              
 
-                                   ;;BlBottomSocialLinkComponent ; "<table width=""100%""><tr><td align=""center""><table><tr>
-	<td width=""16"" align=""center"">
-      <a style=""font-weight:normal;color:#000000;text-decoration:none;line-height:100%;"" href=""https://facebook.com/Borrowlenses"">
-        <img style=""height: 16px; padding:10px 15px;"" src=""https://cdn.static-bl.com/images/newsletter/ico_fb.png"" alt=""Facebook"" height=""16"" width=""16""></a>
+                                    ;                         ; BlBottomSocialLinkComponent ; "<table width=""100%""><tr><td align=""center""><table><tr>
+	<td width=""16"" align=""center""> 
+<a style=""font-weight:normal       ; color:#000000           ; text-decoration:none        ; line-height:100%                                           ; "" href=""https://facebook.com/Borrowlenses"">
+<img style=""height: 16px           ; padding:10px 15px       ; "" src=""https://cdn.static-bl.com/images/newsletter/ico_fb.png"" alt=""Facebook"" height=""16"" width=""16""></a>
      </td><td width=""16"" align=""center"">
-	  <a style=""font-weight:normal;color:#000000;text-decoration:none;line-height:100%;"" href=""https://www.youtube.com/user/BorrowLenses/featured"">
-        <img style=""height: 16px; padding:10px 15px;"" src=""https://cdn.static-bl.com/images/newsletter/ico_yt.png"" alt=""YouTube"" height=""16"" width=""16""></a>
-   	</td>
+<a style=""font-weight:normal       ; color:#000000           ; text-decoration:none        ; line-height:100%                                           ; "" href=""https://www.youtube.com/user/BorrowLenses/featured"">
+<img style=""height: 16px           ; padding:10px 15px       ; "" src=""https://cdn.static-bl.com/images/newsletter/ico_yt.png"" alt=""YouTube"" height=""16"" width=""16""></a>
+   	</td>                           
    	</td><td width=""16"" align=""center"">
-      <a style=""font-weight:normal;color:#000000;text-decoration:none;line-height:100%;"" href=""https://instagram.com/borrowlenses"">
-        <img style=""height: 16px; padding:10px 15px;"" src=""https://cdn.static-bl.com/images/newsletter/ico_ig.png"" alt=""Instagram"" height=""16"" width=""16""></a>
+<a style=""font-weight:normal       ; color:#000000           ; text-decoration:none        ; line-height:100%                                           ; "" href=""https://instagram.com/borrowlenses"">
+<img style=""height: 16px           ; padding:10px 15px       ; "" src=""https://cdn.static-bl.com/images/newsletter/ico_ig.png"" alt=""Instagram"" height=""16"" width=""16""></a>
     </td><td width=""16"" align=""center"">
-     <a style=""font-weight:normal;color:#000000;text-decoration:none;line-height:100%;"" href=""https://www.borrowlenses.com/blog"">
-      	<img style=""height: 16px; padding:10px 15px;"" src=""https://cdn.static-bl.com/images/newsletter/ico_rss.png"" alt=""RSS Blog"" height=""16"" width=""16""></a>
-	 </td>
-</tr></table>
-</td></tr></table>"
+<a style=""font-weight:normal       ; color:#000000           ; text-decoration:none        ; line-height:100%                                           ; "" href=""https://www.borrowlenses.com/blog"">
+<img style=""height: 16px           ; padding:10px 15px       ; "" src=""https://cdn.static-bl.com/images/newsletter/ico_rss.png"" alt=""RSS Blog"" height=""16"" width=""16""></a>
+	 </td>                             
+</tr></table>                       
+</td></tr></table>"                 
 
-                                   ;;BlBottomContentComponent ; "<div style=""margin-top: 10px; padding: 4px 8px; font-family: helvetica,arial,sans-serif; text-align: center; background-color: #ededf0;"">
-  <a href=""${ctx.secureBaseUrl}/contactus"" style=""font-family: sans-serif;text-decoration:none;color:#000000;padding:0 5px;display:inline-block;font-weight:normal;line-height:100%;"">Expert Help</a> |
-  <a href=""${ctx.secureBaseUrl}/my-account/orders"" style=""text-decoration:none;color:#000000;padding:0 5px;display:inline-block;font-weight:normal;line-height:100%;"">My Account</a>
-</div>
+                                    ;                         ; BlBottomContentComponent    ; "<div style=""margin-top: 10px                             ; padding: 4px 8px ; font-family: helvetica,arial,sans-serif ; text-align: center ; background-color: #ededf0 ; "">
+<a href=""${ctx.secureBaseUrl}/contactus"" style=""font-family: sans-serif; text-decoration:none    ; color:#000000               ; padding:0 5px                                              ; display:inline-block; font-weight:normal                      ; line-height:100%   ; "">Expert Help</a> |      
+<a href=""${ctx.secureBaseUrl}/my-account/orders"" style=""text-decoration:none; color:#000000           ; padding:0 5px               ; display:inline-block                                       ; font-weight:normal; line-height:100%                        ; "">My Account</a>  
+</div>                              
 
-<div style=""margin-top: 10px; padding: 4px 8px; font-family: helvetica,arial,sans-serif; text-align: center;"">
-<a href=""${ctx.secureBaseUrl}"" style=""font-size:18px;color:#000000;display:block;text-decoration:none;font-weight:normal;line-height:100%;"">www.borrowlenses.com</a><br />
+<div style=""margin-top: 10px       ; padding: 4px 8px        ; font-family: helvetica,arial,sans-serif; text-align: center                                         ; "">              
+<a href=""${ctx.secureBaseUrl}"" style=""font-size:18px; color:#000000           ; display:block               ; text-decoration:none                                       ; font-weight:normal; line-height:100%                        ; "">www.borrowlenses.com</a><br />
 
-<span style=""font-family: helvetica,arial,sans-serif; text-align: center; font-size: 12px; color: #000; display: block; margin-bottom: 25px;"">
+<span style=""font-family: helvetica,arial,sans-serif; text-align: center      ; font-size: 12px             ; color: #000                                                ; display: block   ; margin-bottom: 25px                     ; "">                
 
 	This message is being sent to you because you requested information from BorrowLenses.
-	<br /><br />
+	<br /><br />                       
 
 	Copyright (C) 2021 BorrowLenses. All rights reserved.
 
-	<br /><br />
-	Our mailing address is:<br />
-	BorrowLenses.com<br />
-	1664 Industrial Road<br />
-	San Carlos, CA 94070<br />
+	<br /><br />                       
+	Our mailing address is:<br />      
+	BorrowLenses.com<br />             
+	1664 Industrial Road<br />         
+	San Carlos, CA 94070<br />         
 
-</span>
-</p><p></p><a href=""#"" style=""color:#000000;font-weight:normal;text-decoration:none;line-height:100%;""> </a></div>"
+</span>                             
+</p><p></p><a href=""#"" style=""color:#000000; font-weight:normal      ; text-decoration:none        ; line-height:100%                                           ; ""> </a></div>"  
 
 
 
-UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid,$contentCV)
-                  ;;BlSiteLogoSlot;BlSiteLogoEmailComponent
-                  ;;BlBottomSocialLinkSlot;BlBottomSocialLinkComponent
-                  ;;BlBottomContentSlot ; BlBottomContentComponent
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]       ; cmsComponents(uid,$contentCV)
+                   ;                         ; BlSiteLogoSlot         ; BlSiteLogoEmailComponent     
+                   ;                         ; BlBottomSocialLinkSlot ; BlBottomSocialLinkComponent  
+                   ;                         ; BlBottomContentSlot    ; BlBottomContentComponent     

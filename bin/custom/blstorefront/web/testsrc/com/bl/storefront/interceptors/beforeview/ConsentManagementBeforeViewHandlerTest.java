@@ -4,15 +4,24 @@
 package com.bl.storefront.interceptors.beforeview;
 
 
+import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
+import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_TEMPLATES;
+import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_WITHDRAWN;
+import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.USER_CONSENTS;
+import static de.hybris.platform.testframework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.consent.ConsentFacade;
 import de.hybris.platform.commercefacades.consent.data.ConsentData;
 import de.hybris.platform.commercefacades.consent.data.ConsentTemplateData;
 import de.hybris.platform.commercefacades.user.UserFacade;
 import de.hybris.platform.servicelayer.session.SessionService;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -22,30 +31,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
-import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
-import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_TEMPLATES;
-import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_WITHDRAWN;
-import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.USER_CONSENTS;
-import static de.hybris.platform.testframework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class ConsentManagementBeforeViewHandlerTest
 {
 	public static final String TEMPLATE_CODE_GIVEN = "templateCodeGiven";
@@ -76,7 +77,7 @@ public class ConsentManagementBeforeViewHandlerTest
 	@Before
 	public void setUp() throws IOException
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		// consent template data setup
 		final ConsentData givenConsent = ConsentDataBuilder.aConsentData()//

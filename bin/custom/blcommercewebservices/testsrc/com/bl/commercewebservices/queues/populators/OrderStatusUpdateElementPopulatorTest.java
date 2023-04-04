@@ -11,17 +11,20 @@ import de.hybris.platform.commerceservices.util.ConverterFactory;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-import com.bl.commercewebservices.queues.data.OrderStatusUpdateElementData;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.commercewebservices.queues.data.OrderStatusUpdateElementData;
 
 
 @SuppressWarnings("deprecation")
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class OrderStatusUpdateElementPopulatorTest
 {
 	private static final String ORDER_CODE = "orderCode";
@@ -33,7 +36,7 @@ public class OrderStatusUpdateElementPopulatorTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		final OrderStatusUpdateElementPopulator orderStatusUpdateElementPopulator = new OrderStatusUpdateElementPopulator();
 		orderStatusUpdateElementConverter = new ConverterFactory<OrderModel, OrderStatusUpdateElementData, OrderStatusUpdateElementPopulator>()

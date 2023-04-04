@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<widget-definition id="custom.bl.widgets.orderConsolidation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd">
+
+	<name>Order Consolidation</name>
+	<description>Order Consolidation Tool</description>
+	<defaultTitle>Order Consolidation</defaultTitle>
+    <author>hybris</author>
+    <version>0.1</version>
+    <view src="orderConsolidation.zul" />
+    
+    <sockets>
+		<output type="java.lang.String" id="confirmOutput" />
+		<output type="java.lang.String" id="webScanTool" />
+	</sockets>
+    
+    
+    <keywords>
+        <keyword>OMS</keyword>
+    </keywords>
+    
+    <controller class="com.bl.backoffice.widget.controller.BlOrderConsolidationController" />
+    
+</widget-definition>

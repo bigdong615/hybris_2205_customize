@@ -1,16 +1,5 @@
 package com.bl.core.datepicker.impl;
 
-import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.enums.BlackoutDateTypeEnum;
-import com.bl.core.model.BlBlackoutDateModel;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.logging.BlLogger;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.collect.Lists;
-
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.store.services.BaseStoreService;
 
@@ -28,6 +17,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.web.util.WebUtils;
+
+import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.BlBlackoutDateModel;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -145,7 +145,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 		}
 		return null;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -215,7 +215,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	/**
 	 * @param baseStoreService the baseStoreService to set
 	 */
-	public void setBaseStoreService(BaseStoreService baseStoreService)
+	public void setBaseStoreService(final BaseStoreService baseStoreService)
 	{
 		this.baseStoreService = baseStoreService;
 	}
@@ -231,7 +231,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	/**
 	 * @param blBlackoutDatesDao the blBlackoutDatesDao to set
 	 */
-	public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao)
+	public void setBlBlackoutDatesDao(final BlBlackoutDatesDao blBlackoutDatesDao)
 	{
 		this.blBlackoutDatesDao = blBlackoutDatesDao;
 	}

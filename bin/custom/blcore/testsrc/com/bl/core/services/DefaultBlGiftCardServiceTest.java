@@ -1,12 +1,9 @@
 package com.bl.core.services;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.mock;
-import static org.mockito.BDDMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import com.bl.core.model.GiftCardModel;
-import com.bl.core.model.GiftCardMovementModel;
-import com.bl.core.services.order.impl.DefaultBlCommerceCartCalculationStrategy;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
@@ -22,17 +19,22 @@ import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.services.order.impl.DefaultBlCommerceCartCalculationStrategy;
 
 
 @UnitTest
@@ -81,10 +83,10 @@ public class DefaultBlGiftCardServiceTest {
   @Test
   public void testRemoveGiftCard() {
 
-    GiftCardModel giftCardModel = mock(GiftCardModel.class);
+    final GiftCardModel giftCardModel = mock(GiftCardModel.class);
     final SearchResult<GiftCardModel> searchResult = mock(SearchResult.class);
     giftCardModel.setCode(GIFTCARD_CODE);
-    List<GiftCardModel> giftList = getGiftCardModelList();
+    final List<GiftCardModel> giftList = getGiftCardModelList();
     when(searchResult.getResult()).thenReturn(giftList);
     final CartModel cartModel = mock(CartModel.class);
     given(cartService.getSessionCart()).willReturn(cartModel);
@@ -111,17 +113,17 @@ public class DefaultBlGiftCardServiceTest {
   }
 
   private List<GiftCardModel> getGiftCardModelList() {
-    CurrencyModel currencyModel = mock(CurrencyModel.class);
+    final CurrencyModel currencyModel = mock(CurrencyModel.class);
     currencyModel.setSymbol("USD");
-    CustomerModel customerModel = mock(CustomerModel.class);
+    final CustomerModel customerModel = mock(CustomerModel.class);
 
-    GiftCardMovementModel giftCardMovementModel = mock(GiftCardMovementModel.class);
+    final GiftCardMovementModel giftCardMovementModel = mock(GiftCardMovementModel.class);
     giftCardMovementModel.setAmount(100d);
 
-    ArrayList giftCardMovementModelList = mock(ArrayList.class);
+    final ArrayList giftCardMovementModelList = mock(ArrayList.class);
     giftCardMovementModelList.add(giftCardMovementModel);
 
-    GiftCardModel model = mock(GiftCardModel.class);
+    final GiftCardModel model = mock(GiftCardModel.class);
 
     model.setCode(GIFTCARD_CODE);
     model.setActive(Boolean.TRUE);
@@ -149,7 +151,7 @@ public class DefaultBlGiftCardServiceTest {
 
     final SearchResult<GiftCardModel> searchResult = mock(SearchResult.class);
 
-    List<GiftCardModel> giftList = getGiftCardModelList();
+    final List<GiftCardModel> giftList = getGiftCardModelList();
     Assert.assertNotNull(giftList);
     when(searchResult.getResult()).thenReturn(giftList);
 
@@ -171,9 +173,9 @@ public class DefaultBlGiftCardServiceTest {
 
   }
 
-  private double calculateGiftCardBalance(List<GiftCardModel> giftCards) {
+  private double calculateGiftCardBalance(final List<GiftCardModel> giftCards) {
 
-    List<GiftCardMovementModel> giftCardMovementModelList = giftCards.get(0).getMovements();
+    final List<GiftCardMovementModel> giftCardMovementModelList = giftCards.get(0).getMovements();
     Assert.assertNotNull(giftCardMovementModelList);
 
     return 100d;

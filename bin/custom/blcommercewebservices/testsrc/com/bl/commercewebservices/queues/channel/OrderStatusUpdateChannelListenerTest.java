@@ -8,17 +8,21 @@ import static org.mockito.BDDMockito.given;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-import com.bl.commercewebservices.queues.data.OrderStatusUpdateElementData;
-import com.bl.commercewebservices.queues.impl.OrderStatusUpdateQueue;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.commercewebservices.queues.data.OrderStatusUpdateElementData;
+import com.bl.commercewebservices.queues.impl.OrderStatusUpdateQueue;
+
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class OrderStatusUpdateChannelListenerTest
 {
 	private static final String ORDER_CODE = "orderCode";
@@ -39,7 +43,7 @@ public class OrderStatusUpdateChannelListenerTest
 	@Before
 	public void setUp() throws Exception
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		orderStatusUpdateQueue = new OrderStatusUpdateQueue();
 		listener = new OrderStatusUpdateChannelListener();
