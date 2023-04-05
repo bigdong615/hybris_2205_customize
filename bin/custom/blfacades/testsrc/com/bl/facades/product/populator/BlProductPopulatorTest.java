@@ -1,27 +1,32 @@
 package com.bl.facades.product.populator;
 
 import static de.hybris.platform.testframework.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import de.hybris.bootstrap.annotations.UnitTest;
+import de.hybris.platform.commercefacades.product.data.ProductData;
+import de.hybris.platform.converters.Populator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.ProductVideoModel;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.populators.BlProductPopulator;
-import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.commercefacades.product.data.ProductData;
-import de.hybris.platform.converters.Populator;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.verify;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BlProductPopulatorTest {
 
   @InjectMocks
@@ -48,7 +53,7 @@ public class BlProductPopulatorTest {
 
   @Before
   public void prepare() {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     final ProductVideoModel productVideoModel;
     productVideoList= new ArrayList<>();
     productVideoModel = new ProductVideoModel();
@@ -67,7 +72,7 @@ public class BlProductPopulatorTest {
     when(productModel.getForRent()).thenReturn(Boolean.TRUE);
     when(productModel.getShortDescription()).thenReturn(SHORT_DESCRIPTION);
     when(productModel.getDisplayNotes()).thenReturn(DISPLAY_NOTE);
-    
+
     when(productModel.getRentalVideosLink()).thenReturn(productVideoList);
 
     populator.populate(productModel, productData);
@@ -76,7 +81,7 @@ public class BlProductPopulatorTest {
     assertEquals(productData.getForRent(), Boolean.TRUE);
     assertEquals(productData.getShortDescription(), SHORT_DESCRIPTION);
     assertEquals(productData.getRentalNote(), DISPLAY_NOTE);
-    
+
     productData.getRentalVideosLink().forEach(videoData -> {
       assertEquals(videoData.getVideoName(), VIDEO_TITLE);
       assertEquals(videoData.getVideoUrl(), VIDEO_URL);

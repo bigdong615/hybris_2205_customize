@@ -1,14 +1,11 @@
 package com.bl.storefront.controllers.pages;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.utils.BlRentalDateUtils;
-import com.bl.facades.product.data.RentalDateDto;
-
-import com.bl.logging.BlLogger;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
+import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +15,6 @@ import java.util.Objects;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -29,6 +25,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
 
 /**
  * This is created to render rental product details related data .
@@ -72,6 +73,7 @@ public class RentalProductPageController extends AbstractBlProductPageController
           .getProductForCodeAndOptions(productCode, null);
       productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
       model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
+		BlLogger.logMessage(LOG, Level.INFO, "************ Is rental page flag *** ***********" + true);
       model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
       final RentalDateDto rentalDatesFromSession = getBlDatePickerService()
           .getRentalDatesFromSession();

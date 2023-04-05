@@ -17,9 +17,10 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -35,6 +36,7 @@ import com.thoughtworks.xstream.core.DefaultConverterLookup;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class XmlXStreamMarshallerFactoryTest
 {
 	@Mock
@@ -57,7 +59,7 @@ public class XmlXStreamMarshallerFactoryTest
 	@Before
 	public void createMocks()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	public Object createMarshaller() throws Exception

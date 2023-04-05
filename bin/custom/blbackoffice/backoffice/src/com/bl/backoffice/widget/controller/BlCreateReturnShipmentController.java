@@ -150,14 +150,18 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		final WarehouseModel stateWarehouse = getBlDeliveryStateSourcingLocationFilter()
 				.applyFilter(selectedConsignment.getOrder());
 		final List<String> errorPackages = Lists.newArrayList();
-		if (stateWarehouse.equals(selectedConsignment.getWarehouse()))
-		{
-			errorPackages.addAll(startShipmentCreationProcess(packages, stateWarehouse));
-		}
-		else
-		{
-			errorPackages.addAll(startShipmentCreationProcess(packages, selectedConsignment.getWarehouse()));
-		}
+		
+//    BLS-39 : Need to set warehouse on the basis of delivery postalCode
+//		if (stateWarehouse.equals(selectedConsignment.getWarehouse()))
+//		{
+//			errorPackages.addAll(startShipmentCreationProcess(packages, stateWarehouse));
+//		}
+//		else
+//		{
+//			errorPackages.addAll(startShipmentCreationProcess(packages, selectedConsignment.getWarehouse()));
+//		}
+		
+		errorPackages.addAll(startShipmentCreationProcess(packages, stateWarehouse));
 		return errorPackages;
 	}
 

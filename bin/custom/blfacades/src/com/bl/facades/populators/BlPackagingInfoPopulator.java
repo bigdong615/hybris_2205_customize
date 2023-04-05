@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.bl.core.model.BlProductModel;
 
+
 public class BlPackagingInfoPopulator implements Populator<PackagingInfoModel, PackagingInfoData>
 {
 
@@ -73,6 +74,7 @@ public class BlPackagingInfoPopulator implements Populator<PackagingInfoModel, P
 		{
 			target.setOutBoundShippingMedia(source.getOutBoundShippingMedia().getDownloadURL());
 		}
+		target.setPrimaryKey(source.getPk().toString());
 	}
 
 }

@@ -1,6 +1,42 @@
 package com.bl.core.esp.service.impl;
 
 
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.ordercancel.OrderCancelEntry;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.util.Utilities;
+
+import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator;
 import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
@@ -66,37 +102,6 @@ import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.ordercancel.OrderCancelEntry;
-import de.hybris.platform.servicelayer.model.ModelService;
-import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * This Common class used for preparing request and resposne for ESP Events
@@ -612,9 +617,9 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @param refundMethod
    * @param orderCancelEntries
    */
-  private void orderCancelEntries(double totalRefundAmount, String refundMethod,
-      List<OrderCancelEntry> orderCancelEntries,
-      OrderRefundData data) {
+  private void orderCancelEntries(final double totalRefundAmount, final String refundMethod,
+      final List<OrderCancelEntry> orderCancelEntries,
+      final OrderRefundData data) {
     data.setRefundamount(formatAmount(totalRefundAmount));
     data.setRefundmethod(refundMethod);
     populateOrderItemXMLData(orderCancelEntries, data);
@@ -670,8 +675,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @throws TransformerConfigurationException TransformerConfigurationException
    */
   protected Transformer getTransformerFactoryObject() throws TransformerConfigurationException {
-    final TransformerFactory transformerFactory = TransformerFactory.newInstance(); //NOSONAR
-    return transformerFactory.newTransformer();
+	  final TransformerFactory factory = Utilities.getTransformerFactory(); //NOSONAR
+	  return factory.newTransformer();
   }
 
   /**
@@ -1021,7 +1026,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
 
     public void setBlOrderConfirmationRequestPopulator(
-        BlOrderConfirmationRequestPopulator blOrderConfirmationRequestPopulator) {
+        final BlOrderConfirmationRequestPopulator blOrderConfirmationRequestPopulator) {
         this.blOrderConfirmationRequestPopulator = blOrderConfirmationRequestPopulator;
     }
 
@@ -1047,7 +1052,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
         return blESPEventRestService;
     }
 
-    public void setBlESPEventRestService(BlESPEventRestService blESPEventRestService) {
+    public void setBlESPEventRestService(final BlESPEventRestService blESPEventRestService) {
         this.blESPEventRestService = blESPEventRestService;
     }
 
@@ -1055,7 +1060,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
         return modelService;
     }
 
-    public void setModelService(ModelService modelService) {
+    public void setModelService(final ModelService modelService) {
         this.modelService = modelService;
     }
 
@@ -1064,7 +1069,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
 
     public void setBlOrderCanceledRequestPopulator(
-        BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator) {
+        final BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator) {
         this.blOrderCanceledRequestPopulator = blOrderCanceledRequestPopulator;
     }
 
@@ -1074,7 +1079,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderExceptionsRequestPopulator(
-      BlOrderExceptionsRequestPopulator blOrderExceptionsRequestPopulator) {
+      final BlOrderExceptionsRequestPopulator blOrderExceptionsRequestPopulator) {
     this.blOrderExceptionsRequestPopulator = blOrderExceptionsRequestPopulator;
   }
 
@@ -1083,7 +1088,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderUnboxedRequestPopulator(
-      BlOrderUnboxedRequestPopulator blOrderUnboxedRequestPopulator) {
+      final BlOrderUnboxedRequestPopulator blOrderUnboxedRequestPopulator) {
     this.blOrderUnboxedRequestPopulator = blOrderUnboxedRequestPopulator;
   }
 
@@ -1092,7 +1097,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
 
     public void setBlOrderPaymentDeclinedRequestPopulator(
-        BlOrderPaymentDeclinedRequestPopulator blOrderPaymentDeclinedRequestPopulator) {
+        final BlOrderPaymentDeclinedRequestPopulator blOrderPaymentDeclinedRequestPopulator) {
         this.blOrderPaymentDeclinedRequestPopulator = blOrderPaymentDeclinedRequestPopulator;
     }
 
@@ -1106,7 +1111,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
 
     public void setBlOrderReadyForPickupRequestPopulator(
-        BlOrderReadyForPickupRequestPopulator blOrderReadyForPickupRequestPopulator) {
+        final BlOrderReadyForPickupRequestPopulator blOrderReadyForPickupRequestPopulator) {
         this.blOrderReadyForPickupRequestPopulator = blOrderReadyForPickupRequestPopulator;
     }
 
@@ -1116,12 +1121,12 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
 
     public void setBlOrderNewShippingRequestPopulator(
-        BlOrderNewShippingRequestPopulator blOrderNewShippingRequestPopulator) {
+        final BlOrderNewShippingRequestPopulator blOrderNewShippingRequestPopulator) {
         this.blOrderNewShippingRequestPopulator = blOrderNewShippingRequestPopulator;
     }
 
     public void setBlOrderVerificationRequiredRequestPopulator(
-        BlOrderVerificationRequiredRequestPopulator blOrderVerificationRequiredRequestPopulator) {
+        final BlOrderVerificationRequiredRequestPopulator blOrderVerificationRequiredRequestPopulator) {
         this.blOrderVerificationRequiredRequestPopulator = blOrderVerificationRequiredRequestPopulator;
     }
 
@@ -1130,7 +1135,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
 
     public void setBlOrderVerificationCompletedRequestPopulator(
-        BlOrderVerificationCompletedRequestPopulator blOrderVerificationCompletedRequestPopulator) {
+        final BlOrderVerificationCompletedRequestPopulator blOrderVerificationCompletedRequestPopulator) {
         this.blOrderVerificationCompletedRequestPopulator = blOrderVerificationCompletedRequestPopulator;
     }
 
@@ -1139,7 +1144,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderDepositRequestPopulator(
-      BlOrderDepositRequestPopulator blOrderDepositRequestPopulator) {
+      final BlOrderDepositRequestPopulator blOrderDepositRequestPopulator) {
     this.blOrderDepositRequestPopulator = blOrderDepositRequestPopulator;
   }
 
@@ -1148,7 +1153,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderShippedRequestPopulator(
-      BlOrderShippedRequestPopulator blOrderShippedRequestPopulator) {
+      final BlOrderShippedRequestPopulator blOrderShippedRequestPopulator) {
     this.blOrderShippedRequestPopulator = blOrderShippedRequestPopulator;
   }
 
@@ -1157,7 +1162,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderPickedUpRequestPopulator(
-      BlOrderPickedUpRequestPopulator blOrderPickedUpRequestPopulator) {
+      final BlOrderPickedUpRequestPopulator blOrderPickedUpRequestPopulator) {
     this.blOrderPickedUpRequestPopulator = blOrderPickedUpRequestPopulator;
   }
 
@@ -1176,7 +1181,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlExtraItemRequestPopulator(
-      BlExtraItemRequestPopulator blExtraItemRequestPopulator) {
+      final BlExtraItemRequestPopulator blExtraItemRequestPopulator) {
     this.blExtraItemRequestPopulator = blExtraItemRequestPopulator;
   }
 
@@ -1185,7 +1190,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderRefundRequestPopulator(
-      BlOrderRefundRequestPopulator blOrderRefundRequestPopulator) {
+      final BlOrderRefundRequestPopulator blOrderRefundRequestPopulator) {
     this.blOrderRefundRequestPopulator = blOrderRefundRequestPopulator;
   }
 
@@ -1194,7 +1199,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderBillPaidRequestPopulator(
-      BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator) {
+      final BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator) {
     this.blOrderBillPaidRequestPopulator = blOrderBillPaidRequestPopulator;
   }
 
@@ -1203,7 +1208,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderPullBackItemsAddedRequestPopulator(
-      BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator) {
+      final BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator) {
     this.blOrderPullBackItemsAddedRequestPopulator = blOrderPullBackItemsAddedRequestPopulator;
   }
 
@@ -1213,7 +1218,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderPullBackItemRemovedRequestPopulator(
-      BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator) {
+      final BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator) {
     this.blOrderPullBackItemRemovedRequestPopulator = blOrderPullBackItemRemovedRequestPopulator;
   }
 
@@ -1224,7 +1229,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderManualAllocationRequestPopulator(
-      BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator) {
+      final BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator) {
     this.blOrderManualAllocationRequestPopulator = blOrderManualAllocationRequestPopulator;
   }
 
@@ -1233,7 +1238,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderDepositRequiredRequestPopulator(
-      BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator) {
+      final BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator) {
     this.blOrderDepositRequiredRequestPopulator = blOrderDepositRequiredRequestPopulator;
   }
 
@@ -1242,7 +1247,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlOrderGiftCardPurchaseEventPopulator(
-      BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator) {
+      final BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator) {
     this.blOrderGiftCardPurchaseEventPopulator = blOrderGiftCardPurchaseEventPopulator;
   }
 
@@ -1252,7 +1257,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlFreeGiftCardPurchaseEventPopulator(
-      BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator) {
+      final BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator) {
     this.blFreeGiftCardPurchaseEventPopulator = blFreeGiftCardPurchaseEventPopulator;
   }
 
@@ -1262,7 +1267,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   public void setBlESPEmailCommonRequestPopulator(
-      BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator) {
+      final BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator) {
     this.blESPEmailCommonRequestPopulator = blESPEmailCommonRequestPopulator;
   }
 }

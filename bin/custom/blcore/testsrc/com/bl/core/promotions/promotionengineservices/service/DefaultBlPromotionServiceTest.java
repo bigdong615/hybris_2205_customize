@@ -2,7 +2,6 @@ package com.bl.core.promotions.promotionengineservices.service;
 
 import static org.mockito.BDDMockito.given;
 
-import com.bl.core.promotions.promotionengineservices.service.impl.DefaultBlPromotionService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.promotionengineservices.dao.PromotionDao;
 import de.hybris.platform.promotionengineservices.model.PromotionSourceRuleModel;
@@ -11,19 +10,25 @@ import de.hybris.platform.promotions.model.PromotionGroupModel;
 import de.hybris.platform.ruleengineservices.enums.RuleStatus;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.promotions.promotionengineservices.service.impl.DefaultBlPromotionService;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultBlPromotionServiceTest{
 
   private static final String PROMOTION_CODE = "TEST_UG_CC_PROMOTION";
@@ -50,7 +55,7 @@ public class DefaultBlPromotionServiceTest{
 
   @Before
     public void prepare(){
-      MockitoAnnotations.initMocks(this);
+		 // MockitoAnnotations.initMocks(this);
       blPromotionService.setPromotionDao(promotionDao);
       blPromotionService.setBaseStoreService(baseStoreService);
       final List<PromotionSourceRuleModel> promotionSourceRules = new ArrayList<>();
@@ -71,7 +76,7 @@ public class DefaultBlPromotionServiceTest{
     given(baseStoreModel.getUsedGearPromotionCode()).willReturn(PROMOTION_CODE);
     given(baseStoreModel.getUsedGearPromotionDiscount()).willReturn(Integer.valueOf(10));
     given(baseStoreModel.getUsedGearPromotionMessage()).willReturn(COUPON_MESSAGE);
-    boolean isUsedGearPromoActive = blPromotionService.isUsedGearCategoryPromotionActive();
+    final boolean isUsedGearPromoActive = blPromotionService.isUsedGearCategoryPromotionActive();
     Assert.assertTrue(isUsedGearPromoActive);
   }
 
@@ -81,7 +86,7 @@ public class DefaultBlPromotionServiceTest{
     given(baseStoreModel.getUsedGearPromotionCode()).willReturn("TEST_PROMO");
     given(baseStoreModel.getUsedGearPromotionDiscount()).willReturn(Integer.valueOf(10));
     given(baseStoreModel.getUsedGearPromotionMessage()).willReturn(COUPON_MESSAGE);
-    boolean isUsedGearPromoActive = blPromotionService.isUsedGearCategoryPromotionActive();
+    final boolean isUsedGearPromoActive = blPromotionService.isUsedGearCategoryPromotionActive();
     Assert.assertFalse(isUsedGearPromoActive);
   }
 
@@ -91,7 +96,7 @@ public class DefaultBlPromotionServiceTest{
     given(baseStoreModel.getUsedGearPromotionCode()).willReturn(null);
     given(baseStoreModel.getUsedGearPromotionDiscount()).willReturn(null);
     given(baseStoreModel.getUsedGearPromotionMessage()).willReturn(COUPON_MESSAGE);
-    boolean isUsedGearPromoActive = blPromotionService.isUsedGearCategoryPromotionActive();
+    final boolean isUsedGearPromoActive = blPromotionService.isUsedGearCategoryPromotionActive();
     Assert.assertFalse(isUsedGearPromoActive);
   }
 

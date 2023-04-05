@@ -14,7 +14,7 @@
             <setting key="widgetStyleAttribute" type="String"/>
             <virtual-sockets/>
         </widget>
-    </widget-extension>
+    </widget-extension> 
 
     <widget-extension widgetId="mainSlot">
 

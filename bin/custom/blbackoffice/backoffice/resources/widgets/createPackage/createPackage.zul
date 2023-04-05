@@ -42,7 +42,7 @@
 	<hlayout width="100%" sclass="oms-widget-reallocationconsignment-list">
         <div sclass="oms-widget-reallocationconsignment-list-container">
             <grid id="serialEntries" mold="paging"
-                  pageSize="6" width="100%" height="100%">
+                  pageSize="6" width="100%"  height="250px;" style="overflow:auto;">
                 <columns>
                 	<column sclass="oms-widget-reallocationconsignment-listbox-header">
                         <checkbox id="serialEntry" class="oms-widget-reallocationconsignment-list-container__checkbox" visible="false"/>

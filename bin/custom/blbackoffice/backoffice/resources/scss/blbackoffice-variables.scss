@@ -1,2 +1,12 @@
 .y-toolbar-leftslot td {
   float: left; }
+  
+  .z-window-header .z-caption-content {
+    line-height: 24px;
+    font-size: 1rem;
+    font-weight: 400;
+    text-overflow: clip !important;
+    overflow: scroll !important;
+    white-space: nowrap;
+    padding-right: 10px;
+}

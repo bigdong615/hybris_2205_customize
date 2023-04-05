@@ -58,6 +58,6 @@ public class BlStockLevelPopulator extends WarehousingStockLevelPopulator
 		target.setReleaseDate(source.getReleaseDate());
 		target.setInStockStatus(source.getInStockStatus());
 		target.setWarehouseCode(source.getWarehouse().getCode());
-
+		target.setPrimaryKey(source.getPk().toString());
 	}
 }

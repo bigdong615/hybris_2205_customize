@@ -1,11 +1,8 @@
 package com.bl.core.resolver;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.resolvers.BlUsedGearProductValueResolver;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.jalo.JaloSession;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -14,19 +11,27 @@ import de.hybris.platform.solrfacetsearch.config.exceptions.FieldValueProviderEx
 import de.hybris.platform.solrfacetsearch.indexer.IndexerBatchContext;
 import de.hybris.platform.solrfacetsearch.indexer.spi.InputDocument;
 import de.hybris.platform.solrfacetsearch.provider.QualifierProvider;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.resolvers.BlUsedGearProductValueResolver;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BlUsedGearProductValueResolverTest {
 
   private static final String INDEXED_PROPERTY_NAME = "forSale";
@@ -67,7 +72,7 @@ public class BlUsedGearProductValueResolverTest {
 
   @Before
   public void startUp(){
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     indexedProperty = new IndexedProperty();
     indexedProperty.setName(INDEXED_PROPERTY_NAME);
     indexedProperty.setValueProviderParameters(new HashMap<>());

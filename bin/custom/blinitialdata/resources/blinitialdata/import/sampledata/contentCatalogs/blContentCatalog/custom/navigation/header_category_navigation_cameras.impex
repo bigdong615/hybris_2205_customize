@@ -46,8 +46,8 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]    ; $contentCV[unique=true]
 #####################################################################
 #### Navigation Node Link  ####  
 #####################################################################
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name              ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow'] 
-                               ;                         ; CamerasLink      ; Cameras Node Link ; "/Cameras/c/cameras" ; cameras                                      ;          ;               ; Cameras              ;
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name              ; url                  ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow']
+                               ;                         ; CamerasLink      ; Cameras Node Link ; "/Cameras/c/cameras" ; cameras                                      ;          ;               ; Cameras              ;                                   
                                
                                
                                
@@ -57,20 +57,20 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; na
 #####################################################################
 #### Navigation Node  ####     
 #####################################################################
-INSERT_UPDATE CMSNavigationNode ; uid[unique=true]           ; $contentCV[unique=true] ; name                 ; &nodeRef                   ; links(&linkRef) ;  
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]           ; $contentCV[unique=true] ; name                 ; &nodeRef                  ; links(&linkRef) ;  
 # Cameras -- all brands         
-                                ; AllCamerasNavNode          ;                         ; All Cameras Link     ; AllCamerasNavNode          
-                                ; NewArrivalsNavNode_Cameras ;                         ; New Arrivals Link    ; NewArrivalsNavNode_Cameras 
-                                ; MirrorlessNavNode          ;                         ; Mirrorless Link      ; MirrorlessNavNode          
-                                ; DSLRCamerasNavNode         ;                         ; DSLR Cameras Link    ; DSLRCamerasNavNode         
-                                ; CinemaCamerasNavNode       ;                         ; CinemaCameras Link   ; CinemaCamerasNavNode       
-                                ; CamcordersNavNode          ;                         ; Camcorders Link      ; CamcordersNavNode          
-                                ; PointShootNavNode          ;                         ; Point And Shoot Link ; PointShootNavNode          
-                                ; ActionNavNode              ;                         ; Action Link          ; ActionNavNode              
-                                ; 360NavNode                 ;                         ; 360 Link             ; 360NavNode                 
-                                ; WebcamsNavNode             ;                         ; Webcams Link         ; WebcamsNavNode             
-                                ; CameraPackagesNavNode      ;                         ; Camera Packages Link ; CameraPackagesNavNode
-                                ; AllGearPackageNavNode       ;                         ; All GearPackage Link     ; AllGearPackageNavNode
+                                ; AllCamerasNavNode          ;                         ; All Cameras Link     ; AllCamerasNavNode         
+                                ; NewArrivalsNavNode_Cameras ;                         ; New Arrivals Link    ; NewArrivalsNavNode_Cameras
+                                ; MirrorlessNavNode          ;                         ; Mirrorless Link      ; MirrorlessNavNode         
+                                ; DSLRCamerasNavNode         ;                         ; DSLR Cameras Link    ; DSLRCamerasNavNode        
+                                ; CinemaCamerasNavNode       ;                         ; CinemaCameras Link   ; CinemaCamerasNavNode      
+                                ; CamcordersNavNode          ;                         ; Camcorders Link      ; CamcordersNavNode         
+                                ; PointShootNavNode          ;                         ; Point And Shoot Link ; PointShootNavNode         
+                                ; ActionNavNode              ;                         ; Action Link          ; ActionNavNode             
+                                ; 360NavNode                 ;                         ; 360 Link             ; 360NavNode                
+                                ; WebcamsNavNode             ;                         ; Webcams Link         ; WebcamsNavNode            
+                                ; CameraPackagesNavNode      ;                         ; Camera Packages Link ; CameraPackagesNavNode     
+                                ; AllGearPackageNavNode      ;                         ; All GearPackage Link ; AllGearPackageNavNode     
 
 
 
@@ -78,7 +78,7 @@ INSERT_UPDATE CMSNavigationNode ; uid[unique=true]           ; $contentCV[unique
 #####################################################################
 #### Navigation Node  ####      
 #####################################################################
-UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name        ; parent(uid, $contentCV) ; &nodeRef       ; children(uid,$contentCV)                                                                                                                                                                                 
+UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name        ; parent(uid, $contentCV) ; &nodeRef       ; children(uid,$contentCV)                                                                                                                                                                                                      
                          ; CamerasNavNode   ;                         ; CamersLinks ; BLCategoryNavNode       ; CamerasNavNode ; AllCamerasNavNode,NewArrivalsNavNode_Cameras,DSLRCamerasNavNode,MirrorlessNavNode,CinemaCamerasNavNode,CamcordersNavNode,PointShootNavNode,ActionNavNode,360NavNode,WebcamsNavNode,CameraPackagesNavNode,AllGearPackageNavNode
                          
 #####################################################################
@@ -97,27 +97,27 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                ; $contentCV[
                                  ; ActionNavNodeEntry              ;                         ; Action Navigation Node Entry          ; ActionNavNode              ; ActionLink                                             
                                  ; 360NavNodeEntry                 ;                         ; 360 Navigation Node Entry             ; 360NavNode                 ; 360Link                                                
                                  ; WebcamsNavNodeEntry             ;                         ; Webcams Navigation Node Entry         ; WebcamsNavNode             ; WebcamsLink                                            
-                                 ; CameraPackagesNavNodeEntry      ;                         ; Camera Packages Navigation Node Entry ; CameraPackagesNavNode      ; CameraPackagesLink
-                                 ; AllGearPackageNavNodeEntry     ;                          ; All GearPackage Navigation Node Entry    ; AllGearPackageNavNode   ; AllGearPackageLink
+                                 ; CameraPackagesNavNodeEntry      ;                         ; Camera Packages Navigation Node Entry ; CameraPackagesNavNode      ; CameraPackagesLink                                     
+                                 ; AllGearPackageNavNodeEntry      ;                         ; All GearPackage Navigation Node Entry ; AllGearPackageNavNode      ; AllGearPackageLink                                     
 
 
 #####################################################################
 #### Navigation Node Link  ####  
 #####################################################################
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]        ; name                 ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=en]  ;  
-# Cameras -- all cameras
-;                         ; AllCamerasLink          ; AllCameras Link      ; "/rent/category/cameras" ;                            ;                                    ; All Cameras        ;
-;                         ; NewArrivalsLink_Cameras ; NewArrivals Link     ; "/rent/category/cameras/NewArrivals-Cameras" ;                            ;                                    ; New Arrivals       ;
-;                         ; DSLRCamerasLink         ; DSLRCameras Link     ; "/rent/category/cameras/dslr-cameras" ; dslr-cameras               ;                                    ; DSLR Cameras       ;
-;                         ; MirrorlessLink          ; Mirrorless Link      ; "/rent/category/cameras/mirrorless-cameras" ; mirrorless-cameras         ;                                    ; Mirrorless Cameras ;
-;                         ; CinemaCamerasLink       ; CinemaCameras Link   ; "/rent/category/cameras/professional" ; professional               ;                                    ; Cinema Cameras     ;
-;                         ; CamcordersLink          ; Camcorders Link      ; "/rent/category/cameras/camcorders" ; camcorders                 ;                                    ; Camcorders         ;
-;                         ; PointShootLink          ; Point Shoot Link     ; "/rent/category/cameras/point-and-shoot-cameras" ; point-and-shoot-cameras    ;                                    ; Point & Shoot      ;
-;                         ; ActionLink              ; Action Link          ; "/rent/category/cameras/action-and-pov-cameras" ; action-and-pov-cameras     ;                                    ; Action             ;
-;                         ; 360Link                 ; 360 Link             ; "/rent/category/cameras/vr-video-cameras" ; vr-video-cameras           ;                                    ; 360                ;
-;                         ; WebcamsLink             ; Webcams Link         ; "/rent/category/cameras/webcams" ; webcams                    ;                                    ; Webcams            ;
-;                         ; CameraPackagesLink      ; Camera Packages Link ; "/rent/category/cameras/camera_packages" ; camera_packages            ;                                    ; Camera Packages    ;
-;                         ; AllGearPackageLink        ; AllGearPackage Link      ; "/rent/category/package" ; package                          ;                                    ; All Gear Package ;
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]        ; name                 ; url                                              ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=en]  ;  
+# Cameras -- all cameras       
+                               ;                         ; AllCamerasLink          ; AllCameras Link      ; "/rent/category/cameras"                         ;                            ;                                    ; All Cameras        ;  
+                               ;                         ; NewArrivalsLink_Cameras ; NewArrivals Link     ; "/rent/category/cameras/NewArrivals-Cameras"     ;                            ;                                    ; New Arrivals       ;  
+                               ;                         ; DSLRCamerasLink         ; DSLRCameras Link     ; "/rent/category/cameras/dslr-cameras"            ; dslr-cameras               ;                                    ; DSLR Cameras       ;  
+                               ;                         ; MirrorlessLink          ; Mirrorless Link      ; "/rent/category/cameras/mirrorless-cameras"      ; mirrorless-cameras         ;                                    ; Mirrorless Cameras ;  
+                               ;                         ; CinemaCamerasLink       ; CinemaCameras Link   ; "/rent/category/cameras/professional"            ; professional               ;                                    ; Cinema Cameras     ;  
+                               ;                         ; CamcordersLink          ; Camcorders Link      ; "/rent/category/cameras/camcorders"              ; camcorders                 ;                                    ; Camcorders         ;  
+                               ;                         ; PointShootLink          ; Point Shoot Link     ; "/rent/category/cameras/point-and-shoot-cameras" ; point-and-shoot-cameras    ;                                    ; Point & Shoot      ;  
+                               ;                         ; ActionLink              ; Action Link          ; "/rent/category/cameras/action-and-pov-cameras"  ; action-and-pov-cameras     ;                                    ; Action             ;  
+                               ;                         ; 360Link                 ; 360 Link             ; "/rent/category/cameras/vr-video-cameras"        ; vr-video-cameras           ;                                    ; 360                ;  
+                               ;                         ; WebcamsLink             ; Webcams Link         ; "/rent/category/cameras/webcams"                 ; webcams                    ;                                    ; Webcams            ;  
+                               ;                         ; CameraPackagesLink      ; Camera Packages Link ; "/rent/category/cameras/camera_packages"         ; camera_packages            ;                                    ; Camera Packages    ;  
+                               ;                         ; AllGearPackageLink      ; AllGearPackage Link  ; "/rent/category/package"                         ; package                    ;                                    ; All Gear Package   ;  
 
                                
 #                              ; BLCategoryNavNode       ;                         ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode

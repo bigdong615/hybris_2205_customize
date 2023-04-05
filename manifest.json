@@ -1,5 +1,5 @@
 {
-    "commerceSuiteVersion": "2011",
+    "commerceSuiteVersion": "2205",
     "enableImageProcessingService": true,
     "extensions": [
 	    "cloudmediaconversion",
@@ -68,11 +68,6 @@
 	   }
 	 ],
 	"storefrontAddons":[
-	   {
-		  "addon":"promotionenginesamplesaddon",
-		  "storefront":"blstorefront",
-		  "template":"yacceleratorstorefront"
-	   },
 	   {
 		  "addon":"smarteditaddon",
 		  "storefront":"blstorefront",

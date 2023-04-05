@@ -7,10 +7,10 @@ $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCata
 $lang=en
 
 # Content Pages
-UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]             ; title[lang=$lang]
-                   ;                         ; cartpage             ; "Shopping Cart"
-                   ;                         ; emptyCartPage        ; "Shopping Cart"
-                   ;                         ; DeliveryOrPickupCartpage ; "Checkout - Delivery Info"
-                   ;                         ; multiStepCheckoutSummaryPage ; "Checkout - Payment Info"
-                   ;                         ; orderConfirmation       ; "Order Confirmed"
-                   ;                         ;multiStepCheckoutReviewPage;"Checkout - Review"
+UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]             ; title[lang=$lang]         
+                   ;                         ; cartpage                     ; "Shopping Cart"           
+                   ;                         ; emptyCartPage                ; "Shopping Cart"           
+                   ;                         ; DeliveryOrPickupCartpage     ; "Checkout - Delivery Info"
+                   ;                         ; multiStepCheckoutSummaryPage ; "Checkout - Payment Info" 
+                   ;                         ; orderConfirmation            ; "Order Confirmed"         
+                   ;                         ; multiStepCheckoutReviewPage  ; "Checkout - Review"       

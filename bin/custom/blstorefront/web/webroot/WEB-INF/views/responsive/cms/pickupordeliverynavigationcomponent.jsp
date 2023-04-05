@@ -25,7 +25,7 @@
 				</h5>
 				<div class="row">
 					<c:forEach items="${component.navigationNode.entries}"	var="entry">
-					<c:if test="${entry.item.type  ne 'Link'}">
+					<c:if test="${entry.item.type  ne 'Link' && entry.item.title ne 'BL Rush'}">
 					<div class="col-md-3">
 						<a href="ship-or-pickup" class=" card card-${fn:toLowerCase(entry.item.mode)}">
 							<p class="overline">${entry.item.mode }</p>

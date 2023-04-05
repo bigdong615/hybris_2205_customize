@@ -23,7 +23,8 @@ public class BlGiftCardPopulator implements Populator<GiftCardModel, GiftCardDat
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setCode(source.getCode());
-		if(source.getAmount()!=null) {
+		if (source.getAmount() != null)
+		{
 			target.setAmount(source.getAmount());
 		}
 		if (source.getCurrency() != null)
@@ -35,7 +36,8 @@ public class BlGiftCardPopulator implements Populator<GiftCardModel, GiftCardDat
 		target.setActive(source.getActive());
 		target.setEmail(source.getEmail());
 		target.setIssuer(source.getIssuer());
-		if(source.getBalance()!=null) {
+		if (source.getBalance() != null)
+		{
 			target.setBalance(source.getBalance());
 		}
 		target.setIsPurchased(source.getIsPurchased());
@@ -56,6 +58,7 @@ public class BlGiftCardPopulator implements Populator<GiftCardModel, GiftCardDat
 		{
 			target.setCustomer(source.getCustomer().getName());
 		}
+		target.setPrimaryKey(source.getPk().toString());
 	}
 
 }

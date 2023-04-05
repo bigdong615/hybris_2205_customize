@@ -47,6 +47,7 @@ public class BlSerialLogsPopulator implements Populator<BlSerialLogModel, BlSeri
 		{
 			target.setWithOrderId(source.getWithOrderId().getCode());
 		}
+		target.setPrimaryKey(source.getPk().toString());
 	}
 
 }

@@ -483,6 +483,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_ITEM_QUANTITY = "quantity";
 
 	public static final String ITEMS_ROOT_ELEMENT = "itemsinfo";
+
+	public static final String PRODUCT_INTERCEPTOR_REMOVE_MSG ="Unable to Delete Product";
 	public static final String ITEM_ROOT_ELEMENT = "item";
 	public static final String ITEM_PRODUCT_URL = "producturl";
 	public static final String ITEM_AMOUNT_DUE_ROOT_ELEMENT = "amountdue";

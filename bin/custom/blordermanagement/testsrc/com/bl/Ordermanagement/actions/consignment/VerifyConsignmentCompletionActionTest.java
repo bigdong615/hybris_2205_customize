@@ -39,8 +39,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 
 @UnitTest
@@ -78,8 +79,8 @@ public class VerifyConsignmentCompletionActionTest
 		consignmentModel.setTaskAssignmentWorkflow(CONSIGNMENT_WORKFLOW_CODE);
 
 		when(consignmentProcessModel.getConsignment()).thenReturn(consignmentModel);
-		when(workflowModel.getCode()).thenReturn(CONSIGNMENT_WORKFLOW_CODE);
-		when(workflowService.getWorkflowForCode(CONSIGNMENT_WORKFLOW_CODE)).thenReturn(workflowModel);
+		Mockito.lenient().when(workflowModel.getCode()).thenReturn(CONSIGNMENT_WORKFLOW_CODE);
+		Mockito.lenient().when(workflowService.getWorkflowForCode(CONSIGNMENT_WORKFLOW_CODE)).thenReturn(workflowModel);
 	}
 
 	@Test

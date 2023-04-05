@@ -6,22 +6,22 @@ $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCata
 $lang=en
  
 # Import config properties into impex macros
-UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true] 
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true]
 $jarResourceCms=$config-jarResourceCmsValue                                                                
                                                                                                            
                                                                                                            
 # Functional Content Pages                                                                                 
-INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]               ; name                                ; masterTemplate(uid,$contentCV) ; label                          ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='false'] ;  
-                          ;                         ; modified-order-payment         ; Modified Order Payment Page         ; AccountPageTemplate            ; modified-order-payment         
-                          ;                         ; modified-order-payment-success ; Modified Order Payment Success Page ; AccountPageTemplate            ; modified-order-payment-success 
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]               ; name                                ; masterTemplate(uid,$contentCV) ; label                         ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='false'] ;  
+                          ;                         ; modified-order-payment         ; Modified Order Payment Page         ; AccountPageTemplate            ; modified-order-payment        
+                          ;                         ; modified-order-payment-success ; Modified Order Payment Success Page ; AccountPageTemplate            ; modified-order-payment-success
                           
-INSERT_UPDATE JspIncludeComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; name                                     ; page                                                                                                     ; actions(uid,$contentCV) ; &componentRef                        
-                                  ;                         ; modifiedOrderPaymentComponent        ; Modified Order Payment Component         ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountModifiedOrderPaymentPage.jsp        ;                         ; modifiedOrderPaymentComponent        
-                                  ;                         ; modifiedOrderPaymentSuccessComponent ; Modified Order Payment Success Component ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountModifiedOrderPaymentSuccessPage.jsp ;                         ; modifiedOrderPaymentSuccessComponent 
+INSERT_UPDATE JspIncludeComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; name                                     ; page                                                                                                     ; actions(uid,$contentCV) ; &componentRef                       
+                                  ;                         ; modifiedOrderPaymentComponent        ; Modified Order Payment Component         ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountModifiedOrderPaymentPage.jsp        ;                         ; modifiedOrderPaymentComponent       
+                                  ;                         ; modifiedOrderPaymentSuccessComponent ; Modified Order Payment Success Component ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountModifiedOrderPaymentSuccessPage.jsp ;                         ; modifiedOrderPaymentSuccessComponent
                                   
 # CMS View Order Action           
-INSERT_UPDATE ViewOrderAction ; $contentCV[unique=true] ; uid[unique=true] ; url                           ; name              ; &actionRef      
-                              ;                         ; ViewOrderAction  ; /my-account/order/{orderCode} ; View Order Action ; ViewOrderAction 
+INSERT_UPDATE ViewOrderAction ; $contentCV[unique=true] ; uid[unique=true] ; url                           ; name              ; &actionRef     
+                              ;                         ; ViewOrderAction  ; /my-account/order/{orderCode} ; View Order Action ; ViewOrderAction
                               
                               
 # ContentSlot                 
@@ -35,8 +35,8 @@ INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]   
                                  ;                         ; BodyContentSlot-modified-order-payment-success ; BodyContent           ; modified-order-payment-success    ; BodyContentSlot-modified-order-payment-success ;  ;  ;  
                                  
 # Content Pages                  
-UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]               ; title[lang=$lang]                
-                   ;                         ; modified-order-payment         ; "Modify Order Payment"         
-                   ;                         ; modified-order-payment-success ; "Modify Order Payment Success" 
+UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]               ; title[lang=$lang]             
+                   ;                         ; modified-order-payment         ; "Modify Order Payment"        
+                   ;                         ; modified-order-payment-success ; "Modify Order Payment Success"
                    
                    

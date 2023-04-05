@@ -5,6 +5,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
+import de.hybris.bootstrap.annotations.UnitTest;
+import de.hybris.platform.commercefacades.user.data.CountryData;
+import de.hybris.platform.commercefacades.user.data.RegionData;
+import de.hybris.platform.core.model.c2l.CountryModel;
+import de.hybris.platform.core.model.c2l.RegionModel;
+import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import com.bl.core.enums.AddressTypeEnum;
 import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.integration.populators.BlUPSAddressResponsePopulator;
@@ -13,23 +32,9 @@ import com.bl.integration.shipping.response.avsresponse.AddressClassificationTyp
 import com.bl.integration.shipping.response.avsresponse.AddressKeyFormatType;
 import com.bl.integration.shipping.response.avsresponse.AddressValidationResponse;
 import com.bl.integration.shipping.response.avsresponse.Response;
-import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.commercefacades.user.data.CountryData;
-import de.hybris.platform.commercefacades.user.data.RegionData;
-import de.hybris.platform.core.model.c2l.CountryModel;
-import de.hybris.platform.core.model.c2l.RegionModel;
-import de.hybris.platform.servicelayer.i18n.CommonI18NService;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BlUPSAddressResponsePopulatorTest {
 
   @InjectMocks
@@ -71,7 +76,7 @@ public class BlUPSAddressResponsePopulatorTest {
 
   @Before
   public void prepare() {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     errorList = new ArrayList<>();
     when(xavRespon.getResponse()).thenReturn(response);
     avsResposeData = new AVSResposeData();
@@ -108,7 +113,7 @@ public class BlUPSAddressResponsePopulatorTest {
     assertEquals(avsResposeData.getErrorDescription(),ERROR_DESCRIPTION);
   }
 
-  private void populateAddressKeyFormatData(AddressKeyFormatType addressKeyFormatType){
+  private void populateAddressKeyFormatData(final AddressKeyFormatType addressKeyFormatType){
     addressKeyFormatType.getAddressLine().add(ADDRESS_LINE);
     addressKeyFormatType.setCountryCode(COUNTRY_CODE);
     addressKeyFormatType.setPoliticalDivision1(REGION_CODE);

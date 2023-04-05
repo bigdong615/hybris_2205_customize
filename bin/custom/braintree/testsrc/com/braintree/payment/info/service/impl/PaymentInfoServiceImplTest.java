@@ -3,7 +3,7 @@
  */
 package com.braintree.payment.info.service.impl;
 
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,9 +15,10 @@ import de.hybris.platform.servicelayer.model.ModelService;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.customer.dao.BrainTreeCustomerAccountDao;
@@ -26,6 +27,7 @@ import com.braintree.payment.info.dao.BrainTreePaymentInfoDao;
 import com.braintree.payment.info.service.PaymentInfoService;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentInfoServiceImplTest
 {
 	private static final String CUSTOMER_ID = "CUSTOMER_ID";
@@ -76,7 +78,7 @@ public class PaymentInfoServiceImplTest
 	@Before
 	public void init()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test

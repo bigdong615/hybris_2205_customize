@@ -33,14 +33,14 @@ $siteUid=bl
 $lang=en
  
  
-INSERT_UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique=true]     ; name                   ; &componentRef        ;     
-                                          ;                         ; PromoBannerComponent ; Promo Banner Component ; PromoBannerComponent ; "#" 
+INSERT_UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique=true]     ; name                   ; &componentRef        ;    
+                                          ;                         ; PromoBannerComponent ; Promo Banner Component ; PromoBannerComponent ; "#"
                                           
-INSERT_UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; name                   ; &componentRef       ; urlLink 
-                                      ;                         ; BLSiteLogoComponent ; BL Site Logo Component ; BLSiteLogoComponent ; "/"     
+INSERT_UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; name                   ; &componentRef       ; urlLink
+                                      ;                         ; BLSiteLogoComponent ; BL Site Logo Component ; BLSiteLogoComponent ; "/"    
                                       
-INSERT_UPDATE MiniCartComponent ; $contentCV[unique=true] ; uid[unique=true] ; name      ; &componentRef ; totalDisplay(code) ; shownProductCount 
-                                ;                         ; MiniCart         ; Mini Cart ; MiniCart      ; SUBTOTAL           ; 3                 
+INSERT_UPDATE MiniCartComponent ; $contentCV[unique=true] ; uid[unique=true] ; name      ; &componentRef ; totalDisplay(code) ; shownProductCount
+                                ;                         ; MiniCart         ; Mini Cart ; MiniCart      ; SUBTOTAL           ; 3                
                                 
 INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]               ; name                               ; &componentRef                  ;  
                                          ;                         ; PickUpOrDeliveryLinkComponent1 ; PickUp Or Delivery Link Component1 ; PickUpOrDeliveryLinkComponent1 ;  
@@ -53,80 +53,80 @@ INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=
                                          ;                         ; SupportLinkComponent3          ; Support Link Component3            ; SupportLinkComponent3          ;  
                                          ;                         ; SupportLinkComponent4          ; Support Link Component4            ; SupportLinkComponent4          ;  
                                          
-INSERT_UPDATE PickUpOrDeliveryNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]               ; name           ; styleClass ; &componentRef                  ; navigationNode(&nodeRef) ; title                           
-                                                  ;                         ; BLPickUpOrDeliveryNavComponent ; Ship Or PickUp ;            ; BLPickUpOrDeliveryNavComponent ; PickUpOrDeliveryNavNode  ; "Free 2-Day Shipping or Faster" 
+INSERT_UPDATE PickUpOrDeliveryNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]               ; name           ; styleClass ; &componentRef                  ; navigationNode(&nodeRef) ; title                          
+                                                  ;                         ; BLPickUpOrDeliveryNavComponent ; Ship Or PickUp ;            ; BLPickUpOrDeliveryNavComponent ; PickUpOrDeliveryNavNode  ; "Free 2-Day Shipping or Faster"
                                                   
-INSERT_UPDATE SupportNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]      ; name    ; styleClass ; &componentRef         ; navigationNode(&nodeRef) ; title     
-                                         ;                         ; BLSupportNavComponent ; Support ;            ; BLSupportNavComponent ; HeaderSupportNavNode     ; "Support" 
+INSERT_UPDATE SupportNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]      ; name    ; styleClass ; &componentRef         ; navigationNode(&nodeRef) ; title    
+                                         ;                         ; BLSupportNavComponent ; Support ;            ; BLSupportNavComponent ; HeaderSupportNavNode     ; "Support"
                                          
                                          
-INSERT_UPDATE CustomNavigationPromoComponent ; $contentCV[unique=true] ; uid[unique=true]            ; name                           ; &componentRef               ; urlLink 
-                                             ;                         ; BLNavigationPromoComponent1 ; BL Navigation Promo Component1 ; BLNavigationPromoComponent1 ; "#"     
-                                             ;                         ; BLNavigationPromoComponent2 ; BL Navigation Promo Component2 ; BLNavigationPromoComponent2 ; "#"     
+INSERT_UPDATE CustomNavigationPromoComponent ; $contentCV[unique=true] ; uid[unique=true]            ; name                           ; &componentRef               ; urlLink
+                                             ;                         ; BLNavigationPromoComponent1 ; BL Navigation Promo Component1 ; BLNavigationPromoComponent1 ; "#"    
+                                             ;                         ; BLNavigationPromoComponent2 ; BL Navigation Promo Component2 ; BLNavigationPromoComponent2 ; "#"    
                                              
                                              
-INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]                        ; name                                       ; &componentRef                           ; urlLink 
-                              ;                         ; HomePageWhyBorrowLensesBannerComponent1 ; HomePage WhyBorrowLenses Banner Component1 ; HomePageWhyBorrowLensesBannerComponent1 ;         
-                              ;                         ; HomePageWhyBorrowLensesBannerComponent2 ; HomePage WhyBorrowLenses Banner Component2 ; HomePageWhyBorrowLensesBannerComponent2 ;         
-                              ;                         ; HomePageWhyBorrowLensesBannerComponent3 ; HomePage WhyBorrowLenses Banner Component3 ; HomePageWhyBorrowLensesBannerComponent3 ;         
+INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]                        ; name                                       ; &componentRef                           ; urlLink
+                              ;                         ; HomePageWhyBorrowLensesBannerComponent1 ; HomePage WhyBorrowLenses Banner Component1 ; HomePageWhyBorrowLensesBannerComponent1 ;        
+                              ;                         ; HomePageWhyBorrowLensesBannerComponent2 ; HomePage WhyBorrowLenses Banner Component2 ; HomePageWhyBorrowLensesBannerComponent2 ;        
+                              ;                         ; HomePageWhyBorrowLensesBannerComponent3 ; HomePage WhyBorrowLenses Banner Component3 ; HomePageWhyBorrowLensesBannerComponent3 ;        
                               
-INSERT_UPDATE CustomWhyBorrowLensesBannerComponent ; $contentCV[unique=true] ; uid[unique=true]                  ; name                                 ; &componentRef                     ; banners(&componentRef)                                                                                                  ; title               ; description                                                                                                                                                                                              ; buttonText   ; buttonUrlLink[lang=$lang] 
-                                                   ;                         ; HomePageWhyBorrowLensesComponent2 ; HomePage Why BorrowLenses Component2 ; HomePageWhyBorrowLensesComponent2 ; HomePageWhyBorrowLensesBannerComponent1,HomePageWhyBorrowLensesBannerComponent2,HomePageWhyBorrowLensesBannerComponent3 ; "Why BorrowLenses?" ; "We are photographers and cinematophers  just like you. Whether you know exactly what you want, need advice on putting together your rig or just want to talk trade, our Gearheads are up for anything." ; "Contact Us" ; "#"                       
+INSERT_UPDATE CustomWhyBorrowLensesBannerComponent ; $contentCV[unique=true] ; uid[unique=true]                  ; name                                 ; &componentRef                     ; banners(&componentRef)                                                                                                  ; title               ; description                                                                                                                                                                                              ; buttonText   ; buttonUrlLink[lang=$lang]
+                                                   ;                         ; HomePageWhyBorrowLensesComponent2 ; HomePage Why BorrowLenses Component2 ; HomePageWhyBorrowLensesComponent2 ; HomePageWhyBorrowLensesBannerComponent1,HomePageWhyBorrowLensesBannerComponent2,HomePageWhyBorrowLensesBannerComponent3 ; "Why BorrowLenses?" ; "We are photographers and cinematophers  just like you. Whether you know exactly what you want, need advice on putting together your rig or just want to talk trade, our Gearheads are up for anything." ; "Contact Us" ; "#"                      
                                                    
                                                    
-INSERT_UPDATE CustomFeaturedStoriesComponent ; $contentCV[unique=true] ; uid[unique=true]                  ; name                                ; &componentRef                     ; storyCategory ; storyTitle                                   ; storyDate ; urlLink 
-                                             ;                         ; HomePageFeaturedStoriesComponent1 ; HomePage FeaturedStories Component1 ; HomePageFeaturedStoriesComponent1 ; "Technique"   ; "20 insane photography tips & tricks"        ; "Jan 2"   ; "#"     
-                                             ;                         ; HomePageFeaturedStoriesComponent2 ; HomePage FeaturedStories Component2 ; HomePageFeaturedStoriesComponent2 ; "Gear"        ; "The best video cameras for 2021 and beyond" ; "Jan 14"  ; "#"     
-                                             ;                         ; HomePageFeaturedStoriesComponent3 ; HomePage FeaturedStories Component3 ; HomePageFeaturedStoriesComponent3 ; "Category"    ; "Dolor waoimaw oimawef awoimawe awoimawe"    ; "Feb 4"   ; "#"     
-                                             ;                         ; HomePageFeaturedStoriesComponent4 ; HomePage FeaturedStories Component4 ; HomePageFeaturedStoriesComponent4 ; "Technique"   ; "20 insane photography tips & tricks"        ; "Feb 4"   ; "#"     
-                                             ;                         ; HomePageFeaturedStoriesComponent5 ; HomePage FeaturedStories Component5 ; HomePageFeaturedStoriesComponent5 ; "Gear"        ; "The best video cameras for 2021 and beyond" ; "Jan 14"  ; "#"     
-                                             ;                         ; HomePageFeaturedStoriesComponent6 ; HomePage FeaturedStories Component6 ; HomePageFeaturedStoriesComponent6 ; "Category"    ; "Dolor waoimaw oimawef awoimawe awoimawe"    ; "Jan 2"   ; "#"     
+INSERT_UPDATE CustomFeaturedStoriesComponent ; $contentCV[unique=true] ; uid[unique=true]                  ; name                                ; &componentRef                     ; storyCategory ; storyTitle                                   ; storyDate ; urlLink
+                                             ;                         ; HomePageFeaturedStoriesComponent1 ; HomePage FeaturedStories Component1 ; HomePageFeaturedStoriesComponent1 ; "Technique"   ; "20 insane photography tips & tricks"        ; "Jan 2"   ; "#"    
+                                             ;                         ; HomePageFeaturedStoriesComponent2 ; HomePage FeaturedStories Component2 ; HomePageFeaturedStoriesComponent2 ; "Gear"        ; "The best video cameras for 2021 and beyond" ; "Jan 14"  ; "#"    
+                                             ;                         ; HomePageFeaturedStoriesComponent3 ; HomePage FeaturedStories Component3 ; HomePageFeaturedStoriesComponent3 ; "Category"    ; "Dolor waoimaw oimawef awoimawe awoimawe"    ; "Feb 4"   ; "#"    
+                                             ;                         ; HomePageFeaturedStoriesComponent4 ; HomePage FeaturedStories Component4 ; HomePageFeaturedStoriesComponent4 ; "Technique"   ; "20 insane photography tips & tricks"        ; "Feb 4"   ; "#"    
+                                             ;                         ; HomePageFeaturedStoriesComponent5 ; HomePage FeaturedStories Component5 ; HomePageFeaturedStoriesComponent5 ; "Gear"        ; "The best video cameras for 2021 and beyond" ; "Jan 14"  ; "#"    
+                                             ;                         ; HomePageFeaturedStoriesComponent6 ; HomePage FeaturedStories Component6 ; HomePageFeaturedStoriesComponent6 ; "Category"    ; "Dolor waoimaw oimawef awoimawe awoimawe"    ; "Jan 2"   ; "#"    
                                              
-INSERT_UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                     ; &componentRef          ; urlLink 
-                                    ;                         ; CustomBorrowComponent1 ; Custom Borrow Component1 ; CustomBorrowComponent1 ; "#"     
-                                    ;                         ; CustomBorrowComponent2 ; Custom Borrow Component2 ; CustomBorrowComponent2 ; "#"     
-                                    ;                         ; CustomBorrowComponent3 ; Custom Borrow Component3 ; CustomBorrowComponent3 ; "#"     
-                                    ;                         ; CustomBorrowComponent4 ; Custom Borrow Component4 ; CustomBorrowComponent4 ; "#"     
-                                    ;                         ; CustomBorrowComponent5 ; Custom Borrow Component5 ; CustomBorrowComponent5 ; "#"     
+INSERT_UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                     ; &componentRef          ; urlLink
+                                    ;                         ; CustomBorrowComponent1 ; Custom Borrow Component1 ; CustomBorrowComponent1 ; "#"    
+                                    ;                         ; CustomBorrowComponent2 ; Custom Borrow Component2 ; CustomBorrowComponent2 ; "#"    
+                                    ;                         ; CustomBorrowComponent3 ; Custom Borrow Component3 ; CustomBorrowComponent3 ; "#"    
+                                    ;                         ; CustomBorrowComponent4 ; Custom Borrow Component4 ; CustomBorrowComponent4 ; "#"    
+                                    ;                         ; CustomBorrowComponent5 ; Custom Borrow Component5 ; CustomBorrowComponent5 ; "#"    
                                     
-INSERT_UPDATE RentingGearIsEasyComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                              ; visible ; &componentRef                ; rentingTitle ; count ; rentingData1         ; rentingData2            
-                                         ;                         ; RentingGearIsEasySelectDates ; Renting Gear Is Easy Select Dates ; true    ; RentingGearIsEasySelectDates ; Select Dates ; 1     ; Real-time inventory  ; Low or no deposit       
-                                         ;                         ; RentingGearIsEasyGearArrives ; Renting Gear Is Easy Gear Arrives ; true    ; RentingGearIsEasyGearArrives ; Gear Arrives ; 2     ; Free 2-day shipping* ; Ship or Pickup          
-                                         ;                         ; RentingGearIsEasyShoot       ; Renting Gear Is Easy Shoot        ; true    ; RentingGearIsEasyShoot       ; Shoot        ; 3     ; The top gear         ; Rent from 1-90 days     
-                                         ;                         ; RentingGearIsEasyReturns     ; Renting Gear Is Easy Returns      ; true    ; RentingGearIsEasyReturns     ; Easy Returns ; 4     ; Repack in same box   ; We provide return label 
+INSERT_UPDATE RentingGearIsEasyComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                              ; visible ; &componentRef                ; rentingTitle ; count ; rentingData1         ; rentingData2           
+                                         ;                         ; RentingGearIsEasySelectDates ; Renting Gear Is Easy Select Dates ; true    ; RentingGearIsEasySelectDates ; Select Dates ; 1     ; Real-time inventory  ; Low or no deposit      
+                                         ;                         ; RentingGearIsEasyGearArrives ; Renting Gear Is Easy Gear Arrives ; true    ; RentingGearIsEasyGearArrives ; Gear Arrives ; 2     ; Free 2-day shipping* ; Ship or Pickup         
+                                         ;                         ; RentingGearIsEasyShoot       ; Renting Gear Is Easy Shoot        ; true    ; RentingGearIsEasyShoot       ; Shoot        ; 3     ; The top gear         ; Rent from 1-90 days    
+                                         ;                         ; RentingGearIsEasyReturns     ; Renting Gear Is Easy Returns      ; true    ; RentingGearIsEasyReturns     ; Easy Returns ; 4     ; Repack in same box   ; We provide return label
                                          
-INSERT_UPDATE RotatingHomePageImagesComponent ; $contentCV[unique=true] ; uid[unique=true]                 ; name                                 ; &componentRef                    ; urlLink ; rentProData                 ; borrowData                    
-                                              ;                         ; RotatingHomePageImagesComponent1 ; Rotating Home Page Images Component1 ; RotatingHomePageImagesComponent1 ; "#"     ; RENT PRO photo & video gear ; Borrow for the studio.        
-                                              ;                         ; RotatingHomePageImagesComponent2 ; Rotating Home Page Images Component3 ; RotatingHomePageImagesComponent2 ; "#"     ; RENT PRO photo & video gear ; Borrow for the flippy screen. 
-                                              ;                         ; RotatingHomePageImagesComponent3 ; Rotating Home Page Images Component4 ; RotatingHomePageImagesComponent3 ; "#"     ; RENT PRO photo & video gear ; Borrow for the road trip.     
+INSERT_UPDATE RotatingHomePageImagesComponent ; $contentCV[unique=true] ; uid[unique=true]                 ; name                                 ; &componentRef                    ; urlLink ; rentProData                 ; borrowData                   
+                                              ;                         ; RotatingHomePageImagesComponent1 ; Rotating Home Page Images Component1 ; RotatingHomePageImagesComponent1 ; "#"     ; RENT PRO photo & video gear ; Borrow for the studio.       
+                                              ;                         ; RotatingHomePageImagesComponent2 ; Rotating Home Page Images Component3 ; RotatingHomePageImagesComponent2 ; "#"     ; RENT PRO photo & video gear ; Borrow for the flippy screen.
+                                              ;                         ; RotatingHomePageImagesComponent3 ; Rotating Home Page Images Component4 ; RotatingHomePageImagesComponent3 ; "#"     ; RENT PRO photo & video gear ; Borrow for the road trip.    
                                               
-INSERT_UPDATE HomePageCategoriesCarouselComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; name                                     ; &componentRef                        
-                                                  ;                         ; HomePageCategoriesCarouselComponent1 ; Home Page Categories Carousel Component1 ; HomePageCategoriesCarouselComponent1 
-                                                  ;                         ; HomePageCategoriesCarouselComponent2 ; Home Page Categories Carousel Component2 ; HomePageCategoriesCarouselComponent2 
-                                                  ;                         ; HomePageCategoriesCarouselComponent3 ; Home Page Categories Carousel Component3 ; HomePageCategoriesCarouselComponent3 
-                                                  ;                         ; HomePageCategoriesCarouselComponent4 ; Home Page Categories Carousel Component4 ; HomePageCategoriesCarouselComponent4 
-                                                  ;                         ; HomePageCategoriesCarouselComponent5 ; Home Page Categories Carousel Component5 ; HomePageCategoriesCarouselComponent5 
-                                                  ;                         ; HomePageCategoriesCarouselComponent6 ; Home Page Categories Carousel Component6 ; HomePageCategoriesCarouselComponent6 
+INSERT_UPDATE HomePageCategoriesCarouselComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; name                                     ; &componentRef                       
+                                                  ;                         ; HomePageCategoriesCarouselComponent1 ; Home Page Categories Carousel Component1 ; HomePageCategoriesCarouselComponent1
+                                                  ;                         ; HomePageCategoriesCarouselComponent2 ; Home Page Categories Carousel Component2 ; HomePageCategoriesCarouselComponent2
+                                                  ;                         ; HomePageCategoriesCarouselComponent3 ; Home Page Categories Carousel Component3 ; HomePageCategoriesCarouselComponent3
+                                                  ;                         ; HomePageCategoriesCarouselComponent4 ; Home Page Categories Carousel Component4 ; HomePageCategoriesCarouselComponent4
+                                                  ;                         ; HomePageCategoriesCarouselComponent5 ; Home Page Categories Carousel Component5 ; HomePageCategoriesCarouselComponent5
+                                                  ;                         ; HomePageCategoriesCarouselComponent6 ; Home Page Categories Carousel Component6 ; HomePageCategoriesCarouselComponent6
                                                   
-INSERT_UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                     ; &componentRef          
-                                    ;                         ; CustomBrandsComponent1 ; Custom Brands Component1 ; CustomBrandsComponent1 
-                                    ;                         ; CustomBrandsComponent2 ; Custom Brands Component2 ; CustomBrandsComponent2 
-                                    ;                         ; CustomBrandsComponent3 ; Custom Brands Component3 ; CustomBrandsComponent3 
-                                    ;                         ; CustomBrandsComponent4 ; Custom Brands Component4 ; CustomBrandsComponent4 
-                                    ;                         ; CustomBrandsComponent5 ; Custom Brands Component5 ; CustomBrandsComponent5 
+INSERT_UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                     ; &componentRef         
+                                    ;                         ; CustomBrandsComponent1 ; Custom Brands Component1 ; CustomBrandsComponent1
+                                    ;                         ; CustomBrandsComponent2 ; Custom Brands Component2 ; CustomBrandsComponent2
+                                    ;                         ; CustomBrandsComponent3 ; Custom Brands Component3 ; CustomBrandsComponent3
+                                    ;                         ; CustomBrandsComponent4 ; Custom Brands Component4 ; CustomBrandsComponent4
+                                    ;                         ; CustomBrandsComponent5 ; Custom Brands Component5 ; CustomBrandsComponent5
                                     
-INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                ; name                                ; &componentRef                   ; content[lang=$lang]    
-                                    ;                         ; FeatureStoryTitleComponent      ; Feature StoryTitle Component        ; FeatureStoryTitleComponent      ; "Featured Stories"     
-                                    ;                         ; BrandTitleComponent             ; Brand Title Component               ; BrandTitleComponent             ; "Brands"               
-                                    ;                         ; RentingGearIsEasyTitleComponent ; Renting Gear IsEasy Title Component ; RentingGearIsEasyTitleComponent ; "Renting gear is easy" 
-                                    ;                         ; CategoriesTitleComponent        ; Categories Title Component          ; CategoriesTitleComponent        ; "Categories"           
-                                    ;                         ; TheyBorrowFromUsTitleComponent  ; They BorrowFromUs Title Component   ; TheyBorrowFromUsTitleComponent  ; "They Borrow From Us"
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                ; name                                ; &componentRef                   ; content[lang=$lang]   
+                                    ;                         ; FeatureStoryTitleComponent      ; Feature StoryTitle Component        ; FeatureStoryTitleComponent      ; "Featured Stories"    
+                                    ;                         ; BrandTitleComponent             ; Brand Title Component               ; BrandTitleComponent             ; "Brands"              
+                                    ;                         ; RentingGearIsEasyTitleComponent ; Renting Gear IsEasy Title Component ; RentingGearIsEasyTitleComponent ; "Renting gear is easy"
+                                    ;                         ; CategoriesTitleComponent        ; Categories Title Component          ; CategoriesTitleComponent        ; "Categories"          
+                                    ;                         ; TheyBorrowFromUsTitleComponent  ; They BorrowFromUs Title Component   ; TheyBorrowFromUsTitleComponent  ; "They Borrow From Us" 
 
 #Mobile device navigation link component for ship or pickup, support and Account nav link                                    
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url  ; target(code)[default='sameWindow'] 
-								;						; MobilePickUpAndDeliveryLink; Mobile PickUp And Delivery Link; "/ship-or-pickup";
-								;						; MobileSupportLink; Mobile Support Link; "/support";
-								;						; MobileAccountNavLink; Mobile My Account Link; "/myaccount";
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]            ; name                            ; url               ; target(code)[default='sameWindow']
+                               ;                         ; MobilePickUpAndDeliveryLink ; Mobile PickUp And Delivery Link ; "/ship-or-pickup" ;                                   
+                               ;                         ; MobileSupportLink           ; Mobile Support Link             ; "/support"        ;                                   
+                               ;                         ; MobileAccountNavLink        ; Mobile My Account Link          ; "/myaccount"      ;                                   
 
                                     
 INSERT_UPDATE CMSNavigationNode ; uid[unique=true]        ; $contentCV[unique=true] ; name               ; &nodeRef                ; parent(uid, $contentCV) ; children(uid,$contentCV) ; links(&linkRef) ;  
@@ -145,53 +145,53 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]     ; $contentCV[unique=true
                                  ; SupportNavNodeEntry3 ;                         ; Support Nav Node Entry3 ; HeaderSupportNavNode     ; SupportLinkComponent3                                                      
                                  ; SupportNavNodeEntry4 ;                         ; Support Nav Node Entry4 ; HeaderSupportNavNode     ; SupportLinkComponent4                                                      
 
-#Mobile device navigation entry
-INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                ; $contentCV[unique=true] ; name                               ; navigationNode(uid,$contentCV) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;
-                                 ; MobilePickUpOrDeliveryEntry1 ;                         ; Mobile PickUp Or Delivery Nav Node Entry1 ; PickUpOrDeliveryNavNode  ; MobilePickUpAndDeliveryLink
-                                 ; MobileSupportNavNodeEntry1 ;                         ; Mobile Support Nav Node Entry1 ; HeaderSupportNavNode     ; MobileSupportLink
-                                 ; MobileAccountNavNodeEntry1 ;                         ; Mobile My Account Nav Node Entry1 ; AccountNavNode     ; MobileAccountNavLink
+#Mobile device navigation entry  
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]             ; $contentCV[unique=true] ; name                                      ; navigationNode(uid,$contentCV) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+                                 ; MobilePickUpOrDeliveryEntry1 ;                         ; Mobile PickUp Or Delivery Nav Node Entry1 ; PickUpOrDeliveryNavNode        ; MobilePickUpAndDeliveryLink                            
+                                 ; MobileSupportNavNodeEntry1   ;                         ; Mobile Support Nav Node Entry1            ; HeaderSupportNavNode           ; MobileSupportLink                                      
+                                 ; MobileAccountNavNodeEntry1   ;                         ; Mobile My Account Nav Node Entry1         ; AccountNavNode                 ; MobileAccountNavLink                                   
 
 #Mobile header bottom information
-INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]               ; name                               ; &componentRef                  ; content[lang=$lang]
-                                         ;                         ; MobileHeaderBottomInfoComponent1 ; Mobile Header Bottom Info Component1 ; MobileHeaderBottomInfoComponent1 ;"<i class='icon-availability'></i> Real time availability"
-										;                         ; MobileHeaderBottomInfoComponent2 ; Mobile Header Bottom Info Component2 ; MobileHeaderBottomInfoComponent2 ;"<i class='icon-checkbadge'></i> Free changes & cancellations"
-										;                         ; MobileHeaderBottomInfoComponent3 ; Mobile Header Bottom Info Component3 ; MobileHeaderBottomInfoComponent3 ;"<i class='icon-truck'></i> Free 2-day shipping"
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                 ; name                                 ; &componentRef                    ; content[lang=$lang]                                           
+                                         ;                         ; MobileHeaderBottomInfoComponent1 ; Mobile Header Bottom Info Component1 ; MobileHeaderBottomInfoComponent1 ; "<i class='icon-availability'></i> Real time availability"    
+                                         ;                         ; MobileHeaderBottomInfoComponent2 ; Mobile Header Bottom Info Component2 ; MobileHeaderBottomInfoComponent2 ; "<i class='icon-checkbadge'></i> Free changes & cancellations"
+                                         ;                         ; MobileHeaderBottomInfoComponent3 ; Mobile Header Bottom Info Component3 ; MobileHeaderBottomInfoComponent3 ; "<i class='icon-truck'></i> Free 2-day shipping"              
 
-INSERT_UPDATE ProductCarouselComponent;$contentCV[unique=true];uid[unique=true]				;name					;title		 ;&componentRef					; products(code, $productCV)
-									  ;						  ;HomePageFeaturedGearComponent;Homepage Featured Gear;Featured Gear;HomePageFeaturedGearComponent ; Canon_1Ds_Mark_II,Nikon_D70,Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon,67mm_CP_Filter,72mm_CP_Filter,Hasselblad_H5D40_Medium_Format_DSLR_Camera,Nikon-D5300-Digital-SLR-Camera,Panasonic_Battery_DMW-BLC12
-                                 
-INSERT_UPDATE SearchBoxComponent; $contentCV[unique = true]; uid[unique = true]; name       ; &componentRef
-                                ;                          ; BlSearchBox       ; Search Box ; BlSearchBox
+INSERT_UPDATE ProductCarouselComponent ; $contentCV[unique=true] ; uid[unique=true]              ; name                   ; title         ; &componentRef                 ; products(code, $productCV)                                                                                                                                                                          
+                                       ;                         ; HomePageFeaturedGearComponent ; Homepage Featured Gear ; Featured Gear ; HomePageFeaturedGearComponent ; Canon_1Ds_Mark_II,Nikon_D70,Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon,67mm_CP_Filter,72mm_CP_Filter,Hasselblad_H5D40_Medium_Format_DSLR_Camera,Nikon-D5300-Digital-SLR-Camera,Panasonic_Battery_DMW-BLC12
+                                       
+INSERT_UPDATE SearchBoxComponent ; $contentCV[unique = true] ; uid[unique = true] ; name       ; &componentRef
+                                 ;                           ; BlSearchBox        ; Search Box ; BlSearchBox  
 
 ###  Assign Components to the Slots  ###
-UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; cmsComponents(uid,$contentCV)                                                                                                                                                                                                 
-                   ;                         ; PromoBannerSlot                    ; PromoBannerComponent                                                                                                                                                                                                          
-                   ;                         ; SiteLogoHeaderSlot                 ; BLSiteLogoComponent                                                                                                                                                                                                           
-                   ;                         ; NavigationPromoSlot                ; BLNavigationPromoComponent1,BLNavigationPromoComponent2                                                                                                                                                                       
-                   ;                         ; NavigationBarSlot                  ; BLCategoryNavComponent                                                                                                                                                                                                        
-                   ;                         ; NavigationBarMobileSlot            ; BLCategoryNavComponent                                                                                                                                                                                                          
-                   ;                         ; HeaderLinkForShipOrPickupSlot      ; BLPickUpOrDeliveryNavComponent                                                                                                                                                                                                
-                   ;                         ; HeaderLinkForSupportSlot           ; BLSupportNavComponent                                                                                                                                                                                                         
-                   ;                         ; MiniCartSlot                       ; MiniCart                                                                                                                                                                                                                      
-                   ;                         ; HomePageWhyBorrowLensesSectionSlot ; HomePageWhyBorrowLensesComponent2                                                                                                                                                                                             
-                   ;                         ; HomePageFeaturedStoriesSectionSlot ; HomePageFeaturedStoriesComponent1,HomePageFeaturedStoriesComponent2,HomePageFeaturedStoriesComponent3,HomePageFeaturedStoriesComponent4,HomePageFeaturedStoriesComponent5,HomePageFeaturedStoriesComponent6                   
-                   ;                         ; HomePageBorrowFromUsSectionSlot    ; CustomBorrowComponent1,CustomBorrowComponent2,CustomBorrowComponent3,CustomBorrowComponent4,CustomBorrowComponent5                                                                                                            
-                   ;                         ; HomePageRentingGearSectionSlot     ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns                                                                                                                     
-                   ;                         ; HomePageHeroBannerSlot             ; RotatingHomePageImagesComponent1,RotatingHomePageImagesComponent2,RotatingHomePageImagesComponent3                                                                                                                            
-                   ;                         ; HomePageCategorySectionSlot        ; HomePageCategoriesCarouselComponent1,HomePageCategoriesCarouselComponent2,HomePageCategoriesCarouselComponent3,HomePageCategoriesCarouselComponent4,HomePageCategoriesCarouselComponent5,HomePageCategoriesCarouselComponent6 
-                   ;                         ; HomePageBrandSectionSlot           ; CustomBrandsComponent1,CustomBrandsComponent2,CustomBrandsComponent3,CustomBrandsComponent4,CustomBrandsComponent5                                                                                                            ;  ;  ;  
-                   ;                         ; HomePageFeaturedStoriesTitleSlot   ; FeatureStoryTitleComponent                                                                                                                                                                                                    
-                   ;                         ; HomePageBrandTitleSlot             ; BrandTitleComponent                                                                                                                                                                                                           
-                   ;                         ; HomePageRentingGearIsEasyTitleSlot ; RentingGearIsEasyTitleComponent                                                                                                                                                                                               
-                   ;                         ; HomePageCategoriesTitleSlot        ; CategoriesTitleComponent                                                                                                                                                                                                      
-                   ;                         ; HomePageTheyBorrowFromUsTitleSlot  ; TheyBorrowFromUsTitleComponent                                                                                                                                                                                                
-                   ;                         ; MobileHeaderLinkForShipOrPickupSlot      ; BLPickUpOrDeliveryNavComponent			
-                   ;                         ; MobileHeaderLinkForSupportSlot           ; BLSupportNavComponent
-                   ;                         ; MobileHeaderLinkForAccountSlot           ; AccountNavigationComponent				   
-                   ;                         ; MobileHeaderBottomInfo                       ; MobileHeaderBottomInfoComponent1,MobileHeaderBottomInfoComponent2,MobileHeaderBottomInfoComponent3                   
-				   ;						 ; HomePageFeaturedGearSectionSlot    ; HomePageFeaturedGearComponent                   
-                   ;                         ; MobileMiniCartSlot                 ; MiniCart                   
-                   ;                         ; HomePageBannerSearchBoxSlot        ; BlSearchBox
-                   ;                         ; MobileHomePageBannerSearchBoxSlot  ; BlSearchBox
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                    ; cmsComponents(uid,$contentCV)                                                                                                                                                                                                
+                   ;                         ; PromoBannerSlot                     ; PromoBannerComponent                                                                                                                                                                                                         
+                   ;                         ; SiteLogoHeaderSlot                  ; BLSiteLogoComponent                                                                                                                                                                                                          
+                   ;                         ; NavigationPromoSlot                 ; BLNavigationPromoComponent1,BLNavigationPromoComponent2                                                                                                                                                                      
+                   ;                         ; NavigationBarSlot                   ; BLCategoryNavComponent                                                                                                                                                                                                       
+                   ;                         ; NavigationBarMobileSlot             ; BLCategoryNavComponent                                                                                                                                                                                                       
+                   ;                         ; HeaderLinkForShipOrPickupSlot       ; BLPickUpOrDeliveryNavComponent                                                                                                                                                                                               
+                   ;                         ; HeaderLinkForSupportSlot            ; BLSupportNavComponent                                                                                                                                                                                                        
+                   ;                         ; MiniCartSlot                        ; MiniCart                                                                                                                                                                                                                     
+                   ;                         ; HomePageWhyBorrowLensesSectionSlot  ; HomePageWhyBorrowLensesComponent2                                                                                                                                                                                            
+                   ;                         ; HomePageFeaturedStoriesSectionSlot  ; HomePageFeaturedStoriesComponent1,HomePageFeaturedStoriesComponent2,HomePageFeaturedStoriesComponent3,HomePageFeaturedStoriesComponent4,HomePageFeaturedStoriesComponent5,HomePageFeaturedStoriesComponent6                  
+                   ;                         ; HomePageBorrowFromUsSectionSlot     ; CustomBorrowComponent1,CustomBorrowComponent2,CustomBorrowComponent3,CustomBorrowComponent4,CustomBorrowComponent5                                                                                                           
+                   ;                         ; HomePageRentingGearSectionSlot      ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns                                                                                                                    
+                   ;                         ; HomePageHeroBannerSlot              ; RotatingHomePageImagesComponent1,RotatingHomePageImagesComponent2,RotatingHomePageImagesComponent3                                                                                                                           
+                   ;                         ; HomePageCategorySectionSlot         ; HomePageCategoriesCarouselComponent1,HomePageCategoriesCarouselComponent2,HomePageCategoriesCarouselComponent3,HomePageCategoriesCarouselComponent4,HomePageCategoriesCarouselComponent5,HomePageCategoriesCarouselComponent6
+                   ;                         ; HomePageBrandSectionSlot            ; CustomBrandsComponent1,CustomBrandsComponent2,CustomBrandsComponent3,CustomBrandsComponent4,CustomBrandsComponent5                                                                                                           ;  ;  ;  
+                   ;                         ; HomePageFeaturedStoriesTitleSlot    ; FeatureStoryTitleComponent                                                                                                                                                                                                   
+                   ;                         ; HomePageBrandTitleSlot              ; BrandTitleComponent                                                                                                                                                                                                          
+                   ;                         ; HomePageRentingGearIsEasyTitleSlot  ; RentingGearIsEasyTitleComponent                                                                                                                                                                                              
+                   ;                         ; HomePageCategoriesTitleSlot         ; CategoriesTitleComponent                                                                                                                                                                                                     
+                   ;                         ; HomePageTheyBorrowFromUsTitleSlot   ; TheyBorrowFromUsTitleComponent                                                                                                                                                                                               
+                   ;                         ; MobileHeaderLinkForShipOrPickupSlot ; BLPickUpOrDeliveryNavComponent                                                                                                                                                                                               
+                   ;                         ; MobileHeaderLinkForSupportSlot      ; BLSupportNavComponent                                                                                                                                                                                                        
+                   ;                         ; MobileHeaderLinkForAccountSlot      ; AccountNavigationComponent                                                                                                                                                                                                   
+                   ;                         ; MobileHeaderBottomInfo              ; MobileHeaderBottomInfoComponent1,MobileHeaderBottomInfoComponent2,MobileHeaderBottomInfoComponent3                                                                                                                           
+                   ;                         ; HomePageFeaturedGearSectionSlot     ; HomePageFeaturedGearComponent                                                                                                                                                                                                
+                   ;                         ; MobileMiniCartSlot                  ; MiniCart                                                                                                                                                                                                                     
+                   ;                         ; HomePageBannerSearchBoxSlot         ; BlSearchBox                                                                                                                                                                                                                  
+                   ;                         ; MobileHomePageBannerSearchBoxSlot   ; BlSearchBox                                                                                                                                                                                                                  
 
 

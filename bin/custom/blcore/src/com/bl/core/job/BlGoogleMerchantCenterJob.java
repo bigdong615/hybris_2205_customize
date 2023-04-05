@@ -4,6 +4,7 @@ import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.cronjob.model.CronJobModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
 import de.hybris.platform.servicelayer.media.MediaService;
@@ -14,8 +15,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -27,7 +32,9 @@ import org.springframework.beans.factory.annotation.Required;
 import com.bl.core.google.product.populators.BlGoogleProductFeedXmlPupulator;
 import com.bl.core.model.BlGoogleMarketPlaceProductFeedModel;
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.service.BlProductService;
+import com.bl.core.stock.BlStockLevelDao;
 import com.bl.integration.marketplace.jaxb.Rss;
 
 
@@ -38,6 +45,7 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 	private BlProductService productService;
 	private static final String MIME_TYPE = "xml";
 	private MediaService mediaService;
+	private BlStockLevelDao blStockLevelDao;
 
 	@Override
 	public PerformResult perform(final CronJobModel cronJob)
@@ -45,6 +53,7 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 		final List<BlProductModel> blProducts = getProductService().getUsedProductsOnSale();
 		if (!blProducts.isEmpty())
 		{
+			filterProducts(blProducts);
 			final Rss rss = new Rss();
 			getBlGoogleProductFeedXmlPupulator().populate(blProducts, rss);
 			try
@@ -58,6 +67,32 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 			}
 		}
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
+	}
+
+	/**
+	 * @param blProducts
+	 */
+	private void filterProducts(final List<BlProductModel> blProducts)
+	{
+		final Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+		final Date startDate = cal.getTime();
+		for (int i = 0; i < 6; i++)
+		{
+			cal.add(Calendar.DATE, 1);
+		}
+		final Date endDate = cal.getTime();
+		for (final BlProductModel product : blProducts)
+		{
+			final Set<String> collectserialSkuList = product.getSerialProducts().stream().map(BlSerialProductModel::getCode)
+					.collect(Collectors.toSet());
+			final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
+					.findALLSerialStockLevelsForDateAndCodes(collectserialSkuList, startDate, endDate);
+			if (serialStock.size() < 1)
+			{
+				blProducts.remove(product);
+			}
+		}
 	}
 
 	private void convertToXML(final Object data) throws FileNotFoundException
@@ -129,6 +164,16 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 	public void setMediaService(final MediaService mediaService)
 	{
 		this.mediaService = mediaService;
+	}
+
+	public BlStockLevelDao getBlStockLevelDao()
+	{
+		return blStockLevelDao;
+	}
+
+	public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao)
+	{
+		this.blStockLevelDao = blStockLevelDao;
 	}
 
 }

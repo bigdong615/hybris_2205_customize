@@ -4,17 +4,21 @@ import static de.hybris.platform.testframework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
-import com.bl.facades.constants.BlFacadesConstants;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.product.data.ProductData;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.facades.constants.BlFacadesConstants;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultBlProductDataUrlResolverTest {
 
   @InjectMocks
@@ -35,7 +39,7 @@ public class DefaultBlProductDataUrlResolverTest {
 
   @Before
   public void prepare() {
-    MockitoAnnotations.initMocks(this);
+	  //MockitoAnnotations.initMocks(this);
     when(productData.getCode()).thenReturn(PRODUCT_CODE);
   }
 

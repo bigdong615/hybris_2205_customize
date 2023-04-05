@@ -3,30 +3,34 @@
  */
 package com.bl.commercewebservices.errors.converters;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.webservicescommons.dto.error.ErrorWsDTO;
-import com.bl.commercewebservices.validation.data.CartVoucherValidationData;
 
 import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
+import com.bl.commercewebservices.validation.data.CartVoucherValidationData;
 
 /**
  * Test suite for {@link CartVoucherValidationErrorConverter}
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CartVoucherValidationErrorConverterTest
 {
 	private static final String APPLIED_VOUCHER_EXPIRED = "applied.voucher.expired";
@@ -54,7 +58,7 @@ public class CartVoucherValidationErrorConverterTest
 		validationData = new CartVoucherValidationData();
 		validationData.setSubject(EXPIRED_VOUCHER_CODE);
 
-		given(messageSource.getMessage(eq(APPLIED_VOUCHER_EXPIRED), any(Object[].class), anyString(), any(Locale.class)))
+		given(messageSource.getMessage(eq(APPLIED_VOUCHER_EXPIRED), any(Object[].class), anyString(), nullable(Locale.class)))
 				.willReturn(APPLIED_VOUCHER_EXPIRED);
 	}
 
