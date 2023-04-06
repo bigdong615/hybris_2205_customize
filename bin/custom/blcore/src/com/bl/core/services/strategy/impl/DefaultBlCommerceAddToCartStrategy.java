@@ -9,6 +9,7 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import java.util.Objects;
 import org.apache.commons.lang.BooleanUtils;
@@ -21,7 +22,8 @@ public class DefaultBlCommerceAddToCartStrategy extends
     DefaultCommerceAddToCartStrategy {
 
   private static final long DEFAULT_STOCK_QUANTITY = 1L;
-
+  private static final String IS_QUANTITY_FROM_ADD_TO_CART_POPUP = "isQuantityFromAddToCartPopup";
+  private SessionService sessionService;
   /**
    * {@inheritDoc}
    */
@@ -129,10 +131,21 @@ public class DefaultBlCommerceAddToCartStrategy extends
       return getAllowedCartAdjustmentForProduct(cartModel, productModel, quantityToAdd,
           deliveryPointOfService);
     }*/ //NOSONAR
- if(BooleanUtils.isTrue(parameter.getIsFromRentAgainPage())){
+
+ if(BooleanUtils.isTrue(parameter.getIsFromRentAgainPage()) || BooleanUtils.isTrue(getSessionService().getCurrentSession().getAttribute(IS_QUANTITY_FROM_ADD_TO_CART_POPUP))){
+   getSessionService().getCurrentSession().removeAttribute(IS_QUANTITY_FROM_ADD_TO_CART_POPUP);
    return quantityToAdd;
  }
     return DEFAULT_STOCK_QUANTITY;
+  }
+
+
+  public SessionService getSessionService() {
+    return sessionService;
+  }
+
+  public void setSessionService(SessionService sessionService) {
+    this.sessionService = sessionService;
   }
 
 }

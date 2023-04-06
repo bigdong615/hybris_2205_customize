@@ -509,14 +509,15 @@ if($(".arrival").hasClass("nextAvailDate") && !$(".js-add-to-cart").hasClass("js
                          e.preventDefault();
                          let popUpId = this.getAttribute("id");
                           var productCode = $(this).attr('data-product-code');
+                          var quantity = $('#qty').val();
                           var serialCode = $(this).attr('data-serial');
                           if(serialCode == '' || serialCode == undefined){
                          serialCode = "serialCodeNotPresent";
                          }
                           $.ajax({
-                                     url: ACC.config.encodedContextPath + "/cart/add",
+                                     url: ACC.config.encodedContextPath + "/cart/addproduct",
                                      type: 'POST',
-                                     data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                                     data: {productCodePost: productCode,serialProductCodePost:serialCode,productQuantity:quantity},
                                      beforeSend: function(){
                                        $('.page-loader-new-layout').show();
                                      },
@@ -524,6 +525,8 @@ if($(".arrival").hasClass("nextAvailDate") && !$(".js-add-to-cart").hasClass("js
                                       var index = $( ".js-add-to-cart-popup" ).index( this );
                                       document.getElementById(popUpId).innerHTML= "Added";
                                       document.getElementById(popUpId).setAttribute("disabled", true);
+                                      $('.js-add-to-cart-popup').parent().find('#qty').prop("disabled", true);
+                                      $('.js-add-to-cart-popup').parent().find('.btn-number').prop("disabled", true);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                           ACC.minicart.updateMiniCartDisplay();
                                       }

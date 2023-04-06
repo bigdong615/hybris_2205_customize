@@ -829,6 +829,7 @@
 	<bean id="blCommerceAddToCartStrategy"
 		class="com.bl.core.services.strategy.impl.DefaultBlCommerceAddToCartStrategy"
 		parent="defaultCommerceAddToCartStrategy">
+		<property name="sessionService" ref="sessionService" />
 	</bean>
 
 	<alias name="blCommerceUpdateCartEntryStrategy" alias="commerceUpdateCartEntryStrategy"/>
