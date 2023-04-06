@@ -61,8 +61,8 @@
                         </span>
                      </c:when>
                      <c:when test="${address.shippingAddress}">
-                        <button class="badge badge-outline float-md-end js-set-default-address" value="set-default-shipping-address/${address.id}">
-                           <spring:theme code="text.setDefault.shipping"/>
+                        <button class="badge badge-outline float-md-end js-set-default-address" value="set-default-address/${address.id}">
+                           <spring:theme code="text.setDefault"/>
                         </button>
                      </c:when>
                   </c:choose>
