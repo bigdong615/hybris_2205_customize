@@ -421,8 +421,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_SHIPPED_EVENT_TEMPLATE = "order.shipped.event.template";
 	public static final String ORDER_PICKEDUP_EVENT_DEFINITION_KEY = "order.pickedup.event.definition.key";
 	public static final String ORDER_PICKEDUP_EVENT_TEMPLATE = "order.pickedup.event.template";
-	public static final String TRACK_STRING_SEPARATOR = "%20";
-
+	public static final String TRACK_STRING_SEPARATOR = "%0d%0a";
+	public static final String FEDEX_TRACK_STRING_SEPARATOR = ",";
 
 	public static final String ORDER_EXTRA_ITEM_EVENT_DEFINITION_KEY = "order.extra.item.event.definition.key";
 	public static final String ORDER_EXTRA_ITEM_EVENT_TEMPLATE = "order.extra.item.event.template";
