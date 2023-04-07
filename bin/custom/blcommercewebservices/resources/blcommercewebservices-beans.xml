@@ -318,6 +318,7 @@
 		<property name="europe1PriceFactory_PDG" type="java.lang.String"/>
 		<property name="europe1PriceFactory_PPG" type="java.lang.String"/>
 		<property name="europe1PriceFactory_PTG" type="java.lang.String"/>
+		<property name="primaryKey" type="java.lang.String"/>		
 	</bean>
 	
 	<bean class="de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentWsDTO">

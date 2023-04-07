@@ -301,6 +301,7 @@ public class BlSearchResultDomoProductPopulator implements Populator<SearchResul
 			target.setEurope1PriceFactory_PDG(this.<String> getValue(source, "europe1PriceFactory_PDG"));
 			target.setEurope1PriceFactory_PPG(this.<String> getValue(source, "europe1PriceFactory_PPG"));
 			target.setEurope1PriceFactory_PTG(this.<String> getValue(source, "europe1PriceFactory_PTG"));
+			target.setPrimaryKey(this.<Long> getValue(source, "pk").toString());
 		}
 		catch (final Exception e)
 		{
