@@ -566,8 +566,8 @@
         <property name="levelMapping">
             <map>
                 <entry key="BASIC" value="stockLevel"/>
-                <entry key="DEFAULT" value="stockLevelStatus,primaryKey,stockLevel,isValueRounded"/>
-                <entry key="FULL" value="stockLevelStatus,primaryKey,stockLevel,isValueRounded"/>
+                <entry key="DEFAULT" value="stockLevelStatus,stockLevel,isValueRounded"/>
+                <entry key="FULL" value="stockLevelStatus,stockLevel,isValueRounded"/>
             </map>
         </property>
     </bean>
