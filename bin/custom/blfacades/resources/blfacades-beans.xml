@@ -181,6 +181,7 @@
 		<property name="europe1PriceFactory_PPG" type="java.lang.String"/>
 		<property name="europe1PriceFactory_PTG" type="java.lang.String"/>
 		<property name="visibleOnStoreFront" type="boolean"/>
+		<property name="primaryKey" type="java.lang.String"/>		
   </bean>
     
 	<bean class="com.bl.facades.product.data.GenderData">
@@ -1888,7 +1889,7 @@
       <property name="damageWaiverPaid" type="java.lang.Double"/>                   
       <property name="repairLogId" type="java.lang.String"/>                   
       <property name="warehouse" type="java.lang.String"/>                   
-      <property name="ocLocation" type="java.lang.String"/>                                                     
+      <property name="ocLocation" type="java.lang.String"/>
     </bean> 
     
     <bean class="com.bl.facades.vendorRepairLog.data.VendorRepairLogData" extends="com.bl.facades.blRepairLog.data.BlRepairLogData">
@@ -1898,7 +1899,7 @@
       <property name="estimateCostDeclined" type="java.lang.Double"/>
       <property name="estimateNote" type="java.lang.String"/>
       <property name="dateReturned" type="java.util.Date"/>
-      <property name="trackingNumber" type="java.lang.String"/>  
+      <property name="trackingNumber" type="java.lang.String"/> 
     </bean>
     
     <bean class="com.bl.facades.vendorRepairLog.dto.VendorRepairLogWsDTO">
@@ -1945,7 +1946,7 @@
       <property name="damageWaiverPaid" type="java.lang.Double"/>                   
       <property name="repairLogId" type="java.lang.String"/>                   
       <property name="warehouse" type="java.lang.String"/>                   
-      <property name="ocLocation" type="java.lang.String"/>   
+      <property name="ocLocation" type="java.lang.String"/>
     </bean>
     
     <bean class="com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData" extends="com.bl.facades.blRepairLog.data.BlRepairLogData">
@@ -2037,7 +2038,7 @@
       <property name="damageWaiverPaid" type="java.lang.Double"/>                   
       <property name="repairLogId" type="java.lang.String"/>                   
       <property name="warehouse" type="java.lang.String"/>                   
-      <property name="ocLocation" type="java.lang.String"/> 
+      <property name="ocLocation" type="java.lang.String"/>
     </bean>   
     
     <bean class="com.bl.facades.blSerialLog.data.BlSerialLogListData">
