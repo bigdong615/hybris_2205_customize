@@ -285,7 +285,7 @@
 																	 data-address-id="${deliveryAddress.id}"></div>
 																   	<b class="mt-4 mb-3">Add Your Billing Address</b>
 																   	<c:if test="${!cartData.hasGiftCart}">
-																   	<c:if test="${cartData.deliveryMode.code eq 'UPS_STANDARD_ROUND_TRIP'}">
+																   	<c:if test="${cartData.deliveryMode.shippingGroup eq 'SHIP_HOME_HOTEL_BUSINESS'}">
 																   	<input type="checkbox" checked="true" class="form-control ${hideUseShipping}" id="ccUseDeliveryAddress" name="useDeliveryAddress"/>
 																   	<label for="ccUseDeliveryAddress" class="${hideUseShipping}">
 																   		<span class="gray80"><spring:theme code="checkout.multi.sop.useMyDeliveryAddress" /></span>
