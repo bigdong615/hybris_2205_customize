@@ -1138,4 +1138,10 @@
 		</property>
 	</bean>
 	
+	<alias name="blConsignmentForTrackingPopulator" alias="consignmentForTrackingPopulator"/>
+	<bean id="blConsignmentForTrackingPopulator"  class="com.bl.facades.populators.BlConsignmentForTrackingPopulator" >
+			<property name="carrierConverter" ref="carrierConverter" />
+		    <property name="consignmentTrackingService" ref="consignmentTrackingService" />
+	</bean>
+	
 </beans>
