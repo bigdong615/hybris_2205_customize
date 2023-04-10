@@ -19,7 +19,8 @@
         <requires-extension name="customerinterestsfacades"/>
         <requires-extension name="stocknotificationfacades"/>
         <requires-extension name="braintreefacades"/>
-          <requires-extension name="warehousingfacades"/>
+        <requires-extension name="warehousingfacades"/>
+        <requires-extension name="consignmenttrackingfacades"/>
         <coremodule generated="true" manager="de.hybris.platform.jalo.extension.GenericManager" packageroot="com.bl.facades"/>
     
     </extension>
