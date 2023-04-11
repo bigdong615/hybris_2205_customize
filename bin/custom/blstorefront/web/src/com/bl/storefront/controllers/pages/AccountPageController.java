@@ -1609,6 +1609,8 @@ public class AccountPageController extends AbstractSearchPageController
 	{
 
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		orderDetails.setEntries(orderDetails.getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
+				Collectors.toList()));
 		
 		getGenerateInvoicePdfService().generateInvoicePdf(orderDetails, request, response);
 
