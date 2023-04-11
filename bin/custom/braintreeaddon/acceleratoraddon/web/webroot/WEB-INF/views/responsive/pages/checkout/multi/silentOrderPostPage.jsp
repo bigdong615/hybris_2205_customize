@@ -530,8 +530,10 @@
         var braintreeLocale = "${braintreeLocale}";
         var currency = "${payPalCheckoutData.currency}";
         var recipientName = "${payPalCheckoutData.shippingAddressOverride.recipientName}";
-        var streetAddress = "${payPalCheckoutData.shippingAddressOverride.streetAddress}";
-        var extendedAddress = "${payPalCheckoutData.shippingAddressOverride.extendedAddress}";
+
+        <%-- var streetAddress = "${payPalCheckoutData.shippingAddressOverride.streetAddress}";
+        var extendedAddress = "${payPalCheckoutData.shippingAddressOverride.extendedAddress}";--%>
+
         var locality = "${payPalCheckoutData.shippingAddressOverride.locality}";
         var countryCodeAlpha2 = "${payPalCheckoutData.shippingAddressOverride.countryCodeAlpha2}";
         var postalCode = "${payPalCheckoutData.shippingAddressOverride.postalCode}";
