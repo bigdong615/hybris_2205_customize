@@ -1462,6 +1462,7 @@ const formatToPhone = (event) => {
 		if (inputElement != null) {
 			inputElement.addEventListener('keydown', enforceFormat);
 			inputElement.addEventListener('keyup', formatToPhone);
+			inputElement.addEventListener('change', formatToPhone);
 		}
 	}, 2000);
 

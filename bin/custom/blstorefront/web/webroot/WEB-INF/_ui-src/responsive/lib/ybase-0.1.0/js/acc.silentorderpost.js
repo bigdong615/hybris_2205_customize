@@ -26,6 +26,7 @@ ACC.silentorderpost = {
         		if (inputElement != null) {
         			inputElement.addEventListener('keydown', enforceBillingFormFormat);
         			inputElement.addEventListener('keyup', formatToPhoneForBillingForm);
+        			inputElement.addEventListener('change',formatToPhoneForBillingForm);
         		}
 			}
 		});
