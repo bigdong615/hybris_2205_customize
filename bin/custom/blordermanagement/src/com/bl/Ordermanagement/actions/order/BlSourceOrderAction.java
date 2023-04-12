@@ -186,7 +186,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
       int completedOrderCount = 0;
       Boolean LateOrderFlag = Boolean.FALSE;
       Boolean ApproveOrderFlag = Boolean.FALSE;
-      Boolean RecentOrderFlag = Boolean.TRUE;
+      Boolean RecentOrderFlag = Boolean.FALSE;
 
       if (order.getUser() != null) {
         CustomerModel customerModel = (CustomerModel) order.getUser();
@@ -226,7 +226,10 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         }
       }
       // Condition #1
-
+        long durationValue = 0l;
+        if (order.getRentalEndDate() != null && order.getRentalStartDate() != null) {
+            durationValue = order.getRentalEndDate().getTime() - order.getRentalStartDate().getTime();
+        }
 		if (sumOfGearValue >= threshouldGearValueThird)
 		{
 			order.setStatus(OrderStatus.VERIFICATION_REQUIRED);
@@ -235,8 +238,8 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 		else if
 
 		(((sumOfGearValue > threshouldGearValue) && ApproveOrderFlag && RecentOrderFlag)
-			//	|| (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0)
-        	|| LateOrderFlag)
+				|| (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0)
+        	|| LateOrderFlag || (durationValue <= 3 && completedOrderCount <= 2 && ApproveOrderFlag && RecentOrderFlag))
 		{
 			order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
 			startConsignmentSubProcess(consignments, process, true);
@@ -245,7 +248,9 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 		{
 			startConsignmentSubProcess(consignments, process, false);
 		}
-    } else {
+    }
+    else
+    {
       startConsignmentSubProcess(consignments, process, false);
     }
   }
