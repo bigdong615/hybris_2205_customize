@@ -45,13 +45,13 @@
                   <div class="col-md-2 text-center">
                    <product:productPrimaryImage product="${product}" format="thumbnail"/>
                   </div>
-                  <div class="col-md-7 mt-4"><b>${product.name}</b>
+                  <div class="col-md-7 mt-4"><b>${ycommerce:encodeJSON(productName)}</b>
                   <c:if test="${not empty rentalDate.selectedFromDate && product.retailGear eq false}">
                     <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span>
                   </c:if>
                   </div>
                      <input type="hidden" id="productCode" value="${product.code}" />
-                     <input type="hidden" id="productName" value="${product.name}" />
+                     <input type="hidden" id="productName" value="${ycommerce:encodeJSON(productName)}" />
                      <input type="hidden" id="productBrand" value="${product.manufacturer}" />
                      <input type="hidden" id="productCategory" value="${product.categories[0].name}" />
                      <input type="hidden" id="productType" value="rental gear" />
