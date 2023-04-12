@@ -1259,3 +1259,33 @@ object-position:center;
       width: fill-available !important;
 }
 }
+
+@media only screen and (min-width: 668px) {
+.input-group .btn-search { 
+	width: 135px; height: 50px; 
+	text-indent: 0px; 
+	background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f; 
+	border-radius: 25px;
+	color: #fff; 
+	text-align: center; 
+	padding-left: 30px; 
+	background-position: 20px 17px;
+ }
+ 
+ .input-group .btn-search:hover {
+    background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f !important; 
+    color: #fff; 
+	text-align: center; 
+	padding-left: 30px; 
+	background-position: 20px 17px !important;
+ }
+ 
+ #hero .input-group {
+    width: 680px;
+ }
+ 
+ #globalSearch .input-group input:first-child {
+   width: calc(100% - 580px);
+ }
+}
+ 
