@@ -1464,6 +1464,16 @@ const formatToPhone = (event) => {
 			inputElement.addEventListener('keyup', formatToPhone);
 			inputElement.addEventListener('change', formatToPhone);
 		}
+		const inputZipElement = document.getElementById('address.postcode');
+		if(inputZipElement !=null)
+		{
+        inputZipElement.addEventListener('keydown', enforceFormat);
+		}
+		const inputAddZipElement = document.getElementById('zip');
+    		if(inputAddZipElement !=null)
+    		{
+            inputAddZipElement.addEventListener('keydown', enforceFormat);
+    		}
 	}, 2000);
 
 	setTimeout(() => {
@@ -1472,6 +1482,7 @@ const formatToPhone = (event) => {
 				if (formItems.id == 'blPickUpBy.phone') {
 					formItems.addEventListener('keydown', enforceFormat);
 					formItems.addEventListener('keyup', formatToPhone);
+					formItems.addEventListener('change', formatToPhone);
 				}
 			});
 		});
