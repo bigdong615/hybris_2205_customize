@@ -59,16 +59,18 @@ public class DefaultPageController extends AbstractPageController
 			return getViewForPage(pageForRequest);
 		}
 
-		// No page found - display the homepage page with error from controller
-		BlLogger.logMessage(LOG, Level.ERROR, "Page Not found for URI  "+urlPathHelper.getLookupPathForRequest(request));
-		return REDIRECT_PREFIX + ROOT;
-		/*model.addAttribute(WebConstants.MODEL_KEY_ADDITIONAL_BREADCRUMB,
-				resourceBreadcrumbBuilder.getBreadcrumbs("breadcrumb.not.found"));
-		GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
+			// No page found - display the notFound page with error from controller
+			final ContentPageModel errorPage = getContentPageForLabelOrId(ERROR_CMS_PAGE);
+			storeCmsPageInModel(model, errorPage);
+			setUpMetaDataForContentPage(model, errorPage);
+			model.addAttribute(WebConstants.MODEL_KEY_ADDITIONAL_BREADCRUMB,
+			model.addAttribute(WebConstants.MODEL_KEY_ADDITIONAL_BREADCRUMB,
+			resourceBreadcrumbBuilder.getBreadcrumbs("breadcrumb.not.found")));
+			GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
 
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
-		return ControllerConstants.Views.Pages.Error.ErrorNotFoundPage;*/
+		return ControllerConstants.Views.Pages.Error.ErrorNotFoundPage;
 	}
 
 	/**

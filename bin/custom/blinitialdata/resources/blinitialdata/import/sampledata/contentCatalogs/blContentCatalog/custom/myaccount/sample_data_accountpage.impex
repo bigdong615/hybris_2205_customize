@@ -6,86 +6,86 @@ $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCata
 $lang=en
 
 
-INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;page;actions(uid,$contentCV);&componentRef
-                                 ;;AccountAddressBookComponent;Account Address Book Component;accountAddressBookPage.jsp;;AccountAddressBookComponent
-                                 ;;AccountAddEditAddressComponent;Account Add Edit Address Component;accountEditAddressPage.jsp;;AccountAddEditAddressComponent
-                                 ;;AccountOrderHistoryComponent;Account History Component;accountOrderHistoryPage.jsp;ViewOrderAction;AccountOrderHistoryComponent
-                                 ;;UpdatePasswordComponent;Update Password Component;accountChangePasswordPage.jsp;;UpdatePasswordComponent
-                                 ;;SavedCartsComponent   ;Saved Carts Component  ;accountSavedCartsPage.jsp;;SavedCartsComponent
-                                 ;;BookmarksComponent    ; Bookmarks Component   ; accountBookmarksPage.jsp ;;BookmarksComponent
-                                 ;;VerificationImagesComponent ; Verification Images Component ; accountVerificationImagesPage.jsp ;; VerificationImagesComponent
-                                 ;;CreditCartsComponent    ; Credit Carts Component   ; accountCreditCartsPage.jsp ;;CreditCartsComponent
-                                 ;;UpdateEmailComponent;Update Email Component;accountProfileEmailEditPage.jsp;;UpdateEmailComponent
-                                 ;;BlAccountOrderDetailsComponent; Account Order Details;accountOrderDetails.jsp;;BlAccountOrderDetailsComponent
-                                 ;;BlReturnOrderDetailsComponent; Return Order Details;returnOrderPage.jsp;;BlReturnOrderDetailsComponent
-                                 ;;BlAccountRentalOrderExtendDetailsComponent; Account Rental Order Extend Details;accountRentalExtendOrderDetails.jsp;;BlAccountRentalOrderExtendDetailsComponent
-                                 ;;BlAccountRentalOrderExtendConfirmationComponent; Account Rental Order Extend Confirmation;extendOrderConfirmation.jsp;;BlAccountRentalOrderExtendConfirmationComponent
-								 ;;PayBillComponent;Bill Pay Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayBillPage.jsp;;PayBillComponent
-								 ;;PayBillSuccessComponent;Bill Pay Success Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayBillSuccessPage.jsp;;PayBillSuccessComponent
-								 ;;ModifyPaymentComponent;Modify Payment Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountModifyPaymentPage.jsp;;ModifyPaymentComponent
-                                  ;                         ; DepositPaymentComponent                         ; Deposit Payment Component                ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountDepositPaymentPage.jsp ;                         ; DepositPaymentComponent                         
-                                  ;                         ; DepositPaymentSuccessComponent                  ; Deposit Payment Success Component        ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountDepositSuccessPage.jsp ;                         ; DepositPaymentSuccessComponent                  
-								  
-# CMS View Order Action
-INSERT_UPDATE ViewOrderAction;$contentCV[unique=true];uid[unique=true];url;name;&actionRef
-                             ;;ViewOrderAction;/my-account/order/{orderCode};View Order Action;ViewOrderAction
+INSERT_UPDATE JspIncludeComponent ; $contentCV[unique=true] ; uid[unique=true]                                ; name                                     ; page                                                                                        ; actions(uid,$contentCV) ; &componentRef                                  
+                                  ;                         ; AccountAddressBookComponent                     ; Account Address Book Component           ; accountAddressBookPage.jsp                                                                  ;                         ; AccountAddressBookComponent                    
+                                  ;                         ; AccountAddEditAddressComponent                  ; Account Add Edit Address Component       ; accountEditAddressPage.jsp                                                                  ;                         ; AccountAddEditAddressComponent                 
+                                  ;                         ; AccountOrderHistoryComponent                    ; Account History Component                ; accountOrderHistoryPage.jsp                                                                 ; ViewOrderAction         ; AccountOrderHistoryComponent                   
+                                  ;                         ; UpdatePasswordComponent                         ; Update Password Component                ; accountChangePasswordPage.jsp                                                               ;                         ; UpdatePasswordComponent                        
+                                  ;                         ; SavedCartsComponent                             ; Saved Carts Component                    ; accountSavedCartsPage.jsp                                                                   ;                         ; SavedCartsComponent                            
+                                  ;                         ; BookmarksComponent                              ; Bookmarks Component                      ; accountBookmarksPage.jsp                                                                    ;                         ; BookmarksComponent                             
+                                  ;                         ; VerificationImagesComponent                     ; Verification Images Component            ; accountVerificationImagesPage.jsp                                                           ;                         ; VerificationImagesComponent                    
+                                  ;                         ; CreditCartsComponent                            ; Credit Carts Component                   ; accountCreditCartsPage.jsp                                                                  ;                         ; CreditCartsComponent                           
+                                  ;                         ; UpdateEmailComponent                            ; Update Email Component                   ; accountProfileEmailEditPage.jsp                                                             ;                         ; UpdateEmailComponent                           
+                                  ;                         ; BlAccountOrderDetailsComponent                  ; Account Order Details                    ; accountOrderDetails.jsp                                                                     ;                         ; BlAccountOrderDetailsComponent                 
+                                  ;                         ; BlReturnOrderDetailsComponent                   ; Return Order Details                     ; returnOrderPage.jsp                                                                         ;                         ; BlReturnOrderDetailsComponent                  
+                                  ;                         ; BlAccountRentalOrderExtendDetailsComponent      ; Account Rental Order Extend Details      ; accountRentalExtendOrderDetails.jsp                                                         ;                         ; BlAccountRentalOrderExtendDetailsComponent     
+                                  ;                         ; BlAccountRentalOrderExtendConfirmationComponent ; Account Rental Order Extend Confirmation ; extendOrderConfirmation.jsp                                                                 ;                         ; BlAccountRentalOrderExtendConfirmationComponent
+                                  ;                         ; PayBillComponent                                ; Bill Pay Component                       ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayBillPage.jsp        ;                         ; PayBillComponent                               
+                                  ;                         ; PayBillSuccessComponent                         ; Bill Pay Success Component               ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayBillSuccessPage.jsp ;                         ; PayBillSuccessComponent                        
+                                  ;                         ; ModifyPaymentComponent                          ; Modify Payment Component                 ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountModifyPaymentPage.jsp  ;                         ; ModifyPaymentComponent                         
+                                  ;                         ; DepositPaymentComponent                         ; Deposit Payment Component                ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountDepositPaymentPage.jsp ;                         ; DepositPaymentComponent                        
+                                  ;                         ; DepositPaymentSuccessComponent                  ; Deposit Payment Success Component        ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountDepositSuccessPage.jsp ;                         ; DepositPaymentSuccessComponent                 
+								                          
+# CMS View Order Action           
+INSERT_UPDATE ViewOrderAction ; $contentCV[unique=true] ; uid[unique=true] ; url                           ; name              ; &actionRef     
+                              ;                         ; ViewOrderAction  ; /my-account/order/{orderCode} ; View Order Action ; ViewOrderAction
 
-# ContentSlot
-INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef);;;
-                         ;;BodyContent-address-book;Body Content Slot for Account Address Book;true;AccountAddressBookComponent;;;
-                         ;;BodyContent-add-edit-address;Body Content Slot for Add Edit Address;true;AccountAddEditAddressComponent;;;
-                         ;;BodyContent-orders;Body Content Slot for My Account Order History;true;AccountOrderHistoryComponent;;;
-                         ;;BodyContent-updatePassword;Body Content Slot for Update Password;true;UpdatePasswordComponent;;;
-                         ;;BodyContentSlot-saved-carts;Body Content Slot for Saved Carts;true;SavedCartsComponent;;;
-                         ;;BodyContentSlot-bookmarks ;Body Content Slot for Bookmarks;true;BookmarksComponent;;;
-                         ;;BodyContentSlot-verificationImages;Body Content Slot for Verification Images;true;VerificationImagesComponent;;;
-                         ;;BodyContentSlot-creditCarts;Body Content Slot for Credit Carts;true;CreditCartsComponent;;;
-                         ;;BodyContent-update-email;Body Content Slot for Update Email;true;UpdateEmailComponent;;;
-                         ;;BodyContent-orderdetail;Body Content Slot for Order Details;true;BlAccountOrderDetailsComponent;;;
-                         ;;BodyContent-returnorderdetail;Body Content Slot for Return Order Details;true;BlReturnOrderDetailsComponent;;;
-                         ;;BodyContent-rentalOrderExtendDetails;Body Content Slot for extend Order Details;true;BlAccountRentalOrderExtendDetailsComponent;
-                         ;;BodyContent-rentalOrderExtendConfirmation;Body Content Slot for extend Order confirmation;true;BlAccountRentalOrderExtendConfirmationComponent;
-						 ;;BodyContentSlot-bill-pay;Body Content Slot for Bill Payment;true;PayBillComponent;;;
-						 ;;BodyContentSlot-bill-pay-success;Body Content Slot for Bill Payment Success;true;PayBillSuccessComponent;;;
-						 ;;BodyContentSlot-modify-payment;Body Content Slot for Modify Payment;true;ModifyPaymentComponent;;; 
+# ContentSlot                 
+INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                          ; name                                            ; active ; cmsComponents(&componentRef)                    ;  ;  ;  
+                          ;                         ; BodyContent-address-book                  ; Body Content Slot for Account Address Book      ; true   ; AccountAddressBookComponent                     ;  ;  ;  
+                          ;                         ; BodyContent-add-edit-address              ; Body Content Slot for Add Edit Address          ; true   ; AccountAddEditAddressComponent                  ;  ;  ;  
+                          ;                         ; BodyContent-orders                        ; Body Content Slot for My Account Order History  ; true   ; AccountOrderHistoryComponent                    ;  ;  ;  
+                          ;                         ; BodyContent-updatePassword                ; Body Content Slot for Update Password           ; true   ; UpdatePasswordComponent                         ;  ;  ;  
+                          ;                         ; BodyContentSlot-saved-carts               ; Body Content Slot for Saved Carts               ; true   ; SavedCartsComponent                             ;  ;  ;  
+                          ;                         ; BodyContentSlot-bookmarks                 ; Body Content Slot for Bookmarks                 ; true   ; BookmarksComponent                              ;  ;  ;  
+                          ;                         ; BodyContentSlot-verificationImages        ; Body Content Slot for Verification Images       ; true   ; VerificationImagesComponent                     ;  ;  ;  
+                          ;                         ; BodyContentSlot-creditCarts               ; Body Content Slot for Credit Carts              ; true   ; CreditCartsComponent                            ;  ;  ;  
+                          ;                         ; BodyContent-update-email                  ; Body Content Slot for Update Email              ; true   ; UpdateEmailComponent                            ;  ;  ;  
+                          ;                         ; BodyContent-orderdetail                   ; Body Content Slot for Order Details             ; true   ; BlAccountOrderDetailsComponent                  ;  ;  ;  
+                          ;                         ; BodyContent-returnorderdetail             ; Body Content Slot for Return Order Details      ; true   ; BlReturnOrderDetailsComponent                   ;  ;  ;  
+                          ;                         ; BodyContent-rentalOrderExtendDetails      ; Body Content Slot for extend Order Details      ; true   ; BlAccountRentalOrderExtendDetailsComponent      ;  
+                          ;                         ; BodyContent-rentalOrderExtendConfirmation ; Body Content Slot for extend Order confirmation ; true   ; BlAccountRentalOrderExtendConfirmationComponent ;  
+                          ;                         ; BodyContentSlot-bill-pay                  ; Body Content Slot for Bill Payment              ; true   ; PayBillComponent                                ;  ;  ;  
+                          ;                         ; BodyContentSlot-bill-pay-success          ; Body Content Slot for Bill Payment Success      ; true   ; PayBillSuccessComponent                         ;  ;  ;  
+                          ;                         ; BodyContentSlot-modify-payment            ; Body Content Slot for Modify Payment            ; true   ; ModifyPaymentComponent                          ;  ;  ;  
                           ;                         ; BodyContentSlot-deposit-payment           ; Body Content Slot for Deposit Payment           ; true   ; DepositPaymentComponent                         ;  ;  ;  
-                          ;                         ; BodyContentSlot-deposit-payment-success   ; Body Content Slot for Deposit Payment Success   ; true   ; DepositPaymentSuccessComponent                  ;  ;  ;
-                          ;;SearchBoxBl;BlSearchBox
-
-# ContentSlotForPage
-INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true];contentSlot(uid,$contentCV)[unique=true];;;
-                                ;;BodyContent-address-book   ;BodyContent;address-book;BodyContent-address-book;;;
-                                ;;BodyContent-add-edit-address;BodyContent;add-edit-address;BodyContent-add-edit-address;;;
-                                ;;BodyContent-orders          ;BodyContent;orders;BodyContent-orders;;;
-                                ;;BodyContent-updatePassword;BodyContent;updatePassword;BodyContent-updatePassword;;;
-                                ;;BodyContent-saved-carts  ; BodyContent; saved-carts ;BodyContentSlot-saved-carts;;;
-                                ;;BodyContent-bookmarks  ;BodyContent; bookmarks ;BodyContentSlot-bookmarks;;;
-                                ;;BodyContent-verificationImages  ;BodyContent; verificationImages ;BodyContentSlot-verificationImages;;;
-                                ;;BodyContent-creditCarts  ;BodyContent; creditCarts ;BodyContentSlot-creditCarts;;;
-                                ;;BodyContent-update-email;BodyContent;update-email;BodyContent-update-email;;;
-                                ;;BodyContentSlot-bill-pay;BodyContent;pay-bill;BodyContentSlot-bill-pay;;;
-								;;BodyContentSlot-bill-pay-success;BodyContent;pay-bill-success;BodyContentSlot-bill-pay-success;;;
-                                ;;BodyContentSlot-modify-payment;BodyContent;modify-payment;BodyContentSlot-modify-payment;;;
-# ContentSlotForPage for order details page
-INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='order'];contentSlot(uid,$contentCV)[unique=true];;;
-                                ;;BodyContent-orderdetail;BodyContent;;BodyContent-orderdetail;;;
-                                
-# ContentSlotForPage for return order page
-INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='returnOrder'];contentSlot(uid,$contentCV)[unique=true];;;
-								;;BodyContent-returnorderdetail;BodyContent;;BodyContent-returnorderdetail;;;
-
-# ContentSlotForPage for extend order details page
-INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='extendRentalOrderDetails'];contentSlot(uid,$contentCV)[unique=true];;;
-                                ;;BodyContent-rentalOrderExtendDetails;BodyContent;;BodyContent-rentalOrderExtendDetails;;;
-
-# ContentSlotForPage for extend order confirmation page
-INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='extendRentalOrderConfirmation'];contentSlot(uid,$contentCV)[unique=true];;;
-                                ;;BodyContent-rentalOrderExtendConfirmation;BodyContent;;BodyContent-rentalOrderExtendConfirmation;;;
+                          ;                         ; BodyContentSlot-deposit-payment-success   ; Body Content Slot for Deposit Payment Success   ; true   ; DepositPaymentSuccessComponent                  ;  ;  ;  
+                          ;                         ; SearchBoxBl                               ; BlSearchBox                                     
 
 # ContentSlotForPage      
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                 ; position[unique=true] ; page(uid,$contentCV)[unique=true] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
+                                 ;                         ; BodyContent-address-book         ; BodyContent           ; address-book                      ; BodyContent-address-book                 ;  ;  ;  
+                                 ;                         ; BodyContent-add-edit-address     ; BodyContent           ; add-edit-address                  ; BodyContent-add-edit-address             ;  ;  ;  
+                                 ;                         ; BodyContent-orders               ; BodyContent           ; orders                            ; BodyContent-orders                       ;  ;  ;  
+                                 ;                         ; BodyContent-updatePassword       ; BodyContent           ; updatePassword                    ; BodyContent-updatePassword               ;  ;  ;  
+                                 ;                         ; BodyContent-saved-carts          ; BodyContent           ; saved-carts                       ; BodyContentSlot-saved-carts              ;  ;  ;  
+                                 ;                         ; BodyContent-bookmarks            ; BodyContent           ; bookmarks                         ; BodyContentSlot-bookmarks                ;  ;  ;  
+                                 ;                         ; BodyContent-verificationImages   ; BodyContent           ; verificationImages                ; BodyContentSlot-verificationImages       ;  ;  ;  
+                                 ;                         ; BodyContent-creditCarts          ; BodyContent           ; creditCarts                       ; BodyContentSlot-creditCarts              ;  ;  ;  
+                                 ;                         ; BodyContent-update-email         ; BodyContent           ; update-email                      ; BodyContent-update-email                 ;  ;  ;  
+                                 ;                         ; BodyContentSlot-bill-pay         ; BodyContent           ; pay-bill                          ; BodyContentSlot-bill-pay                 ;  ;  ;  
+                                 ;                         ; BodyContentSlot-bill-pay-success ; BodyContent           ; pay-bill-success                  ; BodyContentSlot-bill-pay-success         ;  ;  ;  
+                                 ;                         ; BodyContentSlot-modify-payment   ; BodyContent           ; modify-payment                    ; BodyContentSlot-modify-payment           ;  ;  ;  
+# ContentSlotForPage for order details page
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]        ; position[unique=true] ; page(uid,$contentCV)[unique=true][default='order'] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
+                                 ;                         ; BodyContent-orderdetail ; BodyContent           ;                                                    ; BodyContent-orderdetail                  ;  ;  ;  
+                                 
+# ContentSlotForPage for return order page
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]              ; position[unique=true] ; page(uid,$contentCV)[unique=true][default='returnOrder'] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
+                                 ;                         ; BodyContent-returnorderdetail ; BodyContent           ;                                                          ; BodyContent-returnorderdetail            ;  ;  ;  
+
+# ContentSlotForPage for extend order details page
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                     ; position[unique=true] ; page(uid,$contentCV)[unique=true][default='extendRentalOrderDetails'] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
+                                 ;                         ; BodyContent-rentalOrderExtendDetails ; BodyContent           ;                                                                       ; BodyContent-rentalOrderExtendDetails     ;  ;  ;  
+
+# ContentSlotForPage for extend order confirmation page
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true] ; page(uid,$contentCV)[unique=true][default='extendRentalOrderConfirmation'] ; contentSlot(uid,$contentCV)[unique=true]  ;  ;  ;  
+                                 ;                         ; BodyContent-rentalOrderExtendConfirmation ; BodyContent           ;                                                                            ; BodyContent-rentalOrderExtendConfirmation ;  ;  ;  
+
+# ContentSlotForPage             
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                        ; position[unique=true] ; page(uid,$contentCV)[unique=true] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
                                  ;                         ; BodyContentSlot-deposit-payment         ; BodyContent           ; deposit-payment                   ; BodyContentSlot-deposit-payment          ;  ;  ;  
-                                 ;                         ; BodyContentSlot-deposit-payment-success ; BodyContent           ; deposit-payment-success           ; BodyContentSlot-deposit-payment-success  ;  ;  ;
+                                 ;                         ; BodyContentSlot-deposit-payment-success ; BodyContent           ; deposit-payment-success           ; BodyContentSlot-deposit-payment-success  ;  ;  ;  
 
-INSERT_UPDATE SearchBoxComponent;$contentCV[unique=true];uid[unique=true];name;&componentRef
-                                ;;BlSearchBox;Search Box;BlSearchBox
+INSERT_UPDATE SearchBoxComponent ; $contentCV[unique=true] ; uid[unique=true] ; name       ; &componentRef
+                                 ;                         ; BlSearchBox      ; Search Box ; BlSearchBox  

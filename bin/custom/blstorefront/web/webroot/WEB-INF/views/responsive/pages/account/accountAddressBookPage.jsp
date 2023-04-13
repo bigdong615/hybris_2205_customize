@@ -12,9 +12,9 @@
 </c:if>
 
 <div id="accountContent" class="col-lg-8 offset-lg-1">
-<h1>
+<h3>
    <spring:theme code="text.address.header"/>
-</h1>
+</h3>
 <hr>
 <c:if test="${empty addressData}">
 <div class="notification no-orders">
@@ -54,7 +54,7 @@
                          </c:choose>
                      </c:otherwise>
                   </c:choose>
-<%--                   <c:choose>
+                <c:choose>
                      <c:when test="${address.defaultAddress}">
                         <span class="badge badge-default float-end">
                            <spring:theme code="text.default.shipping"/>
@@ -65,7 +65,7 @@
                            <spring:theme code="text.setDefault"/>
                         </button>
                      </c:when>
-                  </c:choose> --%>
+                  </c:choose>
                </div>
                <div class="scroll-over-text">
                <c:if test="${not empty fn:escapeXml(address.companyName)}">

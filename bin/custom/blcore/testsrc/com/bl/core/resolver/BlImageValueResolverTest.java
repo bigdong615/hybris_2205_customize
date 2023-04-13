@@ -1,11 +1,8 @@
 package com.bl.core.resolver;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.bl.core.media.impl.DefaultBlMediaContainerService;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.resolvers.BlImageValueResolver;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.media.MediaContainerModel;
 import de.hybris.platform.core.model.media.MediaFormatModel;
@@ -18,20 +15,28 @@ import de.hybris.platform.solrfacetsearch.config.exceptions.FieldValueProviderEx
 import de.hybris.platform.solrfacetsearch.indexer.IndexerBatchContext;
 import de.hybris.platform.solrfacetsearch.indexer.spi.InputDocument;
 import de.hybris.platform.solrfacetsearch.provider.QualifierProvider;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.media.impl.DefaultBlMediaContainerService;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.resolvers.BlImageValueResolver;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class BlImageValueResolverTest {
 
   private static final String INDEXED_PROPERTY_NAME = "img-300Wx300H";
@@ -65,7 +70,7 @@ public class BlImageValueResolverTest {
 
   @Before
   public void startUp() {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     indexedProperty = new IndexedProperty();
     indexedProperty.setName(INDEXED_PROPERTY_NAME);
     indexedProperty.setValueProviderParameters(new HashMap<>());

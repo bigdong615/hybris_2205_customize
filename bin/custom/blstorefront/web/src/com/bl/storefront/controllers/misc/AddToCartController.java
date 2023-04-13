@@ -75,6 +75,7 @@ public class AddToCartController extends AbstractController {
     private static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
     private static final Logger LOG = Logger.getLogger(AddToCartController.class);
 
+    private static final String IS_QUANTITY_FROM_ADD_TO_CART_POPUP = "isQuantityFromAddToCartPopup";
 
     @Resource(name = "cartFacade")
     private CartFacade cartFacade;
@@ -434,6 +435,81 @@ public class AddToCartController extends AbstractController {
         }
         return errorMsg;
     }
+
+    @RequestMapping(value = "/cart/addproduct", method = RequestMethod.POST, produces = "application/json")
+    public String addToCartFromRecommendedComponent(@RequestParam("productCodePost") final String code,
+                            @RequestParam("serialProductCodePost") final String serialCode , @RequestParam("productQuantity") final Long quantity, final Model model, @Valid final AddToCartForm form,
+                            final BindingResult bindingErrors){
+        validateParameterNotNull(code, "Product code must not be null");
+        validateParameterNotNull(serialCode, "Serial code must not be null");
+
+        if (bindingErrors.hasErrors()) {
+            return getViewWithBindingErrorMessages(model, bindingErrors);
+        }
+
+        final String warningPopup = productAllowedInAddToCart(code, serialCode);
+        if (warningPopup != null)
+        {
+            return warningPopup;
+        }
+
+        final long qty = quantity;
+
+        if (qty <= 0) {
+            model.addAttribute(ERROR_MSG_TYPE, "basket.error.quantity.invalid");
+            model.addAttribute(QUANTITY_ATTR, Long.valueOf(0L));
+        } else {
+            try {
+
+                sessionService.getCurrentSession().setAttribute(IS_QUANTITY_FROM_ADD_TO_CART_POPUP,Boolean.TRUE);
+                final CartModificationData cartModification = blCartFacade.addToCart(code, qty, serialCode);
+                model.addAttribute(QUANTITY_ATTR, Long.valueOf(cartModification.getQuantityAdded()));
+                model.addAttribute("entry", cartModification.getEntry());
+                model.addAttribute("cartCode", cartModification.getCartCode());
+                model.addAttribute("isQuote", cartFacade.getSessionCart().getQuoteData() != null ? Boolean.TRUE : Boolean.FALSE);
+
+                if (cartModification.getQuantityAdded() == 0L) {
+                    model.addAttribute(ERROR_MSG_TYPE, "basket.information.quantity.noItemsAdded." + cartModification.getStatusCode());
+                } else if (cartModification.getQuantityAdded() < qty) {
+                    model.addAttribute(ERROR_MSG_TYPE,
+                            "basket.information.quantity.reducedNumberOfItemsAdded." + cartModification.getStatusCode());
+                }
+            } catch (final CommerceCartModificationException ex) {
+                logDebugException(ex);
+                model.addAttribute(ERROR_MSG_TYPE, "basket.error.occurred");
+                model.addAttribute(QUANTITY_ATTR, Long.valueOf(0L));
+            } catch (final UnknownIdentifierException ex) {
+                LOG.debug(String.format("Product could not be added to cart - %s", ex.getMessage()));
+                model.addAttribute(ERROR_MSG_TYPE, "basket.error.occurred");
+                model.addAttribute(QUANTITY_ATTR, Long.valueOf(0L));
+                return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
+            }
+        }
+
+        model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC,ProductOption.CATEGORIES,ProductOption.REQUIRED_DATA)));
+        final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE,
+                ProductOption.REQUIRED_DATA, ProductOption.GALLERY, ProductOption.STOCK,ProductOption.REQUIRED_WISHLIST);
+        final Integer productsLimit = Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50));
+        final List<ProductReferenceTypeEnum> productReferenceTypeEnums= getEnumerationService().getEnumerationValues(ProductReferenceTypeEnum._TYPECODE);
+        productReferenceTypeEnums.remove(ProductReferenceTypeEnum.CONSISTS_OF);
+        final List<ProductReferenceData> productReferences = productFacade.getProductReferencesForCode(code,
+                productReferenceTypeEnums, PRODUCT_OPTIONS, productsLimit);
+
+        model.addAttribute(BlControllerConstants.PRODUCT_REFERENCE, productReferences);
+        model.addAttribute(BlControllerConstants.MAXIMUM_LIMIT, productsLimit);
+
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && null != sessionService.getAttribute(
+                BlCoreConstants.RETURN_REQUEST)) {
+            model.addAttribute(BlControllerConstants.REPLACEMENT_ORDER, Boolean.TRUE);
+        } else {
+            model.addAttribute(BlControllerConstants.REPLACEMENT_ORDER, Boolean.FALSE);
+        }
+
+        return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
+
+
+    }
+
 
     protected boolean isValidProductEntry(final OrderEntryData cartEntry) {
         return cartEntry.getProduct() != null && StringUtils.isNotBlank(cartEntry.getProduct().getCode());

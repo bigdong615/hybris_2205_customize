@@ -9,45 +9,45 @@ $siteResource=jar:com.braintree.constants.BraintreeaddonConstants&/braintreeaddo
 $lang=en
 
 
-INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;page;&componentRef
-;;BrainTreeAccountPaymentDetailsComponent;Brain Tree Account Payment Details Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPaymentInfoPage.jsp;BrainTreeAccountPaymentDetailsComponent
-;;AccountAddPaymentMethodComponent;Account Add Payment Method Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountAddPaymentMethodPage.jsp;AccountAddPaymentMethodComponent
-;;AccountEditPaymentMethodComponent;Account Edit Payment Method Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountEditPaymentMethodPage.jsp;AccountEditPaymentMethodComponent
+INSERT_UPDATE JspIncludeComponent ; $contentCV[unique=true] ; uid[unique=true]                        ; name                                         ; page                                                                                           ; &componentRef                          
+                                  ;                         ; BrainTreeAccountPaymentDetailsComponent ; Brain Tree Account Payment Details Component ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPaymentInfoPage.jsp       ; BrainTreeAccountPaymentDetailsComponent
+                                  ;                         ; AccountAddPaymentMethodComponent        ; Account Add Payment Method Component         ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountAddPaymentMethodPage.jsp  ; AccountAddPaymentMethodComponent       
+                                  ;                         ; AccountEditPaymentMethodComponent       ; Account Edit Payment Method Component        ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountEditPaymentMethodPage.jsp ; AccountEditPaymentMethodComponent      
 
-# CMS Navigation Nodes
-INSERT_UPDATE CMSNavigationNode;uid[unique=true];$contentCV[unique=true];&nodeRef;
-;AccountLeftNavNode;;AccountLeftNavNode
+# CMS Navigation Nodes            
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]   ; $contentCV[unique=true] ; &nodeRef          ;  
+                                ; AccountLeftNavNode ;                         ; AccountLeftNavNode
 
-INSERT_UPDATE AccountNavigationComponent;$contentCV[unique=true];uid[unique=true];name;navigationNode(&nodeRef);styleClass;&componentRef
-;;AccountLeftNavigationComponent;Account Left Navigation Component;AccountLeftNavNode;;AccountLeftNavigationComponent
+INSERT_UPDATE AccountNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]               ; name                              ; navigationNode(&nodeRef) ; styleClass ; &componentRef                 
+                                         ;                         ; AccountLeftNavigationComponent ; Account Left Navigation Component ; AccountLeftNavNode       ;            ; AccountLeftNavigationComponent
 
-###### Account payment detail page
-# ContentSlot
-INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef)
-;;SideContent-add-payment-method;Side Content Slot for Add Payment Method;true;AccountLeftNavigationComponent
-;;SideContent-edit-payment-method;Side Content Slot for Add Payment Method;true;AccountLeftNavigationComponent
-;;BodyContent-add-payment-method;Body Content Slot for Edit Payment Method;true;AccountAddPaymentMethodComponent
-;;BodyContent-edit-payment-method;Body Content Slot for Edit Payment Method;true;AccountEditPaymentMethodComponent
+###### Account payment detail page       
+# ContentSlot                            
+INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                ; name                                      ; active ; cmsComponents(&componentRef)     
+                          ;                         ; SideContent-add-payment-method  ; Side Content Slot for Add Payment Method  ; true   ; AccountLeftNavigationComponent   
+                          ;                         ; SideContent-edit-payment-method ; Side Content Slot for Add Payment Method  ; true   ; AccountLeftNavigationComponent   
+                          ;                         ; BodyContent-add-payment-method  ; Body Content Slot for Edit Payment Method ; true   ; AccountAddPaymentMethodComponent 
+                          ;                         ; BodyContent-edit-payment-method ; Body Content Slot for Edit Payment Method ; true   ; AccountEditPaymentMethodComponent
 
-INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid,$contentCV)
-;;BodyContent-payment-details;BrainTreeAccountPaymentDetailsComponent
+INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]            ; cmsComponents(uid,$contentCV)          
+                          ;                         ; BodyContent-payment-details ; BrainTreeAccountPaymentDetailsComponent
 
-# ContentSlotForPage
-INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='add-edit-payment-method'];contentSlot(uid,$contentCV)[unique=true];;;
-;;BodyContent-add-payment-method;BodyContent;;BodyContent-add-payment-method;;;
-;;SideContent-add-payment-method;SideContent;;SideContent-add-payment-method;;;
+# ContentSlotForPage      
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]               ; position[unique=true] ; page(uid,$contentCV)[unique=true][default='add-edit-payment-method'] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
+                                 ;                         ; BodyContent-add-payment-method ; BodyContent           ;                                                                      ; BodyContent-add-payment-method           ;  ;  ;  
+                                 ;                         ; SideContent-add-payment-method ; SideContent           ;                                                                      ; SideContent-add-payment-method           ;  ;  ;  
 
-INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='edit-payment-method'];contentSlot(uid,$contentCV)[unique=true];;;
-;;BodyContent-edit-payment-method;BodyContent;;BodyContent-edit-payment-method;;;
-;;SideContent-edit-payment-method;SideContent;;SideContent-edit-payment-method;;;
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                ; position[unique=true] ; page(uid,$contentCV)[unique=true][default='edit-payment-method'] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
+                                 ;                         ; BodyContent-edit-payment-method ; BodyContent           ;                                                                  ; BodyContent-edit-payment-method          ;  ;  ;  
+                                 ;                         ; SideContent-edit-payment-method ; SideContent           ;                                                                  ; SideContent-edit-payment-method          ;  ;  ;  
 
-# ContentSlotForPage
-INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='payment-details'];contentSlot(uid,$contentCV)[unique=true];;;
-;;BodyContent-payment-details;BodyContent;;BodyContent-payment-details;;;
+# ContentSlotForPage             
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]            ; position[unique=true] ; page(uid,$contentCV)[unique=true][default='payment-details'] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
+                                 ;                         ; BodyContent-payment-details ; BodyContent           ;                                                              ; BodyContent-payment-details              ;  ;  ;  
 
 
-# Functional Content Pages
-INSERT_UPDATE ContentPage;$contentCV[unique=true];uid[unique=true];name;masterTemplate(uid,$contentCV);label;defaultPage[default='true'];approvalStatus(code)[default='approved'];homepage[default='false']
-;;add-edit-payment-method;Add Edit Payment Method Page;AccountPageTemplate;add-edit-payment-method
-;;edit-payment-method;Edit Payment Method Page;AccountPageTemplate;edit-payment-method
-;;payment-details;Payment Details Page;AccountPageTemplate;payment-details
+# Functional Content Pages       
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]        ; name                         ; masterTemplate(uid,$contentCV) ; label                  ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
+                          ;                         ; add-edit-payment-method ; Add Edit Payment Method Page ; AccountPageTemplate            ; add-edit-payment-method
+                          ;                         ; edit-payment-method     ; Edit Payment Method Page     ; AccountPageTemplate            ; edit-payment-method    
+                          ;                         ; payment-details         ; Payment Details Page         ; AccountPageTemplate            ; payment-details        

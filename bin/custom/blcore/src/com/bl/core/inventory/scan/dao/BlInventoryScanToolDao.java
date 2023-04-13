@@ -1,9 +1,11 @@
 package com.bl.core.inventory.scan.dao;
 
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
@@ -91,11 +93,15 @@ public interface BlInventoryScanToolDao {
 	 Collection<BlSerialProductModel> getAllSerialsByBinLocation(final String binLocationId);
 
 	/**
-	 * This method will return Staged serial product
-	 * @param barcode barcode
-	 * @return BlSerialProductModel
+	 * This method will return OrderModel
+	 *
+	 * @param
+	 * @return OrderModel
 	 */
-	 BlSerialProductModel getSerialProductByBarcode(final String barcode);
+	public List<OrderModel> getOrders();
+
+
+	BlSerialProductModel getSerialProductByBarcode(final String barcode);
 	 
 	 /**
 		 * Gets the all serials by bin location and version.
@@ -119,4 +125,12 @@ public interface BlInventoryScanToolDao {
 		 */
 		public Collection<BlSerialProductModel> getSerialsByBarcodesAndVersion(final Collection<String> barcodes,
 				final String version);
+		
+		
+		
+		/**
+		 * @param barcode
+		 * @return
+		 */
+		BlSerialProductModel getBlSerialProductByBarcode(String barcode);
 }

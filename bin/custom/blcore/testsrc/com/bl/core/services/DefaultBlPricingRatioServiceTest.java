@@ -1,32 +1,30 @@
 package com.bl.core.services;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyObject;
 
-import com.bl.core.dao.pricingratio.BlPricingRatioDao;
-import com.bl.core.enums.DurationEnum;
-import com.bl.core.model.BlConstrainedPricingRatioModel;
-import com.bl.core.model.BlPricingLogicModel;
-import com.bl.core.model.BlStandardPricingRatioModel;
-import com.bl.core.services.pricingratio.impl.DefaultBlPricingRatioService;
 import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.enumeration.EnumerationService;
-import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.enums.DurationEnum;
+import com.bl.core.model.BlConstrainedPricingRatioModel;
+import com.bl.core.model.BlStandardPricingRatioModel;
+import com.bl.core.services.pricingratio.impl.DefaultBlPricingRatioService;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultBlPricingRatioServiceTest {
 
   private DefaultBlPricingRatioService blPricingRatioService;
@@ -49,7 +47,7 @@ public class DefaultBlPricingRatioServiceTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     blPricingRatioService = new DefaultBlPricingRatioService();
     blConstrainedRatioDao = new DefaultGenericDao(BlConstrainedPricingRatioModel._TYPECODE);
     blStandardRatioDao = new DefaultGenericDao(BlStandardPricingRatioModel._TYPECODE);
@@ -75,14 +73,14 @@ public class DefaultBlPricingRatioServiceTest {
   @Test
   public void shouldGetStandardPricingRatioByDuration()
   {
-    BlStandardPricingRatioModel blStandardPricingRatio = blPricingRatioService.getStandardPricingRatioByDuration(fourteenDay);
+    final BlStandardPricingRatioModel blStandardPricingRatio = blPricingRatioService.getStandardPricingRatioByDuration(fourteenDay);
     Assert.assertEquals(standardPricingRatioModel2.getPricingRatio(),blStandardPricingRatio.getPricingRatio());
   }
 
   @Test
   public void shouldGetConstrainedPricingRatioByDuration()
   {
-    BlConstrainedPricingRatioModel blConstrainedPricingRatio = blPricingRatioService.getConstrainedPricingRatioByDuration(fourteenDay);
+    final BlConstrainedPricingRatioModel blConstrainedPricingRatio = blPricingRatioService.getConstrainedPricingRatioByDuration(fourteenDay);
     Assert.assertEquals(constrainedPricingRatioModel2.getPricingRatio(),blConstrainedPricingRatio.getPricingRatio());
   }
 

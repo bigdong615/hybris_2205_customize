@@ -79,7 +79,8 @@
                         </widget>
 
                         <setting key="explorerTreeConfigCtx" type="String">cs-explorer-tree</setting>
-                        <setting key="widgetStyleClass" type="String">y-customersupport-explorer-tree</setting>
+                       <!--  <setting key="widgetStyleClass" type="String">y-customersupport-explorer-tree</setting> -->
+                        <setting key="widgetStyleClass" type="String">yw-explorerTree-sideNavigation</setting>
                         <setting key="allowFilteringEntries" type="Boolean">false</setting>
                         <setting key="widgetStyleAttribute" type="String"></setting>
                         <virtual-sockets/>

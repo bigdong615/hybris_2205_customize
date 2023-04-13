@@ -11,13 +11,16 @@ import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.AddressListData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
+import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryListWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoListWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.user.RegionsWsDTO;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 import de.hybris.platform.warehousingfacades.product.data.StockLevelData;
 import de.hybris.platform.warehousingfacades.product.data.StockLevelListData;
@@ -62,6 +65,7 @@ import com.bl.facades.inHouseRepairLog.data.InHouseRepairLogListData;
 import com.bl.facades.inHouseRepairLog.dto.InHouseRepairLogListWsDTO;
 import com.bl.facades.order.data.OrderEntryListData;
 import com.bl.facades.order.data.OrderListData;
+import com.bl.facades.orders.dto.OrderEntryListWsDTO;
 import com.bl.facades.orders.dto.OrderListWsDTO;
 import com.bl.facades.packageinfo.data.PackagingInfoListData;
 import com.bl.facades.packageinfo.dto.PackagingInfoListWsDTO;
@@ -72,11 +76,11 @@ import com.bl.facades.paymentTransaction.data.PaymentTransactionEntryListData;
 import com.bl.facades.paymentTransaction.data.PaymentTransactionListData;
 import com.bl.facades.paymentTransaction.dto.PaymentTransactionEntryListWsDTO;
 import com.bl.facades.paymentTransaction.dto.PaymentTransactionListWsDTO;
+import com.bl.facades.regions.data.RegionsData;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogListData;
 import com.bl.facades.vendorRepairLog.dto.VendorRepairLogListWsDTO;
 import com.bl.integration.dto.AddressListWsDTO;
-import com.bl.integration.dto.UsersListWsDTO;
 import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import com.braintree.hybris.data.BrainTreePaymentInfoListData;
 
@@ -94,6 +98,9 @@ public class DomoController extends BaseCommerceController
 
 	@Resource(name = "blDomoFacade")
 	private BlDomoFacade blDomoFacade;
+
+	@Resource(name = "sessionService")
+	private SessionService sessionService;
 
 
 	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
@@ -298,6 +305,7 @@ public class DomoController extends BaseCommerceController
 	final String fields, @RequestParam
 	final Map<String, String> params, final HttpServletResponse response)
 	{
+		sessionService.setAttribute("isApiCall", true);
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final OrderListData orderListData;
 		orderListData = createOrderListData(blDomoFacade.getOrders(pageableData, date));
@@ -732,4 +740,37 @@ public class DomoController extends BaseCommerceController
 		return notesListData;
 	}
 
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/regions", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getRegions", value = "Get regions", notes = "Returns regions")
+	@ApiBaseSiteIdAndUserIdParam
+	public RegionsWsDTO getRegions(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final RegionsData regionsData;
+		regionsData = createRegionsDataData(blDomoFacade.getRegions(pageableData, date));
+		setTotalCountHeader(response, regionsData.getPagination());
+		return getDataMapper().map(regionsData, RegionsWsDTO.class, fields);
+	}
+
+	protected RegionsData createRegionsDataData(final SearchPageData<RegionData> result)
+	{
+		final RegionsData regionsData = new RegionsData();
+		regionsData.setRegions(result.getResults());
+		regionsData.setSorts(result.getSorts());
+		regionsData.setPagination(result.getPagination());
+		return regionsData;
+	}
 }

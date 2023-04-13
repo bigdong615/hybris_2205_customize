@@ -21,6 +21,9 @@ import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.forms.GiftCardForm;
 import com.bl.storefront.forms.GiftCardPurchaseForm;
+import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
+
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
 import de.hybris.platform.acceleratorservices.payment.data.PaymentData;
@@ -44,6 +47,8 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commerceservices.enums.CountryType;
+import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -108,6 +113,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	
 	@Resource(name = "cartService")
 	private BlCartService blCartService;
+		
+	@Resource(name = "brainTreeCheckoutFacade")
+	private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -202,6 +210,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			return REDIRECT_PREFIX  + BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL;
 		}
 
+		
+		
 		// Use the checkout PCI strategy for getting the URL for creating new subscriptions.
 		final CheckoutPciOptionEnum subscriptionPciOption = getCheckoutFlowFacade().getSubscriptionPciOption();
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
@@ -228,6 +238,18 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		}
 		else if (CheckoutPciOptionEnum.SOP.equals(subscriptionPciOption))
 		{
+			//setting default card in checkout BLS-109
+			if (null != getCheckoutCustomerStrategy().getCurrentUserForCheckout())
+			{
+				final BrainTreePaymentInfoModel defaultPaymentInfo = (BrainTreePaymentInfoModel) getCheckoutCustomerStrategy()
+						.getCurrentUserForCheckout().getDefaultPaymentInfo();
+
+				if (Objects.isNull(getCheckoutFlowFacade().getCheckoutCart().getPaymentInfo()) && null != defaultPaymentInfo)
+				{
+					brainTreeCheckoutFacade.setPaymentDetails(defaultPaymentInfo.getPk().toString(), defaultPaymentInfo.getNonce());
+				}
+			}
+			
 			// Build up the SOP form data and render page containing form
 			final SopPaymentDetailsForm sopPaymentDetailsForm = new SopPaymentDetailsForm();
 			try
@@ -245,6 +267,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 				}
 				// adding model attribute to disable other payment excluding Credit card if Gift card is applied
 				disableOtherPayments(cartData, model);
+				
 				model.addAttribute(BlControllerConstants.DEFAULT_BILLING_ADDRESS, getBlCustomerFacade().getDefaultBillingAddress());
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}

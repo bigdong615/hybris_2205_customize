@@ -169,7 +169,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int CONDITION_RATING_ONE = 1;
 	public static final int CONDITION_RATING_ZERO = 0;
 
-
 	public static final String PRICE_ASC = "price-asc";
 	public static final String PRICE_DESC = "price-desc";
 	public static final String MIN_SERIAL_PRICE = "minSerialfinalSalePrice";
@@ -422,8 +421,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_SHIPPED_EVENT_TEMPLATE = "order.shipped.event.template";
 	public static final String ORDER_PICKEDUP_EVENT_DEFINITION_KEY = "order.pickedup.event.definition.key";
 	public static final String ORDER_PICKEDUP_EVENT_TEMPLATE = "order.pickedup.event.template";
-	public static final String TRACK_STRING_SEPARATOR = "%20";
-
+	public static final String TRACK_STRING_SEPARATOR = "%0d%0a";
+	public static final String FEDEX_TRACK_STRING_SEPARATOR = ",";
 
 	public static final String ORDER_EXTRA_ITEM_EVENT_DEFINITION_KEY = "order.extra.item.event.definition.key";
 	public static final String ORDER_EXTRA_ITEM_EVENT_TEMPLATE = "order.extra.item.event.template";
@@ -484,6 +483,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_ITEM_QUANTITY = "quantity";
 
 	public static final String ITEMS_ROOT_ELEMENT = "itemsinfo";
+
+	public static final String PRODUCT_INTERCEPTOR_REMOVE_MSG ="Unable to Delete Product";
 	public static final String ITEM_ROOT_ELEMENT = "item";
 	public static final String ITEM_PRODUCT_URL = "producturl";
 	public static final String ITEM_AMOUNT_DUE_ROOT_ELEMENT = "amountdue";
@@ -685,6 +686,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String PAYMENT_NOT_AUTHORIZED ="PAYMENT_NOT_AUTHORIZED" ;
 	public static final String CHECKED_INVALID ="CHECKED_INVALID" ;
 	public static final String CHECKED_VALID = "CHECKED_VALID";
+
+	public static final String POSTAL_CODE = "postalCode";
+	public static final String CARRIER_ID = "carrierID";
 
 	private BlCoreConstants()
 	{

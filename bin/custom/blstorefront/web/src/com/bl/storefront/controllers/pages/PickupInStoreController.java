@@ -20,8 +20,6 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.order.CommerceCartModificationStatus;
 import de.hybris.platform.commerceservices.store.data.GeoPoint;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
-import com.bl.storefront.controllers.ControllerConstants;
-import com.bl.storefront.security.cookie.CustomerLocationCookieGenerator;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,6 +41,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.security.cookie.CustomerLocationCookieGenerator;
 
 
 @Controller
@@ -97,16 +98,17 @@ public class PickupInStoreController extends AbstractSearchPageController
 	}
 
 	@RequestMapping(value = PRODUCT_CODE_PATH_VARIABLE_PATTERN + "/pointOfServices", method = RequestMethod.POST)
-	public String getPointOfServiceForStorePickupSubmit(@PathVariable("productCode") final String encodedProductCode, // NOSONAR
-			@RequestParam(value = "locationQuery", required = false) final String locationQuery,
-			@RequestParam(value = "latitude", required = false) final Double latitude,
-			@RequestParam(value = "longitude", required = false) final Double longitude,
-			@RequestParam(value = "page", defaultValue = "0") final int page,
-			@RequestParam(value = "show", defaultValue = "Page") final AbstractSearchPageController.ShowMode showMode,
-			@RequestParam(value = "sort", required = false) final String sortCode,
-			@RequestParam(value = "cartPage", defaultValue = "Page") final Boolean cartPage,
-			@RequestParam(value = "entryNumber", defaultValue = "0") final Long entryNumber,
-			@RequestParam(value = "qty", defaultValue = "0") final Long qty, final HttpServletResponse response, final Model model)
+	public String getPointOfServiceForStorePickupSubmit(@PathVariable("productCode")
+	final String productCode, @RequestParam(value = "locationQuery", required = false)
+	final String locationQuery, @RequestParam(value = "latitude", required = false)
+	final Double latitude, @RequestParam(value = "longitude", required = false)
+	final Double longitude, @RequestParam(value = "page", defaultValue = "0")
+	final int page, @RequestParam(value = "show", defaultValue = "Page")
+	final AbstractSearchPageController.ShowMode showMode, @RequestParam(value = "sort", required = false)
+	final String sortCode, @RequestParam(value = "cartPage", defaultValue = "Page")
+	final Boolean cartPage, @RequestParam(value = "entryNumber", defaultValue = "0")
+	final Long entryNumber, @RequestParam(value = "qty", defaultValue = "0")
+	final Long qty, final HttpServletResponse response, final Model model)
 	{
 		GeoPoint geoPoint = null;
 		if (longitude != null && latitude != null)
@@ -118,30 +120,30 @@ public class PickupInStoreController extends AbstractSearchPageController
 
 		model.addAttribute("qty", qty);
 
-		return getPointOfServiceForStorePickup(decodeWithScheme(encodedProductCode, UTF_8), locationQuery, geoPoint, page, showMode, sortCode,
-				cartPage, entryNumber, model, RequestMethod.POST, response);
+		return getPointOfServiceForStorePickup(productCode, locationQuery, geoPoint, page, showMode, sortCode, cartPage,
+				entryNumber, model, RequestMethod.POST, response);
 	}
 
 	@RequestMapping(value = PRODUCT_CODE_PATH_VARIABLE_PATTERN + "/pointOfServices", method = RequestMethod.GET)
-	public String getPointOfServiceForStorePickupClick(@PathVariable("productCode") final String encodedProductCode, // NOSONAR
-			@RequestParam(value = "page", defaultValue = "0") final int page,
-			@RequestParam(value = "show", defaultValue = "Page") final AbstractSearchPageController.ShowMode showMode,
-			@RequestParam(value = "sort", required = false) final String sortCode,
-			@RequestParam(value = "cartPage") final Boolean cartPage, @RequestParam(value = "entryNumber") final Long entryNumber,
-			final HttpServletResponse response, final Model model)
+	public String getPointOfServiceForStorePickupClick(@PathVariable("productCode")
+	final String productCode, @RequestParam(value = "page", defaultValue = "0")
+	final int page, @RequestParam(value = "show", defaultValue = "Page")
+	final AbstractSearchPageController.ShowMode showMode, @RequestParam(value = "sort", required = false)
+	final String sortCode, @RequestParam(value = "cartPage")
+	final Boolean cartPage, @RequestParam(value = "entryNumber")
+	final Long entryNumber, final HttpServletResponse response, final Model model)
 	{
 		final UserLocationData userLocationData = customerLocationFacade.getUserLocationData();
 		String location = "";
 		GeoPoint geoPoint = null;
-
 		if (userLocationData != null)
 		{
 			location = userLocationData.getSearchTerm();
 			geoPoint = userLocationData.getPoint();
 		}
 
-		return getPointOfServiceForStorePickup(decodeWithScheme(encodedProductCode, UTF_8), location, geoPoint, page, showMode, sortCode,
-				cartPage, entryNumber, model, RequestMethod.GET, response);
+		return getPointOfServiceForStorePickup(productCode, location, geoPoint, page, showMode, sortCode, cartPage, entryNumber,
+				model, RequestMethod.GET, response);
 	}
 
 	protected String getPointOfServiceForStorePickup(final String productCode, final String locationQuery, // NOSONAR

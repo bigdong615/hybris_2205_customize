@@ -231,6 +231,7 @@ public class BlInventoryScanLoggingConstants {
  	public static final String ON_CHANGE_EVENT = "onChange";
  	public static final String ON_CLICK_EVENT = "onClick";
  	public static final String CANCEL_EVENT = "cancel";
+ 	public static final String CANCEL_EVENT_WEB_SCAN_CONSOL = "cancelWebScan";
 	public static final String CANCEL_BTN_EVENT = "cancelBtn";
  	public static final String VERIFY_SCAN_EVENT = "verifyScan";
  	public static final String SOCKET_ID = "inputObject";
@@ -387,6 +388,7 @@ public class BlInventoryScanLoggingConstants {
 	 public static final String OUTSIDER_BARCODE="barcode_not_present_on_consignment";
 	 public static final String INCLUDED_SERIAL=  "already_included_serial";
 	 public static final String SUCCESS_SERIAL = "succesfully_scan_serial";
+	 public static final String PACKAGE_SCAN_ERROR_KEY = "blbackoffice.package.scan.error.message";
 
 
     private BlInventoryScanLoggingConstants() { }

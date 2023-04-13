@@ -2,10 +2,9 @@ package com.bl.facades.cart;
 
 import static de.hybris.platform.testframework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyObject;
-import com.bl.core.model.BlProductModel;
-import com.bl.facades.cart.impl.DefaultBlCartFacade;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -20,17 +19,24 @@ import de.hybris.platform.order.CartService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.model.BlProductModel;
+import com.bl.facades.cart.impl.DefaultBlCartFacade;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultBlCartFacadeTest {
 
   @InjectMocks
@@ -75,7 +81,7 @@ public class DefaultBlCartFacadeTest {
 
   @Before
   public void prepare(){
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
 
     given(i18NService.getCurrentLocale()).willReturn(Locale.ENGLISH);
     parameter = new CommerceCartParameter();
@@ -102,7 +108,7 @@ public class DefaultBlCartFacadeTest {
     given(cartService.getSessionCart()).willReturn(cartModel);
     given(cartFacade.getCommerceCartParameterConverter().convert(anyObject())).willReturn(parameter);
     given(commerceCartService.updateQuantityForCartEntry(parameter)).willReturn(modification);
-    String removedProductName = cartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
+    final String removedProductName = cartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
     assertNotNull(removedProductName);
     assertEquals(removedProductName,PRODUCT_NAME1);
   }
@@ -113,21 +119,21 @@ public class DefaultBlCartFacadeTest {
     given(cartService.getSessionCart()).willReturn(cartModel);
     given(cartFacade.getCommerceCartParameterConverter().convert(anyObject())).willReturn(parameter);
     given(commerceCartService.updateQuantityForCartEntry(parameter)).willReturn(modification);
-    String removedProductName = cartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.FALSE);
+    final String removedProductName = cartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.FALSE);
     assertNotNull(removedProductName);
     assertEquals(removedProductName,PRODUCT_NAME1);
   }
 
-  private BlProductModel populateProductData(String productCode,String productName,Boolean isDiscontinue){
-    BlProductModel blProductModel = new BlProductModel();
+  private BlProductModel populateProductData(final String productCode,final String productName,final Boolean isDiscontinue){
+    final BlProductModel blProductModel = new BlProductModel();
     blProductModel.setCode(PRODUCT_CODE1);
     blProductModel.setName(PRODUCT_NAME1,i18NService.getCurrentLocale());
     blProductModel.setDiscontinued(isDiscontinue);
     return blProductModel;
   }
 
-  private AbstractOrderEntryModel populateOrderEntryData(Integer entryNumber ,BlProductModel blProductModel ) {
-    AbstractOrderEntryModel orderEntryModel = new AbstractOrderEntryModel();
+  private AbstractOrderEntryModel populateOrderEntryData(final Integer entryNumber ,final BlProductModel blProductModel ) {
+    final AbstractOrderEntryModel orderEntryModel = new AbstractOrderEntryModel();
     orderEntryModel.setEntryNumber(entryNumber);
     orderEntryModel.setProduct(blProductModel);
     return orderEntryModel;

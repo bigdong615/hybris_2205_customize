@@ -318,6 +318,7 @@
 		<property name="europe1PriceFactory_PDG" type="java.lang.String"/>
 		<property name="europe1PriceFactory_PPG" type="java.lang.String"/>
 		<property name="europe1PriceFactory_PTG" type="java.lang.String"/>
+		<property name="primaryKey" type="java.lang.String"/>		
 	</bean>
 	
 	<bean class="de.hybris.platform.commercewebservicescommons.dto.order.ConsignmentWsDTO">
@@ -340,6 +341,7 @@
 		<property name="rentalEndDate" type="java.util.Date"/>
 		<property name="rentalStartDate" type="java.util.Date"/>
 		<property name="orderNotes" type="String" />
+		<property name="primaryKey" type="java.lang.String"/>
 	</bean>
 	
 	<bean class="com.bl.facades.consignment.dto.ConsignmentListWsDTO">
@@ -381,6 +383,7 @@
 	  <property name="discountID" type="String" />
 	  <property name="order" type="java.util.List&lt;String>" />
 	  <property name="customer" type="String" />
+	  <property name="primaryKey" type="java.lang.String"/>                                                          
 	</bean>
 	
 	<bean class="com.bl.facades.giftcard.dto.GiftCardListWsDTO">
@@ -414,6 +417,7 @@
 	  <property name="balanceAmount" type="double"/>
 	  <property name="order" type="String" />
 	  <property name="giftCard" type="String" />
+	  <property name="primaryKey" type="java.lang.String"/>                                                            
 	</bean>
 	
 	<bean class="com.bl.facades.giftcardmovements.dto.GiftCardMovementListWsDTO">
@@ -450,6 +454,7 @@
 	  <property name="customer" type="String" />
 	  <property name="updatedBillTime" type="java.util.Date" />
 	  <property name="billStatus" type="String" />
+	  <property name="primaryKey" type="java.lang.String"/>                                                          	  
 	</bean>
 	
 	<bean class="de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO">
@@ -517,6 +522,7 @@
 		<property name="blRewards" type="java.math.BigDecimal"/>
 		<property name="averageGearOrderValue" type="java.lang.Double"/>
 		<property name="gearvalueordersinprogress" type="java.lang.Double"/>
+		<property name="primaryKey" type="java.lang.String"/>
 	</bean>
 	
 	<bean class="de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO">
@@ -569,6 +575,7 @@
 	  	<property name="latitude" type="java.lang.Double"/>
 	  	<property name="longitude" type="java.lang.Double"/>
 	  	<property name="phone2" type="String"/>
+        <property name="primaryKey" type="java.lang.String"/>                                                          
     </bean>
     
     <bean class="de.hybris.platform.commercewebservicescommons.dto.user.address.AddressListWsDTO">
@@ -635,6 +642,8 @@
       <property name="isDefault" type="java.lang.Boolean"/>
       <property name="cardType" type="java.lang.String"/>
       <property name="cardNumber" type="java.lang.String"/>
+                  <property name="primaryKey" type="java.lang.String"/>                                                          
+      
     </bean>
     
     <bean class="de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoListWsDTO">
@@ -676,6 +685,9 @@
       <property name="serialProductCode" type="java.lang.String"/>
       <property name="order" type="java.lang.String"/>
       <property name="serialStatus" type="java.lang.String"/>
+      <property name="asnEntry" type="java.lang.String"/>
+      <property name="warehouseCode" type="java.lang.String"/>
+      <property name="primaryKey" type="java.lang.String"/>
 	</bean>
     
     <bean class="de.hybris.platform.warehousingwebservices.dto.product.StockLevelListWsDTO">
@@ -705,7 +717,8 @@
       <property name="type" type="java.lang.String"/>
       <property name="order" type="java.lang.String"/>
       <property name="note" type="java.lang.String"/>    
-      <property name="consignemnt" type="java.lang.String"/>                              
+      <property name="consignemnt" type="java.lang.String"/>  
+            <property name="primaryKey" type="java.lang.String"/>                                                          
     </bean>
     
     <bean class="com.bl.facades.customerNotes.dto.NotesListWsDTO">

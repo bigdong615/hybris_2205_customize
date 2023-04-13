@@ -709,7 +709,11 @@ public CartModificationData addToCart(final String productCode, final long quant
 				.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())) {
 			return BlFacadesConstants.NEW_GEAR_CART;
 		}
-      else if (CollectionUtils
+		else if (CollectionUtils
+				.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isTrue(cartModel.isGiftCardOrder())) {
+			return BlFacadesConstants.GIFT_CART;
+		}
+		else if (CollectionUtils
 				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalOrder()) && !cartModel.isGiftCardOrder()) {
 			return BlFacadesConstants.RENTAL_CART;
 		} else if (CollectionUtils
@@ -720,7 +724,7 @@ public CartModificationData addToCart(final String productCode, final long quant
 			return BlFacadesConstants.RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED;
 		}
 	}
-		return null;
+		return BlFacadesConstants.RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED;
 	}
 
 	/**

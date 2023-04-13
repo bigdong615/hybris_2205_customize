@@ -829,6 +829,7 @@
 	<bean id="blCommerceAddToCartStrategy"
 		class="com.bl.core.services.strategy.impl.DefaultBlCommerceAddToCartStrategy"
 		parent="defaultCommerceAddToCartStrategy">
+		<property name="sessionService" ref="sessionService" />
 	</bean>
 
 	<alias name="blCommerceUpdateCartEntryStrategy" alias="commerceUpdateCartEntryStrategy"/>
@@ -2056,11 +2057,33 @@
 		<property name="productService" ref="productService"/>
 		<property name="blGoogleProductFeedXmlPupulator" ref="blGoogleProductFeedXmlPupulator"/>
 		<property name="mediaService" ref="mediaService"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+	</bean>
+	
+	<bean id="blProductModifiedTimeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductModifiedTimeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
 	
 	<bean id="blProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
+	
+	<bean id="blCameraProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlCameraProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
+    <bean id="blLenseProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlLenseProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
+    <bean id="blBatteriesProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlBatteriesProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
+    <bean id="blOtherProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlOtherProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	
 	<bean id="blBigDecimalValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BigDecimalValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
@@ -2216,6 +2239,45 @@
 		<property name="blDomoDao" ref="blDomoDao"/>
 	</bean>
 	
+	
+
+	<!-- BLS-102 Start-->
+	<bean id="GhostOrderRemovalJob" class="com.bl.core.job.GhostOrderRemovalJob"
+		  parent="abstractJobPerformable">
+		<property name="ghostOrderRemovalJobService" ref="ghostOrderRemovalJobService"/>
+	</bean>
+	<bean id="ghostOrderRemovalJobService" class="com.bl.core.ghostorderremovaljob.Impl.GhostOrderRemovalJobServiceImpl">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	<!-- BLS-102 END-->
+	
+	<alias name="defaultGenerateInvoicePdfService" alias="generateInvoicePdfService"/>
+	<bean id="defaultGenerateInvoicePdfService" class="com.bl.core.service.invoice.impl.DefaultBlGenerateInvoicePdfService">
+
+	</bean>
+
+	<!--BLS-120 START-->
+	<bean id="AssigningTrackingNumberJob" class="com.bl.blbackoffice.job.AssigningTrackingNumberJob"
+		  parent="abstractJobPerformable">
+		<property name="assigningTrackingNumberService" ref="assigningTrackingNumberService"/>
+	</bean>
+
+	<bean id="assigningTrackingNumberService" class="com.bl.core.assigningTrackingNumber.impl.AssigningTrackingNumberServiceImpl">
+		<property name="blInventoryScanToolDao" ref="blInventoryScanToolDao"/>
+		<property name="deliveryTrackingIdStrategy" ref="deliveryTrackingIdStrategy"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	<!-- BLS-120 END-->
+
+	<!--BLS-183 START-->
+	<bean id ="blProductRemoveInterceptor" class="com.bl.core.interceptor.BlProductRemoveInterceptor"/>
+	<bean id="blProductRemoveInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blProductRemoveInterceptor"/>
+		<property name="typeCode" value="Product"/>
+	</bean>
+	<!-- BLS-183 END-->
+	
 	<alias name="defaultBlIpVelocityService" alias="blIpVelocityService"/>
 	<bean id="defaultBlIpVelocityService" class="com.bl.core.service.ipVelocity.impl.DefaultBlIpVelocityService">
 		<property name="blIpVelocityDao" ref="blIpVelocityDao"/>
@@ -2228,5 +2290,4 @@
 	<bean id="defaultBlIpVelocityDao" class="com.bl.core.dao.ipVelocity.impl.DefaultBlIpVelocityDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
-
 </beans>

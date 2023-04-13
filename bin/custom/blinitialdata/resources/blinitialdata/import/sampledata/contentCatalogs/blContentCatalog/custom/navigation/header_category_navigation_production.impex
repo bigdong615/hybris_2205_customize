@@ -44,8 +44,8 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]       ; $contentCV[unique=tr
 #####################################################################
 #### Navigation Node Link  ####  
 #####################################################################
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name                 ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow'] 
-                               ;                         ; ProductionLink   ; Production Node Link ; "/Production/c/production" ; production                                   ;          ;               ; Production           ;
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name                 ; url                        ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow']
+                               ;                         ; ProductionLink   ; Production Node Link ; "/Production/c/production" ; production                                   ;          ;               ; Production           ;                                   
                                
                                
 #####################################################################
@@ -54,36 +54,36 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; na
 #####################################################################
 #### Navigation Node  ####     
 #####################################################################
-INSERT_UPDATE CMSNavigationNode ; uid[unique=true]                ; $contentCV[unique=true] ; name                             ; &nodeRef                        ; links(&linkRef) ;  
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]                ; $contentCV[unique=true] ; name                             ; &nodeRef                       ; links(&linkRef) ;  
 # Cameras -- all brands         
-                                ; AllProductionNavNode            ;                         ; All Production Link              ; AllProductionNavNode            
-                                ; NewArrivalsNavNode_Production   ;                         ; New Arrivals Link                ; NewArrivalsNavNode_Production   
-                                ; GimbalsOrStabilizersNavNode     ;                         ; GimbalsOrStabilizers Link        ; GimbalsOrStabilizersNavNode     
-                                ; CameraRigsSupportNavNode        ;                         ; Camera And Rigs Support Link     ; CameraRigsSupportNavNode        
-                                ; TripodHeadsNavNode              ;                         ; TripodHeads Link                 ; TripodHeadsNavNode              
-                                ; SlidersOrDolliesNavNode         ;                         ; Sliders Or Dollies Link          ; SlidersOrDolliesNavNode         
-                                ; FollowFocusOrMatteBoxesNavNode  ;                         ; Follow Focus Or MatteBoxes Link  ; FollowFocusOrMatteBoxesNavNode  
-                                ; MonitorsOrVideoRecordersNavNode ;                         ; Monitors Or Video Recorders Link ; MonitorsOrVideoRecordersNavNode 
-                                ; StreamingNavNode                ;                         ; Streaming Link                   ; StreamingNavNode                
-                                ; AudioNavNode                    ;                         ; Audio Link                       ; AudioNavNode                    
-                                ; LightingNavNode                 ;                         ; Lighting Link                    ; LightingNavNode                 
-                                ; ProjectorsOrScannersNavNode     ;                         ; Projectors Or Scanners Link      ; ProjectorsOrScannersNavNode     
-                                ; UnderwaterOrHousingsNavNode     ;                         ; Underwater Or Housings Link      ; UnderwaterOrHousingsNavNode     
-                                ; BatteriesOrPowerNavNode         ;                         ; Batteries Or Power Link          ; BatteriesOrPowerNavNode         
-                                ; MemoryCardsOrStorageNavNode     ;                         ; Memory Cards Or Storage Link     ; MemoryCardsOrStorageNavNode     
-                                ; FiltersNavNode                  ;                         ; Filters Link                     ; FiltersNavNode                  
-                                ; CameraBagsOrCasesNavNode        ;                         ; CameraBags Or Cases Link         ; CameraBagsOrCasesNavNode        
-                                ; ViewfindersNavNode              ;                         ; Viewfinders Link                 ; ViewfindersNavNode              
-                                ; CablesOrAdaptersNavNode         ;                         ; Cables Or Adapters Link          ; CablesOrAdaptersNavNode         
-                                ; MicrophonesNavNode              ;                         ; Microphones Link                 ; MicrophonesNavNode              
+                                ; AllProductionNavNode            ;                         ; All Production Link              ; AllProductionNavNode           
+                                ; NewArrivalsNavNode_Production   ;                         ; New Arrivals Link                ; NewArrivalsNavNode_Production  
+                                ; GimbalsOrStabilizersNavNode     ;                         ; GimbalsOrStabilizers Link        ; GimbalsOrStabilizersNavNode    
+                                ; CameraRigsSupportNavNode        ;                         ; Camera And Rigs Support Link     ; CameraRigsSupportNavNode       
+                                ; TripodHeadsNavNode              ;                         ; TripodHeads Link                 ; TripodHeadsNavNode             
+                                ; SlidersOrDolliesNavNode         ;                         ; Sliders Or Dollies Link          ; SlidersOrDolliesNavNode        
+                                ; FollowFocusOrMatteBoxesNavNode  ;                         ; Follow Focus Or MatteBoxes Link  ; FollowFocusOrMatteBoxesNavNode 
+                                ; MonitorsOrVideoRecordersNavNode ;                         ; Monitors Or Video Recorders Link ; MonitorsOrVideoRecordersNavNode
+                                ; StreamingNavNode                ;                         ; Streaming Link                   ; StreamingNavNode               
+                                ; AudioNavNode                    ;                         ; Audio Link                       ; AudioNavNode                   
+                                ; LightingNavNode                 ;                         ; Lighting Link                    ; LightingNavNode                
+                                ; ProjectorsOrScannersNavNode     ;                         ; Projectors Or Scanners Link      ; ProjectorsOrScannersNavNode    
+                                ; UnderwaterOrHousingsNavNode     ;                         ; Underwater Or Housings Link      ; UnderwaterOrHousingsNavNode    
+                                ; BatteriesOrPowerNavNode         ;                         ; Batteries Or Power Link          ; BatteriesOrPowerNavNode        
+                                ; MemoryCardsOrStorageNavNode     ;                         ; Memory Cards Or Storage Link     ; MemoryCardsOrStorageNavNode    
+                                ; FiltersNavNode                  ;                         ; Filters Link                     ; FiltersNavNode                 
+                                ; CameraBagsOrCasesNavNode        ;                         ; CameraBags Or Cases Link         ; CameraBagsOrCasesNavNode       
+                                ; ViewfindersNavNode              ;                         ; Viewfinders Link                 ; ViewfindersNavNode             
+                                ; CablesOrAdaptersNavNode         ;                         ; Cables Or Adapters Link          ; CablesOrAdaptersNavNode        
+                                ; MicrophonesNavNode              ;                         ; Microphones Link                 ; MicrophonesNavNode             
                                 
                                 
 #####################################################################
 #####################################################################
 #### Navigation Node  ####      
 #####################################################################
-UPDATE CMSNavigationNode ; uid[unique=true]  ; $contentCV[unique=true] ; name                ; parent(uid, $contentCV) ; &nodeRef          ; children(uid,$contentCV)                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                         ; ProductionNavNode ;                         ; Production Nav Node ; BLCategoryNavNode       ; ProductionNavNode ; AllProductionNavNode,NewArrivalsNavNode_Production,GimbalsOrStabilizersNavNode,CameraRigsSupportNavNode,TripodHeadsNavNode,SlidersOrDolliesNavNode,FollowFocusOrMatteBoxesNavNode,MonitorsOrVideoRecordersNavNode,StreamingNavNode,AudioNavNode,LightingNavNode,ProjectorsOrScannersNavNode,UnderwaterOrHousingsNavNode,BatteriesOrPowerNavNode,MemoryCardsOrStorageNavNode,FiltersNavNode,CameraBagsOrCasesNavNode,ViewfindersNavNode,CablesOrAdaptersNavNode,MicrophonesNavNode 
+UPDATE CMSNavigationNode ; uid[unique=true]  ; $contentCV[unique=true] ; name                ; parent(uid, $contentCV) ; &nodeRef          ; children(uid,$contentCV)                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                         ; ProductionNavNode ;                         ; Production Nav Node ; BLCategoryNavNode       ; ProductionNavNode ; AllProductionNavNode,NewArrivalsNavNode_Production,GimbalsOrStabilizersNavNode,CameraRigsSupportNavNode,TripodHeadsNavNode,SlidersOrDolliesNavNode,FollowFocusOrMatteBoxesNavNode,MonitorsOrVideoRecordersNavNode,StreamingNavNode,AudioNavNode,LightingNavNode,ProjectorsOrScannersNavNode,UnderwaterOrHousingsNavNode,BatteriesOrPowerNavNode,MemoryCardsOrStorageNavNode,FiltersNavNode,CameraBagsOrCasesNavNode,ViewfindersNavNode,CablesOrAdaptersNavNode,MicrophonesNavNode
                          
 #####################################################################
 #### Navigation Node ENtry ####
@@ -115,27 +115,27 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                     ; $conte
 #####################################################################
 #### Navigation Node Link  ####  
 #####################################################################
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                          ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang]     ;  
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                          ; url                                                  ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang]     ;  
 # Cameras -- all cameras       
-                              ;                         ; AllProductionLink            ; All Production Link           ; "/rent/category/production" ;                            ;                                    ; All Production           ;
-;                         ; NewArrivalsLink_Production   ; NewArrivals Link              ; "/rent/category/production/NewArrivals-Production" ;                            ;                                    ; New Arrivals             ;
-;                         ; GimbalsOrStabilizersLink     ; GimbalsOrStabilizers Link     ; "/rent/category/production/gimbals-stabilizers" ; gimbals-stabilizers        ;                                    ; Gimbals/Stabilizers      ;
-;                         ; CameraRigsSupportLink        ; CameraRigsSupport Link        ; "/rent/category/production/cameraRigs" ;                            ;                                    ; Camera Rigs/Support      ;
-;                         ; TripodHeadsLink              ; TripodHeads Link              ; "/rent/category/production/tripods_heads" ; tripods_heads              ;                                    ; Tripods/Heads            ;
-;                         ; SlidersOrDolliesLink         ; SlidersOrDollies Link         ; "/rent/category/production/dollies_sliders" ; dollies_sliders            ;                                    ; Sliders/Dollies          ;
-;                         ; FollowFocusOrMatteBoxesLink  ; FollowFocusOrMatteBoxes Link  ; "/rent/category/production/follow_focus" ; follow_focus               ;                                    ; Follow Focus/Matte Boxes ;
-;                         ; MonitorsOrVideoRecordersLink ; MonitorsOrVideoRecorders Link ; "/rent/category/production/monitors_video_recorders" ; monitors_video_recorders   ;                                    ; Monitors/Video Recorders ;
-;                         ; StreamingNavLink             ; StreamingNav Link             ; "/rent/category/production/streaming" ; streaming                  ;                                    ; Streaming                ;
-;                         ; AudioNavLink                 ; AudioNav Link                 ; "/rent/category/production/audio" ; audio                      ;                                    ; Audio                    ;
-;                         ; LightingLink                 ; Lighting Link                 ; "/rent/category/production/lighting" ; lighting                   ;                                    ; Lighting                 ;
-;                         ; ProjectorsOrScannersLink     ; ProjectorsOrScanners Link     ; "/rent/category/production/projectors" ; projectors                 ;                                    ; Projectors/Scanners      ;
-;                         ; UnderwaterOrHousingsLink     ; UnderwaterOrHousings Link     ; "/rent/category/production/underwater-housing" ; underwater-housing         ;                                    ; Underwater Housings      ;
-;                         ; BatteriesOrPowerLink         ; BatteriesOrPower Link         ; "/rent/category/production/batteries_power" ; batteries_power            ;                                    ; Batteries/Power          ;
-;                         ; MemoryCardsOrStorageLink     ; MemoryCardsOrStorage Link     ; "/rent/category/production/memory_cards_storage" ; memory_cards_storage       ;                                    ; Memory Cards/Storage     ;
-;                         ; FiltersLink                  ; Filters Link                  ; "/rent/category/production/filters" ; filters                    ;                                    ; Filters                  ;
-;                         ; CameraBagsOrCasesLink        ; CameraBagsOrCases Link        ; "/rent/category/production/camera-bags" ; camera-bags                ;                                    ; Camera Bags/Cases        ;
-;                         ; ViewfindersLink              ; Viewfinders Link              ; "/rent/category/production/viewfinders" ; viewfinders                ;                                    ; Viewfinders              ;
-;                         ; CablesOrAdaptersLink         ; CablesOrAdapters Link         ; "/rent/category/production/cables_adapters" ; cables_adapters            ;                                    ; Cables/Adapters          ;
+                               ;                         ; AllProductionLink            ; All Production Link           ; "/rent/category/production"                          ;                            ;                                    ; All Production           ;  
+                               ;                         ; NewArrivalsLink_Production   ; NewArrivals Link              ; "/rent/category/production/NewArrivals-Production"   ;                            ;                                    ; New Arrivals             ;  
+                               ;                         ; GimbalsOrStabilizersLink     ; GimbalsOrStabilizers Link     ; "/rent/category/production/gimbals-stabilizers"      ; gimbals-stabilizers        ;                                    ; Gimbals/Stabilizers      ;  
+                               ;                         ; CameraRigsSupportLink        ; CameraRigsSupport Link        ; "/rent/category/production/cameraRigs"               ;                            ;                                    ; Camera Rigs/Support      ;  
+                               ;                         ; TripodHeadsLink              ; TripodHeads Link              ; "/rent/category/production/tripods_heads"            ; tripods_heads              ;                                    ; Tripods/Heads            ;  
+                               ;                         ; SlidersOrDolliesLink         ; SlidersOrDollies Link         ; "/rent/category/production/dollies_sliders"          ; dollies_sliders            ;                                    ; Sliders/Dollies          ;  
+                               ;                         ; FollowFocusOrMatteBoxesLink  ; FollowFocusOrMatteBoxes Link  ; "/rent/category/production/follow_focus"             ; follow_focus               ;                                    ; Follow Focus/Matte Boxes ;  
+                               ;                         ; MonitorsOrVideoRecordersLink ; MonitorsOrVideoRecorders Link ; "/rent/category/production/monitors_video_recorders" ; monitors_video_recorders   ;                                    ; Monitors/Video Recorders ;  
+                               ;                         ; StreamingNavLink             ; StreamingNav Link             ; "/rent/category/production/streaming"                ; streaming                  ;                                    ; Streaming                ;  
+                               ;                         ; AudioNavLink                 ; AudioNav Link                 ; "/rent/category/production/audio"                    ; audio                      ;                                    ; Audio                    ;  
+                               ;                         ; LightingLink                 ; Lighting Link                 ; "/rent/category/production/lighting"                 ; lighting                   ;                                    ; Lighting                 ;  
+                               ;                         ; ProjectorsOrScannersLink     ; ProjectorsOrScanners Link     ; "/rent/category/production/projectors"               ; projectors                 ;                                    ; Projectors/Scanners      ;  
+                               ;                         ; UnderwaterOrHousingsLink     ; UnderwaterOrHousings Link     ; "/rent/category/production/underwater-housing"       ; underwater-housing         ;                                    ; Underwater Housings      ;  
+                               ;                         ; BatteriesOrPowerLink         ; BatteriesOrPower Link         ; "/rent/category/production/batteries_power"          ; batteries_power            ;                                    ; Batteries/Power          ;  
+                               ;                         ; MemoryCardsOrStorageLink     ; MemoryCardsOrStorage Link     ; "/rent/category/production/memory_cards_storage"     ; memory_cards_storage       ;                                    ; Memory Cards/Storage     ;  
+                               ;                         ; FiltersLink                  ; Filters Link                  ; "/rent/category/production/filters"                  ; filters                    ;                                    ; Filters                  ;  
+                               ;                         ; CameraBagsOrCasesLink        ; CameraBagsOrCases Link        ; "/rent/category/production/camera-bags"              ; camera-bags                ;                                    ; Camera Bags/Cases        ;  
+                               ;                         ; ViewfindersLink              ; Viewfinders Link              ; "/rent/category/production/viewfinders"              ; viewfinders                ;                                    ; Viewfinders              ;  
+                               ;                         ; CablesOrAdaptersLink         ; CablesOrAdapters Link         ; "/rent/category/production/cables_adapters"          ; cables_adapters            ;                                    ; Cables/Adapters          ;  
 #                              ;                         ; MicrophonesLink              ; Microphones Link              ; "/rent/category/production/microphones" ;                            ;                                    ; Microphones              ;
 
 
@@ -146,16 +146,16 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]     
 #####################################################################
 #### Navigation Node  ####     
 #####################################################################
-INSERT_UPDATE CMSNavigationNode ; uid[unique=true]   ; $contentCV[unique=true] ; name             ; &nodeRef           ; links(&linkRef) ;  
-                                ; MicrophonesNavNode ;                         ; Microphones Link ; MicrophonesNavNode 
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]   ; $contentCV[unique=true] ; name             ; &nodeRef          ; links(&linkRef) ;  
+                                ; MicrophonesNavNode ;                         ; Microphones Link ; MicrophonesNavNode
                                 
                                 
 #####################################################################
 #####################################################################
 #### Navigation Node  ####      
 #####################################################################
-UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name       ; parent(uid, $contentCV) ; &nodeRef     ; children(uid,$contentCV) 
-                         ; AudioNavNode     ;                         ; Audio Link ; ProductionNavNode       ; AudioNavNode ; MicrophonesNavNode       
+UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name       ; parent(uid, $contentCV) ; &nodeRef     ; children(uid,$contentCV)
+                         ; AudioNavNode     ;                         ; Audio Link ; ProductionNavNode       ; AudioNavNode ; MicrophonesNavNode      
                          
 INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]        ; $contentCV[unique=true] ; name                              ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
                                  ; MicrophonesNavNodeEntry ;                         ; Microphones Navigation Node Entry ; MicrophonesNavNode       ; MicrophonesLink                                        

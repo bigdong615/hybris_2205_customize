@@ -13,10 +13,12 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.model.CatalogModel;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.ItemModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
+import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
@@ -70,6 +72,25 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
     }
 
 	/**
+	 * This method get the list of orders.
+	 * @retrun orders
+	 */
+	private static final String GET_ORDERS  = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.ISRENTALORDER + "} =?isRentalOrder";
+
+	public List<OrderModel> getOrders() {
+		final FlexibleSearchQuery flexibleSearchQuery = new FlexibleSearchQuery(GET_ORDERS);
+		flexibleSearchQuery.addQueryParameter(BlCoreConstants.IS_RENTAL_ORDER, Boolean.TRUE);
+		final SearchResult result = getFlexibleSearchService().search(flexibleSearchQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (org.apache.commons.collections4.CollectionUtils.isEmpty(orders)) {
+			BlLogger.logMessage(LOG , Level.INFO , "No orders found to void $1 authorization transactions");
+			return Collections.emptyList();
+		}
+
+		return orders;
+	}
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -84,6 +105,21 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
 		return CollectionUtils.isNotEmpty(results) ? results.get(BlInventoryScanLoggingConstants.ZERO) : null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BlSerialProductModel getBlSerialProductByBarcode(final String barcode) {
+		final String barcodeList = "SELECT {bsp.pk} FROM {BlSerialProduct! as bsp}, {CatalogVersion as cv}, " +
+				"{Catalog as c}, {ArticleApprovalStatus as aas} WHERE {cv.catalog} = {c.pk} and {bsp.catalogVersion} = " +
+				"{cv.pk} and {c.id} = 'blProductCatalog' and {cv.version} = 'Staged' and {aas.code} = 'approved' and {barcode} = ?barcode";
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+		query.addQueryParameter("barcode", barcode);
+		final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel>search(query).getResult();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD, barcode);
+		return CollectionUtils.isNotEmpty(results) ? results.get(BlInventoryScanLoggingConstants.ZERO) : null;
+	}
+	
     /**
      * {@inheritDoc}
      */

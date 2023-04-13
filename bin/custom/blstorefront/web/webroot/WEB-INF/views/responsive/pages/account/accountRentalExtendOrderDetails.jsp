@@ -13,7 +13,7 @@
  <input type="hidden" id="js-extend-order-page" name="jsExtendOrderPage" value="true"/>
  <input type="hidden" id="js-extend-order-code" name="extendOrderCode" value="${fn:escapeXml(orderData.code)}"/>
 <div id="accountContent" class="col-lg-5 offset-lg-1">
-	<h1><spring:theme code="text.myaccount.extend.order"/></h1>
+	<h3><spring:theme code="text.myaccount.extend.order"/></h3>
 	<div class="extend-order">
 		<div class="row">
 			<div class="col-12 mb-3">

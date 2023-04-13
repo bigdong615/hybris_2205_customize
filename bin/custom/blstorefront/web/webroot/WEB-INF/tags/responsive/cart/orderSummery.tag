@@ -187,7 +187,7 @@
 				<form:input type="text"
 					class="form-control ${errormsgvalid} js-voucher-code-text"
 					path="voucherCode" placeholder="${voucherplaceholder}"
-					name="voucherCode" />
+					name="voucherCode"  oninput="this.value = this.value.toUpperCase()"/>
 				<div class="input-group-append">
 					<button type="submit"
 						class="btn btn-secondary js-voucher-apply-btn">

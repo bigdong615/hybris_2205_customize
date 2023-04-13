@@ -38,6 +38,7 @@
                               </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
                                 <c:choose>
+                                
                                     <c:when test="${not empty disableButton and disableButton == true}">
                                       	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock"/></span>
                                       </c:when>
@@ -47,6 +48,7 @@
                                       <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">
                                       	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock" arguments="${product.stock.stockLevel}"/></span>
                                       </c:when>
+                                      
                                       <c:otherwise>
                                          <c:if test ="${product.productTagValues ne null}">
                                            <span class="badge badge-new">${product.productTagValues}</span>
@@ -73,9 +75,8 @@
                                       <c:when test="${product.stock.stockLevelStatus.code eq 'lowStock' && product.isBundle ne true}">
                                         <span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.only.left" arguments="${product.stock.stockLevel}"/></span>
                                       </c:when>
-                                      <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">
-                                      	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock" arguments="${product.stock.stockLevel}"/></span>
-                                      </c:when>
+                                   
+                                      
                                       <c:otherwise>
                                          <c:if test ="${product.productTagValues ne null}">
                                            <span class="badge badge-new">${product.productTagValues}</span>
@@ -136,6 +137,7 @@
 	                                 	<c:when test="${not empty nextAvailabilityDate }">
 	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
+	                                 	
 	                                 </c:choose>
 	                                 <a href="#" class="pickupDeliveryLink" data-bs-toggle="modal" data-bs-target="#pickup-delivery-options"><spring:theme code="pdp.pickup.section.text"/></a>
                                  </p>

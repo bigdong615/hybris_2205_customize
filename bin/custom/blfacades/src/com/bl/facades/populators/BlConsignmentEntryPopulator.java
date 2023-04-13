@@ -34,17 +34,23 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "ConsignmentEntryModel : {} ", source.getPk());
 		if (source.getOrderEntry() != null)
 		{
-			super.populate(source, target);
-			target.setOrder_entry(source.getOrderEntry().getOrder().getCode() + "." + source.getOrderEntry().getEntryNumber());
+			if (source.getOrderEntry().getProduct() != null)
+			{
+				super.populate(source, target);
+			}
+			if (source.getOrderEntry().getOrder() != null)
+			{
+				target.setOrder_entry(source.getOrderEntry().getOrder().getCode() + "." + source.getOrderEntry().getEntryNumber());
+			}
 		}
 		target.setQuantity(source.getQuantity());
 		target.setShippedQuantity(source.getShippedQuantity());
 		target.setConsignment(source.getConsignment() != null ? source.getConsignment().getCode() : StringUtils.EMPTY);
-		target.setPK(source.getPk().getLongValueAsString());
 		target.setShippedQuantity(source.getShippedQuantity());
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setGearrated(source.isGearRated());
+		target.setPrimaryKey(source.getPk().toString());
 
 		final List<String> items = new ArrayList<>();
 		if (!source.getItems().isEmpty())

@@ -22,6 +22,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -85,6 +87,12 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND ({o:" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER
 			+ "} =?manualReviewStatusByReshuffler OR {o:" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER + "}  is null)";
 
+	private static final String GET_ORDERS_SOON_TO_BE_TRANSIT_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE ({con:"
+			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
+			+ "} BETWEEN ?startDate AND ?endDate)"
+			+ " AND {o:status} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} IN ('PENDING','READY') OR {os:code} LIKE ('RECEIVED%')}}) ";
+
 	private static final String GET_ORDERS_OF_UNAVAILABLE_SOFT_ASSIGNED_SERIALS = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o JOIN " + OrderEntryModel._TYPECODE + " AS oe ON {oe:order} = {o:pk} JOIN " + BlProductModel._TYPECODE
 			+ " AS p ON {oe:product}={p:pk} LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {p:"
@@ -137,7 +145,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
 
 	private static final String USED_GEAR_ABANDONED_CARTS  = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ CartEntryModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartEntryModel.CREATIONTIME + "},current_timestamp) > ?timer";
+			+ CartEntryModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartEntryModel.CREATIONTIME + "},?currentTime) > ?timer";
 
 	private static final String GET_ORDERS_TO_VOID_TRANSACTION  = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISAUTHORIZATIONVOIDED +
@@ -145,8 +153,10 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ "{o:" + OrderModel.ISREPLACEMENTORDER + "} =?isReplacementOrder AND "
 			+ "{o:" + OrderModel.GIFTCARDORDER + "} =?isGiftCardOrder AND "
 			+ "{o:" + OrderModel.ISRETAILGEARORDER + "} =?isNewGearOrder AND "
-			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},current_timestamp) > ?timer";
+			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},?currentTime) > ?timer";
 
+	private static final String GHOST_ORDERS  = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISEXTENDEDORDER + "} =?isExtendedOrder";
 	private static final String GET_ALL_RENTAL_LEGACY_ORDERS_QUERY = "SELECT {o:" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE "
 					+ "{o:" + AbstractOrderModel.STATUS + "} = ({{SELECT {os:" + ItemModel.PK + "} from {"+ OrderStatus._TYPECODE + " AS os} where {os:code} = ?orderStatus}}) AND "
@@ -165,6 +175,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 
 	private static final String ORIGINAL_ORDER_BY_CODE = "SELECT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.VERSIONID  + "} IS NULL AND {" + OrderModel.CODE+ "} = ?code";
 
+	final List<OrderStatus> statuses = Arrays.asList(OrderStatus.LATE,OrderStatus.SHIPPED, OrderStatus.UNBOXED_PARTIALLY);
 	/**
  	* {@inheritDoc}
  	*/
@@ -241,6 +252,23 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"There are no orders to be processed via reshuffler job with manual review status for the day {} ", currentDate);
+		}
+		return result.getResult();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersToBeShippedSoon(final Date currentDate) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_SOON_TO_BE_TRANSIT_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
+		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		if (CollectionUtils.isEmpty(result.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"There are no orders to be processed via BlOptimizeSerialsInLateOrdersJob job with manual review status for the day {} ", currentDate);
 		}
 		return result.getResult();
 	}
@@ -330,15 +358,37 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 	public List<AbstractOrderModel> getOrdersForUPSScrape()
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_BE_UPS_SCRAPE);
-		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
+		Date finalRentalEndDate = null;
+		Date pastDayDate = new Date((new Date()).getTime() - (1000 * 60 * 60 * 24)); //orderModel.getRentalEndDate();
+	    if(isWeekend(pastDayDate)) {
+			finalRentalEndDate = new Date(pastDayDate.getTime() - (1000 * 60 * 60 * 24) - (1000 * 60 * 60 * 24) );
+		}
+		else {
+			finalRentalEndDate = pastDayDate;
+		}
+		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(finalRentalEndDate).getTime()));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<AbstractOrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders)) {
 			BlLogger.logMessage(LOG , Level.INFO , "No Results found for UPS Scrape service which is same or before rental end date has ",
-					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(finalRentalEndDate).getTime()));
 			return Collections.emptyList();
 		}
 		return orders;
+	}
+
+	/**
+	 * @param tomorrowDate
+	 * @return
+	 */
+	private boolean isWeekend(Date tomorrowDate)
+	{
+
+		Calendar cal = Calendar.getInstance();
+      cal.setTime(tomorrowDate);
+
+      int day = cal.get(Calendar.DAY_OF_WEEK);
+      return day == Calendar.SATURDAY || day == Calendar.SUNDAY;
 	}
 
 	/**
@@ -360,7 +410,16 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
-		return packagingInfoModels;
+		
+      final List<PackagingInfoModel> updatedPackgeInfoList = new ArrayList<>();
+		
+		packagingInfoModels.forEach(pkgInfo -> {
+			if(statuses.contains(pkgInfo.getConsignment().getOrder().getStatus())) {	
+				updatedPackgeInfoList.add(pkgInfo);
+			}
+		});
+		
+		return updatedPackgeInfoList.size() > 0 ? updatedPackgeInfoList : Collections.emptyList();
 	}
 
 
@@ -382,7 +441,16 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
-		return packagingInfoModels;
+		
+      final List<PackagingInfoModel> updatedPackgeInfoList = new ArrayList<>();
+		
+		packagingInfoModels.forEach(pkgInfo -> {
+			if(statuses.contains(pkgInfo.getConsignment().getOrder().getStatus())) {	
+				updatedPackgeInfoList.add(pkgInfo);
+			}
+		});
+		
+		return updatedPackgeInfoList.size() > 0 ? updatedPackgeInfoList : Collections.emptyList();
 	}
 
 	/**
@@ -490,12 +558,16 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		// Added 8 seconds buffer, so that cron job will never clear the carts before it gets cleared from front end
 		fQuery.addQueryParameter(TIMER, Integer.valueOf(baseStore.getUsedGearCartTimer())
 				+ BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS);
+		Date currentDate = new Date();
+		fQuery.addQueryParameter("currentTime",currentDate);
+		BlLogger.logMessage(LOG, Level.DEBUG, "Getting all abandoned cart entry from current time:"+currentDate);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<CartEntryModel> cartEntries = result.getResult();
 		if (CollectionUtils.isEmpty(cartEntries)) {
 			BlLogger.logMessage(LOG, Level.INFO, "No abandoned carts found for for used gear products");
 			return Collections.emptyList();
 		}
+		cartEntries.forEach(cartEntryModel -> BlLogger.logMessage(LOG, Level.DEBUG, "Creation time :"+cartEntryModel.getCreationtime()+" Current time :"+currentDate +" for entry :"+cartEntryModel.getPk()));
 		return cartEntries;
 	}
 
@@ -510,6 +582,9 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		fQuery.addQueryParameter(IS_REPLACEMENT_ORDER, Boolean.FALSE);
 		fQuery.addQueryParameter(IS_GIFT_CARD_ORDER, Boolean.FALSE);
 		fQuery.addQueryParameter(IS_NEW_GEAR_ORDER, Boolean.FALSE);
+		Date currentDate = new Date();
+		fQuery.addQueryParameter("currentTime",currentDate);
+		BlLogger.logMessage(LOG, Level.DEBUG, "Getting all void transaction order from current time:"+currentDate);
 		fQuery.addQueryParameter(TIMER, getConfigurationService().getConfiguration().getInt(DELAY_VOID_TRANSACTION_BY_TIME));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<OrderModel> orders = result.getResult();
@@ -517,9 +592,26 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			BlLogger.logMessage(LOG , Level.INFO , "No orders found to void $1 authorization transactions");
 			return Collections.emptyList();
 		}
+		orders.forEach(orderModel -> BlLogger.logMessage(LOG, Level.DEBUG, "Creation time :"+orderModel.getCreationtime()+" Current time :"+currentDate +" for order :"+orderModel.getCode()));
+
 		return orders;
 	}
-
+	/**
+	 * This method created to get ExtendedOrder.
+	 *
+	 */
+	@Override
+	public List<OrderModel> getGhostOrders(){
+		final FlexibleSearchQuery flexibleSearchQuery = new FlexibleSearchQuery(GHOST_ORDERS);
+		flexibleSearchQuery.addQueryParameter(BlCoreConstants.IS_EXTENDED_ORDER, Boolean.TRUE);
+		final SearchResult result = getFlexibleSearchService().search(flexibleSearchQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logMessage(LOG , Level.INFO , "No orders found to void $1 authorization transactions");
+			return Collections.emptyList();
+		}
+		return orders;
+	}
 	/**
 	 * This method created to convert date into specific format
 	 * @param dateToConvert the date which required to convert

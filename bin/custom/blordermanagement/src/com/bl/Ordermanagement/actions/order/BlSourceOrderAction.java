@@ -6,6 +6,7 @@ import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.VerificationStatusEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -17,6 +18,8 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.jalo.order.Order;
+import de.hybris.platform.ordercancel.impl.orderstatechangingstrategies.RestorePreviousOrderStatusStrategy;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
@@ -165,20 +168,25 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
                                            Collection<ConsignmentModel> consignments) {
     if (order.getStatus().equals(OrderStatus.PENDING)) {
       double threshouldGearValue = getConfigurationService().getConfiguration().getDouble(
-                      "blordermanagement.non.subpart.gear.value.threshould", 3499);  // Threshould for Max Gear Value
+              "blordermanagement.non.subpart.gear.value.threshould", 3499);  // Threshould for Max Gear Value
       double threshouldGearValueSecond = getConfigurationService().getConfiguration().getDouble(
-                      "blordermanagement.non.subpart.gear.value.threshould.second=",
-                      800);  // Threshould Secondary for Max Gear Value with Completed Orders
+              "blordermanagement.non.subpart.gear.value.threshould.second=",
+              800);  // Threshould Secondary for Max Gear Value with Completed Orders
+      double threshouldGearValueThird = getConfigurationService().getConfiguration().getDouble(
+              "blordermanagement.non.subpart.gear.value.threshould.third=",
+              12000);   // Threshould tertiary for Max Gear Value with Completed Orders
+
 
       // Total Gear Value from Order
       Double sumOfGearValue = Double.valueOf(0);
       if (order.getSumOfGearValueOnOrder() != null) {
         sumOfGearValue = order.getSumOfGearValueOnOrder();
       }
-
       List<OrderModel> availableOrderForCustomer = new ArrayList<>();
       int completedOrderCount = 0;
-      Boolean inCompleteOrLateOrderFlag = Boolean.FALSE;
+      Boolean LateOrderFlag = Boolean.FALSE;
+      Boolean ApproveOrderFlag = Boolean.FALSE;
+      Boolean RecentOrderFlag = Boolean.TRUE;
 
       if (order.getUser() != null) {
         CustomerModel customerModel = (CustomerModel) order.getUser();
@@ -186,9 +194,26 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
           availableOrderForCustomer = (List<OrderModel>) customerModel.getOrders();
 
           for (OrderModel orderModel : availableOrderForCustomer) {
-            if (orderModel.getStatus() != null && (orderModel.getStatus().equals(OrderStatus.INCOMPLETE)
-                            || orderModel.getStatus().equals(OrderStatus.LATE))) {
-              inCompleteOrLateOrderFlag = Boolean.TRUE;
+            if (orderModel.isIsLatestOrder() && orderModel.getStatus() != null
+                    && !(orderModel.getStatus() == OrderStatus.INCOMPLETE)) {
+              RecentOrderFlag = Boolean.TRUE;
+            }
+          }
+          for (OrderModel orderModel : availableOrderForCustomer) {
+            if (orderModel.getVerificationStatus() != null && ((orderModel.getVerificationStatus().equals(VerificationStatusEnum.NA)|| (orderModel.getVerificationStatus().equals(VerificationStatusEnum.DENY)))))
+            {
+              ApproveOrderFlag = Boolean.TRUE;
+              break;
+            }
+
+            else
+            {
+              ApproveOrderFlag = Boolean.FALSE;
+            }
+          }
+          for (OrderModel orderModel : availableOrderForCustomer) {
+            if (orderModel.getStatus() != null && orderModel.getStatus().equals(OrderStatus.LATE)) {
+              LateOrderFlag = Boolean.TRUE;
               break;
             }
           }
@@ -202,18 +227,24 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
       }
       // Condition #1
 
-      long durationValue = 0l;
-      if (order.getRentalEndDate() != null && order.getRentalStartDate() != null) {
-        durationValue = order.getRentalEndDate().getTime() - order.getRentalStartDate().getTime();
-      }
+		if (sumOfGearValue >= threshouldGearValueThird)
+		{
+			order.setStatus(OrderStatus.VERIFICATION_REQUIRED);
+			startConsignmentSubProcess(consignments, process, true);
+		}
+		else if
 
-      if (sumOfGearValue > threshouldGearValue ||
-                      (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0) ||
-                      inCompleteOrLateOrderFlag ||
-                      (durationValue <= 3 && completedOrderCount <= 5)) {
-        order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
-        startConsignmentSubProcess(consignments, process, true);
-      }
+		(((sumOfGearValue > threshouldGearValue) && ApproveOrderFlag && RecentOrderFlag)
+			//	|| (sumOfGearValue >= threshouldGearValueSecond && completedOrderCount == 0)
+        	|| LateOrderFlag)
+		{
+			order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
+			startConsignmentSubProcess(consignments, process, true);
+		}
+		else
+		{
+			startConsignmentSubProcess(consignments, process, false);
+		}
     } else {
       startConsignmentSubProcess(consignments, process, false);
     }

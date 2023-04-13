@@ -3,6 +3,13 @@
  */
 package com.bl.integration.constants;
 
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
+
+import java.util.Arrays;
+import java.util.List;
+
+
 /**
  * Global class for all Blintegration constants. You can add global constants for your extension into this class.
  */
@@ -48,6 +55,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 
 	public static final String REQUEST_OPTION = "nonvalidate";
 	public static final String CUSTOMER_CONTEXT = "JAX-WS Test Client";
+	public static final String DELIVERY_CONFIRMATION_SIGNATURE = "1";
 
 	public static final String CLIENT_SIDE_ERROR = "400";
 	public static final String CLIENT_SIDE_ERROR_DESCRIPTION = "Client Trasportation Error";
@@ -129,7 +137,11 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String STATUS_TYPE = "StatusType";
 	public static final String M = "M";
 	public static final String MV = "MV";
-	public static final String REQUEST_OPTION_NUMBER = "1";
+	public static final String I = "I";
+	public static final String DP = "DP";
+	public static final String OR = "OR";
+	public static final String XD = "XD";
+	public static final String REQUEST_OPTION_NUMBER = "0";
 	public static final String TRACKING_OPTION = "02";
 	public static final String SERVICE_TYPE = "ServiceType";
 	public static final String SERVICE_DESCRIPTION = "ServiceDescription";
@@ -197,6 +209,12 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String WHITE_SPACE = " ";
 	public static final String DS = "DS";
 	public static final String OT = "OT";
+
+	//Below is the list of order status and consignment status for which the tools (create package, shipping scan and mark shipment as BL_SHIPPED) in shipment module will not be visible.
+	public static final List ORDERS_AND_CONSIGNMENT_STATUS = Arrays.asList(OrderStatus.CHECKED_INVALID,
+			OrderStatus.PAYMENT_NOT_AUTHORIZED, OrderStatus.RECEIVED_PAYMENT_DECLINED, OrderStatus.RECEIVED_IN_VERIFICATION,
+			OrderStatus.WAIT_FRAUD_MANUAL_CHECK, OrderStatus.PAYMENT_NOT_CAPTURED, ConsignmentStatus.WAITING,
+			ConsignmentStatus.PAYMENT_NOT_CAPTURED);
 
 	private BlintegrationConstants()
 	{

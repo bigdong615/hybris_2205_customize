@@ -8,6 +8,7 @@ import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransaction
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
+
 public class BlPaymentTransactionEntryPopulator implements Populator<PaymentTransactionEntryModel, PaymentTransactionEntryData>
 {
 
@@ -43,6 +44,7 @@ public class BlPaymentTransactionEntryPopulator implements Populator<PaymentTran
 			}
 			target.setRefundedamount(source.getRefundedAmount());
 			//target.setSubmittedforsettlementamount(source.getSubmittedForSettlementAmount());
+			target.setPrimaryKey(source.getPk().toString());
 
 		}
 	}

@@ -1,15 +1,5 @@
 package com.bl.core.esp.populators;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.DocumentType;
-import com.bl.core.enums.ExtendOrderStatusEnum;
-import com.bl.core.enums.GearGaurdEnum;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.esp.constants.BlespintegrationConstants;
-import com.bl.esp.dto.OrderFeedData;
-import com.braintree.model.BrainTreePaymentInfoModel;
-import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
@@ -22,6 +12,8 @@ import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import de.hybris.platform.util.Utilities;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -35,18 +27,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.DocumentType;
+import com.bl.core.enums.ExtendOrderStatusEnum;
+import com.bl.core.enums.GearGaurdEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.esp.constants.BlespintegrationConstants;
+import com.bl.esp.dto.OrderFeedData;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * This populator created to convert Order to XML
@@ -391,8 +396,8 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
    * @throws TransformerConfigurationException TransformerConfigurationException
    */
   protected Transformer getTransformerFactoryObject() throws TransformerConfigurationException {
-    final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    return transformerFactory.newTransformer();
+	  final TransformerFactory factory = Utilities.getTransformerFactory();
+	  return factory.newTransformer();
   }
 
   /**
@@ -677,7 +682,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
     return productService;
   }
 
-  public void setProductService(ProductService productService) {
+  public void setProductService(final ProductService productService) {
     this.productService = productService;
   }
 
@@ -686,7 +691,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
   }
 
   public void setCatalogVersionService(
-      CatalogVersionService catalogVersionService) {
+      final CatalogVersionService catalogVersionService) {
     this.catalogVersionService = catalogVersionService;
   }
 

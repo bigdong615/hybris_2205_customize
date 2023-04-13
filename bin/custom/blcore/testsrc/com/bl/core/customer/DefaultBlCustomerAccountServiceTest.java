@@ -4,29 +4,31 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.bl.core.services.customer.impl.DefaultBlCustomerAccountService;
-import com.braintree.customer.dao.BrainTreeCustomerAccountDao;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.user.data.RegisterData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
-import de.hybris.platform.commerceservices.customer.dao.CustomerAccountDao;
 import de.hybris.platform.commerceservices.i18n.CommerceCommonI18NService;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.PasswordEncoderConstants;
 import de.hybris.platform.servicelayer.user.UserService;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.BDDMockito;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.core.services.customer.impl.DefaultBlCustomerAccountService;
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultBlCustomerAccountServiceTest {
 
   @InjectMocks
@@ -34,7 +36,7 @@ public class DefaultBlCustomerAccountServiceTest {
 
   public static final String EMAIL = "test@gmail.com";
   public static final String PASSWORD = "12345678";
-  private String passwordEncoding = PasswordEncoderConstants.DEFAULT_ENCODING;
+  private final String passwordEncoding = PasswordEncoderConstants.DEFAULT_ENCODING;
 
   @Mock
   private CustomerModel newCustomer;
@@ -54,7 +56,7 @@ public class DefaultBlCustomerAccountServiceTest {
 
   @Before
   public void prepare(){
-    MockitoAnnotations.initMocks(this);
+	  // MockitoAnnotations.initMocks(this);
     registerData = new RegisterData();
     registerData.setLogin(EMAIL);
     registerData.setPassword(PASSWORD);

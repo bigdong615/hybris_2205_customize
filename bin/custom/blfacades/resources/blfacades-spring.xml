@@ -382,7 +382,9 @@
 
 	<!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
     <alias name="defaultBlOrderEntryPopulator" alias="orderEntryPopulator"/>
-    <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator"/>
+    <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator">
+    	<property name="sessionService" ref="sessionService" />
+    </bean>
 
 	<!--Shipping-->
 	<!--BlShippingGroupDataPopulatorConverter-->
@@ -871,7 +873,8 @@
   		<property name="blInHouseRepairLogConverter" ref="blInHouseRepairLogConverter"/>
   		<property name="domoAddressConvertor" ref="domoAddressConvertor"/>
   		<property name="domoBrainTreePaymentInfoConvertor" ref="domoBrainTreePaymentInfoConvertor"/>
-  		<property name="blStockLevelConvertor" ref="blStockLevelConvertor"/>			
+  		<property name="blStockLevelConvertor" ref="blStockLevelConvertor"/>
+  		<property name="blRegionConverter" ref="blRegionConverter"/>			
 	</bean>
 	
 	<alias name="blDomoOrderEntryPopulator" alias="blDomoOrderEntryPopulator"/>
@@ -1110,7 +1113,7 @@
 	</bean>
 	
 	<alias name="blDomoNotesPopulator" alias="blDomoNotesPopulator"/>
-	<bean id="blDomoNotesPopulator" class="com.bl.facades.populators.BlDomoCustomerNotesPopulator"></bean>
+	<bean id="blDomoNotesPopulator" class="com.bl.facades.populators.BlDomoNotesPopulator"></bean>
 	
 	<alias name="blNotesConverter" alias="blNotesConverter"/>
 	<bean id="blNotesConverter" parent="abstractPopulatingConverter">
@@ -1120,6 +1123,25 @@
 				<ref bean="blDomoNotesPopulator"/>
 				</list>
 		</property>
+	</bean>
+	
+	<alias name="blDomoRegionPopulator" alias="blDomoRegionPopulator"/>
+	<bean id="blDomoRegionPopulator" class="com.bl.facades.populators.BlDomoRegionPopulator"></bean>
+	
+	<alias name="blRegionConverter" alias="blRegionConverter"/>
+	<bean id="blRegionConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.user.data.RegionData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoRegionPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blConsignmentForTrackingPopulator" alias="consignmentForTrackingPopulator"/>
+	<bean id="blConsignmentForTrackingPopulator"  class="com.bl.facades.populators.BlConsignmentForTrackingPopulator" >
+			<property name="carrierConverter" ref="carrierConverter" />
+		    <property name="consignmentTrackingService" ref="consignmentTrackingService" />
 	</bean>
 	
 </beans>

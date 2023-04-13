@@ -101,6 +101,8 @@ public class BlDomoVendorRepairLogPopulator implements Populator<VendorRepairLog
 		target.setEstimateNote(source.getEstimateNote());
 		target.setDateReturned(source.getDateReturned());
 		target.setTrackingNumber(source.getTrackingNumber());
+		target.setPrimaryKey(source.getPk().toString());
+
 	}
 
 }

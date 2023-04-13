@@ -14,7 +14,7 @@
 <c:set var="searchUrl" value="/my-account/saved-carts?sort=${ycommerce:encodeUrl(searchPageData.pagination.sort)}"/>
 
 <div id="accountContent" class="col-lg-8 offset-lg-1">
-	<h1><spring:theme code="text.saved.cart"/></h1>
+	<h3><spring:theme code="text.saved.cart"/></h3>
 	<c:choose>
 	<c:when test="${empty searchPageData.results}">
       <div class="account-section-content content-empty">

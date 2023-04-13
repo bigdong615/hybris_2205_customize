@@ -104,4 +104,38 @@ UPDATE SearchRestriction ; code[unique=true]           ; active[default=false]
                          ; Frontend_RestrictedCategory 
 UPDATE BaseStore ; uid[unique=true] ; name[lang=$lang] ; bundleDiscount
                  ; bl               ; "Borrow Lenses"  ; 10
-                         
+
+#BLS-102 Removal of GhostOrders
+#BLS-102 Start
+
+INSERT_UPDATE ServicelayerJob;code[unique=true];springId
+                             ;ghostOrderRemovalJob;GhostOrderRemovalJob
+
+INSERT_UPDATE GhostOrderRemovalCronJob;code[unique=true];job(code);sessionLanguage(isocode)
+                                      ;ghostOrderRemovalJob;ghostOrderRemovalJob;en
+
+INSERT_UPDATE Trigger;cronJob(code)[unique=true];cronExpression
+                     ;ghostOrderRemovalJob;* * 1 ? * * *
+
+#BLS-102 End
+
+#BLS-120 Start
+INSERT_UPDATE ServicelayerJob;code[unique=true];springId
+                             ;assigningTrackingNumberJob;AssigningTrackingNumberJob
+
+INSERT_UPDATE AssigningTrackingNumberCronJob;code[unique=true];job(code);sessionLanguage(isocode)
+                                            ;assigningTrackingNumberJob;assigningTrackingNumberJob;en
+
+INSERT_UPDATE Trigger;cronJob(code)[unique=true];cronExpression
+                     ;assigningTrackingNumberJob;* * 23 ? * * *
+
+#BLS-120 End
+
+#BLS-9 Start
+INSERT_UPDATE ServicelayerJob ; code[unique=true]      ; springId[unique=true]
+                              ; blOptimizeSerialsInLateOrdersJob ; blOptimizeSerialsInLateOrders
+
+INSERT_UPDATE CronJob ; code[unique=true]               ; job(code)               ; sessionLanguage(isocode) ; active
+                      ; optimizeSerialsInLateOrdersJob ; blOptimizeSerialsInLateOrdersJob  ; en     ; true
+
+#BLS-9 End

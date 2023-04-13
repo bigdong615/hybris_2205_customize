@@ -20,13 +20,15 @@ import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.servlet.ModelAndView;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class CartRestorationBeforeViewHandlerTest
 {
 
@@ -53,7 +55,7 @@ public class CartRestorationBeforeViewHandlerTest
 	@Before
 	public void setUp()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 		BDDMockito.given(restorationHandler.getSessionService()).willReturn(sessionService);
 

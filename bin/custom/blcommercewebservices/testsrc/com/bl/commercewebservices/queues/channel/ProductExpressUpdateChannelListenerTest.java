@@ -8,17 +8,21 @@ import static org.mockito.BDDMockito.given;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-import com.bl.commercewebservices.queues.data.ProductExpressUpdateElementData;
-import com.bl.commercewebservices.queues.impl.ProductExpressUpdateQueue;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.commercewebservices.queues.data.ProductExpressUpdateElementData;
+import com.bl.commercewebservices.queues.impl.ProductExpressUpdateQueue;
+
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class ProductExpressUpdateChannelListenerTest
 {
 	private static final String PRODUCT_CODE = "productCode";
@@ -41,7 +45,7 @@ public class ProductExpressUpdateChannelListenerTest
 	@Before
 	public void setUp() throws Exception
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 
 
 		productExpressUpdateQueue = new ProductExpressUpdateQueue();

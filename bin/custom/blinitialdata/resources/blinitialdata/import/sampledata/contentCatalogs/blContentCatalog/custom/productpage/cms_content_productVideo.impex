@@ -6,32 +6,32 @@ $siteResource=jar:com.bl.initialdata.constants.BlInitialDataConstants&/blinitial
 #jar:classPath
 $data_sheet=data_sheet(code, $catalogVersion);
 
-INSERT_UPDATE Media;mediaFormat(qualifier)  ;code[unique=true]                       ;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator];mime[default='application/pdf'];$catalogVersion;folder(qualifier);realFileName ;
-                   ;                   ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf;$siteResource/HOLIDAYCALENDAR2021.pdf                        ;                               ;               ;images;HOLIDAYCALENDAR2021.pdf;
+INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]                              ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='application/pdf'] ; $catalogVersion ; folder(qualifier) ; realFileName            ;  
+                    ;                        ; /product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf ; $siteResource/HOLIDAYCALENDAR2021.pdf                                      ;                                 ;                 ; images            ; HOLIDAYCALENDAR2021.pdf ;  
 
-INSERT_UPDATE BlProduct;code[unique=true]             ;$data_sheet                           ;$catalogVersion ;
-                     ;Nikon_17-55mm_f2.8_AF-S_ED_DX ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
-                     ;Nikon_D7100_Digital_SLR ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
-                     ;olympus_ep2_extra_battery ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
-                     ;Canon_50mm_f1.2_L ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
-                     ;Canon_5DIII ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
+INSERT_UPDATE BlProduct ; code[unique=true]             ; $data_sheet                                    ; $catalogVersion ;  
+                        ; Nikon_17-55mm_f2.8_AF-S_ED_DX ; /product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf ;                 ;  
+                        ; Nikon_D7100_Digital_SLR       ; /product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf ;                 ;  
+                        ; olympus_ep2_extra_battery     ; /product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf ;                 ;  
+                        ; Canon_50mm_f1.2_L             ; /product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf ;                 ;  
+                        ; Canon_5DIII                   ; /product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf ;                 ;  
 
 
-INSERT_UPDATE ProductVideo ;uid[unique=true]; videoTitle;videoLink                                ;videoDuration
-                           ;Canon_EOS_R1  ;Canon EOS R5 featuresr   ;https://www.youtube.com/embed/8jtaappbWtE ; 383
-                           ;Canon_EOS_R2  ;Canon EOS R5 featuressecond; https://www.youtube.com/embed/4EBEwxWxCK8 ;145
-                           ;Canon_EOS_R3  ; Canon EOS R5 featuresthiird  ;https://www.youtube.com/embed/-EZO9RbATDk ; 155
-                           ;Canon_EOS_R4  ;Canon EOS R5 featuresforth ;https://www.youtube.com/embed/f1peSTA8tRk ;335
+INSERT_UPDATE ProductVideo ; uid[unique=true] ; videoTitle                  ; videoLink                                 ; videoDuration
+                           ; Canon_EOS_R1     ; Canon EOS R5 featuresr      ; https://www.youtube.com/embed/8jtaappbWtE ; 383          
+                           ; Canon_EOS_R2     ; Canon EOS R5 featuressecond ; https://www.youtube.com/embed/4EBEwxWxCK8 ; 145          
+                           ; Canon_EOS_R3     ; Canon EOS R5 featuresthiird ; https://www.youtube.com/embed/-EZO9RbATDk ; 155          
+                           ; Canon_EOS_R4     ; Canon EOS R5 featuresforth  ; https://www.youtube.com/embed/f1peSTA8tRk ; 335          
 
-INSERT_UPDATE BlProduct;code[unique=true]               ;rentalVideosLink(uid)    ;$catalogVersion ;
-                       ;Nikon_17-55mm_f2.8_AF-S_ED_DX ;Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4   ; ;
+INSERT_UPDATE BlProduct ; code[unique=true]             ; rentalVideosLink(uid)                                ; $catalogVersion ;  
+                        ; Nikon_17-55mm_f2.8_AF-S_ED_DX ; Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4 ;                 ;  
 
-INSERT_UPDATE BlProduct;code[unique=true]               ;usedGearVideosLink(uid)    ;$catalogVersion ;
-                       ;Nikon_D7100_Digital_SLR ;Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4   ; ;
-                       ;olympus_ep2_extra_battery ;Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4   ; ;
-                       ;Canon_50mm_f1.2_L ;Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4   ; ;
-                       ;lp-e8             ;Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4   ; ;
-                       ;Canon_5DIII       ;Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4   ; ;
+INSERT_UPDATE BlProduct ; code[unique=true]         ; usedGearVideosLink(uid)                              ; $catalogVersion ;  
+                        ; Nikon_D7100_Digital_SLR   ; Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4 ;                 ;  
+                        ; olympus_ep2_extra_battery ; Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4 ;                 ;  
+                        ; Canon_50mm_f1.2_L         ; Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4 ;                 ;  
+                        ; lp-e8                     ; Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4 ;                 ;  
+                        ; Canon_5DIII               ; Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4 ;                 ;  
 
 
 

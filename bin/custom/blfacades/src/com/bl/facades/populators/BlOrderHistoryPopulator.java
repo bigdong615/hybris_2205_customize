@@ -20,11 +20,10 @@ import de.hybris.platform.payment.dto.TransactionStatus;
 import de.hybris.platform.payment.dto.TransactionStatusDetails;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+
+import de.hybris.platform.util.Config;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -131,9 +130,229 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
           target.setIsCaptured(Boolean.FALSE);
       }
 
+//    BLS-67 Update Order Status Terminology in Order Details
+      populateOrderStatusEligibleFeatures(source,target);
+      populateUpdatedOrderStatus(source, target);
   }
 
-  /**
+    /**
+     *
+     * @param source
+     * @param target
+     */
+    private void populateOrderStatusEligibleFeatures(OrderModel source, OrderHistoryData target) {
+        final String orderStatusForModifyPayment=Config.getParameter("order.myaccount.modify.order.payment");
+        final String orderStatusForChangePayment=Config.getParameter("order.myaccount.change.payment");
+        final String orderStatusForChargeDeposit= Config.getParameter("order.myaccount.charge.deposit");
+
+        List modifyOrderPayment= Arrays.asList(orderStatusForModifyPayment.split(","));
+        List changePayment= Arrays.asList(orderStatusForChangePayment.split(","));
+        List chargeDeposit= Arrays.asList(orderStatusForChargeDeposit.split(","));
+        if(null != source && null != source.getStatus())
+        {
+            if(modifyOrderPayment.contains(source.getStatus().toString()))
+            {
+              target.setIsModifyOrderPayment(Boolean.TRUE);
+            }
+            if(changePayment.contains(source.getStatus().toString()))
+            {
+                target.setIsChangePayment(Boolean.TRUE);
+            }
+            if(chargeDeposit.contains(source.getStatus().toString()))
+            {
+                target.setIsChargeDeposit(Boolean.TRUE);
+            }
+
+        }
+
+    }
+
+    /**
+ * @param source
+ * @param target
+ */
+private void populateUpdatedOrderStatus(OrderModel source, OrderHistoryData target)
+{
+	if(null != source && null != source.getStatus()) 
+	{
+   	switch (source.getStatus())
+   	{
+        case CANCELLED:
+
+            target.setOrderStatus("Canceled");
+            break;
+
+        case CANCELLING:
+
+        case CHECKED_INVALID:
+
+        case CHECKED_VALID:
+
+        case CREATED:
+
+        case FRAUD_CHECKED:
+
+        case INCOMPLETE:
+
+        case INCOMPLETE_MISSING_AND_BROKEN_ITEMS:
+
+        case INCOMPLETE_RECOVERED:
+
+        case ON_HOLD:
+
+        case ON_VALIDATION:
+
+        case ORDER_SPLIT:
+
+        case PARTIAL_CAPTURE:
+
+        case PAYMENT_AUTHORIZED:
+
+        case PAYMENT_NOT_CAPTURED:
+
+        case PAYMENT_AMOUNT_NOT_RESERVED:
+
+        case PAYMENT_NOT_VOIDED:
+
+        case PAYMENT_AMOUNT_RESERVED:
+
+        case PROCESSING_ERROR:
+
+        case READY:
+
+        case RECEIVED:
+
+        case RECEIVED_MANUAL_REVIEW:
+
+        case RECEIVED_PICKED_UP:
+
+        case RECEIVED_ROLLING:
+
+        case RECEIVED_SHIPPING_MANUAL_REVIEW:
+
+        case RETURNED:
+
+        case SHIPPED:
+
+        case SOLD_RMA_CREATED:
+
+        case TAX_NOT_COMMITTED:
+
+        case TAX_NOT_REQUOTED:
+
+        case TAX_NOT_VOIDED:
+
+            target.setOrderStatus("Shipped");
+            break;
+
+        case COMPLETED:
+
+            target.setOrderStatus("Completed");
+            break;
+
+        case INCOMPLETE_BALANCE_DUE:
+   			
+   			target.setOrderStatus("Incomplete");
+   			break;
+   
+   		case INCOMPLETE_ITEMS_IN_REPAIR:
+   			
+   			target.setOrderStatus("Incomplete");
+   			break;
+   
+   		case INCOMPLETE_LOST_IN_TRANSIT:
+   			
+   			target.setOrderStatus("Incomplete");
+   			break;
+   
+   		case INCOMPLETE_MISSING_ITEMS:
+   			
+   			target.setOrderStatus("Incomplete");
+   			break;
+   
+   		case INCOMPLETE_STOLEN:
+   			
+   			target.setOrderStatus("Incomplete");
+   			break;
+   
+   		case LATE:
+   			
+   			target.setOrderStatus("Incomplete");
+   			break;
+   
+   		case PAYMENT_CAPTURED:
+   			
+   			target.setOrderStatus("Payment Captured");
+   			break;
+   
+   		case PAYMENT_NOT_AUTHORIZED:
+   			
+   			target.setOrderStatus("Payment Declined");
+   			break;
+   
+   		case PENDING:
+   			
+   			target.setOrderStatus("Order Placed");
+   			break;
+   
+   		case RECEIVED_IN_VERIFICATION:
+   			
+   			target.setOrderStatus("Verfication Required");
+   			break;
+   
+   		case RECEIVED_PAYMENT_DECLINED:
+   			
+   			target.setOrderStatus("Payment Declined");
+   			break;
+   
+   		case RECEIVED_READY_FOR_PICKUP:
+   			
+   			target.setOrderStatus("Ready for Pickup");
+   			break;
+   
+   		case SOLD:
+   			
+   			target.setOrderStatus("Sold - Order Placed");
+   			break;
+   
+   		case SOLD_SHIPPED:
+   			
+   			target.setOrderStatus("Sold - Order Shipped");
+   			break;
+   
+   		case SUSPENDED:
+   			
+   			target.setOrderStatus("Contact Customer Service");
+   			break;
+   
+   		case UNBOXED_COMPLETELY:
+   			
+   			target.setOrderStatus("Returned to Warehouse");
+   			break;
+   
+   		case UNBOXED_PARTIALLY:
+   			
+   			target.setOrderStatus("Returned to Warehouse");
+   			break;
+   
+   		case VERIFICATION_REQUIRED:
+   			
+   			target.setOrderStatus("Verfication Required");
+   			break;
+   
+   		case WAIT_FRAUD_MANUAL_CHECK:
+   			
+   			target.setOrderStatus("Verfication Required");
+   			break;
+   
+   			
+   		default:
+   			break;
+   	}
+	}	
+}
+
+/**
    * This method created to update the total price if order is extended
    */
   private BigDecimal updateTotalIfOrderExtended(final OrderModel orderModel) {

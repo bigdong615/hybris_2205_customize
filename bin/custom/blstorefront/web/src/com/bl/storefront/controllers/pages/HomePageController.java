@@ -75,14 +75,7 @@ public class HomePageController extends AbstractPageController
 		}
 		updatePageTitle(model, contentPage);
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
-		final String currentCartType = blCartFacade.identifyCartType();
-		if(StringUtils.isNotEmpty(currentCartType)){
-			model.addAttribute(currentCartType,true);
-		}
-		else
-		{
-			model.addAttribute(ISRENTAL_CART, true);
-		}
+		model.addAttribute(blCartFacade.identifyCartType(),true);
 		return getViewForPage(model);
 	}
 

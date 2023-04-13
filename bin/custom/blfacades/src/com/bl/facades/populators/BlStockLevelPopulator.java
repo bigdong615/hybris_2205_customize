@@ -15,7 +15,7 @@ public class BlStockLevelPopulator extends WarehousingStockLevelPopulator
 	@Override
 	public void populate(final StockLevelModel source, final StockLevelData target) throws ConversionException
 	{
-		super.populate(source, target);
+		//super.populate(source, target);
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setNextDeliveryTime(source.getNextDeliveryTime());
@@ -27,6 +27,10 @@ public class BlStockLevelPopulator extends WarehousingStockLevelPopulator
 		target.setMaxPreOrder(source.getMaxPreOrder());
 		target.setMaxStockLevelHistoryCount(source.getMaxStockLevelHistoryCount());
 		target.setTreatNegativeAsZero(source.isTreatNegativeAsZero());
+		if (source.getAsnEntry() != null)
+		{
+			target.setAsnEntry(source.getAsnEntry().getProductCode());
+		}
 		if (source.getReservedStatus() != null)
 		{
 			target.setReservedStatus(source.getReservedStatus());
@@ -44,10 +48,16 @@ public class BlStockLevelPopulator extends WarehousingStockLevelPopulator
 			target.setForSale(source.getForSale());
 		}
 		target.setSerialProductCode(source.getSerialProductCode());
+		target.setProductCode(source.getProductCode());
+		target.setBin(source.getBin());
 		target.setOrder(source.getOrder());
 		if (source.getSerialStatus() != null)
 		{
 			target.setSerialStatus(source.getSerialStatus().getCode());
 		}
+		target.setReleaseDate(source.getReleaseDate());
+		target.setInStockStatus(source.getInStockStatus());
+		target.setWarehouseCode(source.getWarehouse().getCode());
+		target.setPrimaryKey(source.getPk().toString());
 	}
 }

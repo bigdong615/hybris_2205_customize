@@ -3,12 +3,10 @@
  */
 package com.bl.integration.populators;
 
-import com.bl.core.model.OptimizedShippingMethodModel;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.core.model.user.AddressModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.util.Config;
@@ -17,14 +15,15 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.bl.core.model.OptimizedShippingMethodModel;
 import com.bl.facades.shipment.data.DimensionsTypeData;
 import com.bl.facades.shipment.data.PackageTypeData;
 import com.bl.facades.shipment.data.PackageWeightTypeData;
@@ -96,12 +95,12 @@ public class BLUpsShippingDataPopulator
 	 * @param packagingInfo
 	 * @return
 	 */
-	public UpsShippingRequestData populateUPSShipmentRequest(final PackagingInfoModel packagingInfo, final OptimizedShippingMethodModel om)
+	public UpsShippingRequestData populateUPSShipmentRequest(final PackagingInfoModel packagingInfo, final OptimizedShippingMethodModel om, final boolean isSignatureRequired)
 	{
 		final UpsShippingRequestData upsRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
 
-		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, null, false, om);
+		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, null, false, om, isSignatureRequired);
 		upsRequestData.setShipment(upsShipmentData);
 		return upsRequestData;
 
@@ -119,7 +118,7 @@ public class BLUpsShippingDataPopulator
 		final UpsShippingRequestData upsReturnRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
 
-		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel, true, null);
+		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel, true, null, false);
 
 		/** Creating return service Data **/
 
@@ -141,7 +140,7 @@ public class BLUpsShippingDataPopulator
 	 * @param shipmentData
 	 */
 	private ShipmentData populateUpsShipmentRequestData(final PackagingInfoModel packagingInfo, final ShipmentData shipmentData,
-			final WarehouseModel stateWarehouse, final boolean isRSLabel, final OptimizedShippingMethodModel om)
+			final WarehouseModel stateWarehouse, final boolean isRSLabel, final OptimizedShippingMethodModel om,final boolean isSignatureRequired)
 	{
 		/** Creating UPS Payment Data **/
 		final UpsPaymentInformation upsPaymentInformation = new UpsPaymentInformation();
@@ -203,7 +202,7 @@ public class BLUpsShippingDataPopulator
 		/** Creating UPS Shipment Service Data **/
 		final UpsShipmentServiceData upsShipmentServiceData = new UpsShipmentServiceData();
 
-		populateUpsShipmentServiceData(packagingInfo, upsShipmentServiceData, om, isRSLabel);
+		populateUpsShipmentServiceData(packagingInfo, upsShipmentServiceData, om, isRSLabel, isSignatureRequired);
 
 		/** Creating UPS Package Data List **/
 		final List<PackageTypeData> packageDataList = new ArrayList<>();
@@ -277,7 +276,7 @@ public class BLUpsShippingDataPopulator
 	 * @param upsShipmentServiceData
 	 */
 	private void populateUpsShipmentServiceData(final PackagingInfoModel packagingInfo,
-			final UpsShipmentServiceData upsShipmentServiceData, final OptimizedShippingMethodModel om, final boolean isRSLabel)
+			final UpsShipmentServiceData upsShipmentServiceData, final OptimizedShippingMethodModel om, final boolean isRSLabel, final boolean isSignatureRequired)
 	{
 		if(isRSLabel){
 			upsShipmentServiceData.setCode(BlintegrationConstants.RETURN_LABEL_CODE);
@@ -285,7 +284,12 @@ public class BLUpsShippingDataPopulator
 		}
 		else if(Objects.nonNull(om) && StringUtils.isNotBlank(om.getServiceTypeCode()) && StringUtils.isNotBlank(om.getServiceTypeDesc()))
 		{
-			upsShipmentServiceData.setCode(om.getServiceTypeCode());
+			if(isSignatureRequired && om.getSignatureServiceTypeCode()!=null) {
+				upsShipmentServiceData.setCode(om.getSignatureServiceTypeCode());
+			}
+			else {
+				upsShipmentServiceData.setCode(om.getServiceTypeCode());
+			}
 			upsShipmentServiceData.setDescription(om.getServiceTypeDesc());
 		}
 		else if (Objects.nonNull(packagingInfo.getConsignment().getOptimizedShippingType())
@@ -378,7 +382,7 @@ public class BLUpsShippingDataPopulator
 		shipToData.setAddress(shipToAddressData);
 		return shipToData;
 	}
-	
+
 	private String getEmptyIfNullOrBlank(final String value)
 	{
 		return StringUtils.defaultIfBlank(value, StringUtils.EMPTY);
@@ -447,7 +451,7 @@ public class BLUpsShippingDataPopulator
 	{
 		return warehouse.getPointsOfService().iterator().next().getAddress();
 	}
-	
+
 	private String trimmedPhoneNumber(final String phoneNumber)
 	{
 		if(StringUtils.isNotBlank(phoneNumber) && phoneNumber.length() > 15)

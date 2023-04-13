@@ -31,9 +31,10 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 
 /**
@@ -41,6 +42,7 @@ import org.mockito.MockitoAnnotations;
  *
  */
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultGuestCheckoutCartCleanStrategyTest
 {
 	private static final String CHECKOUT_URL_PATTERN = "(^https://.*/checkout/.*)";
@@ -76,7 +78,7 @@ public class DefaultGuestCheckoutCartCleanStrategyTest
 	@Before
 	public void prepare()
 	{
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 		guestCheckoutCartCleanStrategy.setSkipPatterns(Arrays.asList(CHECKOUT_URL_PATTERN, FAVICON_PATTERN));
 	}
 

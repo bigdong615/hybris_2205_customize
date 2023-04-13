@@ -86,6 +86,8 @@ public class BlDomoInHouseRepairLogPopulator implements Populator<InHouseRepairL
 		target.setAssessmentNotes(source.getAssessmentNotes().stream().map(NotesModel::getNote).collect(Collectors.joining(",")));
 		target.setDamageWaiverPaid(source.getDamageWaiverPaid());
 		target.setRepairLogId(source.getRepairLogId());
+		target.setPrimaryKey(source.getPk().toString());
+
 	}
 
 }

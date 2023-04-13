@@ -81,32 +81,32 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 */
 	@Override
 	public boolean createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
-			final Map<String, Integer> sequenceMap) throws IOException
+			final Map<String, Integer> sequenceMap, boolean isSignatureRequired) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.UPS_SHIPMENT_MSG);
 
 		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
 		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
-		return processLabelGeneration(packagingInfo, packageCount, delivertCarrier, sequenceMap, null);
+		return processLabelGeneration(packagingInfo, packageCount, delivertCarrier, sequenceMap, null, isSignatureRequired);
 	}
 
 	@Override
 	public boolean createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
 			final Map<String, Integer> sequenceMap, final CarrierEnum shippingType,
-			final OptimizedShippingMethodModel optimizedShippingMethod) throws IOException
+			final OptimizedShippingMethodModel optimizedShippingMethod, boolean isSignatureRequired) throws IOException
 	{
-		return processLabelGeneration(packagingInfo, packageCount, shippingType, sequenceMap, optimizedShippingMethod);
+		return processLabelGeneration(packagingInfo, packageCount, shippingType, sequenceMap, optimizedShippingMethod, isSignatureRequired);
 	}
 
 	private boolean processLabelGeneration(final PackagingInfoModel packagingInfo, final int packageCount,
 			final CarrierEnum delivertCarrier, final Map<String, Integer> sequenceMap,
-			final OptimizedShippingMethodModel optimizedShippingMethod) throws IOException
+			final OptimizedShippingMethodModel optimizedShippingMethod, boolean isSignatureRequired) throws IOException
 	{
 		if (StringUtils.isNotBlank(delivertCarrier.getCode())
 				&& CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService().createUPSShipment(
-					getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo, optimizedShippingMethod), packagingInfo);
+					getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo, optimizedShippingMethod, isSignatureRequired), packagingInfo);
 			if (upsResponse != null)
 			{
 				saveResponseOnOutboundPackage(upsResponse, packagingInfo, delivertCarrier, optimizedShippingMethod);
@@ -238,6 +238,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 			trackingNumber = completedShipmentDetails.getMasterTrackingId().getTrackingNumber();
 			packagingInfo.setOutBoundTrackingNumber(trackingNumber);
 			labelTypeEnum = ShippingLabelTypeEnum.OUTBOUND;
+			packagingInfo.setLabelURL(fedExShipmentURL + completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
 		}
 		else
 		{
@@ -245,7 +246,6 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 			packagingInfo.setInBoundTrackingNumber(trackingNumber);
 			labelTypeEnum = ShippingLabelTypeEnum.INBOUND;
 		}
-		packagingInfo.setLabelURL(fedExShipmentURL + completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
 		setTotalChargesOnPackage(completedShipmentDetails.getShipmentRating(), packagingInfo);
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
@@ -314,6 +314,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	{
 		final StringBuilder buffer = new StringBuilder();
 		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo, buffer);
+		packagingInfo.setLabelURL(upsShipmentURL + shipmentPackage.getTrackingNumber());
 		packagingInfo.setOutBoundShippingLabel(buffer.toString());
 		packagingInfo.setOutBoundTrackingNumber(shipmentPackage.getTrackingNumber());
 		packagingInfo.setOutBoundGraphicImage(shipmentPackage.getGraphicImage());
@@ -346,11 +347,9 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipment generated for package {} with tracking id {}", packagingInfo,
 				shipmentPackage.getTrackingNumber());
-		packagingInfo.setLabelURL(upsResponse.getLabelURL());
 		packagingInfo.setShipmentIdentificationNumber(upsResponse.getShipmentIdentificationNumber());
 		packagingInfo.setTotalShippingPrice(upsResponse.getTotalCharges());
 		packagingInfo.setHTMLImage(shipmentPackage.getHTMLImage());
-		packagingInfo.setLabelURL(upsShipmentURL + shipmentPackage.getTrackingNumber());
 		try
 		{
 			convertImage(shipmentPackage.getGraphicImage(), packagingInfo, buffer);

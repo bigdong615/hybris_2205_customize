@@ -11,7 +11,6 @@
 package com.bl.customer360;
 
 import de.hybris.bootstrap.annotations.UnitTest;
-import com.bl.customer360.populators.CustomerOverviewDataPopulator;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.core.model.media.MediaModel;
@@ -24,13 +23,17 @@ import java.util.Date;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.bl.customer360.populators.CustomerOverviewDataPopulator;
 
 
 @UnitTest
+@RunWith(MockitoJUnitRunner.class)
 public class CustomerOverviewDataProviderTest
 {
 	@Mock
@@ -47,9 +50,8 @@ public class CustomerOverviewDataProviderTest
 	@Before
 	public void setup()
 	{
-
 		customerOverviewDataPopulator = new CustomerOverviewDataPopulator();
-		MockitoAnnotations.initMocks(this);
+		//MockitoAnnotations.initMocks(this);
 	}
 
 	@Test
