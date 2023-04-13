@@ -287,9 +287,5 @@ INSERT_UPDATE SolrIndexedProperty ; solrIndexedType(identifier)[unique = true] ;
                                   ; $solrIndexedType                           ; productType_Other     ; text       ;                    ;                           ; true                           ;                             ;                        ;                 ;                 ;          ;         ;                                      ;                                     ; blOtherProductTypeValueProvider     ;                          ;                         ;                   ;                
 
 
-INSERT_UPDATE SolrSynonymConfig ; facetSearchConfig(name)[unique=true] ; language(isocode)[unique=true] ; synonymFrom[unique=true] ; synonymTo 
-                                ; "blindex"                            ; "en"                           ; "JennAir"                ; "Jenn-Air"
-
-
 INSERT_UPDATE SolrIndexedProperty ; solrIndexedType(identifier)[unique = true] ; name[unique = true] ; type(code) ; sortableType(code) ; currency[default = false] ; localized[default = false] ; multiValue[default = false] ; facet[default = false] ; facetType(code) ; facetSort(code) ; priority ; visible ; useForSpellchecking[default = false] ; useForAutocomplete[default = false] ; fieldValueProvider                 ; facetDisplayNameProvider ; customFacetSortProvider ; topValuesProvider ; rangeSets(name)
                                   ; $solrIndexedType                           ; modifiedTimeinSec   ; long       ;                    ;                           ;                            ;                             ;                        ;                 ;                 ;          ;         ;                                      ;                                     ; blProductModifiedTimeValueProvider ;                          ;                         ;                   ;                
