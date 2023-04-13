@@ -52,13 +52,13 @@
              <div class="form-group">
             <form:input id="address.phone" name="phone" class="form-control mb-3"  placeholder="Phone Number" type="text" path="phone" inputCSS="form-control" mandatory="false" maxlength="16" />
             </div> 
-            <input type="checkbox" id="default-billing-address" name="billingAddress" ${addressForm.billingAddress eq 'true' ? 'checked':''} >
+            <input type="checkbox"checked="true" id="default-billing-address" name="billingAddress" ${addressForm.billingAddress eq 'true' ? 'checked':''} >
             <label for="default-billing-address">
                <span class="gray80">
                   <spring:theme code="text.default.billing"/>
                </span>
             </label>
-            <input type="checkbox" id="default-shipping-address" name="shippingAddress" ${addressForm.shippingAddress eq 'true' ? 'checked':''} >
+            <input type="checkbox" checked="true" id="default-shipping-address" name="shippingAddress" ${addressForm.shippingAddress eq 'true' ? 'checked':''} >
             <label for="default-shipping-address">
                <span class="gray80">
                   <spring:theme code="text.default.shipping"/>
