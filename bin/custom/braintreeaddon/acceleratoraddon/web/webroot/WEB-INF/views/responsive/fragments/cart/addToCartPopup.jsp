@@ -177,14 +177,14 @@
                                                                                                         <div class="input-group">
                                                                                                          <span class="input-group-btn">
                                                                                                            <button type="button" class="btn btn-default btn-number"
-                                                                                                            data-type="minus" data-field="quant[2]">
+                                                                                                            data-type="minus" data-field="quant[2]${productReference.target.code}">
                                                                                                             <span class="glyphicon glyphicon-minus"></span>
                                                                                                            </button>
-                                                                                                           </span> <input type="text" name="quant[2]" id="qty" class="form-control input-number"
+                                                                                                           </span> <input type="text" name="quant[2]${productReference.target.code}" id="qty-${productReference.target.code}" class="form-control input-number"
                                                                                                                  value="1" min="1" max="99">
                                                                                                             <span class="input-group-btn">
                                                                                                             <button type="button"  class="btn btn-default btn-number"
-                                                                                                              data-type="plus" data-field="quant[2]" >
+                                                                                                              data-type="plus" data-field="quant[2]${productReference.target.code}" >
                                                                                                            <span class="glyphicon glyphicon-plus"></span>
                                                                                                          </button>
                                                                                                        </span>
