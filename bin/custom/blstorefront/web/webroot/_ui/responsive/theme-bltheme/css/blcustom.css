@@ -1287,5 +1287,9 @@ object-position:center;
  #globalSearch .input-group input:first-child {
    width: calc(100% - 580px);
  }
+
+ .blHomePage-search-bar {
+  margin-bottom : 10px;
+ }
 }
  
