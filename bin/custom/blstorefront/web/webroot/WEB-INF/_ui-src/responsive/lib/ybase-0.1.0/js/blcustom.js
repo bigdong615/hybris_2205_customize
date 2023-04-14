@@ -509,7 +509,10 @@ if($(".arrival").hasClass("nextAvailDate") && !$(".js-add-to-cart").hasClass("js
                          e.preventDefault();
                          let popUpId = this.getAttribute("id");
                           var productCode = $(this).attr('data-product-code');
-                          var quantity = $('#qty').val();
+                          var quantity_id='qty' + '-' + productCode ;
+                          var quantity_textbox = document.getElementById(quantity_id);
+                          var quantity = quantity_textbox.value;
+                          var quantity_btn = 'quant[2]' + productCode ;
                           var serialCode = $(this).attr('data-serial');
                           if(serialCode == '' || serialCode == undefined){
                          serialCode = "serialCodeNotPresent";
@@ -525,8 +528,8 @@ if($(".arrival").hasClass("nextAvailDate") && !$(".js-add-to-cart").hasClass("js
                                       var index = $( ".js-add-to-cart-popup" ).index( this );
                                       document.getElementById(popUpId).innerHTML= "Added";
                                       document.getElementById(popUpId).setAttribute("disabled", true);
-                                      $('.js-add-to-cart-popup').parent().find('#qty').prop("disabled", true);
-                                      $('.js-add-to-cart-popup').parent().find('.btn-number').prop("disabled", true);
+                                      quantity_textbox.setAttribute("disabled",true);
+                                      $(".btn-number[data-field='"+quantity_btn+"']").prop("disabled",true);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                           ACC.minicart.updateMiniCartDisplay();
                                       }
