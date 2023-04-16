@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<!--  
+<!--
  For more information, on how to customize this file, please see https://lucene.apache.org/solr/guide/7_5/documents-fields-and-schema-design.html
 -->
 
 <schema name="hybris" version="7.5">
-	<types>	
+	<types>
 		<!-- Basic Types -->
 
 		<fieldType name="boolean" class="solr.BoolField" docValues="true" sortMissingLast="true" />
@@ -61,7 +61,7 @@
 				<filter class="solr.LowerCaseFilterFactory" />
 				<!-- <filter class="solr.KeywordRepeatFilterFactory" /> -->
 				<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
-				<filter class="solr.PorterStemFilterFactory" />
+				<!-- <filter class="solr.PorterStemFilterFactory" /> -->
 				<!-- <filter class="solr.SnowballPorterFilterFactory" language="English" /> -->
 				<!-- <filter class="solr.EnglishMinimalStemFilterFactory" /> -->
 				<!-- <filter class="solr.ASCIIFoldingFilterFactory" /> -->
@@ -76,7 +76,7 @@
 				<filter class="solr.LowerCaseFilterFactory" />
 				<!-- <filter class="solr.KeywordRepeatFilterFactory" /> -->
 				<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
-				<filter class="solr.PorterStemFilterFactory" />
+				<!-- <filter class="solr.PorterStemFilterFactory" /> -->
 				<!-- <filter class="solr.SnowballPorterFilterFactory" language="English" /> -->
 				<!-- <filter class="solr.EnglishMinimalStemFilterFactory" /> -->
 				<!-- <filter class="solr.ASCIIFoldingFilterFactory" /> -->
