@@ -2,10 +2,8 @@
 # Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 # -----------------------------------------------------------------------
 #
-# Import the Solr configuration for the store
+# Import the Solr synonyms configuration for the store
 #
-
-#% impex.info("=============================== Importing content from BLInitialData coredata/stores solr_en.impex =========================");
 
  
 # Index Type
