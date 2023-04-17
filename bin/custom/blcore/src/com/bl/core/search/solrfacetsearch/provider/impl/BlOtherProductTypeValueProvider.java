@@ -47,27 +47,13 @@ public class BlOtherProductTypeValueProvider extends AbstractPropertyFieldValueP
 		if (model instanceof BlProductModel)
 		{
 			final BlProductModel product = (BlProductModel) model;
-			if (model instanceof BlProductModel)
+			final Collection<FieldValue> fieldValues = new ArrayList<FieldValue>();
+			final Collection<LanguageModel> languages = indexConfig.getLanguages();
+			for (final LanguageModel language : languages)
 			{
-				final String status = ((BlProductModel) model).getProductType().getCode();
-				if (status.equals(ProductTypeEnum.BATTERIES.getCode()) || status.equals(ProductTypeEnum.LENSES.getCode())
-						|| status.equals(ProductTypeEnum.CAMERAS.getCode()))
-				{
-					return addFieldValues(new ArrayList<>(), indexedProperty, "");
-				}
+				fieldValues.addAll(createFieldValue(product, language, indexedProperty));
 			}
-			else
-			{
-				final Collection<FieldValue> fieldValues = new ArrayList<FieldValue>();
-
-				final Collection<LanguageModel> languages = indexConfig.getLanguages();
-				for (final LanguageModel language : languages)
-				{
-					fieldValues.addAll(createFieldValue(product, language, indexedProperty));
-				}
-				return fieldValues;
-			}
-
+			return fieldValues;
 		}
 		return Collections.emptyList();
 	}
@@ -114,11 +100,21 @@ public class BlOtherProductTypeValueProvider extends AbstractPropertyFieldValueP
 			{
 				i18nService.setCurrentLocale(locale);
 			}
+			final String status = product.getProductType().getCode();
 
 			final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, language.getIsocode());
 			for (final String fieldName : fieldNames)
 			{
-				fieldValues.add(new FieldValue(fieldName, value));
+				if (status.equals(ProductTypeEnum.BATTERIES.getCode()) || status.equals(ProductTypeEnum.LENSES.getCode())
+						|| status.equals(ProductTypeEnum.CAMERAS.getCode()))
+				{
+					fieldValues.add(new FieldValue(fieldName, ""));
+				}
+				else
+				{
+					fieldValues.add(new FieldValue(fieldName, value));
+
+				}
 			}
 		}
 		else
@@ -127,24 +123,18 @@ public class BlOtherProductTypeValueProvider extends AbstractPropertyFieldValueP
 			final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
 			for (final String fieldName : fieldNames)
 			{
-				fieldValues.add(new FieldValue(fieldName, value));
+				if (product.getProductType().getCode().equals(ProductTypeEnum.BATTERIES.getCode()))
+				{
+					fieldValues.add(new FieldValue(fieldName, value + " " + "Battery batteries"));
+				}
+				else
+				{
+					fieldValues.add(new FieldValue(fieldName, ""));
+
+				}
 			}
 		}
 
-		return fieldValues;
-	}
-
-	/**
-	 * this method created for adding field values in solr property
-	 */
-	private List<FieldValue> addFieldValues(final List<FieldValue> fieldValues, final IndexedProperty indexedProperty,
-			final String value)
-	{
-		final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
-		for (final String fieldName : fieldNames)
-		{
-			fieldValues.add(new FieldValue(fieldName, value));
-		}
 		return fieldValues;
 	}
 
