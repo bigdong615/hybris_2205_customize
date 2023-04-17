@@ -6,7 +6,27 @@
 
 <template:page pageTitle="${pageTitle}">
 	<div class="screen"></div>
+	<div id="heroSearch" class="d-none d-md-block blHomePage-search-bar">
+				<div class="container">
+					<div class="row justify-content-center">
+						<div class="col-12">
+							<cms:pageSlot position="HomePageBannerSearchBoxSlot" var="feature">
+								<cms:component component="${feature}" />
+							</cms:pageSlot>
+						</div>
+					</div>
+				</div>
+			</div>
+		<!-- BL-360 : HomePage Mobile device Search Box Section -->
+    	<div class="wrapup-search">
+    	<section id="globalSearch" class="d-md-none">
+    		<cms:pageSlot position="MobileHomePageBannerSearchBoxSlot" var="feature">
+    			<cms:component component="${feature}" />
+    		</cms:pageSlot>
+    	</section>
+    	</div>
 	<section id="hero">
+
 		<div class="container">
 			<div id="hero-slider" class="splide">
 				<div class="splide__track">
@@ -17,28 +37,10 @@
 					</ul>
 				</div>
 			</div>
-			<div id="heroSearch" class="d-none d-md-block">
-				<div class="container">
-					<div class="row justify-content-center">
-						<div class="col-md-10 col-lg-9">
-							<cms:pageSlot position="HomePageBannerSearchBoxSlot" var="feature">
-								<cms:component component="${feature}" />
-							</cms:pageSlot>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 	</section>
 	
-	<!-- BL-360 : HomePage Mobile device Search Box Section -->
-	<div class="wrapup-search">
-	<section id="globalSearch" class="d-md-none">
-		<cms:pageSlot position="MobileHomePageBannerSearchBoxSlot" var="feature">
-			<cms:component component="${feature}" />
-		</cms:pageSlot>
-	</section>
-	</div>
+
 	<section id="theProcess">
 		<div class="container">
 			<!-- BL-52 : HomePage Featured Gear section -->
