@@ -109,7 +109,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     if(null != source.getGiftCardAmount()){
       totalGiftCardDiscount = source.getGiftCardAmount();
     }
-    final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
+    final Double totalDiscount = totalPromotionDiscount;
     target.setTotalDiscounts(createPrice(source , totalDiscount));
     populateTrackingNumberAndUrl(source , target);
     
