@@ -183,9 +183,10 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         sumOfGearValue = order.getSumOfGearValueOnOrder();
       }
       List<OrderModel> availableOrderForCustomer = new ArrayList<>();
+      int verifiedOrderCount = 0;
       int completedOrderCount = 0;
       Boolean LateOrderFlag = Boolean.FALSE;
-      Boolean ApproveOrderFlag = Boolean.FALSE;
+      Boolean ApproveOrderFlag = Boolean.TRUE;
       Boolean RecentOrderFlag = Boolean.FALSE;
 
       if (order.getUser() != null) {
@@ -199,18 +200,16 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
               RecentOrderFlag = Boolean.TRUE;
             }
           }
+          /* BLS-57 Fix */
           for (OrderModel orderModel : availableOrderForCustomer) {
-            if (orderModel.getVerificationStatus() != null && ((orderModel.getVerificationStatus().equals(VerificationStatusEnum.NA)|| (orderModel.getVerificationStatus().equals(VerificationStatusEnum.DENY)))))
-            {
-              ApproveOrderFlag = Boolean.TRUE;
-              break;
-            }
-
-            else
-            {
-              ApproveOrderFlag = Boolean.FALSE;
+            if (orderModel.getVerificationStatus() != null && ((orderModel.getVerificationStatus().equals(VerificationStatusEnum.APPROVE)))) {
+              verifiedOrderCount = verifiedOrderCount + 1;
+              if (verifiedOrderCount >= 1) {
+                ApproveOrderFlag = Boolean.FALSE;
+              }
             }
           }
+
           for (OrderModel orderModel : availableOrderForCustomer) {
             if (orderModel.getStatus() != null && orderModel.getStatus().equals(OrderStatus.LATE)) {
               LateOrderFlag = Boolean.TRUE;
