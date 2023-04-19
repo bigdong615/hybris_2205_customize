@@ -351,7 +351,10 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .litepicker { border-radius: 10px; font-family: font-family: 'Poppins', 'Helvetica', Arial, sans-serif; font-weight: 400; box-shadow: 0 15px 20px rgb(0,0,0,.5); -webkit-box-shadow: 0 15px 20px rgb(0,0,0,.5); }
 /* Litepicker position override */
 #globalSearch .litepicker:not(.mobilefriendly) { left: auto!important; right: 40px!important; }
-.home .litepicker:not(.mobilefriendly) { left: 50%!important; margin-left: -385px; width: 770px; }
+/* BLS-218 Changes by Sunil Kumar */
+.home .litepicker:not(.mobilefriendly) { right: 50%!important; margin-left: -385px; width: 770px; }
+.litepicker:not(.mobilefriendly) { left: 50%!important; margin-left: -385px; width: 770px; }
+
 .litepicker:not(.mobilefriendly) .container__months .month-item { width: calc(var(--litepicker-month-width) + 57px); padding: 10px 20px 0; }
 .litepicker:not(.mobilefriendly) .container__months.columns-2 { padding: 30px 20px 0; -webkit-box-shadow: none; box-shadow: none; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; width: calc((var(--litepicker-month-width) * 2) + 200px); }
 .litepicker .container__months .month-item-header { font-size: 20px; }
