@@ -1292,4 +1292,10 @@ object-position:center;
   margin-bottom : 10px;
  }
 }
- 
+  /* Added for BLS-215*/
+ #logo-slider .splide__pagination li:only-child,
+ #gear-slider .splide__pagination li:only-child,
+ .card-slider .splide__pagination li:only-child{
+ visibility: hidden;
+ }
+
