@@ -1260,40 +1260,41 @@ object-position:center;
 }
 }
 
-@media only screen and (min-width: 835px) {
-.input-group .btn-search { 
-	width: 184px; height: 50px; 
-	text-indent: 0px; 
-	background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f; 
-	border-radius: 25px;
-	color: #fff; 
-	text-align: center; 
-	padding-left: 30px; 
+
++@media only screen and (min-width: 835px) {
+ .input-group .btn-search {
+	width: 184px; height: 50px;
+ 	text-indent: 0px;
+ 	background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f;
+ 	border-radius: 25px;
+ 	color: #fff;
+ 	text-align: center;
+ 	padding-left: 30px;
 	background-position: 43px 17px;
-	
+
  }
- .input-group {
+.input-group {
      border: 1px solid #D4D3D3;
      padding: 0px 5px 0px 20px;
- }
- 
- .input-group .btn-search:hover {
-    background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f !important; 
-    color: #fff; 
-	text-align: center; 
-	padding-left: 30px; 
+  }
+
+  .input-group .btn-search:hover {
+     color: #fff;
+ 	text-align: center;
+ 	padding-left: 30px;
 	background-position: 43px 17px !important;
- }
- 
- #hero .input-group {
-    width: 680px;
- }
- 
+  }
+
+  #hero .input-group {
+     width: 680px;
+  }
+
+
 
  .blHomePage-search-bar {
-  margin-bottom : 10px;
- }
- 
+   margin-bottom : 10px;
+  }
+
  .input-button-search {
      padding-top: 5px;
      padding-bottom: 5px;
@@ -1311,7 +1312,8 @@ object-position:center;
 	height: 20px;
 	margin-bottom: -3px;
 	margin-right: 8px;
-}
+ }
+
 
 .blHomePage-search-bar#heroSearch .input-group span{
 padding-left: 2px;
@@ -1326,18 +1328,18 @@ padding-right: 0px;
 }
 
   @media (max-width: 834px){
-  .input-group .btn-search { 
-           width: 130px; height: 50px; 
-           text-indent: 0px; 
-	background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f; 
+  .input-group .btn-search {
+           width: 130px; height: 50px;
+           text-indent: 0px;
+	background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f;
 	border-radius: 25px;
-	color: #fff; 
-	text-align: center; 
-	padding-left: 30px; 
+	color: #fff;
+	text-align: center;
+	padding-left: 30px;
 	background-position: 16px 17px;
         }
   }
- 
+
  .input-group {
    padding: 0px 5px 0px 20px;
  }
@@ -1352,12 +1354,12 @@ padding-right: 0px;
    border-right: 2px solid #ddd;
    margin-right:25px;
  }
- 
+
  #globalSearch .input-group span, #productDates .input-group span {
     line-height: 60px;
     border : none;
  }
- 
+
  #heroSearch .form-control:first-of-type{
      background:none;
      padding-left: 10px;
@@ -1367,3 +1369,10 @@ padding-right: 0px;
      text-decoration: none;
      height:1000px;
   }
+  /* Added for BLS-215*/
+ #logo-slider .splide__pagination li:only-child,
+ #gear-slider .splide__pagination li:only-child,
+ .card-slider .splide__pagination li:only-child{
+ visibility: hidden;
+ }
+
