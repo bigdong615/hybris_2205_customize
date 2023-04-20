@@ -1047,6 +1047,23 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * {@inheritDoc}
      */
     @Override
+    public List<ShippingOptimizationModel> getOptimizedShippingRecords(final int carrierId, final int warehouseCode, final String customerZip) {
+        return getBlZoneDeliveryModeDao().getOptimizedShippingRecords(carrierId, warehouseCode, customerZip);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ShippingOptimizationModel> getOptimizedShippingRecordsForCarrierAndZip(final int carrierId, final String customerZip) {
+        return getBlZoneDeliveryModeDao().getOptimizedShippingRecordsForCarrierAndZip(carrierId, customerZip);
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Collection<ConsignmentModel> getAllGroundedConsignments() {
         return getBlZoneDeliveryModeDao().getAllGroundedConsignments(BlDateTimeUtils.getCurrentDateUsingCalendar(
                 BlDeliveryModeLoggingConstants.ZONE_PST, BlDateTimeUtils.getStringToDateWithTimeZone(BlDateTimeUtils.getYesterdayDate(),
