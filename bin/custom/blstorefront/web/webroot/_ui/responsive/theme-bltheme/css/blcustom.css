@@ -1260,36 +1260,130 @@ object-position:center;
 }
 }
 
-@media only screen and (min-width: 668px) {
-.input-group .btn-search { 
-	width: 135px; height: 50px; 
-	text-indent: 0px; 
-	background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f; 
-	border-radius: 25px;
-	color: #fff; 
-	text-align: center; 
-	padding-left: 30px; 
-	background-position: 20px 17px;
+
+@media only screen and (min-width: 835px) {
+ .input-group .btn-search {
+	width: 184px; height: 50px;
+ 	text-indent: 0px;
+ 	background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f;
+ 	border-radius: 25px;
+ 	color: #fff;
+ 	text-align: center;
+ 	padding-left: 30px;
+	background-position: 43px 17px;
+
  }
- 
- .input-group .btn-search:hover {
-    background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f !important; 
-    color: #fff; 
-	text-align: center; 
-	padding-left: 30px; 
-	background-position: 20px 17px !important;
- }
- 
- #hero .input-group {
-    width: 680px;
- }
- 
- #globalSearch .input-group input:first-child {
-   width: calc(100% - 580px);
- }
+.input-group {
+     border: 1px solid #D4D3D3;
+     padding: 0px 5px 0px 20px;
+  }
+
+  .input-group .btn-search:hover {
+     color: #fff;
+ 	text-align: center;
+ 	padding-left: 30px;
+	background-position: 43px 17px !important;
+  }
+
+  #hero .input-group {
+     width: 680px;
+  }
+
+
 
  .blHomePage-search-bar {
-  margin-bottom : 10px;
+   margin-bottom : 10px;
+  }
+
+ .input-button-search {
+     padding-top: 5px;
+     padding-bottom: 5px;
  }
 }
- 
+
+.blHomePage-search-bar .input-group input:first-child {
+	width: calc(100% - 760px);
+    margin-right: 25px;
+}
+
+.blHomePage-search-bar .icon-calendar {
+	display: inline-block;
+	width: 18px;
+	height: 20px;
+	margin-bottom: -3px;
+	margin-right: 8px;
+ }
+
+
+.blHomePage-search-bar#heroSearch .input-group span{
+padding-left: 2px;
+font-weight: 700;
+line-height: 60px;
+padding-right: 0px;
+}
+
+.blHomePage-search-bar .input-group input#litepicker{
+	background: none;
+	padding-left: 0px;
+}
+
+  @media (max-width: 834px){
+  .input-group .btn-search {
+    width: 130px; height: 50px;
+    text-indent: 0px;
+	background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f;
+	border-radius: 25px;
+	color: #fff;
+	text-align: center;
+	padding-left: 30px;
+	background-position: 16px 17px;
+        }
+
+        .input-group .btn-search:hover {
+            width: 130px; height: 50px;
+            text-indent: 0px;
+        	background: url(../assets/icon-search-white.svg) no-repeat left #e64b4f;
+        	border-radius: 25px;
+        	color: #fff;
+        	text-align: center;
+        	padding-left: 30px;
+        	background-position: 16px 17px !important;
+        }
+  }
+
+ .input-group {
+   padding: 0px 5px 0px 20px;
+ }
+
+ .input-button-search {
+      padding-top: 5px;
+      padding-bottom: 5px;
+  }
+
+  #globalSearch .input-group.rental-search input:first-child {
+   width: calc(100% - 750px);
+   border-right: 2px solid #ddd;
+   margin-right:25px;
+ }
+
+ #globalSearch .input-group span, #productDates .input-group span {
+    line-height: 60px;
+    border : none;
+ }
+
+ #heroSearch .form-control:first-of-type{
+     background:none;
+     padding-left: 10px;
+ }
+
+ .embed-responsive-16by9 a{
+     text-decoration: none;
+     height:1000px;
+  }
+  /* Added for BLS-215*/
+ #logo-slider .splide__pagination li:only-child,
+ #gear-slider .splide__pagination li:only-child,
+ .card-slider .splide__pagination li:only-child{
+ visibility: hidden;
+ }
+

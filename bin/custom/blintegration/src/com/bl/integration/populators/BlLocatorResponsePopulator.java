@@ -83,8 +83,8 @@ public class BlLocatorResponsePopulator {
     final List<String> openingDaysDetails = new ArrayList<>();
     for(String day : openingDaysGroundDropOffTime.get(0).split(";")) {
       if(day.contains(",")){
-        openingDaysDetails.add(day.split(",")[0] + ":" +day.split(":")[1]);
-        openingDaysDetails.add(day.split(",")[1]);
+        openingDaysDetails.add(day.split(",")[0] + ":" +day.split(":")[1] + ":" +day.split(":")[2]);
+        openingDaysDetails.add(day.split(",")[2]);
       } else {
         openingDaysDetails.add(day);
       }
