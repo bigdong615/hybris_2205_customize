@@ -49,10 +49,24 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 		{
 			final Item item = new Item();
 			final Shipping shipping = new Shipping();
-			item.setId(product.getCode());
+			if (product.getCode()!=null && product.getCode().length() > 50)
+			{
+				item.setId(product.getCode().substring(0, 49));
+			}
+			else
+			{
+				item.setId(product.getCode());
+			}
 			item.setTitle(product.getName());
 			item.setLink(target.getLink() + "/buy/product/" + product.getCode());
-			item.setDescription(product.getDescription());
+			if (product.getDescription()!=null && product.getDescription().length() > 5000)
+			{
+				item.setDescription(product.getDescription().substring(0, 4999));
+			}
+			else
+			{
+				item.setDescription(product.getDescription());
+			}
 			item.setCondition("Used");
 			item.setAvailability("in_stock");
 			item.setBrand(product.getManufacturerName());
