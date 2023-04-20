@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.bl.core.model.IpVelocityFilterModel;
+import com.bl.core.service.ipVelocity.BlIpVelocityService;
+
 
 /**
  * Default implementation of {@link AuthenticationSuccessHandler}
@@ -26,6 +29,7 @@ public class GUIDAuthenticationSuccessHandler implements AuthenticationSuccessHa
 	private static final Logger LOG = Logger.getLogger(GUIDAuthenticationSuccessHandler.class);
 	private GUIDCookieStrategy guidCookieStrategy;
 	private AuthenticationSuccessHandler authenticationSuccessHandler;
+	private BlIpVelocityService blIpVelocityService;
 
 	@Override
 	public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response,
@@ -34,6 +38,22 @@ public class GUIDAuthenticationSuccessHandler implements AuthenticationSuccessHa
 		getGuidCookieStrategy().setCookie(request, response);
 		getAuthenticationSuccessHandler().onAuthenticationSuccess(request, response, authentication);
 		final String userIp = getUserIp(request);
+
+		final IpVelocityFilterModel velocityFilterModel = getBlIpVelocityService().getUserData(userIp,
+				(String) authentication.getPrincipal());
+		if (velocityFilterModel != null)
+		{
+			getBlIpVelocityService().updateDetails(velocityFilterModel, true);
+
+		}
+		else
+		{
+			getBlIpVelocityService().createNewEntry(userIp, (String) authentication.getPrincipal());
+
+		}
+
+		getBlIpVelocityService().checkIfIpNeedsToBlock(userIp);
+
 		LOG.info("Customer with email id :- " + authentication.getPrincipal() + " Logged in successfully with IP address :- "
 				+ userIp);
 	}
@@ -111,5 +131,22 @@ public class GUIDAuthenticationSuccessHandler implements AuthenticationSuccessHa
 	public void setAuthenticationSuccessHandler(final AuthenticationSuccessHandler authenticationSuccessHandler)
 	{
 		this.authenticationSuccessHandler = authenticationSuccessHandler;
+	}
+
+	/**
+	 * @return the blIpVelocityService
+	 */
+	public BlIpVelocityService getBlIpVelocityService()
+	{
+		return blIpVelocityService;
+	}
+
+	/**
+	 * @param blIpVelocityService
+	 *           the blIpVelocityService to set
+	 */
+	public void setBlIpVelocityService(final BlIpVelocityService blIpVelocityService)
+	{
+		this.blIpVelocityService = blIpVelocityService;
 	}
 }

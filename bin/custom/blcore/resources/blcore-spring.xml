@@ -2071,18 +2071,22 @@
 	
 	<bean id="blCameraProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlCameraProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+  		<property name="commonI18NService" ref="commonI18NService"/>
 	</bean>
 	
     <bean id="blLenseProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlLenseProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+  		<property name="commonI18NService" ref="commonI18NService"/> 		
 	</bean>
 	
     <bean id="blBatteriesProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlBatteriesProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+  		<property name="commonI18NService" ref="commonI18NService"/>  		
 	</bean>
 	
     <bean id="blOtherProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlOtherProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+  		<property name="commonI18NService" ref="commonI18NService"/>  		
 	</bean>
 	
 	<bean id="blBigDecimalValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BigDecimalValueProvider" parent="abstractPropertyFieldValueProvider">
@@ -2278,4 +2282,17 @@
 		<property name="typeCode" value="Product"/>
 	</bean>
 	<!-- BLS-183 END-->
+	
+	<alias name="defaultBlIpVelocityService" alias="blIpVelocityService"/>
+	<bean id="defaultBlIpVelocityService" class="com.bl.core.service.ipVelocity.impl.DefaultBlIpVelocityService">
+		<property name="blIpVelocityDao" ref="blIpVelocityDao"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="configurationService" ref="configurationService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+	</bean>
+	
+	<alias name="defaultBlIpVelocityDao" alias="blIpVelocityDao"/>
+	<bean id="defaultBlIpVelocityDao" class="com.bl.core.dao.ipVelocity.impl.DefaultBlIpVelocityDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
 </beans>

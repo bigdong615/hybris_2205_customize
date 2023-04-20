@@ -110,6 +110,7 @@
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/litepicker_search.js"></script>
 		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
     	<script src="${commonResourcePathHtml}/js/mburger.js"></script>
@@ -123,6 +124,8 @@
 				 {
 					 $("#litepicker").val('');
 					 $("#litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#litepicker_search").val('');
+                     $("#litepicker_search").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
 					 $("#mobile-litepicker").val('');
 					 $("#mobile-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
 					 $("#product-litepicker").val('');
@@ -467,7 +470,8 @@ console.log("First start");
             if ($(window).width() < 400 ) {
                 $("input#litepicker").attr("placeholder","Dates...");
             }
-            else { $("input#litepicker").attr("placeholder","Select dates...");}
+            else{$("input#litepicker").attr("placeholder","Search by date");}
+
             //BL-520 - disable previous dates
              let date = new Date();
              let dd = String(date.getDate() - 1).padStart(2, '0');
@@ -479,8 +483,9 @@ console.log("First start");
                  let oneYearFromNow = new Date();
                  let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
 			     const disallowedDates = [['2001-01-01', today], '2023-01-16', '2023-02-20','2023-05-29', '2023-07-04', '2023-09-04', '2023-11-23', '2023-11-24', '2023-12-25', '2023-12-26', '2023-12-29', '2024-01-01'];
-            const picker = new Litepicker({
-                element: document.getElementById('litepicker'),
+
+              const picker = new Litepicker({
+              element: document.getElementById('litepicker'),
                 //plugins: ['mobilefriendly'],
                 singleMode: false,
                 numberOfMonths: 2,
@@ -629,6 +634,82 @@ console.log("First start");
                       //Change the defaul button values
                          buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
             });
+            //BLS-224 Changes
+            //By:Sunil Kumar
+             const kpicker = new Litepicker({
+                            element: document.getElementById('litepicker_search'),
+                            singleMode: false,
+                            numberOfMonths: 2,
+                            numberOfColumns: 2,
+                            autoApply: false,
+                            format: "MMM D, YYYY",
+                            resetButton: () => {
+                				 let btn = document.createElement('button');
+                				 btn.innerText = 'Reset';
+                				 btn.className = 'reset-button';
+                				 btn.addEventListener('click', (evt) => {
+                				 evt.preventDefault();
+                				 $.ajax({
+                                    url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                    type: "GET",
+                                    success: function (data) {
+                                    	if(data=='success')
+                                        window.location.reload();
+                                    },
+                                    error: function (xhr, textStatus, error) {
+
+                                    }
+                                });
+                				});
+                				return btn;
+                				},
+                         tooltipNumber: (totalDays) => {
+                          return totalDays - 1;
+                        },
+
+                            setup: (picker) => {
+                      			picker.on('button:apply', (date1, date2) => {
+                      				var searchText = document.getElementById('js-site-search-input-mob').value;
+                      				trackDateSelection(date1,date2);
+                      				var rentalGear = 'rentalGear';
+                      				var contextPath = ACC.config.contextPath;
+                      				$.ajax({
+                  	                    url: ACC.config.encodedContextPath + '/datepicker',
+                  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                  	                    type: "GET",
+                  	                    success: function (data) {
+                  	                    	if(searchText == '' && data=='success'){
+                  	                    		window.location.reload();
+                  	                    	}
+                  	                    	else{
+                  	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+                  	                    	}
+                  	                    },
+                                    error: function (xhr, textStatus, error) {
+
+                                    }
+                                });
+                      			});
+                      			},
+                      			 //BL-520 - disable weekends in the calendar
+                                    lockDaysFilter: (day) => {
+                                          const d = day.getDay();
+                                          if($("#enableSaturdays").val() === 'true'){
+                                         	 return [0].includes(d);
+                                          }
+                                           return [6, 0].includes(d);
+                                        },
+                                     lockDays: disallowedDates,
+                                  //Limit days selection to 91 days
+                                     maxDays: 91,
+                                     minDays: 2,
+                                  //Disable dates after one year from today
+                                     maxDate: disableDatesOneYearFomNow,
+                                  //Set Sunday to be the first day in the calendar's header
+                                     firstDay: 0,
+                                  //Change the defaul button values
+                                     buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                        });
             console.log("First End");
         </script>
   	</c:if>
