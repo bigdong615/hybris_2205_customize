@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,6 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -1047,6 +1049,23 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * {@inheritDoc}
      */
     @Override
+    public List<ShippingOptimizationModel> getOptimizedShippingRecords(final int carrierId, final int warehouseCode, final String customerZip) {
+        return getBlZoneDeliveryModeDao().getOptimizedShippingRecords(carrierId, warehouseCode, customerZip);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ShippingOptimizationModel> getOptimizedShippingRecordsForCarrierAndZip(final int carrierId, final String customerZip) {
+        return getBlZoneDeliveryModeDao().getOptimizedShippingRecordsForCarrierAndZip(carrierId, customerZip);
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Collection<ConsignmentModel> getAllGroundedConsignments() {
         return getBlZoneDeliveryModeDao().getAllGroundedConsignments(BlDateTimeUtils.getCurrentDateUsingCalendar(
                 BlDeliveryModeLoggingConstants.ZONE_PST, BlDateTimeUtils.getStringToDateWithTimeZone(BlDateTimeUtils.getYesterdayDate(),
@@ -1354,4 +1373,62 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 	 {
 		 this.blDeliveryModeService = blDeliveryModeService;
 	 }
+	 
+    public void updatePreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, int preDaysToDeduct, int postDaysToAdd)
+    {
+       int inboundServiceDays = 0;
+       int outboundServiceDays = 0;
+       
+   	 if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
+    		  shippingOptimizationModels = shippingOptimizationModels.stream().collect(minList(Comparator.comparing(ShippingOptimizationModel::getServiceDays)));      		
+    	  }
+    	 
+       if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
+      	 for(ShippingOptimizationModel model : shippingOptimizationModels) 
+      	 {
+      		 if(model.getInbound() == BlInventoryScanLoggingConstants.ONE) {
+      			 inboundServiceDays =  model.getServiceDays();     	        		  
+      		 }
+      		 else{
+      			 outboundServiceDays =  model.getServiceDays();     	        		        		  
+      		 }
+      	 }
+         preDaysToDeduct = outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays;
+         postDaysToAdd = inboundServiceDays;
+       }
+       else if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && null != shippingOptimizationModels.get(0))
+       {   	 
+      	 inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
+      	 outboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
+
+         preDaysToDeduct = outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays;
+         postDaysToAdd = inboundServiceDays;
+       }
+    }
+    
+    static <T> Collector<T, ?, List<T>> minList(Comparator<? super T> comp) {
+	    return Collector.of(ArrayList::new, (list, t) -> {
+	        int c;
+	        if (list.isEmpty() || (c = comp.compare(t, list.get(0))) == 0)
+	            list.add(t);
+	        else if (c < 0) {
+	            /*
+	             * We have found a smaller element than what we already have. Clear the list and
+	             * add this smallest element to it.
+	             */
+	            list.clear();
+	            list.add(t);
+	        }
+	    }, (list1, list2) -> {
+	        if (comp.compare(list1.get(0), list2.get(0)) < 0)
+	            return list1;
+	        else if (comp.compare(list1.get(0), list2.get(0)) > 0)
+	            return list2;
+	        else {
+	            list1.addAll(list2);
+	            return list1;
+	        }
+	    });
+	}
+    
 }
