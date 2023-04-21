@@ -9,6 +9,7 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * {javadoc}
@@ -381,7 +382,7 @@ public interface BlDeliveryModeService {
      */
     boolean isEligibleDeliveryModeForOrderTransfer(final ZoneDeliveryModeModel deliveryModeModel);
     
-
-    void updatePreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, int preDaysToDeduct, int postDaysToAdd);
-
+    
+    List<ShippingOptimizationModel> updatePreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, AtomicInteger preDaysToDeduct, AtomicInteger postDaysToAdd);
+    
 }

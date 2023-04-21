@@ -21,6 +21,7 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,21 +59,21 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
     // BLS-40 starts
     final int carrierId = getCarrierId((ZoneDeliveryModeModel) deliveryModeModel);
     final String addressZip = getAddressZip(cartModel.getDeliveryAddress());
- 	 int preDaysToDeduct = 0;
- 	 int postDaysToAdd = 0;
+ 	 AtomicInteger preDaysToDeduct = new AtomicInteger(0);
+ 	 AtomicInteger postDaysToAdd = new AtomicInteger(0);
 
     List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecordsForCarrierAndZip(carrierId, addressZip) : Collections.EMPTY_LIST;
     
     if(CollectionUtils.isNotEmpty(shippingOptimizationModels)) {
-   	 getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
+   	 shippingOptimizationModels = getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
     }
     else
     {
-        preDaysToDeduct = StringUtils.isNotBlank(deliveryModeModel.getPreReservedDays()) ? Integer
-                .parseInt(deliveryModeModel.getPreReservedDays()) : 0;
+        preDaysToDeduct.set(StringUtils.isNotBlank(deliveryModeModel.getPreReservedDays()) ? Integer
+                .parseInt(deliveryModeModel.getPreReservedDays()) : 0);
     
-        postDaysToAdd = StringUtils.isNotBlank(deliveryModeModel.getPostReservedDays()) ? Integer
-                .parseInt(deliveryModeModel.getPostReservedDays()) : 0;   	 
+        postDaysToAdd.set(StringUtils.isNotBlank(deliveryModeModel.getPostReservedDays()) ? Integer
+                .parseInt(deliveryModeModel.getPostReservedDays()) : 0);   	 
     }
     
     final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
@@ -81,10 +82,13 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
     
     if (null != rentalDateDto) {
       final Date startDay = BlDateTimeUtils
-          .subtractDaysInRentalDates(preDaysToDeduct, rentalDateDto.getSelectedFromDate(),
+          .subtractDaysInRentalDates(preDaysToDeduct.get(), rentalDateDto.getSelectedFromDate(),
               blackOutDates);
-      final Date endDay = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd,
-          rentalDateDto.getSelectedToDate(), blackOutDates);
+      
+      // Commenting replacing below line to get Post Order Transit Date same as optimized shipping end date. 
+      // final Date endDay = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd.get(), rentalDateDto.getSelectedToDate(), blackOutDates);
+      
+      final Date endDay = BlDateTimeUtils.addDaysInRentalDates(postDaysToAdd.get(), rentalDateDto.getSelectedToDate(), blackOutDates);
 
       cartModel.setActualRentalStartDate(startDay);
       cartModel.setActualRentalEndDate(endDay);
