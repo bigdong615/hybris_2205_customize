@@ -372,7 +372,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .litepicker .container__days .day-item.is-start-date:hover, .litepicker .container__days .day-item.is-end-date:hover { color: white; }
 .litepicker .container__days .day-item.is-start-date:before { content:''; display: block; height: 46px; width: 19px; right: 0; top: 0; position: absolute; background-color: #c1e2e3; transform: translateZ(-1px); }
 .litepicker .container__days .day-item.is-in-range { background-color: #c1e2e3; }
-.litepicker .container__days .day-item.is-end-date { border-radius: 50%; background-color: #e64b4f; transform-style: preserve-3d; }
+.litepicker .container__days .day-item.is-end-date { border-radius: 50%; background-color: #52bfc0; transform-style: preserve-3d; }
 .litepicker .container__days .day-item.is-end-date:before { content:''; display: block; height: 46px; width: 19px; left: 0; top: 0; position: absolute; background-color: #c1e2e3; transform: translateZ(-1px); }
 .litepicker .container__days .day-item.is-end-date:hover { box-shadow: none; color: #fff; }
 .litepicker .container__days .day-item.is-start-date.is-end-date { border-radius: 50%; }
