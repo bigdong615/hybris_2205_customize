@@ -48,25 +48,15 @@ public class BlCameraProductTypeValueProvider extends AbstractPropertyFieldValue
 		{
 			final BlProductModel product = (BlProductModel) model;
 
-			if (((BlProductModel) model).getProductType().getCode().equals(ProductTypeEnum.CAMERAS.getCode()))
-			{
-				final Collection<FieldValue> fieldValues = new ArrayList<FieldValue>();
+			final Collection<FieldValue> fieldValues = new ArrayList<FieldValue>();
 
-				final Collection<LanguageModel> languages = indexConfig.getLanguages();
-				for (final LanguageModel language : languages)
-				{
-					fieldValues.addAll(createFieldValue(product, language, indexedProperty));
-				}
-				return fieldValues;
-			}
-			else
+			final Collection<LanguageModel> languages = indexConfig.getLanguages();
+			for (final LanguageModel language : languages)
 			{
-				final Collection<LanguageModel> languages = indexConfig.getLanguages();
-				for (final LanguageModel language : languages)
-				{
-					return addFieldValues(new ArrayList<>(), indexedProperty, "");
-				}
+				fieldValues.addAll(createFieldValue(product, language, indexedProperty));
 			}
+			return fieldValues;
+
 		}
 		return Collections.emptyList();
 	}
@@ -117,7 +107,14 @@ public class BlCameraProductTypeValueProvider extends AbstractPropertyFieldValue
 			final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, language.getIsocode());
 			for (final String fieldName : fieldNames)
 			{
-				fieldValues.add(new FieldValue(fieldName, value));
+				if (product.getProductType().getCode().equals(ProductTypeEnum.CAMERAS.getCode()))
+				{
+					fieldValues.add(new FieldValue(fieldName, value));
+				}
+				else
+				{
+					fieldValues.add(new FieldValue(fieldName, ""));
+				}
 			}
 		}
 		else
@@ -126,7 +123,14 @@ public class BlCameraProductTypeValueProvider extends AbstractPropertyFieldValue
 			final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
 			for (final String fieldName : fieldNames)
 			{
-				fieldValues.add(new FieldValue(fieldName, value));
+				if (product.getProductType().getCode().equals(ProductTypeEnum.CAMERAS.getCode()))
+				{
+					fieldValues.add(new FieldValue(fieldName, value));
+				}
+				else
+				{
+					fieldValues.add(new FieldValue(fieldName, ""));
+				}
 			}
 		}
 
@@ -152,20 +156,6 @@ public class BlCameraProductTypeValueProvider extends AbstractPropertyFieldValue
 	protected Object getPropertyValue(final Object model, final String propertyName)
 	{
 		return modelService.getAttributeValue(model, propertyName);
-	}
-
-	/**
-	 * this method created for adding field values in solr property
-	 */
-	private List<FieldValue> addFieldValues(final List<FieldValue> fieldValues, final IndexedProperty indexedProperty,
-			final String value)
-	{
-		final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
-		for (final String fieldName : fieldNames)
-		{
-			fieldValues.add(new FieldValue(fieldName, value));
-		}
-		return fieldValues;
 	}
 
 }

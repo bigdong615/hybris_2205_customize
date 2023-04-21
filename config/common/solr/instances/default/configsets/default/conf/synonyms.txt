@@ -1,7 +1,0 @@
-# some examples:
-TV => Television
-GB,gib,gigabyte,gigabytes
-MB,mib,megabyte,megabytes
-pixl => pixel
-kamera => camera
-
