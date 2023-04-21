@@ -380,5 +380,8 @@ public interface BlDeliveryModeService {
      * @return true if the delivery mode supports internal transfer
      */
     boolean isEligibleDeliveryModeForOrderTransfer(final ZoneDeliveryModeModel deliveryModeModel);
+    
+
+    void getPreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, int preDaysToDeduct, int postDaysToAdd);
 
 }

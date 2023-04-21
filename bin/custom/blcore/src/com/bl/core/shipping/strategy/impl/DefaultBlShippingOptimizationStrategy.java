@@ -29,6 +29,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -261,41 +262,16 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     public boolean getOptimizedShippingMethodForOrder(final ConsignmentModel consignmentModel) {
         final String rentalStartDate = BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalStartDate());
         final String rentalEndDate = BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalEndDate());
-        
-        
         final int carrierId = getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode());
         final int warehouseCode = getWarehouseCode(consignmentModel.getWarehouse());
         final String addressZip = getAddressZip(consignmentModel.getShippingAddress());
-
-        List<ShippingOptimizationModel> shippingOptimizationModels = getZoneDeliveryModeService().getOptimizedShippingRecords(carrierId, warehouseCode, addressZip);
+     	  int preDaysToDeduct = 0;
+     	  int postDaysToAdd = 0;
+     	  
+        List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecords(carrierId, warehouseCode, addressZip) : Collections.EMPTY_LIST;
         
-     	  // Business logic to filter warehouseModel from list of warehouse model.
-     	  if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
-     		  shippingOptimizationModels = shippingOptimizationModels.stream().collect(minList(Comparator.comparing(ShippingOptimizationModel::getServiceDays)));      		
-     	  }
-     	 
-        int inboundServiceDays = 0;
-        int outboundServiceDays = 0;
-        
-        if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
-       	 for(ShippingOptimizationModel model : shippingOptimizationModels) 
-       	 {
-       		 if(model.getInbound() == BlInventoryScanLoggingConstants.ONE) {
-       			 inboundServiceDays =  model.getServiceDays();     	        		  
-       		 }
-       		 else{
-       			 outboundServiceDays =  model.getServiceDays();     	        		        		  
-       		 }
-       	 }
-        }
-        else if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && null != shippingOptimizationModels.get(0))
-        {   	 
-       	 inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
-       	 outboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
-        }
-
-        final int preDaysToDeduct = outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays;
-        final int postDaysToAdd = inboundServiceDays;
+     	  // To get the INBOUND and OUTBOUND service days from shipping optimization records
+        getZoneDeliveryModeService().getPreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
  
         final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOrder().getActualRentalStartDate(),
       	   	 consignmentModel.getOrder().getRentalStartDate(), consignmentModel.getWarehouse().getCutOffTime());
@@ -342,7 +318,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
 
          return false;
     }
-
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -649,31 +626,6 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         return BlInventoryScanLoggingConstants.ZERO;
     }
 
-
-    static <T> Collector<T, ?, List<T>> minList(Comparator<? super T> comp) {
-	    return Collector.of(ArrayList::new, (list, t) -> {
-	        int c;
-	        if (list.isEmpty() || (c = comp.compare(t, list.get(0))) == 0)
-	            list.add(t);
-	        else if (c < 0) {
-	            /*
-	             * We have found a smaller element than what we already have. Clear the list and
-	             * add this smallest element to it.
-	             */
-	            list.clear();
-	            list.add(t);
-	        }
-	    }, (list1, list2) -> {
-	        if (comp.compare(list1.get(0), list2.get(0)) < 0)
-	            return list1;
-	        else if (comp.compare(list1.get(0), list2.get(0)) > 0)
-	            return list2;
-	        else {
-	            list1.addAll(list2);
-	            return list1;
-	        }
-	    });
-	}
     
     public BlDeliveryModeService getZoneDeliveryModeService() {
         return zoneDeliveryModeService;

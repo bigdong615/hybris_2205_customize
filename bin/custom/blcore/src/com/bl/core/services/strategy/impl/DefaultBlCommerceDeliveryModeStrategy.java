@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.stream.Collector;
 
 /**
@@ -57,42 +58,13 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
     // BLS-40 starts
     final int carrierId = getCarrierId((ZoneDeliveryModeModel) deliveryModeModel);
     final String addressZip = getAddressZip(cartModel.getDeliveryAddress());
+ 	 int preDaysToDeduct = 0;
+ 	 int postDaysToAdd = 0;
 
-    List<ShippingOptimizationModel> shippingOptimizationModels = getZoneDeliveryModeService().getOptimizedShippingRecordsForCarrierAndZip(carrierId, addressZip);
+    List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecordsForCarrierAndZip(carrierId, addressZip) : Collections.EMPTY_LIST;
     
- 	 // Business logic to filter warehouseModel from list of warehouse model.
- 	 if(StringUtils.isNotBlank(addressZip) && CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
-  		 shippingOptimizationModels = shippingOptimizationModels.stream().collect(minList(Comparator.comparing(ShippingOptimizationModel::getServiceDays)));      		
- 	 }
-    
-    int inboundServiceDays = 0;
-    int outboundServiceDays = 0;
-
-    int preDaysToDeduct = 0;
-    int postDaysToAdd = 0;
-    
-    if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
-   	 for(ShippingOptimizationModel model : shippingOptimizationModels) 
-   	 {
-   		 if(model.getInbound() == BlInventoryScanLoggingConstants.ONE) {
-   			 inboundServiceDays =  model.getServiceDays();     	        		  
-   		 }
-   		 else{
-   			 outboundServiceDays =  model.getServiceDays();     	        		        		  
-   		 }
-   	 }
-
-       preDaysToDeduct = outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays;
-       postDaysToAdd = inboundServiceDays;
-   	 
-    }
-    else if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && null != shippingOptimizationModels.get(0)) 
-    {   	 
-   	 inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
-   	 outboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
-   	 
-       preDaysToDeduct = outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays;
-       postDaysToAdd = inboundServiceDays;
+    if(CollectionUtils.isNotEmpty(shippingOptimizationModels)) {
+   	 getZoneDeliveryModeService().getPreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
     }
     else
     {
