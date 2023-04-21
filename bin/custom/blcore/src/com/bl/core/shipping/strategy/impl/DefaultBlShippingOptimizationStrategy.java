@@ -18,6 +18,7 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -494,6 +495,11 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                                                   final Date optimizedEndDate, final OptimizedShippingMethodEnum optimizedShippingMethod) {
         consignmentModel.setOptimizedShippingStartDate(optimizedStartDate);
         consignmentModel.setOptimizedShippingEndDate(optimizedEndDate);
+
+        if(null!=consignmentModel) {
+      	  updateActualRentalDatesOnOrder(consignmentModel);      	  
+        }
+        
         final OptimizedShippingTypeEnum optimizedShippingType = checkConsignmentShippingType(consignmentModel, result);
         consignmentModel.setOptimizedShippingMethodType(optimizedShippingType);
         if (result != BlInventoryScanLoggingConstants.ZERO && optimizedShippingType != null) {
@@ -513,6 +519,23 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     }
 
     /**
+	 * @param consignmentModel
+	 */
+ 	private void updateActualRentalDatesOnOrder(final ConsignmentModel consignmentModel)
+ 	{
+ 		final AbstractOrderModel orderModel = consignmentModel.getOrder();
+
+ 		if (!orderModel.getActualRentalEndDate().equals(consignmentModel.getOptimizedShippingEndDate()))
+
+ 		{
+ 			orderModel.setActualRentalStartDate(consignmentModel.getOptimizedShippingStartDate());
+ 			orderModel.setActualRentalEndDate(consignmentModel.getOptimizedShippingEndDate());
+ 			getModelService().save(orderModel);
+ 			getModelService().refresh(orderModel);
+ 		}
+ 	}
+
+	/**
      * This method will
      *
      * @param consignmentModel order
