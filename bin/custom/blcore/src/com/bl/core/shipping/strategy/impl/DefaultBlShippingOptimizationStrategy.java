@@ -312,6 +312,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             
               setOptimizedDetailsOnConsignment(consignmentModel, result, consignmentModel.getOrder().getRentalStartDate(),
                   consignmentModel.getOrder().getRentalEndDate(), OptimizedShippingMethodEnum.DEFAULT);
+              return false;
            }
         }
         else {
@@ -320,8 +321,6 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         }
         // BLS-40 starts
 
-
-         return false;
     }
     
     
