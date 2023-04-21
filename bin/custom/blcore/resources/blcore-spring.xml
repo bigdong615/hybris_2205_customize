@@ -844,6 +844,7 @@
 	<bean id="blCommerceDeliveryModeStrategy"
 		class="com.bl.core.services.strategy.impl.DefaultBlCommerceDeliveryModeStrategy"
 		parent="defaultCommerceDeliveryModeStrategy">
+		<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>		
 		<property name="blDatePickerService" ref="blDatePickerService"/>
 	</bean>
 

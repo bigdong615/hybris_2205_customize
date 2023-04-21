@@ -10,6 +10,7 @@ import de.hybris.platform.util.Config;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
@@ -311,6 +312,31 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
         return CollectionUtils.isNotEmpty(results) ? results.iterator().next() : null;
     }
 
+
+    @Override
+    public List<ShippingOptimizationModel> getOptimizedShippingRecords(final int carrierId, final int warehouseCode, final String customerZip) {
+        final String barcodeList = "select {pk} from {ShippingOptimization} where {carrierID} = ?carrierID and {homeBaseID} = ?warehouseCode" +
+                " and {zip} = ?customerZip";
+        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+        query.addQueryParameter("carrierID", carrierId);
+        query.addQueryParameter("warehouseCode", warehouseCode);
+        query.addQueryParameter("customerZip", customerZip);
+        final List<ShippingOptimizationModel> results = getFlexibleSearchService().<ShippingOptimizationModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIPPING_OPTIMIZATION);
+        return CollectionUtils.isNotEmpty(results) ? results: null;
+    }   
+    
+    @Override
+    public List<ShippingOptimizationModel> getOptimizedShippingRecordsForCarrierAndZip(final int carrierId, final String customerZip) {
+        final String barcodeList = "select {pk} from {ShippingOptimization} where {carrierID} = ?carrierID and {zip} = ?customerZip";
+        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+        query.addQueryParameter("carrierID", carrierId);
+        query.addQueryParameter("customerZip", customerZip);
+        final List<ShippingOptimizationModel> results = getFlexibleSearchService().<ShippingOptimizationModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIPPING_OPTIMIZATION);
+        return CollectionUtils.isNotEmpty(results) ? results: null;
+    } 
+    
     /**
      * {@inheritDoc}
      */
