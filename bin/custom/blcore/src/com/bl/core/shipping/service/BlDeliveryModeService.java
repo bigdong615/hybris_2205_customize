@@ -382,6 +382,6 @@ public interface BlDeliveryModeService {
     boolean isEligibleDeliveryModeForOrderTransfer(final ZoneDeliveryModeModel deliveryModeModel);
     
 
-    void getPreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, int preDaysToDeduct, int postDaysToAdd);
+    void updatePreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, int preDaysToDeduct, int postDaysToAdd);
 
 }

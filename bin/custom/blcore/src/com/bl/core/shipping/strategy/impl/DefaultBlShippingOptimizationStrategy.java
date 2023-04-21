@@ -268,10 +268,11 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      	  int preDaysToDeduct = 0;
      	  int postDaysToAdd = 0;
      	  
+     	  // BLS-40 starts
         List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecords(carrierId, warehouseCode, addressZip) : Collections.EMPTY_LIST;
         
      	  // To get the INBOUND and OUTBOUND service days from shipping optimization records
-        getZoneDeliveryModeService().getPreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
+        getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
  
         final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOrder().getActualRentalStartDate(),
       	   	 consignmentModel.getOrder().getRentalStartDate(), consignmentModel.getWarehouse().getCutOffTime());
@@ -312,6 +313,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
       	  return result >= BlInventoryScanLoggingConstants.TWO ? checkTwoDayAir(consignmentModel, rentalStartDate, rentalEndDate) :
               checkNextDayAir(consignmentModel, rentalStartDate, rentalEndDate);
         }
+        // BLS-40 starts
         
          setOptimizedDetailsOnConsignment(consignmentModel, result, consignmentModel.getOrder().getRentalStartDate(),
              consignmentModel.getOrder().getRentalEndDate(), OptimizedShippingMethodEnum.DEFAULT);

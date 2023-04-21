@@ -1374,7 +1374,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 		 this.blDeliveryModeService = blDeliveryModeService;
 	 }
 	 
-    public void getPreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, int preDaysToDeduct, int postDaysToAdd)
+    public void updatePreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, int preDaysToDeduct, int postDaysToAdd)
     {
        int inboundServiceDays = 0;
        int outboundServiceDays = 0;

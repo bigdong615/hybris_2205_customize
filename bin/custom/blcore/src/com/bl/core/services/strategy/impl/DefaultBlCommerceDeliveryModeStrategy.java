@@ -64,7 +64,7 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
     List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecordsForCarrierAndZip(carrierId, addressZip) : Collections.EMPTY_LIST;
     
     if(CollectionUtils.isNotEmpty(shippingOptimizationModels)) {
-   	 getZoneDeliveryModeService().getPreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
+   	 getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
     }
     else
     {
@@ -77,7 +77,6 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
     
     final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
     final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-
     //    BLS-40 ends
     
     if (null != rentalDateDto) {
