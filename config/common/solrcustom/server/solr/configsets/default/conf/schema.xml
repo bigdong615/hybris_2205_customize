@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!--
- For more information, on how to customize this file, please see https://lucene.apache.org/solr/guide/7_5/documents-fields-and-schema-design.html
+ For more information, on how to customize this file, please see https://lucene.apache.org/solr/guide/8_8/documents-fields-and-schema-design.html
 -->
 
-<schema name="hybris" version="7.5">
+<schema name="hybris" version="8.11">
 	<types>
 		<!-- Basic Types -->
 
@@ -51,13 +51,13 @@
 		</fieldType>
 
 		<!-- Text English (en) -->
-    <!--Stop words is commented for indexing-->
+
 		<fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
 			<analyzer type="index">
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.EnglishPossessiveFilterFactory" />
 				<filter class="solr.ManagedStopFilterFactory" managed="en" />
-				<!--<filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" />-->
+				<!-- <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" /> -->
 				<filter class="solr.LowerCaseFilterFactory" />
 				<!-- <filter class="solr.KeywordRepeatFilterFactory" /> -->
 				<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
@@ -84,12 +84,11 @@
 			</analyzer>
 		</fieldType>
 
-		<!--Stop words is commented for indexing-->
 		<fieldType name="text_spell_en" class="solr.TextField" positionIncrementGap="100">
 			<analyzer type="index">
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.ManagedStopFilterFactory" managed="en" />
-				 <!--<filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" />-->
+				<!-- <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" /> -->
 				<filter class="solr.LowerCaseFilterFactory" />
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
