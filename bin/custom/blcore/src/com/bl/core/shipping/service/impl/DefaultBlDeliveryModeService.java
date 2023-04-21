@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -1374,7 +1375,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 		 this.blDeliveryModeService = blDeliveryModeService;
 	 }
 	 
-    public void updatePreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, int preDaysToDeduct, int postDaysToAdd)
+    public void updatePreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, AtomicInteger preDaysToDeduct, AtomicInteger postDaysToAdd)
     {
        int inboundServiceDays = 0;
        int outboundServiceDays = 0;
@@ -1393,16 +1394,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
       			 outboundServiceDays =  model.getServiceDays();     	        		        		  
       		 }
       	 }
-         preDaysToDeduct = outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays;
-         postDaysToAdd = inboundServiceDays;
+         preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
+         postDaysToAdd.set(inboundServiceDays);
        }
        else if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && null != shippingOptimizationModels.get(0))
        {   	 
       	 inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
       	 outboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
 
-         preDaysToDeduct = outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays;
-         postDaysToAdd = inboundServiceDays;
+         preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
+         postDaysToAdd.set(inboundServiceDays);
        }
     }
     

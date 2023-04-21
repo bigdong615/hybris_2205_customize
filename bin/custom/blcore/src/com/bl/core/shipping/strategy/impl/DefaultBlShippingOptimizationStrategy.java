@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
@@ -265,8 +266,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         final int carrierId = getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode());
         final int warehouseCode = getWarehouseCode(consignmentModel.getWarehouse());
         final String addressZip = getAddressZip(consignmentModel.getShippingAddress());
-     	  int preDaysToDeduct = 0;
-     	  int postDaysToAdd = 0;
+     	  AtomicInteger preDaysToDeduct = new AtomicInteger(0);
+     	  AtomicInteger postDaysToAdd = new AtomicInteger(0);
      	  
      	  // BLS-40 starts
         List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecords(carrierId, warehouseCode, addressZip) : Collections.EMPTY_LIST;
@@ -286,8 +287,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
               BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING + OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode()
                       + BlInventoryScanLoggingConstants.SPACE + consignmentModel.getCode());
               setOptimizedDetailsOnConsignment(consignmentModel, result, BlDateTimeUtils.subtractDaysInRentalDates(
-            		  preDaysToDeduct, rentalStartDate, blackOutDates), BlDateTimeUtils.addDaysInRentalDates(
-            		  postDaysToAdd, rentalEndDate, blackOutDates), OptimizedShippingMethodEnum.THREE_DAY_GROUND);
+            		  preDaysToDeduct.get(), rentalStartDate, blackOutDates), BlDateTimeUtils.addDaysInRentalDates(
+            		  postDaysToAdd.get(), rentalEndDate, blackOutDates), OptimizedShippingMethodEnum.THREE_DAY_GROUND);
               return true;
               
            } else if (result == BlInventoryScanLoggingConstants.TWO) {
@@ -295,8 +296,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
               BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING +
                       OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode() + BlInventoryScanLoggingConstants.SPACE + consignmentModel.getCode());
               setOptimizedDetailsOnConsignment(consignmentModel, result, BlDateTimeUtils.subtractDaysInRentalDates(
-            		   preDaysToDeduct, rentalStartDate, blackOutDates), BlDateTimeUtils.addDaysInRentalDates(
-            			postDaysToAdd, rentalEndDate, blackOutDates), OptimizedShippingMethodEnum.TWO_DAY_GROUND);
+            		   preDaysToDeduct.get(), rentalStartDate, blackOutDates), BlDateTimeUtils.addDaysInRentalDates(
+            			postDaysToAdd.get(), rentalEndDate, blackOutDates), OptimizedShippingMethodEnum.TWO_DAY_GROUND);
               return true;
          	  
            } else if (result == BlInventoryScanLoggingConstants.ONE) {
@@ -304,8 +305,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
               BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING +
                       OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode() + BlInventoryScanLoggingConstants.SPACE + consignmentModel.getCode());
               setOptimizedDetailsOnConsignment(consignmentModel, result, BlDateTimeUtils.subtractDaysInRentalDates(
-            		  	preDaysToDeduct, rentalStartDate, blackOutDates), BlDateTimeUtils.addDaysInRentalDates(
-            			postDaysToAdd, rentalEndDate, blackOutDates), OptimizedShippingMethodEnum.ONE_DAY_GROUND);
+            		  	preDaysToDeduct.get(), rentalStartDate, blackOutDates), BlDateTimeUtils.addDaysInRentalDates(
+            			postDaysToAdd.get(), rentalEndDate, blackOutDates), OptimizedShippingMethodEnum.ONE_DAY_GROUND);
               return true;
               
            } else {
