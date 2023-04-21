@@ -1375,7 +1375,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 		 this.blDeliveryModeService = blDeliveryModeService;
 	 }
 	 
-    public void updatePreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, AtomicInteger preDaysToDeduct, AtomicInteger postDaysToAdd)
+    public List<ShippingOptimizationModel> updatePreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, AtomicInteger preDaysToDeduct, AtomicInteger postDaysToAdd)
     {
        int inboundServiceDays = 0;
        int outboundServiceDays = 0;
@@ -1405,6 +1405,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
          preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
          postDaysToAdd.set(inboundServiceDays);
        }
+		return CollectionUtils.isNotEmpty(shippingOptimizationModels) ? shippingOptimizationModels : Collections.EMPTY_LIST;
     }
     
     static <T> Collector<T, ?, List<T>> minList(Comparator<? super T> comp) {

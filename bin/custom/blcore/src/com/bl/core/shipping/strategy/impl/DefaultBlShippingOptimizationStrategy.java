@@ -273,7 +273,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecords(carrierId, warehouseCode, addressZip) : Collections.EMPTY_LIST;
         
      	  // To get the INBOUND and OUTBOUND service days from shipping optimization records
-        getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
+        shippingOptimizationModels = getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
  
         final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOrder().getActualRentalStartDate(),
       	   	 consignmentModel.getOrder().getRentalStartDate(), consignmentModel.getWarehouse().getCutOffTime());

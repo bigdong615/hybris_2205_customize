@@ -65,7 +65,7 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
     List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecordsForCarrierAndZip(carrierId, addressZip) : Collections.EMPTY_LIST;
     
     if(CollectionUtils.isNotEmpty(shippingOptimizationModels)) {
-   	 getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
+   	 shippingOptimizationModels = getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
     }
     else
     {
