@@ -280,7 +280,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 
         if(CollectionUtils.isNotEmpty(shippingOptimizationModels))
-        {  
+        {
            if (consignmentModel.isThreeDayGroundAvailability() && result >= BlInventoryScanLoggingConstants.THREE) {
 
               BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING + OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode()
@@ -307,6 +307,11 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             		  	preDaysToDeduct, rentalStartDate, blackOutDates), BlDateTimeUtils.addDaysInRentalDates(
             			postDaysToAdd, rentalEndDate, blackOutDates), OptimizedShippingMethodEnum.ONE_DAY_GROUND);
               return true;
+              
+           } else {
+            
+              setOptimizedDetailsOnConsignment(consignmentModel, result, consignmentModel.getOrder().getRentalStartDate(),
+                  consignmentModel.getOrder().getRentalEndDate(), OptimizedShippingMethodEnum.DEFAULT);
            }
         }
         else {
@@ -314,9 +319,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
               checkNextDayAir(consignmentModel, rentalStartDate, rentalEndDate);
         }
         // BLS-40 starts
-        
-         setOptimizedDetailsOnConsignment(consignmentModel, result, consignmentModel.getOrder().getRentalStartDate(),
-             consignmentModel.getOrder().getRentalEndDate(), OptimizedShippingMethodEnum.DEFAULT);
+
 
          return false;
     }
