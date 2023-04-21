@@ -317,6 +317,28 @@ public interface BlDeliveryModeService {
                                                          final int serviceDays, final int inbound);
 
     /**
+     * This method will return ShippingOptimizationModel with input elements
+     *
+     * @param carrierId UPS/FedEx or 2/1
+     * @param warehouseCode CA/MA or 1/2
+     * @param customerZip from delivery address
+     *
+     * @return ShippingOptimizationModel
+     */
+    List<ShippingOptimizationModel> getOptimizedShippingRecords(final int carrierId, final int warehouseCode, final String customerZip);
+    
+    /**
+     * This method will return ShippingOptimizationModel with input elements
+     *
+     * @param carrierId UPS/FedEx or 2/1
+     * @param warehouseCode CA/MA or 1/2
+     * @param customerZip from delivery address
+     *
+     * @return ShippingOptimizationModel
+     */
+    List<ShippingOptimizationModel> getOptimizedShippingRecordsForCarrierAndZip(final int carrierId, final String customerZip);
+    
+    /**
      * This method will return Collection of Consignment models with input
      *
      * @return Collection<ConsignmentModel>
@@ -358,5 +380,8 @@ public interface BlDeliveryModeService {
      * @return true if the delivery mode supports internal transfer
      */
     boolean isEligibleDeliveryModeForOrderTransfer(final ZoneDeliveryModeModel deliveryModeModel);
+    
+
+    void updatePreAndPostServiceDays(List<ShippingOptimizationModel> shippingOptimizationModels, int preDaysToDeduct, int postDaysToAdd);
 
 }
