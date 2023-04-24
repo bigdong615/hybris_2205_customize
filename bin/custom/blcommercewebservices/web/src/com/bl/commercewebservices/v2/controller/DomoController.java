@@ -4,8 +4,10 @@
 package com.bl.commercewebservices.v2.controller;
 
 import de.hybris.platform.commercefacades.BlItemsBillingChargeData;
+import de.hybris.platform.commercefacades.cart.data.CartEntryData;
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
@@ -16,8 +18,10 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commercewebservicescommons.dto.BlItemsBillingChargeListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.carts.CartsWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.payment.BrainTreePaymentInfoListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.user.RegionsWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.user.address.AddressListWsDTO;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionData;
 import de.hybris.platform.ordermanagementfacades.payment.data.PaymentTransactionEntryData;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -47,6 +51,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.bl.facades.blSerialLog.data.BlSerialLogData;
 import com.bl.facades.blSerialLog.data.BlSerialLogListData;
 import com.bl.facades.blSerialLog.dto.BlSerialLogListWsDTO;
+import com.bl.facades.cart.data.CartEntryListData;
+import com.bl.facades.cart.dto.CartEntryListWsDTO;
+import com.bl.facades.carts.data.CartsData;
 import com.bl.facades.commercefacades.BlItemsBillingChargeListData;
 import com.bl.facades.commercefacades.CustomerListsData;
 import com.bl.facades.commercefacades.giftcard.data.GiftCardListData;
@@ -773,4 +780,71 @@ public class DomoController extends BaseCommerceController
 		regionsData.setPagination(result.getPagination());
 		return regionsData;
 	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/carts", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getCarts", value = "Get carts", notes = "Returns carts")
+	@ApiBaseSiteIdAndUserIdParam
+	public CartsWsDTO getCarts(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final CartsData cartsData;
+		cartsData = createCartsData(blDomoFacade.getCarts(pageableData, date));
+		setTotalCountHeader(response, cartsData.getPagination());
+		return getDataMapper().map(cartsData, CartsWsDTO.class, fields);
+	}
+
+	protected CartsData createCartsData(final SearchPageData<CartData> result)
+	{
+		final CartsData cartsData = new CartsData();
+		cartsData.setCarts(result.getResults());
+		cartsData.setSorts(result.getSorts());
+		cartsData.setPagination(result.getPagination());
+		return cartsData;
+	}
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/cartEntries", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getCartEntries", value = "Get carts", notes = "Returns carts")
+	@ApiBaseSiteIdAndUserIdParam
+	public CartEntryListWsDTO getCartEntries(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final CartEntryListData cartEntriesData;
+		cartEntriesData = createCartEntriesData(blDomoFacade.getCartEntries(pageableData, date));
+		setTotalCountHeader(response, cartEntriesData.getPagination());
+		return getDataMapper().map(cartEntriesData, CartEntryListWsDTO.class, fields);
+	}
+
+	protected CartEntryListData createCartEntriesData(final SearchPageData<CartEntryData> result)
+	{
+		final CartEntryListData cartEntriesData = new CartEntryListData();
+		cartEntriesData.setCartEntries(result.getResults());
+		cartEntriesData.setSorts(result.getSorts());
+		cartEntriesData.setPagination(result.getPagination());
+		return cartEntriesData;
+	}
+
 }

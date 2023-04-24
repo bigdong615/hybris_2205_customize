@@ -7,6 +7,8 @@ import de.hybris.platform.commerceservices.search.flexiblesearch.PagedFlexibleSe
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.c2l.RegionModel;
+import de.hybris.platform.core.model.order.CartEntryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -218,5 +220,24 @@ public class DefaultBlDomoDao implements BlDomoDao
 		fQ.addQueryParameter("date", date);
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
+
+	@Override
+	public SearchPageData<CartModel> getCarts(final PageableData pageableData, final Date date)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery(
+				"SELECT distinct {c.pk} FROM {Cart as c} where {modifiedtime} >= ?date");
+		fQ.addQueryParameter("date", date);
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+
+	@Override
+	public SearchPageData<CartEntryModel> getCartEntries(final PageableData pageableData, final Date date)
+	{
+		final FlexibleSearchQuery fQ = new FlexibleSearchQuery(
+				"SELECT distinct {c.pk} FROM {CartEntry as c} where {modifiedtime} >= ?date");
+		fQ.addQueryParameter("date", date);
+		return getPagedFlexibleSearchService().search(fQ, pageableData);
+	}
+
 
 }

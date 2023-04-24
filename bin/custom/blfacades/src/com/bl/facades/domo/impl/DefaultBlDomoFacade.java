@@ -4,8 +4,10 @@
 package com.bl.facades.domo.impl;
 
 import de.hybris.platform.commercefacades.BlItemsBillingChargeData;
+import de.hybris.platform.commercefacades.cart.data.CartEntryData;
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
@@ -15,6 +17,8 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.converters.Converters;
 import de.hybris.platform.core.model.c2l.RegionModel;
+import de.hybris.platform.core.model.order.CartEntryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -93,6 +97,10 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	private Converter<NotesModel, NotesData> blNotesConverter;
 
 	private Converter<RegionModel, RegionData> blRegionConverter;
+
+	private Converter<CartModel, CartData> blDomoCartConverter;
+
+	private Converter<CartEntryModel, CartEntryData> blcartEntryConverter;
 
 	@Override
 	public SearchPageData<PackagingInfoData> getPackagingInfos(final PageableData pageableData, final Date date)
@@ -245,6 +253,19 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 		return convertPageData(regions, getBlRegionConverter());
 	}
 
+	@Override
+	public SearchPageData<CartData> getCarts(final PageableData pageableData, final Date date)
+	{
+		final SearchPageData<CartModel> carts = getBlDomoService().getCarts(pageableData, date);
+		return convertPageData(carts, getBlDomoCartConverter());
+	}
+
+	@Override
+	public SearchPageData<CartEntryData> getCartEntries(final PageableData pageableData, final Date date)
+	{
+		final SearchPageData<CartEntryModel> cartEntries = getBlDomoService().getCartEntries(pageableData, date);
+		return convertPageData(cartEntries, getBlcartEntryConverter());
+	}
 
 	/**
 	 * @return the blSerialLogsConverter
@@ -595,6 +616,41 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	public void setBlRegionConverter(final Converter<RegionModel, RegionData> blRegionConverter)
 	{
 		this.blRegionConverter = blRegionConverter;
+	}
+
+
+	/**
+	 * @return the blDomoCartConverter
+	 */
+	public Converter<CartModel, CartData> getBlDomoCartConverter()
+	{
+		return blDomoCartConverter;
+	}
+
+	/**
+	 * @param blDomoCartConverter
+	 *           the blDomoCartConverter to set
+	 */
+	public void setBlDomoCartConverter(final Converter<CartModel, CartData> blDomoCartConverter)
+	{
+		this.blDomoCartConverter = blDomoCartConverter;
+	}
+
+	/**
+	 * @return the blcartEntryConverter
+	 */
+	public Converter<CartEntryModel, CartEntryData> getBlcartEntryConverter()
+	{
+		return blcartEntryConverter;
+	}
+
+	/**
+	 * @param blcartEntryConverter
+	 *           the blcartEntryConverter to set
+	 */
+	public void setBlcartEntryConverter(final Converter<CartEntryModel, CartEntryData> blcartEntryConverter)
+	{
+		this.blcartEntryConverter = blcartEntryConverter;
 	}
 
 }

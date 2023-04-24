@@ -6,6 +6,8 @@ package com.bl.core.services.domo;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.c2l.RegionModel;
+import de.hybris.platform.core.model.order.CartEntryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -165,5 +167,18 @@ public interface BlDomoService
 	 * @return
 	 */
 	SearchPageData<RegionModel> getRegions(PageableData pageableData, Date date);
+
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<CartModel> getCarts(PageableData pageableData, Date date);
+
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<CartEntryModel> getCartEntries(PageableData pageableData, Date date);
+
 
 }

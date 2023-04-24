@@ -4,8 +4,10 @@
 package com.bl.facades.domo;
 
 import de.hybris.platform.commercefacades.BlItemsBillingChargeData;
+import de.hybris.platform.commercefacades.cart.data.CartEntryData;
 import de.hybris.platform.commercefacades.giftcard.data.GiftCardData;
 import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovementData;
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
@@ -156,5 +158,17 @@ public interface BlDomoFacade
 	 * @return
 	 */
 	SearchPageData<RegionData> getRegions(PageableData pageableData, Date date);
+
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<CartData> getCarts(PageableData pageableData, Date date);
+
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<CartEntryData> getCartEntries(PageableData pageableData, Date date);
 
 }
