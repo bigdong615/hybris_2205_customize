@@ -122,7 +122,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 					final Date fiveDaysPlus = calender.getTime();
 					calender.add(Calendar.DATE, -10);// Subtracting 5 days
 					final Date fiveDaysMinus = calender.getTime();
-					if (date.compareTo(fiveDaysMinus) >= 0 && date.compareTo(fiveDaysPlus) <= 0)
+					if (date.compareTo(fiveDaysMinus) >= 0 || date.compareTo(fiveDaysPlus) <= 0)
 					{
    					for (final ConsignmentEntryModel consEntry : serialModel.getAssociatedShippedConsignment().getConsignmentEntries())
    					{
