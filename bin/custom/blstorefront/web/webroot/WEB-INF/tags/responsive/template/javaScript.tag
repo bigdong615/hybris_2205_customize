@@ -156,6 +156,11 @@
 					 $("#js-site-search-input").val("");
 				 }
 			});
+			let isMobile = false;
+            if ($(window).width() < 600 )
+            {
+               isMobile = true;
+            }
 		</script>
 		
         <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
@@ -557,7 +562,7 @@ console.log("First start");
                       //Set Sunday to be the first day in the calendar's header
                          firstDay: 0,
                      //Change the defaul button values
-                          buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                          buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
             });
             const mpicker = new Litepicker({
                 element: document.getElementById('mobile-litepicker'),
@@ -632,7 +637,7 @@ console.log("First start");
                       //Set Sunday to be the first day in the calendar's header
                          firstDay: 0,
                       //Change the defaul button values
-                         buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                         buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
             });
             //BLS-224 Changes
             //By:Sunil Kumar
@@ -708,7 +713,7 @@ console.log("First start");
                                   //Set Sunday to be the first day in the calendar's header
                                      firstDay: 0,
                                   //Change the defaul button values
-                                     buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                                     buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
                         });
             console.log("First End");
         </script>
@@ -935,7 +940,7 @@ console.log("First start");
                                             //Set Sunday to be the first day in the calendar's header
                                                     firstDay: 0,
                                             //Change the defaul button values
-                                                    buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                                                    buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
                                              });
 
                                              // Initialize MOBILE PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
@@ -1004,7 +1009,7 @@ console.log("First start");
                                           //Set Sunday to be the first day in the calendar's header
                                                     firstDay: 0,
                                           //Change the defaul button values
-                                                    buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                                                    buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
                                              });
                                          // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
                                          // BL-605 : fixedHeight added
@@ -1512,7 +1517,7 @@ console.log("3 end");
                            //Set Sunday to be the first day in the calendar's header
                                 firstDay: 0,
                            //Change the defaul button values
-                                buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                                buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
                         });
                         // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
                         const summarypicker = new Litepicker({
@@ -1587,7 +1592,7 @@ console.log("3 end");
                       //Set Sunday to be the first day in the calendar's header
                               firstDay: 0,
                       //Change the defaul button values
-                              buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                              buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
                         });
                   </script>
         		</c:if>
@@ -1721,7 +1726,7 @@ console.log("3 end");
                            //Set Sunday to be the first day in the calendar's header
                                 firstDay: 0,
                            //Change the defaul button values
-                                buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                                buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
                         });
                         // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
                         const summarypicker = new Litepicker({
@@ -1796,7 +1801,7 @@ console.log("3 end");
                       //Set Sunday to be the first day in the calendar's header
                               firstDay: 0,
                       //Change the defaul button values
-                              buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                              buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
                         });
                   </script>
                   
@@ -1990,7 +1995,7 @@ console.log("3 end");
                       //Set Sunday to be the first day in the calendar's header
                         firstDay: 0,
                       //Change the defaul button values
-                        buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                        buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
                     });
                 </script>
 		</c:if>
@@ -2081,7 +2086,7 @@ console.log("3 end");
                                       //Disable dates after one year from today
                                           maxDate: startDate,
                                      //Change the defaul button values
-                                          buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                                          buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
                                   });
 
           // Initialize RENTAL EXTENSION MOBILE Calendar Litepicker - required for THIS page
