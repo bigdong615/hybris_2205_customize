@@ -53,7 +53,7 @@
                       <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                           modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
                           <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
-                          <input type="hidden" name="productCode" value="${entry.product.code}" />
+                          <input type="hidden" name="productCode" value="${fn:escapeXml(entry.product.code)}" />
                           <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
                           <input type="hidden" name="quantity" value="${entry.quantity}" />
                         <spring:theme code="text.quantity"/>
