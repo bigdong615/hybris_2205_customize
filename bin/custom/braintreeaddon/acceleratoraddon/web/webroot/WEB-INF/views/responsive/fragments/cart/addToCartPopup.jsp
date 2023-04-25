@@ -9,6 +9,7 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 
 <c:set var="productName" value="${fn:escapeXml(product.name)}" />
+<c:set var="productCode" value="${fn:escapeXml(product.code)}" />
 <c:url value="/cart/updateQuantity" var="cartUpdateFormAction"/>
 <c:url value="/cart" var="viewCartUrl"/>
 <c:url value="/cart/addproduct" var="addToCartUrl"/>
@@ -50,7 +51,7 @@
                     <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span>
                   </c:if>
                   </div>
-                     <input type="hidden" id="productCode" value="${product.code}" />
+                     <input type="hidden" id="productCode" value="${ycommerce:encodeJSON(productCode)}" />
                      <input type="hidden" id="productName" value="${ycommerce:encodeJSON(productName)}" />
                      <input type="hidden" id="productBrand" value="${product.manufacturer}" />
                      <input type="hidden" id="productCategory" value="${product.categories[0].name}" />
@@ -68,7 +69,7 @@
                       <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                           modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
                           <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
-                          <input type="hidden" name="productCode" value="${entry.product.code}" />
+                          <input type="hidden" name="productCode" value="${fn:escapeXml(entry.product.code)}" />
                           <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
                           <input type="hidden" name="quantity" value="${entry.quantity}" />
                         <spring:theme code="text.quantity"/>
