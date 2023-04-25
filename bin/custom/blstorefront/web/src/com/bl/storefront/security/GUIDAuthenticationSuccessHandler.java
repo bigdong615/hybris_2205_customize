@@ -39,18 +39,18 @@ public class GUIDAuthenticationSuccessHandler implements AuthenticationSuccessHa
 		getAuthenticationSuccessHandler().onAuthenticationSuccess(request, response, authentication);
 		final String userIp = getUserIp(request);
 
-		final IpVelocityFilterModel velocityFilterModel = getBlIpVelocityService().getUserData(userIp,
-				(String) authentication.getPrincipal());
-		if (velocityFilterModel != null)
-		{
-			getBlIpVelocityService().updateDetails(velocityFilterModel, true);
+		//final IpVelocityFilterModel velocityFilterModel = getBlIpVelocityService().getUserData(userIp,
+				//(String) authentication.getPrincipal());
+		//if (velocityFilterModel != null)
+		//{
+			//getBlIpVelocityService().updateDetails(velocityFilterModel, true);
 
-		}
-		else
-		{
-			getBlIpVelocityService().createNewEntry(userIp, (String) authentication.getPrincipal());
+		//}
+		//else
+		//{
+			//getBlIpVelocityService().createNewEntry(userIp, (String) authentication.getPrincipal());
 
-		}
+		//}
 
 		//getBlIpVelocityService().checkIfIpNeedsToBlock(userIp);
 

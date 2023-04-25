@@ -47,20 +47,20 @@ public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
 		// Register brute attacks
 		bruteForceAttackCounter.registerLoginFailure(request.getParameter("j_username"));
 		
-		String userIp = getUserIp(request);
-		final int ipAddressRestrictDuration = Integer
-				.parseInt(getConfigurationService().getConfiguration().getString(IP_ADDRESS_RESTRICT_DURATION));
-		registerLoginFailureForIpAddress(request.getParameter("j_username"), userIp, ipAddressRestrictDuration);
+		//String userIp = getUserIp(request);
+		//final int ipAddressRestrictDuration = Integer
+				//.parseInt(getConfigurationService().getConfiguration().getString(IP_ADDRESS_RESTRICT_DURATION));
+		//registerLoginFailureForIpAddress(request.getParameter("j_username"), userIp, ipAddressRestrictDuration);
 
 		// Store the j_username in the session
 		request.getSession().setAttribute("SPRING_SECURITY_LAST_USERNAME", request.getParameter("j_username"));
 
-		final IpVelocityFilterModel velocityFilterModel = getBlIpVelocityService().getUserData(userIp,
-				request.getParameter("j_username"));
-		if (velocityFilterModel != null)
-		{
-			getBlIpVelocityService().updateDetails(velocityFilterModel, false);
-		}
+		//final IpVelocityFilterModel velocityFilterModel = getBlIpVelocityService().getUserData(userIp,
+				//request.getParameter("j_username"));
+		//if (velocityFilterModel != null)
+		//{
+			//getBlIpVelocityService().updateDetails(velocityFilterModel, false);
+		//}
 
 		super.onAuthenticationFailure(request, response, exception);
 	}
