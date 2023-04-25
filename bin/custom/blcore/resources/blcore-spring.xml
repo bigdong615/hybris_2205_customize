@@ -2059,6 +2059,7 @@
 		<property name="blGoogleProductFeedXmlPupulator" ref="blGoogleProductFeedXmlPupulator"/>
 		<property name="mediaService" ref="mediaService"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
 	<bean id="blProductModifiedTimeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductModifiedTimeValueProvider" parent="abstractPropertyFieldValueProvider">
