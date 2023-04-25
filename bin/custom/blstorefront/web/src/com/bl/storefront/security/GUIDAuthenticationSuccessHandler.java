@@ -52,7 +52,7 @@ public class GUIDAuthenticationSuccessHandler implements AuthenticationSuccessHa
 
 		}
 
-		getBlIpVelocityService().checkIfIpNeedsToBlock(userIp);
+		//getBlIpVelocityService().checkIfIpNeedsToBlock(userIp);
 
 		LOG.info("Customer with email id :- " + authentication.getPrincipal() + " Logged in successfully with IP address :- "
 				+ userIp);
