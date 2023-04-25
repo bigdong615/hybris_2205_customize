@@ -4,7 +4,7 @@
 <c:url value="${feature.urlLink}" var="urlLink" />
 <li class="splide__slide">
 	<div class="embed-responsive embed-responsive-16by9">
-		<c:choose>
+	<a href="${urlLink}">	<c:choose>
 			<c:when test="${fn:containsIgnoreCase(feature.media.mime,'image/jpeg')}">
 				<img class="embed-responsive-item hero-image-slider" alt="Banner Image" src="${feature.media.url}"/>
 			</c:when>
@@ -20,10 +20,11 @@
 		<div class="row h-100 justify-content-center">
 			<div class="col-md-10 col-lg-9 my-auto">
 				<div class="hero-content white text-start">
-					<a href="${urlLink}"><p class="overline">${feature.rentProData}</p></a>
+					<p class="overline">${feature.rentProData}</p>
 					<h1>${feature.borrowData}</h1>
 				</div>
 			</div>
 		</div>
+	</a>
 	</div>
 </li>

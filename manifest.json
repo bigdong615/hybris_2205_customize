@@ -30,7 +30,7 @@
             "exclude": []
 	   },
 	"solr": {
-		"location": "/config/common/solr"
+		"location": "/config/common/solrcustom"
 	   }
 	},
 	"properties":[

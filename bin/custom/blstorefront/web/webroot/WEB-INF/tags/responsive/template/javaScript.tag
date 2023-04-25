@@ -475,7 +475,7 @@ console.log("First start");
             if ($(window).width() < 400 ) {
                 $("input#litepicker").attr("placeholder","Dates...");
             }
-            else{$("input#litepicker").attr("placeholder","Select dates...");}
+            else{$("input#litepicker").attr("placeholder","Search by date");}
 
             //BL-520 - disable previous dates
              let date = new Date();
