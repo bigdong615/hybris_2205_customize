@@ -1265,6 +1265,12 @@ object-position:center;
     width: -moz-available !important;
       width: fill-available !important;
 }
+.js-responsive-image {
+   object-fit: contain;
+}
+.splide__slide.simple-responsive {
+   height:555px !important;
+}
 }
 
 

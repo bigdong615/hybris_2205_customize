@@ -1,0 +1,40 @@
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$picture=media(code, $contentCV);
+$siteResource=jar:com.bl.initialdata.constants.BlInitialDataConstants&/blinitialdata/import/sampledata/contentCatalogs/$contentCatalog
+$mediaContainer=media(qualifier, $contentCV)[lang=$lang];
+$backimage=backgroundImage(code, $contentCV);
+$medias=medias(code, $contentCV);
+$components=cmsComponents(uid,$contentCV)[mode=append]
+
+
+# Language
+$lang=en
+INSERT_UPDATE Media; mediaFormat(qualifier); code[unique=true]						        ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true]; realfilename							           ;altText;mime[default='image/jpeg'];$contentCV[unique=true];folder(qualifier)[default=images];
+                   ; mobile				   ; homepage-banners_20230420_mirrorless_320W.jpg	; $siteResource/images/homepage-banners_mobile_20230424_mirrorless.jpg						 ; homepage-banners_mobile_20230424_mirrorless.jpg ;"Mirrorless";
+                   ; tablet				   ; homepage-banners_20230420_mirrorless_770W.jpg	; $siteResource/images/homepage-banners_20230420_mirrorless.jpg 							 ; homepage-banners_20230420_mirrorless.jpg    	   ;"Mirrorless";
+                   ; desktop			   ; homepage-banners_20230420_mirrorless_960W.jpg	; $siteResource/images/homepage-banners_20230420_mirrorless.jpg 							 ; homepage-banners_20230420_mirrorless.jpg  	   ;"Mirrorless";
+                   ; widescreen			   ; homepage-banners_20230420_mirrorless_1400W.jpg	; $siteResource/images/homepage-banners_20230420_mirrorless.jpg 							 ; homepage-banners_20230420_mirrorless.jpg        ;"Mirrorless";
+
+                   ; mobile				   ; homepage-banners_mobile_20230424_lens_320W.jpg	    ; $siteResource/images/homepage-banners_mobile_20230424_lens.jpg						 ; homepage-banners_mobile_20230424_lens.jpg  	    ;"Lens Love";
+                   ; tablet				   ; homepage-banners_20230420_lens-love_770W.jpg	; $siteResource/images/homepage-banners_20230420_lens-love.jpg 								 ; homepage-banners_20230420_lens-love.jpg          ;"Lens Love";
+                   ; desktop			   ; homepage-banners_20230420_lens-love_960W.jpg	; $siteResource/images/homepage-banners_20230420_lens-love.jpg 								 ; homepage-banners_20230420_lens-love.jpg  	    ;"Lens Love";
+                   ; widescreen			   ; homepage-banners_20230420_lens-love_1400W.jpg	; $siteResource/images/homepage-banners_20230420_lens-love.jpg 								 ; homepage-banners_20230420_lens-love.jpg          ;"Lens Love";
+
+                   ; mobile				   ; homepage-banners_mobile_20230424_lighting_320W.jpg	    ; $siteResource/images/homepage-banners_mobile_20230424_lighting.jpg				 ; homepage-banners_mobile_20230424_lighting.jpg    ;"Lighting Line";
+                   ; tablet				   ; homepage-banners_20230420_lighting_770W.jpg	; $siteResource/images/homepage-banners_20230420_lighting.jpg 								 ; homepage-banners_20230420_lighting.jpg           ;"Lighting Line";
+                   ; desktop			   ; homepage-banners_20230420_lighting_960W.jpg	; $siteResource/images/homepage-banners_20230420_lighting.jpg 								 ; homepage-banners_20230420_lighting.jpg  	        ;"Lighting Line";
+                   ; widescreen			   ; homepage-banners_20230420_lighting_1400W.jpg	; $siteResource/images/homepage-banners_20230420_lighting.jpg 								 ; homepage-banners_20230420_lighting.jpg           ;"Lighting Line";
+
+INSERT_UPDATE MediaContainer; qualifier[unique=true]						  ; $medias;$contentCV[unique=true]
+                            ; bl-homepage-responsive-banner-splash1           ; homepage-banners_20230420_mirrorless_320W.jpg,homepage-banners_20230420_mirrorless_770W.jpg,homepage-banners_20230420_mirrorless_960W.jpg,homepage-banners_20230420_mirrorless_1400W.jpg
+                            ; bl-homepage-responsive-banner-splash2           ; homepage-banners_mobile_20230424_lens_320W.jpg,homepage-banners_20230420_lens-love_770W.jpg,homepage-banners_20230420_lens-love_960W.jpg,homepage-banners_20230420_lens-love_1400W.jpg
+                            ; bl-homepage-responsive-banner-splash3           ; homepage-banners_mobile_20230424_320W.jpg,homepage-banners_20230420_lighting_770W.jpg,homepage-banners_20230420_lighting_960W.jpg,homepage-banners_20230420_lighting_1400W.jpg
+
+INSERT_UPDATE SimpleResponsiveBannerComponent; $contentCV[unique=true]; uid[unique=true]                    ; $mediaContainer                       ; name                                      ; urlLink;
+                                             ;					      ; blHompageResponsiveBannerComponent1 ; bl-homepage-responsive-banner-splash1 ; BL Homepage Splash Banner Component One   ; /rent/category/cameras/mirrorless;
+                                             ;					      ; blHompageResponsiveBannerComponent2 ; bl-homepage-responsive-banner-splash2 ; BL Homepage Splash Banner Component Two   ; /rent/category/rentalgear/lenses;
+                                             ;					      ; blHompageResponsiveBannerComponent3 ; bl-homepage-responsive-banner-splash3 ; BL Homepage Splash Banner Component Three ; /rent/category/production/lighting;
+
+UPDATE ContentSlot; $contentCV[unique=true]; uid[unique=true]       ; $components
+                  ;                        ; HomePageHeroBannerSlot ; blHompageResponsiveBannerComponent1,blHompageResponsiveBannerComponent2,blHompageResponsiveBannerComponent3
