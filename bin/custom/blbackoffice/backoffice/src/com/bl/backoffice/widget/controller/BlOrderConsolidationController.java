@@ -7,6 +7,8 @@ import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -113,46 +115,56 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 			{
 				try
 				{
-					for (final ConsignmentEntryModel consEntry : serialModel.getAssociatedShippedConsignment().getConsignmentEntries())
+					final Date date = serialModel.getAssociatedShippedConsignment().getOptimizedShippingStartDate();
+					final Calendar calender = Calendar.getInstance();
+					calender.setTime(new Date()); // Using today's date
+					calender.add(Calendar.DATE, 5); // Adding 5 days
+					final Date fiveDaysPlus = calender.getTime();
+					calender.add(Calendar.DATE, -10);// Subtracting 5 days
+					final Date fiveDaysMinus = calender.getTime();
+					if (date.compareTo(fiveDaysMinus) >= 0 || date.compareTo(fiveDaysPlus) <= 0)
 					{
-
-						for (final BlProductModel serial : consEntry.getSerialProducts())
-						{
-							final OrderConsolidationData orderConsolidationData = new OrderConsolidationData();
-							orderConsolidationData.setProductName((((BlSerialProductModel) serial).getBlProduct().getName()));
-							orderConsolidationData.setBarCode(((BlSerialProductModel) serial).getBarcode());
-							orderConsolidationData.setOrderNumber(serialModel.getAssociatedShippedConsignment().getOrder().getCode());
-							orderConsolidationData.setShippingMethod(
-									serialModel.getAssociatedShippedConsignment().getOrder().getDeliveryMode().getCode());
-
-							if (((BlSerialProductModel) serial).getOcLocationDetails() != null)
-							{
-								if (((BlSerialProductModel) serial).getOcLocationDetails().getLocationCategory().getCode()
-										.equals(PREPPED_LOCATION_CATEGORY))
-								{
-									orderConsolidationData.setLocation(((BlSerialProductModel) serial).getOcLocationDetails().getName());
-								}
-								else
-								{
-									orderConsolidationData.setLocation(" ");
-								}
-							}
-							String parentLocation = "";
-							if (serialModel.getOcLocationDetails() != null)
-							{
-								parentLocation = ((BlSerialProductModel) serial).getOcLocationDetails()
-										.getParentInventoryLocation() != null
-												? ((BlSerialProductModel) serial).getOcLocationDetails().getParentInventoryLocation()
-														.getName()
-												: " ";
-								orderConsolidationData.setParentLocation(parentLocation);
-							}
-							else
-							{
-								orderConsolidationData.setParentLocation(parentLocation);
-							}
-							orderConsolidationDataList.add(orderConsolidationData);
-						}
+   					for (final ConsignmentEntryModel consEntry : serialModel.getAssociatedShippedConsignment().getConsignmentEntries())
+   					{
+   
+   						for (final BlProductModel serial : consEntry.getSerialProducts())
+   						{
+   							final OrderConsolidationData orderConsolidationData = new OrderConsolidationData();
+   							orderConsolidationData.setProductName((((BlSerialProductModel) serial).getBlProduct().getName()));
+   							orderConsolidationData.setBarCode(((BlSerialProductModel) serial).getBarcode());
+   							orderConsolidationData.setOrderNumber(serialModel.getAssociatedShippedConsignment().getOrder().getCode());
+   							orderConsolidationData.setShippingMethod(
+   									serialModel.getAssociatedShippedConsignment().getOrder().getDeliveryMode().getCode());
+   
+   							if (((BlSerialProductModel) serial).getOcLocationDetails() != null)
+   							{
+   								if (((BlSerialProductModel) serial).getOcLocationDetails().getLocationCategory().getCode()
+   										.equals(PREPPED_LOCATION_CATEGORY))
+   								{
+   									orderConsolidationData.setLocation(((BlSerialProductModel) serial).getOcLocationDetails().getName());
+   								}
+   								else
+   								{
+   									orderConsolidationData.setLocation(" ");
+   								}
+   							}
+   							String parentLocation = "";
+   							if (serialModel.getOcLocationDetails() != null)
+   							{
+   								parentLocation = ((BlSerialProductModel) serial).getOcLocationDetails()
+   										.getParentInventoryLocation() != null
+   												? ((BlSerialProductModel) serial).getOcLocationDetails().getParentInventoryLocation()
+   														.getName()
+   												: " ";
+   								orderConsolidationData.setParentLocation(parentLocation);
+   							}
+   							else
+   							{
+   								orderConsolidationData.setParentLocation(parentLocation);
+   							}
+   							orderConsolidationDataList.add(orderConsolidationData);
+   						}
+   					}
 					}
 
 				}
