@@ -5,6 +5,10 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
+
+import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.servicelayer.model.ModelService;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import javax.servlet.FilterChain;
@@ -24,6 +28,7 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 {
 	private BlDatePickerService blDatePickerService;
 	private BlCartService blCartService;
+	private ModelService modelService;
 
 	/**
 	 * To get the date picker date from cookie and set the same in sessionService, so that the date will be applicable throughout
@@ -41,6 +46,13 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 		if (null != rentalDateDto)
 		{
 			setOrRemoveRentalDateInSession(rentalDateDto);
+		}
+		else {
+			getBlDatePickerService().removeRentalDatesFromSession();
+			CartModel cart= getBlCartService().getSessionCart();
+			cart.setRentalStartDate(null);
+			cart.setRentalEndDate(null);
+			modelService.save(cart);
 		}
 		filterChain.doFilter(request, response);
 	}
@@ -98,5 +110,15 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 
 	public void setBlCartService(BlCartService blCartService) {
 		this.blCartService = blCartService;
+	}
+	
+	public ModelService getModelService()
+	{
+		return modelService;
+	}
+
+	public void setModelService(ModelService modelService)
+	{
+		this.modelService = modelService;
 	}
 }

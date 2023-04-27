@@ -14,6 +14,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.CookieGenerator;
 
+import com.bl.storefront.controllers.pages.BlControllerConstants;
+
 
 /**
  * Enhanced {@link CookieGenerator} sets additionally header attribute {@value #HEADER_COOKIE}
@@ -26,6 +28,7 @@ public class EnhancedCookieGenerator extends CookieGenerator
 
 	private boolean useDefaultPath = DEFAULT_COOKIE_PATH;
 	private boolean httpOnly = DEFAULT_HTTP_ONLY;
+	private final int SECONDS_IN_A_DAY = 86400;
 
 
 	protected boolean isHttpOnly()
@@ -69,8 +72,13 @@ public class EnhancedCookieGenerator extends CookieGenerator
 				{
 					cookie.setHttpOnly(true);
 				}
-				
+
 				super.addCookie(cookie);
+				if (cookie.getName().equals(BlControllerConstants.SELECTED_DATE))
+				{
+					cookie.setMaxAge(SECONDS_IN_A_DAY);
+					response.addCookie(cookie);
+				}
 			}
 		}, cookieValue);
 	}
