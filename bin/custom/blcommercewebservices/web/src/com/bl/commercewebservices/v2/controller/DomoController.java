@@ -87,7 +87,6 @@ import com.bl.facades.regions.data.RegionsData;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogData;
 import com.bl.facades.vendorRepairLog.data.VendorRepairLogListData;
 import com.bl.facades.vendorRepairLog.dto.VendorRepairLogListWsDTO;
-import com.bl.integration.dto.AddressListWsDTO;
 import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import com.braintree.hybris.data.BrainTreePaymentInfoListData;
 
