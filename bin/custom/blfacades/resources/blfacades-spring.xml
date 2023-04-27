@@ -1144,4 +1144,56 @@
 		    <property name="consignmentTrackingService" ref="consignmentTrackingService" />
 	</bean>
 	
+	<alias name="defaultBlDomoFacade" alias="blDomoFacade"/>
+	<bean id="defaultBlDomoFacade" class="com.bl.facades.domo.impl.DefaultBlDomoFacade">
+		<property name="blDomoService" ref="blDomoService"/>
+		<property name="blpackagingInfoConverter" ref="blpackagingInfoConverter"/>
+		<property name="blpaymentTransactionConverter" ref="blpaymentTransactionConverter"/>
+		<property name="blpaymentTransactionEntryConverter" ref="blpaymentTransactionEntryConverter"/>
+		<property name="blGiftCardConverter" ref="blGiftCardConverter"/>
+		<property name="blGiftCardMovementConverter" ref="blGiftCardMovementConverter"/>
+		<property name="blDomoOrderConverter" ref="blDomoOrderConverter"/>
+		<property name="blorderEntryConverter" ref="blorderEntryConverter"/>
+		<property name="blItemsBillingChargeConverter" ref="blItemsBillingChargeConverter"/>
+		<property name="blCustomerConverter" ref="blCustomerConverter"/>
+		<property name="blNotesConverter" ref="blNotesConverter"/>
+		<property name="blSerialLogsConverter" ref="blSerialLogsConverter"/>
+ 		<property name="blCustomerNotesConverter" ref="blCustomerNotesConverter"/>
+ 		<property name="blVendorRepairLogConverter" ref="blVendorRepairLogConverter"/>
+ 		<property name="blPartsNeededRepairLogConverter" ref="blPartsNeededRepairLogConverter"/>
+ 		<property name="blInHouseRepairLogConverter" ref="blInHouseRepairLogConverter"/>
+ 		<property name="domoAddressConvertor" ref="domoAddressConvertor"/>
+ 		<property name="domoBrainTreePaymentInfoConvertor" ref="domoBrainTreePaymentInfoConvertor"/>
+ 		<property name="blStockLevelConvertor" ref="blStockLevelConvertor"/>
+ 		<property name="blRegionConverter" ref="blRegionConverter"/>
+ 		<property name="blDomoCartConverter" ref="blDomoCartConverter"/>
+ 		<property name="blcartEntryConverter" ref="blcartEntryConverter"/>			
+	</bean>
+
+
+	<bean id="blDomoCartPopulator" class="com.bl.facades.populators.BlDomoCartPopulator" parent="defaultBlCartPopulator"></bean>
+	
+	<alias name="blDomoCartConverter" alias="blDomoCartConverter"/>
+	<bean id="blDomoCartConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.CartData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoCartPopulator"/>
+				</list>
+		</property>
+	</bean>
+	
+	<alias name="blDomoCartEntryPopulator" alias="blDomoCartEntryPopulator"/>
+	<bean id="blDomoCartEntryPopulator" class="com.bl.facades.populators.BlDomoCartEntryPopulator"></bean>
+	
+	<alias name="blcartEntryConverter" alias="blcartEntryConverter"/>
+	<bean id="blcartEntryConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.cart.data.CartEntryData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoCartEntryPopulator"/>
+			</list>
+		</property>
+	</bean>
+	
 </beans>

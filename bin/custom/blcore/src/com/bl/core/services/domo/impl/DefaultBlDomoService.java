@@ -6,6 +6,8 @@ package com.bl.core.services.domo.impl;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.c2l.RegionModel;
+import de.hybris.platform.core.model.order.CartEntryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -153,6 +155,19 @@ public class DefaultBlDomoService implements BlDomoService
 	{
 		return getBlDomoDao().getRegions(pageableData, date);
 	}
+
+	@Override
+	public SearchPageData<CartModel> getCarts(final PageableData pageableData, final Date date)
+	{
+		return getBlDomoDao().getCarts(pageableData, date);
+	}
+
+	@Override
+	public SearchPageData<CartEntryModel> getCartEntries(final PageableData pageableData, final Date date)
+	{
+		return getBlDomoDao().getCartEntries(pageableData, date);
+	}
+
 
 	/**
 	 * @return the blDomoDao
