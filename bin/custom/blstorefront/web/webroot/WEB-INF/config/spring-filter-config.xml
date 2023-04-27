@@ -254,6 +254,7 @@
 	<bean id="blDatePickerFilter" class="com.bl.storefront.filters.BlDatePickerFilter" >
 		<property name="blDatePickerService" ref="blDatePickerService"/>	
 		<property name="blCartService" ref="cartService"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
 	
 	<bean id="ipVelocityFilter" class="com.bl.storefront.filters.IpVelocityFilter" >
