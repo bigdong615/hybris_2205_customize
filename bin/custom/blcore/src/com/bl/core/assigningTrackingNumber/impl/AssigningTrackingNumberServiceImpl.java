@@ -1,14 +1,20 @@
 package com.bl.core.assigningTrackingNumber.impl;
 
 import com.bl.core.assigningTrackingNumber.AssigningTrackingNumberService;
+import com.bl.core.enums.CarrierEnum;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.warehousing.shipping.strategy.DeliveryTrackingIdStrategy;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -27,14 +33,28 @@ public class AssigningTrackingNumberServiceImpl implements AssigningTrackingNumb
     public List<OrderModel> assigningTracking() {
         final List<OrderModel> orders = blInventoryScanToolDao.getOrders();
         for (OrderModel orderModel : orders) {
-            if (CollectionUtils.isNotEmpty(orders) && (orderModel.getStatus() == OrderStatus.SHIPPED)) {
+            if (CollectionUtils.isNotEmpty(orders) && (orderModel.getStatus() == OrderStatus.PAYMENT_CAPTURED)) {
                 for (final ConsignmentModel consignment : orderModel.getConsignments()) {
                     ServicesUtil.validateParameterNotNull(consignment, "Consignment cannot be null");
-                    String trackingId;
-                    if (consignment.getTrackingID() == null) {
-                        trackingId = this.getDeliveryTrackingIdStrategy().generateTrackingId(consignment);
-                        consignment.setTrackingID(trackingId);
-                        this.getModelService().save(consignment);
+                    if (consignment.getPackagingInfo() != null) {
+                        String outBoundTrackingNumber = consignment.getPackagingInfo().getOutBoundTrackingNumber();
+                        for (AbstractOrderEntryModel orderEntryModel : orderModel.getEntries()) {
+                            if (CollectionUtils.isNotEmpty(orderEntryModel.getSerialProducts())) {
+                                for (BlProductModel blProductModel : orderEntryModel.getSerialProducts()) {
+                                    if (blProductModel != null && blProductModel instanceof BlSerialProductModel) {
+                                        BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
+                                        blSerialProductModel.setLastLocationScanParent(outBoundTrackingNumber);
+                                        if (StringUtils.isNotEmpty(consignment.getCarrier())) {
+                                            blSerialProductModel.setOcLocation(consignment.getCarrier());
+                                        } else {
+                                            blSerialProductModel.setOcLocation(CarrierEnum.UPS.getCode());
+                                        }
+                                        modelService.save(blSerialProductModel);
+                                        modelService.refresh(blSerialProductModel);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
