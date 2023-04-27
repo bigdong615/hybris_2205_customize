@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -29,12 +30,14 @@ import javax.xml.bind.Marshaller;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.google.product.populators.BlGoogleProductFeedXmlPupulator;
 import com.bl.core.model.BlGoogleMarketPlaceProductFeedModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
 import com.bl.integration.marketplace.jaxb.Rss;
 
 
@@ -46,6 +49,7 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 	private static final String MIME_TYPE = "xml";
 	private MediaService mediaService;
 	private BlStockLevelDao blStockLevelDao;
+	private BlStockService blStockService;
 
 	@Override
 	public PerformResult perform(final CronJobModel cronJob)
@@ -82,6 +86,7 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 			cal.add(Calendar.DATE, 1);
 		}
 		final Date endDate = cal.getTime();
+		List<BlProductModel> productsToRemove = new ArrayList<BlProductModel>();
 		for (final BlProductModel product : blProducts)
 		{
 			final Set<String> collectserialSkuList = product.getSerialProducts().stream().map(BlSerialProductModel::getCode)
@@ -90,9 +95,18 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 					.findALLSerialStockLevelsForDateAndCodes(collectserialSkuList, startDate, endDate);
 			if (serialStock.size() < 1)
 			{
-				blProducts.remove(product);
+				productsToRemove.add(product);
 			}
+			else {
+				for(BlSerialProductModel blSerialProduct: product.getSerialProducts()) {
+					if(getBlStockService().isInactiveStatus(blSerialProduct.getSerialStatus())){
+						productsToRemove.add(product);
+					}
+				}
+			}
+			
 		}
+		blProducts.removeAll(productsToRemove);
 	}
 
 	private void convertToXML(final Object data) throws FileNotFoundException
@@ -174,6 +188,17 @@ public class BlGoogleMerchantCenterJob extends AbstractJobPerformable<CronJobMod
 	public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao)
 	{
 		this.blStockLevelDao = blStockLevelDao;
+	}
+	
+	
+	public BlStockService getBlStockService()
+	{
+		return blStockService;
+	}
+
+	public void setBlStockService(final BlStockService blStockService)
+	{
+		this.blStockService = blStockService;
 	}
 
 }

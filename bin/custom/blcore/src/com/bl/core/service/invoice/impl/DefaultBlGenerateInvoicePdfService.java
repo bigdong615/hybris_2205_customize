@@ -535,13 +535,13 @@ public class DefaultBlGenerateInvoicePdfService implements GenerateInvoicePdfSer
 			{
 				if (BooleanUtils.isTrue(oe.getGearGuardProFullWaiverSelected()))
 				{
-					damageWaiverPrice = oe.getGearGuardProFullWaiverPrice().getValue().doubleValue() * oe.getQuantity().doubleValue();
+					damageWaiverPrice = oe.getGearGuardProFullWaiverPrice().getValue().doubleValue();
 					damageCell = new PdfPCell(new Phrase("$" + formatter.format(damageWaiverPrice), fontTopright2));
 					totalDamageWaiverPrice = totalDamageWaiverPrice + damageWaiverPrice;
 				}
 				else if (BooleanUtils.isTrue(oe.getGearGuardWaiverSelected()))
 				{
-					damageWaiverPrice = oe.getGearGuardWaiverPrice().getValue().doubleValue() * oe.getQuantity().doubleValue();
+					damageWaiverPrice = oe.getGearGuardWaiverPrice().getValue().doubleValue();
 					damageCell = new PdfPCell(new Phrase("$" + formatter.format(damageWaiverPrice), fontTopright2));
 					totalDamageWaiverPrice = totalDamageWaiverPrice + damageWaiverPrice;
 				}

@@ -49,7 +49,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 		{
 			final Item item = new Item();
 			final Shipping shipping = new Shipping();
-			if (product.getCode().length() > 50)
+			if (product.getCode()!=null && product.getCode().length() > 50)
 			{
 				item.setId(product.getCode().substring(0, 49));
 			}
@@ -59,7 +59,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 			}
 			item.setTitle(product.getName());
 			item.setLink(target.getLink() + "/buy/product/" + product.getCode());
-			if (product.getDescription().length() > 5000)
+			if (product.getDescription()!=null && product.getDescription().length() > 5000)
 			{
 				item.setDescription(product.getDescription().substring(0, 4999));
 			}

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<!--  
- For more information, on how to customize this file, please see https://lucene.apache.org/solr/guide/7_5/documents-fields-and-schema-design.html
+<!--
+ For more information, on how to customize this file, please see https://lucene.apache.org/solr/guide/8_8/documents-fields-and-schema-design.html
 -->
 
-<schema name="hybris" version="7.5">
-	<types>	
+<schema name="hybris" version="8.11">
+	<types>
 		<!-- Basic Types -->
 
 		<fieldType name="boolean" class="solr.BoolField" docValues="true" sortMissingLast="true" />
@@ -51,17 +51,17 @@
 		</fieldType>
 
 		<!-- Text English (en) -->
-    <!--Stop words is commented for indexing-->
+
 		<fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
 			<analyzer type="index">
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.EnglishPossessiveFilterFactory" />
 				<filter class="solr.ManagedStopFilterFactory" managed="en" />
-				<!--<filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" />-->
+				<!-- <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" /> -->
 				<filter class="solr.LowerCaseFilterFactory" />
 				<!-- <filter class="solr.KeywordRepeatFilterFactory" /> -->
 				<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
-				<filter class="solr.PorterStemFilterFactory" />
+				<!-- <filter class="solr.PorterStemFilterFactory" /> -->
 				<!-- <filter class="solr.SnowballPorterFilterFactory" language="English" /> -->
 				<!-- <filter class="solr.EnglishMinimalStemFilterFactory" /> -->
 				<!-- <filter class="solr.ASCIIFoldingFilterFactory" /> -->
@@ -76,7 +76,7 @@
 				<filter class="solr.LowerCaseFilterFactory" />
 				<!-- <filter class="solr.KeywordRepeatFilterFactory" /> -->
 				<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
-				<filter class="solr.PorterStemFilterFactory" />
+				<!-- <filter class="solr.PorterStemFilterFactory" /> -->
 				<!-- <filter class="solr.SnowballPorterFilterFactory" language="English" /> -->
 				<!-- <filter class="solr.EnglishMinimalStemFilterFactory" /> -->
 				<!-- <filter class="solr.ASCIIFoldingFilterFactory" /> -->
@@ -84,12 +84,11 @@
 			</analyzer>
 		</fieldType>
 
-		<!--Stop words is commented for indexing-->
 		<fieldType name="text_spell_en" class="solr.TextField" positionIncrementGap="100">
 			<analyzer type="index">
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.ManagedStopFilterFactory" managed="en" />
-				 <!--<filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" />-->
+				<!-- <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" /> -->
 				<filter class="solr.LowerCaseFilterFactory" />
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
@@ -786,7 +785,7 @@
 				<filter class="solr.ManagedStopFilterFactory" managed="zh" />
 				<!-- <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_zh.txt" /> -->
 				<filter class="solr.LowerCaseFilterFactory" />
-				<filter class="solr.PorterStemFilterFactory" />
+				<!-- <filter class="solr.PorterStemFilterFactory" /> -->
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 			<analyzer type="query">
@@ -799,7 +798,7 @@
 				<filter class="solr.ManagedStopFilterFactory" managed="zh" />
 				<!-- <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_zh.txt" /> -->
 				<filter class="solr.LowerCaseFilterFactory" />
-				<filter class="solr.PorterStemFilterFactory" />
+				<!-- <filter class="solr.PorterStemFilterFactory" /> -->
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>
@@ -834,7 +833,7 @@
 				<filter class="solr.ManagedStopFilterFactory" managed="zh_tw" />
 				<!-- <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_zh_tw.txt" /> -->
 				<filter class="solr.LowerCaseFilterFactory" />
-				<filter class="solr.PorterStemFilterFactory" />
+				<!-- <filter class="solr.PorterStemFilterFactory" /> -->
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 			<analyzer type="query">
@@ -847,7 +846,7 @@
 				<filter class="solr.ManagedStopFilterFactory" managed="zh_tw" />
 				<!-- <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_zh_tw.txt" /> -->
 				<filter class="solr.LowerCaseFilterFactory" />
-				<filter class="solr.PorterStemFilterFactory" />
+				<!-- <filter class="solr.PorterStemFilterFactory" /> -->
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>

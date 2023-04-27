@@ -829,6 +829,7 @@
 	<bean id="blCommerceAddToCartStrategy"
 		class="com.bl.core.services.strategy.impl.DefaultBlCommerceAddToCartStrategy"
 		parent="defaultCommerceAddToCartStrategy">
+		<property name="sessionService" ref="sessionService" />
 	</bean>
 
 	<alias name="blCommerceUpdateCartEntryStrategy" alias="commerceUpdateCartEntryStrategy"/>
@@ -843,6 +844,7 @@
 	<bean id="blCommerceDeliveryModeStrategy"
 		class="com.bl.core.services.strategy.impl.DefaultBlCommerceDeliveryModeStrategy"
 		parent="defaultCommerceDeliveryModeStrategy">
+		<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>		
 		<property name="blDatePickerService" ref="blDatePickerService"/>
 	</bean>
 
@@ -2057,6 +2059,7 @@
 		<property name="blGoogleProductFeedXmlPupulator" ref="blGoogleProductFeedXmlPupulator"/>
 		<property name="mediaService" ref="mediaService"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
 	<bean id="blProductModifiedTimeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductModifiedTimeValueProvider" parent="abstractPropertyFieldValueProvider">
@@ -2272,5 +2275,25 @@
 		<property name="modelService" ref="modelService"/>
 	</bean>
 	<!-- BLS-120 END-->
+
+	<!--BLS-183 START-->
+	<bean id ="blProductRemoveInterceptor" class="com.bl.core.interceptor.BlProductRemoveInterceptor"/>
+	<bean id="blProductRemoveInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blProductRemoveInterceptor"/>
+		<property name="typeCode" value="Product"/>
+	</bean>
+	<!-- BLS-183 END-->
 	
+	<alias name="defaultBlIpVelocityService" alias="blIpVelocityService"/>
+	<bean id="defaultBlIpVelocityService" class="com.bl.core.service.ipVelocity.impl.DefaultBlIpVelocityService">
+		<property name="blIpVelocityDao" ref="blIpVelocityDao"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="configurationService" ref="configurationService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+	</bean>
+	
+	<alias name="defaultBlIpVelocityDao" alias="blIpVelocityDao"/>
+	<bean id="defaultBlIpVelocityDao" class="com.bl.core.dao.ipVelocity.impl.DefaultBlIpVelocityDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
 </beans>

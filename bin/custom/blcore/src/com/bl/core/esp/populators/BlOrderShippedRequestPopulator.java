@@ -14,15 +14,20 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,7 +42,14 @@ public class BlOrderShippedRequestPopulator extends
 
   private static final Logger LOG = Logger.getLogger(BlOrderShippedRequestPopulator.class);
   private static final String POPULATOR_ERROR = "Error while populating data for ESP Event";
+  private static final String UPS = "ups";
+  private static final String FEDEX = "fedex";
 
+	@Value("${blintegration.ups.shipment.label.url}")
+	private String upsShipmentURL;
+
+	@Value("${blintegration.fedex.shipment.label.url}")
+	private String fedExShipmentURL;
   /**
    * Populate the OrderShippedEventRequest instance with values from the OrderModel instance.
    *
@@ -103,11 +115,27 @@ public class BlOrderShippedRequestPopulator extends
       data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
       data.setRentalDuration((int) getRentalDuration(orderModel));
     }
-   final List<String> labelURLs = new ArrayList<>();
-	orderModel.getConsignments().forEach(consignment -> consignment.getPackaginginfos()
-			.forEach(packagingInfo -> labelURLs.add(packagingInfo.getLabelURL())));
-	final String allLabelURLs= String.join(BlCoreConstants.TRACK_STRING_SEPARATOR, labelURLs);
-	data.setTrackingString(allLabelURLs);
+   final Map<String, List<String>> outboundTrackingMap = new HashMap();
+	orderModel.getConsignments().forEach(consignment -> {
+		if (CollectionUtils.isNotEmpty(consignment.getPackaginginfos()))
+		{
+			final String shippingCarrier = consignment.getPackaginginfos().get(0).getLabelURL().contains(UPS) ? UPS : FEDEX;
+			final List<String> outboundTrackingList = outboundTrackingMap.containsKey(shippingCarrier)
+					? outboundTrackingMap.get(shippingCarrier)
+					: new ArrayList<>();
+			consignment.getPackaginginfos()
+					.forEach(packagingInfo -> outboundTrackingList.add(packagingInfo.getOutBoundTrackingNumber()));
+			outboundTrackingMap.put(shippingCarrier, outboundTrackingList);
+		}
+	});
+	final String UPSTracking = outboundTrackingMap.containsKey(UPS)
+			? upsShipmentURL + String.join(BlCoreConstants.TRACK_STRING_SEPARATOR, outboundTrackingMap.get(UPS))
+			: StringUtils.EMPTY;
+	final String fedexTracking = outboundTrackingMap.containsKey(FEDEX)
+			? fedExShipmentURL + String.join(BlCoreConstants.FEDEX_TRACK_STRING_SEPARATOR, outboundTrackingMap.get(FEDEX))
+			: StringUtils.EMPTY;
+	data.setTrackingString(UPSTracking + "\n" + fedexTracking);
+	
     populateShippingInfoInXML(orderModel, data);
     orderShippedEventRequest.setData(data);
   }

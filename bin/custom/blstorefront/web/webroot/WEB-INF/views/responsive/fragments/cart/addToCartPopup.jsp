@@ -36,7 +36,7 @@
             <div class="modal-body">
               <div class="row">
                   <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
-                  <div class="col-md-7 mt-4"><b>${product.name}</b>
+                  <div class="col-md-7 mt-4"><b>${ycommerce:encodeJSON(productName)}</b>
                   <c:if test="${not empty rentalDate.selectedFromDate}">
                     <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate} (${rentalDate.numberOfDays} days)</span>
                   </c:if>
@@ -53,7 +53,7 @@
                       <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                           modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
                           <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
-                          <input type="hidden" name="productCode" value="${entry.product.code}" />
+                          <input type="hidden" name="productCode" value="${fn:escapeXml(entry.product.code)}" />
                           <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
                           <input type="hidden" name="quantity" value="${entry.quantity}" />
                         <spring:theme code="text.quantity"/>

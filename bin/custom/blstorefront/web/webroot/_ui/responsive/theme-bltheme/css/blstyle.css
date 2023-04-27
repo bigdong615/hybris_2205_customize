@@ -252,8 +252,8 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .splide__arrow--prev svg { transform: scaleX(-1); }
 .splide__arrow--next { float: right; }
 .splide__pagination { width: 100%; position: absolute; bottom: -30px; padding: 0; }
-.splide__pagination__page { border: 1px solid #3d3c3c; width: 9px; height: 9px; background: #3d3c3c; border-radius: 50%; display: block; padding: 0; margin: 0 5px; }
-.splide__pagination__page.is-active { background-color: transparent; }
+.splide__pagination__page { border: 1px solid #3d3c3c; width: 9px; height: 9px; background: transparent; border-radius: 50%; display: block; padding: 0; margin: 0 5px; }
+.splide__pagination__page.is-active { background-color: #3d3c3c; }
 /* BL-492 - 2. */
 .card-slider .splide__pagination { bottom: 10px !important }
 
@@ -351,7 +351,10 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .litepicker { border-radius: 10px; font-family: font-family: 'Poppins', 'Helvetica', Arial, sans-serif; font-weight: 400; box-shadow: 0 15px 20px rgb(0,0,0,.5); -webkit-box-shadow: 0 15px 20px rgb(0,0,0,.5); }
 /* Litepicker position override */
 #globalSearch .litepicker:not(.mobilefriendly) { left: auto!important; right: 40px!important; }
-.home .litepicker:not(.mobilefriendly) { left: 50%!important; margin-left: -385px; width: 770px; }
+/* BLS-218 Changes by Sunil Kumar */
+.home .litepicker:not(.mobilefriendly) { right: 50%!important; margin-left: -385px; width: 770px; }
+.litepicker:not(.mobilefriendly) { left: 50%!important; margin-left: -385px; width: 770px; }
+
 .litepicker:not(.mobilefriendly) .container__months .month-item { width: calc(var(--litepicker-month-width) + 57px); padding: 10px 20px 0; }
 .litepicker:not(.mobilefriendly) .container__months.columns-2 { padding: 30px 20px 0; -webkit-box-shadow: none; box-shadow: none; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; width: calc((var(--litepicker-month-width) * 2) + 200px); }
 .litepicker .container__months .month-item-header { font-size: 20px; }
@@ -369,7 +372,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .litepicker .container__days .day-item.is-start-date:hover, .litepicker .container__days .day-item.is-end-date:hover { color: white; }
 .litepicker .container__days .day-item.is-start-date:before { content:''; display: block; height: 46px; width: 19px; right: 0; top: 0; position: absolute; background-color: #c1e2e3; transform: translateZ(-1px); }
 .litepicker .container__days .day-item.is-in-range { background-color: #c1e2e3; }
-.litepicker .container__days .day-item.is-end-date { border-radius: 50%; background-color: #e64b4f; transform-style: preserve-3d; }
+.litepicker .container__days .day-item.is-end-date { border-radius: 50%; background-color: #52bfc0; transform-style: preserve-3d; }
 .litepicker .container__days .day-item.is-end-date:before { content:''; display: block; height: 46px; width: 19px; left: 0; top: 0; position: absolute; background-color: #c1e2e3; transform: translateZ(-1px); }
 .litepicker .container__days .day-item.is-end-date:hover { box-shadow: none; color: #fff; }
 .litepicker .container__days .day-item.is-start-date.is-end-date { border-radius: 50%; }

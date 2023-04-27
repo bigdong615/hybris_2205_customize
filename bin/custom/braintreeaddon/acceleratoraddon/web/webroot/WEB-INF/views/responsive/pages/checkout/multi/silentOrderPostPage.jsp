@@ -285,11 +285,13 @@
 																	 data-address-id="${deliveryAddress.id}"></div>
 																   	<b class="mt-4 mb-3">Add Your Billing Address</b>
 																   	<c:if test="${!cartData.hasGiftCart}">
-																   	<input type="checkbox" class="form-control ${hideUseShipping}" id="ccUseDeliveryAddress" name="useDeliveryAddress"/>
+																   	<c:if test="${cartData.deliveryMode.shippingGroup eq 'SHIP_HOME_HOTEL_BUSINESS'}">
+																   	<input type="checkbox" checked="true" class="form-control ${hideUseShipping}" id="ccUseDeliveryAddress" name="useDeliveryAddress"/>
 																   	<label for="ccUseDeliveryAddress" class="${hideUseShipping}">
 																   		<span class="gray80"><spring:theme code="checkout.multi.sop.useMyDeliveryAddress" /></span>
 																   	</label>    
-																   	</c:if> 
+																   	</c:if>
+																   	</c:if>
 															</c:if> 
 															<input type="hidden" name="paypal_email" id="paypal_email" /> 
 														    <input type="hidden" name="billTo_country" id="address.country" value="US">
@@ -528,8 +530,10 @@
         var braintreeLocale = "${braintreeLocale}";
         var currency = "${payPalCheckoutData.currency}";
         var recipientName = "${payPalCheckoutData.shippingAddressOverride.recipientName}";
-        var streetAddress = "${payPalCheckoutData.shippingAddressOverride.streetAddress}";
-        var extendedAddress = "${payPalCheckoutData.shippingAddressOverride.extendedAddress}";
+
+        <%-- var streetAddress = "${payPalCheckoutData.shippingAddressOverride.streetAddress}";
+        var extendedAddress = "${payPalCheckoutData.shippingAddressOverride.extendedAddress}";--%>
+
         var locality = "${payPalCheckoutData.shippingAddressOverride.locality}";
         var countryCodeAlpha2 = "${payPalCheckoutData.shippingAddressOverride.countryCodeAlpha2}";
         var postalCode = "${payPalCheckoutData.shippingAddressOverride.postalCode}";
