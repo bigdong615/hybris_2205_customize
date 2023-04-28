@@ -27,8 +27,8 @@
 					placeholder="<spring:theme code="text.hero.banner.searchbox.placeholder" />"
 					name="text" value="" maxlength="100"
 					data-options="${fn:escapeXml(optionsJson)}">
-                 <span class="rental-dates d-none d-md-inline"><i class="icon-calendar"></i> Rental Dates :</span>
-				<input type="text" id="litepicker" class="form-control"
+                 <span id="litepicker" class="rental-dates d-none d-md-inline"><i class="icon-calendar"></i> Rental Dates :</span>
+				<input type="text" id="litepicker_search" class="form-control"
 					placeholder="<spring:theme code="text.hero.banner.searchbox.datepicker.placeholder" />" autocomplete="off">
 			</c:if>
 			<c:if test="${positionAttribute == 'MobileHomePageBannerSearchBoxSlot'}">
