@@ -300,7 +300,13 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     }
     final AddressData address = new AddressData();
     final CountryData country = new CountryData();
-    country.setIsocode(sopPaymentDetailsForm.getBillTo_country());
+    if (StringUtils.isNotBlank(sopPaymentDetailsForm.getBillTo_country()))
+    {
+      country.setIsocode(sopPaymentDetailsForm.getBillTo_country());
+    }
+    else {
+      country.setIsocode("US");
+    }
     address.setCountry(country);
     final RegionData region = new RegionData();
     region.setIsocode(sopPaymentDetailsForm.getBillTo_state());
