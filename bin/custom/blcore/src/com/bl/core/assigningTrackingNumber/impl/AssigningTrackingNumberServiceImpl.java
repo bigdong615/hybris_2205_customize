@@ -33,7 +33,7 @@ public class AssigningTrackingNumberServiceImpl implements AssigningTrackingNumb
     public List<OrderModel> assigningTracking() {
         final List<OrderModel> orders = blInventoryScanToolDao.getOrders();
         for (OrderModel orderModel : orders) {
-            if (CollectionUtils.isNotEmpty(orders) && (orderModel.getStatus() == OrderStatus.PAYMENT_CAPTURED)) {
+            if (CollectionUtils.isNotEmpty(orders) && (orderModel.getStatus() == OrderStatus.SHIPPED)) {
                 for (final ConsignmentModel consignment : orderModel.getConsignments()) {
                     ServicesUtil.validateParameterNotNull(consignment, "Consignment cannot be null");
                     if (consignment.getPackagingInfo() != null) {
