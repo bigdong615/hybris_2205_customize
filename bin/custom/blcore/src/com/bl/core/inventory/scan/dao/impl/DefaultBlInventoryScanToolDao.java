@@ -13,6 +13,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.model.CatalogModel;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.ItemModel;
+import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -119,8 +120,18 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD, barcode);
 		return CollectionUtils.isNotEmpty(results) ? results.get(BlInventoryScanLoggingConstants.ZERO) : null;
 	}
-	
-    /**
+
+	@Override
+	public List<OrderEntryModel> getAllOrderEntries(String code) {
+		final String barcodeList = "SELECT {oe.pk} from {OrderEntry as oe join Product as p on {oe.product} = {p.pk}} where {p.code} = ?code";
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+		query.addQueryParameter("code", code);
+		final List<OrderEntryModel> results = getFlexibleSearchService().<OrderEntryModel>search(query).getResult();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD, code);
+		return CollectionUtils.isNotEmpty(results) ? results : null;
+	}
+
+	/**
      * {@inheritDoc}
      */
     @Override

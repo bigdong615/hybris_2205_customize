@@ -3,13 +3,17 @@
  */
 package com.bl.backoffice.widget.controller;
 
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import com.bl.constants.BlloggingConstants;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.stock.BlStockLevelDao;
+import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
+import com.hybris.cockpitng.util.notifications.NotificationService;
+import de.hybris.platform.core.model.order.OrderEntryModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.ordersplitting.model.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -19,6 +23,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.ListModelList;
@@ -37,6 +42,7 @@ import com.google.common.collect.Lists;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 
 
 /**
@@ -53,6 +59,9 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 	private static final String PREPPED_LOCATION_CATEGORY = "CLEAN_AND_READY_TO_SHIP";
 	protected static final String OUT_CONFIRM = "confirmOutput";
 	protected static final String COMPLETE = "completed";
+
+	private static final String FIRST_ITEM_SCAN_INFO = "blbackoffice.order.consolidation.tool.wizard.notification.first.item.info";
+	private static final String LAST_ITEM_SCAN_INFO = "blbackoffice.order.consolidation.tool.wizard.notification.last.item.info";
 
 	private Textbox textInput;
 
@@ -72,6 +81,9 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 	private BlInventoryScanToolService blInventoryScanToolService;
 
 	Object selectedConsignment = new Object();
+
+	@Resource
+	private transient NotificationService notificationService;
 
 	@SocketEvent(socketId = IN_SOCKET)
 	public void initLoadPage(final Object inputObject)
@@ -111,62 +123,68 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 		{
 			final BlSerialProductModel serialModel = getBlInventoryScanToolDao().getBlSerialProductByBarcode(textInput.getText());
 
-			if (serialModel != null && serialModel.getAssociatedShippedConsignment() != null)
+		if (serialModel != null )
 			{
 				try
 				{
-					final Date date = serialModel.getAssociatedShippedConsignment().getOptimizedShippingStartDate();
-					final Calendar calender = Calendar.getInstance();
-					calender.setTime(new Date()); // Using today's date
-					calender.add(Calendar.DATE, 5); // Adding 5 days
-					final Date fiveDaysPlus = calender.getTime();
-					calender.add(Calendar.DATE, -10);// Subtracting 5 days
-					final Date fiveDaysMinus = calender.getTime();
-					if (date.compareTo(fiveDaysMinus) >= 0 || date.compareTo(fiveDaysPlus) <= 0)
-					{
-   					for (final ConsignmentEntryModel consEntry : serialModel.getAssociatedShippedConsignment().getConsignmentEntries())
-   					{
-   
-   						for (final BlProductModel serial : consEntry.getSerialProducts())
-   						{
-   							final OrderConsolidationData orderConsolidationData = new OrderConsolidationData();
-   							orderConsolidationData.setProductName((((BlSerialProductModel) serial).getBlProduct().getName()));
-   							orderConsolidationData.setBarCode(((BlSerialProductModel) serial).getBarcode());
-   							orderConsolidationData.setOrderNumber(serialModel.getAssociatedShippedConsignment().getOrder().getCode());
-   							orderConsolidationData.setShippingMethod(
-   									serialModel.getAssociatedShippedConsignment().getOrder().getDeliveryMode().getCode());
-   
-   							if (((BlSerialProductModel) serial).getOcLocationDetails() != null)
-   							{
-   								if (((BlSerialProductModel) serial).getOcLocationDetails().getLocationCategory().getCode()
-   										.equals(PREPPED_LOCATION_CATEGORY))
-   								{
-   									orderConsolidationData.setLocation(((BlSerialProductModel) serial).getOcLocationDetails().getName());
-   								}
-   								else
-   								{
-   									orderConsolidationData.setLocation(" ");
-   								}
-   							}
-   							String parentLocation = "";
-   							if (serialModel.getOcLocationDetails() != null)
-   							{
-   								parentLocation = ((BlSerialProductModel) serial).getOcLocationDetails()
-   										.getParentInventoryLocation() != null
-   												? ((BlSerialProductModel) serial).getOcLocationDetails().getParentInventoryLocation()
-   														.getName()
-   												: " ";
-   								orderConsolidationData.setParentLocation(parentLocation);
-   							}
-   							else
-   							{
-   								orderConsolidationData.setParentLocation(parentLocation);
-   							}
-   							orderConsolidationDataList.add(orderConsolidationData);
-   						}
-   					}
-					}
+					final List<OrderEntryModel> orderEntries = getBlInventoryScanToolDao().getAllOrderEntries(serialModel.getBlProduct().getCode());
+					OrderModel orderModel = null;
+					for(OrderEntryModel orderEntryModel : orderEntries) {
+						for (final BlProductModel pd : orderEntryModel.getSerialProducts()) {
+							if (pd.getCode().equals(serialModel.getCode())) {
+								 orderModel = orderEntryModel.getOrder();
 
+								 for(ConsignmentModel consignmentModel : orderModel.getConsignments()){
+									 final Date date = consignmentModel.getOptimizedShippingStartDate();
+									 final Calendar calender = Calendar.getInstance();
+									 calender.setTime(new Date()); // Using today's date
+									 calender.add(Calendar.DATE, 5); // Adding 5 days
+									 final Date fiveDaysPlus = calender.getTime();
+									 calender.add(Calendar.DATE, -10);// Subtracting 5 days
+									 final Date fiveDaysMinus = calender.getTime();
+									 if(orderEntryModel.getConsignmentEntries().stream().anyMatch(new HashSet<>(consignmentModel.getConsignmentEntries())::contains)){
+										 for (final ConsignmentEntryModel consEntry : consignmentModel.getConsignmentEntries()) {
+											 if (!date.before(fiveDaysMinus) && !date.after(fiveDaysPlus)) {
+												 {
+													 for (final BlProductModel serial : consEntry.getSerialProducts()) {
+														 final OrderConsolidationData orderConsolidationData = new OrderConsolidationData();
+														 orderConsolidationData.setProductName((((BlSerialProductModel) serial).getBlProduct().getName()));
+														 orderConsolidationData.setBarCode(((BlSerialProductModel) serial).getBarcode());
+														 orderConsolidationData.setOrderNumber(consEntry.getConsignment().getOrder().getCode());
+														 orderConsolidationData.setShippingMethod(consEntry.getConsignment().getOrder().getDeliveryMode().getCode());
+
+														 if (((BlSerialProductModel) serial).getOcLocationDetails() != null) {
+															 if (((BlSerialProductModel) serial).getOcLocationDetails().getLocationCategory().getCode()
+																	 .equals(PREPPED_LOCATION_CATEGORY)) {
+																 orderConsolidationData.setLocation(((BlSerialProductModel) serial).getOcLocationDetails().getName());
+															 } else {
+																 orderConsolidationData.setLocation(" ");
+															 }
+														 }
+														 String parentLocation = "";
+														 if (serialModel.getOcLocationDetails() != null && ((BlSerialProductModel) serial).getOcLocationDetails() !=null) {
+															 parentLocation = ((BlSerialProductModel) serial).getOcLocationDetails()
+																	 .getParentInventoryLocation() != null
+																	 ? ((BlSerialProductModel) serial).getOcLocationDetails().getParentInventoryLocation()
+																	 .getName()
+																	 : " ";
+															 orderConsolidationData.setParentLocation(parentLocation);
+														 } else {
+															 orderConsolidationData.setParentLocation(parentLocation);
+														 }
+														 orderConsolidationDataList.add(orderConsolidationData);
+													 }
+												 }
+											 }
+										 }
+
+									 }
+								 }
+
+
+							}
+						}
+					}
 				}
 				catch (final Exception ex)
 				{
@@ -185,12 +203,19 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 				this.getConsolidationData().setModel(new ListModelList<>(orderConsolidationDataList));
 
 				this.getConsolidationData().renderAll();
+				createErrorMessages(orderConsolidationDataList);
+				scanningArea.setValue(textInput.getText());
+				scanningArea.setFocus(true);
 
 			}
+			else{
+				Messagebox.show("order with the given barcode is not Shipping soon");
+				textInput.setValue("");
+				textInput.setFocus(true);
+			}
 		}
-		scanningArea.setValue(textInput.getText());
-		scanningArea.setFocus(true);
-		createErrorMessages(orderConsolidationDataList);
+
+
 	}
 
 
@@ -201,11 +226,17 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 	{
 		if (orderConsolidationDataList.size() == 1 && StringUtils.isBlank(orderConsolidationDataList.get(0).getLocation()))
 		{
-			Messagebox.show("Last item, please pass gear to shipping.");
+			//Messagebox.show("Last item, please pass gear to shipping.");
+			notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+					NotificationEvent.Level.INFO, this.getLabel(FIRST_ITEM_SCAN_INFO));
+
 		}
 		else if (orderConsolidationDataList.stream().allMatch(cData -> StringUtils.isBlank(cData.getLocation())))
 		{
-			Messagebox.show("First item, please assign a location.");
+			notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+					NotificationEvent.Level.INFO, this.getLabel(LAST_ITEM_SCAN_INFO));
+			//Messagebox.show("First item, please assign a location.");
+
 		}
 
 	}
@@ -308,7 +339,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 	}
 
 	/**
-	 * @param checkValidLocationInBarcodeList
+	 * @param result
 	 * @param barcodes
 	 */
 	private void createResponseMegForScan(final int result, final List<String> barcodes)
@@ -358,7 +389,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 	}
 
 	/**
-	 * @param doBINScanFromWebScanTool
+	 * @param result
 	 * @param barcodes
 	 */
 	private void createResponseMegForBINScan(final int result, final List<String> barcodes)
@@ -465,5 +496,9 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 	{
 		this.blInventoryScanToolService = blInventoryScanToolService;
 	}
+	
 
+	public NotificationService getNotificationService() {
+		return notificationService;
+	}
 }
