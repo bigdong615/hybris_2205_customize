@@ -527,6 +527,26 @@
                     </editorArea:attribute>
                     <editorArea:attribute qualifier="trackingID" label="warehousingbackoffice.consignment.trackingID"/>
                 </editorArea:section>
+				 <editorArea:section name="warehousingbackoffice.section.subpart.entries">
+                    <editorArea:panel name="warehousingbackoffice.subpart.panel">
+                        <editorArea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+                                              qualifier="subpartsList" readonly="true"
+                                              label="warehousingbackoffice.section.entries">
+                            <editorArea:editor-parameter>
+                                <editorArea:name>listConfigContext</editorArea:name>
+                                <editorArea:value>referenceListViewProduct</editorArea:value>
+                            </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+                                <editorArea:name>disableDisplayingDetails</editorArea:name>
+                                <editorArea:value>false</editorArea:value>
+                            </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+                                <editorArea:name>disableRemoveReference</editorArea:name>
+                                <editorArea:value>false</editorArea:value>
+                            </editorArea:editor-parameter>
+                        </editorArea:attribute>
+                    </editorArea:panel>
+                </editorArea:section>
                 <editorArea:section name="warehousingbackoffice.section.consignment.entries">
                     <editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
                         <editorArea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
@@ -1024,6 +1044,22 @@
             <list-view:column qualifier="subpartsNotScannedCount"/>
         </list-view:list-view>
     </context>
+	
+	 <context merge-by="type" parent="GenericItem" type="BlSubparts" component="referenceListViewProduct">
+        <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+            <list-view:column qualifier="blProducts"
+                              label="warehousingbackoffice.blsubparts.mainproduct.product.code"
+                              spring-bean="nullSafeListCellRenderer"/>
+            <list-view:column qualifier="subpartProduct.code"
+                              label="warehousingbackoffice.blsubparts.product.code"
+                              spring-bean="nullSafeListCellRenderer"/>
+            <list-view:column qualifier="quantity"
+                              label="warehousingbackoffice.blsubparts.quantity"
+                              spring-bean="nullSafeListCellRenderer"/>
+
+        </list-view:list-view>
+    </context>
+
 
     <context merge-by="type" parent="GenericItem" type="Warehouse" component="referenceListViewWarehouse">
         <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">

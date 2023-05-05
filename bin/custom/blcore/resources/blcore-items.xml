@@ -42,6 +42,8 @@
         
         <collectiontype code="IpVelocityList" elementtype="java.lang.String" type="list"/>
 
+        <collectiontype code="subpartsList" elementtype="BlSubparts" type="list"/>
+
     </collectiontypes>
 
     <enumtypes>
@@ -3716,6 +3718,11 @@
                         <description>Dynamic attribute on consignment to display Rental Return Date from Order</description>
                         <modifiers write="false"/>
                         <persistence type="dynamic" attributeHandler="blConsignmentRentalEndDateHandler"/>
+                    </attribute>
+                    <attribute autocreate="true" qualifier="subpartsList" type="subpartsList">
+                        <modifiers read="true" write="false" optional="true" />
+                        <description>Gets the overall list of the subparts in consignment entries. </description>
+                        <persistence type="dynamic" attributeHandler="blSubpartsRenderedHandler" />
                     </attribute>
                 </attributes>
             </itemtype>
