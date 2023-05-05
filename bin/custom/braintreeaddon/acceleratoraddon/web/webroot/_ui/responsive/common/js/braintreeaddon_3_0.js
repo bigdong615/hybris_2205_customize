@@ -933,7 +933,7 @@ function createHostedFields(clientInstance) {
 				else if(billingFormErrorCounts > 0)
 				{
 					hasNoError = false;
-					var validationDiv = $('<div class="notification notification-error mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
+					var validationDiv = $('<div class="notification notification-error mb-4" />').html("Looks like you forgot to select a billing address" +
 							'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 					$('#validationMessage').append(validationDiv);
 					$('.page-loader-new-layout').hide();
@@ -1204,7 +1204,7 @@ $('#submit_silentOrderPostForm').click(function () {
 	else if(ccEnable == true && $("#savedBillingAddressId").val() == '')
 	{
 		var billingFormErrorCounts = validateBillingAddressFields();
-		var validationDiv = $('<div class="notification notification-error mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
+		var validationDiv = $('<div class="notification notification-error mb-4" />').html("Looks like you forgot to select a billing address" +
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 		$('#validationMessage').append(validationDiv);
 	}
@@ -1290,7 +1290,7 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 		var billingFormErrorCounts = validateBillingAddressFields();
 		if(billingFormErrorCounts > 0)
 		{
-			var validationDiv = $('<div class="notification notification-error mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
+			var validationDiv = $('<div class="notification notification-error mb-4" />').html("Looks like you forgot to select a billing address"+
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 						$('#validationMessage').append(validationDiv);
 			$('.page-loader-new-layout').hide();
