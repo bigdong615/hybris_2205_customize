@@ -63,6 +63,8 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 	private static final String FIRST_ITEM_SCAN_INFO = "blbackoffice.order.consolidation.tool.wizard.notification.first.item.info";
 	private static final String LAST_ITEM_SCAN_INFO = "blbackoffice.order.consolidation.tool.wizard.notification.last.item.info";
 
+	private static final String NOT_SHIPPING_SOON = "blbackoffice.order.consolidation.tool.wizard.notification.not.shipping.soon";
+
 	private Textbox textInput;
 
 	@Resource(name = "blInventoryScanToolDao")
@@ -206,10 +208,13 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 				createErrorMessages(orderConsolidationDataList);
 				scanningArea.setValue(textInput.getText());
 				scanningArea.setFocus(true);
+				scanningArea.fo
 
 			}
 			else{
-				Messagebox.show("order with the given barcode is not Shipping soon");
+				//Messagebox.show("order with the given barcode is not Shipping soon");
+				notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+						NotificationEvent.Level.INFO, this.getLabel(NOT_SHIPPING_SOON));
 				textInput.setValue("");
 				textInput.setFocus(true);
 			}
@@ -496,7 +501,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 	{
 		this.blInventoryScanToolService = blInventoryScanToolService;
 	}
-	
+
 
 	public NotificationService getNotificationService() {
 		return notificationService;
