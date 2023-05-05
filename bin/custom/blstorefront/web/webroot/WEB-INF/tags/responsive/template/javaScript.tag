@@ -674,7 +674,7 @@ console.log("First start");
 
                             setup: (picker) => {
                       			picker.on('button:apply', (date1, date2) => {
-                      				var searchText = document.getElementById('js-site-search-input-mob').value;
+                      				var searchText = document.getElementById('js-site-search-input').value;
                       				trackDateSelection(date1,date2);
                       				var rentalGear = 'rentalGear';
                       				var contextPath = ACC.config.contextPath;
