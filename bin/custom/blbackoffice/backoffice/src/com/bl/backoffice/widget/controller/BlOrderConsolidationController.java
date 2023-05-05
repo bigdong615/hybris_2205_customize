@@ -206,7 +206,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 
 				this.getConsolidationData().renderAll();
 				createErrorMessages(orderConsolidationDataList);
-				scanningArea.setValue(textInput.getText());
+				scanningArea.setValue(textInput.getText() + "\n");
 				scanningArea.setFocus(true);
 
 			}
@@ -388,7 +388,11 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 		}
 		else
 		{
+			this.scanningArea.setValue("");
+			this.textInput.setValue(this.textInput.getValue());
+			this.textInput.setFocus(true);
 			Messagebox.show("Successfully records scanned!!");
+
 		}
 	}
 
@@ -402,7 +406,8 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 		{
 			case BlInventoryScanLoggingConstants.ONE:
 				Messagebox.show("Successfully records scanned!!");
-
+				this.scanningArea.setValue("");
+				this.textInput.setFocus(true);
 				break;
 
 			case BlInventoryScanLoggingConstants.TWO:
