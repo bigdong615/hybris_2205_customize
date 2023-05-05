@@ -1,5 +1,6 @@
 package com.bl.core.inventory.scan.dao;
 
+import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -133,4 +134,6 @@ public interface BlInventoryScanToolDao {
 		 * @return
 		 */
 		BlSerialProductModel getBlSerialProductByBarcode(String barcode);
+
+    List<OrderEntryModel> getAllOrderEntries(String code);
 }
