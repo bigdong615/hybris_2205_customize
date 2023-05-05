@@ -2296,4 +2296,7 @@
 	<bean id="defaultBlIpVelocityDao" class="com.bl.core.dao.ipVelocity.impl.DefaultBlIpVelocityDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
+
+	<bean id="blSubpartsRenderedHandler" class="com.bl.core.model.handler.BlSubpartsRenderedHandler"/>
+
 </beans>

@@ -204,6 +204,9 @@ UserGroup ; warehouseagentgroup ;                ;          ;                   
           ;                     ;                ;          ;SavedValues             ;+     ;-       ;-       ;-       ;
           ;                     ;                ;           ;SavedValueEntry        ;+     ;-       ;-       ;-       ;
           ;                     ;                ;           ;ShippingLabelHistory   ;+     ;-       ;-       ;-       ; -
+          ;                     ;                ;          ;BlSubparts2BlProductRelation ; +    ;       ;        ;
+          ;                     ;                ;          ;BlSubparts              ; +    ;       ;        ;
+          ;                     ;                ;          ;BlSubparts.subpartProduct	 ; +    ;       ;        ;
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
