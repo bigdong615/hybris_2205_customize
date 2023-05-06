@@ -3,6 +3,42 @@
  */
 package com.bl.backoffice.widget.controller;
 
+import de.hybris.platform.enumeration.EnumerationService;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.servicelayer.model.ModelService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Div;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Textbox;
+
 import com.bl.backoffice.wizards.util.BulkReceiveRespData;
 import com.bl.backoffice.wizards.util.BulkReceiveScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
@@ -20,38 +56,6 @@ import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
-import de.hybris.platform.enumeration.EnumerationService;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.servicelayer.model.ModelService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.WrongValueException;
-import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
-import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Div;
-import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
-import org.zkoss.zul.ListModelList;
-import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Textbox;
 
 /**
  * @author ravinder
@@ -198,13 +202,14 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				bulkReceiveRespData.setFunctionalRating(new ListModelList<>(functionalRatingValues));
 
 				bulkReceiveRespData.setOrderNumber(
-						blSerialProductModel.getAssociatedOrder() != null ? blSerialProductModel.getAssociatedOrder().getCode()
+						blSerialProductModel.getAssociatedShippedConsignment() != null
+								? blSerialProductModel.getAssociatedShippedConsignment().getOrder().getCode()
 								: StringUtils.EMPTY);
 				String orderNotesValue = "";
 				final List<String> orderNotesData = new ArrayList<String>();
-				if (blSerialProductModel.getAssociatedOrder() != null)
+				if (blSerialProductModel.getAssociatedShippedConsignment() != null)
 				{
-					blSerialProductModel.getAssociatedOrder().getOrderNotes().forEach(notes -> {
+					blSerialProductModel.getAssociatedShippedConsignment().getOrder().getOrderNotes().forEach(notes -> {
 						orderNotesData.add(notes.getNote());
 					});
 				}
@@ -222,7 +227,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				}
 				bulkReceiveRespData.setOrderNotes(orderNotesValue);
 
-				if (blSerialProductModel.getAssociatedOrder() != null)
+				if (blSerialProductModel.getAssociatedShippedConsignment() != null)
 				{
 					/* Adding serial product information */
 					bulkReceiveRespDataList.add(bulkReceiveRespData);
@@ -233,7 +238,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				}
 
 				if (CollectionUtils.isNotEmpty(blSerialProductModel.getBlProduct().getSubpartProducts())
-						&& blSerialProductModel.getAssociatedOrder() != null)
+						//						&& blSerialProductModel.getAssociatedOrder() != null)
+						&& blSerialProductModel.getAssociatedShippedConsignment() != null)
 				{
 					for (final BlSubpartsModel blSubPartModel : blSerialProductModel.getBlProduct().getSubpartProducts())
 					{
@@ -254,7 +260,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 						bulkSubpartReceiveRespData.setBarcode(blSerialProductModel.getBarcode());
 						//bulkSubpartReceiveRespData.setFirmwareVersion("");
 						bulkSubpartReceiveRespData.setOrderNumber(
-								blSerialProductModel.getAssociatedOrder() != null ? blSerialProductModel.getAssociatedOrder().getCode()
+								blSerialProductModel.getAssociatedShippedConsignment() != null
+										? blSerialProductModel.getAssociatedShippedConsignment().getOrder().getCode()
 										: StringUtils.EMPTY);
 						//bulkSubpartReceiveRespData.setOrderNotes(orderNotesValue);
 
@@ -309,7 +316,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 	public void confirmChangeStatus() throws InterruptedException
 	{
 
-		Map<String, BlSerialProductModel> blSerialList = new HashMap<String, BlSerialProductModel>();
+		final Map<String, BlSerialProductModel> blSerialList = new HashMap<String, BlSerialProductModel>();
 		final List<BulkReceiveRespData> selectedSerials = new ArrayList<BulkReceiveRespData>();
 		final Set<BlProductModel> blProductModels = new HashSet<BlProductModel>();
 
@@ -344,7 +351,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				bulkReceiveData.setTestingStatusValue(testingStatus);
 				bulkReceiveData.setCosmeticRatingValue(cosmRating);
 				bulkReceiveData.setFirmwareVersion(firmwareVersion);
-				BlSerialProductModel blSerialProductModel = this.getDefaultBlProductDao().getSerialBySerialCode(bulkReceiveData.getSerialProductId());
+				final BlSerialProductModel blSerialProductModel = this.getDefaultBlProductDao().getSerialBySerialCode(bulkReceiveData.getSerialProductId());
 
 				if(Objects.nonNull(blSerialProductModel))
 				{
@@ -368,7 +375,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
-	private void createDataForNonBarcodedSubparts(final List<BulkReceiveRespData> selectedSerials, BlSerialProductModel blSerialProductModel)
+	private void createDataForNonBarcodedSubparts(final List<BulkReceiveRespData> selectedSerials, final BlSerialProductModel blSerialProductModel)
 	{
 		for (final BlSubpartsModel blSubPartModel : blSerialProductModel.getBlProduct().getSubpartProducts())
 		{
@@ -381,7 +388,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				bulkSubpartReceiveRespData.setMainProductId(blSerialProductModel.getBlProduct().getCode());
 				bulkSubpartReceiveRespData.setBarcode(blSerialProductModel.getBarcode());
 				bulkSubpartReceiveRespData.setOrderNumber(
-						blSerialProductModel.getAssociatedOrder() != null ? blSerialProductModel.getAssociatedOrder().getCode()
+						blSerialProductModel.getAssociatedShippedConsignment() != null
+								? blSerialProductModel.getAssociatedShippedConsignment().getOrder().getCode()
 								: StringUtils.EMPTY);
 				bulkSubpartReceiveRespData.setFunctionalRatingValue(StringUtils.EMPTY);
 				bulkSubpartReceiveRespData.setTestingStatusValue(StringUtils.EMPTY);
@@ -399,7 +407,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 	 * @param selectedSerials
 	 *
 	 */
-		private void updateSerialStatus(final List<BulkReceiveRespData> selectedSerials, Map<String, BlSerialProductModel> blSerialList)
+		private void updateSerialStatus(final List<BulkReceiveRespData> selectedSerials, final Map<String, BlSerialProductModel> blSerialList)
 	{
 
 		if (CollectionUtils.isNotEmpty(selectedSerials))
@@ -442,10 +450,12 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 					Map<String, ItemStatusEnum> itemsMap;
 
 
-					if (serialModel.getAssociatedConsignment() != null)
+					//if (serialModel.getAssociatedConsignment() != null)
+					if (serialModel.getAssociatedShippedConsignment() != null)
 					{
 						//Updating consignment items
-					for (final ConsignmentEntryModel consignEntryModel : serialModel.getAssociatedConsignment()
+						//					for (final ConsignmentEntryModel consignEntryModel : serialModel.getAssociatedConsignment()
+						for (final ConsignmentEntryModel consignEntryModel : serialModel.getAssociatedShippedConsignment()
 							.getConsignmentEntries())
 					{
 
