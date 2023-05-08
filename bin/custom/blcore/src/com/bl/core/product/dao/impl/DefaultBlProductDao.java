@@ -73,7 +73,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 
   private static final String GET_SUBPARTS_FOR_PRODUCT_MAPPING_QUERY = "select {sp.pk} from {BlSubparts as sp join blProduct as p on {sp.subpartProduct}={p.pk}} where {p.code}=?productCode and {sp.quantity} =?quantity";
 
-  private static final String GET_USED_PRODUCTS_ON_SALE_QUERY = "SELECT {p.pk} from {blProduct as p JOIN Catalogversion as cv ON {cv.pk}={p.catalogversion} and {cv.version} like ?version JOIN Catalog as c ON {c.pk}={cv.catalog} and {c.id} like ?catalogCode} where {p.forSale} = ?isForSale";
+  private static final String GET_USED_PRODUCTS_ON_SALE_QUERY = "SELECT {p.pk} from {blProduct as p JOIN Catalogversion as cv ON {cv.pk}={p.catalogversion} and {cv.version} like ?version JOIN Catalog as c ON {c.pk}={cv.catalog} and {c.id} like ?catalogCode} where {p.forSale} = ?isForSale and {p.isNew} = ?isNew";
 
   private static final String GET_STOCKLEVELS_FOR_SERIAL_QUERY = "SELECT {s.pk} from {stockLevel as s} where {s.serialProductCode} = ?serialCode";
 
@@ -214,6 +214,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
   {
 	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_USED_PRODUCTS_ON_SALE_QUERY);
 	  fQuery.addQueryParameter("isForSale", Boolean.TRUE);
+	  fQuery.addQueryParameter("isNew", Boolean.FALSE);
 	  fQuery.addQueryParameter("catalogCode", "blProductCatalog");
 	  fQuery.addQueryParameter("version", "Online");
 	  final SearchResult<BlProductModel> result = getFlexibleSearchService().search(fQuery);

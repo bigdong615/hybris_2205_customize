@@ -202,12 +202,25 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 		{
 			if (product instanceof BlProductModel && !product.getSerialProducts().isEmpty())
 			{
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current Used gear Product id for Google Feed : {}",
+						product.getCode());
 				outerloop:
 				for (final BlSerialProductModel serial : product.getSerialProducts())
 				{
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current Used gear Serial Product id for Google Feed : {}",
+							serial.getCode());
 					if(getBlStockService().isActiveStatus(serial.getSerialStatus()) && serial.getForSale()) {
+						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+								"Current Used gear Serial Product id for Google Feed is avaialble and added to feed : {}",
+								serial.getCode());
 						products.add(product);
 						break outerloop;
+					}
+					else
+					{
+						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+								"Current Used gear Serial Product id for Google Feed is not avaialble and removed to feed : {}",
+								serial.getCode());
 					}
 				}
 			}
