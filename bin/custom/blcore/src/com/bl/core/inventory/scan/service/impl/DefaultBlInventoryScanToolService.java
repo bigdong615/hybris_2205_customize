@@ -1,6 +1,5 @@
 package com.bl.core.inventory.scan.service.impl;
 
-import com.bl.core.esp.service.BlESPEventService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -42,6 +41,7 @@ import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.PackagingInfoStatus;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
 import com.bl.core.model.BlInventoryLocationModel;
@@ -927,8 +927,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 		final List<BlProductModel> allIncludedEntry = new ArrayList<>();
 		selectedConsignment.getConsignmentEntries().forEach(consEntry -> {
-			Map<String, ItemStatusEnum> items = consEntry.getItems();
-			List<BlProductModel> includedSerials = allEntryBarcodedSerials.stream().filter(
+			final Map<String, ItemStatusEnum> items = consEntry.getItems();
+			final List<BlProductModel> includedSerials = allEntryBarcodedSerials.stream().filter(
 					blSerialProductModel -> (items.containsKey(blSerialProductModel.getCode()) && items
 							.get(blSerialProductModel.getCode()).equals(ItemStatusEnum.INCLUDED)))
 					.collect(Collectors.toList());
@@ -1136,24 +1136,40 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	private void updateSerialProductMap(final Map<String, ItemStatusEnum> itemsMap, final BlSerialProductModel serialProduct,
 			final ConsignmentModel consignment)
 	{
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Serial product with code {} ", serialProduct.getCode());
+
+		try
+		{
 		if (itemsMap.containsKey(serialProduct.getCode())
 				&& itemsMap.get(serialProduct.getCode()).equals(ItemStatusEnum.NOT_INCLUDED))
 		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Serial product with code {} - step1 ", serialProduct.getCode());
 			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
 			serialProduct.setHardAssigned(true);
 			serialProduct.setAssociatedShippedConsignment(consignment);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Serial product with code {} - step2 ", serialProduct.getCode());
 			if(BooleanUtils.isTrue(serialProduct.getIsBufferedInventory())) {
 				serialProduct.setIsBufferedInventory(Boolean.FALSE);
 				blProductService.changeBufferInvFlagInStagedVersion(serialProduct.getCode(), Boolean.FALSE);
 			}
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Serial product with code {} - step3 ", serialProduct.getCode());
 			final Collection<StockLevelModel> findSerialStockLevelForDate = (consignment.getOptimizedShippingStartDate() !=null && consignment.getOptimizedShippingEndDate() !=null ) ? blStockLevelDao.findSerialStockLevelForDate(
 					serialProduct.getCode(), consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate())  : CollectionUtils.EMPTY_COLLECTION;
 			if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
 			{
 				findSerialStockLevelForDate.forEach(stockLevel -> stockLevel.setHardAssigned(true));
 			}
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Serial product with code {} - step4 ", serialProduct.getCode());
 			modelService.save(serialProduct);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial product with code {} is scanned successfully and marked as included and hard assigned to true.", serialProduct.getCode());
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"Serial product with code {} is scanned successfully and marked as included and hard assigned to true.",
+					serialProduct.getCode());
+		}
+	}
+	catch (final Exception e)
+	{
+		BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, e, "Unable to scan serial product with  {}",
+				serialProduct.getCode());
 		}
 	}
 
@@ -2798,7 +2814,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param consignmentModel  Consignmnet Model
 	 * @param serialProductModel Serial Product Model
 	 */
-	private void setAssociatedConsignment(ConsignmentModel consignmentModel, BlSerialProductModel serialProductModel) {
+	private void setAssociatedConsignment(final ConsignmentModel consignmentModel, final BlSerialProductModel serialProductModel) {
 		serialProductModel.setAssociatedConsignment(consignmentModel);
 		modelService.save(serialProductModel);
 		modelService.refresh(serialProductModel);
