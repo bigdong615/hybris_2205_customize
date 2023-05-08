@@ -1203,6 +1203,7 @@
 		<property name="catalogVersionDao" ref="catalogVersionDao"/>
 		<property name="searchRestrictionService" ref="searchRestrictionService"/>
 		<property name="blProductDao" ref="productDao"/>
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 
 	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->
@@ -2052,6 +2053,7 @@
 	<bean id="blGoogleProductFeedXmlPupulator" class="com.bl.core.google.product.populators.BlGoogleProductFeedXmlPupulator">
 		<property name="modelService" ref="modelService"/>
 		<property name="blDeliveryModeService" ref="blDeliveryModeService"/>
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
 	<bean id="blGoogleMerchantJob" class="com.bl.core.job.BlGoogleMerchantCenterJob" parent="abstractJobPerformable">
