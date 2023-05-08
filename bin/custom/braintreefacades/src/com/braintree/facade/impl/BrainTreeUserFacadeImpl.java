@@ -104,7 +104,9 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		getAddressReversePopulator().populate(addressData, newAddress);
 
 		if(CollectionUtils.isEmpty(currentCustomer.getAddresses())){
-			currentCustomer.setName(newAddress.getFirstname());
+			//currentCustomer.setName(newAddress.getFirstname());
+			//BLS-131 : populate full name instead of only first name
+			currentCustomer.setName(getCustomerNameStrategy().getName(newAddress.getFirstname(), newAddress.getLastname()));
 		}
 		// Store the address against the user
 		getCustomerAccountService().saveAddressEntry(currentCustomer, newAddress);
