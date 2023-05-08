@@ -28,12 +28,12 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.constants.GeneratedBlCoreConstants.Enumerations.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 
@@ -51,6 +51,7 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
   private CatalogVersionDao catalogVersionDao;
   private SearchRestrictionService searchRestrictionService;
   private BlProductDao blProductDao;
+  private BlStockService blStockService;
 
 	@Resource(name = "blStockLevelDao")
 	private BlStockLevelDao blStockLevelDao;
@@ -204,18 +205,9 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 				outerloop:
 				for (final BlSerialProductModel serial : product.getSerialProducts())
 				{
-					if ((serial.getSerialStatus().getCode().equals(SerialStatusEnum.ACTIVE)
-							|| serial.getSerialStatus().getCode().equals(SerialStatusEnum.RECEIVED_OR_RETURNED)) && serial.getForSale())
-					{
-						final List<StockLevelModel> stockLevels = getBlProductDao().getStockLevelsForSerial(serial.getCode());
-						for (final StockLevelModel StockLevel : stockLevels)
-						{
-							if (!StockLevel.getReservedStatus())
-							{
-								products.add(product);
-								break outerloop;
-							}
-						}
+					if(getBlStockService().isActiveStatus(serial.getSerialStatus()) && serial.getForSale()) {
+						products.add(product);
+						break outerloop;
 					}
 				}
 			}
@@ -265,6 +257,16 @@ public BlProductDao getBlProductDao()
 public void setBlProductDao(final BlProductDao blProductDao)
 {
 	this.blProductDao = blProductDao;
+}
+
+public BlStockService getBlStockService()
+{
+	return blStockService;
+}
+
+public void setBlStockService(final BlStockService blStockService)
+{
+	this.blStockService = blStockService;
 }
 
 }
