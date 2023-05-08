@@ -8,6 +8,8 @@ User-agent: *
 Disallow: <c:url value="/cart" />
 Disallow: <c:url value="/checkout" />
 Disallow: <c:url value="/my-account" />
+Disallow: <c:url value="/resetDatepicker" />
+Disallow: <c:url value="/datepicker" />
 
 
 Request-rate: 1/10              # maximum rate is one page every 10 seconds
