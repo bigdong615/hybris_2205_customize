@@ -149,32 +149,34 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 											 if (!date.before(fiveDaysMinus) && !date.after(fiveDaysPlus)) {
 												 {
 													 for (final BlProductModel serial : consEntry.getSerialProducts()) {
-														 final OrderConsolidationData orderConsolidationData = new OrderConsolidationData();
-														 orderConsolidationData.setProductName((((BlSerialProductModel) serial).getBlProduct().getName()));
-														 orderConsolidationData.setBarCode(((BlSerialProductModel) serial).getBarcode());
-														 orderConsolidationData.setOrderNumber(consEntry.getConsignment().getOrder().getCode());
-														 orderConsolidationData.setShippingMethod(consEntry.getConsignment().getOrder().getDeliveryMode().getCode());
+														 if (serial instanceof BlSerialProductModel) {
+															 final OrderConsolidationData orderConsolidationData = new OrderConsolidationData();
+															 orderConsolidationData.setProductName((((BlSerialProductModel) serial).getBlProduct().getName()));
+															 orderConsolidationData.setBarCode(((BlSerialProductModel) serial).getBarcode());
+															 orderConsolidationData.setOrderNumber(consEntry.getConsignment().getOrder().getCode());
+															 orderConsolidationData.setShippingMethod(consEntry.getConsignment().getOrder().getDeliveryMode().getCode());
 
-														 if (((BlSerialProductModel) serial).getOcLocationDetails() != null) {
-															 if (((BlSerialProductModel) serial).getOcLocationDetails().getLocationCategory().getCode()
-																	 .equals(PREPPED_LOCATION_CATEGORY)) {
-																 orderConsolidationData.setLocation(((BlSerialProductModel) serial).getOcLocationDetails().getName());
-															 } else {
-																 orderConsolidationData.setLocation(" ");
+															 if (((BlSerialProductModel) serial).getOcLocationDetails() != null) {
+																 if (((BlSerialProductModel) serial).getOcLocationDetails().getLocationCategory().getCode()
+																		 .equals(PREPPED_LOCATION_CATEGORY)) {
+																	 orderConsolidationData.setLocation(((BlSerialProductModel) serial).getOcLocationDetails().getName());
+																 } else {
+																	 orderConsolidationData.setLocation(" ");
+																 }
 															 }
+															 String parentLocation = "";
+															 if (((BlSerialProductModel) serial).getOcLocationDetails() != null) {
+																 parentLocation = ((BlSerialProductModel) serial).getOcLocationDetails()
+																		 .getParentInventoryLocation() != null
+																		 ? ((BlSerialProductModel) serial).getOcLocationDetails().getParentInventoryLocation()
+																		 .getName()
+																		 : " ";
+																 orderConsolidationData.setParentLocation(parentLocation);
+															 } else {
+																 orderConsolidationData.setParentLocation(parentLocation);
+															 }
+															 orderConsolidationDataList.add(orderConsolidationData);
 														 }
-														 String parentLocation = "";
-														 if (serialModel.getOcLocationDetails() != null && ((BlSerialProductModel) serial).getOcLocationDetails() !=null) {
-															 parentLocation = ((BlSerialProductModel) serial).getOcLocationDetails()
-																	 .getParentInventoryLocation() != null
-																	 ? ((BlSerialProductModel) serial).getOcLocationDetails().getParentInventoryLocation()
-																	 .getName()
-																	 : " ";
-															 orderConsolidationData.setParentLocation(parentLocation);
-														 } else {
-															 orderConsolidationData.setParentLocation(parentLocation);
-														 }
-														 orderConsolidationDataList.add(orderConsolidationData);
 													 }
 												 }
 											 }
