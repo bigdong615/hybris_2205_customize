@@ -126,17 +126,26 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 			{
 
 				final BlProductModel skuProduct = serial.getBlProduct();
-				if (Objects.nonNull(serial.getFinalSalePrice()) && Objects.nonNull(skuProduct)
-						&& Objects.nonNull(skuProduct.getForSaleDiscount()))
+				if (Objects.nonNull(serial.getFinalSalePrice()) && Objects.nonNull(skuProduct))
 				{
 					final BigDecimal finalSalePrice = serial.getFinalSalePrice().setScale(BlCoreConstants.DECIMAL_PRECISION,
 							BlCoreConstants.ROUNDING_MODE);
 					final Integer forSaleDiscount = skuProduct.getForSaleDiscount();
-					final BigDecimal calculatedIncentivizedPrice = finalSalePrice.subtract(finalSalePrice
-							.multiply(BigDecimal.valueOf(forSaleDiscount)).divide(BigDecimal.valueOf(BlCoreConstants.DIVIDE_BY_HUNDRED))
-							.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
-					prices.add(calculatedIncentivizedPrice);
+					if (Objects.nonNull(forSaleDiscount))
+					{
+						final BigDecimal calculatedIncentivizedPrice = finalSalePrice
+								.subtract(finalSalePrice.multiply(BigDecimal.valueOf(forSaleDiscount))
+										.divide(BigDecimal.valueOf(BlCoreConstants.DIVIDE_BY_HUNDRED))
+										.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+						prices.add(calculatedIncentivizedPrice);
+					}
+					else
+					{
+						prices.add(finalSalePrice);
+					}
+
 				}
+
 			}
 		}
 		if (prices.isEmpty())
