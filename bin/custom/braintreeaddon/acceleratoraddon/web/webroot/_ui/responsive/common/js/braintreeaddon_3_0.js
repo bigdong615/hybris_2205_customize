@@ -926,14 +926,14 @@ function createHostedFields(clientInstance) {
 				if(ccEnable == true && $('#savedAddresses').length > 0 && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
 				{	
 					hasNoError = false;				
-					var validationDiv = $('<div class="notification notification-error mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
+					var validationDiv = $('<div class="notification notification-error mb-4" />').html("Please add your billing address.");
 					$('#validationMessage').append(validationDiv);
 					$('.page-loader-new-layout').hide();
 				}
 				else if(billingFormErrorCounts > 0)
 				{
 					hasNoError = false;
-					var validationDiv = $('<div class="notification notification-error mb-4" />').html("Looks like you forgot to select a billing address" +
+					var validationDiv = $('<div class="notification notification-error mb-4" />').html("Please add your billing address" +
 							'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 					$('#validationMessage').append(validationDiv);
 					$('.page-loader-new-layout').hide();
@@ -1198,13 +1198,13 @@ $('#submit_silentOrderPostForm').click(function () {
 	
 	if(ccEnable == true && $('#savedAddresses').length > 0 && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
 	{		
-		var validationDiv = $('<div class="notification notification-error mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
+		var validationDiv = $('<div class="notification notification-error mb-4" />').html("Please add your billing address.");
 		$('#validationMessage').append(validationDiv);
 	}
 	else if(ccEnable == true && $("#savedBillingAddressId").val() == '')
 	{
 		var billingFormErrorCounts = validateBillingAddressFields();
-		var validationDiv = $('<div class="notification notification-error mb-4" />').html("Looks like you forgot to select a billing address" +
+		var validationDiv = $('<div class="notification notification-error mb-4" />').html("Please add your billing address" +
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 		$('#validationMessage').append(validationDiv);
 	}
@@ -1290,7 +1290,7 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 		var billingFormErrorCounts = validateBillingAddressFields();
 		if(billingFormErrorCounts > 0)
 		{
-			var validationDiv = $('<div class="notification notification-error mb-4" />').html("Looks like you forgot to select a billing address"+
+			var validationDiv = $('<div class="notification notification-error mb-4" />').html("Please add your billing address"+
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 						$('#validationMessage').append(validationDiv);
 			$('.page-loader-new-layout').hide();
