@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
@@ -24,6 +25,7 @@ import com.bl.integration.marketplace.jaxb.Channel;
 import com.bl.integration.marketplace.jaxb.Item;
 import com.bl.integration.marketplace.jaxb.Rss;
 import com.bl.integration.marketplace.jaxb.Shipping;
+import com.bl.logging.BlLogger;
 
 
 public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProductModel>, Rss>
@@ -86,7 +88,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 				item.setGtin(product.getUpc());
 			}
 
-			item.setPrice(getSerialPrice(product.getSerialProducts()));
+			item.setPrice(getSerialPrice(product));
 			shipping.setCountry("US");
 			final double price = getShippingPrice(product);
 			shipping.setPrice(String.valueOf(price));
@@ -114,11 +116,11 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 		return price;
 	}
 
-	private String getSerialPrice(final Collection<BlSerialProductModel> serials)
+	private String getSerialPrice(final BlProductModel product)
 	{
 		final String price = StringUtils.EMPTY;
 		final List<BigDecimal> prices = new ArrayList<BigDecimal>();
-		for (final BlSerialProductModel serial : serials)
+		for (final BlSerialProductModel serial : product.getSerialProducts())
 		{
 			if (getBlStockService().isActiveStatus(serial.getSerialStatus()) && serial.getForSale())
 			{
@@ -135,10 +137,17 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 							.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
 					prices.add(calculatedIncentivizedPrice);
 				}
-
 			}
 		}
-		return new TreeSet<BigDecimal>(prices).first().toString();
+		if (prices.isEmpty())
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Price found for Bl product : {} ", product.getCode());
+			return price;
+		}
+		else
+		{
+			return new TreeSet<BigDecimal>(prices).first().toString();
+		}
 	}
 
 	public DefaultBlDeliveryModeService getBlDeliveryModeService()
