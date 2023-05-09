@@ -17,10 +17,11 @@
         <b><spring:theme code="text.ship.it.saved.delivery.address"/></b>
         <div class="dropdown">
             <select id="ship-it-savedAddresses" class="form-control btn btn-block btn-outline text-start" onChange="onSavedAddressChange()">
-                <option value="selectedValue" selected="selected" disabled="disabled">
+            <%--    <option value="selectedValue" selected="selected" disabled="disabled">
                                <spring:theme code="text.enter.select.shipping.address"/>
-                            </option>
+                            </option>--%>
                 <c:forEach items="${deliveryAddresses}" var="deliveryAddress" varStatus="loop">              
+
                             <option value="${deliveryAddress.id}">
                                 ${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.region.isocodeShort}, ${deliveryAddress.postalCode}
                             </option>
