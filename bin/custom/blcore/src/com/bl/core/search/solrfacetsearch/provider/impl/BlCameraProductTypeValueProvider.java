@@ -109,7 +109,7 @@ public class BlCameraProductTypeValueProvider extends AbstractPropertyFieldValue
 			{
 				if (product.getProductType().getCode().equals(ProductTypeEnum.CAMERAS.getCode()))
 				{
-					fieldValues.add(new FieldValue(fieldName, value));
+					fieldValues.add(new FieldValue(fieldName, value + " " + "camera cameras"));
 				}
 				else
 				{
@@ -125,7 +125,7 @@ public class BlCameraProductTypeValueProvider extends AbstractPropertyFieldValue
 			{
 				if (product.getProductType().getCode().equals(ProductTypeEnum.CAMERAS.getCode()))
 				{
-					fieldValues.add(new FieldValue(fieldName, value));
+					fieldValues.add(new FieldValue(fieldName, value + " " + "camera cameras"));
 				}
 				else
 				{

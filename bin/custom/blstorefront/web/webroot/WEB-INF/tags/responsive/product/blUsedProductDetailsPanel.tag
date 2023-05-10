@@ -43,6 +43,7 @@
 					<div class="hide-on-mobile">
 						<p class="overline">${fn:toUpperCase(product.manufacturer)}</p>
 						<h1 class="mb-4">${product.displayName}</h1>
+						<p hidden>used</p>
 					</div>	
 					
 						<table id="usedProductList">

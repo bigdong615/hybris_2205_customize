@@ -10,18 +10,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.shipping.service.impl.DefaultBlDeliveryModeService;
+import com.bl.core.stock.BlStockService;
 import com.bl.integration.marketplace.jaxb.Channel;
 import com.bl.integration.marketplace.jaxb.Item;
 import com.bl.integration.marketplace.jaxb.Rss;
 import com.bl.integration.marketplace.jaxb.Shipping;
+import com.bl.logging.BlLogger;
 
 
 public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProductModel>, Rss>
@@ -29,6 +33,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 	private static final Logger LOG = Logger.getLogger(BlGoogleProductFeedXmlPupulator.class);
 	private DefaultBlDeliveryModeService blDeliveryModeService;
 	private ModelService modelService;
+	private BlStockService blStockService;
 
 	@Override
 	public void populate(final List<BlProductModel> source, final Rss target) throws ConversionException
@@ -83,7 +88,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 				item.setGtin(product.getUpc());
 			}
 
-			item.setPrice(getSerialPrice(product.getSerialProducts().iterator().next()));
+			item.setPrice(getSerialPrice(product));
 			shipping.setCountry("US");
 			final double price = getShippingPrice(product);
 			shipping.setPrice(String.valueOf(price));
@@ -111,22 +116,47 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 		return price;
 	}
 
-	private String getSerialPrice(final BlSerialProductModel blSerialProduct)
+	private String getSerialPrice(final BlProductModel product)
 	{
-		String price = StringUtils.EMPTY;
-		final BlProductModel skuProduct = blSerialProduct.getBlProduct();
-		if (Objects.nonNull(blSerialProduct.getFinalSalePrice()) && Objects.nonNull(skuProduct)
-				&& Objects.nonNull(skuProduct.getForSaleDiscount()))
+		final String price = StringUtils.EMPTY;
+		final List<BigDecimal> prices = new ArrayList<BigDecimal>();
+		for (final BlSerialProductModel serial : product.getSerialProducts())
 		{
-			final BigDecimal finalSalePrice = blSerialProduct.getFinalSalePrice().setScale(BlCoreConstants.DECIMAL_PRECISION,
-					BlCoreConstants.ROUNDING_MODE);
-			final Integer forSaleDiscount = skuProduct.getForSaleDiscount();
-			final BigDecimal calculatedIncentivizedPrice = finalSalePrice.subtract(finalSalePrice
-					.multiply(BigDecimal.valueOf(forSaleDiscount)).divide(BigDecimal.valueOf(BlCoreConstants.DIVIDE_BY_HUNDRED))
-					.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
-			price = calculatedIncentivizedPrice.toString();
+			if (getBlStockService().isActiveStatus(serial.getSerialStatus()) && serial.getForSale())
+			{
+
+				final BlProductModel skuProduct = serial.getBlProduct();
+				if (Objects.nonNull(serial.getFinalSalePrice()) && Objects.nonNull(skuProduct))
+				{
+					final BigDecimal finalSalePrice = serial.getFinalSalePrice().setScale(BlCoreConstants.DECIMAL_PRECISION,
+							BlCoreConstants.ROUNDING_MODE);
+					final Integer forSaleDiscount = skuProduct.getForSaleDiscount();
+					if (Objects.nonNull(forSaleDiscount))
+					{
+						final BigDecimal calculatedIncentivizedPrice = finalSalePrice
+								.subtract(finalSalePrice.multiply(BigDecimal.valueOf(forSaleDiscount))
+										.divide(BigDecimal.valueOf(BlCoreConstants.DIVIDE_BY_HUNDRED))
+										.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+						prices.add(calculatedIncentivizedPrice);
+					}
+					else
+					{
+						prices.add(finalSalePrice);
+					}
+
+				}
+
+			}
 		}
-		return price;
+		if (prices.isEmpty())
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Price found for Bl product : {} ", product.getCode());
+			return price;
+		}
+		else
+		{
+			return new TreeSet<BigDecimal>(prices).first().toString();
+		}
 	}
 
 	public DefaultBlDeliveryModeService getBlDeliveryModeService()
@@ -147,6 +177,16 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	public BlStockService getBlStockService()
+	{
+		return blStockService;
+	}
+
+	public void setBlStockService(final BlStockService blStockService)
+	{
+		this.blStockService = blStockService;
 	}
 
 }
