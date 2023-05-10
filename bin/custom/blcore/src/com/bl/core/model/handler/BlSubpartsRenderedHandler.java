@@ -11,6 +11,7 @@ import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
+import de.hybris.platform.servicelayer.model.ModelService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSubpartsModel;
 
@@ -20,6 +21,8 @@ import com.bl.core.model.BlSubpartsModel;
  */
 public class BlSubpartsRenderedHandler implements DynamicAttributeHandler<List<BlSubpartsModel>, ConsignmentModel> {
     private static final Logger LOG = Logger.getLogger(BlSubpartsRenderedHandler.class);
+
+	private ModelService modelService;
 
     @Override
 	 public List<BlSubpartsModel> get(final ConsignmentModel consignmentModel)
@@ -47,6 +50,8 @@ public class BlSubpartsRenderedHandler implements DynamicAttributeHandler<List<B
 			  {
 				  for (final BlSubpartsModel subparts : product.getSubpartProducts())
 				  {
+					  subparts.setMainProduct(product);
+					  getModelService().save(subparts);
 					  blSubpartsList.add(subparts);
 				  }
 			  }
@@ -60,6 +65,29 @@ public class BlSubpartsRenderedHandler implements DynamicAttributeHandler<List<B
 		 throw new UnsupportedOperationException();
 
 	 }
+
+	/**
+	 * @return the modelService
+	 */
+
+
+	public ModelService getModelService()
+	{
+		return modelService;
+	}
+
+	/**
+	 * @param modelService
+	 *           the modelService to set
+	 */
+
+
+	public void setModelService(final ModelService modelService)
+	{
+		this.modelService = modelService;
+	}
+
+
 
 
 

@@ -1047,7 +1047,7 @@
 	
 	 <context merge-by="type" parent="GenericItem" type="BlSubparts" component="referenceListViewProduct">
         <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
-            <list-view:column qualifier="blProducts"
+            <list-view:column qualifier="mainProduct.name"
                               label="warehousingbackoffice.blsubparts.mainproduct.product.code"
                               spring-bean="nullSafeListCellRenderer"/>
             <list-view:column qualifier="subpartProduct.code"

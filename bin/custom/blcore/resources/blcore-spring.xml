@@ -2299,6 +2299,8 @@
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
-	<bean id="blSubpartsRenderedHandler" class="com.bl.core.model.handler.BlSubpartsRenderedHandler"/>
+	<bean id="blSubpartsRenderedHandler" class="com.bl.core.model.handler.BlSubpartsRenderedHandler">
+			<property name="modelService" ref="modelService"/>
+	</bean>
 
 </beans>
