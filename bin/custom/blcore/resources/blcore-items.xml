@@ -2354,6 +2354,11 @@
                 <description>Contains all subparts with quantity mapping</description>
                 <deployment table="BlSubparts" typecode="12243"/>
                 <attributes>
+                    <attribute qualifier="mainProduct" type="BlProduct">
+                        <persistence type="property"/>
+                        <modifiers unique="true" read="true" write="true" optional="false"/>
+                        <description>Main BlProduct</description>
+                    </attribute>
                     <attribute qualifier="subpartProduct" type="BlProduct">
                         <persistence type="property"/>
                         <modifiers unique="true" read="true" write="true" optional="false"/>
