@@ -456,13 +456,14 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 
 
 					//if (serialModel.getAssociatedConsignment() != null)
-					if (serialModel.getAssociatedShippedConsignment() != null)
-					{
+					//if (serialModel.getAssociatedShippedConsignment() != null)
+					//{
 						//Updating consignment items
 						//					for (final ConsignmentEntryModel consignEntryModel : serialModel.getAssociatedConsignment()
 
 						final List<ConsignmentEntryModel> consEntry = blConsignmentDao.getConsignmentEntriesForSerialCode(serialModel);
-
+						if (CollectionUtils.isNotEmpty(consEntry))
+						{
 						for (final ConsignmentEntryModel consignEntryModel : consEntry)
 
 						//							for (final ConsignmentEntryModel consignEntryModel : serialModel.getAssociatedShippedConsignment()
@@ -492,8 +493,9 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 						getModelService().save(consignEntryModel);
 						getModelService().refresh(consignEntryModel);
 						}
-					}
+						//}
 				}
+			}
 				}
 			}
 		}
