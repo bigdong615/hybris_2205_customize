@@ -42,6 +42,7 @@ import org.zkoss.zul.Textbox;
 import com.bl.backoffice.wizards.util.BulkReceiveRespData;
 import com.bl.backoffice.wizards.util.BulkReceiveScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.dao.warehouse.BlConsignmentDao;
 import com.bl.core.enums.ConditionRatingValueEnum;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.ItemTestingStatusEnum;
@@ -92,6 +93,9 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 
 	@Resource
 	private DefaultBlProductDao defaultBlProductDao;
+
+	@Resource
+	private BlConsignmentDao blConsignmentDao;
 
 	@Wire
 	Textbox scanningArea;
@@ -156,7 +160,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 		}
 		else
 		{
-			boolean noOrderExistFlag = false;
+			final boolean noOrderExistFlag = false;
 			final List<BulkReceiveRespData> bulkReceiveRespDataList = new ArrayList<BulkReceiveRespData>();
 
 			final Collection<BlSerialProductModel> serialProducts = getBlInventoryScanToolService()
@@ -227,15 +231,15 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				}
 				bulkReceiveRespData.setOrderNotes(orderNotesValue);
 
-				if (blSerialProductModel.getAssociatedShippedConsignment() != null)
-				{
+				//				if (blSerialProductModel.getAssociatedShippedConsignment() != null)
+				//				{
 					/* Adding serial product information */
 					bulkReceiveRespDataList.add(bulkReceiveRespData);
-				}
-				else
-				{
-					noOrderExistFlag = true;
-				}
+					//				}
+					//				else
+					//				{
+					//					noOrderExistFlag = true;
+					//				}
 
 				if (CollectionUtils.isNotEmpty(blSerialProductModel.getBlProduct().getSubpartProducts())
 						//						&& blSerialProductModel.getAssociatedOrder() != null)
@@ -271,7 +275,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				}
 			}
 
-			if (!noOrderExistFlag || bulkReceiveRespDataList.size() > 0)
+			//			if (!noOrderExistFlag || bulkReceiveRespDataList.size() > 0)
+			if (bulkReceiveRespDataList.size() > 0)
 			{
 			this.productsListDiv.setStyle("resize:none;display:block");
 			this.barcodesSectionId.setStyle("resize:none;display:none");
@@ -395,7 +400,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				bulkSubpartReceiveRespData.setTestingStatusValue(StringUtils.EMPTY);
 				bulkSubpartReceiveRespData.setCosmeticRatingValue(StringUtils.EMPTY);
 				bulkSubpartReceiveRespData.setFirmwareVersion(StringUtils.EMPTY);
-        bulkSubpartReceiveRespData.setIsSubPart(Boolean.TRUE);
+				bulkSubpartReceiveRespData.setIsSubPart(Boolean.TRUE);
 				/* Adding sub part product information */
 				selectedSerials.add(bulkSubpartReceiveRespData);
 			}
@@ -455,8 +460,13 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 					{
 						//Updating consignment items
 						//					for (final ConsignmentEntryModel consignEntryModel : serialModel.getAssociatedConsignment()
-						for (final ConsignmentEntryModel consignEntryModel : serialModel.getAssociatedShippedConsignment()
-							.getConsignmentEntries())
+
+						final List<ConsignmentEntryModel> consEntry = blConsignmentDao.getConsignmentEntriesForSerialCode(serialModel);
+
+						for (final ConsignmentEntryModel consignEntryModel : consEntry)
+
+						//							for (final ConsignmentEntryModel consignEntryModel : serialModel.getAssociatedShippedConsignment()
+						//									.getConsignmentEntries())
 					{
 
 						itemsMap = new HashMap<>(consignEntryModel.getItems());

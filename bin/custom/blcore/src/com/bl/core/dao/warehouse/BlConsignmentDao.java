@@ -64,4 +64,10 @@ public interface BlConsignmentDao
 
 	SearchPageData<ConsignmentModel> getConsignments(PageableData pageableData, Date date);
 
+	/**
+	 * @param serial
+	 * @return
+	 */
+	List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(BlSerialProductModel serial);
+
 }

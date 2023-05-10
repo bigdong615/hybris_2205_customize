@@ -58,6 +58,13 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 			+ "} = {ce:" + ConsignmentEntryModel.CONSIGNMENT + "} and {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE
 			+ "} >= ?fromDate";
 
+
+	private static final String CONSIGNMENT_ENTRY_FOR_SERIAL = "SELECT {ce:" + ItemModel.PK + "} from {"
+			+ ConsignmentEntryModel._TYPECODE + " as ce}, {" + ConsignmentModel._TYPECODE + " as con} where {ce:"
+			+ ConsignmentEntryModel.SERIALPRODUCTS + "} LIKE CONCAT('%',CONCAT(?serial,'%'))" + " and {con:" + ItemModel.PK
+			+ "} = {ce:" + ConsignmentEntryModel.CONSIGNMENT
+			+ "} and {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = 'COMPLETED'}})";
+
 	/**
 	 * Get consignments
 	 *
@@ -164,6 +171,30 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 				serial.getCode(), fromDate);
 		return Lists.newArrayList(result);
 	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(final BlSerialProductModel serial)
+	{
+		Validate.notNull(serial, "Serial Product must not be null", null);
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_ENTRY_FOR_SERIAL);
+		fQuery.addQueryParameter(BlCoreConstants.SERIAL, serial);
+		final SearchResult<ConsignmentEntryModel> search = getFlexibleSearchService().<ConsignmentEntryModel> search(fQuery);
+		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"DefaultBlConsignmentDao : getConsignmentEntriesForSerialCodeAndDate : No ConsignmentEntry found for serial : {}",
+					serial.getCode());
+			return Lists.newArrayList();
+		}
+		final List<ConsignmentEntryModel> result = search.getResult();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Consignment Entry found : {} for serial : {}", result, serial.getCode());
+		return Lists.newArrayList(result);
+	}
+
 
 	/**
 	 * {@inheritDoc}
