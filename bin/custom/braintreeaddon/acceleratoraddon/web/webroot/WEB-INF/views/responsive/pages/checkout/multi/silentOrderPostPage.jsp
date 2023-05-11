@@ -230,13 +230,13 @@
 																	<div class="dropdown my-2">
 																		<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
 																			<c:choose>
+																				<c:when test="${not empty defaultBillingAddress.formattedAddress }">
+                                                                            	<%-- ${defaultBillingAddress.formattedAddress } --%>
+                                                                                ${defaultBillingAddress.line1}, ${defaultBillingAddress.town}, ${defaultBillingAddress.region.name}, ${defaultBillingAddress.region.isocodeShort}, ${defaultBillingAddress.postalCode}
+                                                                                </c:when>
 																				<c:when test="${not empty paymentInfoBillingAddress.formattedAddress }">
 																					<%-- ${paymentInfoBillingAddress.formattedAddress } --%>
 																					 ${paymentInfoBillingAddress.line1}, ${paymentInfoBillingAddress.town}, ${paymentInfoBillingAddress.region.name}, ${paymentInfoBillingAddress.region.isocodeShort}, ${paymentInfoBillingAddress.postalCode}
-																				</c:when>
-																				<c:when test="${not empty defaultBillingAddress.formattedAddress }">
-																					<%-- ${defaultBillingAddress.formattedAddress } --%>
-																					 ${defaultBillingAddress.line1}, ${defaultBillingAddress.town}, ${defaultBillingAddress.region.name}, ${defaultBillingAddress.region.isocodeShort}, ${defaultBillingAddress.postalCode}
 																				</c:when>
 																				<c:otherwise>
 																					Select Saved Billing Address
