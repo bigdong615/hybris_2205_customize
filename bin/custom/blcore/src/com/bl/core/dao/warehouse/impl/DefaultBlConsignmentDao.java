@@ -63,7 +63,8 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 			+ ConsignmentEntryModel._TYPECODE + " as ce}, {" + ConsignmentModel._TYPECODE + " as con} where {ce:"
 			+ ConsignmentEntryModel.SERIALPRODUCTS + "} LIKE CONCAT('%',CONCAT(?serial,'%'))" + " and {con:" + ItemModel.PK
 			+ "} = {ce:" + ConsignmentEntryModel.CONSIGNMENT
-			+ "} and {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = 'COMPLETED'}})";
+			//			+ "} and {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = 'COMPLETED'}})";
+			+ "}";
 
 	/**
 	 * Get consignments
