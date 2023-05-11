@@ -2356,7 +2356,7 @@
                 <attributes>
                     <attribute qualifier="mainProduct" type="BlProduct">
                         <persistence type="property"/>
-                        <modifiers unique="true" read="true" write="true" optional="false"/>
+                        <modifiers unique="false" read="true" write="true" optional="true"/>
                         <description>Main BlProduct</description>
                     </attribute>
                     <attribute qualifier="subpartProduct" type="BlProduct">

@@ -2,6 +2,7 @@ package com.bl.core.model.handler;
 
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.attribute.DynamicAttributeHandler;
 
 import java.util.ArrayList;
@@ -51,7 +52,13 @@ public class BlSubpartsRenderedHandler implements DynamicAttributeHandler<List<B
 				  for (final BlSubpartsModel subparts : product.getSubpartProducts())
 				  {
 					  subparts.setMainProduct(product);
-					  getModelService().save(subparts);
+					  try{
+						  getModelService().save(subparts);
+					  }
+					  catch (ModelSavingException ex)
+					  {
+						  LOG.error("Failed to set Main product in subparts model" + ex.getMessage());
+					  }
 					  blSubpartsList.add(subparts);
 				  }
 			  }
