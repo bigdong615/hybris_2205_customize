@@ -160,14 +160,22 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 																 if (((BlSerialProductModel) serial).getOcLocationDetails().getLocationCategory().getCode()
 																		 .equals(PREPPED_LOCATION_CATEGORY)) {
 																	 orderConsolidationData.setLocation(((BlSerialProductModel) serial).getOcLocationDetails().getName());
-																 } else {
+																 } else if(((BlSerialProductModel) serial).getOcLocationDetails()
+																		 .getParentInventoryLocation() != null && ((BlSerialProductModel) serial).getOcLocationDetails()
+																		 .getParentInventoryLocation().getLocationCategory().getCode().equals(PREPPED_LOCATION_CATEGORY) ) {
+																	 orderConsolidationData.setLocation(((BlSerialProductModel) serial).getOcLocationDetails().getName());
+																 }
+																 else{
 																	 orderConsolidationData.setLocation(" ");
+																	 orderConsolidationData.setParentLocation(" ");
 																 }
 															 }
 															 String parentLocation = "";
 															 if (((BlSerialProductModel) serial).getOcLocationDetails() != null) {
 																 parentLocation = ((BlSerialProductModel) serial).getOcLocationDetails()
-																		 .getParentInventoryLocation() != null
+																		 .getParentInventoryLocation() != null && (((BlSerialProductModel) serial).getOcLocationDetails()
+																		 .getLocationCategory().getCode().equals(PREPPED_LOCATION_CATEGORY) || ((BlSerialProductModel) serial).getOcLocationDetails()
+																		 .getParentInventoryLocation().getLocationCategory().getCode().equals(PREPPED_LOCATION_CATEGORY))
 																		 ? ((BlSerialProductModel) serial).getOcLocationDetails().getParentInventoryLocation()
 																		 .getName()
 																		 : " ";
