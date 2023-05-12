@@ -1420,17 +1420,131 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
    				final Collection<PackagingInfoModel> packagingInfoModels = this.getPackageForSerials(removedUnboxedSerialBarcodeList);
    				if(CollectionUtils.isEmpty(packagingInfoModels))
    				{
-   					result.put(BlInventoryScanLoggingConstants.INT_NINE, removedUnboxedSerialBarcodeList);
+   					//result.put(BlInventoryScanLoggingConstants.INT_NINE, removedUnboxedSerialBarcodeList);
+					   Collection<ConsignmentEntryModel> consignmentEntryModels = this.getConignmentEntriesForSerials(removedUnboxedSerialBarcodeList);
+					performSerialToDPCOrDCLocationScanWithConsignment(result, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
+							availablePackageBarcodes, consignmentEntryModels);
    					return result;
-   				}
+   				}else {
    				performSerialToDPCOrDCLocationScan(result, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
 							availablePackageBarcodes, packagingInfoModels);
-				}
+				}}
 			}
 
 		}
 
 		return result;
+	}
+
+	private void performSerialToDPCOrDCLocationScanWithConsignment(Map<Integer, Collection<String>> result, BlInventoryLocationModel blInventoryLocationModel,
+																   Set<String> missingPackageBarcodeList, List<String> removedUnboxedSerialBarcodeList,
+																   Set<String> availablePackageBarcodes, Collection<ConsignmentEntryModel> consignmentEntryModels) {
+
+		final Set<String> packageSerialBarcodes = new HashSet<>();
+		getSerialBarcodesFromConsignmentEntry(consignmentEntryModels, packageSerialBarcodes);
+		separateSerialsMissingAndPresentInPackages(removedUnboxedSerialBarcodeList,packageSerialBarcodes , missingPackageBarcodeList, availablePackageBarcodes);
+		if(CollectionUtils.isNotEmpty(missingPackageBarcodeList))
+		{
+			result.put(BlInventoryScanLoggingConstants.INT_NINE, missingPackageBarcodeList);
+		}
+		final Map<Integer,List<String>> errorSerialList = new HashMap<>();
+		this.getMapForUnboxAtDPOrDCWithCons(Lists.newArrayList(availablePackageBarcodes), result, blInventoryLocationModel, consignmentEntryModels, errorSerialList);
+
+	}
+
+	private void getMapForUnboxAtDPOrDCWithCons(ArrayList<String> barcodes, Map<Integer, Collection<String>> result, BlInventoryLocationModel blInventoryLocationModel, Collection<ConsignmentEntryModel> consignmentEntryModels, Map<Integer, List<String>> errorSerialList) {
+
+			if(CollectionUtils.isEmpty(consignmentEntryModels))
+			{
+				result.put(BlInventoryScanLoggingConstants.ZERO, barcodes);
+			}
+			else
+			{
+				errorSerialList = doPerformDpcOrDcUnboxingForCons(barcodes, blInventoryLocationModel, consignmentEntryModels, errorSerialList);
+			}
+			handleUnboxingErrorMessage(result, errorSerialList);
+
+	}
+
+	private Map<Integer, List<String>> doPerformDpcOrDcUnboxingForCons(ArrayList<String> barcodes, BlInventoryLocationModel blInventoryLocationModel, Collection<ConsignmentEntryModel> consignmentEntryModels, Map<Integer, List<String>> errorSerialList) {
+
+		for (final ConsignmentEntryModel consignmentEntryModel : consignmentEntryModels)
+		{
+			final List<BlProductModel> blSerialProductModels = consignmentEntryModel.getSerialProducts().stream().filter(product -> product instanceof BlSerialProductModel).collect(Collectors.toList());
+			
+			if (CollectionUtils.isNotEmpty(blSerialProductModels) && blSerialProductModels.stream().anyMatch(serialCode -> barcodes.stream().anyMatch(b -> b.equals(((BlSerialProductModel) serialCode).getBarcode()))))
+			{
+				errorSerialList = getBlSerialProductModelBooleanMapConsign(consignmentEntryModel, consignmentEntryModel.getConsignment(),
+						blSerialProductModels.stream().filter(
+										serial -> barcodes.stream().anyMatch(b -> b.equals(((BlSerialProductModel) serial).getBarcode()))) // NOSONAR
+								.collect(Collectors.toList()),
+						blInventoryLocationModel);
+			}
+		}
+		return errorSerialList;
+	}
+
+	private Map<Integer, List<String>> getBlSerialProductModelBooleanMapConsign(ConsignmentEntryModel consignmentEntryModel, ConsignmentModel consignmentModel, List<BlProductModel> availableBarcodeList, BlInventoryLocationModel blInventoryLocationModel) {
+
+		if (CollectionUtils.isNotEmpty(availableBarcodeList))
+		{
+			BlLogger.logMessage(LOG, Level.DEBUG, "Marking consignment as PARTIALLY_UNBOXED");
+			//changePackagingInfoStatus(packagingInfoModel, PackagingInfoStatus.PARTIALLY_UNBOXED);
+			changeConsignmentStatus(consignmentModel, ConsignmentStatus.PARTIALLY_UNBOXED);
+			final Map<Integer,List<String>> failedSerials = checkSerialsForDPAndSubParts(availableBarcodeList, consignmentModel,
+					blInventoryLocationModel);
+			if (canChangeToUnBoxStatusConsign(consignmentModel))
+			{
+				//changePackagingInfoStatus(packagingInfoModel, PackagingInfoStatus.UNBOXED);
+				final Collection<PackagingInfoModel> consignmentPackages = consignmentModel.getPackaginginfos();
+				//if (CollectionUtils.isNotEmpty(consignmentPackages) && consignmentPackages.stream()
+					//	.allMatch(pkg -> PackagingInfoStatus.UNBOXED.equals(pkg.getPackagingInfoStatus())))
+				//{
+					changeConsignmentStatus(consignmentModel, ConsignmentStatus.UNBOXED);
+					getBlOrderService().checkAndUpdateOrderStatus(consignmentModel.getOrder());
+					BlLogger.logMessage(LOG, Level.DEBUG, "Marked Consignment as Unboxed as all packages are unboxed");
+				//}
+			}
+			return failedSerials;
+		}
+		return null; //NO SONAR
+	}
+
+	private boolean canChangeToUnBoxStatusConsign(ConsignmentModel consignmentModel) {
+		final HashSet<SerialStatusEnum> itemStatuses = Sets.newHashSet();
+		consignmentModel.getConsignmentEntries().forEach(consignmentEntry -> {
+			consignmentEntry.getSerialProducts().forEach(serial -> {
+				if (serial instanceof BlSerialProductModel)
+				{
+					itemStatuses.add(((BlSerialProductModel) serial).getSerialStatus());
+				}
+			});
+		});
+
+		return itemStatuses.size() == BlCoreConstants.STATUS_LIST_SIZE_ONE
+				&& itemStatuses.iterator().next().equals(SerialStatusEnum.UNBOXED);
+	}
+
+	private void getSerialBarcodesFromConsignmentEntry(Collection<ConsignmentEntryModel> consignmentEntryModels, Set<String> packageSerialBarcodes) {
+
+		consignmentEntryModels.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(blSerial -> {
+			if (blSerial instanceof BlSerialProductModel)
+			{
+				packageSerialBarcodes.add(((BlSerialProductModel) blSerial).getBarcode());
+			}
+		}));
+	}
+
+	@Override
+	public Collection<ConsignmentEntryModel> getConignmentEntriesForSerials(List<String> removedUnboxedSerialBarcodeList) {
+		final Collection<ConsignmentEntryModel> consignmentEntryModels = new ArrayList<>();
+		final Collection<ConsignmentModel> consignmentModels =  getBlInventoryScanToolDao().getConignmentEntriesForSerials(removedUnboxedSerialBarcodeList);
+		consignmentModels.forEach(consignmentModel -> {
+			consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
+				consignmentEntryModels.add(consignmentEntryModel);
+			});
+		});
+		return consignmentEntryModels;
 	}
 
 	/**
@@ -1786,7 +1900,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 			else
 			{
-				dirtyPrioritySerialList.add(blSerialProductModel.getBarcode());
+				//dirtyPrioritySerialList.add(blSerialProductModel.getBarcode());
 				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 		}
@@ -2399,7 +2513,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						? getBlInventoryScanToolDao().getAllSerialsByBinLocationAndVersion(barcodes.get(BlCoreConstants.INT_ZERO),
 								BlCoreConstants.ONLINE)
 						: Lists.newArrayList();
-		if(CollectionUtils.isNotEmpty(allSerialsByBinLocationAndVersion))
+		if(CollectionUtils.isNotEmpty(allSerialsByBinLocationAndVersion) && !isUnboxingFlow)
 		{
 			setBlInventoryLocation(blLocalInventoryLocation);
 			if (isUnboxingFlow)
@@ -2717,14 +2831,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			final List<String> dirtyPrioritySerialList = Lists.newArrayList();
 			final List<String> dirtySerialList = Lists.newArrayList();
 			serialsByBarcodesAndVersion.forEach(blSerialProductModel -> {
-				if (blSerialProductModel.isDirtyPriorityStatus() || doCheckDirtyPriorityStatus(blSerialProductModel))
-				{
-					dirtyPrioritySerialList.add(blSerialProductModel.getBarcode());
-				}
-				else
-				{
+				//if (blSerialProductModel.isDirtyPriorityStatus() || doCheckDirtyPriorityStatus(blSerialProductModel))
+				//{
+					//dirtyPrioritySerialList.add(blSerialProductModel.getBarcode());
+				//}
+				//else
+				//{
 					dirtySerialList.add(blSerialProductModel.getBarcode());
-				}
+				//}
 				updateLocationOnItem(blSerialProductModel, getBlInventoryLocation(), Boolean.FALSE);
 			});
 			addToErrorList(errors, dirtyPrioritySerialList, dirtySerialList);

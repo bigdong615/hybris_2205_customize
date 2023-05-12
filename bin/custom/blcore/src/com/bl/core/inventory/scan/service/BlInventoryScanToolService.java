@@ -4,6 +4,7 @@ import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
@@ -183,7 +184,9 @@ public interface BlInventoryScanToolService {
 	  */
 	 Map<Integer, Collection<String>> doUnboxing(final List<String> barcodes);
 
- 	/**
+	Collection<ConsignmentEntryModel> getConignmentEntriesForSerials(List<String> removedUnboxedSerialBarcodeList);
+
+	/**
  	 * This method will check current serials DirtyPriorityStatus along with today's IN and OUT orders for
  	 * current serials
  	 *
