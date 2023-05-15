@@ -2,9 +2,7 @@ package com.bl.core.model.interceptor;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -96,6 +94,8 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		final Map<String, ConsignmentEntryStatusEnum> consEntryStatus = new HashMap<String, ConsignmentEntryStatusEnum>();
 		for (final Map.Entry<String, ItemStatusEnum> item : consignmentEntryModel.getItems().entrySet())
 		{
+			if (item.getValue() != null)
+			{
 			if (item.getValue().equals(ItemStatusEnum.MISSING))
 			{
 				consEntryStatus.put(item.getKey(), ConsignmentEntryStatusEnum.MISSING);
@@ -114,7 +114,12 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				consEntryStatus.put(item.getKey(), ConsignmentEntryStatusEnum.RETURNED);
 			}
 		}
-		consignmentEntryModel.setConsignmentEntryStatus(consEntryStatus);
+		}
+
+		if (!consEntryStatus.isEmpty())
+		{
+			consignmentEntryModel.setConsignmentEntryStatus(consEntryStatus);
+		}
 	}
 
 	/**
