@@ -163,13 +163,9 @@ public class DefaultBlStockService implements BlStockService
 			stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
 			saveStockRecord(stockLevel, reservedStatus);
 		} else {
-			final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(
-					blSerialProduct);
+			final Collection<StockLevelModel> stockLevels = getExcludedOrderStockLevelModelsBasedOnDates(blSerialProduct);
 			stockLevels.forEach(stockLevel -> {
 				stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
-				if(reservedStatus && Objects.nonNull(stockLevel.getOrder())) {
-					stockLevel.setOrder(null);
-				}
 				saveStockRecord(stockLevel, reservedStatus);
 			});
 		}
@@ -348,6 +344,20 @@ public class DefaultBlStockService implements BlStockService
 						currentDate, futureDate);
 	}
 
+	/**
+	 * It fetches the excluded order stock records from current date to last future date
+	 * @param blSerialProduct the serial product
+	 * @return Collection<StockLevelModel>
+	 */
+	private Collection<StockLevelModel> getExcludedOrderStockLevelModelsBasedOnDates(
+			final BlSerialProductModel blSerialProduct) {
+		final Date currentDate = Date
+				.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+		final Date futureDate = BlDateTimeUtils.getNextYearsSameDay();
+		return getBlStockLevelDao()
+				.findExcludedOrderSerialStockLevelForDate(blSerialProduct.getCode(),
+						currentDate, futureDate);
+	}
 	/**
 	 * It fetches the stock records from current date to last future date
 	 *
