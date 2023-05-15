@@ -20,6 +20,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.shipping.service.impl.DefaultBlDeliveryModeService;
+import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockService;
 import com.bl.integration.marketplace.jaxb.Channel;
 import com.bl.integration.marketplace.jaxb.Item;
@@ -34,6 +35,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 	private DefaultBlDeliveryModeService blDeliveryModeService;
 	private ModelService modelService;
 	private BlStockService blStockService;
+	private BlCommerceStockService blCommerceStockService;
 
 	@Override
 	public void populate(final List<BlProductModel> source, final Rss target) throws ConversionException
@@ -122,7 +124,8 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 		final List<BigDecimal> prices = new ArrayList<BigDecimal>();
 		for (final BlSerialProductModel serial : product.getSerialProducts())
 		{
-			if (getBlStockService().isActiveStatus(serial.getSerialStatus()) && serial.getForSale())
+			if (getBlStockService().isActiveStatus(serial.getSerialStatus()) && serial.getForSale()
+					&& getBlCommerceStockService().isUsedGearSerialNotAssignedToRentalOrder(serial.getCode()))
 			{
 
 				final BlProductModel skuProduct = serial.getBlProduct();
@@ -187,6 +190,16 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 	public void setBlStockService(final BlStockService blStockService)
 	{
 		this.blStockService = blStockService;
+	}
+
+	public BlCommerceStockService getBlCommerceStockService()
+	{
+		return blCommerceStockService;
+	}
+
+	public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService)
+	{
+		this.blCommerceStockService = blCommerceStockService;
 	}
 
 }
