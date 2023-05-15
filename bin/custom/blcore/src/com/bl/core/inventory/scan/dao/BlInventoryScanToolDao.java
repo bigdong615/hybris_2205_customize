@@ -61,6 +61,7 @@ public interface BlInventoryScanToolDao {
 	  */
 	 Collection<PackagingInfoModel> getPackageForSerials(final Collection<String> barcodes);
 
+	Collection<ConsignmentModel> getConignmentEntriesForSerials(final Collection<String> barcodes);
  	/**
  	 * This method will return all orders that needs to be shipped out today and will return today to mark Serials with
  	 * DirtyPriorityStatus

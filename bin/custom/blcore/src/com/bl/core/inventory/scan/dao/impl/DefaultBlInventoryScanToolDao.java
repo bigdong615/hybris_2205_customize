@@ -173,7 +173,20 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
  	}
 
- 	/**
+	@Override
+	public Collection<ConsignmentModel> getConignmentEntriesForSerials(Collection<String> barcodes) {
+
+		 final String queryString = "select distinct({c.pk}) from {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial},"
+		   + "{ConsignmentStatus as cs} where {ce.SerialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {ce.consignment} = {c.pk} and {c.status} = {cs.pk}"
+		   + "and {cs.code} in ('BL_SHIPPED', 'PARTIALLY_UNBOXED') and {serial.barcode} in (?barcodeList)";
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(queryString);
+		query.addQueryParameter("barcodeList", barcodes);
+		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Fetching Consignments for serial barcodes {} and found {} packages.", barcodes, results.size());
+		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+	}
+
+	/**
  	 * {@inheritDoc}
  	 */
  	@Override
