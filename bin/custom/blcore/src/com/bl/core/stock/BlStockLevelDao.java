@@ -173,4 +173,7 @@ public interface BlStockLevelDao {
 			Date endDay, Boolean reservedStatus, WarehouseModel warehouseModel);
 
 	public SolrFacetSearchConfigModel getFacetConfigModel();
+
+	 Collection<StockLevelModel> findExcludedOrderSerialStockLevelForDate(final String serialProductCode,
+			final Date startDay, final Date endDay);
 }

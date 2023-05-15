@@ -51,6 +51,10 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
 			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode";
 
+	private  static final String EXCLUDED_ORDER_SERIAL_STOCK_LEVEL_FOR_DATE_QUERY = SELECT + ItemModel.PK + FROM
+			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
+			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode " + "AND ({"+StockLevelModel.ORDER +"} ='' OR {" + StockLevelModel.ORDER + "} is NULL )";
+
 	private static final String SERIAL_AVAILABLE_STOCK_LEVEL_FOR_DATE_QUERY = SELECT + ItemModel.PK + FROM
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
 			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode " + AND + StockLevelModel
@@ -150,6 +154,34 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			final Date startDay, final Date endDay)
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(SERIAL_STOCK_LEVEL_FOR_DATE_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
+
+		addQueryParameter(startDay, endDay, fQuery);
+
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<StockLevelModel> stockLevels = result.getResult();
+		if (CollectionUtils.isEmpty(stockLevels))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"No Stock Levels found for serial product {} with date between : {} and {}",
+					serialProductCode, startDay, endDay);
+			return Collections.emptyList();
+		}
+		return stockLevels;
+	}
+
+	/**
+	 *  It get excluded order stock for given product for particular duration.
+	 * @param serialProductCode
+	 * @param startDay
+	 * @param endDay
+	 * @return
+	 */
+	@Override
+	public Collection<StockLevelModel> findExcludedOrderSerialStockLevelForDate(final String serialProductCode,
+			final Date startDay, final Date endDay)
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(EXCLUDED_ORDER_SERIAL_STOCK_LEVEL_FOR_DATE_QUERY);
 		fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
 
 		addQueryParameter(startDay, endDay, fQuery);
