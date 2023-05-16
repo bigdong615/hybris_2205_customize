@@ -2055,6 +2055,7 @@
 		<property name="blDeliveryModeService" ref="blDeliveryModeService"/>
 		<property name="blStockService" ref="blStockService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+		<property name="configurationService" ref="configurationService"/>
 	</bean>
 	
 	<bean id="blGoogleMerchantJob" class="com.bl.core.job.BlGoogleMerchantCenterJob" parent="abstractJobPerformable">
