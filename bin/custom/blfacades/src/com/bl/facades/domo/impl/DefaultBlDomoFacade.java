@@ -233,9 +233,9 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 	}
 
 	@Override
-	public SearchPageData<StockLevelData> getStockLevels(final PageableData pageableData, final Date date)
+	public SearchPageData<StockLevelData> getStockLevels(final PageableData pageableData, final Date fromDate, final Date toDate)
 	{
-		final SearchPageData<StockLevelModel> stockLevels = getBlDomoService().getStockLevels(pageableData, date);
+		final SearchPageData<StockLevelModel> stockLevels = getBlDomoService().getStockLevels(pageableData, fromDate, toDate);
 		return convertPageData(stockLevels, getBlStockLevelConvertor());
 	}
 

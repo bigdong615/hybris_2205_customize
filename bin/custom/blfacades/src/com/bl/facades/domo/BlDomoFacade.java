@@ -145,7 +145,7 @@ public interface BlDomoFacade
 
 	SearchPageData<BrainTreePaymentInfoData> getBrainTreePaymentInfo(PageableData pageableData, Date date);
 
-	SearchPageData<StockLevelData> getStockLevels(PageableData pageableData, Date date);
+	SearchPageData<StockLevelData> getStockLevels(PageableData pageableData, Date fromDate, Date toDate);
 
 	/**
 	 * @param pageableData
