@@ -22,6 +22,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
@@ -53,6 +54,9 @@ public class BlShippingScanController extends DefaultWidgetController
 
 	@Wire
 	Textbox scanningArea;
+
+	@Wire
+	private Checkbox doNotAutoClose;
 
 	private transient WebScanToolData shippingScanToolData;
 
@@ -312,6 +316,10 @@ public class BlShippingScanController extends DefaultWidgetController
 				&& !scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.OUTSIDER_BARCODE)) {
 			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+			if (!isDoNotAutoClose())
+			{
+				this.sendOutput(OUT_CONFIRM, COMPLETE);
+			}
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 		} else {
 			final StringBuffer message = new StringBuffer(
@@ -319,6 +327,10 @@ public class BlShippingScanController extends DefaultWidgetController
 			if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.SUCCESS_SERIAL)) {
 				message.append("\nAll successful scan barcode :");
 				createMessage(message, scannedBarcodeMap, BlInventoryScanLoggingConstants.SUCCESS_SERIAL);
+				if (!isDoNotAutoClose())
+				{
+					this.sendOutput(OUT_CONFIRM, COMPLETE);
+				}
 			}
 			if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.INCLUDED_SERIAL)) {
 				message.append("\nAlready included barcode :");
@@ -464,6 +476,10 @@ public class BlShippingScanController extends DefaultWidgetController
 			getBlInventoryScanToolService().updateSerialLastScanLocation(selectedConsignment, lastScannedItem);
 			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+			if (!isDoNotAutoClose())
+			{
+				this.sendOutput(OUT_CONFIRM, COMPLETE);
+			}
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 		}
 		if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.ONE))
@@ -538,6 +554,28 @@ public class BlShippingScanController extends DefaultWidgetController
 	public void setBlInventoryScanToolDao(final BlInventoryScanToolDao blInventoryScanToolDao)
 	{
 		this.blInventoryScanToolDao = blInventoryScanToolDao;
+	}
+
+	private boolean isDoNotAutoClose()
+	{
+		return getDoNotAutoClose().isChecked();
+	}
+
+	/**
+	 * @return the doNotAutoClose
+	 */
+	public Checkbox getDoNotAutoClose()
+	{
+		return doNotAutoClose;
+	}
+
+	/**
+	 * @param doNotAutoClose
+	 *           the doNotAutoClose to set
+	 */
+	public void setDoNotAutoClose(final Checkbox doNotAutoClose)
+	{
+		this.doNotAutoClose = doNotAutoClose;
 	}
 
 

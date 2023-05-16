@@ -30,6 +30,10 @@
     </rows>
   </grid>
   
+  <div>
+      <label value="Do Not Auto Close" width="50%"  style="padding-left:52px;"/>
+      <checkbox id="doNotAutoClose" class="z-listitem-checkable z-listitem-checkbox" style="padding-left:15px;"/>
+  </div>
 
     <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
        <button id="scanToBin" 

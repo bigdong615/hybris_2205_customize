@@ -2,6 +2,7 @@ package com.bl.core.google.product.populators;
 
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.model.ModelService;
 
@@ -32,10 +33,12 @@ import com.bl.logging.BlLogger;
 public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProductModel>, Rss>
 {
 	private static final Logger LOG = Logger.getLogger(BlGoogleProductFeedXmlPupulator.class);
+	public static final String BL_WEBSITE_BASE_URL = "website.bl.https";
 	private DefaultBlDeliveryModeService blDeliveryModeService;
 	private ModelService modelService;
 	private BlStockService blStockService;
 	private BlCommerceStockService blCommerceStockService;
+	private ConfigurationService configurationService;
 
 	@Override
 	public void populate(final List<BlProductModel> source, final Rss target) throws ConversionException
@@ -43,7 +46,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 		target.setVersion("2.0");
 		final Channel channel = new Channel();
 		channel.setTitle("BorrowLenses.com");
-		channel.setLink("https://www.borrowlenses.com");
+		channel.setLink(getConfigurationService().getConfiguration().getString(BL_WEBSITE_BASE_URL));
 		channel.setDescription("BorrowLenses.com");
 		target.setChannel(channel);
 		createItems(source, channel);
@@ -200,6 +203,16 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 	public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService)
 	{
 		this.blCommerceStockService = blCommerceStockService;
+	}
+
+	public ConfigurationService getConfigurationService()
+	{
+		return configurationService;
+	}
+
+	public void setConfigurationService(final ConfigurationService configurationService)
+	{
+		this.configurationService = configurationService;
 	}
 
 }
