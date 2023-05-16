@@ -153,9 +153,10 @@ public interface BlDomoDao
 
 	/**
 	 * @param pageableData
+	 * @param toDate
 	 * @return
 	 */
-	SearchPageData<StockLevelModel> getStockLevels(PageableData pageableData, Date date);
+	SearchPageData<StockLevelModel> getStockLevels(PageableData pageableData, Date fromDate, Date toDate);
 
 	/**
 	 * @param pageableData
