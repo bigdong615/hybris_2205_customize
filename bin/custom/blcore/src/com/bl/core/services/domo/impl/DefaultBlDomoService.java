@@ -139,9 +139,9 @@ public class DefaultBlDomoService implements BlDomoService
 	}
 
 	@Override
-	public SearchPageData<StockLevelModel> getStockLevels(final PageableData pageableData, final Date date)
+	public SearchPageData<StockLevelModel> getStockLevels(final PageableData pageableData, final Date fromDate, final Date toDate)
 	{
-		return getBlDomoDao().getStockLevels(pageableData, date);
+		return getBlDomoDao().getStockLevels(pageableData, fromDate, toDate);
 	}
 
 	@Override

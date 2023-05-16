@@ -204,11 +204,12 @@ public class DefaultBlDomoDao implements BlDomoDao
 	}
 
 	@Override
-	public SearchPageData<StockLevelModel> getStockLevels(final PageableData pageableData, final Date date)
+	public SearchPageData<StockLevelModel> getStockLevels(final PageableData pageableData, final Date fromDate, final Date toDate)
 	{
 		final FlexibleSearchQuery fQ = new FlexibleSearchQuery(
-				"SELECT distinct {s.pk} FROM {StockLevel as s} where {modifiedtime} >= ?date");
-		fQ.addQueryParameter("date", date);
+				"SELECT distinct {s.pk} FROM {StockLevel as s} where {date} >= ?fromDate and {date} < ?toDate");
+		fQ.addQueryParameter("fromDate", fromDate);
+		fQ.addQueryParameter("toDate", toDate);
 		return getPagedFlexibleSearchService().search(fQ, pageableData);
 	}
 

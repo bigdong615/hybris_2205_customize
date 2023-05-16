@@ -1580,8 +1580,8 @@
     </bean>
     
   <bean class="de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryWsDTO">
-  	<property name="gearGuardWaiverPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
-	<property name="gearGuardProFullWaiverPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+  	<property name="gearGuardWaiverPrice" type="de.hybris.platform.commercewebservicescommons.dto.product.PriceWsDTO"/>
+	<property name="gearGuardProFullWaiverPrice" type="de.hybris.platform.commercewebservicescommons.dto.product.PriceWsDTO"/>
 	<property name="gearGuardWaiverSelected" type="java.lang.Boolean"/>
 	<property name="gearGuardProFullWaiverSelected" type="java.lang.Boolean"/>
 	<property name="noDamageWaiverSelected" type="java.lang.Boolean"/>
