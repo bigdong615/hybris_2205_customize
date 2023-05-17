@@ -413,191 +413,96 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 	 *
 	 */
 		private void updateSerialStatus(final List<BulkReceiveRespData> selectedSerials, final Map<String, BlSerialProductModel> blSerialList)
-	{
-
-		if (CollectionUtils.isNotEmpty(selectedSerials))
 		{
-			Map<String, List<BulkReceiveRespData>> selectedRespBasedOnBarCode = new HashMap<>();
 
-			selectedRespBasedOnBarCode = selectedSerials.stream().collect(Collectors.groupingBy(BulkReceiveRespData::getBarcode));
-
-
-			for (final Entry<String, List<BulkReceiveRespData>> dataBasedOnBarcode : selectedRespBasedOnBarCode.entrySet())
+			if (CollectionUtils.isNotEmpty(selectedSerials))
 			{
+				Map<String, List<BulkReceiveRespData>> selectedRespBasedOnBarCode = new HashMap<>();
 
-				for (final BulkReceiveRespData bulkRespData : dataBasedOnBarcode.getValue())
+				selectedRespBasedOnBarCode = selectedSerials.stream().collect(Collectors.groupingBy(BulkReceiveRespData::getBarcode));
+
+
+				for (final Entry<String, List<BulkReceiveRespData>> dataBasedOnBarcode : selectedRespBasedOnBarCode.entrySet())
 				{
-					//Skipping subparts, only serial products need to update
-					if (bulkRespData != null && bulkRespData.getTestingStatusValue() != null
-							&& !bulkRespData.getTestingStatusValue().isEmpty())
+
+					for (final BulkReceiveRespData bulkRespData : dataBasedOnBarcode.getValue())
 					{
-						final BlSerialProductModel serialModel =blSerialList.get(bulkRespData.getSerialProductId());
-						/* this.getDefaultBlProductDao()
-								.getSerialBySerialCode(bulkRespData.getSerialProductId());
-						//.getSerialByBarcode(bulkRespData.getBarcode());*/
-
-					if (null != serialModel)
-					{
-					serialModel.setSerialStatus(SerialStatusEnum.RECEIVED_OR_RETURNED);
-					serialModel.setHardAssigned(Boolean.FALSE);
-					final ItemTestingStatusEnum testingStatusEnum = enumerationService.getEnumerationValue(ItemTestingStatusEnum.class,
-							bulkRespData.getTestingStatusValue());
-					final ConditionRatingValueEnum functionalRatingEnum = enumerationService
-							.getEnumerationValue(ConditionRatingValueEnum.class, bulkRespData.getFunctionalRatingValue());
-					final ConditionRatingValueEnum cosmeticRatingEnum = enumerationService
-							.getEnumerationValue(ConditionRatingValueEnum.class, bulkRespData.getCosmeticRatingValue());
-					serialModel.setFunctionalRating(functionalRatingEnum);
-					serialModel.setTestingStatus(testingStatusEnum);
-					serialModel.setCosmeticRating(cosmeticRatingEnum);
-					serialModel.setFirmwareVersion(bulkRespData.getFirmwareVersion());
-					getModelService().save(serialModel);
-
-					Map<String, ItemStatusEnum> itemsMap;
-
-
-					//if (serialModel.getAssociatedConsignment() != null)
-					//if (serialModel.getAssociatedShippedConsignment() != null)
-					//{
-						//Updating consignment items
-						//					for (final ConsignmentEntryModel consignEntryModel : serialModel.getAssociatedConsignment()
-
-						final List<ConsignmentEntryModel> consEntry = blConsignmentDao.getConsignmentEntriesForSerialCode(serialModel);
-						if (CollectionUtils.isNotEmpty(consEntry))
+						//Skipping subparts, only serial products need to update
+						if (bulkRespData != null && bulkRespData.getTestingStatusValue() != null
+								&& !bulkRespData.getTestingStatusValue().isEmpty())
 						{
-						for (final ConsignmentEntryModel consignEntryModel : consEntry)
+							final BlSerialProductModel serialModel = blSerialList.get(bulkRespData.getSerialProductId());
+							/*
+							 * this.getDefaultBlProductDao() .getSerialBySerialCode(bulkRespData.getSerialProductId());
+							 * //.getSerialByBarcode(bulkRespData.getBarcode());
+							 */
 
-						//							for (final ConsignmentEntryModel consignEntryModel : serialModel.getAssociatedShippedConsignment()
-						//									.getConsignmentEntries())
-					{
-
-						itemsMap = new HashMap<>(consignEntryModel.getItems());
-
-						if (itemsMap.get(serialModel.getCode()) != null)
-						{
-							for (final Map.Entry<String, ItemStatusEnum> entry : itemsMap.entrySet())
+							if (null != serialModel)
 							{
-								//Checking Items, productID for serialProduct, productName for subParts, to update only selected items
-								final BulkReceiveRespData consignmentEntryItems = dataBasedOnBarcode.getValue().stream()
-										.filter(data -> (!data.getTestingStatusValue().isEmpty()
-												? data.getSerialProductId().equals(entry.getKey())
-												: data.getSerialProductName().equals(entry.getKey().split("--")[0])))
-										.findFirst().orElse(null);
-								if (consignmentEntryItems != null)
+								serialModel.setSerialStatus(SerialStatusEnum.RECEIVED_OR_RETURNED);
+								serialModel.setHardAssigned(Boolean.FALSE);
+								final ItemTestingStatusEnum testingStatusEnum = enumerationService
+										.getEnumerationValue(ItemTestingStatusEnum.class, bulkRespData.getTestingStatusValue());
+								final ConditionRatingValueEnum functionalRatingEnum = enumerationService
+										.getEnumerationValue(ConditionRatingValueEnum.class, bulkRespData.getFunctionalRatingValue());
+								final ConditionRatingValueEnum cosmeticRatingEnum = enumerationService
+										.getEnumerationValue(ConditionRatingValueEnum.class, bulkRespData.getCosmeticRatingValue());
+								serialModel.setFunctionalRating(functionalRatingEnum);
+								serialModel.setTestingStatus(testingStatusEnum);
+								serialModel.setCosmeticRating(cosmeticRatingEnum);
+								serialModel.setFirmwareVersion(bulkRespData.getFirmwareVersion());
+								getModelService().save(serialModel);
+
+								Map<String, ItemStatusEnum> itemsMap;
+
+								// Taking the consignments, which are older & new, belongs to serial
+								final List<ConsignmentEntryModel> consEntry = blConsignmentDao
+										.getConsignmentEntriesForSerialCode(serialModel);
+								if (CollectionUtils.isNotEmpty(consEntry))
 								{
-									itemsMap.put(entry.getKey(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+									for (final ConsignmentEntryModel consignEntryModel : consEntry)
+
+									{
+
+										itemsMap = new HashMap<>(consignEntryModel.getItems());
+
+										if (itemsMap.get(serialModel.getCode()) != null)
+										{
+											for (final Map.Entry<String, ItemStatusEnum> entry : itemsMap.entrySet())
+											{
+												//Checking Items, productID for serialProduct, productName for subParts, to update only selected items
+												final BulkReceiveRespData consignmentEntryItems = dataBasedOnBarcode.getValue().stream()
+														.filter(data -> (!data.getTestingStatusValue().isEmpty()
+																? data.getSerialProductId().equals(entry.getKey())
+																: data.getSerialProductName().equals(entry.getKey().split("--")[0])))
+														.findFirst().orElse(null);
+												if (consignmentEntryItems != null)
+												{
+													itemsMap.put(entry.getKey(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+												}
+											}
+										}
+
+										consignEntryModel.setItems(itemsMap);
+										getModelService().save(consignEntryModel);
+										getModelService().refresh(consignEntryModel);
+									}
 								}
 							}
 						}
-
-						consignEntryModel.setItems(itemsMap);
-						getModelService().save(consignEntryModel);
-						getModelService().refresh(consignEntryModel);
-						}
-						//}
+					}
 				}
+
+				Messagebox.show(BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_SUCCESS_MSG);
 			}
-				}
+
+			else
+			{
+				throw new WrongValueException(this.globalDeclineEntriesSelection,
+						BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_PLS_SELECT_MSG);
 			}
+
 		}
-
-			Messagebox.show(BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_SUCCESS_MSG);
-		}
-
-
-			//		Map<String, List<BulkReceiveRespData>> orderFilteredResp = new HashMap<>();
-			//
-			//		orderFilteredResp = selectedSerials.stream().collect(Collectors.groupingBy(BulkReceiveRespData::getOrderNumber));
-			//
-			//		Set<String> orderIds = new HashSet<String>();
-			//		orderIds = orderFilteredResp != null && CollectionUtils.isNotEmpty(orderFilteredResp.keySet())
-			//				? orderFilteredResp.keySet()
-			//				: new HashSet<String>();
-			//
-			//		final boolean entered = false;
-			//		for (final String orderCode : orderIds)
-			//		{
-			//			final List<BulkReceiveRespData> orderData = orderFilteredResp.get(orderCode);
-			//
-			//			final BlSerialProductModel serialModel = this.getDefaultBlProductDao().getSerialByBarcode(orderData.get(0).getBarcode());
-			//
-			//			final OrderModel order = serialModel.getAssociatedOrder();
-			//
-			//			if (null != order)
-			//			{
-			//			order.getConsignments().forEach(consignment -> {
-			//				for (final ConsignmentEntryModel consignEntryModel : consignment.getConsignmentEntries())
-			//				{
-			//					final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignEntryModel.getItems());
-			//					final List<BlSerialProductModel> blSerialsModel = new ArrayList<BlSerialProductModel>();
-			//
-			//					//	consignEntryModel.getSerialProducts().
-			//
-			//
-			//					for (final Map.Entry<String, ItemStatusEnum> entry : itemsMap.entrySet())
-			//					{
-			//						final BlSerialProductModel serial = this.getDefaultBlProductDao().getSerialBySerialCode(entry.getKey());
-			//
-			//						if (serial != null)
-			//						{
-			//							blSerialsModel.add(serial);
-			//
-			//							itemsMap.put(entry.getKey(), ItemStatusEnum.RECEIVED_OR_RETURNED);
-			//						}
-			//					}
-			//
-			//					for (final BlSerialProductModel productModel : blSerialsModel)
-			//					{
-			//
-			//						final BulkReceiveRespData	bulkResData = selectedSerials
-			//								 .stream()
-			//								.filter(bulkData -> bulkData.getSerialProductId().equals(productModel.getCode()))
-			//										.findFirst()
-			//						            .orElse(null);
-			//
-			//						if(bulkResData!=null) {
-			//
-			//						productModel.setSerialStatus(SerialStatusEnum.RECEIVED_OR_RETURNED);
-			//						productModel.setHardAssigned(Boolean.FALSE);
-			//						final ItemTestingStatusEnum testingStatusEnum = enumerationService
-			//								.getEnumerationValue(ItemTestingStatusEnum.class, bulkResData.getTestingStatusValue());
-			//						final ConditionRatingValueEnum functionalRatingEnum = enumerationService
-			//								.getEnumerationValue(ConditionRatingValueEnum.class, bulkResData.getFunctionalRatingValue());
-			//						final ConditionRatingValueEnum cosmeticRatingEnum = enumerationService
-			//								.getEnumerationValue(ConditionRatingValueEnum.class, bulkResData.getCosmeticRatingValue());
-			//						productModel.setFunctionalRating(functionalRatingEnum);
-			//						productModel.setTestingStatus(testingStatusEnum);
-			//						productModel.setCosmeticRating(cosmeticRatingEnum);
-			//						productModel.setFirmwareVersion(bulkResData.getFirmwareVersion());
-			//						getModelService().save(productModel);
-			//
-			//					consignEntryModel.setItems(itemsMap);
-			//					getModelService().save(consignEntryModel);
-			//					getModelService().refresh(consignEntryModel);
-			//						}
-			//					}
-			//				}
-			//			});
-			//		}
-			//
-			//		}
-			//
-			//		Messagebox.show(BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_SUCCESS_MSG);
-
-
-
-
-
-
-
-
-
-	else
-	{
-		throw new WrongValueException(this.globalDeclineEntriesSelection,
-				BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_PLS_SELECT_MSG);
-	}
-
-	}
 
 	protected void selectAllEntries()
 	{

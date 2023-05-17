@@ -94,6 +94,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		final Map<String, ConsignmentEntryStatusEnum> consEntryStatus = new HashMap<String, ConsignmentEntryStatusEnum>();
 		for (final Map.Entry<String, ItemStatusEnum> item : consignmentEntryModel.getItems().entrySet())
 		{
+			//Some of the old consignments having value is null, because of that doing null check
 			if (item.getValue() != null)
 			{
 			if (item.getValue().equals(ItemStatusEnum.MISSING))
