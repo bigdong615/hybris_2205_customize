@@ -79,6 +79,23 @@ ACC.account = {
 								// BL-689: below line added
 								$("#errorMessages_sigin_email").removeClass("d-none");
 							}
+							if (splitValue.includes('register.firstName.invalid')) {
+								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
+									$("#errorMessages_sigin_errorbox").removeClass("d-none");
+								}
+								$("#errorMessages_sigin_firstName").html("Please enter valid first name");
+								// BL-689: below line added
+								$("#errorMessages_sigin_pwd").removeClass("d-none");
+							}
+							if (splitValue.includes('register.lastName.invalid')) {
+								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
+									$("#errorMessages_sigin_errorbox").removeClass("d-none");
+								}
+								$("#errorMessages_sigin_lastName").html("Please enter valid last name");
+								// BL-689: below line added
+								$("#errorMessages_sigin_lastName").removeClass("d-none");
+							}
+							
 							if (splitValue.includes('register.pwd.invalid')) {
 								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 									$("#errorMessages_sigin_errorbox").removeClass("d-none");
@@ -173,6 +190,33 @@ ACC.account = {
 				// BL-689: below line added
 				$("#errorMessages_sigin_chkPwd").addClass("d-none");
 			}
+			
+			
+			if ($('#firstName').val() === '') {
+				if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
+					$("#errorMessages_sigin_errorbox").removeClass("d-none");
+				}
+				$("#errorMessages_sigin_firstName").html("Please enter valid first name");
+				$("#errorMessages_sigin_firstName").removeClass("d-none");
+			} else {
+				$("#errorMessages_sigin_firstName").html("");
+				// BL-689: below line added
+				$("#errorMessages_sigin_firstName").addClass("d-none");
+			}
+			
+			
+			if ($('#lastName').val() === '') {
+				if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
+					$("#errorMessages_sigin_errorbox").removeClass("d-none");
+				}
+				$("#errorMessages_sigin_lastName").html("Please enter valid last name");
+				$("#errorMessages_sigin_lastName").removeClass("d-none");
+			} else {
+				$("#errorMessages_sigin_lastName").html("");
+				// BL-689: below line added
+				$("#errorMessages_sigin_lastName").addClass("d-none");
+			}
+			
 		});
 
 		$(document).on("click", ".js-login-popup-validation", function (e) {
