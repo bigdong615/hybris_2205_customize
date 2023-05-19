@@ -123,7 +123,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 		}
 		else
 		{
-			final BlSerialProductModel serialModel = getBlInventoryScanToolDao().getBlSerialProductByBarcode(textInput.getText());
+			final BlSerialProductModel serialModel = getBlInventoryScanToolDao().getBlSerialProductByBarcode(textInput.getText().trim());
 
 		if (serialModel != null )
 			{
