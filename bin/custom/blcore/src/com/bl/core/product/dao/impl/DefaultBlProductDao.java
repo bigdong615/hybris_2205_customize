@@ -1,8 +1,11 @@
 package com.bl.core.product.dao.impl;
 
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.catalog.model.CatalogModel;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.product.daos.impl.DefaultProductDao;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -229,4 +232,12 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 	  final SearchResult<StockLevelModel> result = getFlexibleSearchService().search(fQuery);
 	  return result.getResult();
   }
+
+  @Override
+  public List<ProductModel> findProductsByPK(final String code)
+  {
+	  validateParameterNotNull(code, "Product code must not be null!");
+	  return find(Collections.singletonMap(ProductModel.PK, (Object) code));
+  }
+
 }

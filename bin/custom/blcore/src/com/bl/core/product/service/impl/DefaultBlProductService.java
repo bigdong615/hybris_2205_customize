@@ -1,5 +1,7 @@
 package com.bl.core.product.service.impl;
 
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
@@ -227,6 +229,19 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 		}
 		return products;
 	}
+
+	@Override
+	public ProductModel getProductForPK(final String code)
+	{
+		validateParameterNotNull(code, "Parameter code must not be null");
+		final List<ProductModel> products = blProductDao.findProductsByPK(code);
+		if (products != null)
+		{
+			return products.get(0);
+		}
+		return null;
+	}
+
 
 
 /**

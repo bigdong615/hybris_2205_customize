@@ -87,4 +87,10 @@ public interface BlProductService extends ProductService {
 			final Date optimizedShippingEndDate);
 
 	public List<BlProductModel> getUsedProductsOnSale();
+
+	/**
+	 *
+	 */
+	ProductModel getProductForPK(String code);
+
 }

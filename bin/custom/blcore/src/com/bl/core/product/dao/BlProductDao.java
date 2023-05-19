@@ -1,5 +1,6 @@
 package com.bl.core.product.dao;
 
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.product.daos.ProductDao;
 
@@ -63,4 +64,9 @@ public interface BlProductDao extends ProductDao {
    * @return
    */
     BlSerialProductModel getSerialByID(final String productId);
+
+	 /**
+	 *
+	 */
+	 List<ProductModel> findProductsByPK(String code);
 }
