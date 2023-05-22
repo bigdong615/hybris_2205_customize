@@ -849,4 +849,30 @@ public class DomoController extends BaseCommerceController
 		return cartEntriesData;
 	}
 
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/stockByModifiedTime", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getStockByModifiedTime", value = "Get StockLevels", notes = "Returns StockLevels")
+	@ApiBaseSiteIdAndUserIdParam
+	public StockLevelListWsDTO getStockByModifiedTime(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final StockLevelListData stockLevelListData;
+		stockLevelListData = createstockLevelListData(blDomoFacade.getStockModifiedTime(pageableData, date));
+		setTotalCountHeader(response, stockLevelListData.getPagination());
+		return getDataMapper().map(stockLevelListData, StockLevelListWsDTO.class, fields);
+	}
+
+
+
 }

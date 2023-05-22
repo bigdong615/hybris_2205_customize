@@ -182,5 +182,10 @@ public interface BlDomoDao
 	 */
 	SearchPageData<CartEntryModel> getCartEntries(PageableData pageableData, Date date);
 
+	/**
+	 * @param pageableData
+	 * @return
+	 */
+	SearchPageData<StockLevelModel> getStockModifiedTime(PageableData pageableData, Date date);
 
 }
