@@ -1908,7 +1908,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			if (isLocationDPC || !getStatusOfLocationDC())
 			{
-				dirtySerialList.add(blSerialProductModel.getBarcode());
+				//dirtySerialList.add(blSerialProductModel.getBarcode());
 				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 			else
@@ -2513,13 +2513,19 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						? getBlInventoryScanToolDao().getAllSerialsByBinLocationAndVersion(barcodes.get(BlCoreConstants.INT_ZERO),
 								BlCoreConstants.ONLINE)
 						: Lists.newArrayList();
-		if(CollectionUtils.isNotEmpty(allSerialsByBinLocationAndVersion) && !isUnboxingFlow)
+		if(CollectionUtils.isNotEmpty(allSerialsByBinLocationAndVersion))
 		{
 			setBlInventoryLocation(blLocalInventoryLocation);
 			if (isUnboxingFlow)
 			{
-				performBinScannedSerialsToDPCOrDC(allSerialsByBinLocationAndVersion, errors, binLocation,
-						blLocalInventoryLocation);
+				//performBinScannedSerialsToDPCOrDC(allSerialsByBinLocationAndVersion, errors, binLocation,
+						//blLocalInventoryLocation);
+				allSerialsByBinLocationAndVersion.forEach(blSerialProductModel -> {
+
+					updateLocationOnItem(blSerialProductModel, binLocation, Boolean.FALSE);
+
+				});
+
 			}
 			else
 			{
@@ -2527,6 +2533,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						blLocalInventoryLocation);
 			}
 		}
+
 	}
 
 	/**
