@@ -106,7 +106,8 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		if(CollectionUtils.isEmpty(currentCustomer.getAddresses())){
 			//currentCustomer.setName(newAddress.getFirstname());
 			//BLS-131 : populate full name instead of only first name
-			currentCustomer.setName(getCustomerNameStrategy().getName(newAddress.getFirstname(), newAddress.getLastname()));
+			//BLS-296 we added firstname, lastname while creating new user, so we have user name data, no need to again take from address 
+			//currentCustomer.setName(getCustomerNameStrategy().getName(newAddress.getFirstname(), newAddress.getLastname()));
 		}
 		// Store the address against the user
 		getCustomerAccountService().saveAddressEntry(currentCustomer, newAddress);
