@@ -168,6 +168,11 @@ public class DefaultBlDomoService implements BlDomoService
 		return getBlDomoDao().getCartEntries(pageableData, date);
 	}
 
+	@Override
+	public SearchPageData<StockLevelModel> getStockModifiedTime(final PageableData pageableData, final Date date)
+	{
+		return getBlDomoDao().getStockModifiedTime(pageableData, date);
+	}
 
 	/**
 	 * @return the blDomoDao

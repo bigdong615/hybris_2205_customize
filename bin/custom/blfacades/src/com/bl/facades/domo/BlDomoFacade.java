@@ -171,4 +171,11 @@ public interface BlDomoFacade
 	 */
 	SearchPageData<CartEntryData> getCartEntries(PageableData pageableData, Date date);
 
+	/**
+	 * @param pageableData
+	 * @param date
+	 * @return
+	 */
+	SearchPageData<StockLevelData> getStockModifiedTime(PageableData pageableData, Date date);
+
 }
