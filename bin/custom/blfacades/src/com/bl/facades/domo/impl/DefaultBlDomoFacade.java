@@ -267,6 +267,14 @@ public class DefaultBlDomoFacade implements BlDomoFacade
 		return convertPageData(cartEntries, getBlcartEntryConverter());
 	}
 
+	@Override
+	public SearchPageData<StockLevelData> getStockModifiedTime(final PageableData pageableData, final Date date)
+	{
+		final SearchPageData<StockLevelModel> stockLevels = getBlDomoService().getStockModifiedTime(pageableData, date);
+		return convertPageData(stockLevels, getBlStockLevelConvertor());
+	}
+
+
 	/**
 	 * @return the blSerialLogsConverter
 	 */
