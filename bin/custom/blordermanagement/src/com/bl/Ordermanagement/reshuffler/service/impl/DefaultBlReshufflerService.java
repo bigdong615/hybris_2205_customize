@@ -95,11 +95,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                 .from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
         final Date endDate = DateUtils.addDays(currentDate, 3);
         for (Date startDate = currentDate; startDate.before(endDate); startDate = DateUtils.addDays(startDate, 1)) {
-            processOrdersSoonToBeTransitByDay(startDate, startDate.equals(currentDate));
-            if(startDate.equals(currentDate)) {
-                getBlOptimizeShippingFromWHService()
-                        .optimizeShipFormWHForOrders(startDate);
-            }
+            processOrdersSoonToBeTransitByDay(startDate);
         }
     }
 
@@ -142,7 +138,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
   }
 
 
-    public void processOrdersSoonToBeTransitByDay(final Date currentDate, final boolean isPresentDay) {
+    public void processOrdersSoonToBeTransitByDay(final Date currentDate) {
         final List<AbstractOrderModel> ordersToBeProcessed = getOrderDao()
                 .getOrdersToBeShippedSoon(currentDate);
         if(CollectionUtils.isNotEmpty(ordersToBeProcessed)) {
@@ -164,8 +160,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
             // of sku needed for orders, will ship on same day, is not sufficient to fulfill from main and buffer inventory
           final Map<AbstractOrderModel, Set<String>> filteredOrdersForSoftAssignSerialInRepair =filterOrdersForProcessingSoftAssignedSerials(finalSortedOrders);
             final Map<AbstractOrderModel, Set<String>> filteredOrderForLateSerial = filterOrdersForProcessingLateSerials(
-                    finalSortedOrders,
-                    warehouses, currentDate, isPresentDay);
+                    finalSortedOrders, warehouses, currentDate);
             filteredOrderForLateSerial.putAll(filteredOrdersForSoftAssignSerialInRepair);
             processOrders(filteredOrderForLateSerial, warehouses);
         }
@@ -180,9 +175,8 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
         if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
           for (BlProductModel productModel : entryModel.getSerialProducts()) {
             if (productModel instanceof BlSerialProductModel) {
-              OrderModel orderModel = ((BlSerialProductModel)productModel).getAssociatedOrder();
               BlSerialProductModel serialProductModel = (BlSerialProductModel) productModel;
-              if (Objects.nonNull(orderModel) && serialProductModel.getSoftAssigned() && (serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_NEEDED) ||
+              if (serialProductModel.getSoftAssigned() && (serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_NEEDED) ||
                       serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_AWAITING_QUOTES) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_PARTS_NEEDED) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_SEND_TO_VENDOR) ||
                       serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_IN_HOUSE))) {
                 entryModel.setSerialProducts(Collections.emptyList());
@@ -689,7 +683,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 
 
     private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessingLateSerials(final List<AbstractOrderModel> todayOrdersToBeProcessed,
-                                                                           final List<WarehouseModel> warehouses, final Date currentDate, final boolean isPresentDay) {
+                                                                           final List<WarehouseModel> warehouses, final Date currentDate) {
 
     Map<AbstractOrderModel, Set<String>> mapOfLateOrders = new HashMap<>();
     for (AbstractOrderModel order: todayOrdersToBeProcessed) {
