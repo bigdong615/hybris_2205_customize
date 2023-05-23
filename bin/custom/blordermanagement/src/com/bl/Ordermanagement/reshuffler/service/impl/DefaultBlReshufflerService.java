@@ -122,8 +122,11 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
       final List<AbstractOrderModel> finalSortedOrders = new ArrayList<>();
       finalSortedOrders.addAll(ordersSortedByDeliveryMode);
       finalSortedOrders.addAll(ordersSortedByTotalPrice);
+      List<String> orderCodeList = finalSortedOrders.stream()
+          .map(abstractOrderModel -> abstractOrderModel.getCode()).collect(Collectors.toList());
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-          "List of orders to fulfill {} for the day {} ", finalSortedOrders.toString(), currentDate);
+          "1. List of orders to fulfill {} for the day {} via Re-shuffler Job", (CollectionUtils.isNotEmpty(orderCodeList) ? orderCodeList : finalSortedOrders.toString()), currentDate);
+
       final BaseStoreModel baseStoreModel = getBaseStoreService()
           .getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
       //Get all warehouses
@@ -150,8 +153,10 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                     .sorted(Comparator.comparing(AbstractOrderModel::getTotalPrice).reversed())
                     .collect(Collectors.toList());
           final List<AbstractOrderModel> finalSortedOrders = new ArrayList<>(ordersSortedByTotalPrice);
-            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-                    "List of orders to fulfill {} for the day {} ", finalSortedOrders.toString(), currentDate);
+          List<String> orderCodeList = finalSortedOrders.stream()
+              .map(abstractOrderModel -> abstractOrderModel.getCode()).collect(Collectors.toList());
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                    "1. List of orders to fulfill {} for the day {} via BlOptimizeSerialsInLateOrders Job", (CollectionUtils.isNotEmpty(orderCodeList) ? orderCodeList : finalSortedOrders.toString()), currentDate);
             final BaseStoreModel baseStoreModel = getBaseStoreService()
                     .getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
             //Get all warehouses
@@ -210,7 +215,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
         try {
         tx.begin();
         BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-            "Processing the order {} ", entry.getKey().getCode());
+            "2.Processing the order {} ", entry.getKey().getCode());
         //It gets the preferred warehouse
         final WarehouseModel location = getBlDeliveryStateSourcingLocationFilter()
             .applyFilter(entry.getKey());
@@ -275,7 +280,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     final Set<String> modifiedProductCodes = getBlOptimizeShippingFromWHService().modifyProductCodes(order, warehouse);
     modifiedProductCodes.addAll(productCodes);
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-        "list of products {} to fulfill from preferred warehouse {} for the order {}",
+        "3. list of products {} to fulfill from preferred warehouse {} for the order {}",
         modifiedProductCodes.toString(), preferredWH.getCode(), order.getCode());
     if (CollectionUtils.isNotEmpty(modifiedProductCodes)) {
       final Collection<StockLevelModel> stockLevels = getBlOptimizeShippingFromWHService()
