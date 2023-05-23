@@ -216,7 +216,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 
 				this.getConsolidationData().renderAll();
 				createErrorMessages(orderConsolidationDataList);
-				scanningArea.setValue(textInput.getText() + "\n");
+				scanningArea.setValue(textInput.getText().trim() + "\n");
 				scanningArea.setFocus(true);
 
 			}
