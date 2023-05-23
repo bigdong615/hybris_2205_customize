@@ -725,6 +725,14 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		{
 			defaultBillingAddressData = getAddressConverter().convert(defaultBillingAddress);
 		}
+		else
+		{
+			final List<AddressModel> addresses = getCustomerAccountService().getAddressBookEntries(currentCustomer);
+			if (CollectionUtils.isNotEmpty(addresses))
+			{
+				defaultBillingAddressData = getAddressConverter().convert(addresses.get(0));
+			}
+	}
 		return defaultBillingAddressData;
 	}
 
@@ -748,7 +756,11 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 				final AddressData addressData = getAddressConverter().convert(address);
 
 				if (defaultBillingAddress!= null && StringUtils.isNotEmpty(defaultBillingAddress.getId()) && StringUtils.equals(defaultBillingAddress.getId(),addressData.getId())){
-					addressData.setDefaultBillingAddress(Boolean.TRUE);
+					addressData.setDefaultBillingAddress(true);
+
+				}
+				else {
+					addressData.setShippingAddress(true);
 				}
 
 				if (defaultAddress != null && StringUtils.isNotEmpty(defaultAddress.getId()) && StringUtils.equals(defaultAddress.getId(),addressData.getId()))
@@ -758,6 +770,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 				}
 				else
 				{
+					addressData.setBillingAddress(true);
 					addressBook.add(addressData);
 				}
 			}
@@ -790,6 +803,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 				}
 				else
 				{
+					addressData.setShippingAddress(true);
 					addressBook.add(addressData);
 				}
 			}
