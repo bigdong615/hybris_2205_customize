@@ -211,7 +211,8 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 				{
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current Used gear Serial Product id for Google Feed : {}",
 							serial.getCode());
-					if(getBlStockService().isActiveStatus(serial.getSerialStatus()) && serial.getForSale()) {
+					if (getBlStockService().isVisibleInPdp(serial.getSerialStatus()) && serial.getForSale())
+					{
 						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 								"Current Used gear Serial Product id for Google Feed is avaialble and added to feed : {}",
 								serial.getCode());
