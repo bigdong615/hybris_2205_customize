@@ -1908,7 +1908,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			if (isLocationDPC || !getStatusOfLocationDC())
 			{
-				dirtySerialList.add(blSerialProductModel.getBarcode());
+				//dirtySerialList.add(blSerialProductModel.getBarcode());
 				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 			else
@@ -2513,13 +2513,19 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						? getBlInventoryScanToolDao().getAllSerialsByBinLocationAndVersion(barcodes.get(BlCoreConstants.INT_ZERO),
 								BlCoreConstants.ONLINE)
 						: Lists.newArrayList();
-		if(CollectionUtils.isNotEmpty(allSerialsByBinLocationAndVersion) && !isUnboxingFlow)
+		if(CollectionUtils.isNotEmpty(allSerialsByBinLocationAndVersion))
 		{
 			setBlInventoryLocation(blLocalInventoryLocation);
 			if (isUnboxingFlow)
 			{
-				performBinScannedSerialsToDPCOrDC(allSerialsByBinLocationAndVersion, errors, binLocation,
-						blLocalInventoryLocation);
+				//performBinScannedSerialsToDPCOrDC(allSerialsByBinLocationAndVersion, errors, binLocation,
+						//blLocalInventoryLocation);
+				allSerialsByBinLocationAndVersion.forEach(blSerialProductModel -> {
+
+					updateLocationOnItem(blSerialProductModel, binLocation, Boolean.FALSE);
+
+				});
+
 			}
 			else
 			{
@@ -2527,6 +2533,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						blLocalInventoryLocation);
 			}
 		}
+
 	}
 
 	/**
@@ -2802,6 +2809,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultInventoryLocation();
 		final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream().anyMatch(b::startsWith))
 				.collect(Collectors.toList());
+		final Set<String> missingPackageBarcodeList = new HashSet<>();
+		final List<String> missingBarcodeList = new ArrayList<>();
+		final List<String> removedUnboxedSerialBarcodeList = new ArrayList<>();
+		final Set<String> availablePackageBarcodes = new HashSet<>();
+
+		final BlInventoryLocationModel blInventoryLocationModel = getBlInventoryLocation();
 		if (CollectionUtils.isNotEmpty(filteredLocationList) && filteredLocationList.size() > BlCoreConstants.INT_ONE)
 		{
 			errors.put(BlCoreConstants.INT_TWELVE, Lists.newArrayList());
@@ -2835,13 +2848,53 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				//{
 					//dirtyPrioritySerialList.add(blSerialProductModel.getBarcode());
 				//}
-				//else
+				//els
 				//{
-					dirtySerialList.add(blSerialProductModel.getBarcode());
+					//dirtySerialList.add(blSerialProductModel.getBarcode());
 				//}
-				updateLocationOnItem(blSerialProductModel, getBlInventoryLocation(), Boolean.FALSE);
+				//updateLocationOnItem(blSerialProductModel, getBlInventoryLocation(), Boolean.FALSE);
+
 			});
-			addToErrorList(errors, dirtyPrioritySerialList, dirtySerialList);
+			if(CollectionUtils.isEmpty(serialsByBarcodesAndVersion))
+			{
+				errors.put(BlInventoryScanLoggingConstants.INT_TEN, serialBarcodeList);
+				return errors;
+			}
+			else if(serialsByBarcodesAndVersion.size() != serialBarcodeList.size())
+			{
+				getInavlidBarcodeList(errors, serialBarcodeList, missingBarcodeList, serialsByBarcodesAndVersion);
+			}
+
+			removeUnboxedSerialsFromList(serialsByBarcodesAndVersion, removedUnboxedSerialBarcodeList);
+
+			if (Objects.nonNull(blInventoryLocationModel) && Objects.nonNull(blInventoryLocationModel.getLocationCategory()))
+			{
+				final String locationCategory = blInventoryLocationModel.getLocationCategory().getCode();
+				if(BlInventoryScanUtility.getUnBoxingWorkStationLocations().contains(locationCategory))
+				{
+					performWorkstationScanOnSerial(errors, serialsByBarcodesAndVersion);
+				}
+				else
+				{
+					if(CollectionUtils.isNotEmpty(removedUnboxedSerialBarcodeList))
+					{
+						setLocationDP(BlInventoryScanUtility.getDirtyPriorityCartLocations().contains(locationCategory));
+						final Collection<PackagingInfoModel> packagingInfoModels = this.getPackageForSerials(removedUnboxedSerialBarcodeList);
+						if(CollectionUtils.isEmpty(packagingInfoModels))
+						{
+							//result.put(BlInventoryScanLoggingConstants.INT_NINE, removedUnboxedSerialBarcodeList);
+							Collection<ConsignmentEntryModel> consignmentEntryModels = this.getConignmentEntriesForSerials(removedUnboxedSerialBarcodeList);
+							performSerialToDPCOrDCLocationScanWithConsignment(errors, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
+									availablePackageBarcodes, consignmentEntryModels);
+							return errors;
+						}else {
+							performSerialToDPCOrDCLocationScan(errors, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
+									availablePackageBarcodes, packagingInfoModels);
+						}}
+				}
+
+			}
+			//addToErrorList(errors, dirtyPrioritySerialList, dirtySerialList);
 		}
 		return errors;
 	}

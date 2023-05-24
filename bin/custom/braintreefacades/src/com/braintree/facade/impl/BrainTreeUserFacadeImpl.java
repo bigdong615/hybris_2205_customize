@@ -106,7 +106,8 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		if(CollectionUtils.isEmpty(currentCustomer.getAddresses())){
 			//currentCustomer.setName(newAddress.getFirstname());
 			//BLS-131 : populate full name instead of only first name
-			currentCustomer.setName(getCustomerNameStrategy().getName(newAddress.getFirstname(), newAddress.getLastname()));
+			//BLS-296 we added firstname, lastname while creating new user, so we have user name data, no need to again take from address 
+			//currentCustomer.setName(getCustomerNameStrategy().getName(newAddress.getFirstname(), newAddress.getLastname()));
 		}
 		// Store the address against the user
 		getCustomerAccountService().saveAddressEntry(currentCustomer, newAddress);
@@ -724,6 +725,14 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		{
 			defaultBillingAddressData = getAddressConverter().convert(defaultBillingAddress);
 		}
+		else
+		{
+			final List<AddressModel> addresses = getCustomerAccountService().getAddressBookEntries(currentCustomer);
+			if (CollectionUtils.isNotEmpty(addresses))
+			{
+				defaultBillingAddressData = getAddressConverter().convert(addresses.get(0));
+			}
+	}
 		return defaultBillingAddressData;
 	}
 
@@ -747,7 +756,11 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 				final AddressData addressData = getAddressConverter().convert(address);
 
 				if (defaultBillingAddress!= null && StringUtils.isNotEmpty(defaultBillingAddress.getId()) && StringUtils.equals(defaultBillingAddress.getId(),addressData.getId())){
-					addressData.setDefaultBillingAddress(Boolean.TRUE);
+					addressData.setDefaultBillingAddress(true);
+
+				}
+				else {
+					addressData.setShippingAddress(true);
 				}
 
 				if (defaultAddress != null && StringUtils.isNotEmpty(defaultAddress.getId()) && StringUtils.equals(defaultAddress.getId(),addressData.getId()))
@@ -757,6 +770,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 				}
 				else
 				{
+					addressData.setBillingAddress(true);
 					addressBook.add(addressData);
 				}
 			}
@@ -789,6 +803,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 				}
 				else
 				{
+					addressData.setShippingAddress(true);
 					addressBook.add(addressData);
 				}
 			}

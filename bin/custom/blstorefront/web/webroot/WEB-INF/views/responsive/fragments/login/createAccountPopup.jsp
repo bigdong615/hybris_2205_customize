@@ -17,6 +17,15 @@
       </h5>
       <c:url value="/login/register" var="registerActionUrl" />
       <form:form method="post" modelAttribute="registerForm" action="${registerActionUrl}" id="signUppopup-validation">
+      
+      
+      <formElement:formInputBox idKey="firstName" path="firstName"
+          inputCSS="form-control mb-3"  placeholder="register.firstName"/>
+          <formElement:formInputBox idKey="lastName" path="lastName"
+          inputCSS="form-control mb-3"  placeholder="register.lastName"/>
+      
+      
+      
         <formElement:formInputBox idKey="register-form-id" path="email"
           inputCSS="form-control mb-3"  placeholder="register.email"/>
         <formElement:formPasswordBox idKey="password"  path="pwd"
@@ -40,6 +49,8 @@
 
            <div class ="notification notification-error d-none" id="errorMessages_sigin_errorbox">
                                      <!--  BL:689 changes in below two line -->
+                                     <div id="errorMessages_sigin_firstName" class="mb-2"></div>
+                                     <div id="errorMessages_sigin_lastName" class="mb-2"></div>
                                        <div id="errorMessages_sigin_email" class="mb-2"></div>
                                        <div id="errorMessages_sigin_pwd" class="mb-2"></div>
                                        <div id="errorMessages_sigin_chkPwd"></div>

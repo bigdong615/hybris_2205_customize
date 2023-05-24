@@ -123,7 +123,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 		}
 		else
 		{
-			final BlSerialProductModel serialModel = getBlInventoryScanToolDao().getBlSerialProductByBarcode(textInput.getText());
+			final BlSerialProductModel serialModel = getBlInventoryScanToolDao().getBlSerialProductByBarcode(textInput.getText().trim());
 
 		if (serialModel != null )
 			{
@@ -216,7 +216,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 
 				this.getConsolidationData().renderAll();
 				createErrorMessages(orderConsolidationDataList);
-				scanningArea.setValue(textInput.getText() + "\n");
+				scanningArea.setValue(textInput.getText().trim() + "\n");
 				scanningArea.setFocus(true);
 
 			}

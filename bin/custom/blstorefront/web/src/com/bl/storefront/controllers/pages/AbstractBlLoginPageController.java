@@ -1,7 +1,6 @@
 package com.bl.storefront.controllers.pages;
 
 
-import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractLoginPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.LoginForm;
@@ -9,14 +8,18 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.RegisterForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.user.data.RegisterData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.bl.logging.BlLogger;
 
 /**
  *
@@ -44,7 +47,7 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
             GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
             // This code added temporary to show the error message. Once we have the user story needs to change the code accordingly
             final StringBuilder stringBuilder = new StringBuilder(BlControllerConstants.ERROR_MESSAGE);
-            for(ObjectError objectError : bindingResult.getAllErrors()) {
+            for(final ObjectError objectError : bindingResult.getAllErrors()) {
               stringBuilder.append(objectError.getCode()).append(BlControllerConstants.RATIO);
             }
             return stringBuilder.toString();
@@ -52,6 +55,8 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
         final RegisterData data = new RegisterData();
         data.setLogin(form.getEmail());
         data.setPassword(form.getPwd());
+		  data.setFirstName(form.getFirstName());
+		  data.setLastName(form.getLastName());
         try
         {
             getCustomerFacade().register(data);

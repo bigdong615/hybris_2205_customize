@@ -94,7 +94,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	private static final Logger LOG = Logger.getLogger(BlCreateOutboundShipmentLabelController.class);
 
 	/**
-	 * This method is used to load the default values at the time of opening the popup
+	 * BLS-148 - This method is used to load the UPS as default value at the time of opening the popup
 	 *
 	 * @param inputObject
 	 */
@@ -107,8 +107,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		shippingTypeList = new ListModelList<>(getShippingTypeList());
 		shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
 		shippingTypeComboBox.setModel(shippingTypeList);
-		optimizedShippingMethodList = new ListModelList<>(Lists.newArrayList());
-		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
+		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
 		deliveryDate.setValue(getDeliveryDateFromOrder(inputObject));
 		destinationState.setValue(getDestinationStateValue(inputObject));
 	}
@@ -264,6 +263,11 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	{
 		final String selectedShippingType = this.shippingTypeComboBox.getSelectedItem().getValue();
 		shippingTypeList.addToSelection(selectedShippingType);
+		setOptimizedShippingMethodComboBox(selectedShippingType);
+	}
+
+	private void setOptimizedShippingMethodComboBox(String selectedShippingType)
+	{
 		final List<String> carrierBasedOptimizedShippingMethodList = Lists.newArrayList();
 		final List<OptimizedShippingMethodModel> allOptimizedShippingMethodList = getBlOptimizedShippingMethodGenericDao().find();
 		allOptimizedShippingMethodList.forEach(

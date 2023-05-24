@@ -98,6 +98,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     Assert.notNull(source, "Parameter source cannot be null.");
     Assert.notNull(target, "Parameter target cannot be null.");
     // Pull the values directly from the SearchResult object
+    target.setPrimaryKey(this.<Long> getValue(source, "pk").toString());
     target.setCode(this.<String>getValue(source, "code"));
     target.setName(this.<String>getValue(source, "name"));
     target.setDisplayName(this.<String>getValue(source, "displayName"));
@@ -155,7 +156,10 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
     populateUrl(source, target);
     populatePromotions(source, target);
-    target.setIsWatching(getStockNotificationFacade().isWatchingProduct(target));
+	 if (getSessionService().getAttribute("isApiCall") == null)
+	 {
+		 target.setIsWatching(getStockNotificationFacade().isWatchingProduct(target));
+	 }
 	 if (getSessionService().getAttribute("isApiCall") != null)
 	 {
 		 getBlSearchResultDomoProductPopulator().populate(source, target);
@@ -168,7 +172,9 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * @param target
    */
   private void populateBookMarks(final ProductData target) {
-    final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
+	 LOG.info(target.getPrimaryKey());
+	 final BlProductModel blProductModel = (BlProductModel) blProductService.getProductForPK(target.getPrimaryKey());
+
     if (blProductModel != null)
     {
       getBlWishlistOptionsPopulator().populate(blProductModel,target);
@@ -180,7 +186,8 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * @param target
    */
   private void populateProductType(final ProductData target) {
-    final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
+	 LOG.info(target.getPrimaryKey());
+	 final BlProductModel blProductModel = (BlProductModel) blProductService.getProductForPK(target.getPrimaryKey());
     if (blProductModel != null)
     {
       target.setProductType(blProductModel.getProductType().getCode());
@@ -219,7 +226,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
    else if(target.isIsBundle())
     {
-      final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
+		final BlProductModel blProductModel = (BlProductModel) blProductService.getProductForPK(target.getPrimaryKey());
       final BigDecimal dynamicPriceValue = getCommercePriceService().getDynamicPriceDataForBundleProduct(constrained, blProductModel);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Dynamic Calculated Price Value is {} for Product : {}", dynamicPriceValue, target.getCode());
        target.setPrice(Objects.nonNull(dynamicPriceValue) ? getProductPriceData(dynamicPriceValue) : (getProductPriceData(BigDecimal.valueOf(0.0d))));
@@ -299,9 +306,10 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 		{
 			// In case of low stock then make a call to the stock service to determine if in or out of stock.
 			// In this case (low stock) it is ok to load the product from the DB and do the real stock check
-			final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
+			final BlProductModel blProductModel = (BlProductModel) blProductService.getProductForPK(target.getPrimaryKey());
       if (blProductModel != null && !blProductService
-          .isAquatechProduct(getProductService().getProductForCode(target.getCode()))) {
+					.isAquatechProduct(blProductService.getProductForPK(target.getPrimaryKey())))
+			{
 
         target.setStock(getStockConverter().convert(blProductModel));
       }
@@ -482,7 +490,8 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
     if (null != this.<Boolean>getValue(source, key) && this.<Boolean>getValue(source, key)
         && !blProductService
-        .isAquatechProduct(getProductService().getProductForCode(target.getCode()))) {
+					 .isAquatechProduct(blProductService.getProductForPK(target.getPrimaryKey())))
+	 {
 
       target.setIsUpcoming(this.<Boolean>getValue(source, key));
     }

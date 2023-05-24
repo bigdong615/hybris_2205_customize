@@ -12,12 +12,16 @@ public class BlControllerConstants
 	public static final String UPDATE_CHECKPASSWORD_INVALID = "updatePwd.checkPwd.invalid";
 	public static final String REGISTER_PASSWORD_INVALID = "register.pwd.invalid";
 	public static final String REGISTER_EMAIL_INVALID = "register.email.invalid";
+	public static final String REGISTER_FIRSTNAME_INVALID = "register.firstName.invalid";
+	public static final String REGISTER_LASTNAME_INVALID = "register.lastName.invalid";
 	public static final int PASSWORD_MIN_LENGTH = 8;
 	public static final int PASSWORD_MAX_LENGTH = 255;
 	public static final int EMAIL_MAX_LENGTH = 255;
 	public static final String DUBLICATE_UID_ERROR = "registration.error.account.exists.title";
 	public static final String REGISTRATION_CONFIRMATION_MESSAGE = "registration.confirmation.message.title";
 	public static final String EMAIL = "email";
+	public static final String FIRSTNAME = "firstName";
+	public static final String LASTNAME = "lastName";
 	public static final String RENTAL_PAGE_IDENTIFIER = "rent";
 	public static final String USED_PAGE_IDENTIFIER = "buy";
 	public static final String FORWARD_SLASH = "/";

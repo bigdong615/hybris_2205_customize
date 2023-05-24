@@ -1,18 +1,20 @@
 package com.bl.storefront.validator;
 
-import com.bl.storefront.controllers.pages.BlControllerConstants;
-
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.RegisterForm;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import javax.annotation.Resource;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 
 /**
  *{javadoc}
@@ -28,23 +30,48 @@ public class BlRegistrationValidator implements Validator{
     private ConfigurationService configurationService;
 
     @Override
-    public boolean supports(Class<?> aClass) {
+    public boolean supports(final Class<?> aClass) {
         return RegisterForm.class.equals(aClass);
     }
 
     @Override
     public void validate(final Object object, final Errors errors) {
-        RegisterForm registerForm = (RegisterForm)object;
+        final RegisterForm registerForm = (RegisterForm)object;
         final String email = registerForm.getEmail();
         final String password = registerForm.getPwd();
         final String checkPassword = registerForm.getCheckPwd();
+		  final String firstName = registerForm.getFirstName();
+		  final String lastName = registerForm.getLastName();
 
         validateEmail(errors, email);
+		  validateFirstName(errors, firstName);
+		  validateLastName(errors, lastName);
+		  validateEmail(errors, email);
         validatePassword(errors, password);
         comparePasswords(errors, password, checkPassword);
     }
 
-    protected void comparePasswords(final Errors errors, final String password, final String checkPassword)
+	 /**
+	  * @param errors
+	  * @param firstName
+	  */
+	 private void validateFirstName(final Errors errors, final String firstName)
+	 {
+		 if (firstName.trim().isEmpty())
+		 {
+			 errors.rejectValue(BlControllerConstants.FIRSTNAME, BlControllerConstants.REGISTER_FIRSTNAME_INVALID);
+		 }
+	 }
+
+	 private void validateLastName(final Errors errors, final String lastName)
+	 {
+		 if (lastName.trim().isEmpty())
+		 {
+			 errors.rejectValue(BlControllerConstants.LASTNAME, BlControllerConstants.REGISTER_LASTNAME_INVALID);
+		 }
+	 }
+
+	 protected void comparePasswords(final Errors errors, final String password, final String checkPassword)
     {
         if (StringUtils.isNotEmpty(password) && StringUtils.isNotEmpty(checkPassword) && !StringUtils.equals(password, checkPassword))
         {

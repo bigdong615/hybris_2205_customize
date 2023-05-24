@@ -1,9 +1,6 @@
 package com.bl.facades.customer.impl;
 
-import com.bl.facades.constants.BlFacadesConstants;
-import com.bl.facades.customer.BlCustomerFacade;
-import com.bl.logging.BlLogger;
-import com.google.common.collect.Lists;
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 
 import de.hybris.platform.commercefacades.customer.impl.DefaultCustomerFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
@@ -23,7 +20,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 
-import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
+import com.bl.facades.customer.BlCustomerFacade;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 
 /**
  *This is created to override register method to perform bl specific registration.
@@ -31,7 +30,7 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
  * @author vijay vishwakarma
  */
 public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements BlCustomerFacade {
-	
+
 	private static final Logger LOG = Logger.getLogger(DefaultBlCustomerFacade.class);
 
     /*
@@ -56,11 +55,12 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
     {
     	//commented as default name not to set as Customer
         //customerModel.setName(BlFacadesConstants.CUSTOMER);
+		  customerModel.setName(registerData.getFirstName() + " " + registerData.getLastName());
         setUidForRegister(registerData, customerModel);
         customerModel.setSessionLanguage(getCommonI18NService().getCurrentLanguage());
         customerModel.setSessionCurrency(getCommonI18NService().getCurrentCurrency());
     }
-    
+
     @Override
  	public List<AddressData> getAllVisibleBillingAddressesOnUser()
  	{
@@ -86,7 +86,7 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
  		}
  		return Lists.newArrayList();
  	}
-    
+
     @Override
     public AddressData getAddressForCode(final String code)
     {

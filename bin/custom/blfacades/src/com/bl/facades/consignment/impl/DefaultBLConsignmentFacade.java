@@ -12,8 +12,13 @@ import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
+import com.bl.core.dao.warehouse.impl.DefaultBlConsignmentDao;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.facades.consignment.BLConsignmentFacade;
 
@@ -24,6 +29,8 @@ import com.bl.facades.consignment.BLConsignmentFacade;
  */
 public class DefaultBLConsignmentFacade implements BLConsignmentFacade
 {
+	private static final Logger LOG = Logger.getLogger(DefaultBlConsignmentDao.class);
+
 	private BlConsignmentEntryService blConsignmentEntryService;
 
 	private Converter<ConsignmentEntryModel, ConsignmentEntryData> consignmentEntryConverter;
@@ -35,14 +42,28 @@ public class DefaultBLConsignmentFacade implements BLConsignmentFacade
 	{
 		final SearchPageData<ConsignmentEntryModel> entries = getBlConsignmentEntryService().getConsignmentEntries(pageableData,
 				date);
-		return convertPageData(entries, getConsignmentEntryConverter());
+		final Instant inst1 = Instant.now();
+		LOG.info("Before calling consignmnet entries populator " + inst1);
+		final SearchPageData<ConsignmentEntryData> consignmentEntries = convertPageData(entries, getConsignmentEntryConverter());
+		final Instant inst2 = Instant.now();
+		LOG.info("after calling consignmnets populator " + inst2);
+		LOG.info("Elapsed Time: " + Duration.between(inst1, inst2).toString());
+		return consignmentEntries;
 	}
+
 
 	@Override
 	public SearchPageData<ConsignmentData> getConsignments(final PageableData pageableData, final Date date)
 	{
+
 		final SearchPageData<ConsignmentModel> consignments = getBlConsignmentEntryService().getConsignments(pageableData, date);
-		return convertConsignmentPageData(consignments, getConsignmentConverter());
+		final Instant inst1 = Instant.now();
+		LOG.info("Before calling consignmnets  populator" + inst1);
+		final SearchPageData<ConsignmentData> cnmnts = convertConsignmentPageData(consignments, getConsignmentConverter());
+		final Instant inst2 = Instant.now();
+		LOG.info("after calling consignmnets populator" + inst2);
+		LOG.info("Elapsed Time: " + Duration.between(inst1, inst2).toString());
+		return cnmnts;
 	}
 
 	/*
