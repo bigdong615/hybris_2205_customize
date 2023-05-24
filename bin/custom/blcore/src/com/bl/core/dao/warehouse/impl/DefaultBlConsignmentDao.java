@@ -12,6 +12,8 @@ import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -198,19 +200,32 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 	@Override
 	public SearchPageData<ConsignmentEntryModel> getConsignmentEntries(final PageableData pageableData, final Date date)
 	{
+		final Instant inst1 = Instant.now();
+		LOG.info("Before calling consignmnet entris query " + inst1);
 		final FlexibleSearchQuery fQ = new FlexibleSearchQuery(
 				"SELECT distinct {ce.pk} FROM {ConsignmentEntry as ce} where {modifiedtime} >= ?date");
 		fQ.addQueryParameter("date", date);
-		return getPagedFlexibleSearchService().search(fQ, pageableData);
+		final SearchPageData<ConsignmentEntryModel> enties = getPagedFlexibleSearchService().search(fQ, pageableData);
+		final Instant inst2 = Instant.now();
+		LOG.info("after calling consignmnet entries query " + inst2);
+		LOG.info("Elapsed Time: " + Duration.between(inst1, inst2).toString());
+		return enties;
 	}
+
 
 	@Override
 	public SearchPageData<ConsignmentModel> getConsignments(final PageableData pageableData, final Date date)
 	{
+		final Instant inst1 = Instant.now();
+		LOG.info("Before calling consignmnets queary " + inst1);
 		final FlexibleSearchQuery fQ = new FlexibleSearchQuery(
 				"SELECT distinct {c.pk} FROM {Consignment as c} where {modifiedtime} >= ?date");
 		fQ.addQueryParameter("date", date);
-		return getPagedFlexibleSearchService().search(fQ, pageableData);
+		final SearchPageData<ConsignmentModel> consignments = getPagedFlexibleSearchService().search(fQ, pageableData);
+		final Instant inst2 = Instant.now();
+		LOG.info("after calling consignmnets queary " + inst2);
+		LOG.info("Elapsed Time: " + Duration.between(inst1, inst2).toString());
+		return consignments;
 	}
 
 	public PagedFlexibleSearchService getPagedFlexibleSearchService()
