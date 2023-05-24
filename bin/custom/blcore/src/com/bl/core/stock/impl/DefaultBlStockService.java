@@ -244,6 +244,20 @@ public class DefaultBlStockService implements BlStockService
 		return Boolean.FALSE;
 	}
 
+	@Override
+	public boolean isVisibleInPdp(final SerialStatusEnum currentStatus)
+	{
+		switch (currentStatus.getCode())
+		{
+			case "ACTIVE":
+			case "RECEIVED_OR_RETURNED":
+			case "IN_HOUSE":
+				return Boolean.TRUE;
+			default:
+		}
+		return Boolean.FALSE;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @param warehouseModel the warehouse model

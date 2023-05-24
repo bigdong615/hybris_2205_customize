@@ -127,7 +127,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 		final List<BigDecimal> prices = new ArrayList<BigDecimal>();
 		for (final BlSerialProductModel serial : product.getSerialProducts())
 		{
-			if (getBlStockService().isActiveStatus(serial.getSerialStatus()) && serial.getForSale()
+			if (getBlStockService().isVisibleInPdp(serial.getSerialStatus()) && serial.getForSale()
 					&& getBlCommerceStockService().isUsedGearSerialNotAssignedToRentalOrder(serial.getCode()))
 			{
 
