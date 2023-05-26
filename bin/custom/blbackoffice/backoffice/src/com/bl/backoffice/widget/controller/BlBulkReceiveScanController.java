@@ -169,136 +169,156 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 			if (CollectionUtils.isNotEmpty(serialProducts))
 			{
 
-			for (final BlSerialProductModel blSerialProductModel : serialProducts)
-			{
-				final List<String> testingStatusValues = new ArrayList<String>();
-				this.getEnumerationService().getEnumerationValues(ItemTestingStatusEnum.class).forEach(testingStatus -> {
-					testingStatusValues.add(testingStatus.getCode());
-				});
-
-				final List<String> cosmeticRatingValues = new ArrayList<String>();
-				this.getEnumerationService().getEnumerationValues(ConditionRatingValueEnum.class).forEach(cosmRating -> {
-					cosmeticRatingValues.add(cosmRating.getCode());
-				});
-
-				final List<String> functionalRatingValues = new ArrayList<String>();
-				this.getEnumerationService().getEnumerationValues(ConditionRatingValueEnum.class).forEach(funRating -> {
-					functionalRatingValues.add(funRating.getCode());
-				});
-
-				final BulkReceiveRespData bulkReceiveRespData = new BulkReceiveRespData();
-				bulkReceiveRespData.setIsSubPart(Boolean.FALSE);
-				bulkReceiveRespData.setSerialProductId(blSerialProductModel.getCode());
-				bulkReceiveRespData.setSerialProductName(blSerialProductModel.getBlProduct().getName());
-				bulkReceiveRespData.setProductType(blSerialProductModel.getProductType().getCode());
-				bulkReceiveRespData.setMainProductId(blSerialProductModel.getBlProduct().getCode());
-				bulkReceiveRespData.setBarcode(blSerialProductModel.getBarcode());
-				bulkReceiveRespData.setSkuFirmwareVersion(blSerialProductModel.getSkuFirmwareVersion());
-				bulkReceiveRespData.setFirmwareVersion(
-						blSerialProductModel.getFirmwareVersion() != null ? blSerialProductModel.getFirmwareVersion()
-								: StringUtils.EMPTY);
-				bulkReceiveRespData.setCosmeticRatingValue(blSerialProductModel.getCosmeticRating().getCode());
-				bulkReceiveRespData.setFunctionalRatingValue(blSerialProductModel.getFunctionalRating().getCode());
-				bulkReceiveRespData.setTestingStatusValue(blSerialProductModel.getTestingStatus().getCode());
-
-				bulkReceiveRespData.setCosmeticRating(new ListModelList<>(cosmeticRatingValues));
-				bulkReceiveRespData.setTestingStatus(new ListModelList<>(testingStatusValues));
-				bulkReceiveRespData.setFunctionalRating(new ListModelList<>(functionalRatingValues));
-
-				bulkReceiveRespData.setOrderNumber(
-						blSerialProductModel.getAssociatedShippedConsignment() != null
-								? blSerialProductModel.getAssociatedShippedConsignment().getOrder().getCode()
-								: StringUtils.EMPTY);
-				String orderNotesValue = "";
-				final List<String> orderNotesData = new ArrayList<String>();
-				if (blSerialProductModel.getAssociatedShippedConsignment() != null)
+				for (final BlSerialProductModel blSerialProductModel : serialProducts)
 				{
-					blSerialProductModel.getAssociatedShippedConsignment().getOrder().getOrderNotes().forEach(notes -> {
-						orderNotesData.add(notes.getNote());
-					});
+					final List<ConsignmentEntryModel> consEntry = blConsignmentDao
+							.getConsignmentEntriesForSerialCode(blSerialProductModel);
+					if (CollectionUtils.isNotEmpty(consEntry))
+					{
+						for (final ConsignmentEntryModel consignEntryModel : consEntry)
+
+						{
+
+							if (consignEntryModel.getItems().get(blSerialProductModel.getCode()) != null
+									? !(consignEntryModel.getItems().get(blSerialProductModel.getCode()).getCode()
+											.equals("RECEIVED_OR_RETURNED"))
+									: Boolean.FALSE)
+							{
+
+								consignEntryModel.getSerialProducts().forEach(serialProduct -> {
+									if (serialProduct instanceof BlSerialProductModel
+											&& serialProduct.getCode().equals(blSerialProductModel.getCode()))
+									{
+										final BlSerialProductModel serialProductModel = (BlSerialProductModel) serialProduct;
+										final List<String> testingStatusValues = new ArrayList<String>();
+										this.getEnumerationService().getEnumerationValues(ItemTestingStatusEnum.class)
+												.forEach(testingStatus -> {
+													testingStatusValues.add(testingStatus.getCode());
+												});
+
+										final List<String> cosmeticRatingValues = new ArrayList<String>();
+										this.getEnumerationService().getEnumerationValues(ConditionRatingValueEnum.class)
+												.forEach(cosmRating -> {
+													cosmeticRatingValues.add(cosmRating.getCode());
+												});
+
+										final List<String> functionalRatingValues = new ArrayList<String>();
+										this.getEnumerationService().getEnumerationValues(ConditionRatingValueEnum.class)
+												.forEach(funRating -> {
+													functionalRatingValues.add(funRating.getCode());
+												});
+
+										final BulkReceiveRespData bulkReceiveRespData = new BulkReceiveRespData();
+										bulkReceiveRespData.setIsSubPart(Boolean.FALSE);
+										bulkReceiveRespData.setSerialProductId(serialProductModel.getCode());
+										bulkReceiveRespData.setSerialProductName(serialProductModel.getBlProduct().getName());
+										bulkReceiveRespData.setProductType(serialProductModel.getProductType().getCode());
+										bulkReceiveRespData.setMainProductId(serialProductModel.getBlProduct().getCode());
+										bulkReceiveRespData.setBarcode(serialProductModel.getBarcode());
+										bulkReceiveRespData.setSkuFirmwareVersion(serialProductModel.getSkuFirmwareVersion());
+										bulkReceiveRespData.setFirmwareVersion(
+												serialProductModel.getFirmwareVersion() != null ? serialProductModel.getFirmwareVersion()
+														: StringUtils.EMPTY);
+										bulkReceiveRespData.setCosmeticRatingValue(serialProductModel.getCosmeticRating().getCode());
+										bulkReceiveRespData.setFunctionalRatingValue(serialProductModel.getFunctionalRating().getCode());
+										bulkReceiveRespData.setTestingStatusValue(serialProductModel.getTestingStatus().getCode());
+
+										bulkReceiveRespData.setCosmeticRating(new ListModelList<>(cosmeticRatingValues));
+										bulkReceiveRespData.setTestingStatus(new ListModelList<>(testingStatusValues));
+										bulkReceiveRespData.setFunctionalRating(new ListModelList<>(functionalRatingValues));
+
+										bulkReceiveRespData.setOrderNumber(consignEntryModel.getOrderEntry().getOrder() != null
+												? consignEntryModel.getOrderEntry().getOrder().getCode()
+												: StringUtils.EMPTY);
+										String orderNotesValue = "";
+										final List<String> orderNotesData = new ArrayList<String>();
+										if (consignEntryModel.getOrderEntry() != null)
+										{
+											consignEntryModel.getOrderEntry().getOrder().getOrderNotes().forEach(notes -> {
+												orderNotesData.add(notes.getNote());
+											});
+										}
+
+										for (final String orderNote : orderNotesData)
+										{
+											if (StringUtils.isEmpty(orderNotesValue))
+											{
+												orderNotesValue = orderNote;
+											}
+											else
+											{
+												orderNotesValue = orderNotesValue + ", " + orderNote;
+											}
+										}
+										bulkReceiveRespData.setOrderNotes(orderNotesValue);
+
+										bulkReceiveRespDataList.add(bulkReceiveRespData);
+
+
+										if (CollectionUtils.isNotEmpty(serialProductModel.getBlProduct().getSubpartProducts())
+												&& !serialProductModel.getProductType().equals("SUBPARTS"))
+										{
+											//for (final BlSubpartsModel blSubPartModel : serialProductModel.getBlProduct().getSubpartProducts())
+											consignEntryModel.getSerialProducts().forEach(product -> {
+
+												if ((product instanceof BlProductModel))
+												{
+													final BulkReceiveRespData bulkSubpartReceiveRespData = new BulkReceiveRespData();
+													//											if (Objects.nonNull(blSubPartModel) && Objects.nonNull(blSubPartModel.getSubpartProduct())
+													//													&& CollectionUtils.isEmpty(blSubPartModel.getSubpartProduct().getSerialProducts()))
+													//											{
+													bulkSubpartReceiveRespData.setIsSubPart(Boolean.TRUE);
+													//											}
+													//											else
+													//											{
+													//												bulkSubpartReceiveRespData.setIsSubPart(Boolean.FALSE);
+													//											}
+													bulkSubpartReceiveRespData.setSerialProductId(product.getCode());
+													bulkSubpartReceiveRespData.setSerialProductName(product.getName());
+													bulkSubpartReceiveRespData.setProductType(product.getProductType().getCode());
+													bulkSubpartReceiveRespData.setMainProductId(serialProductModel.getBlProduct().getCode());
+													bulkSubpartReceiveRespData.setBarcode(serialProductModel.getBarcode());
+													bulkSubpartReceiveRespData
+															.setOrderNumber(consignEntryModel.getOrderEntry().getOrder() != null
+																	? consignEntryModel.getOrderEntry().getOrder().getCode()
+																	: StringUtils.EMPTY);
+
+													/* Adding sub part product information */
+													bulkReceiveRespDataList.add(bulkSubpartReceiveRespData);
+												}
+											});
+										}
+									}
+								});
+							}
+						}
+
+					}
 				}
 
-				for (final String orderNote : orderNotesData)
+				if (bulkReceiveRespDataList.size() > 0)
 				{
-					if (StringUtils.isEmpty(orderNotesValue))
-					{
-						orderNotesValue = orderNote;
-					}
-					else
-					{
-						orderNotesValue = orderNotesValue + ", " + orderNote;
-					}
+					this.productsListDiv.setStyle("resize:none;display:block");
+					this.barcodesSectionId.setStyle("resize:none;display:none");
+
+					this.getWidgetInstanceManager()
+							.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.bulk.scan.heading")));
+
+					this.getProductEntries().setModel(new ListModelList<>(bulkReceiveRespDataList));
+
+					this.getProductEntries().renderAll();
 				}
-				bulkReceiveRespData.setOrderNotes(orderNotesValue);
-
-				//				if (blSerialProductModel.getAssociatedShippedConsignment() != null)
-				//				{
-					/* Adding serial product information */
-					bulkReceiveRespDataList.add(bulkReceiveRespData);
-					//				}
-					//				else
-					//				{
-					//					noOrderExistFlag = true;
-					//				}
-
-				if (CollectionUtils.isNotEmpty(blSerialProductModel.getBlProduct().getSubpartProducts())
-						//						&& blSerialProductModel.getAssociatedOrder() != null)
-						&& blSerialProductModel.getAssociatedShippedConsignment() != null)
+				else
 				{
-					for (final BlSubpartsModel blSubPartModel : blSerialProductModel.getBlProduct().getSubpartProducts())
-					{
-						final BulkReceiveRespData bulkSubpartReceiveRespData = new BulkReceiveRespData();
-						if (Objects.nonNull(blSubPartModel) && Objects.nonNull(blSubPartModel.getSubpartProduct()) &&
-								CollectionUtils.isEmpty(blSubPartModel.getSubpartProduct().getSerialProducts()))
-						{
-							bulkSubpartReceiveRespData.setIsSubPart(Boolean.TRUE);
-						}
-						else
-						{
-							bulkSubpartReceiveRespData.setIsSubPart(Boolean.FALSE);
-						}
-						bulkSubpartReceiveRespData.setSerialProductId(blSubPartModel.getSubpartProduct().getCode());
-						bulkSubpartReceiveRespData.setSerialProductName(blSubPartModel.getSubpartProduct().getName());
-						bulkSubpartReceiveRespData.setProductType(blSubPartModel.getSubpartProduct().getProductType().getCode());
-						bulkSubpartReceiveRespData.setMainProductId(blSerialProductModel.getBlProduct().getCode());
-						bulkSubpartReceiveRespData.setBarcode(blSerialProductModel.getBarcode());
-						//bulkSubpartReceiveRespData.setFirmwareVersion("");
-						bulkSubpartReceiveRespData.setOrderNumber(
-								blSerialProductModel.getAssociatedShippedConsignment() != null
-										? blSerialProductModel.getAssociatedShippedConsignment().getOrder().getCode()
-										: StringUtils.EMPTY);
-						//bulkSubpartReceiveRespData.setOrderNotes(orderNotesValue);
-
-						/* Adding sub part product information */
-						bulkReceiveRespDataList.add(bulkSubpartReceiveRespData);
-					}
+					notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+							BlInventoryScanLoggingConstants.NO_ORDER_FOR_SERIAL_SCAN_KEY);
 				}
 			}
-
-			//			if (!noOrderExistFlag || bulkReceiveRespDataList.size() > 0)
-			if (bulkReceiveRespDataList.size() > 0)
+			else
 			{
-			this.productsListDiv.setStyle("resize:none;display:block");
-			this.barcodesSectionId.setStyle("resize:none;display:none");
-
-			this.getWidgetInstanceManager()
-					.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.bulk.scan.heading")));
-
-			this.getProductEntries().setModel(new ListModelList<>(bulkReceiveRespDataList));
-
-			this.getProductEntries().renderAll();
-		}
-		else
-		{
-			notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.NO_ORDER_FOR_SERIAL_SCAN_KEY);
-		}
-		}
-		else
-		{
-			notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY);
-		}
+				notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY);
+			}
 		}
 	}
 
