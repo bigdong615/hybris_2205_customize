@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -124,13 +125,22 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 	{
 
 
-		if (v != null)
+		try
 		{
-			return v.get(0).getCode();
+			if (CollectionUtils.isNotEmpty(v) && v.get(0) != null)
+			{
+				return v.get(0).getCode();
+			}
+			else
+			{
+				return StringUtils.EMPTY;
+			}
 		}
-		else
+		catch (final Exception e)
 		{
+			e.printStackTrace();
 			return StringUtils.EMPTY;
+
 		}
 
 	}
