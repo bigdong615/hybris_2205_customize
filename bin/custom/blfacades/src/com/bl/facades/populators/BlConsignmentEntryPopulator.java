@@ -93,8 +93,6 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 	 */
 	private String getConsignmentEntryStatus(final ConsignmentEntryStatusEnum v)
 	{
-		System.out.println("ConsignmentEntryStatusEnum " + v);
-
 		if (v != null)
 		{
 			return v.getCode();
@@ -111,7 +109,6 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 	 */
 	private String getItemsCode(final ItemStatusEnum v)
 	{
-		System.out.println("ItemStatusEnum " + v);
 
 		if (v != null)
 		{
@@ -125,7 +122,17 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 
 	private String getCode(final List<BlItemsBillingChargeModel> v)
 	{
-		return v.isEmpty() ? StringUtils.EMPTY : v.get(0).getCode();
+
+
+		if (v != null)
+		{
+			return v.get(0).getCode();
+		}
+		else
+		{
+			return StringUtils.EMPTY;
+		}
+
 	}
 
 }
