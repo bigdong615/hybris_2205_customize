@@ -168,7 +168,6 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 
 			if (CollectionUtils.isNotEmpty(serialProducts))
 			{
-
 				for (final BlSerialProductModel blSerialProductModel : serialProducts)
 				{
 					final List<ConsignmentEntryModel> consEntry = blConsignmentDao
@@ -258,34 +257,29 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 										if (CollectionUtils.isNotEmpty(serialProductModel.getBlProduct().getSubpartProducts())
 												&& !serialProductModel.getProductType().equals("SUBPARTS"))
 										{
-											//for (final BlSubpartsModel blSubPartModel : serialProductModel.getBlProduct().getSubpartProducts())
 											consignEntryModel.getSerialProducts().forEach(product -> {
 
 												if (!(product instanceof BlSerialProductModel)
 														&& !product.getCode().equals(serialProductModel.getCode()))
 												{
-													final BulkReceiveRespData bulkSubpartReceiveRespData = new BulkReceiveRespData();
-													//											if (Objects.nonNull(blSubPartModel) && Objects.nonNull(blSubPartModel.getSubpartProduct())
-													//													&& CollectionUtils.isEmpty(blSubPartModel.getSubpartProduct().getSerialProducts()))
-													//											{
-													bulkSubpartReceiveRespData.setIsSubPart(Boolean.TRUE);
-													//											}
-													//											else
-													//											{
-													//												bulkSubpartReceiveRespData.setIsSubPart(Boolean.FALSE);
-													//											}
-													bulkSubpartReceiveRespData.setSerialProductId(product.getCode());
-													bulkSubpartReceiveRespData.setSerialProductName(product.getName());
-													bulkSubpartReceiveRespData.setProductType(product.getProductType().getCode());
-													bulkSubpartReceiveRespData.setMainProductId(serialProductModel.getBlProduct().getCode());
-													bulkSubpartReceiveRespData.setBarcode(serialProductModel.getBarcode());
-													bulkSubpartReceiveRespData
-															.setOrderNumber(consignEntryModel.getOrderEntry().getOrder() != null
-																	? consignEntryModel.getOrderEntry().getOrder().getCode()
-																	: StringUtils.EMPTY);
+													if (CollectionUtils.isEmpty(product.getSerialProducts()))
+													{
+														final BulkReceiveRespData bulkSubpartReceiveRespData = new BulkReceiveRespData();
+														bulkSubpartReceiveRespData.setIsSubPart(Boolean.TRUE);
+														bulkSubpartReceiveRespData.setSerialProductId(product.getCode());
+														bulkSubpartReceiveRespData.setSerialProductName(product.getName());
+														bulkSubpartReceiveRespData.setProductType(product.getProductType().getCode());
+														bulkSubpartReceiveRespData
+																.setMainProductId(serialProductModel.getBlProduct().getCode());
+														bulkSubpartReceiveRespData.setBarcode(serialProductModel.getBarcode());
+														bulkSubpartReceiveRespData
+																.setOrderNumber(consignEntryModel.getOrderEntry().getOrder() != null
+																		? consignEntryModel.getOrderEntry().getOrder().getCode()
+																		: StringUtils.EMPTY);
 
-													/* Adding sub part product information */
-													bulkReceiveRespDataList.add(bulkSubpartReceiveRespData);
+														/* Adding sub part product information */
+														bulkReceiveRespDataList.add(bulkSubpartReceiveRespData);
+													}
 												}
 											});
 										}
