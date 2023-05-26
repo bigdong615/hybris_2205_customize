@@ -261,7 +261,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 											//for (final BlSubpartsModel blSubPartModel : serialProductModel.getBlProduct().getSubpartProducts())
 											consignEntryModel.getSerialProducts().forEach(product -> {
 
-												if ((product instanceof BlProductModel))
+												if (!(product instanceof BlSerialProductModel)
+														&& !product.getCode().equals(serialProductModel.getCode()))
 												{
 													final BulkReceiveRespData bulkSubpartReceiveRespData = new BulkReceiveRespData();
 													//											if (Objects.nonNull(blSubPartModel) && Objects.nonNull(blSubPartModel.getSubpartProduct())
