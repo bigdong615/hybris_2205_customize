@@ -347,6 +347,7 @@ public class DomoController extends BaseCommerceController
 	final String fields, @RequestParam
 	final Map<String, String> params, final HttpServletResponse response)
 	{
+		sessionService.setAttribute("isApiCall", true);
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final OrderEntryListData orderEntryListData;
 		orderEntryListData = createOrderEntryListData(blDomoFacade.getOrderEntries(pageableData, date));
