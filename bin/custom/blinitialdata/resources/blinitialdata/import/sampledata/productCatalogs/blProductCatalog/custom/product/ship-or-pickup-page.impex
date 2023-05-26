@@ -12,22 +12,22 @@
 #
 # Import the CMS content for the Borrow Lenses site
 #
- 
+
 #% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs core_data_homepage.impex =========================");
 $contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 $lang=en
-$picture=media(code, $contentCV); 
+$picture=media(code, $contentCV);
 
 # Import modulegen config properties into impex macros
-UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true] 
-$jarResourceCms=$config-jarResourceCmsValue    
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true]
+$jarResourceCms=$config-jarResourceCmsValue
 
-###  Page Template For Borrow Lenses ShipOrPickup Page  ###                                                                                                                           
+###  Page Template For Borrow Lenses ShipOrPickup Page  ###
 
-INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; name                    ; frontendTemplateName      ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true] 
-                           ;                         ; shipOrPickUpPageTemplate ; ShipOrPickup Page Template ; ship-or-pickup/shipOrPickupPage ; $jarResourceCms/structure-view/structure_shipOrPickupPageTemplate.vm                                      ; CategoryPage,ContentPage  
-     
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; name                    ; frontendTemplateName      ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true]
+                           ;                         ; shipOrPickUpPageTemplate ; ShipOrPickup Page Template ; -pickup/shipOrPickupPage ; $jarResourceCms/structure-view/structure_shipOrPickupPageTemplate.vm                                      ; CategoryPage,ContentPage
+
 ###  Define Content SlotNames  ###
 INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='shipOrPickUpPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
                               ; PromoBannerSlot                    ;                                                                       ;                           ; wide
@@ -46,14 +46,14 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
                               ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
                               ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
-                              ; HomePageBannerSearchBoxSlot              ;                                                                       ;                           ; searchbox
-                              ; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox
-                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
-                             ; TopHeaderSlot                    ;                                                                             ;                           ; wide
+                              ; ShipOrPickupPageSearchBoxSlot              ;                                                                       ;                           ; searchbox
+                              ; MobileShipOrPickupPageSearchBoxSlot       ;                                                                       ;                           ; searchbox
+                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                              ; TopHeaderSlot                    ;                                                                             ;                           ; wide
                               ; Section1Slot                   ;                                             ;                           ; wide
                               ; Section2Slot                  ;                                             ;                           ; wide
                               ; Section3Slot                  ;                                             ;                           ; wide
-                              ; Section4Slot                  ;                                             ;                          ;wide                                               
+                              ; Section4Slot                  ;                                             ;                          ;wide
                               ; Section5Slot                  ;                                             ;                           ; wide
                               ; Section6Slot                  ;                                             ;                          ;wide
                               ; Section7Slot                  ;                                             ;                          ;wide
@@ -61,22 +61,22 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; Section9Slot                  ;                                             ;                          ;wide
 
 ###  Define ContentSlot For Template  ###
-INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='shipOrPickUpPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
-                                     ;                         ; PromoBannerSlot-ShipOrPickupPage               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true           
-                                     ;                         ; SiteLogoHeaderSlot-ShipOrPickupPage            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true           
-                                     ;                         ; NavigationPromoSlot-ShipOrPickupPage           ; NavigationPromoSlot           ;                                                                           ; NavigationPromoSlot                      ; true           
-                                     ;                         ; NavigationBarSlot-ShipOrPickupPage             ; NavigationBarSlot             ;                                                                           ; NavigationBarSlot                        ; true           
-                                     ;                         ; NavigationBarMobileSlot-ShipOrPickupPage       ; NavigationBarMobileSlot       ;                                                                           ; NavigationBarMobileSlot                  ; true           
-                                     ;                         ; HeaderLinkForSupportSlot-ShipOrPickupPage      ; HeaderLinkForSupportSlot      ;                                                                           ; HeaderLinkForSupportSlot                 ; true           
-                                     ;                         ; HeaderLinkForShipOrPickupSlot-ShipOrPickupPage ; HeaderLinkForShipOrPickupSlot ;                                                                           ; HeaderLinkForShipOrPickupSlot            ; true           
-                                     ;                         ; MiniCartSlot-ShipOrPickupPage                  ; MiniCartSlot                  ;                                                                           ; MiniCartSlot                             ; true           
-                                     ;                         ; FooterSlot-ShipOrPickupPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true           
-                                     ;                         ; FooterSubscriptionSlot-ShipOrPickupPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true           
-                                     ;                         ; FooterCopyRightslot-ShipOrPickupPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true           
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='shipOrPickUpPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
+                                     ;                         ; PromoBannerSlot-ShipOrPickupPage               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true
+                                     ;                         ; SiteLogoHeaderSlot-ShipOrPickupPage            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true
+                                     ;                         ; NavigationPromoSlot-ShipOrPickupPage           ; NavigationPromoSlot           ;                                                                           ; NavigationPromoSlot                      ; true
+                                     ;                         ; NavigationBarSlot-ShipOrPickupPage             ; NavigationBarSlot             ;                                                                           ; NavigationBarSlot                        ; true
+                                     ;                         ; NavigationBarMobileSlot-ShipOrPickupPage       ; NavigationBarMobileSlot       ;                                                                           ; NavigationBarMobileSlot                  ; true
+                                     ;                         ; HeaderLinkForSupportSlot-ShipOrPickupPage      ; HeaderLinkForSupportSlot      ;                                                                           ; HeaderLinkForSupportSlot                 ; true
+                                     ;                         ; HeaderLinkForShipOrPickupSlot-ShipOrPickupPage ; HeaderLinkForShipOrPickupSlot ;                                                                           ; HeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MiniCartSlot-ShipOrPickupPage                  ; MiniCartSlot                  ;                                                                           ; MiniCartSlot                             ; true
+                                     ;                         ; FooterSlot-ShipOrPickupPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true
+                                     ;                         ; FooterSubscriptionSlot-ShipOrPickupPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true
+                                     ;                         ; FooterCopyRightslot-ShipOrPickupPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true
                                      ;                         ; MobileHeaderLinkForShipOrPickupSlot-ShipOrPickupPage ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
                                      ;                         ; MobileHeaderLinkForSupportSlot-ShipOrPickupPage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
-                                     ;                         ; MobileHeaderLinkForAccountSlot-ShipOrPickupPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
-                                     ;                         ; MobileHeaderBottomInfo-ShipOrPickupPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
+                                     ;                         ; MobileHeaderLinkForAccountSlot-ShipOrPickupPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true
+                                     ;                         ; MobileHeaderBottomInfo-ShipOrPickupPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true
                                      ;                         ; MobileMiniCartSlot-ShipOrPickupPage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
                                      ;                         ; SocialMediaSectionSlot-ShipOrPickupPage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
                                      ;                         ; TopHeaderSlot-ShipOrPickupPage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
@@ -85,7 +85,7 @@ INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name 
                           ;                    ; shipOrPickupPage ; Ship or pickup Page ; shipOrPickUpPageTemplate           ; /ship-or-pickup
 #### ShipOrPick page
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
-                         ;                          ; ShipOrPickupHomePageBannerSearchBoxSlot     ; ShipOrPick search Slot              ; true
+                         ;                          ; ShipOrPickupShipOrPickupPageSearchBoxSlot     ; ShipOrPick search Slot              ; true
                          ;                          ; ShipOrPickupSection0Slot     ; ShipOrPick Section0 Slot              ; true
                          ;                          ; ShipOrPickupSection1Slot     ; ShipOrPick Section1 Slot              ; true
                          ;                          ; ShipOrPickupSection2Slot     ; ShipOrPick Section2 Slot              ; true
@@ -99,7 +99,7 @@ INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]        
 
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='shipOrPickupPage'] ; contentSlot(uid,$contentCV)[unique=true]
-                                 ;                         ; SearchBoxSlot-ShipOrPickupPage             ; HomePageBannerSearchBoxSlot            ;                         ; ShipOrPickupHomePageBannerSearchBoxSlot                   ; true
+                                 ;                         ; SearchBoxSlot-             ;ShipOrPickupPageSearchBoxSlot            ;                         ; ShipOrPickupShipOrPickupPageSearchBoxSlot                   ; true
                                  ;                         ; Section0Slot-ShipOrPickupPage             ; Section0Slot            ;                                                       ; ShipOrPickupSection0Slot                   ; true
                                  ;                         ; Section1Slot-ShipOrPickupPage             ; Section1Slot            ;                                                       ; ShipOrPickupSection1Slot                   ; true
                                  ;                         ; Section2Slot-ShipOrPickupPage             ; Section2Slot            ;                                                       ; ShipOrPickupSection2Slot                   ; true
@@ -135,11 +135,11 @@ INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=
 
 
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
-                          ;                    ; ShipOrPickupSection0Slot        ; ShipOrPickCMSBreadcrumbBlComponent
-                          ;                    ; ShipOrPickupHomePageBannerSearchBoxSlot ; BlSearchBox
-                          ;                    ; ShipOrPickupSection1Slot        ; ShipOrPickCMSParagraphTitleComponent
-                          ;                    ; ShipOrPickupSection2Slot        ; ShipOrPickCMSParagraphNoticeComponent
-                          ;                    ; ShipOrPickupSection3Slot        ; ShipOrPickImgCustomBLParagraphComponent
-                          ;                    ; ShipOrPickupSection4Slot        ; ShipitCustomBLParagraphComponent
-                          ;                    ; ShipOrPickupSection5Slot        ; PickupCustomBLParagraphComponent
-                          ;                    ; ShipOrPickupSection6Slot        ; SameDayCustomBLParagraphComponent
+                   ;                    ; ShipOrPickupSection0Slot        ; ShipOrPickCMSBreadcrumbBlComponent
+                   ;                    ; ShipOrPickupShipOrPickupPageSearchBoxSlot ; BlSearchBox
+                   ;                    ; ShipOrPickupSection1Slot        ; ShipOrPickCMSParagraphTitleComponent
+                   ;                    ; ShipOrPickupSection2Slot        ; ShipOrPickCMSParagraphNoticeComponent
+                   ;                    ; ShipOrPickupSection3Slot        ; ShipOrPickImgCustomBLParagraphComponent
+                   ;                    ; ShipOrPickupSection4Slot        ; ShipitCustomBLParagraphComponent
+                   ;                    ; ShipOrPickupSection5Slot        ; PickupCustomBLParagraphComponent
+                   ;                    ; ShipOrPickupSection6Slot        ; SameDayCustomBLParagraphComponent
