@@ -68,6 +68,9 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 			//			+ "} and {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = 'COMPLETED'}})";
 			+ "}";
 
+	private static final String CONSIGNMENT_ENTRY_BY_PK = "SELECT {ce:" + ItemModel.PK + "} from {"
+			+ ConsignmentEntryModel._TYPECODE + " as ce} WHERE {ce:" + ItemModel.PK + "} = ?consignmentPK";
+
 	/**
 	 * Get consignments
 	 *
@@ -146,6 +149,29 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment found : {} for return date: {}", result, returnDate);
 		return Lists.newArrayList(result);
 	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ConsignmentEntryModel getConsignmentEntryByPk(final String pk)
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_ENTRY_BY_PK);
+		fQuery.addQueryParameter("consignmentPK", pk);
+		final SearchResult<ConsignmentEntryModel> search = getFlexibleSearchService().<ConsignmentEntryModel> search(fQuery);
+		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
+		{
+			//			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+			//					"DefaultBlConsignmentDao : getConsignmentForReturnDate : No Consignment found for return date : {}", returnDate);
+			return null;
+		}
+		final List<ConsignmentEntryModel> result = search.getResult();
+		//	BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment found : {} for return date: {}", result, returnDate);
+		return result.get(0);
+	}
+
+
 
 	/**
 	 * {@inheritDoc}

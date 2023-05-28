@@ -40,6 +40,28 @@ public class BulkReceiveRespData
 
 	private String testingStatusValue;
 
+	private String consignmentEntry;
+
+	private Boolean enableFlag;
+
+
+	/**
+	 * @return the enableFlag
+	 */
+	public Boolean getEnableFlag()
+	{
+		return enableFlag;
+	}
+
+	/**
+	 * @param enableFlag
+	 *           the enableFlag to set
+	 */
+	public void setEnableFlag(final Boolean enableFlag)
+	{
+		this.enableFlag = enableFlag;
+	}
+
 	private String orderNotes;
 	private Boolean isSubPart;
 
@@ -310,9 +332,28 @@ public class BulkReceiveRespData
 	/**
 	 * @param isSubPart the isSubPart to set
 	 */
-	public void setIsSubPart(Boolean isSubPart)
+	public void setIsSubPart(final Boolean isSubPart)
 	{
 		this.isSubPart = isSubPart;
 	}
+
+	/**
+	 * @return the consignmentEntry
+	 */
+	public String getConsignmentEntry()
+	{
+		return consignmentEntry;
+	}
+
+	/**
+	 * @param consignmentEntry
+	 *           the consignmentEntry to set
+	 */
+	public void setConsignmentEntry(final String consignmentEntry)
+	{
+		this.consignmentEntry = consignmentEntry;
+	}
+
+
 
 }

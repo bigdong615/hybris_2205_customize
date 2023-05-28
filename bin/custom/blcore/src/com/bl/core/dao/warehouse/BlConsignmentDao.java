@@ -70,4 +70,10 @@ public interface BlConsignmentDao
 	 */
 	List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(BlSerialProductModel serial);
 
+	/**
+	 * @param pk
+	 * @return
+	 */
+	ConsignmentEntryModel getConsignmentEntryByPk(String pk);
+
 }
