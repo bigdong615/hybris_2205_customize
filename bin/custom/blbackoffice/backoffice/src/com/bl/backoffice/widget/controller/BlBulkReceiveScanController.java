@@ -296,14 +296,14 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 														final BulkReceiveRespData bulkSubpartReceiveRespData = new BulkReceiveRespData();
 														bulkSubpartReceiveRespData.setIsSubPart(Boolean.TRUE);
 														//To disable few options, for non barcoded subparts
-														bulkReceiveRespData.setDisableFlag(true);
+														bulkSubpartReceiveRespData.setDisableFlag(true);
 														bulkSubpartReceiveRespData.setSerialProductId(product.getCode());
 														bulkSubpartReceiveRespData.setSerialProductName(product.getName());
 														bulkSubpartReceiveRespData.setProductType(product.getProductType().getCode());
 														bulkSubpartReceiveRespData
 																.setMainProductId(serialProductModel.getBlProduct().getCode());
 														bulkSubpartReceiveRespData.setBarcode("");
-														bulkReceiveRespData.setConsignmentEntry("" + consignEntryModel.getPk());
+														bulkSubpartReceiveRespData.setConsignmentEntry("" + consignEntryModel.getPk());
 														bulkSubpartReceiveRespData
 																.setOrderNumber(consignEntryModel.getOrderEntry().getOrder() != null
 																		? consignEntryModel.getOrderEntry().getOrder().getCode()
