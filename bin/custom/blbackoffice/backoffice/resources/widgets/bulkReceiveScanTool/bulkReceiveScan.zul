@@ -98,23 +98,23 @@
                             <label value="${each.orderNumber}" width="100%"/>
                             <label value="${each.barcode}" style="display:none;" width="0%"/>
                           
-                             <textbox disabled="${each.enableFlag}" value="${each.firmwareVersion}" width="50%" style="margin-left:15px;text-align:center;"/>
+                             <textbox disabled="${each.disableFlag}" value="${each.firmwareVersion}" width="50%" style="margin-left:15px;text-align:center;"/>
                              
                              <label value="${each.skuFirmwareVersion}" width="100%" />
                            
-                                <combobox xmlns:w="client" value = "${each.functionalRatingValue}" disabled="${each.enableFlag}"
+                                <combobox xmlns:w="client" value = "${each.functionalRatingValue}" disabled="${each.disableFlag}"
                                 model="${each.functionalRating}" 
                                 readonly="true" style="margin-left:4px;width:95%;">
                                <comboitem label="${each.functionalRating}" value="${each.functionalRating}" />
                             </combobox>        
                             
-                              <combobox xmlns:w="client" value = "${each.cosmeticRatingValue}" disabled="${each.enableFlag}"
+                              <combobox xmlns:w="client" value = "${each.cosmeticRatingValue}" disabled="${each.disableFlag}"
                                 model="${each.cosmeticRating}" placeholder="${labels.warehousingbackoffice.reallocationconsignment.popup.placeholder.reason}"
                                 readonly="true" style="margin-left:4px;width:95%;">
                                <comboitem label="${each.cosmeticRating}" value="${each.cosmeticRating}" />
                             </combobox>        
                             
-                            <combobox xmlns:w="client" value = "${each.testingStatusValue}" disabled="${each.enableFlag}" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)"
+                            <combobox xmlns:w="client" value = "${each.testingStatusValue}" disabled="${each.disableFlag}" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)"
                                 model="${each.testingStatus}" placeholder="${labels.warehousingbackoffice.reallocationconsignment.popup.placeholder.reason}"
                                 readonly="true" style="margin-left:4px;width:95%;" >
                                <comboitem label="${each.testingStatus}" value="${each.testingStatus}" />

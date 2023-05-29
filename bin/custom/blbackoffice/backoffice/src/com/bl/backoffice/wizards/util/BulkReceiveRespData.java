@@ -42,28 +42,30 @@ public class BulkReceiveRespData
 
 	private String consignmentEntry;
 
-	private Boolean enableFlag;
-
-
-	/**
-	 * @return the enableFlag
-	 */
-	public Boolean getEnableFlag()
-	{
-		return enableFlag;
-	}
-
-	/**
-	 * @param enableFlag
-	 *           the enableFlag to set
-	 */
-	public void setEnableFlag(final Boolean enableFlag)
-	{
-		this.enableFlag = enableFlag;
-	}
+	private Boolean disableFlag;
 
 	private String orderNotes;
+
 	private Boolean isSubPart;
+
+
+	/**
+	 * @return the disableFlag
+	 */
+	public Boolean getDisableFlag()
+	{
+		return disableFlag;
+	}
+
+	/**
+	 * @param disableFlag
+	 *           the disableFlag to set
+	 */
+	public void setDisableFlag(final Boolean disableFlag)
+	{
+		this.disableFlag = disableFlag;
+	}
+
 
 	/**
 	 * @return the cosmeticRating

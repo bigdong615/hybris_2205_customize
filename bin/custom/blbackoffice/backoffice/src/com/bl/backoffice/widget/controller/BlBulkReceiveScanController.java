@@ -180,8 +180,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 							//We need to exclude RECEIVED_OR_RETURNED & NOT_INCLUDED
 							if (consignEntryModel.getItems().get(blSerialProductModel.getCode()) != null
 									? !(consignEntryModel.getItems().get(blSerialProductModel.getCode()).getCode()
-											.equals("RECEIVED_OR_RETURNEDl")
-											|| consignEntryModel.getItems().get(blSerialProductModel.getCode()).getCode()
+											.equals("RECEIVED_OR_RETURNEDl"))
+											&& !(consignEntryModel.getItems().get(blSerialProductModel.getCode()).getCode()
 													.equals("NOT_INCLUDED"))
 									: Boolean.FALSE)
 							{
@@ -191,7 +191,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 									if (serialProduct instanceof BlSerialProductModel
 											&& serialProduct.getCode().equals(blSerialProductModel.getCode()))
 									{
-										BulkReceiveRespData bulkReceiveRespData1 = new BulkReceiveRespData();
+										BulkReceiveRespData serialMatchBulkReceiveRespData = new BulkReceiveRespData();
 
 
 
@@ -217,17 +217,18 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 										final BulkReceiveRespData bulkReceiveRespData = new BulkReceiveRespData();
 
 
-										bulkReceiveRespData1 = bulkReceiveRespDataList.stream()
+										serialMatchBulkReceiveRespData = bulkReceiveRespDataList.stream()
 												.filter(serialId -> serialId.getSerialProductId().equals(blSerialProductModel.getCode()))
 												.findFirst().orElse(null);
 
-										if (bulkReceiveRespData1 != null)
+										//Checking, if the selected serial, already saved, then need to disable
+										if (serialMatchBulkReceiveRespData != null)
 										{
-											bulkReceiveRespData.setEnableFlag(true);
+											bulkReceiveRespData.setDisableFlag(true);
 										}
 										else
 										{
-											bulkReceiveRespData.setEnableFlag(false);
+											bulkReceiveRespData.setDisableFlag(false);
 										}
 
 
@@ -292,6 +293,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 													{
 														final BulkReceiveRespData bulkSubpartReceiveRespData = new BulkReceiveRespData();
 														bulkSubpartReceiveRespData.setIsSubPart(Boolean.TRUE);
+														//To disable few options, for non barcoded subparts
+														bulkReceiveRespData.setDisableFlag(true);
 														bulkSubpartReceiveRespData.setSerialProductId(product.getCode());
 														bulkSubpartReceiveRespData.setSerialProductName(product.getName());
 														bulkSubpartReceiveRespData.setProductType(product.getProductType().getCode());
@@ -629,7 +632,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 									.getConsignmentEntryByPk(bulkRespData.getConsignmentEntry());
 							if (consignEntry != null)
 							{
-								final Map<String, ItemStatusEnum> itemsMap = new HashMap<>();
+								final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignEntry.getItems());
 
 								itemsMap.put(bulkRespData.getSerialProductId(), ItemStatusEnum.RECEIVED_OR_RETURNED);
 								consignEntry.setItems(itemsMap);
