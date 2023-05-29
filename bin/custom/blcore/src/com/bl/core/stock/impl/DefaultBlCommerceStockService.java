@@ -624,6 +624,51 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		return null;
 	}
 
+	@Override
+	public String getNextAvailableDateForSelectedDuration(final String productCode,
+			final int qtyToCheck,final RentalDateDto rentalDates )
+	{
+		 Date nextAvailabilityDate=null;
+		final List<Date> listOfBlackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+		final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Last Date to check : {}", lastDateToCheck);
+		final Date newRentalStartDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
+				rentalDates.getSelectedFromDate(), listOfBlackOutDates);
+		final Date newRentalEndDate = BlDateTimeUtils.getRentalEndDate(listOfBlackOutDates, rentalDates, lastDateToCheck);
+
+		if (newRentalEndDate.compareTo(lastDateToCheck) <= 0) {
+			final Collection<WarehouseModel> warehouses = getBaseStoreService().getCurrentBaseStore()
+					.getWarehouses();
+			final Collection<StockLevelModel> stockLevelModels = getStockForDate(productCode, warehouses,
+					newRentalStartDate, newRentalEndDate).stream().filter(stockLevel -> !stockLevel.getReservedStatus())
+					.collect(Collectors.toList());
+			final int numberOfDays = (int) getNumberOfDays(newRentalStartDate, newRentalEndDate);
+			final Long availableQty = getStockLevels(stockLevelModels, numberOfDays);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"Available Stock dates map size : {} and number of days : {} and dates are : {} and {} for qty : {}",
+					availableQty, numberOfDays, newRentalStartDate, newRentalEndDate, qtyToCheck);
+			if (availableQty.intValue() >= qtyToCheck) {
+				nextAvailabilityDate = BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
+						BlDateTimeUtils
+								.convertDateToStringDate(newRentalStartDate, BlCoreConstants.DATE_FORMAT),
+						listOfBlackOutDates);
+			}
+
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"For List page : Next Available Date for for selected duration for product {} is {}", productCode,
+					nextAvailabilityDate);
+		}
+		if (Objects.nonNull(nextAvailabilityDate))
+		{
+			final String newAvailableDate = BlDateTimeUtils.convertDateToStringDate(nextAvailabilityDate,
+					BlCoreConstants.RENTAL_DATE_FORMAT);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "For List page : Available Rental Date for product {} is {}", productCode,
+					newAvailableDate);
+			return newAvailableDate;
+		}
+		return StringUtils.EMPTY;
+	}
+
 	/**
 	 * Gets the missing dates for stock.
 	 *
