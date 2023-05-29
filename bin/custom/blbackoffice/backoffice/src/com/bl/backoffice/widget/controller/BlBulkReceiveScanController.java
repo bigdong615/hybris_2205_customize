@@ -286,8 +286,10 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 											consignEntryModel.getSerialProducts().forEach(product -> {
 												LOG.info("Loop1---->" + product.getCode());
 												// Trying to pull only non barcoded subparts
-												if (!(product instanceof BlSerialProductModel)
-														&& !(product.getCode().equals(serialProductModel.getCode())))
+												//												if (!(product instanceof BlSerialProductModel)
+												//														&& !(product.getCode().equals(serialProductModel.getCode()))
+												//														&& product.getProductType().equals("SUBPARTS"))
+												if (!(product instanceof BlSerialProductModel) && product.getProductType().equals("SUBPARTS"))
 												{
 													LOG.info("Loop2---->" + product.getCode());
 													if (CollectionUtils.isEmpty(product.getSerialProducts()))
