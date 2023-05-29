@@ -222,4 +222,7 @@ public interface BlCommerceStockService
 	 */
 	public Map<String, Long> getStockForUnallocatedProduct(final List<String> productCodes,
 			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate);
+
+	String getNextAvailableDateForSelectedDuration(final String productCode,
+			final int qtyToCheck,final RentalDateDto rentalDates );
 }

@@ -307,27 +307,23 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 			// In case of low stock then make a call to the stock service to determine if in or out of stock.
 			// In this case (low stock) it is ok to load the product from the DB and do the real stock check
 			final BlProductModel blProductModel = (BlProductModel) blProductService.getProductForPK(target.getPrimaryKey());
-      if (blProductModel != null && !blProductService
-					.isAquatechProduct(blProductService.getProductForPK(target.getPrimaryKey())))
-			{
+      if (blProductModel != null ) {
+          if (!blProductService.isAquatechProduct(blProductService.getProductForPK(target.getPrimaryKey()))) {
+          target.setStock(getStockConverter().convert(blProductModel));
+          final RentalDateDto rentalDatesFromSession = getBlDatePickerService()
+                .getRentalDatesFromSession();
+            if (Objects.nonNull(rentalDatesFromSession) && Objects.nonNull(blProductModel)) {
+              final String nextAvailableDate = getBlCommerceStockService().getNextAvailableDateForSelectedDuration(blProductModel.getCode(),1,rentalDatesFromSession);
+              target.setNextAvailableDate(nextAvailableDate);
+              if(StringUtils.isBlank(nextAvailableDate)){
+                target.setNextAvailableDate(" ");
+                target.setDisableButton(Boolean.TRUE);
+              }
+            }
 
-        target.setStock(getStockConverter().convert(blProductModel));
-      }
-
-      final RentalDateDto rentalDatesFromSession = getBlDatePickerService()
-          .getRentalDatesFromSession();
-      if (Objects.nonNull(rentalDatesFromSession) && Objects.nonNull(blProductModel)) {
-        final String nextAvailableDate = getBlCommerceStockService()
-            .getNextAvailabilityDateInPDP(blProductModel.getCode(), rentalDatesFromSession);
-        target.setNextAvailableDate(nextAvailableDate);
-        if (StringUtils.isNotBlank(nextAvailableDate)) {
-          final RentalDateDto rentalDuration =  BlRentalDateUtils.getRentalsDuration();
-          if (Objects.nonNull(rentalDuration) && StringUtils
-              .isNotBlank(rentalDuration.getSelectedFromDate())
-              && !nextAvailableDate.equalsIgnoreCase(rentalDuration.getSelectedFromDate())) {
-            target.setDisableButton(Boolean.TRUE);
-          }
-        }
+          } else {
+            target.setNextAvailableDate(StringUtils.EMPTY);
+         }
       }
 
 		}
