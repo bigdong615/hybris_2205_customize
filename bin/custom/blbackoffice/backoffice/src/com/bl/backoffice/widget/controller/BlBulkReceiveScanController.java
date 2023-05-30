@@ -289,7 +289,9 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 												//												if (!(product instanceof BlSerialProductModel)
 												//														&& !(product.getCode().equals(serialProductModel.getCode()))
 												//														&& product.getProductType().equals("SUBPARTS"))
-												if (!(product instanceof BlSerialProductModel) && product.getProductType().equals("SUBPARTS"))
+												if ((CollectionUtils.isEmpty(product.getSerialProducts()))
+														&& product.getProductType().equals("SUBPARTS")
+														&& product.getNumberSystem().equals("NONE"))
 												{
 													LOG.info("Loop2---->" + product.getCode());
 													if (CollectionUtils.isEmpty(product.getSerialProducts()))
