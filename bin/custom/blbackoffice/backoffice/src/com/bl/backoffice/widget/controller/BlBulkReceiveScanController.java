@@ -180,7 +180,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 							//We need to exclude RECEIVED_OR_RETURNED & NOT_INCLUDED
 							if (consignEntryModel.getItems().get(blSerialProductModel.getCode()) != null
 									? !(consignEntryModel.getItems().get(blSerialProductModel.getCode()).getCode()
-											.equals("RECEIVED_OR_RETURNEDl"))
+											.equals("RECEIVED_OR_RETURNED"))
 											&& !(consignEntryModel.getItems().get(blSerialProductModel.getCode()).getCode()
 													.equals("NOT_INCLUDED"))
 									: Boolean.FALSE)
@@ -421,8 +421,11 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				//					}
 				//				}
 				selectedSerials.add(bulkReceiveData);
+
+				LOG.info("selected serial code --->" + bulkReceiveData.getSerialProductId());
 			}
 		}
+		LOG.info("Total entries selected --->" + selectedSerials.size());
 		//	updateSerialStatus(selectedSerials, blSerialList);
 		updateSerialStatusNew(selectedSerials);
 
@@ -565,13 +568,13 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 	 *
 	 */
 	private void updateSerialStatusNew(final List<BulkReceiveRespData> selectedSerials)
-			{
+	{
 
 		if (CollectionUtils.isNotEmpty(selectedSerials))
-				{
+		{
 			for (final BulkReceiveRespData bulkRespData : selectedSerials)
-						{
-							if (bulkRespData.getBarcode() != null && !bulkRespData.getBarcode().isEmpty())
+			{
+				if (bulkRespData.getBarcode() != null && !bulkRespData.getBarcode().isEmpty())
 				{
 					final BlSerialProductModel blSerialProductModel = this.getDefaultBlProductDao()
 							.getSerialBySerialCode(bulkRespData.getSerialProductId());
@@ -579,7 +582,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 					final BlSerialProductModel serialModel = blSerialProductModel;
 
 					if (null != serialModel && !submittedSerials.contains(serialModel.getCode()))
-								{
+					{
 						submittedSerials.add(serialModel.getCode());
 						serialModel.setSerialStatus(SerialStatusEnum.RECEIVED_OR_RETURNED);
 						serialModel.setHardAssigned(Boolean.FALSE);
@@ -595,70 +598,50 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 						serialModel.setFirmwareVersion(bulkRespData.getFirmwareVersion());
 						getModelService().save(serialModel);
 
-
-
-						// Taking the consignments, which are older & new, belongs to serial
-						//									final List<ConsignmentEntryModel> consEntry = blConsignmentDao
-						//											.getConsignmentEntriesForSerialCode(serialModel)
-						//									if (CollectionUtils.isNotEmpty(consEntry))
-						//									{
-						//										for (final ConsignmentEntryModel consignEntryModel : consEntry)
-						//
-						//										{
-						//
-						//											itemsMap = new HashMap<>(consignEntryModel.getItems());
-						//
-						//											if (itemsMap.get(serialModel.getCode()) != null)
-						//											{
-						//												for (final Map.Entry<String, ItemStatusEnum> entry : itemsMap.entrySet())
-						//												{
-						//													//Checking Items, productID for serialProduct, productName for subParts, to update only selected items
-						//													final BulkReceiveRespData consignmentEntryItems = dataBasedOnBarcode.getValue().stream()
-						//															.filter(data -> (!data.getTestingStatusValue().isEmpty()
-						//																	? data.getSerialProductId().equals(entry.getKey())
-						//																	: data.getSerialProductName().equals(entry.getKey().split("--")[0])))
-						//															.findFirst().orElse(null);
-						//													if (consignmentEntryItems != null)
-						//													{
-						//														itemsMap.put(entry.getKey(), ItemStatusEnum.RECEIVED_OR_RETURNED);
-						//													}
-						//												}
-						//											}
-						//
-						//											consignEntryModel.setItems(itemsMap);
-						//											getModelService().save(consignEntryModel);
-						//											getModelService().refresh(consignEntryModel);
-						//										}
-						//									}
-								}
-
-							}
-
-							final ConsignmentEntryModel consignEntry = blConsignmentDao
-									.getConsignmentEntryByPk(bulkRespData.getConsignmentEntry());
-							if (consignEntry != null)
-							{
-								final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignEntry.getItems());
-
-								itemsMap.put(bulkRespData.getSerialProductId(), ItemStatusEnum.RECEIVED_OR_RETURNED);
-								consignEntry.setItems(itemsMap);
-								getModelService().save(consignEntry);
-								getModelService().refresh(consignEntry);
-							}
-
-						}
-						//}
-
-						Messagebox.show(BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_SUCCESS_MSG);
+					}
 				}
 
-					else
-					{
-						throw new WrongValueException(this.globalDeclineEntriesSelection,
-								BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_PLS_SELECT_MSG);
-					}
+				final ConsignmentEntryModel consignEntry = blConsignmentDao
+						.getConsignmentEntryByPk(bulkRespData.getConsignmentEntry());
+				if (consignEntry != null)
+				{
+					final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignEntry.getItems());
+
+
+					consignEntry.getSerialProducts().forEach(product -> {
+
+						if (product.getCode().equals(bulkRespData.getSerialProductId()))
+						{
+							itemsMap.put(bulkRespData.getSerialProductId(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+						}
+						else if ((CollectionUtils.isEmpty(product.getSerialProducts()))
+								&& product.getProductType().getCode().equals("SUBPARTS")
+								&& product.getNumberSystem().getCode().equals("NONE"))
+						{
+
+							itemsMap.put(product.getCode(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+						}
+
+					});
+
+
+					consignEntry.setItems(itemsMap);
+					getModelService().save(consignEntry);
+					getModelService().refresh(consignEntry);
+				}
 
 			}
+
+			Messagebox.show(BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_SUCCESS_MSG);
+		}
+
+		else
+		{
+			throw new WrongValueException(this.globalDeclineEntriesSelection,
+					BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_PLS_SELECT_MSG);
+		}
+
+	}
 
 	protected void selectAllEntries()
 	{
