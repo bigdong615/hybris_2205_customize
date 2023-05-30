@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -93,8 +94,6 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 	 */
 	private String getConsignmentEntryStatus(final ConsignmentEntryStatusEnum v)
 	{
-		System.out.println("ConsignmentEntryStatusEnum " + v);
-
 		if (v != null)
 		{
 			return v.getCode();
@@ -111,7 +110,6 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 	 */
 	private String getItemsCode(final ItemStatusEnum v)
 	{
-		System.out.println("ItemStatusEnum " + v);
 
 		if (v != null)
 		{
@@ -125,7 +123,26 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 
 	private String getCode(final List<BlItemsBillingChargeModel> v)
 	{
-		return v.isEmpty() ? StringUtils.EMPTY : v.get(0).getCode();
+
+
+		try
+		{
+			if (CollectionUtils.isNotEmpty(v) && v.get(0) != null)
+			{
+				return v.get(0).getCode();
+			}
+			else
+			{
+				return StringUtils.EMPTY;
+			}
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+			return StringUtils.EMPTY;
+
+		}
+
 	}
 
 }

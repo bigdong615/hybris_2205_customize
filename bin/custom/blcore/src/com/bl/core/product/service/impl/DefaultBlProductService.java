@@ -34,6 +34,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.product.service.BlProductService;
+import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.stock.BlStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -54,6 +55,7 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
   private SearchRestrictionService searchRestrictionService;
   private BlProductDao blProductDao;
   private BlStockService blStockService;
+  private BlCommerceStockService blCommerceStockService;
 
 	@Resource(name = "blStockLevelDao")
 	private BlStockLevelDao blStockLevelDao;
@@ -211,7 +213,9 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 				{
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current Used gear Serial Product id for Google Feed : {}",
 							serial.getCode());
-					if(getBlStockService().isActiveStatus(serial.getSerialStatus()) && serial.getForSale()) {
+					if (getBlStockService().isVisibleInPdp(serial.getSerialStatus()) && serial.getForSale()
+							&& getBlCommerceStockService().isUsedGearSerialNotAssignedToRentalOrder(serial.getCode()))
+					{
 						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 								"Current Used gear Serial Product id for Google Feed is avaialble and added to feed : {}",
 								serial.getCode());
@@ -295,6 +299,16 @@ public BlStockService getBlStockService()
 public void setBlStockService(final BlStockService blStockService)
 {
 	this.blStockService = blStockService;
+}
+
+public BlCommerceStockService getBlCommerceStockService()
+{
+	return blCommerceStockService;
+}
+
+public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService)
+{
+	this.blCommerceStockService = blCommerceStockService;
 }
 
 }

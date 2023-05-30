@@ -1204,6 +1204,7 @@
 		<property name="searchRestrictionService" ref="searchRestrictionService"/>
 		<property name="blProductDao" ref="productDao"/>
 		<property name="blStockService" ref="blStockService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 	</bean>
 
 	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->
