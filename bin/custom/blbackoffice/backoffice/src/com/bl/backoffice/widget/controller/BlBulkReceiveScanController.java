@@ -281,7 +281,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 
 										// we need to skip, barcoded subparts
 										if (CollectionUtils.isNotEmpty(serialProductModel.getBlProduct().getSubpartProducts())
-												&& !serialProductModel.getProductType().equals("SUBPARTS"))
+												&& !serialProductModel.getProductType().getCode().equals("SUBPARTS"))
 										{
 											consignEntryModel.getSerialProducts().forEach(product -> {
 												LOG.info("Loop1---->" + product.getCode());
@@ -290,8 +290,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 												//														&& !(product.getCode().equals(serialProductModel.getCode()))
 												//														&& product.getProductType().equals("SUBPARTS"))
 												if ((CollectionUtils.isEmpty(product.getSerialProducts()))
-														&& product.getProductType().equals("SUBPARTS")
-														&& product.getNumberSystem().equals("NONE"))
+														&& product.getProductType().getCode().equals("SUBPARTS")
+														&& product.getNumberSystem().getCode().equals("NONE"))
 												{
 													LOG.info("Loop2---->" + product.getCode());
 													if (CollectionUtils.isEmpty(product.getSerialProducts()))
