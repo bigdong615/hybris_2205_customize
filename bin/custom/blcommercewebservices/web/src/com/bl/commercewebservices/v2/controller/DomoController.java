@@ -33,6 +33,8 @@ import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 
@@ -118,8 +120,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -162,8 +163,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -186,8 +186,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -232,8 +231,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -268,8 +266,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -303,8 +300,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -339,8 +335,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -375,8 +370,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -411,8 +405,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -446,8 +439,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -481,8 +473,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -516,8 +507,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -551,8 +541,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -588,8 +577,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -623,8 +611,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -656,8 +643,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -726,8 +712,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -760,8 +745,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -793,8 +777,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -826,8 +809,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -859,8 +841,7 @@ public class DomoController extends BaseCommerceController
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
 	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+	final String date, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -874,6 +855,19 @@ public class DomoController extends BaseCommerceController
 		return getDataMapper().map(stockLevelListData, StockLevelListWsDTO.class, fields);
 	}
 
-
-
+	protected Date convertDate(final String date)
+	{
+		Date dat = null;
+		if (date != null)
+		{
+			final String[] arrSplit = date.split("-");
+			final LocalDate currentDate = LocalDate.now();
+			if (arrSplit[1] != null)
+			{
+				dat = Date
+						.from(currentDate.minusDays(Integer.parseInt(arrSplit[1])).atStartOfDay(ZoneId.systemDefault()).toInstant());
+			}
+		}
+		return dat;
+	}
 }
