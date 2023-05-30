@@ -129,7 +129,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final PackagingInfoListData packagingInfoListData;
-		packagingInfoListData = createPackginfInfoListData(blDomoFacade.getPackagingInfos(pageableData, date));
+		packagingInfoListData = createPackginfInfoListData(blDomoFacade.getPackagingInfos(pageableData, convertDate(date)));
 		setTotalCountHeader(response, packagingInfoListData.getPagination());
 		return getDataMapper().map(packagingInfoListData, PackagingInfoListWsDTO.class, fields);
 	}
@@ -172,7 +172,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final PaymentTransactionListData paymentTransactionListData;
-		paymentTransactionListData = createTransListData(blDomoFacade.getPaymentTransactions(pageableData, date));
+		paymentTransactionListData = createTransListData(blDomoFacade.getPaymentTransactions(pageableData, convertDate(date)));
 		setTotalCountHeader(response, paymentTransactionListData.getPagination());
 		return getDataMapper().map(paymentTransactionListData, PaymentTransactionListWsDTO.class, fields);
 	}
@@ -195,7 +195,8 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final PaymentTransactionEntryListData paymentTransactionEntryListData;
-		paymentTransactionEntryListData = createTransEntryListData(blDomoFacade.getPaymentTransactionEntries(pageableData, date));
+		paymentTransactionEntryListData = createTransEntryListData(
+				blDomoFacade.getPaymentTransactionEntries(pageableData, convertDate(date)));
 		setTotalCountHeader(response, paymentTransactionEntryListData.getPagination());
 		return getDataMapper().map(paymentTransactionEntryListData, PaymentTransactionEntryListWsDTO.class, fields);
 	}
@@ -240,7 +241,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final GiftCardListData giftCardListData;
-		giftCardListData = createGiftCardListData(blDomoFacade.getGiftCards(pageableData, date));
+		giftCardListData = createGiftCardListData(blDomoFacade.getGiftCards(pageableData, convertDate(date)));
 		setTotalCountHeader(response, giftCardListData.getPagination());
 		return getDataMapper().map(giftCardListData, GiftCardListWsDTO.class, fields);
 	}
@@ -275,7 +276,8 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final GiftCardMovementListData giftCardMovementListData;
-		giftCardMovementListData = createGiftCardMovementListData(blDomoFacade.getGiftCardMovements(pageableData, date));
+		giftCardMovementListData = createGiftCardMovementListData(
+				blDomoFacade.getGiftCardMovements(pageableData, convertDate(date)));
 		setTotalCountHeader(response, giftCardMovementListData.getPagination());
 		return getDataMapper().map(giftCardMovementListData, GiftCardMovementListWsDTO.class, fields);
 	}
@@ -310,7 +312,7 @@ public class DomoController extends BaseCommerceController
 		sessionService.setAttribute("isApiCall", true);
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final OrderListData orderListData;
-		orderListData = createOrderListData(blDomoFacade.getOrders(pageableData, date));
+		orderListData = createOrderListData(blDomoFacade.getOrders(pageableData, convertDate(date)));
 		setTotalCountHeader(response, orderListData.getPagination());
 		return getDataMapper().map(orderListData, OrderListWsDTO.class, fields);
 	}
@@ -345,7 +347,7 @@ public class DomoController extends BaseCommerceController
 		sessionService.setAttribute("isApiCall", true);
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final OrderEntryListData orderEntryListData;
-		orderEntryListData = createOrderEntryListData(blDomoFacade.getOrderEntries(pageableData, date));
+		orderEntryListData = createOrderEntryListData(blDomoFacade.getOrderEntries(pageableData, convertDate(date)));
 		setTotalCountHeader(response, orderEntryListData.getPagination());
 		return getDataMapper().map(orderEntryListData, OrderEntryListWsDTO.class, fields);
 	}
@@ -379,7 +381,8 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final BlItemsBillingChargeListData blItemsBillingChargeListData;
-		blItemsBillingChargeListData = createBlItemsBillingChargeListData(blDomoFacade.getBlItemsBillingCharge(pageableData, date));
+		blItemsBillingChargeListData = createBlItemsBillingChargeListData(
+				blDomoFacade.getBlItemsBillingCharge(pageableData, convertDate(date)));
 		setTotalCountHeader(response, blItemsBillingChargeListData.getPagination());
 		return getDataMapper().map(blItemsBillingChargeListData, BlItemsBillingChargeListWsDTO.class, fields);
 	}
@@ -414,7 +417,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final CustomerListsData customerListsData;
-		customerListsData = createCustomerListsData(blDomoFacade.getCustomers(pageableData, date));
+		customerListsData = createCustomerListsData(blDomoFacade.getCustomers(pageableData, convertDate(date)));
 		setTotalCountHeader(response, customerListsData.getPagination());
 		return getDataMapper().map(customerListsData, UsersListWsDTO.class, fields);
 	}
@@ -448,7 +451,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final BlSerialLogListData blSerialLogListData;
-		blSerialLogListData = createblSerialLogListData(blDomoFacade.getBlSerialLogs(pageableData, date));
+		blSerialLogListData = createblSerialLogListData(blDomoFacade.getBlSerialLogs(pageableData, convertDate(date)));
 		setTotalCountHeader(response, blSerialLogListData.getPagination());
 		return getDataMapper().map(blSerialLogListData, BlSerialLogListWsDTO.class, fields);
 	}
@@ -482,7 +485,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final CustomerNotesListData customerNotesListData;
-		customerNotesListData = createCustomerNotesListData(blDomoFacade.getCustomerNotes(pageableData, date));
+		customerNotesListData = createCustomerNotesListData(blDomoFacade.getCustomerNotes(pageableData, convertDate(date)));
 		setTotalCountHeader(response, customerNotesListData.getPagination());
 		return getDataMapper().map(customerNotesListData, CustomerNotesListWsDTO.class, fields);
 	}
@@ -516,7 +519,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final VendorRepairLogListData vendorRepairLogListData;
-		vendorRepairLogListData = createVendorRepairsData(blDomoFacade.getVendorRepairLogs(pageableData, date));
+		vendorRepairLogListData = createVendorRepairsData(blDomoFacade.getVendorRepairLogs(pageableData, convertDate(date)));
 		setTotalCountHeader(response, vendorRepairLogListData.getPagination());
 		return getDataMapper().map(vendorRepairLogListData, VendorRepairLogListWsDTO.class, fields);
 	}
@@ -551,7 +554,7 @@ public class DomoController extends BaseCommerceController
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final PartsNeededRepairLogListData partsNeededRepairLogListData;
 		partsNeededRepairLogListData = createPartsNeededRepairLogListData(
-				blDomoFacade.getPartsNeededRepairLogs(pageableData, date));
+				blDomoFacade.getPartsNeededRepairLogs(pageableData, convertDate(date)));
 		setTotalCountHeader(response, partsNeededRepairLogListData.getPagination());
 		return getDataMapper().map(partsNeededRepairLogListData, PartsNeededRepairLogListWsDTO.class, fields);
 	}
@@ -586,7 +589,8 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final InHouseRepairLogListData inHouseRepairLogListData;
-		inHouseRepairLogListData = createInHouseRepairLogListData(blDomoFacade.getInHouseRepairLogs(pageableData, date));
+		inHouseRepairLogListData = createInHouseRepairLogListData(
+				blDomoFacade.getInHouseRepairLogs(pageableData, convertDate(date)));
 		setTotalCountHeader(response, inHouseRepairLogListData.getPagination());
 		return getDataMapper().map(inHouseRepairLogListData, InHouseRepairLogListWsDTO.class, fields);
 	}
@@ -620,7 +624,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final AddressListData addressListData;
-		addressListData = createAddressesListData(blDomoFacade.getAddresses(pageableData, date));
+		addressListData = createAddressesListData(blDomoFacade.getAddresses(pageableData, convertDate(date)));
 		setTotalCountHeader(response, addressListData.getPagination());
 		return getDataMapper().map(addressListData, AddressListWsDTO.class, fields);
 	}
@@ -652,7 +656,8 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final BrainTreePaymentInfoListData brainTreePaymentInfoListData;
-		brainTreePaymentInfoListData = createBrainTreePaymentInfoListData(blDomoFacade.getBrainTreePaymentInfo(pageableData, date));
+		brainTreePaymentInfoListData = createBrainTreePaymentInfoListData(
+				blDomoFacade.getBrainTreePaymentInfo(pageableData, convertDate(date)));
 		setTotalCountHeader(response, brainTreePaymentInfoListData.getPagination());
 		return getDataMapper().map(brainTreePaymentInfoListData, BrainTreePaymentInfoListWsDTO.class, fields);
 	}
@@ -721,7 +726,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final NotesListData notesListData;
-		notesListData = createNotesListData(blDomoFacade.getNotes(pageableData, date));
+		notesListData = createNotesListData(blDomoFacade.getNotes(pageableData, convertDate(date)));
 		setTotalCountHeader(response, notesListData.getPagination());
 		return getDataMapper().map(notesListData, NotesListWsDTO.class, fields);
 	}
@@ -754,7 +759,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final RegionsData regionsData;
-		regionsData = createRegionsDataData(blDomoFacade.getRegions(pageableData, date));
+		regionsData = createRegionsDataData(blDomoFacade.getRegions(pageableData, convertDate(date)));
 		setTotalCountHeader(response, regionsData.getPagination());
 		return getDataMapper().map(regionsData, RegionsWsDTO.class, fields);
 	}
@@ -786,7 +791,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final CartsData cartsData;
-		cartsData = createCartsData(blDomoFacade.getCarts(pageableData, date));
+		cartsData = createCartsData(blDomoFacade.getCarts(pageableData, convertDate(date)));
 		setTotalCountHeader(response, cartsData.getPagination());
 		return getDataMapper().map(cartsData, CartsWsDTO.class, fields);
 	}
@@ -818,7 +823,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final CartEntryListData cartEntriesData;
-		cartEntriesData = createCartEntriesData(blDomoFacade.getCartEntries(pageableData, date));
+		cartEntriesData = createCartEntriesData(blDomoFacade.getCartEntries(pageableData, convertDate(date)));
 		setTotalCountHeader(response, cartEntriesData.getPagination());
 		return getDataMapper().map(cartEntriesData, CartEntryListWsDTO.class, fields);
 	}
@@ -850,7 +855,7 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final StockLevelListData stockLevelListData;
-		stockLevelListData = createstockLevelListData(blDomoFacade.getStockModifiedTime(pageableData, date));
+		stockLevelListData = createstockLevelListData(blDomoFacade.getStockModifiedTime(pageableData, convertDate(date)));
 		setTotalCountHeader(response, stockLevelListData.getPagination());
 		return getDataMapper().map(stockLevelListData, StockLevelListWsDTO.class, fields);
 	}
