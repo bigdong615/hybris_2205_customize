@@ -33,8 +33,6 @@ import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 
@@ -103,6 +101,9 @@ import io.swagger.annotations.ApiParam;
 public class DomoController extends BaseCommerceController
 {
 	private static final Logger LOG = LoggerFactory.getLogger(DomoController.class);
+
+	protected static final String DEFAULT_FORMAT_DATE = "1000-01-01";
+
 
 	@Resource(name = "blDomoFacade")
 	private BlDomoFacade blDomoFacade;
@@ -680,10 +681,10 @@ public class DomoController extends BaseCommerceController
 	public StockLevelListWsDTO getStockLevels(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
-	@RequestParam(value = "fromDate", defaultValue = DEFAULT_DATE)
+	@RequestParam(value = "fromDate", defaultValue = DEFAULT_FORMAT_DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	final Date fromDate, @ApiParam(value = "Sorting method applied to the return results.")
-	@RequestParam(value = "toDate", defaultValue = DEFAULT_DATE)
+	@RequestParam(value = "toDate", defaultValue = DEFAULT_FORMAT_DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	final Date toDate, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
@@ -860,19 +861,4 @@ public class DomoController extends BaseCommerceController
 		return getDataMapper().map(stockLevelListData, StockLevelListWsDTO.class, fields);
 	}
 
-	protected Date convertDate(final String date)
-	{
-		Date dat = null;
-		if (date != null)
-		{
-			final String[] arrSplit = date.split("-");
-			final LocalDate currentDate = LocalDate.now();
-			if (arrSplit[1] != null)
-			{
-				dat = Date
-						.from(currentDate.minusDays(Integer.parseInt(arrSplit[1])).atStartOfDay(ZoneId.systemDefault()).toInstant());
-			}
-		}
-		return dat;
-	}
 }

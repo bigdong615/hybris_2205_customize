@@ -58,7 +58,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -150,10 +149,8 @@ public class ProductsController extends BaseController
 			@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 			final int currentPage, @ApiParam(value = "The number of results returned per page.")
 			@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
-			final int pageSize, @DateTimeFormat(pattern = "yyyy-MM-dd")
-			@ApiParam(value = "Sorting method applied to the return results.")
-			@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
-			final Date date, @ApiParam(value = "Sorting method applied to the return results.")
+			final int pageSize, @RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+			final String date, @ApiParam(value = "Sorting method applied to the return results.")
 			@RequestParam(required = false)
 			final String sort, @ApiParam(value = "The context to be used in the search query.")
 			@RequestParam(required = false)
@@ -162,7 +159,7 @@ public class ProductsController extends BaseController
 			final String fields, final HttpServletResponse response)
 	{
 		sessionService.setAttribute("isApiCall", true);
-		sessionService.setAttribute("apirequestTime", date.getTime());
+		sessionService.setAttribute("apirequestTime", convertDate(date).getTime());
 		final ProductSearchPageWsDTO result = productsHelper.searchProducts(query, currentPage, pageSize, sort,
 				addPaginationField(fields), searchQueryContext);
 		setTotalCountHeader(response, result.getPagination());
