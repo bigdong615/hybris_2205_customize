@@ -126,7 +126,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 	    + ItemModel.PK + "} HAVING COUNT(*) > 1}} INTERSECT {{SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE ({con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
-			+ "} BETWEEN ?startDate AND ?endDate) AND {" + OrderModel.STATUS + "} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED'}})}}) o";
+			+ "} BETWEEN ?startDate AND ?endDate) AND {" + OrderModel.STATUS + "} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'PENDING'}})}}) o";
 
 	private static final String ORDERS_TO_FEED_FTP  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERMODIFIEDDATE + "} BETWEEN ?orderModifiedDate AND ?orderModifiedEndDate ";
