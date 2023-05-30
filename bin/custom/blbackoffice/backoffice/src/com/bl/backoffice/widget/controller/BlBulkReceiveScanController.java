@@ -252,7 +252,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 										bulkReceiveRespData.setFunctionalRating(new ListModelList<>(functionalRatingValues));
 										bulkReceiveRespData.setConsignmentEntry("" + consignEntryModel.getPk());
 
-										bulkReceiveRespData.setOrderNumber(consignEntryModel.getOrderEntry().getOrder() != null
+										bulkReceiveRespData.setOrderNumber(consignEntryModel.getOrderEntry() != null
 												? consignEntryModel.getOrderEntry().getOrder().getCode()
 												: StringUtils.EMPTY);
 										String orderNotesValue = "";
@@ -309,7 +309,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 														bulkSubpartReceiveRespData.setBarcode("");
 														bulkSubpartReceiveRespData.setConsignmentEntry("" + consignEntryModel.getPk());
 														bulkSubpartReceiveRespData
-																.setOrderNumber(consignEntryModel.getOrderEntry().getOrder() != null
+																.setOrderNumber(consignEntryModel.getOrderEntry() != null
 																		? consignEntryModel.getOrderEntry().getOrder().getCode()
 																		: StringUtils.EMPTY);
 
@@ -607,7 +607,6 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				{
 					final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignEntry.getItems());
 
-
 					consignEntry.getSerialProducts().forEach(product -> {
 
 						if (product.getCode().equals(bulkRespData.getSerialProductId()))
@@ -618,8 +617,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 								&& product.getProductType().getCode().equals("SUBPARTS")
 								&& product.getNumberSystem().getCode().equals("NONE"))
 						{
-
-							itemsMap.put(product.getCode(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+							itemsMap.put(product.getName(), ItemStatusEnum.RECEIVED_OR_RETURNED);
 						}
 
 					});
