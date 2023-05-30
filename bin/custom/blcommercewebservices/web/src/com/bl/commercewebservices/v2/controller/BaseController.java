@@ -15,6 +15,10 @@ import de.hybris.platform.webservicescommons.mapping.DataMapper;
 import de.hybris.platform.webservicescommons.mapping.FieldSetLevelHelper;
 import de.hybris.platform.webservicescommons.util.YSanitizer;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,7 +47,7 @@ public class BaseController
 {
 	protected static final String DEFAULT_PAGE_SIZE = "20";
 	protected static final String DEFAULT_CURRENT_PAGE = "0";
-	protected static final String DEFAULT_DATE = "1000-01-01";
+	protected static final String DEFAULT_DATE = "date-10000";
 	protected static final String BASIC_FIELD_SET = FieldSetLevelHelper.BASIC_LEVEL;
 	protected static final String DEFAULT_FIELD_SET = FieldSetLevelHelper.DEFAULT_LEVEL;
 	protected static final String HEADER_TOTAL_COUNT = "X-Total-Count";
@@ -169,5 +173,21 @@ public class BaseController
 	{
 		LOG.debug(INVALID_REQUEST_BODY_ERROR_MESSAGE, ex);
 		return handleErrorInternal(HttpMessageNotReadableException.class.getSimpleName(), INVALID_REQUEST_BODY_ERROR_MESSAGE);
+	}
+
+	protected Date convertDate(final String date)
+	{
+		Date dat = null;
+		if (date != null)
+		{
+			final String[] arrSplit = date.split("-");
+			final LocalDate currentDate = LocalDate.now();
+			if (arrSplit[1] != null)
+			{
+				dat = Date
+						.from(currentDate.minusDays(Integer.parseInt(arrSplit[1])).atStartOfDay(ZoneId.systemDefault()).toInstant());
+			}
+		}
+		return dat;
 	}
 }
