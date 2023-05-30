@@ -95,11 +95,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                 .from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
         final Date endDate = DateUtils.addDays(currentDate, 3);
         for (Date startDate = currentDate; startDate.before(endDate); startDate = DateUtils.addDays(startDate, 1)) {
-            processOrdersSoonToBeTransitByDay(startDate, startDate.equals(currentDate));
-            if(startDate.equals(currentDate)) {
-                getBlOptimizeShippingFromWHService()
-                        .optimizeShipFormWHForOrders(startDate);
-            }
+            processOrdersSoonToBeTransitByDay(startDate);
         }
     }
 
@@ -126,8 +122,11 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
       final List<AbstractOrderModel> finalSortedOrders = new ArrayList<>();
       finalSortedOrders.addAll(ordersSortedByDeliveryMode);
       finalSortedOrders.addAll(ordersSortedByTotalPrice);
+      List<String> orderCodeList = finalSortedOrders.stream()
+          .map(abstractOrderModel -> abstractOrderModel.getCode()).collect(Collectors.toList());
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-          "List of orders to fulfill {} for the day {} ", finalSortedOrders.toString(), currentDate);
+          "1. List of orders to fulfill {} for the day {} via Re-shuffler Job", (CollectionUtils.isNotEmpty(orderCodeList) ? orderCodeList : finalSortedOrders.toString()), currentDate);
+
       final BaseStoreModel baseStoreModel = getBaseStoreService()
           .getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
       //Get all warehouses
@@ -142,7 +141,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
   }
 
 
-    public void processOrdersSoonToBeTransitByDay(final Date currentDate, final boolean isPresentDay) {
+    public void processOrdersSoonToBeTransitByDay(final Date currentDate) {
         final List<AbstractOrderModel> ordersToBeProcessed = getOrderDao()
                 .getOrdersToBeShippedSoon(currentDate);
         if(CollectionUtils.isNotEmpty(ordersToBeProcessed)) {
@@ -154,8 +153,10 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                     .sorted(Comparator.comparing(AbstractOrderModel::getTotalPrice).reversed())
                     .collect(Collectors.toList());
           final List<AbstractOrderModel> finalSortedOrders = new ArrayList<>(ordersSortedByTotalPrice);
-            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-                    "List of orders to fulfill {} for the day {} ", finalSortedOrders.toString(), currentDate);
+          List<String> orderCodeList = finalSortedOrders.stream()
+              .map(abstractOrderModel -> abstractOrderModel.getCode()).collect(Collectors.toList());
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                    "1. List of orders to fulfill {} for the day {} via BlOptimizeSerialsInLateOrders Job", (CollectionUtils.isNotEmpty(orderCodeList) ? orderCodeList : finalSortedOrders.toString()), currentDate);
             final BaseStoreModel baseStoreModel = getBaseStoreService()
                     .getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
             //Get all warehouses
@@ -164,8 +165,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
             // of sku needed for orders, will ship on same day, is not sufficient to fulfill from main and buffer inventory
           final Map<AbstractOrderModel, Set<String>> filteredOrdersForSoftAssignSerialInRepair =filterOrdersForProcessingSoftAssignedSerials(finalSortedOrders);
             final Map<AbstractOrderModel, Set<String>> filteredOrderForLateSerial = filterOrdersForProcessingLateSerials(
-                    finalSortedOrders,
-                    warehouses, currentDate, isPresentDay);
+                    finalSortedOrders, warehouses, currentDate);
             filteredOrderForLateSerial.putAll(filteredOrdersForSoftAssignSerialInRepair);
             processOrders(filteredOrderForLateSerial, warehouses);
         }
@@ -180,9 +180,8 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
         if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
           for (BlProductModel productModel : entryModel.getSerialProducts()) {
             if (productModel instanceof BlSerialProductModel) {
-              OrderModel orderModel = ((BlSerialProductModel)productModel).getAssociatedOrder();
               BlSerialProductModel serialProductModel = (BlSerialProductModel) productModel;
-              if (Objects.nonNull(orderModel) && serialProductModel.getSoftAssigned() && (serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_NEEDED) ||
+              if (serialProductModel.getSoftAssigned() && (serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_NEEDED) ||
                       serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_AWAITING_QUOTES) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_PARTS_NEEDED) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_SEND_TO_VENDOR) ||
                       serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_IN_HOUSE))) {
                 entryModel.setSerialProducts(Collections.emptyList());
@@ -216,7 +215,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
         try {
         tx.begin();
         BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-            "Processing the order {} ", entry.getKey().getCode());
+            "2.Processing the order {} ", entry.getKey().getCode());
         //It gets the preferred warehouse
         final WarehouseModel location = getBlDeliveryStateSourcingLocationFilter()
             .applyFilter(entry.getKey());
@@ -281,7 +280,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     final Set<String> modifiedProductCodes = getBlOptimizeShippingFromWHService().modifyProductCodes(order, warehouse);
     modifiedProductCodes.addAll(productCodes);
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-        "list of products {} to fulfill from preferred warehouse {} for the order {}",
+        "3. list of products {} to fulfill from preferred warehouse {} for the order {}",
         modifiedProductCodes.toString(), preferredWH.getCode(), order.getCode());
     if (CollectionUtils.isNotEmpty(modifiedProductCodes)) {
       final Collection<StockLevelModel> stockLevels = getBlOptimizeShippingFromWHService()
@@ -689,7 +688,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 
 
     private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessingLateSerials(final List<AbstractOrderModel> todayOrdersToBeProcessed,
-                                                                           final List<WarehouseModel> warehouses, final Date currentDate, final boolean isPresentDay) {
+                                                                           final List<WarehouseModel> warehouses, final Date currentDate) {
 
     Map<AbstractOrderModel, Set<String>> mapOfLateOrders = new HashMap<>();
     for (AbstractOrderModel order: todayOrdersToBeProcessed) {
