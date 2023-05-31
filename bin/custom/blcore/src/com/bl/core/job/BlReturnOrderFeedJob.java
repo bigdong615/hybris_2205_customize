@@ -156,8 +156,7 @@ public class BlReturnOrderFeedJob extends AbstractJobPerformable<CronJobModel>
 	private File getFile()
 	{
 		final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
-		final String fileName = new StringBuilder(BlespintegrationConstants.RETUNR_ORDER_FILE_NAME_PREFIX).append(logFileName)
-				.append(BlespintegrationConstants.RETURN_ORDER_FILE_SUFFIX).toString();
+		final String fileName = new StringBuilder(BlespintegrationConstants.RETUNR_ORDER_FILE_NAME_PREFIX).append(BlespintegrationConstants.RETURN_ORDER_FILE_SUFFIX).toString();
 		final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
 		createDirectoryForFTPFeed(path);
 		return new File(new StringBuilder(path).append(BlespintegrationConstants.SLASH).append(fileName).toString());
