@@ -87,6 +87,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                 BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
                 BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN), rentalStart, sourcingLocation.getWarehouse().getCutOffTime());
 
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "getUpdatedSourcingLocation : BusinessDaysDifferenceWithCutOffTime :" + result+" Order : " + order.getCode());
+
         if (result >= BlInventoryScanLoggingConstants.THREE) {
             final Map<String, Long> allocatedMap = sourcingLocation.getAllocatedMap();
             if (allocatedMap != null) {
@@ -275,10 +277,12 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         
      	  // To get the INBOUND and OUTBOUND service days from shipping optimization records
         shippingOptimizationModels = getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
- 
+
         final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOrder().getActualRentalStartDate(),
       	   	 consignmentModel.getOrder().getRentalStartDate(), consignmentModel.getWarehouse().getCutOffTime());
-        
+
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "getOptimizedShippingMethodForOrder : BusinessDaysDifferenceWithCutOffTime :" + result+" Order : " + consignmentModel.getOrder().getCode());
+
         final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 
         if(CollectionUtils.isNotEmpty(shippingOptimizationModels))
@@ -497,9 +501,9 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         consignmentModel.setOptimizedShippingEndDate(optimizedEndDate);
 
         if(null!=consignmentModel) {
-      	  updateActualRentalDatesOnOrder(consignmentModel);      	  
+      	  updateActualRentalDatesOnOrder(consignmentModel);
         }
-        
+
         final OptimizedShippingTypeEnum optimizedShippingType = checkConsignmentShippingType(consignmentModel, result);
         consignmentModel.setOptimizedShippingMethodType(optimizedShippingType);
         if (result != BlInventoryScanLoggingConstants.ZERO && optimizedShippingType != null) {
