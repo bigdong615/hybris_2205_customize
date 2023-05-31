@@ -57,5 +57,9 @@ public class DomoAddressPopulator extends BlAddressPopulator
 		}
 		target.setPhone2(source.getPhone2());
 		target.setPrimaryKey(source.getPk().toString());
+		target.setBillingAddress(source.getBillingAddress());
+		target.setShippingAddress(source.getShippingAddress());
+		target.setUnloadingAddress(source.getUnloadingAddress());
+		target.setContactaAddress(source.getContactAddress());
 	}
 }
