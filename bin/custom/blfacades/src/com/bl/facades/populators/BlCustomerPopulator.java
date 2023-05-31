@@ -74,5 +74,17 @@ public class BlCustomerPopulator extends CustomerPopulator
 		target.setAverageGearOrderValue(source.getAverageGearOrderValue());
 		target.setGearvalueordersinprogress(source.getGearValueOrdersInProgress());
 		target.setPrimaryKey(source.getPk().toString());
+		if (source.getDefaultBillingAddress() != null)
+		{
+			target.setDefaultBillingAddressPk(source.getDefaultBillingAddress().getPk().toString());
+		}
+		if (source.getDefaultPaymentAddress() != null)
+		{
+			target.setDefaultPaymentAddressPk(source.getDefaultPaymentAddress().getPk().toString());
+		}
+		if (source.getDefaultShipmentAddress() != null)
+		{
+			target.setDefaultShippingAddressPk(source.getDefaultShipmentAddress().getPk().toString());
+		}
 	}
 }
