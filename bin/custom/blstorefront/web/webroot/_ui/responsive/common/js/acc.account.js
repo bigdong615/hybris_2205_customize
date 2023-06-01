@@ -142,13 +142,17 @@ ACC.account = {
                    pageType:pageType
                  });
 
-                            if(pageType=== 'CART')
+                            if(pageType=== 'CART' && !($('.js-cart-type').val() === 'usedGear'))
                             {
                             		moveToShippingStep(e);
                             }
-                            else
+                            else if($('.js-cart-type').val() === 'usedGear')
                             {
-                            		location.reload();
+                            var url = ACC.config.encodedContextPath + "/checkout/multi/delivery-method/chooseShipping";
+                            window.location.href = url;
+                            }
+                            else{
+                            location.reload();
                             }
 							}else if(!(productCode == "" || productCode  == undefined)){
 							addingProductToBookMark(productCode);
@@ -264,14 +268,18 @@ ACC.account = {
                     userId: $('#j_username').val(),
                      pageType:pageType
                   });
-								if(pageType=== 'CART')
-								{
-								moveToShippingStep(e);
-								}
-								else
-								{
-								 location.reload();
-								}
+								if(pageType=== 'CART' && !($('.js-cart-type').val() === 'usedGear'))
+                                {
+                                moveToShippingStep(e);
+                                }
+                                else if($('.js-cart-type').val() === 'usedGear')
+                                {
+                                var url = ACC.config.encodedContextPath + "/checkout/multi/delivery-method/chooseShipping";
+                                window.location.href = url;
+                                }
+                                else{
+                                location.reload();
+                                }
 							}
 							
 						}
