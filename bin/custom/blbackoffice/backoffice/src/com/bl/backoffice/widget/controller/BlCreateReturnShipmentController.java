@@ -1,5 +1,10 @@
 package com.bl.backoffice.widget.controller;
 
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.ShippingOptimizationModel;
+import com.bl.core.shipping.service.BlDeliveryModeService;
+import com.bl.core.utils.BlDateTimeUtils;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
@@ -7,10 +12,9 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -65,6 +69,12 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
+
+	@Resource(name = "zoneDeliveryModeService")
+	private BlDeliveryModeService zoneDeliveryModeService;
+
+	@Resource(name = "blDatePickerService")
+	private BlDatePickerService blDatePickerService;
 
 	private ListModelList<String> warehouseList = new ListModelList<>();
 
@@ -212,6 +222,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 				errorPackages.add(packagingInfoModel.getPackageId());
 			}
 			if(BooleanUtils.isTrue(isLabelGenerateSuccess)){
+				updateOptimizedEndDateOnConsignment(packagingInfoModel, stateWarehouse);
 				packagingInfoModel.setInboundWarehouse(stateWarehouse);
 				getModelService().save(packagingInfoModel);
 				getModelService().refresh(packagingInfoModel);
@@ -220,6 +231,61 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 			}
 		}
 		return errorPackages;
+	}
+
+	private void updateOptimizedEndDateOnConsignment(PackagingInfoModel packagingInfoModel, WarehouseModel stateWarehouse) {
+
+		ConsignmentModel consignmentModel = packagingInfoModel.getConsignment();
+		if(null != consignmentModel && !(stateWarehouse.equals(consignmentModel.getWarehouse())))
+		{
+			String postalCode = consignmentModel.getOrder().getDeliveryAddress().getPostalcode().toString();
+			String carrierID = consignmentModel.getCarrier();
+			int carrier = carrierID.equalsIgnoreCase("UPS") ? 2 : 1;
+			String homeBaseID = stateWarehouse.getName();
+			int homeBase = homeBaseID.equalsIgnoreCase("MA") ? 2 : 1;
+			List<ShippingOptimizationModel> shippingOptimizationModels = getZoneDeliveryModeService().getOptimizedShippingRecords(carrier, homeBase, postalCode);
+			shippingOptimizationModels = shippingOptimizationModels.stream().filter(shippingOptimizationModel -> shippingOptimizationModel.getInbound().equals("1")).collect(Collectors.toList());
+
+			// Business logic to filter warehouseModel from list of warehouse model.
+			if(org.apache.commons.collections.CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > 1)
+			{
+				shippingOptimizationModels = shippingOptimizationModels.stream().collect(minList(Comparator.comparing(ShippingOptimizationModel::getServiceDays)));
+			}
+
+			int inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
+			final String rentalEndDate = BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalEndDate());
+			final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+			Date optimizedShippingEndDate = BlDateTimeUtils.addDaysInRentalDates(inboundServiceDays, rentalEndDate, blackOutDates);
+			consignmentModel.setOptimizedShippingEndDate(optimizedShippingEndDate);
+			getModelService().save(consignmentModel);
+			getModelService().refresh(consignmentModel);
+		}
+
+	}
+
+	static <T> Collector<T, ?, List<T>> minList(Comparator<? super T> comp) {
+		return Collector.of(ArrayList::new, (list, t) -> {
+			int c;
+			if (list.isEmpty() || (c = comp.compare(t, list.get(0))) == 0)
+				list.add(t);
+			else if (c < 0) {
+				/*
+				 * We have found a smaller element than what we already have. Clear the list and
+				 * add this smallest element to it.
+				 */
+				list.clear();
+				list.add(t);
+			}
+		}, (list1, list2) -> {
+			if (comp.compare(list1.get(0), list2.get(0)) < 0)
+				return list1;
+			else if (comp.compare(list1.get(0), list2.get(0)) > 0)
+				return list2;
+			else {
+				list1.addAll(list2);
+				return list1;
+			}
+		});
 	}
 
 	/**
@@ -291,6 +357,22 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
+	}
+
+	public BlDeliveryModeService getZoneDeliveryModeService() {
+		return zoneDeliveryModeService;
+	}
+
+	public void setZoneDeliveryModeService(BlDeliveryModeService zoneDeliveryModeService) {
+		this.zoneDeliveryModeService = zoneDeliveryModeService;
+	}
+
+	public BlDatePickerService getBlDatePickerService() {
+		return blDatePickerService;
+	}
+
+	public void setBlDatePickerService(BlDatePickerService blDatePickerService) {
+		this.blDatePickerService = blDatePickerService;
 	}
 }
 
