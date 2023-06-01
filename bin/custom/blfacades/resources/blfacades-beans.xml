@@ -1733,6 +1733,9 @@
 		<property name="averageGearOrderValue" type="java.lang.Double"/>
 		<property name="gearvalueordersinprogress" type="java.lang.Double"/>
 		<property name="primaryKey" type="java.lang.String"/>
+		<property name="defaultBillingAddressPk" type="String"/>
+		<property name="defaultPaymentAddressPk" type="String"/>
+		<property name="defaultShippingAddressPk" type="String"/>
 	</bean>
 	
 	<bean class="com.bl.facades.commercefacades.CustomerListsData">
