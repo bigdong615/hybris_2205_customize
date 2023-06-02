@@ -284,9 +284,13 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         /* final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOrder().getActualRentalStartDate(),
       	   	 consignmentModel.getOrder().getRentalStartDate(), consignmentModel.getWarehouse().getCutOffTime()); */
 
+        Date rentalStartDateForThreeDayGround = BlDateTimeUtils.subtractDaysInRentalDates(
+                BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalStartDate()),
+                getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY));
+
         final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(BlDateTimeUtils.convertStringDateToDate(
                 BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
-                BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN), consignmentModel.getOrder().getRentalStartDate(), consignmentModel.getWarehouse().getCutOffTime());
+                BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN), rentalStartDateForThreeDayGround, consignmentModel.getWarehouse().getCutOffTime());
 
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "getOptimizedShippingMethodForOrder : BusinessDaysDifferenceWithCutOffTime :" + result+" Order : " + consignmentModel.getOrder().getCode());
 
