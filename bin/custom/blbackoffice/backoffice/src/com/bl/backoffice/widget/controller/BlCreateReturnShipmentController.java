@@ -239,8 +239,8 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		if(null != consignmentModel && !(stateWarehouse.getCode().equalsIgnoreCase(consignmentModel.getWarehouse().getCode())))
 		{
 			String postalCode = consignmentModel.getOrder().getDeliveryAddress().getPostalcode().toString();
-			String carrierID = consignmentModel.getCarrier();
-			int carrier = carrierID.equalsIgnoreCase("UPS") ? 2 : 1;
+			String carrierID = consignmentModel.getDeliveryMode().getCode();
+			int carrier = carrierID.contains("UPS") ? 2 : 1;
 			String homeBaseID = stateWarehouse.getName();
 			int homeBase = homeBaseID.equalsIgnoreCase("MA") ? 2 : 1;
 			List<ShippingOptimizationModel> shippingOptimizationModels = getZoneDeliveryModeService().getOptimizedShippingRecords(carrier, homeBase, postalCode);
