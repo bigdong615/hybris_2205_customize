@@ -236,7 +236,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	private void updateOptimizedEndDateOnConsignment(PackagingInfoModel packagingInfoModel, WarehouseModel stateWarehouse) {
 
 		ConsignmentModel consignmentModel = packagingInfoModel.getConsignment();
-		if(null != consignmentModel && !(stateWarehouse.equals(consignmentModel.getWarehouse())))
+		if(null != consignmentModel && !(stateWarehouse.getCode().equalsIgnoreCase(consignmentModel.getWarehouse().getCode())))
 		{
 			String postalCode = consignmentModel.getOrder().getDeliveryAddress().getPostalcode().toString();
 			String carrierID = consignmentModel.getCarrier();
