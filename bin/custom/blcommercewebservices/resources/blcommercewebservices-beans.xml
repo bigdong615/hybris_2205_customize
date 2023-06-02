@@ -523,6 +523,9 @@
 		<property name="averageGearOrderValue" type="java.lang.Double"/>
 		<property name="gearvalueordersinprogress" type="java.lang.Double"/>
 		<property name="primaryKey" type="java.lang.String"/>
+		<property name="defaultBillingAddressPk" type="String"/>
+		<property name="defaultPaymentAddressPk" type="String"/>
+		<property name="defaultShippingAddressPk" type="String"/>
 	</bean>
 	
 	<bean class="de.hybris.platform.commercewebservicescommons.dto.UsersListWsDTO">
@@ -575,7 +578,8 @@
 	  	<property name="latitude" type="java.lang.Double"/>
 	  	<property name="longitude" type="java.lang.Double"/>
 	  	<property name="phone2" type="String"/>
-        <property name="primaryKey" type="java.lang.String"/>                                                          
+        <property name="primaryKey" type="java.lang.String"/> 
+        <property name="billingAddress" type="boolean"/>                                                         
     </bean>
     
     <bean class="de.hybris.platform.commercewebservicescommons.dto.user.address.AddressListWsDTO">

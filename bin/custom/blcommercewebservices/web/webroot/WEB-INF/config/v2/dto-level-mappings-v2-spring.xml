@@ -81,9 +81,9 @@
                   value="de.hybris.platform.commercewebservicescommons.dto.user.AddressWsDTO"/>
         <property name="levelMapping">
             <map>
-                <entry key="BASIC" value="id"/>
-                <entry key="DEFAULT" value="BASIC,firstName,lastName,email,titleCode,phone,cellphone,line1,line2,postalCode,country,region,district,town,defaultAddress"/>
-                <entry key="FULL" value="createdTS,modifiedTS,original,primaryKey,duplicate,appartment,building,department,fax,middleName,middleName2,poBox,streetName,streetNumber,gender,dateOfBirth,remarks,unloadingAddress,zone,latitude,longitude,phone2,title,firstName,lastName,town,postalCode,region,district,country,email,shippingAddress,visibleInAddressBook,addressType,openingDaysDetails,pickStoreAddress,upsStoreAddress,url"/>
+                <entry key="BASIC" value="createdTS,modifiedTS,original,primaryKey,duplicate,appartment,building,department,fax,middleName,middleName2,poBox,streetName,streetNumber,gender,dateOfBirth,remarks,unloadingAddress,zone,latitude,longitude,phone2,title,firstName,lastName,town,postalCode,region,district,country,email,shippingAddress,visibleInAddressBook,addressType,openingDaysDetails,pickStoreAddress,upsStoreAddress,url,contactaAddress,billingAddress,shippingAddress,unloadingAddress"/>
+                <entry key="DEFAULT" value="createdTS,modifiedTS,original,primaryKey,duplicate,appartment,building,department,fax,middleName,middleName2,poBox,streetName,streetNumber,gender,dateOfBirth,remarks,unloadingAddress,zone,latitude,longitude,phone2,title,firstName,lastName,town,postalCode,region,district,country,email,shippingAddress,visibleInAddressBook,addressType,openingDaysDetails,pickStoreAddress,upsStoreAddress,url,contactaAddress,billingAddress,shippingAddress,unloadingAddress"/>
+                <entry key="FULL" value="createdTS,modifiedTS,original,primaryKey,duplicate,appartment,building,department,fax,middleName,middleName2,poBox,streetName,streetNumber,gender,dateOfBirth,remarks,unloadingAddress,zone,latitude,longitude,phone2,title,firstName,lastName,town,postalCode,region,district,country,email,shippingAddress,visibleInAddressBook,addressType,openingDaysDetails,pickStoreAddress,upsStoreAddress,url,contactaAddress,billingAddress,shippingAddress,unloadingAddress"/>
             </map>
         </property>
     </bean>
@@ -160,7 +160,7 @@
                 <entry key="DEFAULT"
                        value="lastName,title,titleCode,displayUid,defaultAddress(DEFAULT),language(DEFAULT),firstName,currency(DEFAULT),uid,name,customerId,deactivationDate"/>
                 <entry key="FULL"
-                       value="lastName,title,titleCode,primaryKey,displayUid,defaultAddress(FULL),language(FULL),firstName,currency(FULL),uid,name,customerId,deactivationDate,createdTS,modifiedTS,description,passwordAnswer,passwordQuestion,retentionState,taxExemptNumber,taxExemptState,lastLogin,coiExpirationDate,taxExemptExpiry,backofficeLoginDisabled,loginDisabled,authorizedToUnlockPages,isTaxExempt,hmcLoginDisabled,emailPreference,smsPreference,poEnabled,vip,coiVerified,employee,originalUid,type,braintreeCustomerId,badBehaviorTag,coiCoverageAmount,kycScore,vipType,verificationLinkSource,photoOrVideo,badBehaviorNotes,verificationNotes,verificationLink,accountNotes,orderCount,completedOrderCount,inprocessOrderCount,totalAmountPastDue,blRewards,averageGearOrderValue,gearvalueordersinprogress"/>
+                       value="lastName,title,titleCode,primaryKey,displayUid,defaultAddress(FULL),language(FULL),firstName,currency(FULL),uid,name,customerId,deactivationDate,createdTS,modifiedTS,description,passwordAnswer,passwordQuestion,retentionState,taxExemptNumber,taxExemptState,lastLogin,coiExpirationDate,taxExemptExpiry,backofficeLoginDisabled,loginDisabled,authorizedToUnlockPages,isTaxExempt,hmcLoginDisabled,emailPreference,smsPreference,poEnabled,vip,coiVerified,employee,originalUid,type,braintreeCustomerId,badBehaviorTag,coiCoverageAmount,kycScore,vipType,verificationLinkSource,photoOrVideo,badBehaviorNotes,verificationNotes,verificationLink,accountNotes,orderCount,completedOrderCount,inprocessOrderCount,totalAmountPastDue,blRewards,averageGearOrderValue,gearvalueordersinprogress,defaultBillingAddressPk,defaultPaymentAddressPk,defaultShippingAddressPk"/>
             </map>
         </property>
     </bean>

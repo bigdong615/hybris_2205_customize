@@ -141,7 +141,19 @@ ACC.account = {
                    userId: userId,
                    pageType:pageType
                  });
-								location.reload();
+
+                            if(pageType=== 'CART' && !($('.js-cart-type').val() === 'usedGear'))
+                            {
+                            		moveToShippingStep(e);
+                            }
+                            else if($('.js-cart-type').val() === 'usedGear')
+                            {
+                            var url = ACC.config.encodedContextPath + "/checkout/multi/delivery-method/chooseShipping";
+                            window.location.href = url;
+                            }
+                            else{
+                            location.reload();
+                            }
 							}else if(!(productCode == "" || productCode  == undefined)){
 							addingProductToBookMark(productCode);
               $("#signUp").hide();
@@ -256,7 +268,18 @@ ACC.account = {
                     userId: $('#j_username').val(),
                      pageType:pageType
                   });
-								location.reload();
+								if(pageType=== 'CART' && !($('.js-cart-type').val() === 'usedGear'))
+                                {
+                                moveToShippingStep(e);
+                                }
+                                else if($('.js-cart-type').val() === 'usedGear')
+                                {
+                                var url = ACC.config.encodedContextPath + "/checkout/multi/delivery-method/chooseShipping";
+                                window.location.href = url;
+                                }
+                                else{
+                                location.reload();
+                                }
 							}
 							
 						}
@@ -314,6 +337,32 @@ ACC.account = {
                     }
                  })
                  return status;
+        }
+
+        function moveToShippingStep(e){
+
+                           e.preventDefault();
+                             	$.ajax({
+                             		url: ACC.config.encodedContextPath + "/cart/checkDateAndStock",
+                             		type: 'GET',
+                                 success: function (response) {
+
+                             			if (response == 'success') {
+                             				var url = ACC.config.encodedContextPath + "/checkout/multi/delivery-method/chooseShipping";
+                             				window.location.href = url;
+                             			} else if (response == 'rentalDateNotSelected') {
+                             				$('#signIn').modal('hide');
+                             				$('#signUp').modal('hide');
+                             				$('#cart-warning').css('display', 'block');
+                             			}else{
+                             			  window.location.href = ACC.config.encodedContextPath + "/cart";
+                             			}
+                             		},
+                             		error: function (jqXHR, textStatus, errorThrown) {
+                             			console.log("The following error occurred: " + jqXHR, textStatus, errorThrown);
+                             		}
+                             	});
+
         }
 
 	}

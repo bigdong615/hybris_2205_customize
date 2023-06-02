@@ -300,6 +300,7 @@
                      data-bs-toggle="modal" data-bs-target="#signIn">
                      <spring:theme code="general.continue.button" />
                      <input type="hidden" value="${pageType}" class="js-page-type"/>
+                     <input type="hidden" value="usedGear" class="js-cart-type"/>
                   </a>
                </sec:authorize>
                <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
