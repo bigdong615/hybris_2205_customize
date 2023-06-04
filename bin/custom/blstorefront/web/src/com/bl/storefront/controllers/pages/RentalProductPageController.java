@@ -105,7 +105,9 @@ public class RentalProductPageController extends AbstractBlProductPageController
       return productDetail(encodedProductCode, options, productData, model, request, response);
     } catch(final Exception ex){
       BlLogger.logMessage(LOG, Level.ERROR,"Product Not found for Code{}",encodedProductCode, ex);
-      return REDIRECT_PREFIX + ROOT;
+		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+		response.setHeader("Location", REDIRECT_PREFIX + ROOT);
+		return null;
     }
   }
 
