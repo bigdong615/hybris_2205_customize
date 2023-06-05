@@ -84,7 +84,9 @@
                     <column width="15%" sclass="oms-widget-reassignserial-listbox-header">
                          <label value="${labels.blbackoffice.bulk.scan.orderNotes.code}" width="100%"/>
                     </column>
-                   
+                    <column width="1%">
+                         <label value="" width="0%"/>
+                    </column>
                  
                 </columns>
                 <rows >
@@ -96,29 +98,30 @@
                             <label value="${each.orderNumber}" width="100%"/>
                             <label value="${each.barcode}" style="display:none;" width="0%"/>
                           
-                             <textbox disabled="${each.firmwareVersion == null}" value="${each.firmwareVersion}" width="50%" style="margin-left:15px;text-align:center;"/>
+                             <textbox disabled="${each.disableFlag}" value="${each.firmwareVersion}" width="50%" style="margin-left:15px;text-align:center;"/>
                              
                              <label value="${each.skuFirmwareVersion}" width="100%" />
                            
-                                <combobox xmlns:w="client" value = "${each.functionalRatingValue}" disabled="${empty each.functionalRating}"
+                                <combobox xmlns:w="client" value = "${each.functionalRatingValue}" disabled="${each.disableFlag}"
                                 model="${each.functionalRating}" 
                                 readonly="true" style="margin-left:4px;width:95%;">
                                <comboitem label="${each.functionalRating}" value="${each.functionalRating}" />
                             </combobox>        
                             
-                              <combobox xmlns:w="client" value = "${each.cosmeticRatingValue}" disabled="${empty each.cosmeticRating}"
+                              <combobox xmlns:w="client" value = "${each.cosmeticRatingValue}" disabled="${each.disableFlag}"
                                 model="${each.cosmeticRating}" placeholder="${labels.warehousingbackoffice.reallocationconsignment.popup.placeholder.reason}"
                                 readonly="true" style="margin-left:4px;width:95%;">
                                <comboitem label="${each.cosmeticRating}" value="${each.cosmeticRating}" />
                             </combobox>        
                             
-                            <combobox xmlns:w="client" value = "${each.testingStatusValue}" disabled="${empty each.testingStatus}" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)"
+                            <combobox xmlns:w="client" value = "${each.testingStatusValue}" disabled="${each.disableFlag}" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)"
                                 model="${each.testingStatus}" placeholder="${labels.warehousingbackoffice.reallocationconsignment.popup.placeholder.reason}"
-                                readonly="true" style="margin-left:4px;width:95%;">
+                                readonly="true" style="margin-left:4px;width:95%;" >
                                <comboitem label="${each.testingStatus}" value="${each.testingStatus}" />
                             </combobox>                            
                             
-                      <label value="${each.orderNotes}" width="100%"/>                              
+                      <label value="${each.orderNotes}" width="100%"/> 
+                       <label style="display:none;" value="${each.consignmentEntry}" width="0%"/>                              
                         </row>
                     </template>
                 </rows>
