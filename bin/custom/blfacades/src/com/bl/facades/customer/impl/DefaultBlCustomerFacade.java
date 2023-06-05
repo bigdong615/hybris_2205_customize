@@ -149,7 +149,7 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
 	@Override
 	public void updateUserProfile(final CustomerData customerData) throws DuplicateUidException
 	{
-		validateDataBeforeUpdate(customerData);
+		//validateDataBeforeUpdate(customerData);
 
 		final CustomerModel customer = getCurrentSessionCustomer();
 		//customer.setOriginalUid(customerData.getDisplayUid());

@@ -664,9 +664,9 @@ public class AccountPageController extends AbstractSearchPageController
 		final UpdateProfileForm updateProfileForm = new UpdateProfileForm();
 
 		updateProfileForm.setTitleCode(customerData.getTitleCode());
-		updateProfileForm.setFirstName(customerData.getFirstName());
-		updateProfileForm.setLastName(customerData.getLastName());
-		updateProfileForm.setFullName(customerData.getFirstName() + " " + customerData.getLastName());
+		//updateProfileForm.setFirstName(customerData.getFirstName());
+		//updateProfileForm.setLastName(customerData.getLastName());
+		updateProfileForm.setFullName(customerData.getName());
 		updateProfileForm.setEmail(customerData.getUid());
 
 		model.addAttribute("updateProfileForm", updateProfileForm);
@@ -713,7 +713,7 @@ public class AccountPageController extends AbstractSearchPageController
 			{
 				blCustomerFacade.updateUserProfile(customerData);
 				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-						"text.account.profile.confirmationUpdated", null);
+						"account.confirmation.profile.updated", null);
 
 			}
 			catch (final DuplicateUidException e)
