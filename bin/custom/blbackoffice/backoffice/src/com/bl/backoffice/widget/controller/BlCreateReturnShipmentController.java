@@ -262,13 +262,19 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 				if(CollectionUtils.isNotEmpty(shippingOptimizationModels))
 				{
-					int inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays()  ;
+					int inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
 					final String rentalEndDate = BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalEndDate());
 					final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 					Date optimizedShippingEndDate = BlDateTimeUtils.addDaysInRentalDates(inboundServiceDays, rentalEndDate, blackOutDates);
 					consignmentModel.setOptimizedShippingEndDate(optimizedShippingEndDate);
 					getModelService().save(consignmentModel);
 					getModelService().refresh(consignmentModel);
+
+					if(null != consignmentModel.getOrder()){
+						consignmentModel.getOrder().setActualRentalEndDate(optimizedShippingEndDate);
+						getModelService().save(consignmentModel.getOrder());
+						getModelService().refresh(consignmentModel.getOrder());
+					}
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "updateOptimizedEndDateOnConsignment done.");
 				}
 			}
