@@ -128,7 +128,8 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 		for (final BlSerialProductModel serial : product.getSerialProducts())
 		{
 			if (getBlStockService().isVisibleInPdp(serial.getSerialStatus()) && serial.getForSale()
-					&& getBlCommerceStockService().isUsedGearSerialNotAssignedToRentalOrder(serial.getCode()))
+					&& getBlCommerceStockService().isUsedGearSerialNotAssignedToRentalOrder(serial.getCode())
+					&& serial.getApprovalStatus().equals("approved"))
 			{
 
 				final BlProductModel skuProduct = serial.getBlProduct();
