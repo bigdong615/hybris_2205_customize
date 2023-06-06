@@ -106,7 +106,7 @@ public class RentalProductPageController extends AbstractBlProductPageController
     } catch(final Exception ex){
       BlLogger.logMessage(LOG, Level.ERROR,"Product Not found for Code{}",encodedProductCode, ex);
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-		response.setHeader("Location", REDIRECT_PREFIX + ROOT);
+		response.setHeader("Location", REDIRECT_PREFIX + encodedProductCode);
 		return null;
     }
   }
