@@ -509,7 +509,14 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      */
     private void setOptimizedDetailsOnConsignment(final ConsignmentModel consignmentModel, final int result, final Date optimizedStartDate,
                                                   final Date optimizedEndDate, final OptimizedShippingMethodEnum optimizedShippingMethod) {
-        consignmentModel.setOptimizedShippingStartDate(optimizedStartDate);
+        final Date currentDate = BlDateTimeUtils.convertStringDateToDate(
+                BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
+                BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
+        if(optimizedStartDate.compareTo(currentDate) < 0) {
+            consignmentModel.setOptimizedShippingStartDate(currentDate);
+        }else{
+            consignmentModel.setOptimizedShippingStartDate(optimizedStartDate);
+        }
         consignmentModel.setOptimizedShippingEndDate(optimizedEndDate);
 
         if(null != consignmentModel && null != consignmentModel.getOrder() &&

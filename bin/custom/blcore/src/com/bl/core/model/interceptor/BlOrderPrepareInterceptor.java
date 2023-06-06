@@ -417,7 +417,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 			for (final ConsignmentModel consignmentModel : abstractOrderModel.getConsignments()) {
 				consignmentModel.getOrder().setRentalStartDate(abstractOrderModel.getRentalStartDate());
 				consignmentModel.getOrder().setRentalEndDate(abstractOrderModel.getRentalEndDate());
-				updareShippingOptimizationDate(abstractOrderModel, sourcingLocation, isGroundAvailability, consignmentModel);
+				updateShippingOptimizationDate(abstractOrderModel, sourcingLocation, isGroundAvailability, consignmentModel);
 			}
 		}
 		if (deliveryMode instanceof ZoneDeliveryModeModel)
@@ -525,7 +525,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 * @param consignmentModel
 	 * @return
 	 */
-	private void updareShippingOptimizationDate(final AbstractOrderModel abstractOrderModel, SourcingLocation sourcingLocation,
+	private void updateShippingOptimizationDate(final AbstractOrderModel abstractOrderModel, SourcingLocation sourcingLocation,
 			final AtomicBoolean isGroundAvailability, final ConsignmentModel consignmentModel)
 	{
 		final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(

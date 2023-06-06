@@ -2,6 +2,7 @@ package com.bl.core.services.strategy.impl;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
@@ -79,18 +80,24 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
     final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
     final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
     //    BLS-40 ends
-    
+
     if (null != rentalDateDto) {
       final Date startDay = BlDateTimeUtils
           .subtractDaysInRentalDates(preDaysToDeduct.get(), rentalDateDto.getSelectedFromDate(),
               blackOutDates);
-      
-      // Commenting replacing below line to get Post Order Transit Date same as optimized shipping end date. 
-      // final Date endDay = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd.get(), rentalDateDto.getSelectedToDate(), blackOutDates);
-      
-      final Date endDay = BlDateTimeUtils.addDaysInRentalDates(postDaysToAdd.get(), rentalDateDto.getSelectedToDate(), blackOutDates);
+      final Date currentDate = BlDateTimeUtils.convertStringDateToDate(
+              BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
+              BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
+      if(startDay.compareTo(currentDate) < 0) {
+          cartModel.setActualRentalStartDate(currentDate);
+      }else{
+          cartModel.setActualRentalStartDate(startDay);
+      }
+        // Commenting replacing below line to get Post Order Transit Date same as optimized shipping end date.
+        // final Date endDay = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd.get(), rentalDateDto.getSelectedToDate(), blackOutDates);
 
-      cartModel.setActualRentalStartDate(startDay);
+        final Date endDay = BlDateTimeUtils.addDaysInRentalDates(postDaysToAdd.get(), rentalDateDto.getSelectedToDate(), blackOutDates);
+
       cartModel.setActualRentalEndDate(endDay);
 
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
