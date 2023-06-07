@@ -5,6 +5,7 @@ import de.hybris.platform.commerceservices.search.flexiblesearch.PagedFlexibleSe
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.ItemModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -62,11 +63,12 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 
 
 	private static final String CONSIGNMENT_ENTRY_FOR_SERIAL = "SELECT {ce:" + ItemModel.PK + "} from {"
-			+ ConsignmentEntryModel._TYPECODE + " as ce}, {" + ConsignmentModel._TYPECODE + " as con} where {ce:"
+			+ ConsignmentEntryModel._TYPECODE + " as ce}, {" + ConsignmentModel._TYPECODE + " as con}, {" + OrderModel._TYPECODE
+			+ " as order} where {ce:"
 			+ ConsignmentEntryModel.SERIALPRODUCTS + "} LIKE CONCAT('%',CONCAT(?serial,'%'))" + " and {con:" + ItemModel.PK
-			+ "} = {ce:" + ConsignmentEntryModel.CONSIGNMENT
+			+ "} = {ce:" + ConsignmentEntryModel.CONSIGNMENT + "} and {order:" + ItemModel.PK + "} = {con:" + ConsignmentModel.ORDER
+			+ "} order by {order:" + OrderModel.CODE + "} DESC ";
 			//			+ "} and {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = 'COMPLETED'}})";
-			+ "}";
 
 	private static final String CONSIGNMENT_ENTRY_BY_PK = "SELECT {ce:" + ItemModel.PK + "} from {"
 			+ ConsignmentEntryModel._TYPECODE + " as ce} WHERE {ce:" + ItemModel.PK + "} = ?consignmentPK";
@@ -306,4 +308,19 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 		this.flexibleSearchService = flexibleSearchService;
 	}
 
+
+
+	@Override
+	public List<ConsignmentEntryModel> getMismatchConsignmentEntries()
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery("SELECT distinct {ce.pk} FROM {ConsignmentEntry as ce}");
+
+		final SearchResult<ConsignmentEntryModel> search = getFlexibleSearchService().<ConsignmentEntryModel> search(fQuery);
+		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
+		{
+			return Lists.newArrayList();
+		}
+		final List<ConsignmentEntryModel> result = search.getResult();
+		return Lists.newArrayList(result);
+	}
 }

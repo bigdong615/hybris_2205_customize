@@ -76,4 +76,9 @@ public interface BlConsignmentDao
 	 */
 	ConsignmentEntryModel getConsignmentEntryByPk(String pk);
 
+	/**
+	 * @return
+	 */
+	List<ConsignmentEntryModel> getMismatchConsignmentEntries();
+
 }

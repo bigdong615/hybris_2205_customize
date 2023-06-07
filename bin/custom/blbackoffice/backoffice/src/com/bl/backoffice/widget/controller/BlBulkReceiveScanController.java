@@ -172,6 +172,10 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 					// Pulling all consignment entries, which is having this serial
 					final List<ConsignmentEntryModel> consEntry = blConsignmentDao
 							.getConsignmentEntriesForSerialCode(blSerialProductModel);
+
+
+
+
 					if (CollectionUtils.isNotEmpty(consEntry))
 					{
 						for (final ConsignmentEntryModel consignEntryModel : consEntry)
@@ -617,7 +621,12 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 								&& product.getProductType().getCode().equals("SUBPARTS")
 								&& product.getNumberSystem().getCode().equals("NONE"))
 						{
+							// We need to skip the subparts, which status is missing
+							if (itemsMap.get(product.getName()) != null ? !itemsMap.get(product.getName()).equals("MISSING")
+									: Boolean.TRUE)
+							{
 							itemsMap.put(product.getName(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+							}
 						}
 
 					});
