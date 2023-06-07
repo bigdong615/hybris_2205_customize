@@ -327,8 +327,9 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
               
            } else {
             
-              setOptimizedDetailsOnConsignment(consignmentModel, result, consignmentModel.getOrder().getRentalStartDate(),
-                  consignmentModel.getOrder().getRentalEndDate(), OptimizedShippingMethodEnum.DEFAULT);
+              setOptimizedDetailsOnConsignment(consignmentModel, result, BlDateTimeUtils.subtractDaysInRentalDates(
+                      preDaysToDeduct.get(), rentalStartDate, blackOutDates), BlDateTimeUtils.addDaysInRentalDates(
+                      postDaysToAdd.get(), rentalEndDate, blackOutDates), OptimizedShippingMethodEnum.DEFAULT);
                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "getOptimizedShippingMethodForOrder : Order : " + consignmentModel.getOrder().getCode());
                return false;
            }
@@ -504,7 +505,6 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      *
      * @param consignmentModel        order
      * @param result                  of days
-     * @param optimizedDate           date
      * @param optimizedShippingMethod methode
      */
     private void setOptimizedDetailsOnConsignment(final ConsignmentModel consignmentModel, final int result, final Date optimizedStartDate,
