@@ -6,7 +6,7 @@ uri="http://www.springframework.org/tags"%>
 
 <template:page pageTitle="${pageTitle}">
   <div class="container search-container">
-		<cms:pageSlot position="HowItWorkPageSearchBoxSlot" var="feature">
+		<cms:pageSlot position="HomePageBannerSearchBoxSlot" var="feature">
 			<cms:component component="${feature}" />
 		</cms:pageSlot>
     </div>
