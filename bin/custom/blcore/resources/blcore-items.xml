@@ -43,6 +43,8 @@
         <collectiontype code="IpVelocityList" elementtype="java.lang.String" type="list"/>
 
         <collectiontype code="subpartsList" elementtype="BlSubparts" type="list"/>
+        <collectiontype code="stockList" elementtype="StockLevel" type="list"/>
+
 
     </collectiontypes>
 
@@ -7956,6 +7958,23 @@
 
         <typegroup name="orderBussinessProcess">
             <itemtype code="OrderToAvalaraProcess" autocreate="true" generate="true" extends="BusinessProcess"/>
+
+            <itemtype generate="true"
+              code="ReallocateSerialProcess"
+              extends="BusinessProcess" autocreate="true">
+                <attributes>
+                    <attribute qualifier="associatedOrderStocks" type="stockList">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="oldSerialProduct" type="BlSerialProduct">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="reservedStatus" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
+                </attributes>
+            </itemtype>
         </typegroup>
 
         <typegroup name="ShippingLabelLog">
