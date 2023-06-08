@@ -167,7 +167,7 @@
             <script src="${commonResourcePathHtml}/js/blcustomshipping.js"></script>
         </c:if>
 
-		<c:if test="${cmsPage.uid eq 'homepage' || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'shipOrPickupPage'}">
+		<c:if test="${cmsPage.uid eq 'homepage'}">
 
 		<script>
 		$('.social').eq(1).remove();
