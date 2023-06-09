@@ -308,19 +308,4 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 		this.flexibleSearchService = flexibleSearchService;
 	}
 
-
-
-	@Override
-	public List<ConsignmentEntryModel> getMismatchConsignmentEntries()
-	{
-		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery("SELECT distinct {ce.pk} FROM {ConsignmentEntry as ce}");
-
-		final SearchResult<ConsignmentEntryModel> search = getFlexibleSearchService().<ConsignmentEntryModel> search(fQuery);
-		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
-		{
-			return Lists.newArrayList();
-		}
-		final List<ConsignmentEntryModel> result = search.getResult();
-		return Lists.newArrayList(result);
-	}
 }

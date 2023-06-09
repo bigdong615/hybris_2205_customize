@@ -174,8 +174,6 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 							.getConsignmentEntriesForSerialCode(blSerialProductModel);
 
 
-
-
 					if (CollectionUtils.isNotEmpty(consEntry))
 					{
 						for (final ConsignmentEntryModel consignEntryModel : consEntry)
@@ -438,7 +436,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 			throw new WrongValueException(this.globalDeclineEntriesSelection,
 					this.getLabel("warehousingbackoffice.reassignserial.decline.validation.missing.selectedLine"));
 		}
-		this.sendOutput(OUT_CONFIRM, COMPLETE);
+		//this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
 	//	private void createDataForNonBarcodedSubparts(final List<BulkReceiveRespData> selectedSerials, final BlSerialProductModel blSerialProductModel)
@@ -638,6 +636,14 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				}
 
 			}
+
+			this.productsListDiv.setStyle("resize:none;display:none");
+			this.barcodesSectionId.setStyle("resize:none;display:block");
+			this.getWidgetInstanceManager()
+					.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.bulk.scan.heading")));
+			bulkScanToolData = new BulkReceiveScanToolData();
+			scanningArea.setValue("");
+			this.globalDeclineEntriesSelection.setChecked(false);
 
 			Messagebox.show(BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_SUCCESS_MSG);
 		}
