@@ -215,7 +215,7 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 							serial.getCode());
 					if (getBlStockService().isVisibleInPdp(serial.getSerialStatus()) && serial.getForSale()
 							&& getBlCommerceStockService().isUsedGearSerialNotAssignedToRentalOrder(serial.getCode())
-							&& serial.getApprovalStatus().equals("approved"))
+							&& serial.getApprovalStatus().getCode().equalsIgnoreCase("approved"))
 					{
 						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 								"Current Used gear Serial Product id for Google Feed is avaialble and added to feed : {}",
