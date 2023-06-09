@@ -3,6 +3,8 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ContentPageBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
@@ -22,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UrlPathHelper;
@@ -44,6 +47,12 @@ public class DefaultPageController extends AbstractPageController
 
 	@Resource(name = "contentPageBreadcrumbBuilder")
 	private ContentPageBreadcrumbBuilder contentPageBreadcrumbBuilder;
+
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration()
+	{
+		return BlRentalDateUtils.getRentalsDuration();
+	}
 
 	@RequestMapping(value = "/**", method = RequestMethod.GET)
 	public String get(final Model model, final HttpServletRequest request, final HttpServletResponse response)
