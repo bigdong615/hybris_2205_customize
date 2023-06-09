@@ -6,7 +6,7 @@
 
 <template:page pageTitle="${pageTitle}">
 	<div class="container search-container">
-		<cms:pageSlot position="HomePageBannerSearchBoxSlot" var="feature">
+		<cms:pageSlot position="AffiliatePageSearchBoxSlot" var="feature">
 			<cms:component component="${feature}" />
 		</cms:pageSlot>
 	</div>
