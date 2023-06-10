@@ -33,7 +33,9 @@ import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -859,6 +861,43 @@ public class DomoController extends BaseCommerceController
 		stockLevelListData = createstockLevelListData(blDomoFacade.getStockModifiedTime(pageableData, convertDate(date)));
 		setTotalCountHeader(response, stockLevelListData.getPagination());
 		return getDataMapper().map(stockLevelListData, StockLevelListWsDTO.class, fields);
+	}
+
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/orderEntriesSerials", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getOrderEntriesSerials", value = "Get orders", notes = "Returns orders")
+	@ApiBaseSiteIdAndUserIdParam
+	public OrderEntryListWsDTO getOrderEntriesSerials(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	final String date, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final OrderEntryListData orderEntryListData;
+		final SearchPageData<OrderEntryData> orderentries = blDomoFacade.getOrderEntries(pageableData, convertDate(date));
+		final List<OrderEntryData> oel = new ArrayList<OrderEntryData>();
+		for (final OrderEntryData oe : orderentries.getResults())
+		{
+			for (final String str : oe.getSerialProducts().split(","))
+			{
+				final OrderEntryData orderEntryData = getDataMapper().map(oe, OrderEntryData.class);
+				orderEntryData.setSerialProducts(str);
+				oel.add(orderEntryData);
+			}
+		}
+		orderentries.getResults().removeAll(orderentries.getResults());
+		orderentries.getResults().addAll(oel);
+		orderEntryListData = createOrderEntryListData(orderentries);
+		setTotalCountHeader(response, orderEntryListData.getPagination());
+		return getDataMapper().map(orderEntryListData, OrderEntryListWsDTO.class, fields);
 	}
 
 }
