@@ -3,35 +3,6 @@
  */
 package com.bl.storefront.controllers.pages;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.model.VerificationDocumentMediaModel;
-import com.bl.core.service.invoice.GenerateInvoicePdfService;
-import com.bl.core.services.cart.BlCartService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlExtendOrderUtils;
-import com.bl.core.utils.BlRentalDateUtils;
-import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
-import com.bl.facades.customer.BlVerificationDocumentFacade;
-import com.bl.facades.order.BlOrderFacade;
-import com.bl.facades.order.BlReturnOrderFacade;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.facades.product.data.VerificationDocumentData;
-import com.bl.facades.wishlist.BlWishListFacade;
-import com.bl.facades.wishlist.data.Wishlist2EntryData;
-import com.bl.logging.BlLogger;
-import com.bl.storefront.controllers.ControllerConstants;
-import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
-import com.bl.storefront.file.validate.BlValidator;
-import com.bl.storefront.forms.BlAddressForm;
-import com.bl.storefront.forms.ReturnOrderForm;
-import com.bl.storefront.forms.VerificationDocumentForm;
-import com.bl.storefront.promotion.validate.BlPromotionValidator;
-import com.bl.storefront.validator.BlPasswordValidator;
-import com.braintree.facade.BrainTreeUserFacade;
-import com.braintree.facade.impl.BrainTreeCheckoutFacade;
-import com.braintree.model.BrainTreePaymentInfoModel;
-import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -93,6 +64,7 @@ import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,11 +78,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -133,6 +107,37 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.model.VerificationDocumentMediaModel;
+import com.bl.core.service.invoice.GenerateInvoicePdfService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlExtendOrderUtils;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
+import com.bl.facades.customer.BlCustomerFacade;
+import com.bl.facades.customer.BlVerificationDocumentFacade;
+import com.bl.facades.order.BlOrderFacade;
+import com.bl.facades.order.BlReturnOrderFacade;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.product.data.VerificationDocumentData;
+import com.bl.facades.wishlist.BlWishListFacade;
+import com.bl.facades.wishlist.data.Wishlist2EntryData;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
+import com.bl.storefront.file.validate.BlValidator;
+import com.bl.storefront.forms.BlAddressForm;
+import com.bl.storefront.forms.ReturnOrderForm;
+import com.bl.storefront.forms.VerificationDocumentForm;
+import com.bl.storefront.promotion.validate.BlPromotionValidator;
+import com.bl.storefront.validator.BlPasswordValidator;
+import com.braintree.facade.BrainTreeUserFacade;
+import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.transaction.service.BrainTreeTransactionService;
 
 
 
@@ -214,6 +219,9 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "customerFacade")
 	private CustomerFacade customerFacade;
+
+	@Resource(name = "customerFacade")
+	private BlCustomerFacade blCustomerFacade;
 
 	@Resource(name = "accountBreadcrumbBuilder")
 	private ResourceBreadcrumbBuilder accountBreadcrumbBuilder;
@@ -299,13 +307,13 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource
 	private AssistedServiceFacade assistedServiceFacade;
-	
+
 	@Resource(name = "blPromotionValidator")
 	private BlPromotionValidator blPromotionValidator;
-	
+
 	@Resource(name = "blPasswordValidator")
 	private BlPasswordValidator blPasswordValidator;
-	
+
 	@Resource(name="generateInvoicePdfService")
 	private GenerateInvoicePdfService generateInvoicePdfService;
 
@@ -542,6 +550,7 @@ public class AccountPageController extends AbstractSearchPageController
 		return null;
 	}
 
+
 	@RequestMapping(value = "/update-email", method = RequestMethod.GET)
 	@RequireHardLogIn
 	public String editEmail(final Model model) throws CMSItemNotFoundException
@@ -655,8 +664,10 @@ public class AccountPageController extends AbstractSearchPageController
 		final UpdateProfileForm updateProfileForm = new UpdateProfileForm();
 
 		updateProfileForm.setTitleCode(customerData.getTitleCode());
-		updateProfileForm.setFirstName(customerData.getFirstName());
-		updateProfileForm.setLastName(customerData.getLastName());
+		//updateProfileForm.setFirstName(customerData.getFirstName());
+		//updateProfileForm.setLastName(customerData.getLastName());
+		updateProfileForm.setFullName(customerData.getName());
+		updateProfileForm.setEmail(customerData.getUid());
 
 		model.addAttribute("updateProfileForm", updateProfileForm);
 
@@ -674,16 +685,17 @@ public class AccountPageController extends AbstractSearchPageController
 	public String updateProfile(final UpdateProfileForm updateProfileForm, final BindingResult bindingResult, final Model model,
 			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
-		getProfileValidator().validate(updateProfileForm, bindingResult);
+		//getProfileValidator().validate(updateProfileForm, bindingResult);
 
 		String returnAction = REDIRECT_TO_UPDATE_PROFILE;
 		final CustomerData currentCustomerData = customerFacade.getCurrentCustomer();
 		final CustomerData customerData = new CustomerData();
-		customerData.setTitleCode(updateProfileForm.getTitleCode());
-		customerData.setFirstName(updateProfileForm.getFirstName());
-		customerData.setLastName(updateProfileForm.getLastName());
+		//customerData.setTitleCode(updateProfileForm.getTitleCode());
+		//customerData.setFirstName(updateProfileForm.getFirstName());
+		//customerData.setLastName(updateProfileForm.getLastName());
 		customerData.setUid(currentCustomerData.getUid());
 		customerData.setDisplayUid(currentCustomerData.getDisplayUid());
+		customerData.setName(updateProfileForm.getFullName());
 
 		model.addAttribute(TITLE_DATA_ATTR, userFacade.getTitles());
 
@@ -699,9 +711,9 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			try
 			{
-				customerFacade.updateProfile(customerData);
+				blCustomerFacade.updateUserProfile(customerData);
 				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-						"text.account.profile.confirmationUpdated", null);
+						"account.confirmation.profile.updated", null);
 
 			}
 			catch (final DuplicateUidException e)
@@ -1206,10 +1218,10 @@ public class AccountPageController extends AbstractSearchPageController
 	@GetMapping(value = "/verificationImages")
 	@RequireHardLogIn
 	public String getVarificationImagesDetails(final Model model) throws CMSItemNotFoundException{
-		VerificationDocumentForm verificationDocumentForm = new VerificationDocumentForm();
+		final VerificationDocumentForm verificationDocumentForm = new VerificationDocumentForm();
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlControllerConstants.VERIFICATION_PAGE_IDENTIFIER);
     model.addAttribute("verificationDocumentForm",verificationDocumentForm);
-		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
+		final Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
 		model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
 		final ContentPageModel varificationImagesPage = getContentPageForLabelOrId(VERIFICATION_IMAGES_CMS_PAGE);
 		storeCmsPageInModel(model, varificationImagesPage);
@@ -1234,7 +1246,7 @@ public class AccountPageController extends AbstractSearchPageController
 	   blVerificationDocumentValidator.validate(verificationDocumentForm, bindingResult, model,redirectModel);
 		final ContentPageModel verificationImagesPage = getContentPageForLabelOrId(
 				VERIFICATION_IMAGES_CMS_PAGE);
-		VerificationDocumentForm verificationDocument = new VerificationDocumentForm();
+		final VerificationDocumentForm verificationDocument = new VerificationDocumentForm();
 		model.addAttribute("verificationDocumentForm",verificationDocument);
 
 		storeCmsPageInModel(model, verificationImagesPage);
@@ -1246,7 +1258,7 @@ public class AccountPageController extends AbstractSearchPageController
 		final VerificationDocumentData documentData = getVerificationDocumentData(
 				verificationDocumentForm);
 		blVerificationDocumentFacade.uploadDocument(documentData);
-		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
+		final Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
     redirectModel.addFlashAttribute("documentName", documentData.getDocument().getOriginalFilename());
 		redirectModel.addFlashAttribute("type",documentData.getDocumentType());
 		redirectModel.addFlashAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
@@ -1256,8 +1268,8 @@ public class AccountPageController extends AbstractSearchPageController
 	 * Method is used for set Erro rMessages For Verification
 	 * @param model
 	 */
-	private String setErrorMessagesForVerification(Model model) throws CMSItemNotFoundException {
-		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
+	private String setErrorMessagesForVerification(final Model model) throws CMSItemNotFoundException {
+		final Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
 		model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
 		final ContentPageModel cmsPage = getContentPageForLabelOrId(VERIFICATION_IMAGES_CMS_PAGE);
 		storeCmsPageInModel(model, cmsPage);
@@ -1267,10 +1279,10 @@ public class AccountPageController extends AbstractSearchPageController
 	}
 
 	@RequestMapping(value = "/removeDocumentEntry", method = RequestMethod.GET)
-	public String removeVerificationDocument(@RequestParam("removeDocumentEntry") String code, final Model model,final RedirectAttributes redirectModel, final HttpServletResponse response)
+	public String removeVerificationDocument(@RequestParam("removeDocumentEntry") final String code, final Model model,final RedirectAttributes redirectModel, final HttpServletResponse response)
 	{
 		blVerificationDocumentFacade.removeDocument(code);
-		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
+		final Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
    	model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
 		return REDIRECT_TO_VERIFICATION_IMAGES_PAGE;
 	}
@@ -1423,7 +1435,7 @@ public class AccountPageController extends AbstractSearchPageController
 						final OrderData orderDataForExtendedOrder = defaultBlCouponFacade.getOrderDataForExtendedOrder(referer);
 						model.addAttribute(BlControllerConstants.ORDER_DATA , orderDataForExtendedOrder);
 					}
-					
+
 				}
 
 		}
@@ -1593,14 +1605,14 @@ public class AccountPageController extends AbstractSearchPageController
 
 
 	@RequestMapping(value="/returnOrderRequest",method=RequestMethod.POST)
-	public String createReturnRequest(final Model model, @RequestParam(value = "orderCode") final String orderCode, @RequestParam(value = "productList") String productList)
+	public String createReturnRequest(final Model model, @RequestParam(value = "orderCode") final String orderCode, @RequestParam(value = "productList") final String productList)
 	{
 		final OrderModel order = blOrderFacade.getOrderModelFromOrderCode(orderCode);
 		blReturnOrderFacade.createReturnRequest(order, productList);
 		return REDIRECT_PREFIX + ROOT;
 	}
-	
-	
+
+
 	@GetMapping(value = "/{orderCode}/printInvoice")
 	@RequireHardLogIn
 	public void printInvoice(@PathVariable(value = "orderCode", required = false)
@@ -1611,7 +1623,7 @@ public class AccountPageController extends AbstractSearchPageController
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
 		orderDetails.setEntries(orderDetails.getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
 				Collectors.toList()));
-		
+
 		getGenerateInvoicePdfService().generateInvoicePdf(orderDetails, request, response);
 
 	}
@@ -1627,11 +1639,11 @@ public class AccountPageController extends AbstractSearchPageController
 	/**
 	 * @param blPasswordValidator the blPasswordValidator to set
 	 */
-	public void setBlPasswordValidator(BlPasswordValidator blPasswordValidator)
+	public void setBlPasswordValidator(final BlPasswordValidator blPasswordValidator)
 	{
 		this.blPasswordValidator = blPasswordValidator;
 	}
-	
+
 	/**
 	 * @return the generateInvoicePdfService
 	 */
@@ -1643,7 +1655,7 @@ public class AccountPageController extends AbstractSearchPageController
 	/**
 	 * @param generateInvoicePdfService the generateInvoicePdfService to set
 	 */
-	public void setGenerateInvoicePdfService(GenerateInvoicePdfService generateInvoicePdfService)
+	public void setGenerateInvoicePdfService(final GenerateInvoicePdfService generateInvoicePdfService)
 	{
 		this.generateInvoicePdfService = generateInvoicePdfService;
 	}

@@ -9,45 +9,36 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-<div class="account-section-header">
-    <div class="row">
-        <div class="container-lg col-md-6">
-            <spring:theme code="text.account.profile.updatePersonalDetails"/>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="container-lg col-md-6">
-        <div class="account-section-content">
-            <div class="account-section-form">
-                <form:form action="update-profile" method="post" modelAttribute="updateProfileForm">
 
-                    <formElement:formSelectBoxDefaultEnabled idKey="profile.title" labelKey="profile.title" path="titleCode" mandatory="true" skipBlank="false" skipBlankMessageKey="form.select.none" items="${titleData}" selectCSSClass="form-control"/>
-                    <formElement:formInputBox idKey="profile.firstName" labelKey="profile.firstName" path="firstName" inputCSS="text" mandatory="true"/>
-                    <formElement:formInputBox idKey="profile.lastName" labelKey="profile.lastName" path="lastName" inputCSS="text" mandatory="true"/>
 
+
+
+ <div id="accountContent" class="col-lg-8 offset-lg-1">
+                    <h3><spring:theme code="text.account.profile.updatePersonalDetails"/></h3>
+                    <hr>
                     <div class="row">
-                        <div class="col-sm-6 col-sm-push-6">
-                            <div class="accountActions">
-                                <ycommerce:testId code="personalDetails_savePersonalDetails_button">
-                                    <button type="submit" class="btn btn-primary btn-block">
-                                        <spring:theme code="text.account.profile.saveUpdates" text="Save Updates"/>
-                                    </button>
-                                </ycommerce:testId>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-sm-pull-6">
-                            <div class="accountActions">
-                                <ycommerce:testId code="personalDetails_cancelPersonalDetails_button">
-                                    <button type="button" class="btn btn-default btn-block backToHome">
-                                        <spring:theme code="text.account.profile.cancel" text="Cancel"/>
-                                    </button>
-                                </ycommerce:testId>
-                            </div>
+                        <div class="col-lg-7">
+                             <form:form action="${action}" method="post" modelAttribute="updateProfileForm" class="my-6">
+
+                       					<formElement:formInputBox idKey="fullName"  path="fullName" inputCSS="form-control mb-3 ${errormsgvalid}" placeholder="Name" mandatory="true" />
+                       					<!-- <formElement:formInputBox idKey="lastName" path="lastName" inputCSS="form-control mt-3" placeholder="name" mandatory="true" /> -->
+                       					<formElement:formInputBox idKey="email"  path="email" inputCSS="form-control mt-3 ${errormsgvalidates}" placeholder="email" mandatory="true" disabled="true"/>
+
+                       							<div class="accountActions text-end mt-3">
+                       						     	<button type="button" class="btn btn-outline backToHome">
+                                     				<spring:theme code="text.button.cancel" text="Cancel" />
+                                     		</button>
+                       								<button type="submit" class="btn btn-primary">
+                       									<spring:theme code="updatePwd.submit" text="Update Password" />
+                       								</button>
+                       						  </div>
+                       						  <c:if test="${not empty errorMsg}">
+                                         <div class="notification notification-error mt-4">${errorMsg}</div>
+                                    </c:if>
+                       						  <c:if test="${not empty successMsg && empty errorMsg}"> 
+                               								<div class="notification notification-tip check mt-4">${successMsg}</div>
+                               			</c:if>
+                       				</form:form>
                         </div>
                     </div>
-                </form:form>
-            </div>
-        </div>
-    </div>
-</div>
+  </div>

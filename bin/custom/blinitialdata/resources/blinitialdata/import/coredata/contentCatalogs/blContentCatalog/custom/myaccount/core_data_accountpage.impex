@@ -75,6 +75,8 @@ INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; address-book                  ; Address Book Page                     ; AccountPageTemplate            ; address-book                 
                           ;                         ; add-edit-address              ; Add Edit Address Page                 ; AccountPageTemplate            ; add-edit-address             
                           ;                         ; orders                        ; Order History Page                    ; AccountPageTemplate            ; orders                       
+                          ;                         ; update-profile                ; Update Profile  Page                  ; AccountPageTemplate            ; update-profile              
+
                           ;                         ; updatePassword                ; Update Forgotten Password Page        ; AccountPageTemplate            ; updatePassword               
                           ;                         ; saved-carts                   ; Saved Carts Page                      ; AccountPageTemplate            ; saved-carts                  
                           ;                         ; bookmarks                     ; Book Marks Page                       ; AccountPageTemplate            ; bookmarks                    
