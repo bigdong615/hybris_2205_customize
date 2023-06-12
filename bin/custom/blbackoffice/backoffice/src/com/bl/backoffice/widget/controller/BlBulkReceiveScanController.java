@@ -47,6 +47,7 @@ import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.BlSubpartsModel;
 import com.bl.core.product.dao.impl.DefaultBlProductDao;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.logging.BlLogger;
@@ -171,7 +172,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				{
 					// Pulling all consignment entries, which is having this serial
 					final List<ConsignmentEntryModel> consEntry = blConsignmentDao
-							.getConsignmentEntriesForSerialCode(blSerialProductModel);
+							.getConsignmentEntriesForSerialCode(blSerialProductModel.getCode());
 
 
 					if (CollectionUtils.isNotEmpty(consEntry))
@@ -609,22 +610,67 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				{
 					final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignEntry.getItems());
 
-					consignEntry.getSerialProducts().forEach(product -> {
+//					consignEntry.getSerialProducts().forEach(product -> {
+//
+//						if (product.getCode().equals(bulkRespData.getSerialProductId()))
+//						{
+//							itemsMap.put(bulkRespData.getSerialProductId(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+//						}
+//						else if ((CollectionUtils.isEmpty(product.getSerialProducts()))
+//								&& product.getProductType().getCode().equals("SUBPARTS")
+//								&& product.getNumberSystem().getCode().equals("NONE"))
+//						{
+//							// We need to skip the subparts, which status is missing
+//							if (itemsMap.get(product.getName()) != null ? !itemsMap.get(product.getName()).equals("MISSING")
+//									: Boolean.TRUE)
+//							{
+//							itemsMap.put(product.getName(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+//							}
+//						}
+//
+//					});
 
-						if (product.getCode().equals(bulkRespData.getSerialProductId()))
+
+					consignEntry.getItems().forEach((product,v) -> {
+
+						final BlProductModel blSerialProductModel = consignEntry.getSerialProducts().stream()
+								.filter(serialProduct -> serialProduct.getCode().equals(product)).findFirst().orElse(null);
+						if (product.equals(bulkRespData.getSerialProductId()))
 						{
 							itemsMap.put(bulkRespData.getSerialProductId(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+
+							if (blSerialProductModel instanceof BlSerialProductModel)
+							{
+
+								final BlSerialProductModel blSerialModel = (BlSerialProductModel) blSerialProductModel;
+								for (final BlSubpartsModel blSubPartModel : blSerialModel.getBlProduct().getSubpartProducts())
+								{
+									if (CollectionUtils.isEmpty(blSubPartModel.getSubpartProduct().getSerialProducts()))
+									{
+
+										itemsMap.put(bulkRespData.getSerialProductId(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+									}
+								}
+							}
 						}
-						else if ((CollectionUtils.isEmpty(product.getSerialProducts()))
-								&& product.getProductType().getCode().equals("SUBPARTS")
-								&& product.getNumberSystem().getCode().equals("NONE"))
+						else if (null != blSerialProductModel)
+						{
+							if ((CollectionUtils.isEmpty(blSerialProductModel.getSerialProducts()))
+									&& blSerialProductModel.getProductType().getCode().equals("SUBPARTS")
+									&& blSerialProductModel.getNumberSystem().getCode().equals("NONE"))
 						{
 							// We need to skip the subparts, which status is missing
-							if (itemsMap.get(product.getName()) != null ? !itemsMap.get(product.getName()).equals("MISSING")
+								if (itemsMap.get(blSerialProductModel.getName()) != null
+										? !itemsMap.get(blSerialProductModel.getName()).equals("MISSING")
 									: Boolean.TRUE)
 							{
-							itemsMap.put(product.getName(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+									itemsMap.put(blSerialProductModel.getName(), ItemStatusEnum.RECEIVED_OR_RETURNED);
 							}
+						}
+						}
+						else
+						{
+
 						}
 
 					});

@@ -65,7 +65,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 	private static final String CONSIGNMENT_ENTRY_FOR_SERIAL = "SELECT {ce:" + ItemModel.PK + "} from {"
 			+ ConsignmentEntryModel._TYPECODE + " as ce}, {" + ConsignmentModel._TYPECODE + " as con}, {" + OrderModel._TYPECODE
 			+ " as order} where {ce:"
-			+ ConsignmentEntryModel.SERIALPRODUCTS + "} LIKE CONCAT('%',CONCAT(?serial,'%'))" + " and {con:" + ItemModel.PK
+			+ ConsignmentEntryModel.ITEMS + "} LIKE CONCAT('%',CONCAT(?serial,'%'))" + " and {con:" + ItemModel.PK
 			+ "} = {ce:" + ConsignmentEntryModel.CONSIGNMENT + "} and {order:" + ItemModel.PK + "} = {con:" + ConsignmentModel.ORDER
 			+ "} order by {order:" + OrderModel.CODE + "} DESC ";
 			//			+ "} and {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = 'COMPLETED'}})";
@@ -208,7 +208,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(final BlSerialProductModel serial)
+	public List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(final String serial)
 	{
 		Validate.notNull(serial, "Serial Product must not be null", null);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_ENTRY_FOR_SERIAL);
@@ -218,11 +218,11 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"DefaultBlConsignmentDao : getConsignmentEntriesForSerialCodeAndDate : No ConsignmentEntry found for serial : {}",
-					serial.getCode());
+					serial);
 			return Lists.newArrayList();
 		}
 		final List<ConsignmentEntryModel> result = search.getResult();
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Consignment Entry found : {} for serial : {}", result, serial.getCode());
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Consignment Entry found : {} for serial : {}", result, serial);
 		return Lists.newArrayList(result);
 	}
 
