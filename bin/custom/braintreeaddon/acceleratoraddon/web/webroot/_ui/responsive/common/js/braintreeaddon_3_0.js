@@ -963,7 +963,8 @@ function createHostedFields(clientInstance) {
 						    creditCardValidation(tokenizeErr.message);
 							$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
 							$('.page-loader-new-layout').hide();
-							handleClientError(tokenizeErr);							
+							handleClientError(tokenizeErr);	
+							document.getElementById('validationMessage').scrollIntoView(true);						
 						} 
 						else 
 						{
@@ -1122,6 +1123,7 @@ $("#paymentAddNewAddress").on("click",function(e)
 	$("#savedBillingAddressId").val('');
 	$("#paymentAddNewAddress").hide();
 	$("#showSavedAddresses").hide();	
+	ACC.silentorderpost.enableAddressForm();
 });
 $("#showSavedAddresses").on("click",function(e)
 {

@@ -65,9 +65,14 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             final Optional<AbstractOrderEntryModel> orderEntryModel = context.getOrderEntries().stream().findFirst();
             if (orderEntryModel.isPresent()) {
                 final AbstractOrderModel order = orderEntryModel.get().getOrder();
-                return order != null ? getUpdatedSourcingLocation(sourcingLocation, order, BlDateTimeUtils.subtractDaysInRentalDates(
+
+                /*return order != null ? getUpdatedSourcingLocation(sourcingLocation, order, BlDateTimeUtils.subtractDaysInRentalDates(
                         BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(order.getRentalStartDate()),
-                        getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY))) : setFalseSourcingLocation(sourcingLocation);
+                        getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY))) : setFalseSourcingLocation(sourcingLocation);*/
+
+                return order != null ? getUpdatedSourcingLocation(sourcingLocation, order, order.getRentalStartDate()) : setFalseSourcingLocation(sourcingLocation);
+
+
             }
         }
         return setFalseSourcingLocation(sourcingLocation);
@@ -83,9 +88,12 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      */
     private SourcingLocation getUpdatedSourcingLocation(final SourcingLocation sourcingLocation, final AbstractOrderModel order,
                                                         final Date rentalStart) {
-        final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(BlDateTimeUtils.convertStringDateToDate(
+
+        /*final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(BlDateTimeUtils.convertStringDateToDate(
                 BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
-                BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN), rentalStart, sourcingLocation.getWarehouse().getCutOffTime());
+                BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN), rentalStart, sourcingLocation.getWarehouse().getCutOffTime());*/
+
+        final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(order.getActualRentalStartDate(), rentalStart, sourcingLocation.getWarehouse().getCutOffTime());
 
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "getUpdatedSourcingLocation : BusinessDaysDifferenceWithCutOffTime :" + result+" Order : " + order.getCode());
 
@@ -281,16 +289,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         shippingOptimizationModels = getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
 
         // BLS-311 : Commenting below lines to fix cutoff time issue
-        /* final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOrder().getActualRentalStartDate(),
-      	   	 consignmentModel.getOrder().getRentalStartDate(), consignmentModel.getWarehouse().getCutOffTime()); */
-
-        Date rentalStartDateForThreeDayGround = BlDateTimeUtils.subtractDaysInRentalDates(
-                BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalStartDate()),
-                getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY));
-
-        final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(BlDateTimeUtils.convertStringDateToDate(
-                BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
-                BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN), rentalStartDateForThreeDayGround, consignmentModel.getWarehouse().getCutOffTime());
+        final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOrder().getActualRentalStartDate(),
+      	   	 consignmentModel.getOrder().getRentalStartDate(), consignmentModel.getWarehouse().getCutOffTime());
 
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "getOptimizedShippingMethodForOrder : BusinessDaysDifferenceWithCutOffTime :" + result+" Order : " + consignmentModel.getOrder().getCode());
 
@@ -327,8 +327,9 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
               
            } else {
             
-              setOptimizedDetailsOnConsignment(consignmentModel, result, consignmentModel.getOrder().getRentalStartDate(),
-                  consignmentModel.getOrder().getRentalEndDate(), OptimizedShippingMethodEnum.DEFAULT);
+              setOptimizedDetailsOnConsignment(consignmentModel, result, BlDateTimeUtils.subtractDaysInRentalDates(
+                      preDaysToDeduct.get(), rentalStartDate, blackOutDates), BlDateTimeUtils.addDaysInRentalDates(
+                      postDaysToAdd.get(), rentalEndDate, blackOutDates), OptimizedShippingMethodEnum.DEFAULT);
                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "getOptimizedShippingMethodForOrder : Order : " + consignmentModel.getOrder().getCode());
                return false;
            }
@@ -504,12 +505,18 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      *
      * @param consignmentModel        order
      * @param result                  of days
-     * @param optimizedDate           date
      * @param optimizedShippingMethod methode
      */
     private void setOptimizedDetailsOnConsignment(final ConsignmentModel consignmentModel, final int result, final Date optimizedStartDate,
                                                   final Date optimizedEndDate, final OptimizedShippingMethodEnum optimizedShippingMethod) {
-        consignmentModel.setOptimizedShippingStartDate(optimizedStartDate);
+        final Date currentDate = BlDateTimeUtils.convertStringDateToDate(
+                BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
+                BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
+        if(optimizedStartDate.compareTo(currentDate) < 0) {
+            consignmentModel.setOptimizedShippingStartDate(currentDate);
+        }else{
+            consignmentModel.setOptimizedShippingStartDate(optimizedStartDate);
+        }
         consignmentModel.setOptimizedShippingEndDate(optimizedEndDate);
 
         if(null != consignmentModel && null != consignmentModel.getOrder() &&

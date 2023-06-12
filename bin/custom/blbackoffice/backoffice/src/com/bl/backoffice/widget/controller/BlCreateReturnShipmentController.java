@@ -243,27 +243,39 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 			int carrier = carrierID.contains(BlInventoryScanLoggingConstants.UPS) ? BlInventoryScanLoggingConstants.TWO : BlInventoryScanLoggingConstants.ONE;
 			String homeBaseID = stateWarehouse.getName();
 			int homeBase = homeBaseID.equalsIgnoreCase(BlInventoryScanLoggingConstants.MA) ? BlInventoryScanLoggingConstants.TWO : BlInventoryScanLoggingConstants.ONE;
+
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "carrier : "+carrier+ " postalCode : "+postalCode+ " homeBase : "+homeBase);
+
 			List<ShippingOptimizationModel> shippingOptimizationModels = getZoneDeliveryModeService().getOptimizedShippingRecords(carrier, homeBase, postalCode);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "shippingOptimizationModels DAO : "+shippingOptimizationModels);
 
 			if(CollectionUtils.isNotEmpty(shippingOptimizationModels))
 			{
-				shippingOptimizationModels = shippingOptimizationModels.stream().filter(shippingOptimizationModel -> shippingOptimizationModel.getInbound().equals("1")).collect(Collectors.toList());
+				shippingOptimizationModels = shippingOptimizationModels.stream().filter(som -> som.getInbound().intValue() == 1).collect(Collectors.toList());
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "shippingOptimizationModels som : "+shippingOptimizationModels);
 
 				// Business logic to filter warehouseModel from list of warehouse model.
-				if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > 1)
-				{
+				if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
 					shippingOptimizationModels = shippingOptimizationModels.stream().collect(minList(Comparator.comparing(ShippingOptimizationModel::getServiceDays)));
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "shippingOptimizationModels minList : "+shippingOptimizationModels);
 				}
 
 				if(CollectionUtils.isNotEmpty(shippingOptimizationModels))
 				{
-					int inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays()  ;
+					int inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
 					final String rentalEndDate = BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalEndDate());
 					final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 					Date optimizedShippingEndDate = BlDateTimeUtils.addDaysInRentalDates(inboundServiceDays, rentalEndDate, blackOutDates);
 					consignmentModel.setOptimizedShippingEndDate(optimizedShippingEndDate);
 					getModelService().save(consignmentModel);
 					getModelService().refresh(consignmentModel);
+
+					if(null != consignmentModel.getOrder()){
+						consignmentModel.getOrder().setActualRentalEndDate(optimizedShippingEndDate);
+						getModelService().save(consignmentModel.getOrder());
+						getModelService().refresh(consignmentModel.getOrder());
+					}
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "updateOptimizedEndDateOnConsignment done.");
 				}
 			}
 
