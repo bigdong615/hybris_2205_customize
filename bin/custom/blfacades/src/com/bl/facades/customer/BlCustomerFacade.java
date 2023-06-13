@@ -2,6 +2,8 @@ package com.bl.facades.customer;
 
 import de.hybris.platform.commercefacades.customer.CustomerFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.commercefacades.user.data.CustomerData;
+import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 
 import java.util.List;
 
@@ -30,12 +32,18 @@ public interface BlCustomerFacade extends CustomerFacade
 	 * @return the address for code
 	 */
 	AddressData getAddressForCode(final String code);
-	
+
 	/**
 	 * Gets the default billing address from customer.
 	 *
 	 * @return the default billing address
 	 */
 	AddressData getDefaultBillingAddress();
+
+	/**
+	 * @param customerData
+	 * @throws DuplicateUidException
+	 */
+	void updateUserProfile(CustomerData customerData) throws DuplicateUidException;
 
 }

@@ -11,6 +11,8 @@ import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -122,5 +124,42 @@ public class ConsignmentController extends BaseCommerceController
 		consignmentListData.setPagination(result.getPagination());
 
 		return consignmentListData;
+	}
+
+
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/consignmententriesserials", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(nickname = "getConsignmentEntriesSerials", value = "Get consignment entries", notes = "Returns order history data for all orders placed by a specified user for a specified base store. The response can display the results across multiple pages, if required.")
+	@ApiBaseSiteIdAndUserIdParam
+	public ConsignmentEntryListWsDTO getConsignmentEntriesSerials(@ApiParam(value = "The current result page requested.")
+	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
+	final int currentPage, @ApiParam(value = "The number of results returned per page.")
+	@RequestParam(value = "date", defaultValue = DEFAULT_DATE)
+	final String date, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
+	final String fields, @RequestParam
+	final Map<String, String> params, final HttpServletResponse response)
+	{
+		final PageableData pageableData = createPageableData(currentPage, pageSize);
+		final ConsignmentEntryListData consignmentEntryListData;
+		final SearchPageData<ConsignmentEntryData> ce = blconsignmentFacade.getConsignmentEntries(pageableData, convertDate(date));
+		final List<ConsignmentEntryData> cl = new ArrayList<ConsignmentEntryData>();
+		for (final ConsignmentEntryData cons : ce.getResults())
+		{
+			for (final String str : cons.getSerialproducts().split(","))
+			{
+				final ConsignmentEntryData consignmentEntryData = getDataMapper().map(cons, ConsignmentEntryData.class);
+				consignmentEntryData.setSerialproducts(str);
+				cl.add(consignmentEntryData);
+			}
+		}
+		ce.getResults().removeAll(ce.getResults());
+		ce.getResults().addAll(cl);
+		consignmentEntryListData = createConsignmentEntryListData(ce);
+		setTotalCountHeader(response, consignmentEntryListData.getPagination());
+		return getDataMapper().map(consignmentEntryListData, ConsignmentEntryListWsDTO.class, fields);
 	}
 }

@@ -172,6 +172,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 					// Pulling all consignment entries, which is having this serial
 					final List<ConsignmentEntryModel> consEntry = blConsignmentDao
 							.getConsignmentEntriesForSerialCode(blSerialProductModel);
+
+
 					if (CollectionUtils.isNotEmpty(consEntry))
 					{
 						for (final ConsignmentEntryModel consignEntryModel : consEntry)
@@ -434,7 +436,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 			throw new WrongValueException(this.globalDeclineEntriesSelection,
 					this.getLabel("warehousingbackoffice.reassignserial.decline.validation.missing.selectedLine"));
 		}
-		this.sendOutput(OUT_CONFIRM, COMPLETE);
+		//this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
 	//	private void createDataForNonBarcodedSubparts(final List<BulkReceiveRespData> selectedSerials, final BlSerialProductModel blSerialProductModel)
@@ -617,7 +619,12 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 								&& product.getProductType().getCode().equals("SUBPARTS")
 								&& product.getNumberSystem().getCode().equals("NONE"))
 						{
+							// We need to skip the subparts, which status is missing
+							if (itemsMap.get(product.getName()) != null ? !itemsMap.get(product.getName()).equals("MISSING")
+									: Boolean.TRUE)
+							{
 							itemsMap.put(product.getName(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+							}
 						}
 
 					});
@@ -629,6 +636,14 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				}
 
 			}
+
+			this.productsListDiv.setStyle("resize:none;display:none");
+			this.barcodesSectionId.setStyle("resize:none;display:block");
+			this.getWidgetInstanceManager()
+					.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.bulk.scan.heading")));
+			bulkScanToolData = new BulkReceiveScanToolData();
+			scanningArea.setValue("");
+			this.globalDeclineEntriesSelection.setChecked(false);
 
 			Messagebox.show(BlInventoryScanLoggingConstants.BULK_SCAN_TOOL_SUCCESS_MSG);
 		}

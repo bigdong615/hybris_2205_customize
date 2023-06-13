@@ -11,6 +11,7 @@ INSERT_UPDATE JspIncludeComponent ; $contentCV[unique=true] ; uid[unique=true]  
                                   ;                         ; AccountAddEditAddressComponent                  ; Account Add Edit Address Component       ; accountEditAddressPage.jsp                                                                  ;                         ; AccountAddEditAddressComponent                 
                                   ;                         ; AccountOrderHistoryComponent                    ; Account History Component                ; accountOrderHistoryPage.jsp                                                                 ; ViewOrderAction         ; AccountOrderHistoryComponent                   
                                   ;                         ; UpdatePasswordComponent                         ; Update Password Component                ; accountChangePasswordPage.jsp                                                               ;                         ; UpdatePasswordComponent                        
+                                  ;                         ; UpdateProfileComponent                         ; Update Profile Component                  ; accountProfileEditPage.jsp                                                               ;                         ; UpdateProfileComponent                        
                                   ;                         ; SavedCartsComponent                             ; Saved Carts Component                    ; accountSavedCartsPage.jsp                                                                   ;                         ; SavedCartsComponent                            
                                   ;                         ; BookmarksComponent                              ; Bookmarks Component                      ; accountBookmarksPage.jsp                                                                    ;                         ; BookmarksComponent                             
                                   ;                         ; VerificationImagesComponent                     ; Verification Images Component            ; accountVerificationImagesPage.jsp                                                           ;                         ; VerificationImagesComponent                    
@@ -35,6 +36,8 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; BodyContent-address-book                  ; Body Content Slot for Account Address Book      ; true   ; AccountAddressBookComponent                     ;  ;  ;  
                           ;                         ; BodyContent-add-edit-address              ; Body Content Slot for Add Edit Address          ; true   ; AccountAddEditAddressComponent                  ;  ;  ;  
                           ;                         ; BodyContent-orders                        ; Body Content Slot for My Account Order History  ; true   ; AccountOrderHistoryComponent                    ;  ;  ;  
+                          ;                         ; BodyContent-update-profile                ; Body Content Slot for Update profile           ; true   ; UpdateProfileComponent                         ;  ;  ;  
+
                           ;                         ; BodyContent-updatePassword                ; Body Content Slot for Update Password           ; true   ; UpdatePasswordComponent                         ;  ;  ;  
                           ;                         ; BodyContentSlot-saved-carts               ; Body Content Slot for Saved Carts               ; true   ; SavedCartsComponent                             ;  ;  ;  
                           ;                         ; BodyContentSlot-bookmarks                 ; Body Content Slot for Bookmarks                 ; true   ; BookmarksComponent                              ;  ;  ;  
@@ -52,11 +55,13 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; BodyContentSlot-deposit-payment-success   ; Body Content Slot for Deposit Payment Success   ; true   ; DepositPaymentSuccessComponent                  ;  ;  ;  
                           ;                         ; SearchBoxBl                               ; BlSearchBox                                     
 
-# ContentSlotForPage      
+# ContentSlotForPage       
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                 ; position[unique=true] ; page(uid,$contentCV)[unique=true] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
                                  ;                         ; BodyContent-address-book         ; BodyContent           ; address-book                      ; BodyContent-address-book                 ;  ;  ;  
                                  ;                         ; BodyContent-add-edit-address     ; BodyContent           ; add-edit-address                  ; BodyContent-add-edit-address             ;  ;  ;  
                                  ;                         ; BodyContent-orders               ; BodyContent           ; orders                            ; BodyContent-orders                       ;  ;  ;  
+                                 ;                         ; BodyContent-update-profile       ; BodyContent           ; update-profile                    ; BodyContent-update-profile               ;  ;  ;  
+
                                  ;                         ; BodyContent-updatePassword       ; BodyContent           ; updatePassword                    ; BodyContent-updatePassword               ;  ;  ;  
                                  ;                         ; BodyContent-saved-carts          ; BodyContent           ; saved-carts                       ; BodyContentSlot-saved-carts              ;  ;  ;  
                                  ;                         ; BodyContent-bookmarks            ; BodyContent           ; bookmarks                         ; BodyContentSlot-bookmarks                ;  ;  ;  
