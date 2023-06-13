@@ -4,6 +4,7 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 
 import de.hybris.platform.commercefacades.customer.impl.DefaultCustomerFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.commercefacades.user.data.RegisterData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -142,5 +143,17 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
 		Assert.hasText(id, "The field [id] cannot be empty");
 		final CustomerModel customerModel = getUserMatchingService().getUserByProperty(id, CustomerModel.class);
 		getCustomerAccountService().forgottenPassword(customerModel);
+	}
+
+
+	@Override
+	public void updateUserProfile(final CustomerData customerData) throws DuplicateUidException
+	{
+		//validateDataBeforeUpdate(customerData);
+
+		final CustomerModel customer = getCurrentSessionCustomer();
+		//customer.setOriginalUid(customerData.getDisplayUid());
+		getCustomerAccountService().updateProfile(customer, customerData.getTitleCode(), customerData.getName(),
+				customerData.getUid());
 	}
 }
