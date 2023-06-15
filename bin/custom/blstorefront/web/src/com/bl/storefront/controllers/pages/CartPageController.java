@@ -51,9 +51,11 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.CommerceSaveCartParameterData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
+import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.quote.data.QuoteData;
 import de.hybris.platform.commercefacades.voucher.VoucherFacade;
@@ -77,17 +79,9 @@ import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Config;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -680,6 +674,10 @@ public class CartPageController extends AbstractCartPageController
 		if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
 			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
 		}
+		PriceData remainingAmountToGetFreeShipping= blCartFacade.addAmountToGetFreeShipping(cartData,getCurrentCurrency());
+		model.addAttribute("amountToGetFreeShipping", remainingAmountToGetFreeShipping );
+		model.addAttribute("minTotalForFreeShipping",Config.getParameter("bl.min.subtotal.for.free.shipping"));
+
 	}
 
 	protected void addFlashMessage(final UpdateQuantityForm form, final HttpServletRequest request,
@@ -1094,9 +1092,10 @@ public class CartPageController extends AbstractCartPageController
 	 */
 	@PostMapping(value = "/updateQuantity")
 	@ResponseBody
-	public void updateQuantity(@RequestParam("entryNumber") final long entryNumber, final Model model,
-			@Valid final UpdateQuantityForm form, final BindingResult bindingResult,
-			final HttpServletRequest request) throws CommerceCartModificationException {
+	public Map<String, String> updateQuantity(@RequestParam("entryNumber") final long entryNumber, final Model model,
+											  @Valid final UpdateQuantityForm form, final BindingResult bindingResult,
+											  final HttpServletRequest request) throws CommerceCartModificationException {
+		final Map<String, String> responseMap = new HashMap<>();
 		if (bindingResult.hasErrors()) {
 			handleBindingResultError(model, bindingResult);
 		} else if (getCartFacade().hasEntries()) {
@@ -1104,6 +1103,10 @@ public class CartPageController extends AbstractCartPageController
 				getBlCartFacade().updateCartEntryFromPopup(entryNumber,
 						form.getQuantity().longValue());
 
+				PriceData remainingAmountToGetFreeShipping= getBlCartFacade().addAmountToGetFreeShipping(getBlCartFacade().getSessionCart(),getCurrentCurrency());
+				model.addAttribute("amountToGetFreeShipping", remainingAmountToGetFreeShipping );
+				model.addAttribute("minTotalForFreeShipping",Config.getParameter("bl.min.subtotal.for.free.shipping"));
+				responseMap.put("amountToGetFreeShipping",remainingAmountToGetFreeShipping.getFormattedValue());
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 						"Product quantity: {} updated successfully for cart entry: {}", form.getQuantity(),
 						entryNumber);
@@ -1115,6 +1118,7 @@ public class CartPageController extends AbstractCartPageController
 								"Couldn't update product with the entry number: {}", entryNumber);
 			}
 		}
+		return responseMap;
 	}
 
 	/**
