@@ -48,9 +48,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
   private BlOrderDao orderDao;
   private BlCommerceStockService blCommerceStockService;
   private BlStockLevelDao blStockLevelDao;
-  @Resource(name = "searchRestrictionService")
   private SearchRestrictionService searchRestrictionService;
-  @Resource(name = "sessionService")
   private SessionService sessionService;
 
   @Override

@@ -44,7 +44,6 @@
 
         <collectiontype code="subpartsList" elementtype="BlSubparts" type="list"/>
 
-
     </collectiontypes>
 
     <enumtypes>
@@ -7958,9 +7957,8 @@
         <typegroup name="orderBussinessProcess">
             <itemtype code="OrderToAvalaraProcess" autocreate="true" generate="true" extends="BusinessProcess"/>
 
-            <itemtype generate="true"
-              code="ReallocateSerialProcess"
-              extends="BusinessProcess" autocreate="true">
+            <itemtype code="ReallocateSerialProcess"
+              extends="BusinessProcess" generate="true" autocreate="true">
                 <attributes>
                     <attribute qualifier="oldSerialProduct" type="BlSerialProduct">
                         <persistence type="property"/>
