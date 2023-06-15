@@ -1,14 +1,16 @@
 package com.bl.core.stock.impl;
 
-import com.bl.core.enums.ConsignmentEntryStatusEnum;
-import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ReallocateSerialProcessModel;
-import com.bl.core.order.dao.BlOrderDao;
-import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.product.dao.BlProductDao;
+import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.processengine.BusinessProcessService;
@@ -16,38 +18,19 @@ import de.hybris.platform.servicelayer.exceptions.BusinessException;
 import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.product.dao.BlProductDao;
-import com.bl.core.stock.BlStockLevelDao;
-import com.bl.core.stock.BlStockService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.logging.BlLogger;
-import org.apache.solr.common.StringUtils;
 
 
 /**
@@ -61,11 +44,6 @@ public class DefaultBlStockService implements BlStockService
 	private ModelService modelService;
 	private BlProductDao productDao;
 	private BlStockLevelDao blStockLevelDao;
-	@Resource(name="orderDao")// need to remove this line
-	private BlOrderDao orderDao;
-	@Resource(name="blCommerceStockService")
-	private BlCommerceStockService blCommerceStockService;
-
 	private BusinessProcessService businessProcessService;
 	/**
 	 * {@inheritDoc}
@@ -184,21 +162,11 @@ public class DefaultBlStockService implements BlStockService
 			stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
 			saveStockRecord(stockLevel, reservedStatus);
 		} else {
-			//final Collection<StockLevelModel> stockLevels = getExcludedOrderStockLevelModelsBasedOnDates(blSerialProduct);
-			final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(blSerialProduct);
-			List<StockLevelModel> associatedOrderStocks = stockLevels.stream()
-					.filter(stockLevel -> stockLevel.getOrder() != null).collect(Collectors.toList());
-
-			if(CollectionUtils.isNotEmpty(associatedOrderStocks)) {
-				//stockLevels.remove(associatedOrderStocks);
+			final Collection<StockLevelModel> stockLevels = getExcludedOrderStockLevelModelsBasedOnDates(blSerialProduct);
 				if(reservedStatus) {
-					//updateSerialOnOrder(associatedOrderStocks, blSerialProduct, reservedStatus);
-					createAndExecuteBusinessProcess(associatedOrderStocks,blSerialProduct,reservedStatus);
+					createAndExecuteBusinessProcess(blSerialProduct);
 				}
-			}
-			List<StockLevelModel> excludedOrderStocks = stockLevels.stream()
-					.filter(stockLevel -> StringUtils.isEmpty(stockLevel.getOrder())).collect(Collectors.toList());
-			excludedOrderStocks.forEach(stockLevel -> {
+			stockLevels.forEach(stockLevel -> {
 					stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
 					saveStockRecord(stockLevel, reservedStatus);
 				});
@@ -206,112 +174,21 @@ public class DefaultBlStockService implements BlStockService
 		}
 	}
 
-	private void createAndExecuteBusinessProcess(final List<StockLevelModel> associatedOrderStocks,final BlSerialProductModel blSerialProduct, final boolean reservedStatus){
-		ReallocateSerialProcessModel reallocateSerialProcessModel = (ReallocateSerialProcessModel) getBusinessProcessService()
-				.createProcess("reallocateSerial-" + System.currentTimeMillis(), "reallocateSerialProcess");
+  private void createAndExecuteBusinessProcess(final BlSerialProductModel blSerialProduct) {
+    ReallocateSerialProcessModel reallocateSerialProcess = (ReallocateSerialProcessModel) getBusinessProcessService()
+        .createProcess(
+            "reallocateSerial_" + blSerialProduct.getCode() + "_" + System.currentTimeMillis(),
+            "reallocateSerialProcess");
 
-		reallocateSerialProcessModel.setAssociatedOrderStocks(associatedOrderStocks);
-		reallocateSerialProcessModel.setOldSerialProduct(blSerialProduct);
-		reallocateSerialProcessModel.setReservedStatus(reservedStatus);
-// Save the process
-		getModelService().save(reallocateSerialProcessModel);
-
+    reallocateSerialProcess.setOldSerialProduct(blSerialProduct);
+    getModelService().save(reallocateSerialProcess);
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+        "Starting Business process {} for reallocation serial when serial status change from Active to inactive",
+        reallocateSerialProcess.getCode());
 // Then start the process
-    getBusinessProcessService().startProcess(reallocateSerialProcessModel);
-	}
-	private void updateSerialOnOrder(final List<StockLevelModel> associatedOrderStocks,final BlSerialProductModel blSerialProduct, final boolean reservedStatus){
+    getBusinessProcessService().startProcess(reallocateSerialProcess);
+  }
 
-		final Map<String, List<StockLevelModel>> stockLevelsOrderWise = associatedOrderStocks.stream()
-				.collect(Collectors.groupingBy(StockLevelModel::getOrder));
-		for(Map.Entry<String,List<StockLevelModel>> orderCodeEntry :stockLevelsOrderWise.entrySet()){
-          String orderCode = orderCodeEntry.getKey();
-          AtomicReference<Boolean> isSerialUpdated = new AtomicReference<>(false);
-			final Map<String, List<StockLevelModel>> stockLevelsProductWise = orderCodeEntry.getValue().stream().collect(Collectors.groupingBy(StockLevelModel::getProductCode));
-			  for (Map.Entry<String,List<StockLevelModel>> productCodeEntry : stockLevelsProductWise.entrySet()){
-			  	    Set<String> productCode = new HashSet<>();
-			  	    productCode.add(productCodeEntry.getKey());
-					    Set<String> oldSerialProductCode = productCodeEntry.getValue().stream()
-							.collect(Collectors.groupingBy(StockLevelModel::getSerialProductCode)).keySet();
-					    final AbstractOrderModel order = getOrderDao().getOrderByCode(orderCode);
-
-					    filterOrderEntryAndAssignSerial(order,oldSerialProductCode,isSerialUpdated,productCode);
-
-				}
-			  if(isSerialUpdated.get()){
-					List<StockLevelModel> stockLevelModelList = orderCodeEntry.getValue();
-					stockLevelModelList.forEach(stockLevel -> {
-						stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
-						stockLevel.setOrder(null);
-						saveStockRecord(stockLevel, reservedStatus);
-					});
-					break;
-				}
-		}
-
-	}
-
-	public void filterOrderEntryAndAssignSerial(AbstractOrderModel order ,Set<String> oldSerialProductCode, AtomicReference<Boolean> isSerialUpdated,Set<String> productCode){
-		order.getConsignments().forEach(consignmentModel -> {
-			consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
-				consignmentEntryModel.getSerialProducts().forEach(blProductModel -> {
-					if(blProductModel instanceof  BlSerialProductModel ){
-						BlSerialProductModel oldSerialProduct = (BlSerialProductModel)blProductModel;
-						if(oldSerialProduct.getCode().equals(oldSerialProductCode.toString())){
-							isSerialUpdated.set( findStockAndAssignSerial(productCode,consignmentModel,consignmentEntryModel,oldSerialProduct,isSerialUpdated));
-						}
-					}
-				});
-			});
-		});
-	}
-
-
-	private Boolean findStockAndAssignSerial(Set<String> productCode, ConsignmentModel consignmentModel,
-			ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct,AtomicReference<Boolean> isSerialUpdated){
-		final Collection<StockLevelModel> stockLevels = getBlCommerceStockService().getStockForProductCodesAndDate(productCode, consignmentModel.getWarehouse(), consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate());
-
-		if (CollectionUtils.isNotEmpty(stockLevels)) {
-			final Map<String, List<StockLevelModel>> stockLevelsSerialWise = stockLevels
-					.stream()
-					.collect(Collectors.groupingBy(StockLevelModel::getSerialProductCode));
-			Collection<BlSerialProductModel> blSerialProducts = productDao
-					.getBlSerialProductsForCodes(stockLevelsSerialWise.keySet());
-
-			final List<BlSerialProductModel> nonBufferProducts = blSerialProducts.stream()
-					.filter(serial -> BooleanUtils.isFalse(serial.getIsBufferedInventory()))
-					.collect(Collectors.toList());
-			blSerialProducts
-					.remove(nonBufferProducts); // now it was only contain buffer product
-			final List<BlSerialProductModel> consignerSerial = nonBufferProducts.stream()
-					.filter(serial -> "BL".equalsIgnoreCase(serial.getOwnedBy()))
-					.collect(Collectors.toList());
-			if (CollectionUtils.isNotEmpty(consignerSerial)) {
-				return assignSerial(consignerSerial,consignmentEntryModel,oldSerialProduct);
-			}
-
-		}
-		return false;
-	}
-
-	public Boolean assignSerial(List<BlSerialProductModel> availableSerials,ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct){
-		BlSerialProductModel newSerialProduct = availableSerials.get(0);
-		consignmentEntryModel.getSerialProducts().add(newSerialProduct);
-
-		Map<String, ItemStatusEnum> items = consignmentEntryModel.getItems();
-		items.put(newSerialProduct.getCode(),items.get(oldSerialProduct.getCode()));
-
-
-		Map<String, ConsignmentEntryStatusEnum> consignmentEntryStatus = consignmentEntryModel
-				.getConsignmentEntryStatus();
-		consignmentEntryStatus.put(newSerialProduct.getCode(),consignmentEntryStatus.get(oldSerialProduct.getCode()));
-
-		consignmentEntryModel.getSerialProducts().remove(oldSerialProduct);
-		items.remove(oldSerialProduct.getCode());
-		consignmentEntryStatus.remove(oldSerialProduct.getCode());
-		modelService.save(consignmentEntryModel);
-		modelService.refresh(consignmentEntryModel);
-		return true;
-	}
 	/**
 	 * {@inheritDoc}
 	 */
@@ -794,20 +671,7 @@ public class DefaultBlStockService implements BlStockService
 	{
 		this.blStockLevelDao = blStockLevelDao;
 	}
-	public BlOrderDao getOrderDao() {
-		return orderDao;
-	}
 
-	public void setOrderDao(BlOrderDao orderDao) {
-		this.orderDao = orderDao;
-	}
-	public BlCommerceStockService getBlCommerceStockService() {
-		return blCommerceStockService;
-	}
-
-	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService) {
-		this.blCommerceStockService = blCommerceStockService;
-	}
 	public BusinessProcessService getBusinessProcessService() {
 		return businessProcessService;
 	}

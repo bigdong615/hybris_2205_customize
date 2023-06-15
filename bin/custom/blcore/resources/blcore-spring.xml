@@ -803,12 +803,16 @@
 		<property name="modelService" ref="modelService"/>
 		<property name="productDao" ref="productDao"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
-		<property name="orderDao" ref="orderDao"/>
-		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 
 	<bean id="replaceSerialAction" class="com.bl.core.order.actions.ReplaceSerialAction" parent="abstractAction">
+		<property name="productDao" ref="productDao"/>
+		<property name="orderDao" ref="orderDao"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="searchRestrictionService" ref="searchRestrictionService"/>
+		<property name="sessionService" ref="sessionService"/>
 
 	</bean>
 
