@@ -8,6 +8,7 @@ import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
@@ -45,6 +46,25 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 
 	private static final Logger LOG = Logger.getLogger(DefaultBlConsignmentDao.class);
 	private FlexibleSearchService flexibleSearchService;
+
+	private SearchRestrictionService searchRestrictionService;
+
+	/**
+	 * @return the searchRestrictionService
+	 */
+	public SearchRestrictionService getSearchRestrictionService()
+	{
+		return searchRestrictionService;
+	}
+
+	/**
+	 * @param searchRestrictionService
+	 *           the searchRestrictionService to set
+	 */
+	public void setSearchRestrictionService(final SearchRestrictionService searchRestrictionService)
+	{
+		this.searchRestrictionService = searchRestrictionService;
+	}
 
 	private PagedFlexibleSearchService pagedFlexibleSearchService;
 
@@ -213,6 +233,8 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 		Validate.notNull(serial, "Serial Product must not be null", null);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_ENTRY_FOR_SERIAL);
 		fQuery.addQueryParameter(BlCoreConstants.SERIAL, serial);
+		getSearchRestrictionService().disableSearchRestrictions();
+
 		final SearchResult<ConsignmentEntryModel> search = getFlexibleSearchService().<ConsignmentEntryModel> search(fQuery);
 		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
 		{
@@ -221,6 +243,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 					serial);
 			return Lists.newArrayList();
 		}
+		getSearchRestrictionService().enableSearchRestrictions();
 		final List<ConsignmentEntryModel> result = search.getResult();
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Consignment Entry found : {} for serial : {}", result, serial);
 		return Lists.newArrayList(result);
@@ -307,5 +330,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 	{
 		this.flexibleSearchService = flexibleSearchService;
 	}
+
+
 
 }
