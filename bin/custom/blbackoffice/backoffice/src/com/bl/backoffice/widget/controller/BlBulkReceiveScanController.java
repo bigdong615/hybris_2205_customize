@@ -575,12 +575,13 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 
 		if (CollectionUtils.isNotEmpty(selectedSerials))
 		{
-			for (final BulkReceiveRespData bulkRespData : selectedSerials)
+			for (final BulkReceiveRespData bulkRespDataSerial : selectedSerials)
 			{
-				if (bulkRespData.getBarcode() != null && !bulkRespData.getBarcode().isEmpty())
+				//Updating serial model
+				if (bulkRespDataSerial.getBarcode() != null && !bulkRespDataSerial.getBarcode().isEmpty())
 				{
 					final BlSerialProductModel blSerialProductModel = this.getDefaultBlProductDao()
-							.getSerialBySerialCode(bulkRespData.getSerialProductId());
+							.getSerialBySerialCode(bulkRespDataSerial.getSerialProductId());
 
 					final BlSerialProductModel serialModel = blSerialProductModel;
 
@@ -590,32 +591,63 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 						serialModel.setSerialStatus(SerialStatusEnum.RECEIVED_OR_RETURNED);
 						serialModel.setHardAssigned(Boolean.FALSE);
 						final ItemTestingStatusEnum testingStatusEnum = enumerationService
-								.getEnumerationValue(ItemTestingStatusEnum.class, bulkRespData.getTestingStatusValue());
+								.getEnumerationValue(ItemTestingStatusEnum.class, bulkRespDataSerial.getTestingStatusValue());
 						final ConditionRatingValueEnum functionalRatingEnum = enumerationService
-								.getEnumerationValue(ConditionRatingValueEnum.class, bulkRespData.getFunctionalRatingValue());
+								.getEnumerationValue(ConditionRatingValueEnum.class, bulkRespDataSerial.getFunctionalRatingValue());
 						final ConditionRatingValueEnum cosmeticRatingEnum = enumerationService
-								.getEnumerationValue(ConditionRatingValueEnum.class, bulkRespData.getCosmeticRatingValue());
+								.getEnumerationValue(ConditionRatingValueEnum.class, bulkRespDataSerial.getCosmeticRatingValue());
 						serialModel.setFunctionalRating(functionalRatingEnum);
 						serialModel.setTestingStatus(testingStatusEnum);
 						serialModel.setCosmeticRating(cosmeticRatingEnum);
-						serialModel.setFirmwareVersion(bulkRespData.getFirmwareVersion());
+						serialModel.setFirmwareVersion(bulkRespDataSerial.getFirmwareVersion());
 						getModelService().save(serialModel);
 
 					}
 				}
 
+				//Updating consignment entry items
 				final ConsignmentEntryModel consignEntry = blConsignmentDao
-						.getConsignmentEntryByPk(bulkRespData.getConsignmentEntry());
+						.getConsignmentEntryByPk(bulkRespDataSerial.getConsignmentEntry());
 				if (consignEntry != null)
 				{
 					final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignEntry.getItems());
 
-//					consignEntry.getSerialProducts().forEach(product -> {
-//
-//						if (product.getCode().equals(bulkRespData.getSerialProductId()))
-//						{
-//							itemsMap.put(bulkRespData.getSerialProductId(), ItemStatusEnum.RECEIVED_OR_RETURNED);
-//						}
+					consignEntry.getSerialProducts().forEach(serialProduct -> {
+
+						if (serialProduct.getCode().equals(bulkRespDataSerial.getSerialProductId()))
+						{
+							//Updated serial
+							itemsMap.put(bulkRespDataSerial.getSerialProductId(), ItemStatusEnum.RECEIVED_OR_RETURNED);
+
+
+							//updating, non barcoded subparts
+							if (serialProduct instanceof BlSerialProductModel)
+							{
+
+								final BlSerialProductModel blSerialModel = (BlSerialProductModel) serialProduct;
+								if (!blSerialModel.getProductType().equals("SUBPARTS"))
+								{
+									for (final BlSubpartsModel blSubPartModel : blSerialModel.getBlProduct().getSubpartProducts())
+									{
+										if (CollectionUtils.isEmpty(blSubPartModel.getSubpartProduct().getSerialProducts()))
+										{
+											consignEntry.getItems().forEach((key, value) -> {
+												if (blSubPartModel.getSubpartProduct().getName().contains(key))
+													{
+													if (!(value.equals("MISSING")))
+														{
+														itemsMap.put(key, ItemStatusEnum.RECEIVED_OR_RETURNED);
+														}
+													}
+
+												});
+
+											}
+										}
+									}
+								}
+
+							}
 //						else if ((CollectionUtils.isEmpty(product.getSerialProducts()))
 //								&& product.getProductType().getCode().equals("SUBPARTS")
 //								&& product.getNumberSystem().getCode().equals("NONE"))
@@ -627,54 +659,9 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 //							itemsMap.put(product.getName(), ItemStatusEnum.RECEIVED_OR_RETURNED);
 //							}
 //						}
-//
-//					});
 
-
-					consignEntry.getItems().forEach((product,v) -> {
-
-						final BlProductModel blSerialProductModel = consignEntry.getSerialProducts().stream()
-								.filter(serialProduct -> serialProduct.getCode().equals(product)).findFirst().orElse(null);
-						if (product.equals(bulkRespData.getSerialProductId()))
-						{
-							itemsMap.put(bulkRespData.getSerialProductId(), ItemStatusEnum.RECEIVED_OR_RETURNED);
-
-							if (blSerialProductModel instanceof BlSerialProductModel)
-							{
-
-								final BlSerialProductModel blSerialModel = (BlSerialProductModel) blSerialProductModel;
-								for (final BlSubpartsModel blSubPartModel : blSerialModel.getBlProduct().getSubpartProducts())
-								{
-									if (CollectionUtils.isEmpty(blSubPartModel.getSubpartProduct().getSerialProducts()))
-									{
-
-										itemsMap.put(bulkRespData.getSerialProductId(), ItemStatusEnum.RECEIVED_OR_RETURNED);
-									}
-								}
-							}
-						}
-						else if (null != blSerialProductModel)
-						{
-							if ((CollectionUtils.isEmpty(blSerialProductModel.getSerialProducts()))
-									&& blSerialProductModel.getProductType().getCode().equals("SUBPARTS")
-									&& blSerialProductModel.getNumberSystem().getCode().equals("NONE"))
-						{
-							// We need to skip the subparts, which status is missing
-								if (itemsMap.get(blSerialProductModel.getName()) != null
-										? !itemsMap.get(blSerialProductModel.getName()).equals("MISSING")
-									: Boolean.TRUE)
-							{
-									itemsMap.put(blSerialProductModel.getName(), ItemStatusEnum.RECEIVED_OR_RETURNED);
-							}
-						}
-						}
-						else
-						{
-
-						}
 
 					});
-
 
 					consignEntry.setItems(itemsMap);
 					getModelService().save(consignEntry);
