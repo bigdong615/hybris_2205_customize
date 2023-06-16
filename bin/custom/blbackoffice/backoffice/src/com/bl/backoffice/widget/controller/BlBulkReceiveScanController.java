@@ -316,8 +316,19 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 																		? consignEntryModel.getOrderEntry().getOrder().getCode()
 																		: StringUtils.EMPTY);
 
+														final BulkReceiveRespData duplicateBulkReceiveRespData = bulkReceiveRespDataList
+																.stream()
+																.filter(bulRespData -> (bulRespData.getSerialProductId()
+																		.equals(bulkSubpartReceiveRespData.getSerialProductId()))
+																		&& (bulRespData.getOrderNumber()
+																						.equals(bulkSubpartReceiveRespData.getOrderNumber())))
+																.findFirst().orElse(null);
+
+														if (null == duplicateBulkReceiveRespData)
+														{
 														/* Adding sub part product information */
 														bulkReceiveRespDataList.add(bulkSubpartReceiveRespData);
+														}
 													}
 												}
 											});
