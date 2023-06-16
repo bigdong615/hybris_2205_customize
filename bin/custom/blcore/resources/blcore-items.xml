@@ -7956,6 +7956,15 @@
 
         <typegroup name="orderBussinessProcess">
             <itemtype code="OrderToAvalaraProcess" autocreate="true" generate="true" extends="BusinessProcess"/>
+
+            <itemtype code="ReallocateSerialProcess"
+              extends="BusinessProcess" generate="true" autocreate="true">
+                <attributes>
+                    <attribute qualifier="oldSerialProduct" type="BlSerialProduct">
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
         </typegroup>
 
         <typegroup name="ShippingLabelLog">

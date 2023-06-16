@@ -1,13 +1,14 @@
 package com.bl.core.stock.impl;
 
+import com.bl.core.model.ReallocateSerialProcessModel;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
 import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
@@ -45,7 +45,7 @@ public class DefaultBlStockService implements BlStockService
 	private ModelService modelService;
 	private BlProductDao productDao;
 	private BlStockLevelDao blStockLevelDao;
-
+	private BusinessProcessService businessProcessService;
 	/**
 	 * {@inheritDoc}
 	 *
@@ -164,12 +164,31 @@ public class DefaultBlStockService implements BlStockService
 			saveStockRecord(stockLevel, reservedStatus);
 		} else {
 			final Collection<StockLevelModel> stockLevels = getExcludedOrderStockLevelModelsBasedOnDates(blSerialProduct);
+				if(reservedStatus) {
+					createAndExecuteBusinessProcess(blSerialProduct);
+				}
 			stockLevels.forEach(stockLevel -> {
-				stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
-				saveStockRecord(stockLevel, reservedStatus);
-			});
+					stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
+					saveStockRecord(stockLevel, reservedStatus);
+				});
+
 		}
 	}
+
+  private void createAndExecuteBusinessProcess(final BlSerialProductModel blSerialProduct) {
+    ReallocateSerialProcessModel reallocateSerialProcess = (ReallocateSerialProcessModel) getBusinessProcessService()
+        .createProcess(
+            "reallocateSerial_" + blSerialProduct.getCode() + "_" + System.currentTimeMillis(),
+            "reallocateSerialProcess");
+
+    reallocateSerialProcess.setOldSerialProduct(blSerialProduct);
+    getModelService().save(reallocateSerialProcess);
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+        "Starting Business process {} for reallocation serial when serial status change from Active to inactive",
+        reallocateSerialProcess.getCode());
+// Then start the process
+    getBusinessProcessService().startProcess(reallocateSerialProcess);
+  }
 
 	/**
 	 * {@inheritDoc}
@@ -654,4 +673,12 @@ public class DefaultBlStockService implements BlStockService
 		this.blStockLevelDao = blStockLevelDao;
 	}
 
+	public BusinessProcessService getBusinessProcessService() {
+		return businessProcessService;
+	}
+
+	public void setBusinessProcessService(
+			BusinessProcessService businessProcessService) {
+		this.businessProcessService = businessProcessService;
+	}
 }
