@@ -1043,7 +1043,7 @@ console.log("First start");
 		 console.log("3 start");
 		  // Expand Used Gear Items
           var swap = document.getElementById("showmore");
-           $(swap).click(function (event) {
+            swap.addEventListener('click', (event) => {
             event.preventDefault();
               $('.hide-product-row').toggle('slow');
               //BL-573 and BL-572 : added + icon and html code for + and _
