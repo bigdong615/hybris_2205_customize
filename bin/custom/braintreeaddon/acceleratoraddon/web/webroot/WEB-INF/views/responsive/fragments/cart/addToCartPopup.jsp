@@ -25,7 +25,7 @@
 </c:forEach>
 ],
 
-"cartAnalyticsData":{"cartCode" : "${ycommerce:encodeJSON(cartCode)}","productPostPrice":"${ycommerce:encodeJSON(entry.basePrice.value)}","productName":"${ycommerce:encodeJSON(productName)}"}
+"cartAnalyticsData":{"cartCode" : "${ycommerce:encodeJSON(cartCode)}","productPostPrice":"${ycommerce:encodeJSON(entry.basePrice.value)}","productName":"${ycommerce:encodeJSON(productName)}","amountToGetFreeShipping":"${ycommerce:encodeJSON(amountToGetFreeShipping.formattedValue)}"}
 ,
 "addToCartLayer":"<spring:escapeBody javaScriptEscape="true" htmlEscape="false">
 	<spring:htmlEscape defaultHtmlEscape="true">
@@ -211,6 +211,13 @@
                             	</c:otherwise>
               </c:choose>
                </c:if>
+            <div id="message">
+                <input type="hidden" id="minTotalForFreeShipping" value="${minTotalForFreeShipping}"/>
+                <c:if test="${amountToGetFreeShipping.value > 0}">
+                    <progress id="addToCartProgress" value="${minTotalForFreeShipping-amountToGetFreeShipping.value}" max="${minTotalForFreeShipping}"></progress>
+                    <small id="smallTag"> <spring:theme code="text.cart.nearness.message"/>&nbsp;<span class="amount">${amountToGetFreeShipping.formattedValue}</span>&nbsp;<spring:theme code="text.cart.nearness.message1"/></small>
+                </c:if>
+            </div>
             <div class="modal-footer">
                 <a href="#" class="btn btn-outline" data-bs-dismiss="modal"><spring:theme code="text.popup.button.continue"/></a>
                 <a href="${viewCartUrl}" class="btn btn-primary"><spring:theme code="text.popup.button.viewcart"/></a>

@@ -29,13 +29,17 @@ import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
+import de.hybris.platform.commercefacades.storesession.StoreSessionFacade;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.util.Config;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -94,6 +98,9 @@ public class AddToCartController extends AbstractController {
 
     @Resource(name="sessionService")
     protected SessionService sessionService;
+
+    @Resource(name = "storeSessionFacade")
+    private StoreSessionFacade storeSessionFacade;
 
     @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
     private RentalDateDto getRentalsDuration() {
@@ -168,6 +175,7 @@ public class AddToCartController extends AbstractController {
             model.addAttribute(BlControllerConstants.REPLACEMENT_ORDER, Boolean.FALSE);
         }
 
+        addAmountToGetFreeShipping(model);
         return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
 
 
@@ -505,11 +513,18 @@ public class AddToCartController extends AbstractController {
             model.addAttribute(BlControllerConstants.REPLACEMENT_ORDER, Boolean.FALSE);
         }
 
+        addAmountToGetFreeShipping(model);
         return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
 
 
     }
 
+    private void addAmountToGetFreeShipping(final Model model)
+    {
+        PriceData remainingAmountToGetFreeShipping= blCartFacade.addAmountToGetFreeShipping(blCartFacade.getSessionCart(),storeSessionFacade.getCurrentCurrency());
+        model.addAttribute("amountToGetFreeShipping", remainingAmountToGetFreeShipping );
+        model.addAttribute("minTotalForFreeShipping",Config.getParameter("bl.min.subtotal.for.free.shipping"));
+    }
 
     protected boolean isValidProductEntry(final OrderEntryData cartEntry) {
         return cartEntry.getProduct() != null && StringUtils.isNotBlank(cartEntry.getProduct().getCode());

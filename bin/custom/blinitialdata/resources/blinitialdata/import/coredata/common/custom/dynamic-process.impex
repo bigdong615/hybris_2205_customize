@@ -1,0 +1,13 @@
+INSERT_UPDATE DynamicProcessDefinition; code[unique=true]            ; active ; content
+                                      ; reallocateSerialProcess ; true   ; "<process  xmlns=""http://www.hybris.de/xsd/processdefinition""
+  start=""replaceSerialAction""
+  name=""reallocateSerialProcess""
+  processClass=""com.bl.core.model.ReallocateSerialProcessModel"">
+<action id=""replaceSerialAction"" bean=""replaceSerialAction"">
+<transition name=""OK"" to=""end""/>
+<transition name=""NOK"" to = ""error""/>
+</action>
+<end id=""error"" state=""ERROR"">Replace serial error.</end>
+<end id=""failed"" state=""FAILED"">Replace serial failed.</end>
+<end id=""end"" state=""SUCCEEDED"">Success</end>
+</process>"
