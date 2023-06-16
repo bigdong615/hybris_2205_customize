@@ -231,7 +231,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
  						$('.page-loader-new-layout').show();
  					},
  					success : function(response) {
- 						if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+ 						updateDivElements(response.amountToGetFreeShipping);
+                        if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
  							ACC.minicart.updateMiniCartDisplay();
  						}
  					},
@@ -328,6 +329,27 @@ $('.shopping-cart__item-remove').on("click", function (e){
     });
  }
 
+function updateDivElements(amountToGetFreeShipping){
+                        let amount=amountToGetFreeShipping.split("$");
+ 						let progressBar = document.getElementById('addToCartProgress');
+                        let smallTag = document.getElementById('smallTag');
+                        let minTotalForFreeShipping=document.getElementById('minTotalForFreeShipping');
+ 						if(amount[1] > 0)
+                        {
+                              progressBar.value= minTotalForFreeShipping.value-amount[1];
+                              $("#smallTag").html("You're only "+'<span class="amount">'+amountToGetFreeShipping+'</span>'+" away from FREE Shipping!");
+                              progressBar.style.display = '';
+                              smallTag.style.display = '' ;
+                        }
+                        else
+                        {
+                         if(progressBar!= null && smallTag!= null)
+                         {
+                             progressBar.style.display = 'none';
+                             smallTag.style.display = 'none' ;
+                         }
+                        }
+      }
 //BL-461,465 Product Availability
 $('#cart-continue').on("click", function (e) {
 	e.preventDefault();
@@ -530,6 +552,7 @@ if($(".arrival").hasClass("nextAvailDate") && !$(".js-add-to-cart").hasClass("js
                                       document.getElementById(popUpId).setAttribute("disabled", true);
                                       quantity_textbox.setAttribute("disabled",true);
                                       $(".btn-number[data-field='"+quantity_btn+"']").prop("disabled",true);
+                                      updateDivElements(response.cartAnalyticsData.amountToGetFreeShipping);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                           ACC.minicart.updateMiniCartDisplay();
                                       }
