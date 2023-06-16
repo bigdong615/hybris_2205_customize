@@ -8,7 +8,6 @@ import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
@@ -47,25 +46,6 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 	private static final Logger LOG = Logger.getLogger(DefaultBlConsignmentDao.class);
 	private FlexibleSearchService flexibleSearchService;
 
-	private SearchRestrictionService searchRestrictionService;
-
-	/**
-	 * @return the searchRestrictionService
-	 */
-	public SearchRestrictionService getSearchRestrictionService()
-	{
-		return searchRestrictionService;
-	}
-
-	/**
-	 * @param searchRestrictionService
-	 *           the searchRestrictionService to set
-	 */
-	public void setSearchRestrictionService(final SearchRestrictionService searchRestrictionService)
-	{
-		this.searchRestrictionService = searchRestrictionService;
-	}
-
 	private PagedFlexibleSearchService pagedFlexibleSearchService;
 
 	private static final String DATE_PARAM = "} BETWEEN ?startDate AND ?endDate ";
@@ -85,7 +65,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 	private static final String CONSIGNMENT_ENTRY_FOR_SERIAL = "SELECT {ce:" + ItemModel.PK + "} from {"
 			+ ConsignmentEntryModel._TYPECODE + " as ce}, {" + ConsignmentModel._TYPECODE + " as con}, {" + OrderModel._TYPECODE
 			+ " as order} where {ce:"
-			+ ConsignmentEntryModel.ITEMS + "} LIKE CONCAT('%',CONCAT(?serial,'%'))" + " and {con:" + ItemModel.PK
+			+ ConsignmentEntryModel.SERIALPRODUCTS + "} LIKE CONCAT('%',CONCAT(?serial,'%'))" + " and {con:" + ItemModel.PK
 			+ "} = {ce:" + ConsignmentEntryModel.CONSIGNMENT + "} and {order:" + ItemModel.PK + "} = {con:" + ConsignmentModel.ORDER
 			+ "} order by {order:" + OrderModel.CODE + "} DESC ";
 			//			+ "} and {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = 'COMPLETED'}})";
@@ -228,24 +208,21 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(final String serial)
+	public List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(final BlSerialProductModel serial)
 	{
 		Validate.notNull(serial, "Serial Product must not be null", null);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_ENTRY_FOR_SERIAL);
 		fQuery.addQueryParameter(BlCoreConstants.SERIAL, serial);
-		getSearchRestrictionService().disableSearchRestrictions();
-
 		final SearchResult<ConsignmentEntryModel> search = getFlexibleSearchService().<ConsignmentEntryModel> search(fQuery);
 		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"DefaultBlConsignmentDao : getConsignmentEntriesForSerialCodeAndDate : No ConsignmentEntry found for serial : {}",
-					serial);
+					serial.getCode());
 			return Lists.newArrayList();
 		}
-		getSearchRestrictionService().enableSearchRestrictions();
 		final List<ConsignmentEntryModel> result = search.getResult();
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Consignment Entry found : {} for serial : {}", result, serial);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Consignment Entry found : {} for serial : {}", result, serial.getCode());
 		return Lists.newArrayList(result);
 	}
 

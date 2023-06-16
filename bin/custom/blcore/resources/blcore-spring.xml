@@ -1108,7 +1108,6 @@
 	<bean id="defaultBlConsignmentDao" class="com.bl.core.dao.warehouse.impl.DefaultBlConsignmentDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
-		<property name="searchRestrictionService" ref="searchRestrictionService" />
 	</bean>
 
 	<alias name="defaultBlReadyToShipOrderItemDao" alias="blReadyToShipOrderItemDao"/>

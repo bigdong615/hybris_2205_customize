@@ -68,7 +68,7 @@ public interface BlConsignmentDao
 	 * @param serial
 	 * @return
 	 */
-	List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(String serial);
+	List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(BlSerialProductModel serial);
 
 	/**
 	 * @param pk
