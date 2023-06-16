@@ -643,7 +643,8 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 										if (CollectionUtils.isEmpty(blSubPartModel.getSubpartProduct().getSerialProducts()))
 										{
 											consignEntry.getItems().forEach((key, value) -> {
-												if (blSubPartModel.getSubpartProduct().getName().contains(key))
+
+												if (key.contains(blSubPartModel.getSubpartProduct().getName()))
 													{
 													if (!(value.equals("MISSING")))
 														{
