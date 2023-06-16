@@ -172,7 +172,7 @@ public class BlBulkReceiveScanController extends DefaultWidgetController
 				{
 					// Pulling all consignment entries, which is having this serial
 					final List<ConsignmentEntryModel> consEntry = blConsignmentDao
-							.getConsignmentEntriesForSerialCode(blSerialProductModel.getCode());
+							.getConsignmentEntriesForSerialCode(blSerialProductModel);
 
 
 					if (CollectionUtils.isNotEmpty(consEntry))
