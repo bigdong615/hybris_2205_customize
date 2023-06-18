@@ -34,7 +34,6 @@ import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +42,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -683,12 +681,10 @@ public class DomoController extends BaseCommerceController
 	public StockLevelListWsDTO getStockLevels(@ApiParam(value = "The current result page requested.")
 	@RequestParam(defaultValue = DEFAULT_CURRENT_PAGE)
 	final int currentPage, @ApiParam(value = "The number of results returned per page.")
-	@RequestParam(value = "fromDate", defaultValue = DEFAULT_FORMAT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date fromDate, @ApiParam(value = "Sorting method applied to the return results.")
-	@RequestParam(value = "toDate", defaultValue = DEFAULT_FORMAT_DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	final Date toDate, @ApiParam(value = "Sorting method applied to the return results.")
+	@RequestParam(value = "fromDate", defaultValue = DEFAULT_DATE)
+	final String fromDate, @ApiParam(value = "Input date like today-1")
+	@RequestParam(value = "toDate", defaultValue = DEFAULT_DATE)
+	final String toDate, @ApiParam(value = "Input date like today-1")
 	@RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
 	final int pageSize, @ApiParam(value = "Sorting method applied to the return results.")
 	@RequestParam(defaultValue = DEFAULT_FIELD_SET)
@@ -697,10 +693,12 @@ public class DomoController extends BaseCommerceController
 	{
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final StockLevelListData stockLevelListData;
-		stockLevelListData = createstockLevelListData(blDomoFacade.getStockLevels(pageableData, fromDate, toDate));
+		stockLevelListData = createstockLevelListData(
+				blDomoFacade.getStockLevels(pageableData, convertStockLevelDate(fromDate), convertStockLevelDate(toDate)));
 		setTotalCountHeader(response, stockLevelListData.getPagination());
 		return getDataMapper().map(stockLevelListData, StockLevelListWsDTO.class, fields);
 	}
+
 
 	protected StockLevelListData createstockLevelListData(final SearchPageData<StockLevelData> result)
 	{

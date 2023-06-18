@@ -7,6 +7,8 @@ import de.hybris.platform.commercefacades.order.data.ConsignmentData;
 import de.hybris.platform.commercefacades.order.data.ConsignmentEntryData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.product.ProductService;
 import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
@@ -18,6 +20,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -46,6 +49,9 @@ public class ConsignmentController extends BaseCommerceController
 
 	@Resource(name = "blconsignmentFacade")
 	private BLConsignmentFacade blconsignmentFacade;
+
+	@Resource(name = "productService")
+	private ProductService productService;
 
 	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
 	@RequestMapping(value = "/consignmententries", method = RequestMethod.GET)
@@ -151,9 +157,75 @@ public class ConsignmentController extends BaseCommerceController
 		{
 			for (final String str : cons.getSerialproducts().split(","))
 			{
+				LOG.info(str);
 				final ConsignmentEntryData consignmentEntryData = getDataMapper().map(cons, ConsignmentEntryData.class);
-				consignmentEntryData.setSerialproducts(str);
-				cl.add(consignmentEntryData);
+
+				if (StringUtils.isNumeric(str))
+				{
+					for (final String itm : cons.getItems().split(","))
+					{
+						if (itm.contains(str))
+						{
+							consignmentEntryData.setItems(itm);
+						}
+					}
+					for (final String csts : cons.getConsignmententrystatus().split(","))
+					{
+						if (csts.contains(str))
+						{
+							consignmentEntryData.setConsignmententrystatus(csts);
+						}
+					}
+					consignmentEntryData.setSerialproducts(str);
+					cl.add(consignmentEntryData);
+				}
+				else
+				{
+					final ProductModel productModel = productService.getProductForCode(str);
+					final List<String> tempList = new ArrayList<>();
+					int count = 1;
+					if (!tempList.contains(str))
+					{
+						final String pname = productModel.getName() + "--" + count;
+						for (final String itm : cons.getItems().split(","))
+						{
+							if (itm.contains(pname))
+							{
+								consignmentEntryData.setItems(itm);
+							}
+						}
+						for (final String csts : cons.getConsignmententrystatus().split(","))
+						{
+							if (csts.contains(pname))
+							{
+								consignmentEntryData.setConsignmententrystatus(csts);
+							}
+						}
+						tempList.add(str);
+					}
+					else
+					{
+						count++;
+						tempList.add(str);
+						final String pname = productModel.getName() + "--" + count;
+						for (final String itm : cons.getItems().split(","))
+						{
+							if (itm.contains(pname))
+							{
+								consignmentEntryData.setSerialproducts(itm);
+							}
+						}
+						for (final String csts : cons.getConsignmententrystatus().split(","))
+						{
+							if (csts.contains(pname))
+							{
+								consignmentEntryData.setConsignmententrystatus(csts);
+							}
+						}
+					}
+					consignmentEntryData.setSerialproducts(str);
+					cl.add(consignmentEntryData);
+				}
 			}
 		}
 		ce.getResults().removeAll(ce.getResults());

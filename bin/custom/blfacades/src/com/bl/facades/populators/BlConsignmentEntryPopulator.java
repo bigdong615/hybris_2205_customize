@@ -73,9 +73,8 @@ public class BlConsignmentEntryPopulator extends ConsignmentEntryPopulator
 		}
 		target.setConsignmententrystatus(StringUtils.join(consignmententrystatus, ','));
 
-		target.setSerialproducts(
-				source.getSerialProducts().stream().map(BlProductModel::getCode).collect(Collectors.joining(", ")));
-		target.setOptions(source.getOptions().stream().map(BlOptionsModel::getOptionId).collect(Collectors.joining(", ")));
+		target.setSerialproducts(source.getSerialProducts().stream().map(BlProductModel::getCode).collect(Collectors.joining(",")));
+		target.setOptions(source.getOptions().stream().map(BlOptionsModel::getOptionId).collect(Collectors.joining(",")));
 		target.setTestingstatus(source.getTestingStatus() != null ? source.getTestingStatus().getCode() : StringUtils.EMPTY);
 
 		if (source.getConsignment() != null)
