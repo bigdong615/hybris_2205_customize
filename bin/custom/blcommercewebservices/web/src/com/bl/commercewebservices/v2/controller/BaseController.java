@@ -190,4 +190,28 @@ public class BaseController
 		}
 		return dat;
 	}
+
+	protected Date convertStockLevelDate(final String date)
+	{
+		Date dat = null;
+		if (date != null)
+		{
+			if (date.contains("-"))
+			{
+				dat = convertDate(date);
+			}
+			if (date.contains(" ") || date.contains("+"))
+			{
+				final String[] arrSplit = date.split(" ");
+				final LocalDate currentDate = LocalDate.now();
+				if (arrSplit[1] != null)
+				{
+					dat = Date
+							.from(currentDate.plusDays(Integer.parseInt(arrSplit[1])).atStartOfDay(ZoneId.systemDefault()).toInstant());
+				}
+			}
+		}
+		return dat;
+	}
+
 }
