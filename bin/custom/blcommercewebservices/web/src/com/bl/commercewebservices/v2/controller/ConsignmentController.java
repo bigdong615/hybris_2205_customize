@@ -157,7 +157,7 @@ public class ConsignmentController extends BaseCommerceController
 		{
 			for (final String str : cons.getSerialproducts().split(","))
 			{
-				LOG.info(str);
+				LOG.debug(str);
 				final ConsignmentEntryData consignmentEntryData = getDataMapper().map(cons, ConsignmentEntryData.class);
 
 				if (StringUtils.isNumeric(str))
