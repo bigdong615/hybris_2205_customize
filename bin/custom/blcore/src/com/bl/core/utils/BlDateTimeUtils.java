@@ -35,6 +35,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
@@ -423,6 +425,47 @@ public final class BlDateTimeUtils
 				weeks += BlInventoryScanLoggingConstants.ONE;
 			}
 			return BlInventoryScanLoggingConstants.FIVE * weeks.intValue() + end.getDayOfWeek().getValue() - start.getDayOfWeek().getValue();
+		}
+		return BlInventoryScanLoggingConstants.ZERO;
+	}
+
+	public static int getDaysBetweenBusinessDaysNew(final String startDate, final String endDate, List<Date> holidayBlackoutDates) {
+		LocalDate start = BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
+		LocalDate end = BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN);
+		if(null != start && null != end) {
+			if (start.getDayOfWeek().getValue() > BlInventoryScanLoggingConstants.FIVE) {
+				start = start.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+			}
+			if (end.getDayOfWeek().getValue() > BlInventoryScanLoggingConstants.FIVE) {
+				end = end.with(TemporalAdjusters.previous(DayOfWeek.FRIDAY));
+			}
+			if (start.isAfter(end)) {
+				return BlInventoryScanLoggingConstants.ZERO;
+			}
+			Long weeks = ChronoUnit.WEEKS.between(start, end);
+			if (start.getDayOfWeek().getValue() > end.getDayOfWeek().getValue()) {
+				weeks += BlInventoryScanLoggingConstants.ONE;
+			}
+
+
+			boolean isHolidayDateIsBetweenRentalDays = false;
+			int daysToMinus = 0;
+			if (CollectionUtils.isNotEmpty(holidayBlackoutDates)) {
+				for (Date date : holidayBlackoutDates) {
+					LocalDate holidayDate = BlDateTimeUtils.convertStringDateToLocalDate(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, date), BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
+					if (holidayDate.compareTo(start) >= 0 && holidayDate.compareTo(end) <= 0) {
+						isHolidayDateIsBetweenRentalDays = true;
+						daysToMinus = daysToMinus + 1;
+					}
+				}
+			}
+				if (isHolidayDateIsBetweenRentalDays) {
+					return BlInventoryScanLoggingConstants.FIVE * weeks.intValue() + end.getDayOfWeek().getValue() - start.getDayOfWeek().getValue() - daysToMinus;
+				} else {
+					return BlInventoryScanLoggingConstants.FIVE * weeks.intValue() + end.getDayOfWeek().getValue() - start.getDayOfWeek().getValue();
+				}
+				//return BlInventoryScanLoggingConstants.FIVE * weeks.intValue() + end.getDayOfWeek().getValue() - start.getDayOfWeek().getValue();
+
 		}
 		return BlInventoryScanLoggingConstants.ZERO;
 	}
