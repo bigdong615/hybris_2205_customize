@@ -848,9 +848,9 @@ public CartModificationData addToCart(final String productCode, final long quant
 	{
 		final PriceData minTotalForFreeShipping = getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(Double.parseDouble(Config.getParameter("bl.min.subtotal.for.free.shipping"))), currencyData.getIsocode());
 		final PriceData remainingAmountToGetFreeShipping = getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.ZERO, currencyData.getIsocode());
-		if(minTotalForFreeShipping.getValue().compareTo(cartData.getTotalPrice().getValue()) > 0)
+		if(minTotalForFreeShipping.getValue().compareTo(cartData.getSubTotal().getValue()) > 0)
 		{
-			final BigDecimal amountToBeAdded=minTotalForFreeShipping.getValue().subtract(cartData.getTotalPrice().getValue());
+			final BigDecimal amountToBeAdded=minTotalForFreeShipping.getValue().subtract(cartData.getSubTotal().getValue());
 			remainingAmountToGetFreeShipping.setValue(amountToBeAdded);
 			remainingAmountToGetFreeShipping.setFormattedValue(currencyData.getSymbol() + String.format("%.2f",amountToBeAdded));
 		}
