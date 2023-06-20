@@ -126,7 +126,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           if(blProductModel instanceof  BlSerialProductModel ){
             BlSerialProductModel olderSerialProduct = (BlSerialProductModel)blProductModel;
             if(olderSerialProduct.getCode().equals(oldSerialProductCode.iterator().next())){
-              isSerialUpdated.set( findStockAndAssignSerial(productCode,consignmentModel,consignmentEntryModel,olderSerialProduct,isSerialUpdated));
+              isSerialUpdated.set( findStockAndAssignSerial(productCode,consignmentModel,consignmentEntryModel,olderSerialProduct));
             }
           }
         });
@@ -136,7 +136,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
 
 
   private Boolean findStockAndAssignSerial(Set<String> productCode, ConsignmentModel consignmentModel,
-      ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct,AtomicReference<Boolean> isSerialUpdated){
+      ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct){
     final Collection<StockLevelModel> stockLevels = getBlCommerceStockService().getStockForProductCodesAndDate(productCode, consignmentModel.getWarehouse(), consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate());
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
         "Stock size {} for product {} on warehouse {} for order {} for duration {} to {}",
@@ -185,6 +185,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
               stockLevel.getSerialProductCode(), stockLevel.getOrder());
         } );
         modelService.saveAll(stockLevelModels);
+        return true;
       }
     }
     return false;
