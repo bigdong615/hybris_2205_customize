@@ -29,7 +29,7 @@ public class DefaultBlStateWarehouseMappingDao implements BlStateWarehouseMappin
 			+ "} IN ({{SELECT {reg:PK} FROM {Region as reg} WHERE {reg:isoCodeShort} =  ?isoCodeShort }})";
 
 	private static final String FIND_BL_WAREHOUSE_BY_POSTAL_CODE = "SELECT {pk} FROM {" + ShippingOptimizationModel._TYPECODE
-			+ "} WHERE {" + ShippingOptimizationModel.ZIP + "} = ?postalCode AND {" + ShippingOptimizationModel.CARRIERID
+			+ "} WHERE {" + ShippingOptimizationModel.ZIPTEXT + "} = ?postalCode AND {" + ShippingOptimizationModel.CARRIERID
 			+ "} = ?carrierID";
 
 	private static final String FIND_BOX_DIMENSIONS = "SELECT {pk} FROM {" + BoxSizesModel._TYPECODE + "}";
