@@ -54,8 +54,7 @@ public class BlDeliveryStateSourcingLocationFilter {
       	
       }else if (null != order.getDeliveryAddress() && null != order.getDeliveryAddress().getPostalcode()) {
       	String postalCode = order.getDeliveryAddress().getPostalcode();
-      	postalCode = postalCode.replaceFirst("^0+(?!$)", "");
-      	
+
       	final String carrierID = ((ZoneDeliveryModeModel) order.getDeliveryMode()).getCarrier().getCode();
       	
       	Integer carrierIDVal = carrierID.equalsIgnoreCase(UPS) ? TWO : ONE;
