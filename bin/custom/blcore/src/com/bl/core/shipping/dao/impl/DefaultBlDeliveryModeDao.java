@@ -300,7 +300,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     public ShippingOptimizationModel getOptimizedShippingRecord(final int carrierId, final int warehouseCode, final String customerZip,
                                                                 final int serviceDays, final int inbound) {
         final String barcodeList = "select {pk} from {ShippingOptimization} where {carrierID} = ?carrierID and {homeBaseID} = ?warehouseCode" +
-                " and {zip} = ?customerZip and {serviceDays} = ?serviceDays and {inbound} = ?inbound";
+                " and {zipText} = ?customerZip and {serviceDays} = ?serviceDays and {inbound} = ?inbound";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("carrierID", carrierId);
         query.addQueryParameter("warehouseCode", warehouseCode);
@@ -316,7 +316,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     @Override
     public List<ShippingOptimizationModel> getOptimizedShippingRecords(final int carrierId, final int warehouseCode, final String customerZip) {
         final String barcodeList = "select {pk} from {ShippingOptimization} where {carrierID} = ?carrierID and {homeBaseID} = ?warehouseCode" +
-                " and {zip} = ?customerZip";
+                " and {zipText} = ?customerZip";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("carrierID", carrierId);
         query.addQueryParameter("warehouseCode", warehouseCode);
@@ -328,7 +328,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     
     @Override
     public List<ShippingOptimizationModel> getOptimizedShippingRecordsForCarrierAndZip(final int carrierId, final String customerZip) {
-        final String barcodeList = "select {pk} from {ShippingOptimization} where {carrierID} = ?carrierID and {zip} = ?customerZip";
+        final String barcodeList = "select {pk} from {ShippingOptimization} where {carrierID} = ?carrierID and {zipText} = ?customerZip";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("carrierID", carrierId);
         query.addQueryParameter("customerZip", customerZip);
