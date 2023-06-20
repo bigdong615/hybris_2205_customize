@@ -270,6 +270,14 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		final String selectedShippingType = this.shippingTypeComboBox.getSelectedItem().getValue();
 		shippingTypeList.addToSelection(selectedShippingType);
 		setOptimizedShippingMethodComboBox(selectedShippingType);
+		if (selectedShippingType.equalsIgnoreCase("FEDEX"))
+		{
+			signatureSelection.setDisabled(Boolean.TRUE);
+		}
+		else
+		{
+			signatureSelection.setDisabled(Boolean.FALSE);
+		}
 	}
 
 	private void setOptimizedShippingMethodComboBox(final String selectedShippingType)

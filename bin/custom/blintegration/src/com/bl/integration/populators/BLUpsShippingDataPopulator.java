@@ -214,7 +214,7 @@ public class BLUpsShippingDataPopulator
 		shipmentData.setService(upsShipmentServiceData);
 		shipmentData.setPaymentInformation(upsPaymentInformation);
 		shipmentData.setShipmentPackage(packageDataList);
-
+		shipmentData.setSignatureRequired(isSignatureRequired);
 		return shipmentData;
 	}
 
