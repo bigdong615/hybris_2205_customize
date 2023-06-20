@@ -18,6 +18,7 @@ $lang=en
  
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                             ; url                            ; &linkRef                     ; linkName               ; category(code, $productCV) ; target(code)[default='sameWindow'] ;  ;  
                                ;                         ; AccountOrderHistoryLink      ; Account Order History Link       ; /my-account/orders             ; AccountOrderHistoryLink      ; Order History          ;                            ;                                    ;  ;  ;  
+                               ;                         ; AccountUpdateProfileLink      ; Account Edit profile Link         ; /my-account/update-profile      ; AccountUpdateProfileLink       ; Edit Profile           ;                            ;                                    ;  ;  ;  
                                ;                         ; AccountAddressesLink         ; Account Addresses Link           ; /my-account/address-book       ; AccountAddressesLink         ; Addresses              ;                            ;                                    ;  ;  ;  
                                ;                         ; AccountChangeEmailLink       ; Account Change Email Link        ; /my-account/update-email       ; AccountChangeEmailLink       ; Change Email           ;                            ;                                    ;  ;  ;  
                                ;                         ; AccountChangePasswordLink    ; Account Change Password Link     ; /my-account/update-password    ; AccountChangePasswordLink    ; Change Password        ;                            ;                                    ;  ;  ;  
@@ -43,6 +44,7 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                  ; $contentC
                                  ; AccountBookmarksLinkEntry         ;                         ; Account Bookmarks Link Entry           ; AccountNavNode           ; AccountBookmarksLink                                   
                                  ; AccountVerificaionImagesLinkEntry ;                         ; Account Verification Images Link Entry ; AccountNavNode           ; AccountVerificaionImagesLink                           
                                  ; AccountCreditCardsLinkEntry       ;                         ; Account Credit Cards Link Entry        ; AccountNavNode           ; AccountCreditCardsLink                                 
+                                 ; AccountUpdateProfileLinkEntry      ;                         ; Account update profile Link Entry       ; AccountNavNode           ; AccountUpdateProfileLink                                
 
 #                                ; AccountUserAccountsLinkEntry      ;                         ; Account User Accounts Link Entry       ; AccountNavNode           ; AccountUserAccountsLink                                
 

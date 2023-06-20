@@ -22,4 +22,9 @@ UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]        ; title[l
                    ;                         ; modify-payment          ; "Modify Payment Page"         
                    ;                         ; deposit-payment         ; "Deposit Payment Page"        
                    ;                         ; deposit-payment-success ; "Deposit Payment Success Page"
+                   ;                         ; deposit-payment-success ; "Deposit Payment Success Page"
+                   ;                         ; update-profile          ; "Update Profile"
+                   
+                   
+                   
 				           		  

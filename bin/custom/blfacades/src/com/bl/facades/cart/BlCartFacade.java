@@ -3,6 +3,8 @@ package com.bl.facades.cart;
 import de.hybris.platform.commercefacades.order.CartFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.storesession.data.CurrencyData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -216,4 +218,12 @@ public interface BlCartFacade extends CartFacade {
    * @return true, if is rental cart only
    */
   boolean isRentalCartOnly();
+
+	/**
+	 * This method is used to show how much more amount needed to add to the cart to get Free Shipping
+	 * @param cartData
+	 * @param currencyData
+	 * @return
+	 */
+  PriceData addAmountToGetFreeShipping(CartData cartData, CurrencyData currencyData);
 }

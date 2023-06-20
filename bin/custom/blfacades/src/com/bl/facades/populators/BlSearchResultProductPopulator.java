@@ -21,6 +21,7 @@ import de.hybris.platform.commerceservices.url.UrlResolver;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
@@ -52,7 +53,6 @@ import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
 import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
@@ -84,7 +84,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private BlDatePickerService blDatePickerService;
   private BlSearchResultDomoProductPopulator blSearchResultDomoProductPopulator;
   private SessionService sessionService;
-
+  private SearchRestrictionService searchRestrictionService;
   /**
    * this method is created for populating values from source to target
    *
@@ -173,7 +173,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    */
   private void populateBookMarks(final ProductData target) {
 	 LOG.info(target.getPrimaryKey());
-	 final BlProductModel blProductModel = (BlProductModel) blProductService.getProductForPK(target.getPrimaryKey());
+	 final BlProductModel blProductModel = getProductForPK(target.getPrimaryKey());
 
     if (blProductModel != null)
     {
@@ -187,7 +187,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    */
   private void populateProductType(final ProductData target) {
 	 LOG.info(target.getPrimaryKey());
-	 final BlProductModel blProductModel = (BlProductModel) blProductService.getProductForPK(target.getPrimaryKey());
+	 final BlProductModel blProductModel = getProductForPK(target.getPrimaryKey());
     if (blProductModel != null)
     {
       target.setProductType(blProductModel.getProductType().getCode());
@@ -226,7 +226,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
    else if(target.isIsBundle())
     {
-		final BlProductModel blProductModel = (BlProductModel) blProductService.getProductForPK(target.getPrimaryKey());
+		 final BlProductModel blProductModel = getProductForPK(target.getPrimaryKey());
       final BigDecimal dynamicPriceValue = getCommercePriceService().getDynamicPriceDataForBundleProduct(constrained, blProductModel);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Dynamic Calculated Price Value is {} for Product : {}", dynamicPriceValue, target.getCode());
        target.setPrice(Objects.nonNull(dynamicPriceValue) ? getProductPriceData(dynamicPriceValue) : (getProductPriceData(BigDecimal.valueOf(0.0d))));
@@ -306,9 +306,11 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 		{
 			// In case of low stock then make a call to the stock service to determine if in or out of stock.
 			// In this case (low stock) it is ok to load the product from the DB and do the real stock check
-			final BlProductModel blProductModel = (BlProductModel) blProductService.getProductForPK(target.getPrimaryKey());
+			final BlProductModel blProductModel = getProductForPK(target.getPrimaryKey());
       if (blProductModel != null ) {
-          if (!blProductService.isAquatechProduct(blProductService.getProductForPK(target.getPrimaryKey()))) {
+			final BlProductModel blProduct = getProductForPK(target.getPrimaryKey());
+			if (!blProductService.isAquatechProduct(blProduct))
+			{
           target.setStock(getStockConverter().convert(blProductModel));
           final RentalDateDto rentalDatesFromSession = getBlDatePickerService()
                 .getRentalDatesFromSession();
@@ -484,13 +486,39 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private void setUpcomingAttributeValue(final SearchResultValueData source,
       final ProductData target, final String key) {
 
+	  final BlProductModel blProductModel = getProductForPK(target.getPrimaryKey());
+
     if (null != this.<Boolean>getValue(source, key) && this.<Boolean>getValue(source, key)
         && !blProductService
-					 .isAquatechProduct(blProductService.getProductForPK(target.getPrimaryKey())))
+					  .isAquatechProduct(blProductModel))
 	 {
 
       target.setIsUpcoming(this.<Boolean>getValue(source, key));
     }
+  }
+
+
+  /**
+   * @param primaryKey
+   * @return
+   */
+  private BlProductModel getProductForPK(final String primaryKey)
+  {
+	  BlProductModel blProductModel = null;
+	  try
+	  {
+		  getSearchRestrictionService().disableSearchRestrictions();
+		  blProductModel = (BlProductModel) blProductService.getProductForPK(primaryKey);
+	  }
+	  catch (final Exception exp)
+	  {
+		  LOG.error(exp, exp);
+	  }
+	  finally
+	  {
+		  getSearchRestrictionService().enableSearchRestrictions();
+	  }
+	  return blProductModel;
   }
 
 
@@ -677,6 +705,16 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
   public void setSessionService(final SessionService sessionService)
   {
 	  this.sessionService = sessionService;
+  }
+
+  public SearchRestrictionService getSearchRestrictionService()
+  {
+	  return searchRestrictionService;
+  }
+
+  public void setSearchRestrictionService(final SearchRestrictionService searchRestrictionService)
+  {
+	  this.searchRestrictionService = searchRestrictionService;
   }
 
 }

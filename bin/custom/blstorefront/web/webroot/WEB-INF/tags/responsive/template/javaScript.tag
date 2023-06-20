@@ -167,7 +167,7 @@
             <script src="${commonResourcePathHtml}/js/blcustomshipping.js"></script>
         </c:if>
 
-		<c:if test="${cmsPage.uid eq 'homepage' || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'shipOrPickupPage'}">
+		<c:if test="${cmsPage.uid eq 'homepage' || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'shipOrPickupPage' || cmsPage.uid eq 'affiliatePage'}">
 
 		<script>
 		$('.social').eq(1).remove();
@@ -469,7 +469,7 @@
   	</c:if>
 
   	<!-- This js is used for rental search box component-->
-  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalGear') || isRentalPage eq true || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'productDetails'|| cmsPage.uid eq 'contactUsPage' || cmsPage.uid eq 'shipOrPickupPage'}">
+  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalGear') || isRentalPage eq true || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'productDetails'|| cmsPage.uid eq 'contactUsPage' || cmsPage.uid eq 'affiliatePage' || cmsPage.uid eq 'shipOrPickupPage'}">
   	<script type="text/javascript">
 console.log("First start");
             if ($(window).width() < 400 ) {
@@ -1043,7 +1043,7 @@ console.log("First start");
 		 console.log("3 start");
 		  // Expand Used Gear Items
           var swap = document.getElementById("showmore");
-           $(swap).click(function (event) {
+            swap.addEventListener('click', (event) => {
             event.preventDefault();
               $('.hide-product-row').toggle('slow');
               //BL-573 and BL-572 : added + icon and html code for + and _

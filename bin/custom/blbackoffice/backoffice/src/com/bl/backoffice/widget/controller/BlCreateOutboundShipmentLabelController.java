@@ -9,11 +9,11 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
-import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -25,11 +25,11 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
-import org.zkoss.zul.Checkbox;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
@@ -80,7 +80,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
-	
+
 	@Resource(name = "blOrderService")
 	private BlOrderService blOrderService;
 
@@ -111,7 +111,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		deliveryDate.setValue(getDeliveryDateFromOrder(inputObject));
 		destinationState.setValue(getDestinationStateValue(inputObject));
 	}
-	
+
 	private String getDeliveryDateFromOrder(final ConsignmentModel consignment)
 	{
 		final AbstractOrderModel orderModel = consignment.getOrder();
@@ -119,22 +119,22 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		{
 			if(getBlOrderService().isRentalOrderOnly(orderModel) && Objects.nonNull(orderModel.getRentalStartDate()))
 			{
-				return convertDateToString(orderModel.getRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT, 
+				return convertDateToString(orderModel.getRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT,
 						TimeZone.getTimeZone(BlDeliveryModeLoggingConstants.ZONE_PST));
 			}
 			if(getBlOrderService().isUsedOrderOnly(orderModel) && Objects.nonNull(orderModel.getActualRentalStartDate()))
 			{
-				return convertDateToString(orderModel.getActualRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT, 
+				return convertDateToString(orderModel.getActualRentalStartDate(), BlCoreConstants.DELIVERY_DATE_FORMAT,
 						TimeZone.getTimeZone(BlDeliveryModeLoggingConstants.ZONE_PST));
 			}
 		}
 		return StringUtils.EMPTY;
 	}
-	
+
 	private String getDestinationStateValue(final ConsignmentModel consignment)
 	{
 		final AbstractOrderModel orderModel = consignment.getOrder();
-		if(Objects.nonNull(orderModel) && Objects.nonNull(orderModel.getDeliveryAddress()) 
+		if(Objects.nonNull(orderModel) && Objects.nonNull(orderModel.getDeliveryAddress())
 				&& Objects.nonNull(orderModel.getDeliveryAddress().getRegion()))
 		{
 			final String destinationStateName = orderModel.getDeliveryAddress().getRegion().getName();
@@ -161,6 +161,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.GENERATE_OUTBOUND_LABEL, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void generateOutboundLabel() throws IOException
 	{
+		
 		final Map<String, Integer> sequenceMap = new HashedMap();
 		getModelService().refresh(selectedConsignment);
 		final List<PackagingInfoModel> packages = selectedConsignment.getPackaginginfos();
@@ -184,11 +185,16 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 			}
 			carrier = selectedShippingType.equals(CarrierEnum.UPS.getCode()) ? CarrierEnum.UPS : CarrierEnum.FEDEX;
 		}
+		
 		final boolean isOptimizedShippingMethodChanged = StringUtils.isNotBlank(selectedShippingType)
 				&& BooleanUtils.isFalse(selectedShippingType.equals(BlintegrationConstants.DEFAULT_SHIPPING_CODE))
 				&& Objects.nonNull(carrier) && Objects.nonNull(selectedOptimizedShippingMethodModel);
 		final boolean isSignatureRequired = getSignatureRequired();
 		final List<String> errorPackages = Lists.newArrayList();
+		if (carrier.getCode().equals(CarrierEnum.FEDEX) && isSignatureRequired)
+		{
+			Messagebox.show("Signature cannot be selected for FEDEX : ", BlCoreConstants.ERROR_TITLE, Messagebox.OK, Messagebox.ERROR);
+		}
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
 			processLabelCreation(packageCount, sequenceNumber, carrier, selectedOptimizedShippingMethodModel,
@@ -208,7 +214,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 
 	private void processLabelCreation(final int packageCount, final Map<String, Integer> sequenceNumber, final CarrierEnum carrier,
 			final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged,
-			final List<String> errorPackages, final PackagingInfoModel packagingInfoModel, boolean isSignatureRequired)
+			final List<String> errorPackages, final PackagingInfoModel packagingInfoModel, final boolean isSignatureRequired)
 	{
 		try
 		{
@@ -243,7 +249,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 				? this.optimizedShippingMethodComboBox.getSelectedItem().getValue()
 				: StringUtils.EMPTY;
 	}
-	
+
 	private boolean getSignatureRequired()
 	{
 		return this.signatureSelection.isChecked();
@@ -264,9 +270,17 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		final String selectedShippingType = this.shippingTypeComboBox.getSelectedItem().getValue();
 		shippingTypeList.addToSelection(selectedShippingType);
 		setOptimizedShippingMethodComboBox(selectedShippingType);
+		if (selectedShippingType.equalsIgnoreCase("FEDEX"))
+		{
+			signatureSelection.setDisabled(Boolean.TRUE);
+		}
+		else
+		{
+			signatureSelection.setDisabled(Boolean.FALSE);
+		}
 	}
 
-	private void setOptimizedShippingMethodComboBox(String selectedShippingType)
+	private void setOptimizedShippingMethodComboBox(final String selectedShippingType)
 	{
 		final List<String> carrierBasedOptimizedShippingMethodList = Lists.newArrayList();
 		final List<OptimizedShippingMethodModel> allOptimizedShippingMethodList = getBlOptimizedShippingMethodGenericDao().find();
@@ -419,7 +433,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	/**
 	 * @param blOrderService the blOrderService to set
 	 */
-	public void setBlOrderService(BlOrderService blOrderService)
+	public void setBlOrderService(final BlOrderService blOrderService)
 	{
 		this.blOrderService = blOrderService;
 	}
@@ -446,11 +460,11 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	/**
 	 * @param destinationState the destinationState to set
 	 */
-	public void setDestinationState(Textbox destinationState)
+	public void setDestinationState(final Textbox destinationState)
 	{
 		this.destinationState = destinationState;
 	}
-	
+
 	public Checkbox getSignatureSelection()
 	{
 		return signatureSelection;
@@ -459,7 +473,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	/**
 	 * @param signatureSelection the signatureSelection to set
 	 */
-	public void setSignatureSelection(Checkbox signatureSelection)
+	public void setSignatureSelection(final Checkbox signatureSelection)
 	{
 		this.signatureSelection = signatureSelection;
 	}

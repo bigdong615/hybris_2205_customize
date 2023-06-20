@@ -40,8 +40,32 @@ public class BulkReceiveRespData
 
 	private String testingStatusValue;
 
+	private String consignmentEntry;
+
+	private Boolean disableFlag;
+
 	private String orderNotes;
+
 	private Boolean isSubPart;
+
+
+	/**
+	 * @return the disableFlag
+	 */
+	public Boolean getDisableFlag()
+	{
+		return disableFlag;
+	}
+
+	/**
+	 * @param disableFlag
+	 *           the disableFlag to set
+	 */
+	public void setDisableFlag(final Boolean disableFlag)
+	{
+		this.disableFlag = disableFlag;
+	}
+
 
 	/**
 	 * @return the cosmeticRating
@@ -310,9 +334,28 @@ public class BulkReceiveRespData
 	/**
 	 * @param isSubPart the isSubPart to set
 	 */
-	public void setIsSubPart(Boolean isSubPart)
+	public void setIsSubPart(final Boolean isSubPart)
 	{
 		this.isSubPart = isSubPart;
 	}
+
+	/**
+	 * @return the consignmentEntry
+	 */
+	public String getConsignmentEntry()
+	{
+		return consignmentEntry;
+	}
+
+	/**
+	 * @param consignmentEntry
+	 *           the consignmentEntry to set
+	 */
+	public void setConsignmentEntry(final String consignmentEntry)
+	{
+		this.consignmentEntry = consignmentEntry;
+	}
+
+
 
 }

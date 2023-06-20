@@ -8,6 +8,8 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.order.impl.DefaultCartFacade;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
@@ -20,7 +22,9 @@ import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.store.services.BaseStoreService;
+import de.hybris.platform.commercefacades.storesession.data.CurrencyData;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +39,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import de.hybris.platform.util.Config;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -838,6 +843,20 @@ public CartModificationData addToCart(final String productCode, final long quant
 			final Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
 		this.commerceCartParameterConverter = commerceCartParameterConverter;
 	}
+
+	public PriceData addAmountToGetFreeShipping(final CartData cartData, final CurrencyData currencyData)
+	{
+		final PriceData minTotalForFreeShipping = getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(Double.parseDouble(Config.getParameter("bl.min.subtotal.for.free.shipping"))), currencyData.getIsocode());
+		final PriceData remainingAmountToGetFreeShipping = getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.ZERO, currencyData.getIsocode());
+		if(minTotalForFreeShipping.getValue().compareTo(cartData.getSubTotal().getValue()) > 0)
+		{
+			final BigDecimal amountToBeAdded=minTotalForFreeShipping.getValue().subtract(cartData.getSubTotal().getValue());
+			remainingAmountToGetFreeShipping.setValue(amountToBeAdded);
+			remainingAmountToGetFreeShipping.setFormattedValue(currencyData.getSymbol() + String.format("%.2f",amountToBeAdded));
+		}
+		return remainingAmountToGetFreeShipping;
+	}
+
 
 	/**
     * @inheritDoc
