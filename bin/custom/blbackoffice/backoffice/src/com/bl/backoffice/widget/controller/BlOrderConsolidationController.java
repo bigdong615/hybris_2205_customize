@@ -13,6 +13,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.*;
 
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.annotation.Resource;
@@ -140,9 +141,9 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 									 final Date date = consignmentModel.getOptimizedShippingStartDate();
 									 final Calendar calender = Calendar.getInstance();
 									 calender.setTime(new Date()); // Using today's date
-									 calender.add(Calendar.DATE, 5); // Adding 5 days
+									 calender.add(Calendar.DATE, 7); // Adding 7 days
 									 final Date fiveDaysPlus = calender.getTime();
-									 calender.add(Calendar.DATE, -10);// Subtracting 5 days
+									 calender.add(Calendar.DATE, -14);// Subtracting 7 days
 									 final Date fiveDaysMinus = calender.getTime();
 									 if(orderEntryModel.getConsignmentEntries().stream().anyMatch(new HashSet<>(consignmentModel.getConsignmentEntries())::contains)){
 										 for (final ConsignmentEntryModel consEntry : consignmentModel.getConsignmentEntries()) {
@@ -155,6 +156,12 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 															 orderConsolidationData.setBarCode(((BlSerialProductModel) serial).getBarcode());
 															 orderConsolidationData.setOrderNumber(consEntry.getConsignment().getOrder().getCode());
 															 orderConsolidationData.setShippingMethod(consEntry.getConsignment().getOrder().getDeliveryMode().getCode());
+															 orderConsolidationData.setWarehouse(consEntry.getConsignment().getWarehouse().getCode());
+																//Feb 17 , 2023	12:13 PM
+															 final Date orderDate = orderModel.getRentalEndDate();//Fri Jun 23 00:00:00 IST 2023
+															 final SimpleDateFormat myFormat = new SimpleDateFormat("MM/d/yyyy");
+															 final String reformattedStr = myFormat.format(orderDate);
+															 orderConsolidationData.setRentalEndDate(reformattedStr);
 
 															 if (((BlSerialProductModel) serial).getOcLocationDetails() != null) {
 																 if (((BlSerialProductModel) serial).getOcLocationDetails().getLocationCategory().getCode()
@@ -212,6 +219,22 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 			if (orderConsolidationDataList.size() > 0)
 			{
 				this.consolidationDataHeader.setStyle("resize:none;display:block");
+				Collections.sort(orderConsolidationDataList, new Comparator() {
+
+					public int compare(Object o1, Object o2) {
+
+						String x1 = ((OrderConsolidationData) o1).getLocation();
+						String x2 = ((OrderConsolidationData) o2).getLocation();
+						int sComp = x1.compareTo(x2);
+
+						if (sComp != 0) {
+							return sComp;
+						}
+
+						String y1 = ((OrderConsolidationData) o1).getWarehouse();
+						String y2 = ((OrderConsolidationData) o2).getWarehouse();
+						return y1.compareTo(y2);
+					}});
 				this.getConsolidationData().setModel(new ListModelList<>(orderConsolidationDataList));
 
 				this.getConsolidationData().renderAll();
