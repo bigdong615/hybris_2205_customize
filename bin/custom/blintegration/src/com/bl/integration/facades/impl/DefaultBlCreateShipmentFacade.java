@@ -133,17 +133,20 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 */
 	@Override
 	public boolean createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,
-			final int packageCount, final Map<String, Integer> sequenceMap) throws IOException
+			final int packageCount, final Map<String, Integer> sequenceMap, final CarrierEnum carrier,
+			final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.RETURN_SHIPMENT_MSG);
-
-		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
-		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
-
-		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
+/*
+		if(null != carrier){
+			final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
+			final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
+		}
+*/
+		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(carrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService().createUPSShipment(
-					getBlUpsShippingDataPopulator().populateUPSReturnShipmentRequest(packagingInfo, warehouseModel), packagingInfo);
+					getBlUpsShippingDataPopulator().populateUPSReturnShipmentRequest(packagingInfo, warehouseModel, selectedOptimizedShippingMethodModel, isOptimizedShippingMethodChanged), packagingInfo);
 			if (upsResponse != null)
 			{
 				saveResponseOnInBoundPackage(upsResponse, packagingInfo);
@@ -169,7 +172,6 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	private boolean createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
 			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel)
 	{
-
 		final ProcessShipmentReply masterReply = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount,
 				sequenceMap, warehouseModel);
 
