@@ -118,9 +118,9 @@ public class BLUPSShipmentCreateRequestPopulator
 		if(shipmentData.isSignatureRequired()) {
    		final DeliveryConfirmationType deliveryConfirmation = new DeliveryConfirmationType();
    		deliveryConfirmation.setDCISType(BlintegrationConstants.DELIVERY_CONFIRMATION_SIGNATURE);
-   		final ShipmentType.ShipmentServiceOptions shipmentServiceOptions = new ShipmentType.ShipmentServiceOptions();
-   		shipmentServiceOptions.setDeliveryConfirmation(deliveryConfirmation);
-   		shipmentType.setShipmentServiceOptions(shipmentServiceOptions);
+			final PackageServiceOptionsType packageServiceOptions = new PackageServiceOptionsType();
+			packageServiceOptions.setDeliveryConfirmation(deliveryConfirmation);
+			pkg1.setPackageServiceOptions(packageServiceOptions);
 		}
 
 		final ShipUnitOfMeasurementType shipUnitOfMeasurementType = new ShipUnitOfMeasurementType();
@@ -146,7 +146,7 @@ public class BLUPSShipmentCreateRequestPopulator
 		pkgWeight.setWeight(packageType.getPackageWeight().getWeight());
 		pkg1.setPackageWeight(pkgWeight);
 		pkg1.setDescription(BlintegrationConstants.PACKAGE_DESCRIPTION);
-		List<ReferenceNumberType> lRefNum = new ArrayList<>();
+		final List<ReferenceNumberType> lRefNum = new ArrayList<>();
 		final ReferenceNumberType refNumType = new ReferenceNumberType();
 		refNumType.setValue(referenceNumber);
 		lRefNum.add(refNumType);
