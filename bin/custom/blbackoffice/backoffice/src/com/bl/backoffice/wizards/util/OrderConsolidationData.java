@@ -13,7 +13,9 @@ public class OrderConsolidationData
 	private String location;
 	private String parentLocation;
 	private String barCode;
+	private String warehouse;
 	private String orderNumber;
+	private String rentalEndDate;
 	private String shippingMethod;
 
 	/**
@@ -119,5 +121,19 @@ public class OrderConsolidationData
 	}
 
 
+	public String getWarehouse() {
+		return warehouse;
+	}
 
+	public void setWarehouse(String warehouse) {
+		this.warehouse = warehouse;
+	}
+
+	public String getRentalEndDate() {
+		return rentalEndDate;
+	}
+
+	public void setRentalEndDate(String rentalEndDate) {
+		this.rentalEndDate = rentalEndDate;
+	}
 }

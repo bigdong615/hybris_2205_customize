@@ -214,7 +214,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                                                                        final String carrier,
                                                                                        final boolean payByCustomer) {
         final String pstCutOffTime = BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST);
-		  final int result = checkDateForRental(
+          final int result = checkDateForRental(
 				  BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
                 rentalStart);
 		  final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST,
@@ -1098,7 +1098,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public int checkDateForRental(final String currentDay, final String rentalStart) {
-        final int days = BlDateTimeUtils.getDaysBetweenBusinessDays(currentDay, rentalStart);
+        final List<Date> holidayBlackoutDates = getBlDatePickerService()
+                .getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+        final int days = BlDateTimeUtils.getDaysBetweenBusinessDaysNew(currentDay, rentalStart, holidayBlackoutDates);
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Business days difference: {} ", days);
         return days;
     }

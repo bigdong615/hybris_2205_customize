@@ -126,7 +126,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           if(blProductModel instanceof  BlSerialProductModel ){
             BlSerialProductModel olderSerialProduct = (BlSerialProductModel)blProductModel;
             if(olderSerialProduct.getCode().equals(oldSerialProductCode.iterator().next())){
-              isSerialUpdated.set( findStockAndAssignSerial(productCode,consignmentModel,consignmentEntryModel,olderSerialProduct,isSerialUpdated));
+              isSerialUpdated.set( findStockAndAssignSerial(productCode,consignmentModel,consignmentEntryModel,olderSerialProduct));
             }
           }
         });
@@ -136,13 +136,14 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
 
 
   private Boolean findStockAndAssignSerial(Set<String> productCode, ConsignmentModel consignmentModel,
-      ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct,AtomicReference<Boolean> isSerialUpdated){
+      ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct){
     final Collection<StockLevelModel> stockLevels = getBlCommerceStockService().getStockForProductCodesAndDate(productCode, consignmentModel.getWarehouse(), consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate());
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
         "Stock size {} for product {} on warehouse {} for order {} for duration {} to {}",
         stockLevels.size(), productCode.toString(), consignmentModel.getWarehouse().getCode(),
         consignmentModel.getOrder().getCode(),consignmentModel.getOptimizedShippingStartDate(),
         consignmentModel.getOptimizedShippingEndDate());
+    BlSerialProductModel newSerial=null;
     if (CollectionUtils.isNotEmpty(stockLevels)) {
       final Map<String, List<StockLevelModel>> stockLevelsSerialWise = stockLevels
           .stream()
@@ -168,16 +169,29 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
       bufferProducts.removeAll(nonBufferProducts); // now it was only contain buffer product
       BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the buffer serial product {}",bufferProducts);
       BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the non buffer serial product {}",nonBufferProducts);
+
       if(CollectionUtils.isNotEmpty(nonBufferProducts)) {
-      return   filterAndAssignSerial(nonBufferProducts,consignmentEntryModel,oldSerialProduct);
+        newSerial  = filterAndAssignSerial(nonBufferProducts,consignmentEntryModel,oldSerialProduct);
       }else{
-       return filterAndAssignSerial(bufferProducts,consignmentEntryModel,oldSerialProduct);
+        newSerial= filterAndAssignSerial(bufferProducts,consignmentEntryModel,oldSerialProduct);
+      }
+      if(null!=newSerial){
+        List<StockLevelModel> stockLevelModels = stockLevelsSerialWise.get(newSerial.getCode());
+        stockLevelModels.forEach(stockLevel ->{
+          stockLevel.setOrder(consignmentModel.getOrder().getCode());
+          stockLevel.setReservedStatus(true);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+              "Stock status is changed to {} for the serial product {} for the order {} ", stockLevel.getReservedStatus(),
+              stockLevel.getSerialProductCode(), stockLevel.getOrder());
+        } );
+        modelService.saveAll(stockLevelModels);
+        return true;
       }
     }
     return false;
   }
 
-  public boolean filterAndAssignSerial(List<BlSerialProductModel> serialProducts,ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct){
+  public BlSerialProductModel filterAndAssignSerial(List<BlSerialProductModel> serialProducts,ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct){
 
     final List<BlSerialProductModel> consignerSerial = serialProducts.stream()
         .filter(serial -> "BL".equalsIgnoreCase(serial.getOwnedBy()))
@@ -194,11 +208,10 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
       }
     }
 
-
-    return false;
+    return null;
   }
 
-  public Boolean assignSerial(List<BlSerialProductModel> availableSerials,ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct){
+  public BlSerialProductModel assignSerial(List<BlSerialProductModel> availableSerials,ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct){
     BlSerialProductModel newSerialProduct = availableSerials.get(0);
 
     List<BlProductModel> serialProducts = consignmentEntryModel.getSerialProducts();
@@ -242,7 +255,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
     modelService.refresh(consignmentEntryModel.getOrderEntry());
     modelService.save(consignmentEntryModel);
     modelService.refresh(consignmentEntryModel);
-    return true;
+    return newSerialProduct;
   }
 
   /**

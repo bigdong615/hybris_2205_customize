@@ -80,12 +80,18 @@
                     <column width="6%" sclass="oms-widget-reassignserial-listbox-header">
                         <label value="${labels.blbackoffice.consolidation.tool.parentLocation}" width="100%"/>
                     </column>
-                     <column width="5%" sclass="oms-widget-reassignserial-listbox-header">
+                     <column width="3%" sclass="oms-widget-reassignserial-listbox-header">
                         <label value="${labels.blbackoffice.consolidation.tool.barCode}" width="100%"/>
                     </column>
                     <column width="5%" sclass="oms-widget-reassignserial-listbox-header">
+                                           <label value="${labels.blbackoffice.consolidation.tool.warehouse}" width="100%"/>
+                                        </column>
+                    <column width="4%" sclass="oms-widget-reassignserial-listbox-header">
                        <label value="${labels.blbackoffice.consolidation.tool.orderNumber}" width="100%"/>
                     </column>
+                    <column width="5%" sclass="oms-widget-reassignserial-listbox-header">
+                                         <label value="${labels.blbackoffice.consolidation.tool.retnalEndDate}" width="100%"/>
+                                        </column>
                       <column width="7%" sclass="oms-widget-reassignserial-listbox-header">
                        <label value="${labels.blbackoffice.consolidation.tool.shippingMethod}" width="100%"/>
                     </column>             
@@ -97,8 +103,10 @@
                             <label value="${each.productName}" width="100%"/>
                             <label value="${each.location}" width="100%" style="font-weight:bold;font-size:15px;"/>
                             <label value="${each.parentLocation}" width="100%"/>
-                            <label value="${each.barCode}" width="100%"/>
-                            <label value="${each.orderNumber}" width="100%"/>
+                            <label value="${each.barCode}" width="80%"/>
+                            <label value="${each.warehouse}" width="100%"/>
+                            <label value="${each.orderNumber}" width="80%"/>
+                            <label value="${each.rentalEndDate}" width="100%"/>
                             <label value="${each.shippingMethod}" width="100%"/>                          
                  </row>
                     </template>

@@ -27,7 +27,7 @@
 	</h5>
 	<c:if test="${cartData.isRetailGearOrder eq false}">
     <c:choose>
-       <c:when test="${pageType =='CART'}">
+       <c:when test="${cartData.isRentalCart eq true && pageType =='CART'}">
              <c:if test="${amountToGetFreeShipping.value > 0}">
                  <progress id="cartProgress" value="${minTotalForFreeShipping-amountToGetFreeShipping.value}" max="${minTotalForFreeShipping}"></progress>
                  <small class="cartSmall" ><spring:theme code="text.cart.nearness.message"/>&nbsp;<span class="amount">${amountToGetFreeShipping.formattedValue}</span>&nbsp;<spring:theme code="text.cart.nearness.message1"/></small>
