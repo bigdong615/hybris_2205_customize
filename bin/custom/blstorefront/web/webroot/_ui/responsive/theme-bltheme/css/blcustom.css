@@ -54,6 +54,27 @@ BL-31 Added for error message in login and create account popup
   .litepicker .reset-button { color: #3d3c3c; position: absolute; bottom: 30px; left: 50px; text-transform: initial; }
   @media screen and (max-width: 480px) { .litepicker .reset-button { position: relative; bottom: 0; left: 0 }}
   @media screen and (max-width: 480px) { .litepicker .preview-date-range { display: block; padding-bottom: 10px; }}
+  
+  
+@media screen and (min-device-width: 300px) and (max-device-width: 380px){
+.litepicker.mobilefriendly[data-plugins*="mobilefriendly"] {
+    margin-top: 23%;
+}
+}
+
+@media screen and (min-device-width: 200px) and (max-device-width: 300px){
+.litepicker.mobilefriendly[data-plugins*="mobilefriendly"] {
+    margin-top: 30%;
+}
+}
+
+@media screen and (min-device-width: 400px) and (max-device-width: 450px){
+.litepicker.mobilefriendly[data-plugins*="mobilefriendly"] {
+    margin-top: 20%;
+}
+}
+  
+  
 .litepicker .container__months .month-item { transform: none !important; }
  @media (min-width: 767px) {
 .litepicker .container__months .month-item { transform: none !important; margin-top: 63px;}
