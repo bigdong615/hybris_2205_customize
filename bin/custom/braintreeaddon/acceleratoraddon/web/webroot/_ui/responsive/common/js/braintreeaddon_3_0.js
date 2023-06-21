@@ -952,6 +952,14 @@ function createHostedFields(clientInstance) {
 				{
 					hostedFieldsInstance.tokenize(function (tokenizeErr, payload) 
 					{
+					    if(tokenizeErr!=null && tokenizeErr.message === "Some payment input fields are invalid. Cannot tokenize invalid card fields.")
+                        {
+                          let creditCardErrorMessage=document.getElementById('creditCardErrorMessage');
+                          if(creditCardErrorMessage!=null)
+                          {
+                          tokenizeErr.message = creditCardErrorMessage.value;
+                          }
+                        }
 						if (tokenizeErr) 
 						{
 						 window.mediator.publish('applyCreditCart', {
