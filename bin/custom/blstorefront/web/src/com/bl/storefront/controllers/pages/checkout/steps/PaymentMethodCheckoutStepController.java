@@ -199,6 +199,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		 model.addAttribute(BlControllerConstants.ENABLE_DATE_PICKER, blCartService.isRentalCartOnly());
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, true);
 		model.addAttribute("pageType",BlControllerConstants.BILLING_PAGE);
+		model.addAttribute("paymentErrorMessage",getMessageSource().getMessage("text.payment.error.message", null,getI18nService().getCurrentLocale()));
 		showMessageForRemovedGiftCard(model);
 		getCheckoutFacade().setDeliveryModeIfAvailable();
 		setupAddPaymentPage(model);
