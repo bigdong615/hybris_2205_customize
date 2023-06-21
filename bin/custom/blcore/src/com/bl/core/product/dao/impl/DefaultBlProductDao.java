@@ -39,9 +39,10 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
   private static final Logger LOG = Logger.getLogger(DefaultBlProductDao.class);
 
   private static final String GET_ALL_ACTIVE_SKU_PRODUCTS_QUERY =
-      "SELECT {" + BlProductModel.PK + "} from {"
+		  "SELECT {" + BlProductModel.PK + " as p join EnumerationValue as enum  on {enum.pk}={p.productType}} from {"
           + BlProductModel._TYPECODE
           + "} WHERE {" + BlProductModel.DISCONTINUED + "} = ?discontinued "
+				  + " AND {enum.code}!= ?subParts"
           + " AND {" + BlProductModel.APPROVALSTATUS + "} IN ({{SELECT {aas:PK} FROM {"
           + ArticleApprovalStatus._TYPECODE +
           " as aas} WHERE {aas:CODE} = (?approved)}}) "
@@ -102,6 +103,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
     fQuery.addQueryParameter(BlCoreConstants.APPROVED, ArticleApprovalStatus.APPROVED.getCode());
     fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CATALOG, BlCoreConstants.CATALOG_VALUE);
     fQuery.addQueryParameter(BlCoreConstants.VERSION, BlCoreConstants.STAGED);
+	 fQuery.addQueryParameter("subParts", "SUBPARTS");
     final SearchResult result = getFlexibleSearchService().search(fQuery);
     final List<BlProductModel> skuProducts = result.getResult();
     if (CollectionUtils.isEmpty(skuProducts)) {

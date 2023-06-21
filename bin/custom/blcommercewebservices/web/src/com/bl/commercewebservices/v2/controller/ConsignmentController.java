@@ -9,6 +9,7 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
@@ -53,6 +54,9 @@ public class ConsignmentController extends BaseCommerceController
 	@Resource(name = "productService")
 	private ProductService productService;
 
+	@Resource(name = "sessionService")
+	private SessionService sessionService;
+
 	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
 	@RequestMapping(value = "/consignmententries", method = RequestMethod.GET)
 	@ResponseBody
@@ -69,6 +73,7 @@ public class ConsignmentController extends BaseCommerceController
 	final String fields, @RequestParam
 	final Map<String, String> params, final HttpServletResponse response)
 	{
+		sessionService.setAttribute("isApiCall", true);
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final ConsignmentEntryListData consignmentEntryListData;
 		consignmentEntryListData = createConsignmentEntryListData(
@@ -93,6 +98,7 @@ public class ConsignmentController extends BaseCommerceController
 	final String fields, @RequestParam
 	final Map<String, String> params, final HttpServletResponse response)
 	{
+		sessionService.setAttribute("isApiCall", true);
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final ConsignmentListData consignmentListData;
 		consignmentListData = createConsignmentListData(blconsignmentFacade.getConsignments(pageableData, convertDate(date)));
@@ -149,6 +155,7 @@ public class ConsignmentController extends BaseCommerceController
 	final String fields, @RequestParam
 	final Map<String, String> params, final HttpServletResponse response)
 	{
+		sessionService.setAttribute("isApiCall", true);
 		final PageableData pageableData = createPageableData(currentPage, pageSize);
 		final ConsignmentEntryListData consignmentEntryListData;
 		final SearchPageData<ConsignmentEntryData> ce = blconsignmentFacade.getConsignmentEntries(pageableData, convertDate(date));

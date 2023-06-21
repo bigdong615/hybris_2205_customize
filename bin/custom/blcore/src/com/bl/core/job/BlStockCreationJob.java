@@ -7,10 +7,12 @@ import de.hybris.platform.servicelayer.cronjob.PerformResult;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlStockCreationCronJobModel;
 import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
@@ -40,7 +42,7 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlStockCreationJob...");
 		try
 		{
-			getBlStockService().createStockLevelForSkuProductsByDate(blStockCreationCronJob.getSkuProductList(),
+			getBlStockService().createStockLevelForSkuProductsByDate(filterSubparts(blStockCreationCronJob.getSkuProductList()),
 					blStockCreationCronJob.getStartDate(), blStockCreationCronJob.getEndDate());
 		}
 		catch (final BusinessException ex)
@@ -56,6 +58,20 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 		}
 		resetParameters(blStockCreationCronJob);
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
+	}
+
+	/**
+	 * @param skuProductList
+	 */
+	private List<BlProductModel> filterSubparts(final List<BlProductModel> skuProductList)
+	{
+		final List<BlProductModel> finalProductList = new ArrayList<BlProductModel>();
+		for(final BlProductModel product : skuProductList) {
+			if(product instanceof BlProductModel && product.getProductType()!=null && !product.getProductType().getCode().equalsIgnoreCase("SUBPARTS")) {
+				finalProductList.add(product);
+			}
+		}
+		return finalProductList;
 	}
 
 	/**
