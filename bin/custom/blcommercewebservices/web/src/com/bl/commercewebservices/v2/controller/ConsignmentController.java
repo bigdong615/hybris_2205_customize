@@ -160,11 +160,12 @@ public class ConsignmentController extends BaseCommerceController
 		final ConsignmentEntryListData consignmentEntryListData;
 		final SearchPageData<ConsignmentEntryData> ce = blconsignmentFacade.getConsignmentEntries(pageableData, convertDate(date));
 		final List<ConsignmentEntryData> cl = new ArrayList<ConsignmentEntryData>();
+		final Map<String, Integer> nameCount = new HashMap<>();
 		for (final ConsignmentEntryData cons : ce.getResults())
 		{
 			for (final String str : cons.getSerialproducts().split(","))
 			{
-				LOG.debug(str);
+				LOG.info(str);
 				final ConsignmentEntryData consignmentEntryData = getDataMapper().map(cons, ConsignmentEntryData.class);
 
 				if (StringUtils.isNumeric(str))
@@ -183,17 +184,36 @@ public class ConsignmentController extends BaseCommerceController
 							consignmentEntryData.setConsignmententrystatus(csts);
 						}
 					}
-					consignmentEntryData.setSerialproducts(str);
-					cl.add(consignmentEntryData);
+
+				}
+				else if (occursOnlyOnce(cons.getSerialproducts(), str))
+				{
+					final ProductModel productModel = productService.getProductForCode(str);
+					final String pname = productModel.getName();
+					for (final String itm : cons.getItems().split(","))
+					{
+						if (itm.contains(pname))
+						{
+							consignmentEntryData.setItems(itm);
+						}
+					}
+					for (final String csts : cons.getConsignmententrystatus().split(","))
+					{
+						if (csts.contains(pname))
+						{
+							consignmentEntryData.setConsignmententrystatus(csts);
+						}
+					}
 				}
 				else
 				{
 					final ProductModel productModel = productService.getProductForCode(str);
-					final List<String> tempList = new ArrayList<>();
-					int count = 1;
-					if (!tempList.contains(str))
+					if (nameCount.containsKey(str))
 					{
+						final int count = nameCount.get(str) + 1;
+						nameCount.put(str, count);
 						final String pname = productModel.getName() + "--" + count;
+						LOG.info(pname);
 						for (final String itm : cons.getItems().split(","))
 						{
 							if (itm.contains(pname))
@@ -208,18 +228,17 @@ public class ConsignmentController extends BaseCommerceController
 								consignmentEntryData.setConsignmententrystatus(csts);
 							}
 						}
-						tempList.add(str);
 					}
 					else
 					{
-						count++;
-						tempList.add(str);
-						final String pname = productModel.getName() + "--" + count;
+						nameCount.put(str, 1);
+						final String pname = productModel.getName() + "--" + 1;
+						LOG.info(pname);
 						for (final String itm : cons.getItems().split(","))
 						{
 							if (itm.contains(pname))
 							{
-								consignmentEntryData.setSerialproducts(itm);
+								consignmentEntryData.setItems(itm);
 							}
 						}
 						for (final String csts : cons.getConsignmententrystatus().split(","))
@@ -230,9 +249,10 @@ public class ConsignmentController extends BaseCommerceController
 							}
 						}
 					}
-					consignmentEntryData.setSerialproducts(str);
-					cl.add(consignmentEntryData);
+
 				}
+				consignmentEntryData.setSerialproducts(str);
+				cl.add(consignmentEntryData);
 			}
 		}
 		ce.getResults().removeAll(ce.getResults());
@@ -240,5 +260,13 @@ public class ConsignmentController extends BaseCommerceController
 		consignmentEntryListData = createConsignmentEntryListData(ce);
 		setTotalCountHeader(response, consignmentEntryListData.getPagination());
 		return getDataMapper().map(consignmentEntryListData, ConsignmentEntryListWsDTO.class, fields);
+	}
+
+	protected boolean occursOnlyOnce(final String input, final String value)
+	{
+		final int firstIndex = input.indexOf(value);
+		final int lastIndex = input.lastIndexOf(value);
+
+		return firstIndex != -1 && firstIndex == lastIndex;
 	}
 }
