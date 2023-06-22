@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -133,16 +134,14 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 */
 	@Override
 	public boolean createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,
-			final int packageCount, final Map<String, Integer> sequenceMap, final CarrierEnum carrier,
+			final int packageCount, final Map<String, Integer> sequenceMap, CarrierEnum carrier,
 			final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.RETURN_SHIPMENT_MSG);
-/*
-		if(null != carrier){
+		if(BooleanUtils.isFalse(isOptimizedShippingMethodChanged) && null != packagingInfo && null != packagingInfo.getConsignment() && null != packagingInfo.getConsignment().getDeliveryMode()){
 			final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
-			final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
+			carrier = zoneDeliveryMode.getCarrier();
 		}
-*/
 		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(carrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService().createUPSShipment(

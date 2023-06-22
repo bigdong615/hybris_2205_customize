@@ -46,5 +46,5 @@ public interface BlCreateShipmentFacade
 	 * @throws IOException 
 	 */
 	public boolean createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,final int packageCount,
-			final Map<String, Integer> sequenceMap, final CarrierEnum carrier, final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged) throws IOException;
+			final Map<String, Integer> sequenceMap, CarrierEnum carrier, final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged) throws IOException;
 }
