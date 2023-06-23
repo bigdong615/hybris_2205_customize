@@ -2031,7 +2031,18 @@
 			</na:notifications>
 		</na:notification-area>
 	</context>
-	
+
+	<context component="notification-area" source="OrderConsolidationToolNotification" merge-by="source">
+	<na:notification-area>
+	<na:notifications eventType="orderConsolidationToolCancelledOrder" level="INFO" destination="TOPMOST">
+		<na:message>blbackoffice.order.consolidation.tool.wizard.notification.order.cancelled</na:message>
+		<na:references linksEnabled="true">
+			<na:reference placeholder="0" link="true"/>
+		</na:references>
+	</na:notifications>
+	</na:notification-area>
+	</context>
+
 	<!--BL-820 ExportAllDirtySerials-->
 	<context type="ExportAllDirtyPrioritySerials" component="advanced-search" merge-by="replace">
 		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
