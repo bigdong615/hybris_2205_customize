@@ -117,7 +117,8 @@
 														action="${request.contextPath}/braintree/checkout/hop/response"
 														method="POST">
 														<div id="cardDetails">
-															<div id="credit-card-saved" class="collapse show" data-bs-parent="#cardDetails">
+															<input id="creditCardErrorMessage" type="hidden" value="${paymentErrorMessage}"/>
+                                                            <div id="credit-card-saved" class="collapse show" data-bs-parent="#cardDetails">
 																<c:choose>
 																	<c:when test="${not empty userSelectedPaymentInfo.cardNumber and empty braintreePaymentInfos}">
 																	<b class="mt-4">Saved Credit Cards</b>

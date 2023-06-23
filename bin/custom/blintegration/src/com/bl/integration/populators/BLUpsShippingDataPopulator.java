@@ -300,7 +300,7 @@ public class BLUpsShippingDataPopulator
 		else if(Objects.nonNull(om) && StringUtils.isNotBlank(om.getServiceTypeCode()) && StringUtils.isNotBlank(om.getServiceTypeDesc()))
 		{
 			if(isSignatureRequired && om.getSignatureServiceTypeCode()!=null) {
-				upsShipmentServiceData.setCode(om.getSignatureServiceTypeCode());
+				upsShipmentServiceData.setCode(om.getServiceTypeCode());
 			}
 			else {
 				upsShipmentServiceData.setCode(om.getServiceTypeCode());
