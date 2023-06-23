@@ -39,10 +39,11 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
   private static final Logger LOG = Logger.getLogger(DefaultBlProductDao.class);
 
   private static final String GET_ALL_ACTIVE_SKU_PRODUCTS_QUERY =
-		  "SELECT {" + BlProductModel.PK + " as p join EnumerationValue as enum  on {enum.pk}={p.productType}} from {"
+		  "SELECT {" + BlProductModel.PK + "} from {"
           + BlProductModel._TYPECODE
+				  + " as p join EnumerationValue as enum  on {enum.pk}={p.productType}"
           + "} WHERE {" + BlProductModel.DISCONTINUED + "} = ?discontinued "
-				  + " AND {enum.code}!= ?subParts"
+			 + " AND {enum.code}!= ?subParts"
           + " AND {" + BlProductModel.APPROVALSTATUS + "} IN ({{SELECT {aas:PK} FROM {"
           + ArticleApprovalStatus._TYPECODE +
           " as aas} WHERE {aas:CODE} = (?approved)}}) "
