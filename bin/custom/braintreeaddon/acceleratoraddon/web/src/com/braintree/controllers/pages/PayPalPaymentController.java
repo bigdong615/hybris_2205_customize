@@ -160,10 +160,6 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
-	@ModelAttribute(name = BlControllerConstants.HOLIDAY_DATES)
-	private String getHolidayDates(){
-		return BlRentalDateUtils.getHolidayDates();
-	}
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
