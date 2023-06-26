@@ -1,0 +1,12 @@
+INSERT_UPDATE BlBlackoutDate;blackoutDate[dateformat=yyyy-MM-dd HH:mm][unique=true];blockedShippingMethod(code);blackoutDateType(code)
+                            ;2023-01-16 17:51									   ;ALL                        ;HOLIDAY
+                            ;2023-02-20 17:51                                      ;ALL                        ;HOLIDAY
+                            ;2023-05-29 17:51                                      ;ALL                        ;HOLIDAY
+                            ;2023-07-04 17:51                                      ;ALL                        ;HOLIDAY
+                            ;2023-09-04 17:51                                      ;ALL                        ;HOLIDAY
+                            ;2023-11-23 17:51                                      ;ALL                        ;HOLIDAY
+                            ;2023-11-24 17:51                                      ;ALL                        ;HOLIDAY
+                            ;2023-12-25 17:51                                      ;ALL                        ;HOLIDAY
+                            ;2023-12-26 17:51                                      ;ALL                        ;HOLIDAY
+                            ;2023-12-29 17:51                                      ;ALL                        ;HOLIDAY
+                            ;2024-01-01 17:51                                      ;ALL                        ;HOLIDAY
