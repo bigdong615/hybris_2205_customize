@@ -58,6 +58,11 @@ public class RentalProductPageController extends AbstractBlProductPageController
     return BlRentalDateUtils.getRentalsDuration();
   }
 
+  @ModelAttribute(name = BlControllerConstants.HOLIDAY_DATES)
+  private String getHolidayDates(){
+    return BlRentalDateUtils.getHolidayDates();
+  }
+
   /*
    * This method is used for render rental pdp.
    */

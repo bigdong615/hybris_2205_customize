@@ -26,6 +26,7 @@ public interface BraintreeaddonControllerConstants
     public static final String GIFTCARDPURCHASEMESSAGE = "message";
     public static final String REVIEW_PAGE = "Review";
     public static final String RENTAL_DATE = "rentalDate";
+    public static final String HOLIDAY_DATES = "holidayDates";
     public static final String CURRENT_PAGE = "currentPage";
     public static final String DATE_FORMAT_PATTERN = "dd-MM-yyyy";
     public static final String FORMATTED_RENTAL_START_DATE = "formattedRentalStartDate";

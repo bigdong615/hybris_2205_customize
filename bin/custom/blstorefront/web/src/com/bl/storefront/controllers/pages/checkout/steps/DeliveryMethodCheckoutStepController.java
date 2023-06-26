@@ -111,6 +111,11 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
  		 return BlRentalDateUtils.getRentalsDuration();
  	 }
 
+    @ModelAttribute(name = BlControllerConstants.HOLIDAY_DATES)
+    private String getHolidayDates(){
+        return BlRentalDateUtils.getHolidayDates();
+    }
+
     @GetMapping(value = "/chooseShipping")
     @RequireHardLogIn
     @Override

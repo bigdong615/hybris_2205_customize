@@ -93,6 +93,11 @@ public class SearchPageController extends AbstractSearchPageController
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
+	@ModelAttribute(name = BlControllerConstants.HOLIDAY_DATES)
+	private String getHolidayDates(){
+		return BlRentalDateUtils.getHolidayDates();
+	}
+
 	@GetMapping(params = "!q")
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
 			@RequestParam(value="blPageType") final String blPageType,

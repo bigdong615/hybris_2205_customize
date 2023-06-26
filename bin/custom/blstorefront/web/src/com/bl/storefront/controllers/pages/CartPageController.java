@@ -211,6 +211,10 @@ public class CartPageController extends AbstractCartPageController
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
+	@ModelAttribute(name = BlControllerConstants.HOLIDAY_DATES)
+	private String getHolidayDates(){
+		return BlRentalDateUtils.getHolidayDates();
+	}
 	@GetMapping
 	public String showCart(final Model model) throws CMSItemNotFoundException{
 		if(blCartService.isRentalCartOnly())

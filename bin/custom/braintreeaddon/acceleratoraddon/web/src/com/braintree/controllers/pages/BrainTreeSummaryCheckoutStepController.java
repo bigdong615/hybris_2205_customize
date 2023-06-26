@@ -108,6 +108,11 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
+	@ModelAttribute(name = BraintreeaddonControllerConstants.HOLIDAY_DATES)
+	private String getHolidayDates(){
+		return BlRentalDateUtils.getHolidayDates();
+	}
+
 	@GetMapping(value = "/view")
 	@RequireHardLogIn
 	@Override

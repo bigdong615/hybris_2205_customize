@@ -107,6 +107,11 @@ public class AddToCartController extends AbstractController {
         return BlRentalDateUtils.getRentalsDuration();
     }
 
+    @ModelAttribute(name = BlControllerConstants.HOLIDAY_DATES)
+    private String getHolidayDates(){
+        return BlRentalDateUtils.getHolidayDates();
+    }
+
     @RequestMapping(value = "/cart/add", method = RequestMethod.POST, produces = "application/json")
     public String addToCart(@RequestParam("productCodePost") final String code,
                             @RequestParam("serialProductCodePost") final String serialCode, final Model model, @Valid final AddToCartForm form,

@@ -57,6 +57,11 @@ public class HomePageController extends AbstractPageController
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
+	@ModelAttribute(name = BlControllerConstants.HOLIDAY_DATES)
+	private String getHolidayDates(){
+		return BlRentalDateUtils.getHolidayDates();
+	}
+
 	@GetMapping
 	public String home(@RequestParam(value = WebConstants.CLOSE_ACCOUNT, defaultValue = "false") final boolean closeAcc,
 			@RequestParam(value = LOGOUT, defaultValue = "false") final boolean logout, final Model model,
