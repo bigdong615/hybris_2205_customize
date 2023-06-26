@@ -20,8 +20,8 @@
 <!DOCTYPE html>
 <html lang="${fn:escapeXml(currentLanguage.isocode)}">
 <head>
-    <!--Analytics Google Tag Manager Header -->
-    <analytics:googleTagManagerHeader/>
+    <%--Analytics Google Tag Manager Header
+    <analytics:googleTagManagerHeader/> --%>
 	<title>
 		${not empty pageTitle ? pageTitle : not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
 	</title>
@@ -68,8 +68,8 @@
 </head>
 <body class="${pageBodyCssClasses} ${cmsPageRequestContextData.liveEdit ? ' yCmsLiveEdit' : ''} language-${fn:escapeXml(currentLanguage.isocode)}">
 
-<!-- Analytics Google Tag Manager Body -->
-<analytics:googleTagManagerBody/>
+<%-- Analytics Google Tag Manager Body
+ <analytics:googleTagManagerBody/> --%>
 <!-- Talkable integration Script -->
 <analytics:talkableScript/>
 
