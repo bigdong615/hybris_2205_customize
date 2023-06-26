@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.interceptors.beforeview;
 
+import com.bl.core.utils.BlRentalDateUtils;
 import de.hybris.platform.acceleratorcms.data.CmsPageRequestContextData;
 import de.hybris.platform.acceleratorcms.model.actions.AbstractCMSActionModel;
 import de.hybris.platform.acceleratorcms.services.CMSPageContextService;
@@ -109,6 +110,7 @@ public class CmsPageBeforeViewHandler implements BeforeViewHandler
 				addCmsComponentActions(actionJsFiles, cmsComponents, dependantAddOns);
 			}
 			modelAndView.addObject("cmsActionsJsFiles", actionJsFiles);
+			modelAndView.addObject(BlControllerConstants.HOLIDAY_DATES, BlRentalDateUtils.getHolidayDates());
 		}
 
 		// Create the restriction data

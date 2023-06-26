@@ -33,8 +33,8 @@ public class AnalyticsPropertiesBeforeViewHandler implements BeforeViewHandler
 
 	private static final String ANALYTICS_TRACKING_ID = "googleAnalyticsTrackingId";
 
-	private static final String GTM_ID = "googleTagManagerId";
-	private static final String GOOGLE_GTM_ID = "google.tag.manager.id";
+	// private static final String GTM_ID = "googleTagManagerId";
+	// private static final String GOOGLE_GTM_ID = "google.tag.manager.id";
 
 	@PostConstruct
 	public void init()
@@ -104,10 +104,12 @@ public class AnalyticsPropertiesBeforeViewHandler implements BeforeViewHandler
 		{
 			modelAndView.addObject(AnalyticsPropertiesBeforeViewHandler.ANALYTICS_TRACKING_ID, propertyForHost);
 		}
-		final String fullConfigGTMKey = GOOGLE_GTM_ID + "." + serverName;
-		final String propertyForGTMHost = analyticsPropertiesMapCache
-				.computeIfAbsent(fullConfigGTMKey, k -> getHostConfigService().getProperty(GOOGLE_GTM_ID, serverName));
-		modelAndView.addObject(AnalyticsPropertiesBeforeViewHandler.GTM_ID, propertyForGTMHost);
+		/*
+		* final String fullConfigGTMKey = GOOGLE_GTM_ID + "." + serverName;
+		* final String propertyForGTMHost = analyticsPropertiesMapCache
+		*		.computeIfAbsent(fullConfigGTMKey, k -> getHostConfigService().getProperty(GOOGLE_GTM_ID, serverName));
+		* modelAndView.addObject(AnalyticsPropertiesBeforeViewHandler.GTM_ID, propertyForGTMHost);
+		*/
 
 	}
 

@@ -487,7 +487,14 @@ console.log("First start");
              //BL-520 - disable dates after one year from today's date
                  let oneYearFromNow = new Date();
                  let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-			     const disallowedDates = [['2001-01-01', today], '2023-01-16', '2023-02-20','2023-05-29', '2023-07-04', '2023-09-04', '2023-11-23', '2023-11-24', '2023-12-25', '2023-12-26', '2023-12-29', '2024-01-01'];
+			     const disallowedDates = [['2001-01-01', today], ];
+
+                  var dates =  ${holidayDates};
+                 $.each(dates, function( index, value ) {
+                 			disallowedDates.push(value);
+                 		});
+
+
 
               const picker = new Litepicker({
               element: document.getElementById('litepicker'),
@@ -1444,7 +1451,11 @@ console.log("3 end");
                         //BL-520 - disable dates after one year from today's date
                            let oneYearFromNow = new Date();
                            let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-				           const disallowedDates = [['2001-01-01', today], '2023-01-16', '2023-02-20','2023-05-29', '2023-07-04', '2023-09-04', '2023-11-23', '2023-11-24', '2023-12-25', '2023-12-26', '2023-12-29', '2024-01-01'];
+				           const disallowedDates = [['2001-01-01', today], ];
+                            var dates =  ${holidayDates};
+                                 $.each(dates, function( index, value ) {
+                 			disallowedDates.push(value);
+                 		});
 				 const picker = new Litepicker({
                             element: document.getElementById('litepicker'),
                             plugins: ['mobilefriendly'],
@@ -1648,7 +1659,11 @@ console.log("3 end");
                         //BL-520 - disable dates after one year from today's date
                            let oneYearFromNow = new Date();
                            let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-					       const disallowedDates = [['2001-01-01', today], '2023-01-16', '2023-02-20','2023-05-29', '2023-07-04', '2023-09-04', '2023-11-23', '2023-11-24', '2023-12-25', '2023-12-26', '2023-12-29', '2024-01-01'];
+					       const disallowedDates = [['2001-01-01', today], ];
+                           var dates =  ${holidayDates};
+                                            $.each(dates, function( index, value ) {
+                                            			disallowedDates.push(value);
+                                            		});
                            </script>
                            </c:if>
                            <c:if test="${enableDatePicker == true and cmsPage.uid eq 'multiStepCheckoutSummaryPage' and fn:containsIgnoreCase(currentPage, 'Review') == false}">
@@ -1916,8 +1931,11 @@ console.log("3 end");
                  // BL-520 - disable dates after one year from today's date
                     let oneYearFromNow = new Date();
                     let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-					const disallowedDates = [['2001-01-01', today], '2023-01-16', '2023-02-20','2023-05-29', '2023-07-04', '2023-09-04', '2023-11-23', '2023-11-24', '2023-12-25', '2023-12-26', '2023-12-29', '2024-01-01'];
-
+					const disallowedDates = [['2001-01-01', today], ];
+                     var dates =  ${holidayDates};
+                          $.each(dates, function( index, value ) {
+                                    disallowedDates.push(value);
+                                });
                  // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
                     const summarypicker = new Litepicker({
                         element: document.getElementById('summary-litepicker'),
@@ -2019,7 +2037,13 @@ console.log("3 end");
            var orderCode = $("#orderCode").val(); // To Get Order Code
 
            startDate.setDate(startDate.getDate() + 89); // To add max days from existing order startDate
-		  const disallowedDatesForExendOrder = [['2001-01-01', endDate], '2023-01-16', '2023-02-20','2023-05-29', '2023-07-04', '2023-09-04', '2023-11-23', '2023-11-24', '2023-12-25', '2023-12-26', '2023-12-29', '2024-01-01'];
+		  const disallowedDatesForExendOrder = [['2001-01-01', endDate],];
+                                  var dates =  ${holidayDates};
+                                                   $.each(dates, function( index, value ) {
+                                                   			disallowedDatesForExendOrder.push(value);
+                                                   		});
+
+
                                        const extendRentalDatePicker = new Litepicker({
                                       element: document.getElementById('rental-litepicker'),
                                   //    plugins: ['mobilefriendly'],

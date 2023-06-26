@@ -206,7 +206,7 @@ public class CartPageController extends AbstractCartPageController
 	}
 	
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
-	private RentalDateDto getRentalsDuration() 
+	private RentalDateDto getRentalsDuration()
 	{
 		return BlRentalDateUtils.getRentalsDuration();
 	}
