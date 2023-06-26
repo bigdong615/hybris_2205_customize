@@ -2,9 +2,12 @@ package com.bl.backoffice.widget.controller;
 
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.enums.CarrierEnum;
+import com.bl.core.model.OptimizedShippingMethodModel;
 import com.bl.core.model.ShippingOptimizationModel;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.google.common.collect.Maps;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
@@ -20,6 +23,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -51,6 +55,10 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 {
 	@Wire
 	private Combobox warehouseCombobox;
+	@Wire
+	private Combobox shippingTypeComboBox;
+	@Wire
+	private Combobox optimizedShippingMethodComboBox;
 
 	protected static final String OUT_CONFIRM = "confirmOutput";
 	protected static final String COMPLETE = "completed";
@@ -76,8 +84,13 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	@Resource(name = "blDatePickerService")
 	private BlDatePickerService blDatePickerService;
 
-	private ListModelList<String> warehouseList = new ListModelList<>();
+	@Resource(name = "blOptimizedShippingMethodGenericDao")
+	private GenericDao<OptimizedShippingMethodModel> blOptimizedShippingMethodGenericDao;
 
+	private ListModelList<String> warehouseList = new ListModelList<>();
+	private ListModelList<String> shippingTypeList = new ListModelList<>();
+	private ListModelList<String> optimizedShippingMethodList = new ListModelList<>();
+	Map<String, OptimizedShippingMethodModel> optimizedMethodList = Maps.newHashMap();
 	ConsignmentModel selectedConsignment = new ConsignmentModel();
 
 	private static final Logger LOG = Logger.getLogger(BlCreateReturnShipmentController.class);
@@ -96,6 +109,10 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		warehouseList = new ListModelList<>(getWarehouseList());
 		warehouseList.addToSelection(BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
 		warehouseCombobox.setModel(warehouseList);
+		shippingTypeList = new ListModelList<>(getShippingTypeList());
+		shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
+		shippingTypeComboBox.setModel(shippingTypeList);
+		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
 	}
 
 	/**
@@ -116,15 +133,42 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	{
 		final List<PackagingInfoModel> packages = selectedConsignment.getPackaginginfos();
 
+
+		///BLS-371:start
+		final String selectedShippingType = getSelectedShippingType();
+		CarrierEnum carrier = null;
+		final String selectedOptimizedShippingMethod = getSelectedOptimizedShippingMethod();
+		OptimizedShippingMethodModel selectedOptimizedShippingMethodModel = null;
+		if (StringUtils.isNotBlank(selectedShippingType)
+				&& BooleanUtils.isFalse(selectedShippingType.equals(BlintegrationConstants.DEFAULT_SHIPPING_CODE)))
+		{
+			for (final Map.Entry<String, OptimizedShippingMethodModel> entry : optimizedMethodList.entrySet())
+			{
+				if (entry.getKey().equals(selectedOptimizedShippingMethod))
+				{
+					selectedOptimizedShippingMethodModel = entry.getValue();
+					break;
+				}
+			}
+			carrier = selectedShippingType.equals(CarrierEnum.UPS.getCode()) ? CarrierEnum.UPS : CarrierEnum.FEDEX;
+		}
+
+		final boolean isOptimizedShippingMethodChanged = StringUtils.isNotBlank(selectedShippingType)
+				&& BooleanUtils.isFalse(selectedShippingType.equals(BlintegrationConstants.DEFAULT_SHIPPING_CODE))
+				&& Objects.nonNull(carrier) && Objects.nonNull(selectedOptimizedShippingMethodModel);
+
+		//BLS-371: end
+
 		final List<WarehouseModel> activeWarehouseList = blWarehouseGenericDao.find();
 		final List<String> errorPackages = Lists.newArrayList();
 		if (!BlintegrationConstants.DEFAULT_WAREHOUSE_CODE.equalsIgnoreCase(this.warehouseCombobox.getSelectedItem().getValue()))
 		{
-			errorPackages.addAll(createShipmentForSelectedWarehouse(packages, activeWarehouseList));
+			errorPackages.addAll(createShipmentForSelectedWarehouse(packages, activeWarehouseList, carrier, selectedOptimizedShippingMethodModel,
+			isOptimizedShippingMethodChanged));
 		}
 		else
 		{
-			errorPackages.addAll(createShipmentForOptimizedWarehouse(packages));
+			errorPackages.addAll(createShipmentForOptimizedWarehouse(packages, carrier, selectedOptimizedShippingMethodModel, isOptimizedShippingMethodChanged));
 		}
 		if (CollectionUtils.isNotEmpty(errorPackages))
 		{
@@ -150,12 +194,31 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	}
 
 	/**
+	 * method will be called when any value change for shipping type combobox
+	 */
+	@ViewEvent(componentID = BlInventoryScanLoggingConstants.SHIPPING_TYPE_COMBOBOX, eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
+	public void changeOptimizedShippingType()
+	{
+		final String selectedShippingType = this.shippingTypeComboBox.getSelectedItem().getValue();
+		shippingTypeList.addToSelection(selectedShippingType);
+		setOptimizedShippingMethodComboBox(selectedShippingType);
+	}
+
+	@ViewEvent(componentID = "optimizedShippingMethodComboBox", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
+	public void changeOptimizedShippingMethod()
+	{
+		final String selectedOptimizedShippingMethod = this.optimizedShippingMethodComboBox.getSelectedItem().getValue();
+		optimizedShippingMethodList.addToSelection(selectedOptimizedShippingMethod);
+	}
+
+	/**
 	 * this method will be used to create shipment for optimized warehouse
 	 *
 	 * @param packages
 	 * @throws IOException 
 	 */
-	private List<String> createShipmentForOptimizedWarehouse(final List<PackagingInfoModel> packages) throws IOException
+	private List<String> createShipmentForOptimizedWarehouse(final List<PackagingInfoModel> packages, final CarrierEnum carrier,
+	 		final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged) throws IOException
 	{
 		final WarehouseModel stateWarehouse = getBlDeliveryStateSourcingLocationFilter()
 				.applyFilter(selectedConsignment.getOrder());
@@ -171,7 +234,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 //			errorPackages.addAll(startShipmentCreationProcess(packages, selectedConsignment.getWarehouse()));
 //		}
 		
-		errorPackages.addAll(startShipmentCreationProcess(packages, stateWarehouse));
+		errorPackages.addAll(startShipmentCreationProcess(packages, stateWarehouse, carrier, selectedOptimizedShippingMethodModel, isOptimizedShippingMethodChanged));
 		return errorPackages;
 	}
 
@@ -182,7 +245,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 * @param activeWarehouseList
 	 */
 	private List<String> createShipmentForSelectedWarehouse(final List<PackagingInfoModel> packages,
-			final List<WarehouseModel> activeWarehouseList)
+			final List<WarehouseModel> activeWarehouseList, CarrierEnum carrier, OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, boolean isOptimizedShippingMethodChanged)
 	{
 		final Optional<WarehouseModel> selectedWarehouse = activeWarehouseList.stream().filter(warehouse -> this.warehouseCombobox.getSelectedItem().getValue().equals(warehouse.getCode())).findAny();
 		final List<String> errorPackages = Lists.newArrayList();
@@ -190,7 +253,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		{
 			try
 			{
-				errorPackages.addAll(startShipmentCreationProcess(packages, selectedWarehouse.get()));
+				errorPackages.addAll(startShipmentCreationProcess(packages, selectedWarehouse.get(), carrier, selectedOptimizedShippingMethodModel, isOptimizedShippingMethodChanged));
 			}
 			catch (final IOException ioException)
 			{
@@ -207,7 +270,8 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 * @param stateWarehouse
 	 * @throws IOException 
 	 */
-	private List<String> startShipmentCreationProcess(final List<PackagingInfoModel> packages, final WarehouseModel stateWarehouse) throws IOException
+	private List<String> startShipmentCreationProcess(final List<PackagingInfoModel> packages, final WarehouseModel stateWarehouse, final CarrierEnum carrier,
+			final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged) throws IOException
 	{
 		final Map<String, Integer> sequenceMap = new HashedMap();
 		final int packageCount = packages.size();
@@ -216,7 +280,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Creating shipment package for {}", packagingInfoModel);
-			final boolean isLabelGenerateSuccess = getBlCreateShipmentFacade().createBlReturnShipmentPackages(packagingInfoModel, stateWarehouse,packageCount, sequenceNumber);
+			final boolean isLabelGenerateSuccess = getBlCreateShipmentFacade().createBlReturnShipmentPackages(packagingInfoModel, stateWarehouse,packageCount, sequenceNumber, carrier, selectedOptimizedShippingMethodModel, isOptimizedShippingMethodChanged);
 			if(BooleanUtils.isFalse(isLabelGenerateSuccess))
 			{
 				errorPackages.add(packagingInfoModel.getPackageId());
@@ -393,6 +457,76 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 	public void setBlDatePickerService(BlDatePickerService blDatePickerService) {
 		this.blDatePickerService = blDatePickerService;
+	}
+
+	private List<String> getShippingTypeList()
+	{
+		final List<String> shippingTypesList = org.assertj.core.util.Lists.newArrayList();
+		//shippingTypesList.add(BlintegrationConstants.DEFAULT_SHIPPING_CODE);
+		shippingTypesList.add(CarrierEnum.UPS.getCode());
+		shippingTypesList.add(CarrierEnum.FEDEX.getCode());
+		return shippingTypesList;
+	}
+
+	private void setOptimizedShippingMethodComboBox(final String selectedShippingType)
+	{
+		final List<String> carrierBasedOptimizedShippingMethodList = org.assertj.core.util.Lists.newArrayList();
+		final List<OptimizedShippingMethodModel> allOptimizedShippingMethodList = getBlOptimizedShippingMethodGenericDao().find();
+		allOptimizedShippingMethodList.forEach(
+				optimizedShippingMethod -> optimizedMethodList.put(optimizedShippingMethod.getName(), optimizedShippingMethod));
+		if (selectedShippingType.equalsIgnoreCase(CarrierEnum.UPS.getCode()))
+		{
+			optimizedShippingMethodList.clearSelection();
+			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
+			{
+				if (!optimizedShippingMethod.getCode().toLowerCase().contains(CarrierEnum.FEDEX.getCode().toLowerCase()))
+				{
+					carrierBasedOptimizedShippingMethodList.add(optimizedShippingMethod.getName());
+				}
+
+			}
+		}
+		else if (selectedShippingType.equalsIgnoreCase(CarrierEnum.FEDEX.getCode()))
+		{
+			optimizedShippingMethodList.clearSelection();
+			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
+			{
+				if (optimizedShippingMethod.getCode().toLowerCase().contains(CarrierEnum.FEDEX.getCode().toLowerCase()))
+				{
+					carrierBasedOptimizedShippingMethodList.add(optimizedShippingMethod.getName());
+				}
+
+			}
+		}
+		else
+		{
+			carrierBasedOptimizedShippingMethodList.clear();
+			optimizedShippingMethodList.clearSelection();
+		}
+		optimizedShippingMethodList = new ListModelList<>(carrierBasedOptimizedShippingMethodList);
+		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
+
+	}
+
+	private String getSelectedShippingType()
+	{
+		return Objects.nonNull(this.shippingTypeComboBox.getSelectedItem()) ? this.shippingTypeComboBox.getSelectedItem().getValue()
+				: StringUtils.EMPTY;
+	}
+
+	private String getSelectedOptimizedShippingMethod()
+	{
+		return Objects.nonNull(this.optimizedShippingMethodComboBox.getSelectedItem())
+				? this.optimizedShippingMethodComboBox.getSelectedItem().getValue()
+				: StringUtils.EMPTY;
+	}
+
+	public GenericDao<OptimizedShippingMethodModel> getBlOptimizedShippingMethodGenericDao() {
+		return blOptimizedShippingMethodGenericDao;
+	}
+
+	public void setBlOptimizedShippingMethodGenericDao(GenericDao<OptimizedShippingMethodModel> blOptimizedShippingMethodGenericDao) {
+		this.blOptimizedShippingMethodGenericDao = blOptimizedShippingMethodGenericDao;
 	}
 }
 

@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -133,17 +134,18 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 */
 	@Override
 	public boolean createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,
-			final int packageCount, final Map<String, Integer> sequenceMap) throws IOException
+			final int packageCount, final Map<String, Integer> sequenceMap, CarrierEnum carrier,
+			final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.RETURN_SHIPMENT_MSG);
-
-		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
-		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
-
-		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
+		if(BooleanUtils.isFalse(isOptimizedShippingMethodChanged) && null != packagingInfo && null != packagingInfo.getConsignment() && null != packagingInfo.getConsignment().getDeliveryMode()){
+			final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
+			carrier = zoneDeliveryMode.getCarrier();
+		}
+		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(carrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService().createUPSShipment(
-					getBlUpsShippingDataPopulator().populateUPSReturnShipmentRequest(packagingInfo, warehouseModel), packagingInfo);
+					getBlUpsShippingDataPopulator().populateUPSReturnShipmentRequest(packagingInfo, warehouseModel, selectedOptimizedShippingMethodModel, isOptimizedShippingMethodChanged), packagingInfo);
 			if (upsResponse != null)
 			{
 				saveResponseOnInBoundPackage(upsResponse, packagingInfo);
@@ -169,7 +171,6 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	private boolean createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
 			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel)
 	{
-
 		final ProcessShipmentReply masterReply = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount,
 				sequenceMap, warehouseModel);
 

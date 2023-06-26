@@ -20,6 +20,30 @@
     <grid style="margin-left:50px;margin-top:10px">
     <rows>
       <row>
+                   	<label value="Select Carrier Type" width="50%" />
+				  <combobox   xmlns:w="client" id="shippingTypeComboBox"
+                                        model="${each.shippingTypeComboBox}"
+                                        sclass="oms-widget-updateorder__template-reason"
+                                        style="">
+                                <template name="model">
+                                    <comboitem label="${forEachStatus.previous.each} ${each}"
+                                    forEach="${each}" />
+                                </template>
+                            </combobox>
+      </row>
+      <row>
+                   <label value="Select Optimized Shipping Method" width="50%" />
+				  <combobox   xmlns:w="client" id="optimizedShippingMethodComboBox"
+                                        model="${each.optimizedShippingMethodComboBox}"
+                                        sclass="oms-widget-updateorder__template-reason"
+                                        style="">
+                                <template name="model">
+                                    <comboitem label="${forEachStatus.previous.each} ${each}"
+                                    forEach="${each}" />
+                                </template>
+                            </combobox>
+      </row>
+      <row>
                    	<label value="${labels.blbackoffice.inbound.label.warehouse.code}" width="50%" />
 				  <combobox   xmlns:w="client" id="warehouseCombobox"
                                         model="${each.warehouseCombobox}" 
