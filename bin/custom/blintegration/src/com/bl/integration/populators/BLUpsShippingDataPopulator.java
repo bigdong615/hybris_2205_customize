@@ -3,6 +3,7 @@
  */
 package com.bl.integration.populators;
 
+import com.bl.core.enums.CarrierEnum;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
@@ -112,13 +113,19 @@ public class BLUpsShippingDataPopulator
 	 * @param packagingInfo
 	 * @return
 	 */
-	public UpsShippingRequestData populateUPSReturnShipmentRequest(final PackagingInfoModel packagingInfo,
-			final WarehouseModel warehouseModel)
+	public UpsShippingRequestData populateUPSReturnShipmentRequest(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,
+			final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged)
 	{
 		final UpsShippingRequestData upsReturnRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
+		ShipmentData upsReturnShipmentData = null;
 
-		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel, true, null, false);
+		if(isOptimizedShippingMethodChanged){
+			upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel, true, selectedOptimizedShippingMethodModel, false);
+		}
+		else {
+			upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel, true, null, false);
+		}
 
 		/** Creating return service Data **/
 
@@ -126,7 +133,7 @@ public class BLUpsShippingDataPopulator
 		returnServiceData.setCode(returnServiceCode);
 		returnServiceData.setDescription(returnServiceDescription);
 		upsReturnShipmentData.setReturnService(returnServiceData);
-		upsReturnRequestData.setShipment(shipmentData);
+		upsReturnRequestData.setShipment(upsReturnShipmentData);
 
 		return upsReturnRequestData;
 
@@ -279,8 +286,16 @@ public class BLUpsShippingDataPopulator
 			final UpsShipmentServiceData upsShipmentServiceData, final OptimizedShippingMethodModel om, final boolean isRSLabel, final boolean isSignatureRequired)
 	{
 		if(isRSLabel){
-			upsShipmentServiceData.setCode(BlintegrationConstants.RETURN_LABEL_CODE);
-			upsShipmentServiceData.setDescription(BlintegrationConstants.RETURN_LABEL_DESC);
+			if(Objects.nonNull(om) && StringUtils.isNotBlank(om.getServiceTypeCode()) && StringUtils.isNotBlank(om.getServiceTypeDesc()))
+			{
+				upsShipmentServiceData.setCode(om.getServiceTypeCode());
+				upsShipmentServiceData.setDescription(om.getServiceTypeDesc());
+			}
+			else
+			{
+				upsShipmentServiceData.setCode(BlintegrationConstants.RETURN_LABEL_CODE);
+				upsShipmentServiceData.setDescription(BlintegrationConstants.RETURN_LABEL_DESC);
+			}
 		}
 		else if(Objects.nonNull(om) && StringUtils.isNotBlank(om.getServiceTypeCode()) && StringUtils.isNotBlank(om.getServiceTypeDesc()))
 		{
