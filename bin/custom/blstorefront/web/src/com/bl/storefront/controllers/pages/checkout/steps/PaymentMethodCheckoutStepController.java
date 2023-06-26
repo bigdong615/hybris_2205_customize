@@ -184,11 +184,6 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
-	@ModelAttribute(name = BlControllerConstants.HOLIDAY_DATES)
-	private String getHolidayDates(){
-		return BlRentalDateUtils.getHolidayDates();
-	}
-
 	@Override
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	@RequireHardLogIn

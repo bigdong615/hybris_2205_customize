@@ -108,11 +108,6 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
-	@ModelAttribute(name = BlControllerConstants.HOLIDAY_DATES)
-	private String getHolidayDates(){
-		return BlRentalDateUtils.getHolidayDates();
-	}
-
   @GetMapping
 	@RequireHardLogIn
 	public String savedCarts(@RequestParam(value = "page", defaultValue = "0") final int page,

@@ -322,11 +322,6 @@ public class AccountPageController extends AbstractSearchPageController
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
-	@ModelAttribute(name = BlControllerConstants.HOLIDAY_DATES)
-	private String getHolidayDates(){
-		return BlRentalDateUtils.getHolidayDates();
-	}
-
 	@ModelAttribute(name = "isRentalPage")
 	private boolean getRentalDuration() {
 		return Boolean.TRUE;
