@@ -25,7 +25,7 @@
       </row>
       <row>
         <hlayout>
-          <textbox id="textInput" width="250px" height="150px" multiline="true" style="width:50%;" submitByEnter="true" forward="onOK=scanBarCodes.onClick"/>
+          <textbox id="textInput" width="250px" height="150px" multiline="true" style="width:50%;"/>
         </hlayout>
       </row>
     </rows>
