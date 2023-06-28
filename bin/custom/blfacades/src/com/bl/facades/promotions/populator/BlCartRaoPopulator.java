@@ -6,13 +6,14 @@ import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.ruleengineservices.rao.CartRAO;
 import de.hybris.platform.servicelayer.user.UserService;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -47,7 +48,12 @@ public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO
     target.setTotalIncludingDamageWaiver(
         BigDecimal.valueOf(source.getSubtotal() + source.getTotalDamageWaiverCost()));
 
-    populateIsFirstTimeCustomer(target);
+	  if(source instanceof CartModel){
+		  populateIsFirstTimeCustomer(target);
+	  }else{
+		  populateCustomerData(source,target);
+	  }
+
  }
 
   /**
@@ -73,6 +79,22 @@ public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO
 						&& CollectionUtils.isEmpty(currentUser.getOrders()));
 	}
 
+	private void populateCustomerData(final AbstractOrderModel source, final CartRAO target)
+	{
+		final UserModel currentUser = source.getUser();
+		List<Date> creationTime= new ArrayList<>();
+		if(Objects.nonNull(currentUser) && CollectionUtils.isNotEmpty( currentUser.getOrders()))
+		{
+			for(OrderModel order: currentUser.getOrders()) {
+				creationTime.add(order.getCreationtime());
+			}
+			Collections.sort(creationTime);
+			if(creationTime.get(Integer.valueOf(BlCoreConstants.ZERO)).equals(source.getCreationtime())) {
+				target.setFirstTimeCustomer(Boolean.TRUE);
+			}
+		}
+		target.setRentalArrivalDate(source.getRentalStartDate());
+	}
 	/**
 	 * @return the userService
 	 */
