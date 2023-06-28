@@ -498,7 +498,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param blSerialProduct
 	 *           the new bl location scan history
 	 */
-	private void setBlLocationScanHistory(final BlSerialProductModel blSerialProduct, final boolean unboxStatus, final BlInventoryLocationModel inventoryLocation)
+	public void setBlLocationScanHistory(final BlSerialProductModel blSerialProduct, final boolean unboxStatus,
+			final BlInventoryLocationModel inventoryLocation)
 	{
 		final BlInventoryLocationScanHistoryModel blInventoryLocationScanHistory = modelService
 				.create(BlInventoryLocationScanHistoryModel.class);

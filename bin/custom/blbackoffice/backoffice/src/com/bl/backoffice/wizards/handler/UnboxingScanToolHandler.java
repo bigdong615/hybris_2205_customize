@@ -1,27 +1,33 @@
 package com.bl.backoffice.wizards.handler;
 
+import de.hybris.platform.core.Registry;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.bl.backoffice.wizards.renderer.WebScanToolRenderer;
-import com.bl.backoffice.wizards.util.WebScanToolUtil;
-import de.hybris.platform.core.Registry;
+import javax.annotation.Resource;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.zul.impl.InputElement;
 
+import com.bl.backoffice.wizards.renderer.WebScanToolRenderer;
 import com.bl.backoffice.wizards.util.WebScanToolData;
+import com.bl.backoffice.wizards.util.WebScanToolUtil;
 import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
+import com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService;
+import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Maps;
@@ -30,8 +36,6 @@ import com.hybris.cockpitng.config.jaxb.wizard.CustomType;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.hybris.cockpitng.widgets.configurableflow.FlowActionHandler;
 import com.hybris.cockpitng.widgets.configurableflow.FlowActionHandlerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.zul.impl.InputElement;
 
 
 /**
@@ -45,13 +49,34 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 
 	private NotificationService notificationService;
 	private BlInventoryScanToolService blInventoryScanToolService;
+
+	DefaultBlInventoryScanToolService defaultBlInventoryScanToolService;
 	private static final NotificationEvent.Level NOTIFICATION_LEVEL_FAILURE = NotificationEvent.Level.FAILURE;
 	private static final NotificationEvent.Level NOTIFICATION_LEVEL_WARNING = NotificationEvent.Level.WARNING;
 	private static final NotificationEvent.Level NOTIFICATION_LEVEL_SUCCESS = NotificationEvent.Level.SUCCESS;
 	private Boolean allowSuccessMsgDisplay;
 
+	@Resource(name = "blInventoryScanToolDao")
+	BlInventoryScanToolDao blInventoryScanToolDao;
+
 	@Autowired
 	private WebScanToolUtil webScanToolUtil;
+
+	/**
+	 * @return the blInventoryScanToolDao
+	 */
+	public BlInventoryScanToolDao getBlInventoryScanToolDao()
+	{
+		return blInventoryScanToolDao;
+	}
+
+	/**
+	 * @param blInventoryScanToolDao the blInventoryScanToolDao to set
+	 */
+	public void setBlInventoryScanToolDao(final BlInventoryScanToolDao blInventoryScanToolDao)
+	{
+		this.blInventoryScanToolDao = blInventoryScanToolDao;
+	}
 
 	/**
 	 * This OOB method which will perform actions on input barcodes form backoffice wizard
@@ -365,6 +390,33 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		final Map<Integer, Collection<String>> unboxingResultMap = getBlInventoryScanToolService().doUnboxing(barcodes);
 		if (MapUtils.isEmpty(unboxingResultMap))
 		{
+			final List<String> subList = barcodes.subList(BlInventoryScanLoggingConstants.INT_ZERO,
+					barcodes.size() - BlInventoryScanLoggingConstants.ONE);
+			final Collection<BlSerialProductModel> blScannedProduct = getBlInventoryScanToolDao()
+					.getSerialProductsByBarcode(subList);
+
+			try
+			{
+			final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
+					.getInventoryLocationById(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+
+			blScannedProduct.forEach(scannedProduct -> {
+				// to enter OC location details in BLinventory
+				if (null != blLocalInventoryLocation)
+				{
+					defaultBlInventoryScanToolService.setBlInventoryLocation(blLocalInventoryLocation);
+
+					defaultBlInventoryScanToolService.setBlLocationScanHistory(scannedProduct, true, blLocalInventoryLocation);
+
+				}
+
+			});
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+		}
+
 			addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
 					BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NOTIFICATION_LEVEL_SUCCESS,
 					barcodes.subList(BlInventoryScanLoggingConstants.INT_ZERO, barcodes.size() - BlInventoryScanLoggingConstants.ONE));
@@ -393,12 +445,12 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 					doActionOnFailedBarcodeList(barcodeList);
 					successBarcodes.removeAll(barcodeList);
 					break;
-					
+
 				case BlInventoryScanLoggingConstants.ONE: // dirty priority serial
 					doAddMessageForDirtyPriortySerial(barcodeList);
 					successBarcodes.removeAll(barcodeList);
 					break;
-				
+
 				case BlInventoryScanLoggingConstants.TWO:
 					doActionOnErrorSerialList(barcodes, unboxingResultMap);
 					successBarcodes.removeAll(barcodeList);
@@ -413,11 +465,11 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 							BlInventoryScanLoggingConstants.MISSING_BARCODE_PACKAGE_ERROR, NOTIFICATION_LEVEL_FAILURE, barcodeList);
 					successBarcodes.removeAll(barcodeList);
 					break;
-					
+
 				case BlInventoryScanLoggingConstants.INT_TEN:
 					addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
 							BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, barcodeList);
-					successBarcodes.removeAll(barcodeList);			
+					successBarcodes.removeAll(barcodeList);
 					break;
 				default:
 					break;
@@ -691,7 +743,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		return webScanToolUtil;
 	}
 
-	public void setWebScanToolUtil(WebScanToolUtil webScanToolUtil) {
+	public void setWebScanToolUtil(final WebScanToolUtil webScanToolUtil) {
 		this.webScanToolUtil = webScanToolUtil;
 	}
 
