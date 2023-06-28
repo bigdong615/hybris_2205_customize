@@ -237,6 +237,7 @@ public class BlShippingScanController extends DefaultWidgetController
 			final Map<String, List<BlProductModel>> scannedBarcodeMap = getBlInventoryScanToolService().verifyShippingScan(barcodes,
 					selectedConsignment);
 			createResponseMsg(scannedBarcodeMap);
+
 		}
 		else
 		{
@@ -346,10 +347,10 @@ public class BlShippingScanController extends DefaultWidgetController
 
 	}
 
-	private void createMessage(StringBuffer message,
-			final Map<String, List<BlProductModel>> scannedBarcodeMap, String key) {
+	private void createMessage(final StringBuffer message,
+			final Map<String, List<BlProductModel>> scannedBarcodeMap, final String key) {
 
-		List<BlProductModel> blProduct = scannedBarcodeMap.get(key);
+		final List<BlProductModel> blProduct = scannedBarcodeMap.get(key);
 		blProduct.forEach(blProductModel -> {
 			if (blProductModel instanceof BlSerialProductModel) {
 				message.append(((BlSerialProductModel) blProductModel).getBarcode()).append(", ");
