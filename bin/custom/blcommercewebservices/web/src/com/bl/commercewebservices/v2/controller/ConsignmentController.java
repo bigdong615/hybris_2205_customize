@@ -9,6 +9,7 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
@@ -57,6 +58,9 @@ public class ConsignmentController extends BaseCommerceController
 
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
+
+	@Resource
+	private SearchRestrictionService searchRestrictionService;
 
 	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
 	@RequestMapping(value = "/consignmententries", method = RequestMethod.GET)
@@ -189,64 +193,72 @@ public class ConsignmentController extends BaseCommerceController
 				}
 				else if (occursOnlyOnce(cons.getSerialproducts(), str))
 				{
-					final ProductModel productModel = productService.getProductForCode(str);
-					final String pname = productModel.getName();
-					for (final String itm : cons.getItems().split(","))
+
+					final ProductModel productModel = getProductForCode(str);
+
+					if (productModel != null)
 					{
-						if (itm.contains(pname))
+						final String pname = productModel.getName();
+						for (final String itm : cons.getItems().split(","))
 						{
-							consignmentEntryData.setItems(itm);
+							if (itm.contains(pname))
+							{
+								consignmentEntryData.setItems(itm);
+							}
 						}
-					}
-					for (final String csts : cons.getConsignmententrystatus().split(","))
-					{
-						if (csts.contains(pname))
+						for (final String csts : cons.getConsignmententrystatus().split(","))
 						{
-							consignmentEntryData.setConsignmententrystatus(csts);
+							if (csts.contains(pname))
+							{
+								consignmentEntryData.setConsignmententrystatus(csts);
+							}
 						}
 					}
 				}
 				else
 				{
-					final ProductModel productModel = productService.getProductForCode(str);
-					if (nameCount.containsKey(str))
+					final ProductModel productModel = getProductForCode(str);
+					if (productModel != null)
 					{
-						final int count = nameCount.get(str) + 1;
-						nameCount.put(str, count);
-						final String pname = productModel.getName() + "--" + count;
-						LOG.info(pname);
-						for (final String itm : cons.getItems().split(","))
+						if (nameCount.containsKey(str))
 						{
-							if (itm.contains(pname))
+							final int count = nameCount.get(str) + 1;
+							nameCount.put(str, count);
+							final String pname = productModel.getName() + "--" + count;
+							LOG.info(pname);
+							for (final String itm : cons.getItems().split(","))
 							{
-								consignmentEntryData.setItems(itm);
+								if (itm.contains(pname))
+								{
+									consignmentEntryData.setItems(itm);
+								}
+							}
+							for (final String csts : cons.getConsignmententrystatus().split(","))
+							{
+								if (csts.contains(pname))
+								{
+									consignmentEntryData.setConsignmententrystatus(csts);
+								}
 							}
 						}
-						for (final String csts : cons.getConsignmententrystatus().split(","))
+						else
 						{
-							if (csts.contains(pname))
+							nameCount.put(str, 1);
+							final String pname = productModel.getName() + "--" + 1;
+							LOG.info(pname);
+							for (final String itm : cons.getItems().split(","))
 							{
-								consignmentEntryData.setConsignmententrystatus(csts);
+								if (itm.contains(pname))
+								{
+									consignmentEntryData.setItems(itm);
+								}
 							}
-						}
-					}
-					else
-					{
-						nameCount.put(str, 1);
-						final String pname = productModel.getName() + "--" + 1;
-						LOG.info(pname);
-						for (final String itm : cons.getItems().split(","))
-						{
-							if (itm.contains(pname))
+							for (final String csts : cons.getConsignmententrystatus().split(","))
 							{
-								consignmentEntryData.setItems(itm);
-							}
-						}
-						for (final String csts : cons.getConsignmententrystatus().split(","))
-						{
-							if (csts.contains(pname))
-							{
-								consignmentEntryData.setConsignmententrystatus(csts);
+								if (csts.contains(pname))
+								{
+									consignmentEntryData.setConsignmententrystatus(csts);
+								}
 							}
 						}
 					}
@@ -261,6 +273,30 @@ public class ConsignmentController extends BaseCommerceController
 		consignmentEntryListData = createConsignmentEntryListData(ce);
 		setTotalCountHeader(response, consignmentEntryListData.getPagination());
 		return getDataMapper().map(consignmentEntryListData, ConsignmentEntryListWsDTO.class, fields);
+	}
+
+	/**
+	 * @param str
+	 * @return
+	 */
+	private ProductModel getProductForCode(final String str)
+	{
+		ProductModel productModel = null;
+		try
+		{
+			searchRestrictionService.disableSearchRestrictions();
+			productModel = productService.getProductForCode(str);
+		}
+		catch (final Exception exp)
+		{
+			LOG.error(exp.getMessage());
+		}
+		finally
+		{
+			searchRestrictionService.enableSearchRestrictions();
+		}
+		return productModel;
+
 	}
 
 	protected boolean occursOnlyOnce(final String input, final String value)
