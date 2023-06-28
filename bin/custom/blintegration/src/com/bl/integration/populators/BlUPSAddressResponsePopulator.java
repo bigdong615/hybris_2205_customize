@@ -60,6 +60,9 @@ public class BlUPSAddressResponsePopulator {
       addressData.setAddressType(BlintegrationConstants.ADDRESS_TYPE_UNKNOWN);
     }
     addressData.setLine1(addressKeyFormat.getAddressLine().get(0));
+    if(addressKeyFormat.getAddressLine().size()>1) {
+   	 addressData.setLine2(addressKeyFormat.getAddressLine().get(1));
+    }
     addressData.setTown(addressKeyFormat.getPoliticalDivision2());
     addressData.setPostalCode(
         addressKeyFormat.getPostcodePrimaryLow() + "-" + addressKeyFormat.getPostcodeExtendedLow());
