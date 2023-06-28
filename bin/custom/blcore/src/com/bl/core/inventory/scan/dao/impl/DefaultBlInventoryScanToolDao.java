@@ -24,7 +24,6 @@ import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,13 +121,25 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
 	}
 
 	@Override
-	public List<OrderEntryModel> getAllOrderEntries(String code) {
+	public List<OrderEntryModel> getAllOrderEntries(String code, String s) {
 		final String barcodeList = "SELECT {oe.pk} from {OrderEntry as oe join Product as p on {oe.product} = {p.pk}} where {p.code} = ?code";
 		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
 		query.addQueryParameter("code", code);
-		final List<OrderEntryModel> results = getFlexibleSearchService().<OrderEntryModel>search(query).getResult();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD, code);
-		return CollectionUtils.isNotEmpty(results) ? results : null;
+		final List<OrderEntryModel> resultsForSoldOrders = getFlexibleSearchService().<OrderEntryModel>search(query).getResult();
+		if(CollectionUtils.isNotEmpty(resultsForSoldOrders)){
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD, code);
+			return resultsForSoldOrders;
+		}
+		else{
+			final String barcodeListRental = "SELECT {oe.pk} from {OrderEntry as oe join Product as p on {oe.product} = {p.pk}} where {p.code} = ?code";
+			final FlexibleSearchQuery query1 = new FlexibleSearchQuery(barcodeList);
+			query1.addQueryParameter("code", s);
+			final List<OrderEntryModel> results = getFlexibleSearchService().<OrderEntryModel>search(query1).getResult();
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD, code);
+			return CollectionUtils.isNotEmpty(results) ? results : null;
+		}
+
+
 	}
 
 	/**

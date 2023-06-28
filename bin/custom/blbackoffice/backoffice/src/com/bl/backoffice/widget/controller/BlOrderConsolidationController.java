@@ -8,6 +8,7 @@ import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
 import com.hybris.cockpitng.util.notifications.NotificationService;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.*;
@@ -63,8 +64,9 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 
 	private static final String FIRST_ITEM_SCAN_INFO = "blbackoffice.order.consolidation.tool.wizard.notification.first.item.info";
 	private static final String LAST_ITEM_SCAN_INFO = "blbackoffice.order.consolidation.tool.wizard.notification.last.item.info";
-
 	private static final String NOT_SHIPPING_SOON = "blbackoffice.order.consolidation.tool.wizard.notification.not.shipping.soon";
+	private static final String SUCCESSFUL_SCAN = "blbackoffice.order.consolidation.tool.wizard.notification.successful.scan.message";
+	private static final String ORDER_CANCELLED_MESSAGE = "blbackoffice.order.consolidation.tool.wizard.notification.order.cancelled";
 
 	private Textbox textInput;
 
@@ -84,6 +86,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 	private BlInventoryScanToolService blInventoryScanToolService;
 
 	Object selectedConsignment = new Object();
+	String orderStatus = "";
 
 	@Resource
 	private transient NotificationService notificationService;
@@ -130,12 +133,14 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 			{
 				try
 				{
-					final List<OrderEntryModel> orderEntries = getBlInventoryScanToolDao().getAllOrderEntries(serialModel.getBlProduct().getCode());
+					final List<OrderEntryModel> orderEntries = getBlInventoryScanToolDao().getAllOrderEntries(serialModel.getCode(), serialModel.getBlProduct().getCode());
 					OrderModel orderModel = null;
 					for(OrderEntryModel orderEntryModel : orderEntries) {
 						for (final BlProductModel pd : orderEntryModel.getSerialProducts()) {
 							if (pd.getCode().equals(serialModel.getCode())) {
 								 orderModel = orderEntryModel.getOrder();
+								List<OrderStatus> orderStatusList = Arrays.asList(OrderStatus.CANCELLED);
+								if (!orderStatusList.contains(orderModel.getStatus())) {
 
 								 for(ConsignmentModel consignmentModel : orderModel.getConsignments()){
 									 final Date date = consignmentModel.getOptimizedShippingStartDate();
@@ -145,7 +150,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 									 final Date fiveDaysPlus = calender.getTime();
 									 calender.add(Calendar.DATE, -14);// Subtracting 7 days
 									 final Date fiveDaysMinus = calender.getTime();
-									 if(orderEntryModel.getConsignmentEntries().stream().anyMatch(new HashSet<>(consignmentModel.getConsignmentEntries())::contains)){
+									 //if(orderEntryModel.getConsignmentEntries().stream().anyMatch(new HashSet<>(consignmentModel.getConsignmentEntries())::contains)){
 										 for (final ConsignmentEntryModel consEntry : consignmentModel.getConsignmentEntries()) {
 											 if (!date.before(fiveDaysMinus) && !date.after(fiveDaysPlus)) {
 												 {
@@ -158,10 +163,14 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 															 orderConsolidationData.setShippingMethod(consEntry.getConsignment().getOrder().getDeliveryMode().getCode());
 															 orderConsolidationData.setWarehouse(consEntry.getConsignment().getWarehouse().getCode());
 																//Feb 17 , 2023	12:13 PM
-															 final Date orderDate = orderModel.getRentalEndDate();//Fri Jun 23 00:00:00 IST 2023
-															 final SimpleDateFormat myFormat = new SimpleDateFormat("MM/d/yyyy");
-															 final String reformattedStr = myFormat.format(orderDate);
-															 orderConsolidationData.setRentalEndDate(reformattedStr);
+															 if(null != orderModel.getRentalEndDate()) {
+																 final Date orderDate = orderModel.getRentalEndDate();//Fri Jun 23 00:00:00 IST 2023
+																 final SimpleDateFormat myFormat = new SimpleDateFormat("MM/d/yyyy");
+																 final String reformattedStr = myFormat.format(orderDate);
+																 orderConsolidationData.setRentalEndDate(reformattedStr);
+															 } else {
+																 orderConsolidationData.setRentalEndDate(" ");
+															 }
 
 															 if (((BlSerialProductModel) serial).getOcLocationDetails() != null) {
 																 if (((BlSerialProductModel) serial).getOcLocationDetails().getLocationCategory().getCode()
@@ -176,6 +185,8 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 																	 orderConsolidationData.setLocation(" ");
 																	 orderConsolidationData.setParentLocation(" ");
 																 }
+															 }else {
+																 orderConsolidationData.setLocation("");
 															 }
 															 String parentLocation = "";
 															 if (((BlSerialProductModel) serial).getOcLocationDetails() != null) {
@@ -197,10 +208,11 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 											 }
 										 }
 
-									 }
+									// }
 								 }
-
-
+								}else {
+									orderStatus = orderModel.getStatus().getCode();
+								}
 							}
 						}
 					}
@@ -243,6 +255,14 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 				scanningArea.setFocus(true);
 
 			}
+			else if(!StringUtils.isBlank(this.orderStatus)){
+
+				addMessageToNotifyUser(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+						"orderConsolidationToolCancelledOrder", NotificationEvent.Level.INFO, this.orderStatus);
+
+				textInput.setValue("");
+				textInput.setFocus(true);
+			}
 			else{
 				//Messagebox.show("order with the given barcode is not Shipping soon");
 				notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
@@ -255,7 +275,13 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 
 	}
 
-
+	private void addMessageToNotifyUser(final String logMessage, final String errorType,
+										final NotificationEvent.Level notificationEventLevel, final Object... referenceObjects)
+	{
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, logMessage, referenceObjects);
+		this.getNotificationService().notifyUser("OrderConsolidationToolNotification", errorType,
+				notificationEventLevel, referenceObjects);
+	}
 	/**
 	 * @param orderConsolidationDataList
 	 */
@@ -421,10 +447,11 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 		}
 		else
 		{
-			this.scanningArea.setValue("");
-			this.textInput.setValue(this.textInput.getValue());
+			this.textInput.setValue("");
 			this.textInput.setFocus(true);
-			Messagebox.show("Successfully records scanned!!");
+			notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+					NotificationEvent.Level.INFO, this.getLabel(SUCCESSFUL_SCAN));
+			//Messagebox.show("Successfully records scanned!!");
 
 		}
 	}
@@ -438,7 +465,8 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 		switch (result)
 		{
 			case BlInventoryScanLoggingConstants.ONE:
-				Messagebox.show("Successfully records scanned!!");
+				notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+						NotificationEvent.Level.INFO, this.getLabel(SUCCESSFUL_SCAN));
 				this.scanningArea.setValue("");
 				this.textInput.setFocus(true);
 				break;
