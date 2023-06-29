@@ -308,4 +308,6 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 		this.flexibleSearchService = flexibleSearchService;
 	}
 
+
+
 }

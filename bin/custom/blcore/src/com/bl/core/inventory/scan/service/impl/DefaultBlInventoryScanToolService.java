@@ -1198,12 +1198,19 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			final BlInventoryLocationModel blLocalInventoryLocation)
 	{
 		blScannedProduct.forEach(scannedProduct -> {
-			// to enter OC location details in BLinventory
-			if (null != blLocalInventoryLocation)
+			try
 			{
-				setBlInventoryLocation(blLocalInventoryLocation);
+				// to enter OC location details in BLinventory
+				if (null != blLocalInventoryLocation)
+				{
+					setBlInventoryLocation(blLocalInventoryLocation);
 
-				setBlLocationScanHistory(scannedProduct, false, blLocalInventoryLocation);
+					setBlLocationScanHistory(scannedProduct, false, blLocalInventoryLocation);
+				}
+			}
+			catch (final Exception e)
+			{
+				e.printStackTrace();
 			}
 
 			if (!ProductTypeEnum.SUBPARTS.equals(scannedProduct.getProductType()))
@@ -2364,17 +2371,23 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			{
 				final BlSerialProductModel serial = (BlSerialProductModel) serialProduct;
 
-				//Ravi
-				final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
-						.getInventoryLocationById(parentLocation);
-
-				if (null != blLocalInventoryLocation)
+				//to update the OC location, in blInventoryLocationScanHistory
+				try
 				{
-					setBlInventoryLocation(blLocalInventoryLocation);
+					final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
+							.getInventoryLocationById(parentLocation);
 
-					setBlLocationScanHistory(serial, false, blLocalInventoryLocation);
+					if (null != blLocalInventoryLocation)
+					{
+						setBlInventoryLocation(blLocalInventoryLocation);
+
+						setBlLocationScanHistory(serial, false, blLocalInventoryLocation);
+					}
 				}
-
+				catch (final Exception e)
+				{
+					e.printStackTrace();
+				}
 
 				serial.setLastLocationScanParent(parentLocation);
 				modelService.save(serial);

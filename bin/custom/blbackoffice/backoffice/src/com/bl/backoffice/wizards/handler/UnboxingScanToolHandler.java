@@ -390,6 +390,8 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		final Map<Integer, Collection<String>> unboxingResultMap = getBlInventoryScanToolService().doUnboxing(barcodes);
 		if (MapUtils.isEmpty(unboxingResultMap))
 		{
+
+			//to update OC location details in blInventroyScanHistory
 			final List<String> subList = barcodes.subList(BlInventoryScanLoggingConstants.INT_ZERO,
 					barcodes.size() - BlInventoryScanLoggingConstants.ONE);
 			final Collection<BlSerialProductModel> blScannedProduct = getBlInventoryScanToolDao()
@@ -397,25 +399,24 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 
 			try
 			{
-			final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
-					.getInventoryLocationById(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+				final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
+						.getInventoryLocationById(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 
-			blScannedProduct.forEach(scannedProduct -> {
-				// to enter OC location details in BLinventory
-				if (null != blLocalInventoryLocation)
-				{
-					defaultBlInventoryScanToolService.setBlInventoryLocation(blLocalInventoryLocation);
+				blScannedProduct.forEach(scannedProduct -> {
+					if (null != blLocalInventoryLocation)
+					{
+						defaultBlInventoryScanToolService.setBlInventoryLocation(blLocalInventoryLocation);
 
-					defaultBlInventoryScanToolService.setBlLocationScanHistory(scannedProduct, true, blLocalInventoryLocation);
+						defaultBlInventoryScanToolService.setBlLocationScanHistory(scannedProduct, true, blLocalInventoryLocation);
 
-				}
+					}
+				});
+			}
+			catch (final Exception e)
+			{
+				e.printStackTrace();
+			}
 
-			});
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
 
 			addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
 					BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NOTIFICATION_LEVEL_SUCCESS,
