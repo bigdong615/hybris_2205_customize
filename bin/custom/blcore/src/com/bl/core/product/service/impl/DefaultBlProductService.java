@@ -170,6 +170,27 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
     });
   }
 
+  @Override
+  public ProductModel getProductsOfOnlineVersion(final String productCode, final CatalogVersionModel catalogVersionModel)
+  {
+	  return getSessionService().executeInLocalView(new SessionExecutionBody()
+	  {
+		  @Override
+		  public Object execute()
+		  {
+			  try
+			  {
+				  getSearchRestrictionService().disableSearchRestrictions();
+				  return getProductDao().findProductsByCode(catalogVersionModel, productCode).get(0);
+			  }
+			  finally
+			  {
+				  getSearchRestrictionService().enableSearchRestrictions();
+			  }
+		  }
+	  });
+  }
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -311,5 +332,7 @@ public void setBlCommerceStockService(final BlCommerceStockService blCommerceSto
 {
 	this.blCommerceStockService = blCommerceStockService;
 }
+
+
 
 }

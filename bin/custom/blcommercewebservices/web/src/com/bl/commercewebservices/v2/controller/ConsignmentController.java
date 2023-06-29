@@ -290,14 +290,13 @@ public class ConsignmentController extends BaseCommerceController
 		ProductModel productModel = null;
 		try
 		{
-			productModel = productService.getProduct(catalogVersionModel, str);
+			productModel = productService.getProductsOfOnlineVersion(str, catalogVersionModel);
 		}
 		catch (final Exception exp)
 		{
 			LOG.error(exp.getMessage());
 		}
 		return productModel;
-
 	}
 
 	protected boolean occursOnlyOnce(final String input, final String value)
