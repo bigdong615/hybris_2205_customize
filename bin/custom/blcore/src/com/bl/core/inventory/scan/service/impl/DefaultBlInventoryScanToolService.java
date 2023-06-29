@@ -1,6 +1,5 @@
 package com.bl.core.inventory.scan.service.impl;
 
-import com.bl.core.esp.service.BlESPEventService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -42,6 +41,7 @@ import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.PackagingInfoStatus;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
 import com.bl.core.model.BlInventoryLocationModel;
@@ -498,7 +498,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param blSerialProduct
 	 *           the new bl location scan history
 	 */
-	private void setBlLocationScanHistory(final BlSerialProductModel blSerialProduct, final boolean unboxStatus, final BlInventoryLocationModel inventoryLocation)
+	public void setBlLocationScanHistory(final BlSerialProductModel blSerialProduct, final boolean unboxStatus,
+			final BlInventoryLocationModel inventoryLocation)
 	{
 		final BlInventoryLocationScanHistoryModel blInventoryLocationScanHistory = modelService
 				.create(BlInventoryLocationScanHistoryModel.class);
@@ -855,7 +856,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final List<BlSerialProductModel> scannedSerialProduct = new ArrayList<>();
 		final List<BlSerialProductModel> scannedSubpartProduct = new ArrayList<>();
 
-		getScannedSerial(blScannedProduct, scannedSerialProduct, scannedSubpartProduct);
+      final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao().getInventoryLocationById(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+
+		//Update OC location in BlInventoryLocationScanHistoryModel
+			getScannedSerial(blScannedProduct, scannedSerialProduct, scannedSubpartProduct, blLocalInventoryLocation);
+
 
 		return validateConsignmentEntry(barcodes, selectedConsignment, filteredSerialProduct, filteredSubPartProduct,
 				scannedSerialProduct, scannedSubpartProduct);
@@ -927,8 +932,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 		final List<BlProductModel> allIncludedEntry = new ArrayList<>();
 		selectedConsignment.getConsignmentEntries().forEach(consEntry -> {
-			Map<String, ItemStatusEnum> items = consEntry.getItems();
-			List<BlProductModel> includedSerials = allEntryBarcodedSerials.stream().filter(
+			final Map<String, ItemStatusEnum> items = consEntry.getItems();
+			final List<BlProductModel> includedSerials = allEntryBarcodedSerials.stream().filter(
 					blSerialProductModel -> (items.containsKey(blSerialProductModel.getCode()) && items
 							.get(blSerialProductModel.getCode()).equals(ItemStatusEnum.INCLUDED)))
 					.collect(Collectors.toList());
@@ -1189,9 +1194,25 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param scannedSubpartProduct subpart
 	 */
 	private void getScannedSerial(final Collection<BlSerialProductModel> blScannedProduct,
-								  final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct)
+			final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct,
+			final BlInventoryLocationModel blLocalInventoryLocation)
 	{
 		blScannedProduct.forEach(scannedProduct -> {
+			try
+			{
+				// to enter OC location details in BLinventory
+				if (null != blLocalInventoryLocation)
+				{
+					setBlInventoryLocation(blLocalInventoryLocation);
+
+					setBlLocationScanHistory(scannedProduct, false, blLocalInventoryLocation);
+				}
+			}
+			catch (final Exception e)
+			{
+				e.printStackTrace();
+			}
+
 			if (!ProductTypeEnum.SUBPARTS.equals(scannedProduct.getProductType()))
 			{
 				scannedSerialProduct.add(scannedProduct);
@@ -1421,7 +1442,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
    				if(CollectionUtils.isEmpty(packagingInfoModels))
    				{
    					//result.put(BlInventoryScanLoggingConstants.INT_NINE, removedUnboxedSerialBarcodeList);
-					   Collection<ConsignmentEntryModel> consignmentEntryModels = this.getConignmentEntriesForSerials(removedUnboxedSerialBarcodeList);
+					   final Collection<ConsignmentEntryModel> consignmentEntryModels = this.getConignmentEntriesForSerials(removedUnboxedSerialBarcodeList);
 					performSerialToDPCOrDCLocationScanWithConsignment(result, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
 							availablePackageBarcodes, consignmentEntryModels);
    					return result;
@@ -1436,9 +1457,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		return result;
 	}
 
-	private void performSerialToDPCOrDCLocationScanWithConsignment(Map<Integer, Collection<String>> result, BlInventoryLocationModel blInventoryLocationModel,
-																   Set<String> missingPackageBarcodeList, List<String> removedUnboxedSerialBarcodeList,
-																   Set<String> availablePackageBarcodes, Collection<ConsignmentEntryModel> consignmentEntryModels) {
+	private void performSerialToDPCOrDCLocationScanWithConsignment(final Map<Integer, Collection<String>> result, final BlInventoryLocationModel blInventoryLocationModel,
+																   final Set<String> missingPackageBarcodeList, final List<String> removedUnboxedSerialBarcodeList,
+																   final Set<String> availablePackageBarcodes, final Collection<ConsignmentEntryModel> consignmentEntryModels) {
 
 		final Set<String> packageSerialBarcodes = new HashSet<>();
 		getSerialBarcodesFromConsignmentEntry(consignmentEntryModels, packageSerialBarcodes);
@@ -1452,7 +1473,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	}
 
-	private void getMapForUnboxAtDPOrDCWithCons(ArrayList<String> barcodes, Map<Integer, Collection<String>> result, BlInventoryLocationModel blInventoryLocationModel, Collection<ConsignmentEntryModel> consignmentEntryModels, Map<Integer, List<String>> errorSerialList) {
+	private void getMapForUnboxAtDPOrDCWithCons(final ArrayList<String> barcodes, final Map<Integer, Collection<String>> result, final BlInventoryLocationModel blInventoryLocationModel, final Collection<ConsignmentEntryModel> consignmentEntryModels, Map<Integer, List<String>> errorSerialList) {
 
 			if(CollectionUtils.isEmpty(consignmentEntryModels))
 			{
@@ -1466,12 +1487,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	}
 
-	private Map<Integer, List<String>> doPerformDpcOrDcUnboxingForCons(ArrayList<String> barcodes, BlInventoryLocationModel blInventoryLocationModel, Collection<ConsignmentEntryModel> consignmentEntryModels, Map<Integer, List<String>> errorSerialList) {
+	private Map<Integer, List<String>> doPerformDpcOrDcUnboxingForCons(final ArrayList<String> barcodes, final BlInventoryLocationModel blInventoryLocationModel, final Collection<ConsignmentEntryModel> consignmentEntryModels, Map<Integer, List<String>> errorSerialList) {
 
 		for (final ConsignmentEntryModel consignmentEntryModel : consignmentEntryModels)
 		{
 			final List<BlProductModel> blSerialProductModels = consignmentEntryModel.getSerialProducts().stream().filter(product -> product instanceof BlSerialProductModel).collect(Collectors.toList());
-			
+
 			if (CollectionUtils.isNotEmpty(blSerialProductModels) && blSerialProductModels.stream().anyMatch(serialCode -> barcodes.stream().anyMatch(b -> b.equals(((BlSerialProductModel) serialCode).getBarcode()))))
 			{
 				errorSerialList = getBlSerialProductModelBooleanMapConsign(consignmentEntryModel, consignmentEntryModel.getConsignment(),
@@ -1484,7 +1505,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		return errorSerialList;
 	}
 
-	private Map<Integer, List<String>> getBlSerialProductModelBooleanMapConsign(ConsignmentEntryModel consignmentEntryModel, ConsignmentModel consignmentModel, List<BlProductModel> availableBarcodeList, BlInventoryLocationModel blInventoryLocationModel) {
+	private Map<Integer, List<String>> getBlSerialProductModelBooleanMapConsign(final ConsignmentEntryModel consignmentEntryModel, final ConsignmentModel consignmentModel, final List<BlProductModel> availableBarcodeList, final BlInventoryLocationModel blInventoryLocationModel) {
 
 		if (CollectionUtils.isNotEmpty(availableBarcodeList))
 		{
@@ -1510,7 +1531,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		return null; //NO SONAR
 	}
 
-	private boolean canChangeToUnBoxStatusConsign(ConsignmentModel consignmentModel) {
+	private boolean canChangeToUnBoxStatusConsign(final ConsignmentModel consignmentModel) {
 		final HashSet<SerialStatusEnum> itemStatuses = Sets.newHashSet();
 		consignmentModel.getConsignmentEntries().forEach(consignmentEntry -> {
 			consignmentEntry.getSerialProducts().forEach(serial -> {
@@ -1525,7 +1546,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				&& itemStatuses.iterator().next().equals(SerialStatusEnum.UNBOXED);
 	}
 
-	private void getSerialBarcodesFromConsignmentEntry(Collection<ConsignmentEntryModel> consignmentEntryModels, Set<String> packageSerialBarcodes) {
+	private void getSerialBarcodesFromConsignmentEntry(final Collection<ConsignmentEntryModel> consignmentEntryModels, final Set<String> packageSerialBarcodes) {
 
 		consignmentEntryModels.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(blSerial -> {
 			if (blSerial instanceof BlSerialProductModel)
@@ -1536,7 +1557,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	@Override
-	public Collection<ConsignmentEntryModel> getConignmentEntriesForSerials(List<String> removedUnboxedSerialBarcodeList) {
+	public Collection<ConsignmentEntryModel> getConignmentEntriesForSerials(final List<String> removedUnboxedSerialBarcodeList) {
 		final Collection<ConsignmentEntryModel> consignmentEntryModels = new ArrayList<>();
 		final Collection<ConsignmentModel> consignmentModels =  getBlInventoryScanToolDao().getConignmentEntriesForSerials(removedUnboxedSerialBarcodeList);
 		consignmentModels.forEach(consignmentModel -> {
@@ -2349,6 +2370,25 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			if (serialProduct instanceof BlSerialProductModel)
 			{
 				final BlSerialProductModel serial = (BlSerialProductModel) serialProduct;
+
+				//to update the OC location, in blInventoryLocationScanHistory
+				try
+				{
+					final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
+							.getInventoryLocationById(parentLocation);
+
+					if (null != blLocalInventoryLocation)
+					{
+						setBlInventoryLocation(blLocalInventoryLocation);
+
+						setBlLocationScanHistory(serial, false, blLocalInventoryLocation);
+					}
+				}
+				catch (final Exception e)
+				{
+					e.printStackTrace();
+				}
+
 				serial.setLastLocationScanParent(parentLocation);
 				modelService.save(serial);
 				modelService.refresh(serial);
@@ -2883,7 +2923,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						if(CollectionUtils.isEmpty(packagingInfoModels))
 						{
 							//result.put(BlInventoryScanLoggingConstants.INT_NINE, removedUnboxedSerialBarcodeList);
-							Collection<ConsignmentEntryModel> consignmentEntryModels = this.getConignmentEntriesForSerials(removedUnboxedSerialBarcodeList);
+							final Collection<ConsignmentEntryModel> consignmentEntryModels = this.getConignmentEntriesForSerials(removedUnboxedSerialBarcodeList);
 							performSerialToDPCOrDCLocationScanWithConsignment(errors, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
 									availablePackageBarcodes, consignmentEntryModels);
 							return errors;
@@ -2965,7 +3005,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param consignmentModel  Consignmnet Model
 	 * @param serialProductModel Serial Product Model
 	 */
-	private void setAssociatedConsignment(ConsignmentModel consignmentModel, BlSerialProductModel serialProductModel) {
+	private void setAssociatedConsignment(final ConsignmentModel consignmentModel, final BlSerialProductModel serialProductModel) {
 		serialProductModel.setAssociatedConsignment(consignmentModel);
 		modelService.save(serialProductModel);
 		modelService.refresh(serialProductModel);
