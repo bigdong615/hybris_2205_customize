@@ -93,4 +93,11 @@ public interface BlProductService extends ProductService {
 	 */
 	ProductModel getProductForPK(String code);
 
+	/**
+	 * @param str
+	 * @param catalogVersionModel
+	 * @return
+	 */
+	ProductModel getProductsOfOnlineVersion(String str, CatalogVersionModel catalogVersionModel);
+
 }
