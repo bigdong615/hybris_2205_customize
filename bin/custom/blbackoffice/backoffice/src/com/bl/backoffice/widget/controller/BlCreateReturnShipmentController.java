@@ -504,8 +504,13 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 			optimizedShippingMethodList.clearSelection();
 		}
 		optimizedShippingMethodList = new ListModelList<>(carrierBasedOptimizedShippingMethodList);
-		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
 
+		if(selectedShippingType.equalsIgnoreCase(CarrierEnum.UPS.getCode())){
+			List<String> groundShippingMethods = optimizedShippingMethodList.stream().filter(s -> s.contains("GROUND")).collect(Collectors.toList());
+			String defaultShippingMethod = CollectionUtils.isNotEmpty(groundShippingMethods) ? groundShippingMethods.stream().findFirst().get() : StringUtils.EMPTY;
+			optimizedShippingMethodList.addToSelection(defaultShippingMethod);
+		}
+		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
 	}
 
 	private String getSelectedShippingType()
