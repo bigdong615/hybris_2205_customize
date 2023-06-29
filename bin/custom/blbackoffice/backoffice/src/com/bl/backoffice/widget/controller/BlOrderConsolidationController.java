@@ -150,7 +150,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 									 final Date fiveDaysPlus = calender.getTime();
 									 calender.add(Calendar.DATE, -14);// Subtracting 7 days
 									 final Date fiveDaysMinus = calender.getTime();
-									 //if(orderEntryModel.getConsignmentEntries().stream().anyMatch(new HashSet<>(consignmentModel.getConsignmentEntries())::contains)){
+									 if(orderEntryModel.getConsignmentEntries().stream().anyMatch(new HashSet<>(consignmentModel.getConsignmentEntries())::contains)){
 										 for (final ConsignmentEntryModel consEntry : consignmentModel.getConsignmentEntries()) {
 											 if (!date.before(fiveDaysMinus) && !date.after(fiveDaysPlus)) {
 												 {
@@ -208,7 +208,7 @@ public class BlOrderConsolidationController extends DefaultWidgetController
 											 }
 										 }
 
-									// }
+									 }
 								 }
 								}else {
 									orderStatus = orderModel.getStatus().getCode();
