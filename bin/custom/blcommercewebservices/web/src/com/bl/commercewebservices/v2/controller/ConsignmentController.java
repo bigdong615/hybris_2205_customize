@@ -3,12 +3,13 @@
  */
 package com.bl.commercewebservices.v2.controller;
 
+import de.hybris.platform.catalog.CatalogVersionService;
+import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.commercefacades.order.data.ConsignmentData;
 import de.hybris.platform.commercefacades.order.data.ConsignmentEntryData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.product.ProductModel;
-import de.hybris.platform.product.ProductService;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.webservicescommons.cache.CacheControl;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bl.core.product.service.BlProductService;
 import com.bl.facades.consignment.BLConsignmentFacade;
 import com.bl.facades.consignment.data.ConsignmentEntryListData;
 import com.bl.facades.consignment.data.ConsignmentListData;
@@ -54,13 +56,16 @@ public class ConsignmentController extends BaseCommerceController
 	private BLConsignmentFacade blconsignmentFacade;
 
 	@Resource(name = "productService")
-	private ProductService productService;
+	private BlProductService productService;
 
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
 
 	@Resource
 	private SearchRestrictionService searchRestrictionService;
+
+	@Resource
+	private CatalogVersionService catalogVersionService;
 
 	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
 	@RequestMapping(value = "/consignmententries", method = RequestMethod.GET)
@@ -281,19 +286,15 @@ public class ConsignmentController extends BaseCommerceController
 	 */
 	private ProductModel getProductForCode(final String str)
 	{
+		final CatalogVersionModel catalogVersionModel = catalogVersionService.getCatalogVersion("blProductCatalog", "Online");
 		ProductModel productModel = null;
 		try
 		{
-			searchRestrictionService.disableSearchRestrictions();
-			productModel = productService.getProductForCode(str);
+			productModel = (ProductModel) productService.getProductsOfStagedVersion(str, catalogVersionModel);
 		}
 		catch (final Exception exp)
 		{
 			LOG.error(exp.getMessage());
-		}
-		finally
-		{
-			searchRestrictionService.enableSearchRestrictions();
 		}
 		return productModel;
 
