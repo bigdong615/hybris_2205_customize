@@ -516,17 +516,18 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
 	}
 
-	private void updateOptimizedShippingMethod(final ListModelList<String> optimizedShippingMethodList, final ConsignmentModel consignmentModel) {
+	private void updateOptimizedShippingMethod(final ListModelList<String> optimizedShippingMethodList, final ConsignmentModel consignmentModel)
+	{
 		final WarehouseModel optimizedWarehouse = getBlDeliveryStateSourcingLocationFilter()
 				.applyFilter(selectedConsignment.getOrder());
 		final int carrierId = BlInventoryScanLoggingConstants.TWO;
 		final int warehouseCode = getWarehouseCode(optimizedWarehouse);
 		final String addressZip = getAddressZip(consignmentModel.getShippingAddress());
-		AtomicInteger preDaysToDeduct = new AtomicInteger(0);
 		AtomicInteger postDaysToAdd = new AtomicInteger(0);
 
 		List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecords(carrierId, warehouseCode, addressZip) : Collections.EMPTY_LIST;
-		getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
+
+		updatePostServiceDays(postDaysToAdd, shippingOptimizationModels);
 
 		if(postDaysToAdd.get() <= BlInventoryScanLoggingConstants.THREE)
 		{
@@ -540,7 +541,26 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 			String defaultShippingMethod = CollectionUtils.isNotEmpty(groundShippingMethods) ? groundShippingMethods.stream().findFirst().get() : StringUtils.EMPTY;
 			optimizedShippingMethodList.addToSelection(defaultShippingMethod);
 		}
+	}
 
+	private static void updatePostServiceDays(AtomicInteger postDaysToAdd, List<ShippingOptimizationModel> shippingOptimizationModels)
+	{
+		if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
+			shippingOptimizationModels = shippingOptimizationModels.stream().collect(minList(Comparator.comparing(ShippingOptimizationModel::getServiceDays)));
+		}
+
+		if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
+			for(ShippingOptimizationModel model : shippingOptimizationModels)
+			{
+				if(model.getInbound() == BlInventoryScanLoggingConstants.ONE) {
+					postDaysToAdd.set(model.getServiceDays());
+				}
+			}
+		}
+		else if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && null != shippingOptimizationModels.get(0))
+		{
+			postDaysToAdd.set(shippingOptimizationModels.get(0).getServiceDays());
+		}
 	}
 
 	private int getWarehouseCode(final WarehouseModel warehouseModel) {
