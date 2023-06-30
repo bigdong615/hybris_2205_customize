@@ -8,6 +8,8 @@ import com.bl.core.model.ShippingOptimizationModel;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.google.common.collect.Maps;
+import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
@@ -16,6 +18,7 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -112,7 +115,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		shippingTypeList = new ListModelList<>(getShippingTypeList());
 		shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
 		shippingTypeComboBox.setModel(shippingTypeList);
-		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
+		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode(), inputObject);
 	}
 
 	/**
@@ -201,7 +204,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	{
 		final String selectedShippingType = this.shippingTypeComboBox.getSelectedItem().getValue();
 		shippingTypeList.addToSelection(selectedShippingType);
-		setOptimizedShippingMethodComboBox(selectedShippingType);
+		setOptimizedShippingMethodComboBox(selectedShippingType, selectedConsignment);
 	}
 
 	@ViewEvent(componentID = "optimizedShippingMethodComboBox", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
@@ -468,7 +471,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		return shippingTypesList;
 	}
 
-	private void setOptimizedShippingMethodComboBox(final String selectedShippingType)
+	private void setOptimizedShippingMethodComboBox(final String selectedShippingType, final ConsignmentModel consignmentModel)
 	{
 		final List<String> carrierBasedOptimizedShippingMethodList = org.assertj.core.util.Lists.newArrayList();
 		final List<OptimizedShippingMethodModel> allOptimizedShippingMethodList = getBlOptimizedShippingMethodGenericDao().find();
@@ -505,12 +508,59 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		}
 		optimizedShippingMethodList = new ListModelList<>(carrierBasedOptimizedShippingMethodList);
 
-		if(selectedShippingType.equalsIgnoreCase(CarrierEnum.UPS.getCode())){
+		if(selectedShippingType.equalsIgnoreCase(CarrierEnum.UPS.getCode()))
+		{
+			updateOptimizedShippingMethod(optimizedShippingMethodList, consignmentModel);
+		}
+
+		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
+	}
+
+	private void updateOptimizedShippingMethod(final ListModelList<String> optimizedShippingMethodList, final ConsignmentModel consignmentModel) {
+		final WarehouseModel optimizedWarehouse = getBlDeliveryStateSourcingLocationFilter()
+				.applyFilter(selectedConsignment.getOrder());
+		final int carrierId = BlInventoryScanLoggingConstants.TWO;
+		final int warehouseCode = getWarehouseCode(optimizedWarehouse);
+		final String addressZip = getAddressZip(consignmentModel.getShippingAddress());
+		AtomicInteger preDaysToDeduct = new AtomicInteger(0);
+		AtomicInteger postDaysToAdd = new AtomicInteger(0);
+
+		List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecords(carrierId, warehouseCode, addressZip) : Collections.EMPTY_LIST;
+		getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
+
+		if(postDaysToAdd.get() <= BlInventoryScanLoggingConstants.THREE)
+		{
 			List<String> groundShippingMethods = optimizedShippingMethodList.stream().filter(s -> s.contains("GROUND")).collect(Collectors.toList());
 			String defaultShippingMethod = CollectionUtils.isNotEmpty(groundShippingMethods) ? groundShippingMethods.stream().findFirst().get() : StringUtils.EMPTY;
 			optimizedShippingMethodList.addToSelection(defaultShippingMethod);
 		}
-		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
+		else
+		{
+			List<String> groundShippingMethods = optimizedShippingMethodList.stream().filter(s -> s.contains("THREE DAY SELECT")).collect(Collectors.toList());
+			String defaultShippingMethod = CollectionUtils.isNotEmpty(groundShippingMethods) ? groundShippingMethods.stream().findFirst().get() : StringUtils.EMPTY;
+			optimizedShippingMethodList.addToSelection(defaultShippingMethod);
+		}
+
+	}
+
+	private int getWarehouseCode(final WarehouseModel warehouseModel) {
+		if (warehouseModel != null) {
+			return warehouseModel.getCode().contains("_ca") ? BlInventoryScanLoggingConstants.ONE : BlInventoryScanLoggingConstants.TWO;
+		}
+		return BlInventoryScanLoggingConstants.ZERO;
+	}
+	private String getAddressZip(final AddressModel addressModel) {
+		String newZip;
+		if(addressModel != null && addressModel.getPostalcode() != null) {
+			if(addressModel.getPostalcode().contains("-")) {
+				newZip = addressModel.getPostalcode().split("-")[0];
+			} else {
+				newZip = addressModel.getPostalcode();
+			}
+		} else {
+			newZip = StringUtils.EMPTY;
+		}
+		return newZip;
 	}
 
 	private String getSelectedShippingType()
