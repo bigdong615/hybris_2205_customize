@@ -1397,7 +1397,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
       		 }
       	 }
          preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
-         postDaysToAdd.set(inboundServiceDays);
+         postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : inboundServiceDays);
        }
        else if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && null != shippingOptimizationModels.get(0))
        {   	 
@@ -1405,7 +1405,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
       	 outboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
 
          preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
-         postDaysToAdd.set(inboundServiceDays);
+         postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : inboundServiceDays);
        }
 		return CollectionUtils.isNotEmpty(shippingOptimizationModels) ? shippingOptimizationModels : Collections.EMPTY_LIST;
     }
