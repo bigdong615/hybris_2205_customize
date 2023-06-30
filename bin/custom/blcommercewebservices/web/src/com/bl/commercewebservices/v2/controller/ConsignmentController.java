@@ -206,14 +206,14 @@ public class ConsignmentController extends BaseCommerceController
 						final String pname = productModel.getName();
 						for (final String itm : cons.getItems().split(","))
 						{
-							if (itm.contains(pname))
+							if (itm.contains(pname) || itm.contains(str))
 							{
 								consignmentEntryData.setItems(itm);
 							}
 						}
 						for (final String csts : cons.getConsignmententrystatus().split(","))
 						{
-							if (csts.contains(pname))
+							if (csts.contains(pname) || csts.contains(str))
 							{
 								consignmentEntryData.setConsignmententrystatus(csts);
 							}
@@ -233,14 +233,14 @@ public class ConsignmentController extends BaseCommerceController
 							LOG.info(pname);
 							for (final String itm : cons.getItems().split(","))
 							{
-								if (itm.contains(pname))
+								if (itm.contains(pname) || itm.contains(str))
 								{
 									consignmentEntryData.setItems(itm);
 								}
 							}
 							for (final String csts : cons.getConsignmententrystatus().split(","))
 							{
-								if (csts.contains(pname))
+								if (csts.contains(pname) || csts.contains(str))
 								{
 									consignmentEntryData.setConsignmententrystatus(csts);
 								}
@@ -253,14 +253,14 @@ public class ConsignmentController extends BaseCommerceController
 							LOG.info(pname);
 							for (final String itm : cons.getItems().split(","))
 							{
-								if (itm.contains(pname))
+								if (itm.contains(pname) || itm.contains(str))
 								{
 									consignmentEntryData.setItems(itm);
 								}
 							}
 							for (final String csts : cons.getConsignmententrystatus().split(","))
 							{
-								if (csts.contains(pname))
+								if (csts.contains(pname) || csts.contains(str))
 								{
 									consignmentEntryData.setConsignmententrystatus(csts);
 								}
