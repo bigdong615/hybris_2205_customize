@@ -15,6 +15,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceDeliveryModeStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
@@ -58,24 +59,12 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
     validateParameterNotNull(deliveryModeModel, "Delivery mode model cannot be null");
     
     // BLS-40 starts
-    final int carrierId = getCarrierId((ZoneDeliveryModeModel) deliveryModeModel);
-    final String addressZip = getAddressZip(cartModel.getDeliveryAddress());
+
  	 AtomicInteger preDaysToDeduct = new AtomicInteger(0);
  	 AtomicInteger postDaysToAdd = new AtomicInteger(0);
 
-    List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecordsForCarrierAndZip(carrierId, addressZip) : Collections.EMPTY_LIST;
-    
-    if(CollectionUtils.isNotEmpty(shippingOptimizationModels)) {
-   	 shippingOptimizationModels = getZoneDeliveryModeService().updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
-    }
-    else
-    {
-        preDaysToDeduct.set(StringUtils.isNotBlank(deliveryModeModel.getPreReservedDays()) ? Integer
-                .parseInt(deliveryModeModel.getPreReservedDays()) : 0);
-    
-        postDaysToAdd.set(StringUtils.isNotBlank(deliveryModeModel.getPostReservedDays()) ? Integer
-                .parseInt(deliveryModeModel.getPostReservedDays()) : 0);   	 
-    }
+    List<ShippingOptimizationModel> shippingOptimizationModels = getShippingOptimizeData(deliveryModeModel,cartModel.getDeliveryAddress());
+    shippingOptimizationModels =   updatePreAndPostServiceDays(deliveryModeModel,shippingOptimizationModels,preDaysToDeduct,postDaysToAdd);
     
     final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
     final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
@@ -115,7 +104,58 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
 
     return true;
   }
-  
+
+  public List<ShippingOptimizationModel>  getShippingOptimizeData(ZoneDeliveryModeModel deliveryModeModel , AddressModel addressModel){
+    final int carrierId = getCarrierId((ZoneDeliveryModeModel) deliveryModeModel);
+    final String addressZip = getAddressZip(addressModel);
+    return (StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecordsForCarrierAndZip(carrierId, addressZip) : Collections.EMPTY_LIST);
+  }
+
+  public List<ShippingOptimizationModel> updatePreAndPostServiceDays(
+      ZoneDeliveryModeModel deliveryModeModel,
+      List<ShippingOptimizationModel> shippingOptimizationModels, AtomicInteger preDaysToDeduct,
+      AtomicInteger postDaysToAdd) {
+    if (CollectionUtils.isNotEmpty(shippingOptimizationModels)) {
+      shippingOptimizationModels = getZoneDeliveryModeService()
+          .updatePreAndPostServiceDays(shippingOptimizationModels, preDaysToDeduct, postDaysToAdd);
+    } else {
+      preDaysToDeduct.set(StringUtils.isNotBlank(deliveryModeModel.getPreReservedDays()) ? Integer
+          .parseInt(deliveryModeModel.getPreReservedDays()) : 0);
+
+      postDaysToAdd.set(StringUtils.isNotBlank(deliveryModeModel.getPostReservedDays()) ? Integer
+          .parseInt(deliveryModeModel.getPostReservedDays()) : 0);
+    }
+    return shippingOptimizationModels;
+  }
+
+  public void updateActualRentalDate(final AbstractOrderModel abstractOrderModel,
+      String selectedFromDate, String selectedToDate, AtomicInteger preDaysToDeduct,
+      AtomicInteger postDaysToAdd) {
+    final List<Date> blackOutDates = blDatePickerService
+        .getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+    final Date startDay = BlDateTimeUtils
+        .subtractDaysInRentalDates(preDaysToDeduct.get(), selectedFromDate,
+            blackOutDates);
+    final Date currentDate = BlDateTimeUtils.convertStringDateToDate(
+        BlDateTimeUtils
+            .getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
+        BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
+    if (startDay.compareTo(currentDate) < 0) {
+      abstractOrderModel.setActualRentalStartDate(currentDate);
+    } else {
+      abstractOrderModel.setActualRentalStartDate(startDay);
+    }
+
+    final Date endDay = BlDateTimeUtils
+        .addDaysInRentalDates(postDaysToAdd.get(), selectedToDate, blackOutDates);
+    abstractOrderModel.setActualRentalEndDate(endDay);
+
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+        "Actual rental start date : {} and actual rental end date : {} set in order with id : {}",
+        startDay, endDay, abstractOrderModel.getCode());
+  }
+
+
   private int getCarrierId(final ZoneDeliveryModeModel zoneDeliveryModeModel) {
      if (zoneDeliveryModeModel != null) {
          if (zoneDeliveryModeModel.getCarrier() != null) {

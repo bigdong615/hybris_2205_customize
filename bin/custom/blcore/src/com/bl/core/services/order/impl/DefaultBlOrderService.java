@@ -4,9 +4,12 @@ import com.bl.core.enums.CustomerCollectionStatusEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlRepairLogModel;
 import com.bl.core.model.OrderToAvalaraProcessModel;
+import com.bl.core.model.ShippingOptimizationModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.repair.log.dao.BlRepairLogDao;
 import com.bl.core.services.order.BlOrderService;
+import com.bl.core.services.strategy.impl.DefaultBlCommerceDeliveryModeStrategy;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
@@ -15,6 +18,8 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.order.AbstractOrderEntryService;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
@@ -49,7 +54,7 @@ public class DefaultBlOrderService implements BlOrderService {
 	private AbstractOrderEntryService abstractOrderEntryService;
   private BlRepairLogDao blRepairLogDao;
 	private DefaultBlESPEventService defaultBlESPEventService;
-	
+	private DefaultBlCommerceDeliveryModeStrategy commerceDeliveryModeStrategy;
 	private BusinessProcessService businessProcessService;
 
   /**
@@ -382,6 +387,43 @@ public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
 		  }
 	}
 
+
+	/**
+	 * This method will update the actual rental order date for order
+	 *
+	 * @param abstractOrderModel
+	 */
+	public void updateActualRentalDatesForOrder(final AbstractOrderModel abstractOrderModel)
+	{
+		final DeliveryModeModel deliveryMode = abstractOrderModel.getDeliveryMode();
+		final ZoneDeliveryModeModel zoneDeliveryMode;
+		if (deliveryMode instanceof ZoneDeliveryModeModel) {
+			zoneDeliveryMode = (ZoneDeliveryModeModel) deliveryMode;
+
+			AtomicInteger preDaysToDeduct = new AtomicInteger(0);
+			AtomicInteger postDaysToAdd = new AtomicInteger(0);
+
+			// getting shipping optimize date
+			List<ShippingOptimizationModel> shippingOptimizationModels = commerceDeliveryModeStrategy
+					.getShippingOptimizeData(zoneDeliveryMode, abstractOrderModel.getDeliveryAddress());
+			// updating pre and post date
+			shippingOptimizationModels = commerceDeliveryModeStrategy
+					.updatePreAndPostServiceDays(zoneDeliveryMode, shippingOptimizationModels,
+							preDaysToDeduct, postDaysToAdd);
+
+			// updating actual rental start and end date on order.
+			commerceDeliveryModeStrategy
+					.updateActualRentalDate(abstractOrderModel, BlDateTimeUtils.getDateInStringFormat(
+							abstractOrderModel.getRentalStartDate()), BlDateTimeUtils.getDateInStringFormat(
+							abstractOrderModel.getRentalEndDate()), preDaysToDeduct, postDaysToAdd);
+
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"ActualRentalStart {} and ActualRentalEnd {} Date updated on {} for delivery mode {}",
+					abstractOrderModel.getActualRentalStartDate(),
+					abstractOrderModel.getActualRentalEndDate(), abstractOrderModel.getCode(),
+					zoneDeliveryMode.getCode());
+		}
+	}
 	/**
 	 * @return the businessProcessService
 	 */
@@ -398,4 +440,12 @@ public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
 		this.businessProcessService = businessProcessService;
 	}
 
+	public DefaultBlCommerceDeliveryModeStrategy getCommerceDeliveryModeStrategy() {
+		return commerceDeliveryModeStrategy;
+	}
+
+	public void setCommerceDeliveryModeStrategy(
+			DefaultBlCommerceDeliveryModeStrategy commerceDeliveryModeStrategy) {
+		this.commerceDeliveryModeStrategy = commerceDeliveryModeStrategy;
+	}
 }

@@ -386,7 +386,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
    * @param consignment model
    * @param result sourcingResult
    */
-  private void optimizeShippingMethodForConsignment(final ConsignmentModel consignment, final SourcingResult result) {
+  public void optimizeShippingMethodForConsignment(final ConsignmentModel consignment, final SourcingResult result) {
 
     if (!consignment.isOrderTransferConsignment()) {
     try {

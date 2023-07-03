@@ -33,4 +33,5 @@ public interface BlAllocationService extends AllocationService {
    */
   public void setSerialCodesToBillingCharges(final ConsignmentEntryModel consignmentEntry,
       final Set<BlSerialProductModel> serialProductModels);
+  void optimizeShippingMethodForConsignment(final ConsignmentModel consignment, final SourcingResult result);
 }
