@@ -1659,12 +1659,26 @@ function reverseTraverseOnShipping() {
             if(data != null && data.statusMessage == 'Success' && data.result != null && data.result.length > 0) {
                  sessionStorage.setItem("avsFlowDeliveryMode", JSON.stringify(deliveryMode));
                  sessionStorage.setItem("businessType", JSON.stringify(businessType));
-                 let whatYouEntered = addressForm.line1 + '<br/>' + addressForm.townCity + ', ' + addressForm.regionIso.split('-')[1] + ' ' +
-                                         addressForm.postcode ;
+                 let whatYouEntered = '';
+                 if(addressForm.line2 == 'undefined' || !addressForm.line2 || addressForm.line2.length ===0 || addressForm.line2 ===""){
+					 whatYouEntered = addressForm.line1 + '<br/>' + addressForm.townCity + ', ' + addressForm.regionIso.split('-')[1];
+				 }
+				 else{
+					 whatYouEntered = addressForm.line1 + '<br/>' +addressForm.line2 + '<br/>' + addressForm.townCity + ', ' + addressForm.regionIso.split('-')[1] + ' ' +
+                                        addressForm.postcode ;      
+				 }
+                 
                  $('#whatYouEntered').html(whatYouEntered);
                  sessionStorage.setItem("suggestedAddressForm", JSON.stringify(data.result[0]));
-                 let whatWeSuggest = data.result[0].line1 + '<br/>' + data.result[0].town + ', ' + data.result[0].region.isocodeShort +
+                 let whatWeSuggest = '';
+                 if(data.result[0].line2 == 'undefined' || !data.result[0].line2 || data.result[0].line2.length ===0 || data.result[0].line2 ===""){
+                 	whatWeSuggest = data.result[0].line1 + '<br/>' + data.result[0].town + ', ' + data.result[0].region.isocodeShort +
                                      ' ' + data.result[0].postalCode;
+                 }
+                 else{
+					 whatWeSuggest = data.result[0].line1 + '<br/>' + data.result[0].line2 + '<br/>' + data.result[0].town + ', ' + data.result[0].region.isocodeShort +
+                                     ' ' + data.result[0].postalCode;
+				 }
                  $('#whatWeSuggest').html(whatWeSuggest);
                  $('#avsCheck').modal('show');
             } else {
