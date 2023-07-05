@@ -1,6 +1,8 @@
 package com.bl.storefront.controllers.pages;
 
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
@@ -30,6 +32,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
 
 /**
  * This is created to render rental product details related data .
@@ -41,6 +44,7 @@ import com.bl.logging.BlLogger;
 public class RentalProductPageController extends AbstractBlProductPageController {
 
   private static final Logger LOG = Logger.getLogger(RentalProductPageController.class);
+  private static final String ERROR_CMS_PAGE = "notFound";
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
@@ -105,9 +109,12 @@ public class RentalProductPageController extends AbstractBlProductPageController
       return productDetail(encodedProductCode, options, productData, model, request, response);
     } catch(final Exception ex){
       BlLogger.logMessage(LOG, Level.ERROR,"Product Not found for Code{}",encodedProductCode, ex);
+		final ContentPageModel errorPage = getContentPageForLabelOrId(ERROR_CMS_PAGE);
+		storeCmsPageInModel(model, errorPage);
+		setUpMetaDataForContentPage(model, errorPage);
+		GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-		response.setHeader("Location", REDIRECT_PREFIX + encodedProductCode);
-		return null;
+		return ControllerConstants.Views.Pages.Error.ErrorNotFoundPage;
     }
   }
 
