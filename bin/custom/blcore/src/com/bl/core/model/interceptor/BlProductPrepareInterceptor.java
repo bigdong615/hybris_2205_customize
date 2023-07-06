@@ -1,13 +1,5 @@
 package com.bl.core.model.interceptor;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.DurationEnum;
-import com.bl.core.enums.ProductTypeEnum;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.product.service.BlProductService;
-import com.bl.core.services.calculation.BlPricingService;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
@@ -18,17 +10,28 @@ import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.session.SessionService;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.DurationEnum;
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
+import com.bl.core.services.calculation.BlPricingService;
+import com.bl.logging.BlLogger;
 
 /**
  * This class is for setting the auto generated product Id on BlProduct when it is created and has
@@ -76,7 +79,7 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
       }
     }
   }
-  
+
   /**
    * Gets the serial products attached to SKU.
    *
@@ -179,7 +182,7 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
    */
   private void createOrUpdateRentalBlProductPrice(final BlProductModel blProductModel,
       final InterceptorContext ctx) {
-    Optional<PriceRowModel> sevenDayPrice = getPrices(blProductModel).stream().filter(
+    final Optional<PriceRowModel> sevenDayPrice = getPrices(blProductModel).stream().filter(
         price -> getEnumerationService()
             .getEnumerationValue(DurationEnum.class, BlCoreConstants.SEVEN_DAY_PRICE)
             .equals(price.getDuration())).findAny();
@@ -192,8 +195,8 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
             .createOrUpdateSevenDayPrice(blProductModel, retailPrice, true)));
       } else if (ctx.isModified(blProductModel, BlProductModel.RETAILPRICE)) {
         blProductModel.setRetailPrice(retailPrice);
-        blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
-            .createOrUpdateSevenDayPrice(blProductModel, retailPrice, false)));
+		  //        blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
+		  //            .createOrUpdateSevenDayPrice(blProductModel, retailPrice, false)));
       }
 
     }
@@ -248,7 +251,7 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
     return keyGenerator;
   }
 
-  public void setKeyGenerator(KeyGenerator keyGenerator) {
+  public void setKeyGenerator(final KeyGenerator keyGenerator) {
     this.keyGenerator = keyGenerator;
   }
 
@@ -256,7 +259,7 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
     return enumerationService;
   }
 
-  public void setEnumerationService(EnumerationService enumerationService) {
+  public void setEnumerationService(final EnumerationService enumerationService) {
     this.enumerationService = enumerationService;
   }
 
@@ -264,7 +267,7 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
     return blPricingService;
   }
 
-  public void setBlPricingService(BlPricingService blPricingService) {
+  public void setBlPricingService(final BlPricingService blPricingService) {
     this.blPricingService = blPricingService;
   }
 
@@ -273,7 +276,7 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
   }
 
   public void setCatalogVersionService(
-      CatalogVersionService catalogVersionService) {
+      final CatalogVersionService catalogVersionService) {
     this.catalogVersionService = catalogVersionService;
   }
 
@@ -288,7 +291,7 @@ public SessionService getSessionService()
 /**
  * @param sessionService the sessionService to set
  */
-public void setSessionService(SessionService sessionService)
+public void setSessionService(final SessionService sessionService)
 {
 	this.sessionService = sessionService;
 }
@@ -304,7 +307,7 @@ public SearchRestrictionService getSearchRestrictionService()
 /**
  * @param searchRestrictionService the searchRestrictionService to set
  */
-public void setSearchRestrictionService(SearchRestrictionService searchRestrictionService)
+public void setSearchRestrictionService(final SearchRestrictionService searchRestrictionService)
 {
 	this.searchRestrictionService = searchRestrictionService;
 }
@@ -313,7 +316,7 @@ public void setSearchRestrictionService(SearchRestrictionService searchRestricti
     return blProductService;
   }
 
-  public void setBlProductService(BlProductService blProductService) {
+  public void setBlProductService(final BlProductService blProductService) {
     this.blProductService = blProductService;
   }
 }
