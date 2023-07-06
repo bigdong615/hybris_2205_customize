@@ -1,7 +1,9 @@
 package com.bl.storefront.controllers.pages;
 
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.assistedserviceservices.utils.AssistedServiceSession;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
@@ -28,12 +30,14 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.facades.productreference.BlProductFacade;
 import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
 
 @Controller
 @RequestMapping(value = "/buy/product")
 public class UsedProductPageController extends AbstractBlProductPageController {
 
   private static final Logger LOG = Logger.getLogger(UsedProductPageController.class);
+  private static final String ERROR_CMS_PAGE = "notFound";
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
@@ -76,10 +80,13 @@ public class UsedProductPageController extends AbstractBlProductPageController {
     }
     return productDetail(encodedProductCode, options, productData, model, request, response);
     } catch(final Exception ex){
-      BlLogger.logMessage(LOG, Level.ERROR,"Product Not found for Code{}",encodedProductCode, ex);
-		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-		response.setHeader("Location", REDIRECT_PREFIX + encodedProductCode);
-		return null;
+		 BlLogger.logMessage(LOG, Level.ERROR, "Product Not found for Code{}", encodedProductCode, ex);
+		 final ContentPageModel errorPage = getContentPageForLabelOrId(ERROR_CMS_PAGE);
+		 storeCmsPageInModel(model, errorPage);
+		 setUpMetaDataForContentPage(model, errorPage);
+		 GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
+		 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+		 return ControllerConstants.Views.Pages.Error.ErrorNotFoundPage;
     }
   }
 }
