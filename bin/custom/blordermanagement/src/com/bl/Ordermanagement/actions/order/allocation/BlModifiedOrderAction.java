@@ -78,6 +78,8 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
         consignmentEntryModel.setSerialProducts(Collections.emptyList());
       });
       releaseStockForGivenSerial(olderProductCode,consignmentModel.getOptimizedShippingStartDate(),consignmentModel.getOptimizedShippingEndDate());
+    consignmentModel.setOptimizedShippingStartDate(order.getActualRentalStartDate());
+    consignmentModel.setOptimizedShippingEndDate(order.getActualRentalEndDate());
     });
 
     order.getEntries().forEach(entryModel -> {
@@ -131,6 +133,7 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
         "3. list of products {} to fulfill from preferred warehouse {} for the order {}",
         productCodes.toString(), preferredWH.getCode(), order.getCode());
     if (CollectionUtils.isNotEmpty(productCodes)) {
+
       final Collection<StockLevelModel> stockLevels = getBlOptimizeShippingFromWHService()
           .getStocks(productCodes, preferredWH,
               order);
@@ -151,6 +154,7 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
             context);
         assignSerialFromLocation(context, true, warehouse);
         getBlOptimizeShippingFromWHService().deleteOtherConsignmentIfAny(order, warehouse);
+
         getBlOptimizeShippingFromWHService().createConsignment(order, context, preferredWH);
         return true;
       }

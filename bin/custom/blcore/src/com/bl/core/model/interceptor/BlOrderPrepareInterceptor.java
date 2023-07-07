@@ -438,11 +438,9 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 			orderModel = (OrderModel) abstractOrderModel;
 			blOrderService.updateActualRentalDatesForOrder(abstractOrderModel);
 
-			/*if(!checkIsStockAvailableForModifyDate(abstractOrderModel)){
-        notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
-            NotificationEvent.Level.INFO, this.getLabel(NOT_SHIPPING_SOON));
+			if(!checkIsStockAvailableForModifyDate(abstractOrderModel)){
 				throw new InterceptorException("Can't modify rental date due unavailable of stock for new duration");
-			}*/
+			}
 
 			if (CollectionUtils.isNotEmpty(abstractOrderModel.getConsignments())) {
 				ConsignmentModel consignmentModel = abstractOrderModel.getConsignments().iterator().next();

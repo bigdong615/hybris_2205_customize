@@ -88,9 +88,9 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<AbstractO
 
 				blOrderService.updateActualRentalDatesForOrder(orderModel);
 
-				if(!checkIsStockAvailableForModifyDate(orderModel)){
-					throw new InterceptorException("Can't modify rental date due unavailable of stock for new duration");
-				}
+				/*if(!checkIsStockAvailableForModifyDate(orderModel)){
+					throw new InterceptorException("from validator Can't modify rental date due unavailable of stock for new duration");
+				}*/
 
 			/*	final BaseStoreModel baseStore = getBaseStoreService()
 						.getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
@@ -148,7 +148,7 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<AbstractO
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public Long getAvailabilityForProduct(final String skuProduct, final
