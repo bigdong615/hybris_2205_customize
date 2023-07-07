@@ -210,6 +210,11 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String DS = "DS";
 	public static final String OT = "OT";
 
+	public static final String FEDEX_SHIPPER_ACCOUNT_NUMBER = "blintegration.fedex.shipper.account.number";
+	public static final String FEDEX_SHIPPER_METER_NUMBER = "blintegration.fedex.shipper.meter.number";
+	public static final String FEDEX_SHIPPER_API_KEY = "blintegration.fedex.api.key";
+	public static final String FEDEX_SHIPPER_PASSWORD = "blintegration.fedex.shipment.password";
+
 	//Below is the list of order status and consignment status for which the tools (create package, shipping scan and mark shipment as BL_SHIPPED) in shipment module will not be visible.
 	public static final List ORDERS_AND_CONSIGNMENT_STATUS = Arrays.asList(OrderStatus.CHECKED_INVALID,
 			OrderStatus.PAYMENT_NOT_AUTHORIZED, OrderStatus.RECEIVED_PAYMENT_DECLINED, OrderStatus.RECEIVED_IN_VERIFICATION,

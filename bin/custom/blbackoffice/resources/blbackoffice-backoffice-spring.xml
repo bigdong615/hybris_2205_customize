@@ -68,6 +68,8 @@
 	<bean id="defaultUnboxingScanToolHandler" class="com.bl.backoffice.wizards.handler.UnboxingScanToolHandler">
 		<property name="notificationService" ref="notificationService"/>
 		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
+		<property name="defaultBlInventoryScanToolService" ref="defaultBlInventoryScanToolService"/>
+		
 	</bean>
 
 	<alias name="defaultBlExceptionTranslationService" alias="exceptionTranslationService"/>
