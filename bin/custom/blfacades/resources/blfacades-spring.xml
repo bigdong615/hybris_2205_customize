@@ -850,7 +850,7 @@
 	<alias name="defaultBlConsignmentFacade" alias="blconsignmentFacade"/>
 	<bean id="defaultBlConsignmentFacade" class="com.bl.facades.consignment.impl.DefaultBLConsignmentFacade">
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
-		<property name="consignmentEntryConverter" ref="consignmentEntryConverter"/>
+		<property name="blDomoConsignmentEntryConverter" ref="blDomoConsignmentEntryConverter"/>
 		<property name="blDomoConsignmentConverter" ref="blDomoConsignmentConverter"/>
 	</bean>
 	
@@ -1185,6 +1185,21 @@
 		<property name="populators">
 			<list>
 				<ref bean="blDomoConsignmentPopulator"/>
+			</list>
+		</property>
+	</bean>
+	
+		
+	<alias name="blDomoConsignmentEntryPopulator" alias="blDomoConsignmentEntryPopulator"/>
+	<bean id="blDomoConsignmentEntryPopulator" class="com.bl.facades.populators.BlDomoConsignmentEntryPopulator"> 	
+	</bean>
+	
+	<alias name="blDomoConsignmentEntryConverter" alias="blDomoConsignmentEntryConverter"/>
+	<bean id="blDomoConsignmentEntryConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.ConsignmentEntryData" />
+		<property name="populators">
+			<list>
+				<ref bean="blDomoConsignmentEntryPopulator"/>
 			</list>
 		</property>
 	</bean>

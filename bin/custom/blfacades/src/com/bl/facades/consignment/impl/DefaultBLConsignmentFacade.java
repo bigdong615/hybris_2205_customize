@@ -33,7 +33,7 @@ public class DefaultBLConsignmentFacade implements BLConsignmentFacade
 
 	private BlConsignmentEntryService blConsignmentEntryService;
 
-	private Converter<ConsignmentEntryModel, ConsignmentEntryData> consignmentEntryConverter;
+	private Converter<ConsignmentEntryModel, ConsignmentEntryData> blDomoConsignmentEntryConverter;
 
 	private Converter<ConsignmentModel, ConsignmentData> blDomoConsignmentConverter;
 
@@ -44,7 +44,8 @@ public class DefaultBLConsignmentFacade implements BLConsignmentFacade
 				date);
 		final Instant inst1 = Instant.now();
 		LOG.info("Before calling consignmnet entries populator " + inst1);
-		final SearchPageData<ConsignmentEntryData> consignmentEntries = convertPageData(entries, getConsignmentEntryConverter());
+		final SearchPageData<ConsignmentEntryData> consignmentEntries = convertPageData(entries,
+				getBlDomoConsignmentEntryConverter());
 		final Instant inst2 = Instant.now();
 		LOG.info("after calling consignmnets populator " + inst2);
 		LOG.info("Elapsed Time: " + Duration.between(inst1, inst2).toString());
@@ -98,21 +99,21 @@ public class DefaultBLConsignmentFacade implements BLConsignmentFacade
 	}
 
 	/**
-	 * @return the consignmentEntryConverter
+	 * @return the blDomoConsignmentEntryConverter
 	 */
-	public Converter<ConsignmentEntryModel, ConsignmentEntryData> getConsignmentEntryConverter()
+	public Converter<ConsignmentEntryModel, ConsignmentEntryData> getBlDomoConsignmentEntryConverter()
 	{
-		return consignmentEntryConverter;
+		return blDomoConsignmentEntryConverter;
 	}
-
+	
 	/**
-	 * @param consignmentEntryConverter
-	 *           the consignmentEntryConverter to set
+	 * @param blDomoConsignmentEntryConverter
+	 *           the blDomoConsignmentEntryConverter to set
 	 */
-	public void setConsignmentEntryConverter(
-			final Converter<ConsignmentEntryModel, ConsignmentEntryData> consignmentEntryConverter)
+	public void setBlDomoConsignmentEntryConverter(
+			final Converter<ConsignmentEntryModel, ConsignmentEntryData> blDomoConsignmentEntryConverter)
 	{
-		this.consignmentEntryConverter = consignmentEntryConverter;
+		this.blDomoConsignmentEntryConverter = blDomoConsignmentEntryConverter;
 	}
 
 	/**
