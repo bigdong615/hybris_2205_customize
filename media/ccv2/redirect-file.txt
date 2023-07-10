@@ -2521,3 +2521,4 @@ RedirectMatch 301 ^/blog/your-gear-guide-better-wedding-photography https://blog
 RedirectMatch 301 ^/blog/zhiyun-tech-crane-2-vs-dji-ronin-s-handheld-gimbal-stabilizer https://blog.borrowlenses.com/zhiyun-tech-crane-2-vs-dji-ronin-s-handheld-gimbal-stabilizer/
 RedirectMatch 301 ^/blog/zhiyun-tech-crane-3-rental-first-look-review https://blog.borrowlenses.com/zhiyun-tech-crane-3-rental-first-look-review/
 RedirectMatch 301 ^/blog/10-tips-for-shooting-family-events https://blog.borrowlenses.com/10-tips-for-shooting-family-events/
+RedirectMatch 301 ^/blog https://blog.borrowlenses.com/
