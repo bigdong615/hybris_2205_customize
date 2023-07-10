@@ -109,12 +109,14 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 
 		if(null != inputObject.getDeliveryMode() && (inputObject.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel)){
 			shippingTypeList.addToSelection(CarrierEnum.UPSSTORE.getCode());
+			shippingTypeComboBox.setModel(shippingTypeList);
+			setOptimizedShippingMethodComboBox(CarrierEnum.UPSSTORE.getCode());
 		}else{
 			shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
+			shippingTypeComboBox.setModel(shippingTypeList);
+			setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
 		}
 
-		shippingTypeComboBox.setModel(shippingTypeList);
-		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
 		deliveryDate.setValue(getDeliveryDateFromOrder(inputObject));
 		destinationState.setValue(getDestinationStateValue(inputObject));
 	}
