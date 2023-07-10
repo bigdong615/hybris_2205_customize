@@ -107,7 +107,8 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.outbound.label.heading")));
 		shippingTypeList = new ListModelList<>(getShippingTypeList());
 
-		if(null != inputObject.getDeliveryMode() && (inputObject.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel)){
+		if(null != inputObject.getDeliveryMode() && (inputObject.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel)
+				&& inputObject.getDeliveryMode().getCode().contains("UPS_STORE")){
 			shippingTypeList.addToSelection(CarrierEnum.UPSSTORE.getCode());
 			shippingTypeComboBox.setModel(shippingTypeList);
 			setOptimizedShippingMethodComboBox(CarrierEnum.UPSSTORE.getCode());
