@@ -6,6 +6,7 @@ package com.bl.integration.shipping.ups.converters.populator;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.math.BigDecimal;
@@ -377,7 +378,7 @@ public class BLFedExShipmentCreateRequestPopulator
 		payment.setPaymentType(PaymentType.SENDER);
 		final Payor payor = new Payor();
 		final Party responsibleParty = new Party();
-		responsibleParty.setAccountNumber(fedExAccountNumber);
+		responsibleParty.setAccountNumber(Config.getParameter(BlintegrationConstants.FEDEX_SHIPPER_ACCOUNT_NUMBER));
 		final Address responsiblePartyAddress = new Address();
 		responsiblePartyAddress.setCountryCode(BlintegrationConstants.FEDEX_COUNTRY_CODE);
 		responsibleParty.setAddress(responsiblePartyAddress);
@@ -445,8 +446,8 @@ public class BLFedExShipmentCreateRequestPopulator
 	private static ClientDetail createClientDetail()
 	{
 		final ClientDetail clientDetail = new ClientDetail();
-		clientDetail.setAccountNumber(fedExAccountNumber);
-		clientDetail.setMeterNumber(fedExMeterNumber);
+		clientDetail.setAccountNumber(Config.getParameter(BlintegrationConstants.FEDEX_SHIPPER_ACCOUNT_NUMBER));
+		clientDetail.setMeterNumber(Config.getParameter(BlintegrationConstants.FEDEX_SHIPPER_METER_NUMBER));
 		return clientDetail;
 	}
 
@@ -459,8 +460,8 @@ public class BLFedExShipmentCreateRequestPopulator
 	{
 		final WebAuthenticationCredential wac = new WebAuthenticationCredential();
 
-		wac.setKey(fedExApiKey);
-		wac.setPassword(fedExapiPassword);
+		wac.setKey(Config.getParameter(BlintegrationConstants.FEDEX_SHIPPER_API_KEY));
+		wac.setPassword(Config.getParameter(BlintegrationConstants.FEDEX_SHIPPER_PASSWORD));
 		return new WebAuthenticationDetail(wac, wac);
 	}
 }
