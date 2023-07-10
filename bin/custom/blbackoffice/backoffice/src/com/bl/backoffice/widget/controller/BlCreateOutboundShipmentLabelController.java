@@ -1,5 +1,6 @@
 package com.bl.backoffice.widget.controller;
 
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
@@ -105,7 +106,13 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		this.getWidgetInstanceManager()
 				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.outbound.label.heading")));
 		shippingTypeList = new ListModelList<>(getShippingTypeList());
-		shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
+
+		if(null != inputObject.getDeliveryMode() && (inputObject.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel)){
+			shippingTypeList.addToSelection(CarrierEnum.UPSSTORE.getCode());
+		}else{
+			shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
+		}
+
 		shippingTypeComboBox.setModel(shippingTypeList);
 		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
 		deliveryDate.setValue(getDeliveryDateFromOrder(inputObject));
@@ -291,11 +298,10 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 			optimizedShippingMethodList.clearSelection();
 			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
 			{
-				if (!optimizedShippingMethod.getCode().toLowerCase().contains(CarrierEnum.FEDEX.getCode().toLowerCase()))
+				if (null != optimizedShippingMethod.getCarrier() && optimizedShippingMethod.getCarrier().equals(CarrierEnum.UPS))
 				{
 					carrierBasedOptimizedShippingMethodList.add(optimizedShippingMethod.getName());
 				}
-
 			}
 		}
 		else if (selectedShippingType.equalsIgnoreCase(CarrierEnum.FEDEX.getCode()))
@@ -303,11 +309,21 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 			optimizedShippingMethodList.clearSelection();
 			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
 			{
-				if (optimizedShippingMethod.getCode().toLowerCase().contains(CarrierEnum.FEDEX.getCode().toLowerCase()))
+				if (null != optimizedShippingMethod.getCarrier() && optimizedShippingMethod.getCarrier().equals(CarrierEnum.FEDEX))
 				{
 					carrierBasedOptimizedShippingMethodList.add(optimizedShippingMethod.getName());
 				}
-
+			}
+		}
+		else if (selectedShippingType.equalsIgnoreCase(CarrierEnum.UPSSTORE.getCode()))
+		{
+			optimizedShippingMethodList.clearSelection();
+			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
+			{
+				if (null != optimizedShippingMethod.getCarrier() && optimizedShippingMethod.getCarrier().equals(CarrierEnum.UPSSTORE))
+				{
+					carrierBasedOptimizedShippingMethodList.add(optimizedShippingMethod.getName());
+				}
 			}
 		}
 		else
@@ -338,6 +354,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		//shippingTypesList.add(BlintegrationConstants.DEFAULT_SHIPPING_CODE);
 		shippingTypesList.add(CarrierEnum.UPS.getCode());
 		shippingTypesList.add(CarrierEnum.FEDEX.getCode());
+		shippingTypesList.add(CarrierEnum.UPSSTORE.getCode());
 		return shippingTypesList;
 	}
 

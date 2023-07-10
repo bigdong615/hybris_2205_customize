@@ -151,6 +151,7 @@
         <enumtype generate="true" code="CarrierEnum" autocreate="true" dynamic="true">
             <value code="UPS"/>
             <value code="FEDEX"/>
+            <value code="UPSSTORE"/>
         </enumtype>
 
         <enumtype generate="true" code="ShippingMethodTypeEnum" autocreate="true" dynamic="true">
@@ -3637,6 +3638,10 @@
                         <modifiers read="true" write="true" unique="false" optional="true"/>
                         <persistence type="property"/>
                         <description>OptimizedShippingMethod for Signature Required if any </description>
+                    </attribute>
+                    <attribute qualifier="carrier" type="CarrierEnum">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" unique="false" optional="true"/>
                     </attribute>
                 </attributes>
             </itemtype>
