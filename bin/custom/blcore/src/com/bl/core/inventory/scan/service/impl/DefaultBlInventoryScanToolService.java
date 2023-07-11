@@ -522,16 +522,16 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	// for package scan, we need to add tracking number as location here
 	public void setBlLocationScanHistoryForPackageScan(final BlSerialProductModel blSerialProduct, final boolean unboxStatus,
-			final String trackingNumberLocation)
+			final BlInventoryLocationModel trackingNumberLocation)
 	{
 		final BlInventoryLocationScanHistoryModel blInventoryLocationScanHistory = modelService
 				.create(BlInventoryLocationScanHistoryModel.class);
 		blInventoryLocationScanHistory.setSerialProduct(blSerialProduct);
 		blInventoryLocationScanHistory.setSerialId(blSerialProduct.getProductId());
 		blInventoryLocationScanHistory.setSerialBarcode(blSerialProduct.getBarcode());
-		blInventoryLocationScanHistory.setOcParent(trackingNumberLocation);
+		//blInventoryLocationScanHistory.setOcParent(trackingNumberLocation);
 		blInventoryLocationScanHistory.setScanUser(userService.getCurrentUser());
-		blInventoryLocationScanHistory.setBlInventoryLocation(blInventoryLocation);
+		blInventoryLocationScanHistory.setBlInventoryLocation(trackingNumberLocation);
 		blInventoryLocationScanHistory.setScanTime(new Date());
 		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
 		modelService.save(blInventoryLocationScanHistory);

@@ -365,6 +365,6 @@ public interface BlInventoryScanToolService {
 
 
 	public void setBlLocationScanHistoryForPackageScan(final BlSerialProductModel blSerialProduct, final boolean unboxStatus,
-			final String trackingNumberLocation);
+			final BlInventoryLocationModel blLocalInventoryLocation);
 
 }

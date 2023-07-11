@@ -27,6 +27,7 @@ import com.bl.backoffice.wizards.util.WebScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
+import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
@@ -316,10 +317,17 @@ public class BlPackageScanController extends DefaultWidgetController
 			final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
 					.getSerialProductsByBarcode(barcodes, BlInventoryScanLoggingConstants.ONLINE);
 
-			serialProductsByBarcode.forEach(blSerialProduct -> {
-				getBlInventoryScanToolService().setBlLocationScanHistoryForPackageScan(blSerialProduct, false, lastScannedItem);
-			});
+			//For package scan alone, we need to update carrierType(UPS/FedEx)
+			final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
+					.getInventoryLocationById(selectedConsignment.getCarrier());
 
+			if (null != blLocalInventoryLocation)
+			{
+				serialProductsByBarcode.forEach(blSerialProduct -> {
+					getBlInventoryScanToolService().setBlLocationScanHistoryForPackageScan(blSerialProduct, false,
+							blLocalInventoryLocation);
+				});
+			}
 
 		}
 	}
