@@ -30,21 +30,13 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -256,8 +248,24 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
                 consignmentModel.getOptimizedShippingStartDate(),
                 consignmentModel.getOptimizedShippingEndDate(), Boolean.TRUE);
         stocks.forEach(stock -> {
-          stock.setReservedStatus(false);
-          stock.setOrder(null);
+          if(stock.getDate().equals(consignmentModel.getOptimizedShippingStartDate()) && stock.getOrder().split(",").length > 1){
+            stock.setReservedStatus(false);
+            String[] orders = stock.getOrder().split(",");
+            List<String> arr_new = Arrays.asList(orders);
+            List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(consignmentModel.getOrder().getCode())).collect(Collectors.toList());
+            stock.setOrder(String.join(",",updateOrders));
+          }
+          else if(stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && stock.getOrder().split(",").length > 1){
+            stock.setReservedStatus(true);
+            String[] orders = stock.getOrder().split(",");
+            List<String> arr_new = Arrays.asList(orders);
+            List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(consignmentModel.getOrder().getCode())).collect(Collectors.toList());
+            stock.setOrder(String.join(",",updateOrders));
+          }
+          else {
+            stock.setReservedStatus(false);
+            stock.setOrder(null);
+          }
           BlLogger.logFormatMessageInfo(LOG, Level.INFO,
               "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
               stock.getSerialProductCode());
@@ -437,8 +445,18 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
     if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
         .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
       serialStocks.forEach(stock -> {
-        stock.setReservedStatus(true);
-        stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+        if(stock.getDate().equals(entry.getConsignment().getOptimizedShippingStartDate()) && StringUtils.isNotBlank(stock.getOrder())){
+          stock.setReservedStatus(true);
+          stock.setOrder(stock.getOrder()+ "," + entry.getOrderEntry().getOrder().getCode());
+        }
+        else if(stock.getDate().equals(entry.getConsignment().getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
+          stock.setReservedStatus(true);
+          stock.setOrder(stock.getOrder()+ "," + entry.getOrderEntry().getOrder().getCode());
+        }
+        else {
+          stock.setReservedStatus(true);
+          stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+        }
         BlLogger.logFormatMessageInfo(LOG, Level.INFO,
             "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
             stock.getSerialProductCode());

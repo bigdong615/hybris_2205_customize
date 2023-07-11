@@ -285,8 +285,17 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
         if (CollectionUtils.isNotEmpty(allocatedProductCodes) && serialStocks.stream()
             .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
           serialStocks.forEach(stock -> {
-            stock.setReservedStatus(true);
-            stock.setOrder(orderCode);
+            if(stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
+              stock.setReservedStatus(true);
+              stock.setOrder(stock.getOrder()+ "," +orderCode);
+            }else if(stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && StringUtils.isBlank(stock.getOrder())) {
+              stock.setReservedStatus(false);
+              stock.setOrder(orderCode);
+            }
+            else {
+              stock.setReservedStatus(true);
+              stock.setOrder(orderCode);
+            }
           });
           this.getModelService().saveAll(serialStocks);
         }

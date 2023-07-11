@@ -33,15 +33,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
@@ -247,8 +239,19 @@ public class DefaultBlReallocationService implements BlReallocationService {
     if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
         .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
       serialStocks.forEach(stock -> {
-        stock.setReservedStatus(true);
-        stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+        if(stock.getDate().equals(entry.getConsignment().getOptimizedShippingStartDate()) && StringUtils.isNotBlank(stock.getOrder())){
+          stock.setReservedStatus(true);
+          stock.setOrder(stock.getOrder()+ "," + entry.getOrderEntry().getOrder().getCode());
+        }
+        else if(stock.getDate().equals(entry.getConsignment().getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
+          stock.setReservedStatus(true);
+          stock.setOrder(stock.getOrder()+ "," + entry.getOrderEntry().getOrder().getCode());
+        }
+        else {
+          stock.setReservedStatus(true);
+          stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+
+        }
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
             "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
             stock.getSerialProductCode());
@@ -258,15 +261,33 @@ public class DefaultBlReallocationService implements BlReallocationService {
   }
   
   @Override
-  public void removeReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus, WarehouseModel warehouse) {
+  public void removeReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus, WarehouseModel warehouse, String orderCode) {
 	    final Collection<StockLevelModel> serialStocks = blStockLevelDao
 	        .findSerialStockLevelsForDateAndCodesForWarehouse(serialProductCodes, startDay,
 	      		  endDay, reservedStatus, warehouse);
 	    if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
 	        .allMatch(stock -> serialProductCodes.contains(stock.getSerialProductCode()))) {
 	      serialStocks.forEach(stock -> {
-	        stock.setReservedStatus(false);
-	        stock.setOrder(StringUtils.EMPTY);
+            if(stock.getOrder().split(",").length > 1 && stock.getDate().equals(startDay)){
+              stock.setReservedStatus(false);
+              String[] orders = stock.getOrder().split(",");
+              List<String> arr_new = Arrays.asList(orders);
+              List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+              stock.setOrder(String.join(",",updateOrders));
+
+            }
+            else if(stock.getOrder().split(",").length > 1 && stock.getDate().equals(endDay)){
+              stock.setReservedStatus(true);
+              String[] orders = stock.getOrder().split(",");
+              List<String> arr_new = Arrays.asList(orders);
+              List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+              stock.setOrder(String.join(",",updateOrders));
+
+            }
+            else {
+              stock.setReservedStatus(false);
+              stock.setOrder(StringUtils.EMPTY);
+            }
 	        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 	            "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
 	            stock.getSerialProductCode());

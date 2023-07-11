@@ -32,19 +32,8 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
@@ -184,7 +173,7 @@ public class DefaultBlOrderModificationService
 				{
 					final boolean isRentalOrder = consignment.getOrder().getIsRentalOrder();
 					updateStockForSerial(consignment.getOptimizedShippingStartDate(),
-							isRentalOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial, !isRentalOrder);
+							isRentalOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial, !isRentalOrder,consignment.getOrder().getCode());
 				}
 			});
 			if (CollectionUtils.isEmpty(updatedSerialList))
@@ -248,8 +237,9 @@ public class DefaultBlOrderModificationService
 	 * method is used to update stock from removed entry
 	 *
 	 * @param serial
+	 * @param orderCode
 	 */
-	public void updateStockForSerial(final Date optimizedShippingStartDate, final Date optimizedShippingEndDate, final BlProductModel serial,final boolean isUsedGearOrder)
+	public void updateStockForSerial(final Date optimizedShippingStartDate, final Date optimizedShippingEndDate, final BlProductModel serial, final boolean isUsedGearOrder, String orderCode)
 	{
 		if (serial instanceof BlSerialProductModel)
 		{
@@ -259,9 +249,26 @@ public class DefaultBlOrderModificationService
 			{
 				findSerialStockLevelForDate.forEach(stockLevel -> {
 					final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serial);
-					stockLevel.setHardAssigned(false);
-					stockLevel.setReservedStatus(false);
-					stockLevel.setOrder(null);
+					if(stockLevel.getDate().equals(optimizedShippingStartDate) && stockLevel.getOrder().split(",").length > 1){
+						stockLevel.setReservedStatus(false);
+						String[] orders = stockLevel.getOrder().split(",");
+						List<String> arr_new = Arrays.asList(orders);
+						List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+						stockLevel.setOrder(String.join(",",updateOrders));
+					}
+					else if(stockLevel.getDate().equals(optimizedShippingEndDate) && stockLevel.getOrder().split(",").length > 1){
+						stockLevel.setReservedStatus(true);
+						String[] orders = stockLevel.getOrder().split(",");
+						List<String> arr_new = Arrays.asList(orders);
+						List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+						stockLevel.setOrder(String.join(",",updateOrders));
+					}
+					else {
+						stockLevel.setHardAssigned(false);
+						stockLevel.setReservedStatus(false);
+						stockLevel.setOrder(null);
+
+					}
 					getModelService().save(stockLevel);
 				});
 				if(isUsedGearOrder)
@@ -398,11 +405,11 @@ public class DefaultBlOrderModificationService
 						consignmentEntry.setQuantity(consignmentEntry.getQuantity()-1);
 						updateConsignmentEntry(serialProduct, consignmentEntry, products, itemMap);
 						updateStockForSerial(consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(),
-								serialProduct, false);
+								serialProduct, false, orderModel.getCode());
 					} else {
 						consignmentEntriesToRemove.add(consignmentEntry);
 						updateStockForSerial(consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(),
-								serialProduct, false);
+								serialProduct, false, orderModel.getCode());
 					}
 					break;
 				}

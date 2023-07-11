@@ -25,6 +25,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -234,8 +235,18 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
             if(CollectionUtils.isNotEmpty(serialStocks))
             {
                 serialStocks.forEach(stock -> {
-                    stock.setReservedStatus(true);
-                    stock.setOrder(orderEntryModel.getOrder().getCode());
+                    if(stock.getDate().equals(consignment.getOptimizedShippingStartDate()) && StringUtils.isNotBlank(stock.getOrder())){
+                        stock.setReservedStatus(true);
+                        stock.setOrder(stock.getOrder()+ "," + orderEntryModel.getOrder().getCode());
+                    }
+                    else if(stock.getDate().equals(consignment.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
+                        stock.setReservedStatus(true);
+                        stock.setOrder(stock.getOrder()+ "," + orderEntryModel.getOrder().getCode());
+                    }
+                    else{
+                        stock.setReservedStatus(true);
+                        stock.setOrder(orderEntryModel.getOrder().getCode());
+                    }
                 });
                 modelService.saveAll(serialStocks);
             }

@@ -356,8 +356,18 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			if(CollectionUtils.isNotEmpty(serialStocks))
 			{
 				serialStocks.forEach(stock -> {
-					stock.setReservedStatus(true);
-					stock.setOrder(orderEntryModel.getOrder().getCode());
+					if(stock.getDate().equals(consignment.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
+						stock.setReservedStatus(true);
+						stock.setOrder(stock.getOrder()+ "," + orderEntryModel.getOrder().getCode());
+					}
+					else if(stock.getDate().equals(consignment.getOptimizedShippingStartDate()) && StringUtils.isNotBlank(stock.getOrder())){
+						stock.setOrder(stock.getOrder()+ "," + orderEntryModel.getOrder().getCode());
+						stock.setReservedStatus(true);
+					}
+					else {
+						stock.setReservedStatus(true);
+						stock.setOrder(orderEntryModel.getOrder().getCode());
+					}
 				});
 				modelService.saveAll(serialStocks);
 			}

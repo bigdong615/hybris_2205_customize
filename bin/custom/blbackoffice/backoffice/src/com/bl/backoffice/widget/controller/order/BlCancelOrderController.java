@@ -41,6 +41,7 @@ import org.zkoss.zul.Messagebox;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class created for cancel order
@@ -224,10 +225,29 @@ public class BlCancelOrderController extends DefaultWidgetController {
                 .findSerialStockLevelForDate(serialProduct.getCode(), optimizedShippingStartDate, optimizedShippingEndDate);
         if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
         {
+            Date finalOptimizedShippingEndDate = optimizedShippingEndDate;
             findSerialStockLevelForDate.forEach(stockLevel -> {
-                stockLevel.setHardAssigned(false);
-                stockLevel.setReservedStatus(false);
-                stockLevel.setOrder(null);
+                if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1 && stockLevel.getDate().equals(optimizedShippingStartDate)){
+                    stockLevel.setReservedStatus(false);
+                    String[] orders = stockLevel.getOrder().split(",");
+                    List<String> arr_new = Arrays.asList(orders);
+                    List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(abstractOrderModel.getCode())).collect(Collectors.toList());
+                    stockLevel.setOrder(String.join(",",updateOrders));
+
+                }
+                else if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1 && stockLevel.getDate().equals(finalOptimizedShippingEndDate)){
+                    stockLevel.setReservedStatus(true);
+                    String[] orders = stockLevel.getOrder().split(",");
+                    List<String> arr_new = Arrays.asList(orders);
+                    List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(abstractOrderModel.getCode())).collect(Collectors.toList());
+                    stockLevel.setOrder(String.join(",",updateOrders));
+
+                }
+                else {
+                    stockLevel.setHardAssigned(false);
+                    stockLevel.setReservedStatus(false);
+                    stockLevel.setOrder(null);
+                }
                 stockLevel.setSerialStatus(SerialStatusEnum.ACTIVE);
                 if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalOrder())) {
                     BlSerialProductModel blSerialProductModel = (BlSerialProductModel) serialProduct;

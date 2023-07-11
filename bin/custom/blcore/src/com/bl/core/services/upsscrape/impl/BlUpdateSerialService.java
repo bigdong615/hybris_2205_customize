@@ -33,6 +33,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -239,8 +240,23 @@ public class BlUpdateSerialService implements UpdateSerialService {
     {
       findSerialStockLevelForDate.forEach(stockLevel -> {
         stockLevel.setHardAssigned(true);
-        stockLevel.setReservedStatus(true);
-        stockLevel.setOrder(abstractOrderModel.getCode());
+        if(stockLevel.getDate().equals(optimizedShippingEndDate) && StringUtils.isNotBlank(stockLevel.getOrder())){
+           stockLevel.setReservedStatus(true);
+           stockLevel.setOrder(stockLevel.getOrder()+ "," + abstractOrderModel.getCode());
+        }
+        else if(stockLevel.getDate().equals(optimizedShippingEndDate) && StringUtils.isBlank(stockLevel.getOrder())){
+            stockLevel.setReservedStatus(false);
+            stockLevel.setOrder(abstractOrderModel.getCode());
+        }
+        else if(stockLevel.getDate().equals(optimizedShippingStartDate) && StringUtils.isNotBlank(stockLevel.getOrder())){
+          stockLevel.setReservedStatus(true);
+          stockLevel.setOrder(stockLevel.getOrder()+","+abstractOrderModel.getCode());
+        }
+        else{
+          stockLevel.setReservedStatus(true);
+          stockLevel.setOrder(abstractOrderModel.getCode());
+        }
+
         ((BlSerialProductModel) serialProduct).setHardAssigned(true); // NOSONAR
         getModelService().save(stockLevel);
         getModelService().save(serialProduct);

@@ -38,16 +38,9 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.warehousing.allocation.impl.DefaultAllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -184,11 +177,35 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
                     consignment.getOptimizedShippingEndDate(), Boolean.FALSE);
 
             serialStocksForOptimizedDates.forEach(stock -> {
-              stock.setReservedStatus(true);
-              stock.setOrder(order.getCode());
-              BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-                  "Stock status is changed to {} for the serial product {} for the order {} ", stock.getReservedStatus(),
-                  stock.getSerialProductCode(), stock.getOrder());
+              Calendar cal = Calendar.getInstance();
+              cal.setTime(consignment.getOptimizedShippingStartDate());
+              cal.add(Calendar.DATE, 1);
+              Date plusOneDate = cal.getTime();
+              if(stock.getDate().equals(consignment.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
+                stock.setReservedStatus(true);
+                stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + order.getCode() : order.getCode());
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                        "Stock status is changed to {} for the serial product {} for the order {} having stock date as {}", stock.getReservedStatus(),
+                        stock.getSerialProductCode(), stock.getOrder(), stock.getDate());
+              }
+              else if(stock.getDate().equals(consignment.getOptimizedShippingEndDate()) && StringUtils.isBlank(stock.getOrder())) {
+                stock.setReservedStatus(false);
+                stock.setOrder(order.getCode());
+              }
+              else if(stock.getDate().equals(consignment.getOptimizedShippingStartDate())) {
+                stock.setReservedStatus(true);
+                stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + order.getCode() : order.getCode());
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                        "Stock status is changed to {} for the serial product {} for the order {} having stock date as", stock.getReservedStatus(),
+                        stock.getSerialProductCode(), stock.getOrder(), stock.getDate());
+              }
+              else {
+                stock.setReservedStatus(true);
+                stock.setOrder(order.getCode());
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                        "Stock status is changed to {} for the serial product {} for the order {} having stock date as", stock.getReservedStatus(),
+                        stock.getSerialProductCode(), stock.getOrder(), stock.getDate());
+              }
             });
 
             //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
