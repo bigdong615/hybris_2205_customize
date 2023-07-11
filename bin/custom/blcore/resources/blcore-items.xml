@@ -3638,6 +3638,10 @@
                         <persistence type="property"/>
                         <description>OptimizedShippingMethod for Signature Required if any </description>
                     </attribute>
+                    <attribute qualifier="carrier" type="CarrierEnum">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" unique="false" optional="true"/>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
