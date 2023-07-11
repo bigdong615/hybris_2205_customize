@@ -115,7 +115,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		shippingTypeList = new ListModelList<>(getShippingTypeList());
 		shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
 		shippingTypeComboBox.setModel(shippingTypeList);
-		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode(), inputObject);
+		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode(), inputObject, BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
 	}
 
 	/**
@@ -193,6 +193,8 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	{
 		final String selectedWarehouse = this.warehouseCombobox.getSelectedItem().getValue();
 		warehouseList.addToSelection(selectedWarehouse);
+		final String selectedShippingType = getSelectedShippingType();
+		setOptimizedShippingMethodComboBox(selectedShippingType, selectedConsignment, selectedWarehouse);
 
 	}
 
@@ -204,7 +206,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	{
 		final String selectedShippingType = this.shippingTypeComboBox.getSelectedItem().getValue();
 		shippingTypeList.addToSelection(selectedShippingType);
-		setOptimizedShippingMethodComboBox(selectedShippingType, selectedConsignment);
+		setOptimizedShippingMethodComboBox(selectedShippingType, selectedConsignment, BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
 	}
 
 	@ViewEvent(componentID = "optimizedShippingMethodComboBox", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
@@ -471,7 +473,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		return shippingTypesList;
 	}
 
-	private void setOptimizedShippingMethodComboBox(final String selectedShippingType, final ConsignmentModel consignmentModel)
+	private void setOptimizedShippingMethodComboBox(final String selectedShippingType, final ConsignmentModel consignmentModel, final String warehouse)
 	{
 		final List<String> carrierBasedOptimizedShippingMethodList = org.assertj.core.util.Lists.newArrayList();
 		final List<OptimizedShippingMethodModel> allOptimizedShippingMethodList = getBlOptimizedShippingMethodGenericDao().find();
@@ -482,7 +484,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 			optimizedShippingMethodList.clearSelection();
 			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
 			{
-				if (!optimizedShippingMethod.getCode().toLowerCase().contains(CarrierEnum.FEDEX.getCode().toLowerCase()))
+				if(null != optimizedShippingMethod.getCarrier() && optimizedShippingMethod.getCarrier().equals(CarrierEnum.UPS))
 				{
 					carrierBasedOptimizedShippingMethodList.add(optimizedShippingMethod.getName());
 				}
@@ -494,7 +496,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 			optimizedShippingMethodList.clearSelection();
 			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
 			{
-				if (optimizedShippingMethod.getCode().toLowerCase().contains(CarrierEnum.FEDEX.getCode().toLowerCase()))
+				if (null != optimizedShippingMethod.getCarrier() && optimizedShippingMethod.getCarrier().equals(CarrierEnum.FEDEX))
 				{
 					carrierBasedOptimizedShippingMethodList.add(optimizedShippingMethod.getName());
 				}
@@ -510,18 +512,24 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 		if(selectedShippingType.equalsIgnoreCase(CarrierEnum.UPS.getCode()))
 		{
-			updateOptimizedShippingMethod(optimizedShippingMethodList, consignmentModel);
+			updateOptimizedShippingMethod(optimizedShippingMethodList, consignmentModel, warehouse);
 		}
 
 		optimizedShippingMethodComboBox.setModel(optimizedShippingMethodList);
 	}
 
-	private void updateOptimizedShippingMethod(final ListModelList<String> optimizedShippingMethodList, final ConsignmentModel consignmentModel)
+	private void updateOptimizedShippingMethod(final ListModelList<String> optimizedShippingMethodList, final ConsignmentModel consignmentModel, final String warehouse)
 	{
-		final WarehouseModel optimizedWarehouse = getBlDeliveryStateSourcingLocationFilter()
-				.applyFilter(selectedConsignment.getOrder());
+		int warehouseCode = 0;
+		if(warehouse.equals(BlintegrationConstants.DEFAULT_WAREHOUSE_CODE)){
+			final WarehouseModel optimizedWarehouse = getBlDeliveryStateSourcingLocationFilter()
+					.applyFilter(selectedConsignment.getOrder());
+			warehouseCode = getWarehouseCode(optimizedWarehouse);
+		}
+		else{
+			warehouseCode = warehouse.contains("_ca") ? BlInventoryScanLoggingConstants.ONE : BlInventoryScanLoggingConstants.TWO;
+		}
 		final int carrierId = BlInventoryScanLoggingConstants.TWO;
-		final int warehouseCode = getWarehouseCode(optimizedWarehouse);
 		final String addressZip = getAddressZip(consignmentModel.getShippingAddress());
 		AtomicInteger postDaysToAdd = new AtomicInteger(0);
 
