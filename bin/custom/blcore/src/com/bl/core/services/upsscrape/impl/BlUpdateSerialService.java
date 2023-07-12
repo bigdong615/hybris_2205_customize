@@ -7,6 +7,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.order.dao.BlOrderDao;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.services.upsscrape.UpdateSerialService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -52,6 +53,8 @@ public class BlUpdateSerialService implements UpdateSerialService {
   private BlOrderDao orderDao;
   private BlStockLevelDao blStockLevelDao;
   private ConfigurationService configurationService;
+  @Resource(name = "defaultBlUserService")
+  private DefaultBlUserService defaultBlUserService;
 
   /**
    * {@inheritDoc}
@@ -238,6 +241,14 @@ public class BlUpdateSerialService implements UpdateSerialService {
     if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
     {
       findSerialStockLevelForDate.forEach(stockLevel -> {
+        try {
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                  "Reserve stock for serial product {}, for stock date {} while  USP scrub response before change Hard Assign {} , reserve status {}, associated order {} "
+                          + ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
+                  stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+        } catch (Exception e) {
+          BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in UPS scrub response flow", e);
+        }
         stockLevel.setHardAssigned(true);
         stockLevel.setReservedStatus(true);
         stockLevel.setOrder(abstractOrderModel.getCode());

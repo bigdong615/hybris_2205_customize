@@ -102,8 +102,8 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       ServicesUtil.validateParameterNotNullStandardMessage("order", order);
       Assert.isTrue(!Strings.isNullOrEmpty(code), "Parameter code cannot be null or empty");
 
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Creating consignment for Location: '{}'",
-          result.getWarehouse().getCode());
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Creating consignment for Location: '{}' for the order {}",
+              result.getWarehouse().getCode(),order.getCode());
       final ConsignmentModel consignment = (ConsignmentModel) this.getModelService()
           .create(ConsignmentModel.class);
       consignment.setCode(code);
@@ -166,15 +166,21 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
           }
         }
 
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                "1. All allocated serial product {}  for the order {} ", allocatedProductCodes,
+                order.getCode());
         if (!blOrderService.isAquatechProductOrder(order) && CollectionUtils
             .isNotEmpty(allocatedProductCodes)) {
 
           final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order,
               new HashSet<>(allocatedProductCodes));
-
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                  "2. Stock size {} for serial product {} for rental duration {}  and {} for the order {} ",serialStocks.size(), allocatedProductCodes,
+                  order.getActualRentalStartDate(), order.getActualRentalEndDate(),order.getCode());
           if ((!serialStocks.isEmpty()) && serialStocks.stream()
               .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
 
+            BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"3. Before optimize shipping method for consignment {}",consignment.getCode());
             this.optimizeShippingMethodForConsignment(consignment, result);
             this.getModelService().save(consignment);
 
@@ -182,7 +188,10 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
                 .findSerialStockLevelsForDateAndCodes(new HashSet<>(allocatedProductCodes),
                     consignment.getOptimizedShippingStartDate(),
                     consignment.getOptimizedShippingEndDate(), Boolean.FALSE);
-
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                    "4. Stock size {} for serial product {} for rental duration on consignment {}  and {} for the order {} ",
+                    serialStocksForOptimizedDates.size(), allocatedProductCodes,
+                    consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), order.getCode());
             serialStocksForOptimizedDates.forEach(stock -> {
               stock.setReservedStatus(true);
               stock.setOrder(order.getCode());

@@ -13,6 +13,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.BlSubpartsModel;
 import com.bl.core.order.dao.BlOrderDao;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
@@ -50,6 +51,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Resource;
+
 /**
  * This service used for any modification on order
  *
@@ -65,6 +68,9 @@ public class DefaultBlOrderModificationService
 	private CalculationService calculationService;
 	private BlAllocationService blAllocationService;
 	private BlOrderDao blOrderDao;
+	@Resource(name = "defaultBlUserService")
+	private DefaultBlUserService defaultBlUserService;
+
 
 	/**
 	 * This method will be used to get sourcing result for used gear orders
@@ -258,6 +264,14 @@ public class DefaultBlOrderModificationService
 			if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
 			{
 				findSerialStockLevelForDate.forEach(stockLevel -> {
+					try {
+						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+								"Release stock for serial product {}, for stock date {} while  order modification before change Hard Assign {} , reserve status {}, associated order {} "
+										+ ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
+								stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+					} catch (Exception e) {
+						BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in order modification flow", e);
+					}
 					final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serial);
 					stockLevel.setHardAssigned(false);
 					stockLevel.setReservedStatus(false);

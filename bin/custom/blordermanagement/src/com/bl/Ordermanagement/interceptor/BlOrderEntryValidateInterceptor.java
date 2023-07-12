@@ -356,6 +356,14 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			if(CollectionUtils.isNotEmpty(serialStocks))
 			{
 				serialStocks.forEach(stock -> {
+					try {
+						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+								"Reserve stock for serial product {}, for stock date {} while creating new consignment entry before change Hard Assign {} , reserve status {}, associated order {} "
+										+ ",current date {} current user {}", stock.getSerialProductCode(), stock.getDate(), stock.getHardAssigned(), stock.getReservedStatus(),
+								stock.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+					} catch (Exception e) {
+						BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in create consignment flow", e);
+					}
 					stock.setReservedStatus(true);
 					stock.setOrder(orderEntryModel.getOrder().getCode());
 				});
