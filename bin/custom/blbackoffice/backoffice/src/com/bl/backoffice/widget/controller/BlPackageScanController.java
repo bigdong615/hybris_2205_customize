@@ -312,26 +312,41 @@ public class BlPackageScanController extends DefaultWidgetController
 			final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 			createReponseMsgForPackageScan(getBlInventoryScanToolService().checkValidTrackingId(lastScannedItem), barcodes);
 
+			try
+			{
+				// To update tracking id in blinventoryhistory table
+				final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
+						.getSerialProductsByBarcode(barcodes, BlInventoryScanLoggingConstants.ONLINE);
 
-			// To update tracking id in blinventoryhistory table
-			final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
-					.getSerialProductsByBarcode(barcodes, BlInventoryScanLoggingConstants.ONLINE);
-
-			//For package scan alone, we need to update carrierType(UPS/FedEx)
-			//final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) selectedConsignment.getDeliveryMode();
-
-
-
-			serialProductsByBarcode.forEach(blSerialProduct -> {
-
-				final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
-						.getInventoryLocationById(blSerialProduct.getOcLocation());
-				if (null != blLocalInventoryLocation)
+				if (null != selectedConsignment.getPackagingInfo().getLabelURL())
 				{
-					getBlInventoryScanToolService().setBlLocationScanHistoryForPackageScan(blSerialProduct, false,
-							blLocalInventoryLocation);
+					//For package scan alone, we need to update labeled carrier type(UPS/FedEx)
+					String labelScanedLocation = "UPS";
+					if (selectedConsignment.getPackagingInfo().getLabelURL().contains("www.fedex"))
+					{
+						labelScanedLocation = "FEDEX";
+					}
+
+					final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
+							.getInventoryLocationById(labelScanedLocation);
+
+					if (null != blLocalInventoryLocation)
+					{
+						serialProductsByBarcode.forEach(blSerialProduct -> {
+							if (null != blLocalInventoryLocation)
+							{
+								getBlInventoryScanToolService().setBlLocationScanHistoryForPackageScan(blSerialProduct, false,
+										blLocalInventoryLocation);
+							}
+						});
+					}
 				}
-			});
+
+			}
+			catch (final Exception e)
+			{
+				e.printStackTrace();
+			}
 
 		}
 	}
