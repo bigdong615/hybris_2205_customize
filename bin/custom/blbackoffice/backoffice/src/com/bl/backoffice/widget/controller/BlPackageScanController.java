@@ -2,7 +2,6 @@ package com.bl.backoffice.widget.controller;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.util.Config;
 
@@ -319,18 +318,20 @@ public class BlPackageScanController extends DefaultWidgetController
 					.getSerialProductsByBarcode(barcodes, BlInventoryScanLoggingConstants.ONLINE);
 
 			//For package scan alone, we need to update carrierType(UPS/FedEx)
-			final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) selectedConsignment.getDeliveryMode();
+			//final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) selectedConsignment.getDeliveryMode();
 
-			final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
-					.getInventoryLocationById(zoneDeliveryMode.getCarrier().getCode());
 
-			if (null != blLocalInventoryLocation)
-			{
-				serialProductsByBarcode.forEach(blSerialProduct -> {
+
+			serialProductsByBarcode.forEach(blSerialProduct -> {
+
+				final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
+						.getInventoryLocationById(blSerialProduct.getOcLocation());
+				if (null != blLocalInventoryLocation)
+				{
 					getBlInventoryScanToolService().setBlLocationScanHistoryForPackageScan(blSerialProduct, false,
 							blLocalInventoryLocation);
-				});
-			}
+				}
+			});
 
 		}
 	}
