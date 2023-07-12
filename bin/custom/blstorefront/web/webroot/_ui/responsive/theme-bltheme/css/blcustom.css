@@ -365,7 +365,7 @@ margin: 0;
   .splide {margin-bottom: 18px;}
   #globalSearch, #productDates {width:86%;}
 .wrapup-search{background:#fff;box-shadow: 6px 0px 2px 0px #7c7c7c inset;}
-#globalSearch .input-group {padding-right: 0;}
+#globalSearch .input-group {padding-right: 0;overflow:hidden;}
 #globalSearch .input-group input#mobile-litepicker {
   padding-left: 26px;
   background: url(../assets/icon-calendar-red.svg) no-repeat 4px center;
