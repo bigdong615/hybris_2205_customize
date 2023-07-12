@@ -55,7 +55,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 
 	public static final String REQUEST_OPTION = "nonvalidate";
 	public static final String CUSTOMER_CONTEXT = "JAX-WS Test Client";
-	public static final String DELIVERY_CONFIRMATION_SIGNATURE = "1";
+	public static final String DELIVERY_CONFIRMATION_SIGNATURE = "2";
 
 	public static final String CLIENT_SIDE_ERROR = "400";
 	public static final String CLIENT_SIDE_ERROR_DESCRIPTION = "Client Trasportation Error";
