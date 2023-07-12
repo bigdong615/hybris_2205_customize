@@ -8,6 +8,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
@@ -49,6 +50,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Resource;
+
 public class DefaultBlReallocationService implements BlReallocationService {
 
   private static final Logger LOG = Logger.getLogger(
@@ -59,6 +62,8 @@ public class DefaultBlReallocationService implements BlReallocationService {
   private BlConsignmentEntryService blConsignmentEntryService;
   private BlStockLevelDao blStockLevelDao;
   private BusinessProcessService businessProcessService;
+  @Resource(name = "defaultBlUserService")
+  private DefaultBlUserService defaultBlUserService;
 
   /**
    * {@inheritDoc}
@@ -247,6 +252,14 @@ public class DefaultBlReallocationService implements BlReallocationService {
     if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
         .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
       serialStocks.forEach(stock -> {
+        try {
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                  "Reserve stock for serial product {}, for stock date {} while reallocation before change Hard Assign {}, reserve status {}, associated order {}"
+                          + ",current date {} current user {}", stock.getSerialProductCode(), stock.getDate(), stock.getHardAssigned(), stock.getReservedStatus(),
+                  stock.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+        } catch (Exception e) {
+          BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in reallocation flow", e);
+        }
         stock.setReservedStatus(true);
         stock.setOrder(entry.getOrderEntry().getOrder().getCode());
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
@@ -265,6 +278,14 @@ public class DefaultBlReallocationService implements BlReallocationService {
 	    if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
 	        .allMatch(stock -> serialProductCodes.contains(stock.getSerialProductCode()))) {
 	      serialStocks.forEach(stock -> {
+            try {
+              BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                      "Release stock for serial product {}, for stock date {} while reallocate or reassign order before change Hard Assign {} , reserve status {}, associated order {} "
+                              + ",current date {} current user {}", stock.getSerialProductCode(), stock.getDate(), stock.getHardAssigned(), stock.getReservedStatus(),
+                      stock.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+            } catch (Exception e) {
+              BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in reallocate or reassign flow", e);
+            }
 	        stock.setReservedStatus(false);
 	        stock.setOrder(StringUtils.EMPTY);
 	        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
