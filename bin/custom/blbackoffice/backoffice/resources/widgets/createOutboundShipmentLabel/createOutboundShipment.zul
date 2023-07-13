@@ -54,7 +54,7 @@
                          style=""/>
       </row>
       <row>
-                   <label value="Signature Reuired" width="50%" />
+                   <label value="Signature Required" width="50%" />
                 <checkbox id="signatureSelection" class="oms-widget-signature-list-container__checkbox"/>
       </row>
     </rows>

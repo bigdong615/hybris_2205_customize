@@ -1,6 +1,7 @@
 package com.bl.core.stock.impl;
 
 import com.bl.core.model.ReallocateSerialProcessModel;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -33,6 +34,8 @@ import com.bl.core.stock.BlStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 
+import javax.annotation.Resource;
+
 
 /**
  * It is used to create the stock level
@@ -46,6 +49,9 @@ public class DefaultBlStockService implements BlStockService
 	private BlProductDao productDao;
 	private BlStockLevelDao blStockLevelDao;
 	private BusinessProcessService businessProcessService;
+	@Resource(name = "defaultBlUserService")
+	private DefaultBlUserService defaultBlUserService;
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -164,10 +170,22 @@ public class DefaultBlStockService implements BlStockService
 			saveStockRecord(stockLevel, reservedStatus);
 		} else {
 			final Collection<StockLevelModel> stockLevels = getExcludedOrderStockLevelModelsBasedOnDates(blSerialProduct);
-				if(reservedStatus) {
-					createAndExecuteBusinessProcess(blSerialProduct);
-				}
+			final String stock_Message;
+			if (reservedStatus) {
+				stock_Message = "Reserve";
+				createAndExecuteBusinessProcess(blSerialProduct);
+			} else {
+				stock_Message = "Release";
+			}
 			stockLevels.forEach(stockLevel -> {
+				try {
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+							stock_Message + " stock for serial product {}, for stock date {} while update serial status before change Hard Assign {} , reserve status {}, associated order {} "
+									+ ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
+							stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+				} catch (Exception e) {
+					BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while " + stock_Message + " stock in update serial status flow", e);
+				}
 					stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
 					saveStockRecord(stockLevel, reservedStatus);
 				});
@@ -199,6 +217,14 @@ public class DefaultBlStockService implements BlStockService
 			final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(
 					blSerialProduct, intialCode);
 			stockLevels.forEach(stockLevel -> {
+				try {
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+							"Remove order from stock for serial product {}, for stock date {} while  serial code update on serial before change Hard Assign {} , reserve status {}, associated order {} "
+									+ ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
+							stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+				} catch (Exception e) {
+					BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while remove order from stock in serial code update flow", e);
+				}
 				stockLevel.setSerialProductCode(blSerialProduct.getCode());
 				if(Objects.nonNull(stockLevel.getOrder())) {
 					stockLevel.setOrder(null);
