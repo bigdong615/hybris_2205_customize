@@ -2,7 +2,6 @@ package com.bl.backoffice.widget.controller;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.util.Config;
 
@@ -313,23 +312,40 @@ public class BlPackageScanController extends DefaultWidgetController
 			final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 			createReponseMsgForPackageScan(getBlInventoryScanToolService().checkValidTrackingId(lastScannedItem), barcodes);
 
-
-			// To update tracking id in blinventoryhistory table
-			final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
-					.getSerialProductsByBarcode(barcodes, BlInventoryScanLoggingConstants.ONLINE);
-
-			//For package scan alone, we need to update carrierType(UPS/FedEx)
-			final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) selectedConsignment.getDeliveryMode();
-
-			final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
-					.getInventoryLocationById(zoneDeliveryMode.getCarrier().getCode());
-
-			if (null != blLocalInventoryLocation)
+			try
 			{
-				serialProductsByBarcode.forEach(blSerialProduct -> {
-					getBlInventoryScanToolService().setBlLocationScanHistoryForPackageScan(blSerialProduct, false,
-							blLocalInventoryLocation);
-				});
+				// To update tracking id in blinventoryhistory table
+				final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
+						.getSerialProductsByBarcode(barcodes, BlInventoryScanLoggingConstants.ONLINE);
+
+				if (null != selectedConsignment.getPackagingInfo().getLabelURL())
+				{
+					//For package scan alone, we need to update labeled carrier type(UPS/FedEx)
+					String labelScanedLocation = "UPS";
+					if (selectedConsignment.getPackagingInfo().getLabelURL().contains("www.fedex"))
+					{
+						labelScanedLocation = "FEDEX";
+					}
+
+					final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
+							.getInventoryLocationById(labelScanedLocation);
+
+					if (null != blLocalInventoryLocation)
+					{
+						serialProductsByBarcode.forEach(blSerialProduct -> {
+							if (null != blLocalInventoryLocation)
+							{
+								getBlInventoryScanToolService().setBlLocationScanHistoryForPackageScan(blSerialProduct, false,
+										blLocalInventoryLocation);
+							}
+						});
+					}
+				}
+
+			}
+			catch (final Exception e)
+			{
+				e.printStackTrace();
 			}
 
 		}
