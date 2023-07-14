@@ -2321,5 +2321,9 @@
 	<bean id="blSubpartsRenderedHandler" class="com.bl.core.model.handler.BlSubpartsRenderedHandler">
 			<property name="modelService" ref="modelService"/>
 	</bean>
+	
+	<bean id="blProductSearchTermValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductSearchTermValueProvider" parent="abstractPropertyFieldValueProvider">
+		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
 
 </beans>
