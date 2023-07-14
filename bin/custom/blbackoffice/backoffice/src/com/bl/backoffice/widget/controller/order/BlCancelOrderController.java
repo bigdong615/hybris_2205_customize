@@ -9,6 +9,7 @@ import com.bl.core.model.BlOrderCancellationHistoryModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.populators.BlCancelOrderPopulator;
@@ -79,6 +80,8 @@ public class BlCancelOrderController extends DefaultWidgetController {
 
     @WireVariable
     private transient BackofficeLocaleService cockpitLocaleService;
+    @Resource(name = "defaultBlUserService")
+    private DefaultBlUserService defaultBlUserService;
 
     /**
      * This method created to Init cancellation order form.
@@ -225,6 +228,14 @@ public class BlCancelOrderController extends DefaultWidgetController {
         if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
         {
             findSerialStockLevelForDate.forEach(stockLevel -> {
+                try {
+                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                            "Release stock for serial product {}, for stock date {} while cancel order before change Hard Assign {} , reserve status {}, associated order {} "
+                                    + ",current date {} current user {} ", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
+                            stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+                } catch (Exception e) {
+                    BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in cancel flow", e);
+                }
                 stockLevel.setHardAssigned(false);
                 stockLevel.setReservedStatus(false);
                 stockLevel.setOrder(null);

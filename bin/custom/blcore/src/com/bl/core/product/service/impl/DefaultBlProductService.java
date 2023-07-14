@@ -206,6 +206,14 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 		if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
 		{
 			findSerialStockLevelForDate.forEach(stockLevel -> {
+				try {
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+							"Release stock for serial product {}, for stock date {} while partial cancel order before change Hard Assign {} , reserve status {}, associated order {}"
+									+ ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
+							stockLevel.getOrder(), new Date(), (getUserService().getCurrentUser() != null ? getUserService().getCurrentUser().getUid() : "In Automation"));
+				} catch (Exception e) {
+					BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in partial cancel flow", e);
+				}
 				stockLevel.setHardAssigned(false);
 				stockLevel.setReservedStatus(false);
 				stockLevel.setOrder(null);

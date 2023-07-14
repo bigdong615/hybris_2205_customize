@@ -11,6 +11,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
@@ -48,6 +49,8 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Resource;
+
 /**
  * This class is used to optimize 'ship from' WH for the consignments
  * @author Moumita
@@ -66,6 +69,9 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
   private BlStockLevelDao blStockLevelDao;
   private BlAllocationService blAllocationService;
   private BlConsignmentEntryService blConsignmentEntryService;
+  @Resource(name = "defaultBlUserService")
+  private DefaultBlUserService defaultBlUserService;
+
 
   /**
    * {@inheritDoc}
@@ -256,6 +262,14 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
                 consignmentModel.getOptimizedShippingStartDate(),
                 consignmentModel.getOptimizedShippingEndDate(), Boolean.TRUE);
         stocks.forEach(stock -> {
+          try {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                    "Release stock for serial product {}, for stock date {} while re-shuffler job before change Hard Assign {} , reserve status {}, associated order {} "
+                            + ",current date {} current user {}", stock.getSerialProductCode(), stock.getDate(), stock.getHardAssigned(), stock.getReservedStatus(),
+                    stock.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+          } catch (Exception e) {
+            BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in re-shuffler job flow", e);
+          }
           stock.setReservedStatus(false);
           stock.setOrder(null);
           BlLogger.logFormatMessageInfo(LOG, Level.INFO,
@@ -437,6 +451,14 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
     if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
         .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
       serialStocks.forEach(stock -> {
+        try {
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                  "Reserve stock for serial product {}, for stock date {} while re-shuffler before change Hard Assign {} , reserve status {}, associated order {}"
+                          + ",current date {} current user {}", stock.getSerialProductCode(), stock.getDate(), stock.getHardAssigned(), stock.getReservedStatus(),
+                  stock.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+        } catch (Exception e) {
+          BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in re-shuffler flow", e);
+        }
         stock.setReservedStatus(true);
         stock.setOrder(entry.getOrderEntry().getOrder().getCode());
         BlLogger.logFormatMessageInfo(LOG, Level.INFO,
