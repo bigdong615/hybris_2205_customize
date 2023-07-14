@@ -323,10 +323,6 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "A new consignment has been created {} ", newConsignment.getCode());
     } else {
-
-      consignment.setOptimizedShippingStartDate(order.getActualRentalStartDate());
-      consignment.setOptimizedShippingEndDate(order.getActualRentalEndDate());
-
       final List<AbstractOrderEntryModel> orderEntries = new ArrayList<>();
       context.getOrderEntries().forEach(orderEntry ->
           consignment.getConsignmentEntries().forEach(consignmentEntryModel -> {
@@ -348,10 +344,6 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
                           .get(entryModel.getEntryNumber()).size()), consignment,
                       sourcingResult)
           ).collect(Collectors.toSet());
-
-      getBlAllocationService().optimizeShippingMethodForConsignment(consignment, result);
-      modelService.save(consignment);
-     modelService.refresh(consignment);
       entries.forEach( consignmentEntryModel -> {
         final Set<BlSerialProductModel> serialProductModels =
             null == result.getSerialProductMap() ? new HashSet<>() : result.getSerialProductMap()
