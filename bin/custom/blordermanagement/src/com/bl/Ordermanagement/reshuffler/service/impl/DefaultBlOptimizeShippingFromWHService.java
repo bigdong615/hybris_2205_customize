@@ -34,6 +34,8 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -243,19 +245,28 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
         getModelService().remove(consignmentEntryModel);
       }
       if (CollectionUtils.isNotEmpty(productCodes)) {
-        final Collection<StockLevelModel> stocks = getBlStockLevelDao()
+        final Collection<StockLevelModel> stocksWithTrueStatus = getBlStockLevelDao()
             .findSerialStockLevelsForDateAndCodes(productCodes,
                 consignmentModel.getOptimizedShippingStartDate(),
                 consignmentModel.getOptimizedShippingEndDate(), Boolean.TRUE);
+        final Collection<StockLevelModel> stockWithFalseStatus = getBlStockLevelDao()
+                .findSerialStockLevelsForDateAndCodes(productCodes,
+                        consignmentModel.getOptimizedShippingEndDate(),
+                        consignmentModel.getOptimizedShippingEndDate(), Boolean.FALSE);
+
+        final Collection<StockLevelModel> stocks = Stream
+                .concat(stocksWithTrueStatus.stream(), stockWithFalseStatus.stream())
+                .collect(Collectors.toList());
+
         stocks.forEach(stock -> {
-          if(stock.getDate().equals(consignmentModel.getOptimizedShippingStartDate()) && stock.getOrder().split(",").length > 1){
+          if(null != stock.getOrder() && stock.getDate().equals(consignmentModel.getOptimizedShippingStartDate()) && stock.getOrder().split(",").length > 1){
             stock.setReservedStatus(false);
             String[] orders = stock.getOrder().split(",");
             List<String> arr_new = Arrays.asList(orders);
             List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(consignmentModel.getOrder().getCode())).collect(Collectors.toList());
             stock.setOrder(String.join(",",updateOrders));
           }
-          else if(stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && stock.getOrder().split(",").length > 1){
+          else if(null != stock.getOrder() && stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && stock.getOrder().split(",").length > 1){
             stock.setReservedStatus(true);
             String[] orders = stock.getOrder().split(",");
             List<String> arr_new = Arrays.asList(orders);

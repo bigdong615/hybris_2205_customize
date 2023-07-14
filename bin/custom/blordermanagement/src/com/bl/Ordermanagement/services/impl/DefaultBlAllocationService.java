@@ -42,6 +42,8 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -171,10 +173,19 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
             this.optimizeShippingMethodForConsignment(consignment, result);
             this.getModelService().save(consignment);
 
-            final Collection<StockLevelModel> serialStocksForOptimizedDates = blStockLevelDao
+            final Collection<StockLevelModel> serialStocksForOptimizedDatesWithFalse = blStockLevelDao
                 .findSerialStockLevelsForDateAndCodes(new HashSet<>(allocatedProductCodes),
                     consignment.getOptimizedShippingStartDate(),
                     consignment.getOptimizedShippingEndDate(), Boolean.FALSE);
+
+            final Collection<StockLevelModel> serialStocksForOptimizedEndDate = blStockLevelDao
+                    .findSerialStockLevelsForDateAndCodes(new HashSet<>(allocatedProductCodes),
+                            consignment.getOptimizedShippingEndDate(),
+                            consignment.getOptimizedShippingEndDate(), Boolean.TRUE);
+
+            final Collection<StockLevelModel> serialStocksForOptimizedDates = Stream
+                    .concat(serialStocksForOptimizedDatesWithFalse.stream(), serialStocksForOptimizedEndDate.stream())
+                    .collect(Collectors.toList());
 
             serialStocksForOptimizedDates.forEach(stock -> {
               Calendar cal = Calendar.getInstance();

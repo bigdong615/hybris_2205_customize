@@ -249,14 +249,14 @@ public class DefaultBlOrderModificationService
 			{
 				findSerialStockLevelForDate.forEach(stockLevel -> {
 					final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serial);
-					if(stockLevel.getDate().equals(optimizedShippingStartDate) && stockLevel.getOrder().split(",").length > 1){
+					if(null != stockLevel.getOrder() && stockLevel.getDate().equals(optimizedShippingStartDate) && stockLevel.getOrder().split(",").length > 1){
 						stockLevel.setReservedStatus(false);
 						String[] orders = stockLevel.getOrder().split(",");
 						List<String> arr_new = Arrays.asList(orders);
 						List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
 						stockLevel.setOrder(String.join(",",updateOrders));
 					}
-					else if(stockLevel.getDate().equals(optimizedShippingEndDate) && stockLevel.getOrder().split(",").length > 1){
+					else if(null != stockLevel.getOrder() && stockLevel.getDate().equals(optimizedShippingEndDate) && stockLevel.getOrder().split(",").length > 1){
 						stockLevel.setReservedStatus(true);
 						String[] orders = stockLevel.getOrder().split(",");
 						List<String> arr_new = Arrays.asList(orders);
