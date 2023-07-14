@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-center">
-                    <div class="col-12 col-lg-10 col-xl-9">
+                    <div class="col-12 col-lg-11 col-xl-10">
                         <div class="row">
                               <div id="productImage" class="col-lg-6 text-center">
                               <div class="hide-on-desktop" id="productInfo">

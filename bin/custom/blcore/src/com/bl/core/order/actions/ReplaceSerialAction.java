@@ -8,6 +8,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ReallocateSerialProcessModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.product.dao.BlProductDao;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -51,6 +52,8 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
   private BlStockLevelDao blStockLevelDao;
   private SearchRestrictionService searchRestrictionService;
   private SessionService sessionService;
+  @Resource(name = "defaultBlUserService")
+  private DefaultBlUserService defaultBlUserService;
 
   @Override
   public Transition executeAction(ReallocateSerialProcessModel serialProcessModel)
@@ -113,6 +116,14 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           if (isSerialUpdated.get()) {
             List<StockLevelModel> stockLevelModelList = orderCodeEntry.getValue();
             stockLevelModelList.forEach(stockLevel -> {
+              try {
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                        "Remove order from stock for serial product {}, for stock date {} while replacing serial(old serial) before change Hard Assign {}, reserve status {}, associated order {}"
+                                + ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
+                        stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+              } catch (Exception e) {
+                BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while remove order from stock in replace serial flow", e);
+              }
               stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
               stockLevel.setOrder(null);
               saveStockRecord(stockLevel, true);
@@ -190,6 +201,14 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
       if(null!=newSerial){
         List<StockLevelModel> stockLevelModels = stockLevelsSerialWise.get(newSerial.getCode());
         stockLevelModels.forEach(stockLevel ->{
+          try {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                    "Reserve stock for serial product {}, for stock date {} while replacing serial before change Hard Assign {}, reserve status {}, associated order {}"
+                            + ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
+                    stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+          } catch (Exception e) {
+            BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in replace serial flow", e);
+          }
 
           if(stockLevel.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && stockLevel.getOrder().split(",").length > 1) {
             stockLevel.setReservedStatus(true);

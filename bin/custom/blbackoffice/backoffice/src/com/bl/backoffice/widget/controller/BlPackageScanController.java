@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -28,6 +27,7 @@ import com.bl.backoffice.wizards.util.WebScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
+import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
@@ -71,20 +71,20 @@ public class BlPackageScanController extends DefaultWidgetController
 	@SocketEvent(socketId = BlInventoryScanLoggingConstants.SOCKET_ID)
 	public void initCustomerAddressForm(final ConsignmentModel inputObject)
 	{
-	
+
 		selectedConsignment = inputObject;
 		this.getWidgetInstanceManager()
 				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.order.scan.heading")));
 		shippingScanToolData = new WebScanToolData();
-	
-		boolean isTrackingNumberEmpty = inputObject.getPackaginginfos() != null ? inputObject.getPackaginginfos().stream()
+
+		final boolean isTrackingNumberEmpty = inputObject.getPackaginginfos() != null ? inputObject.getPackaginginfos().stream()
 				.filter(p -> StringUtils.isEmpty(p.getOutBoundTrackingNumber())).findAny().isPresent() : true;
 
 		if (!ConsignmentStatus.BL_SHIPPED.equals(inputObject.getStatus()) ||  isTrackingNumberEmpty)
 		{
 			notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
 					BlInventoryScanLoggingConstants.PACKAGE_SCAN_ERROR_KEY);
-			
+
 		}
 	}
 
@@ -311,6 +311,43 @@ public class BlPackageScanController extends DefaultWidgetController
 		{
 			final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 			createReponseMsgForPackageScan(getBlInventoryScanToolService().checkValidTrackingId(lastScannedItem), barcodes);
+
+			try
+			{
+				// To update tracking id in blinventoryhistory table
+				final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
+						.getSerialProductsByBarcode(barcodes, BlInventoryScanLoggingConstants.ONLINE);
+
+				if (null != selectedConsignment.getPackagingInfo().getLabelURL())
+				{
+					//For package scan alone, we need to update labeled carrier type(UPS/FedEx)
+					String labelScanedLocation = "UPS";
+					if (selectedConsignment.getPackagingInfo().getLabelURL().contains("www.fedex"))
+					{
+						labelScanedLocation = "FEDEX";
+					}
+
+					final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
+							.getInventoryLocationById(labelScanedLocation);
+
+					if (null != blLocalInventoryLocation)
+					{
+						serialProductsByBarcode.forEach(blSerialProduct -> {
+							if (null != blLocalInventoryLocation)
+							{
+								getBlInventoryScanToolService().setBlLocationScanHistoryForPackageScan(blSerialProduct, false,
+										blLocalInventoryLocation);
+							}
+						});
+					}
+				}
+
+			}
+			catch (final Exception e)
+			{
+				e.printStackTrace();
+			}
+
 		}
 	}
 
@@ -467,6 +504,17 @@ public class BlPackageScanController extends DefaultWidgetController
 					BlLogger.logMessage(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 					Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
 					this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
+
+					//					final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+					//
+					//					final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
+					//							.getSerialProductsByBarcode(barcodes, BlInventoryScanLoggingConstants.ONLINE);
+					//
+					//					serialProductsByBarcode.forEach(blSerialProduct -> {
+					//						getBlInventoryScanToolService().setBlLocationScanHistoryForPackageScan(blSerialProduct, false, lastScannedItem);
+					//					});
+
+
 				}
 				else if (checkValidTrackingId == BlInventoryScanLoggingConstants.TWO)
 				{

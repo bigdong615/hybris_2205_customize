@@ -99,6 +99,7 @@ public class BlModelSavingExceptionTranslationHandler extends ModelExceptionTran
 		customExceptionObjectsList.add(BlCoreConstants.BL_REPAIR_LOG_PREPARE_INTERCEPTOR);
 		customExceptionObjectsList.add(BlCoreConstants.BL_GIFT_CARD_LOG_PREPARE_INTERCEPTOR);
 		customExceptionObjectsList.add(BlCoreConstants.BL_ORDER_ENTRY_VALIDATE_INTERCEPTOR);
+		customExceptionObjectsList.add(BlCoreConstants.BL_ORDER_PREPARE_INTERCEPTOR);
 		return customExceptionObjectsList;
 	}
 

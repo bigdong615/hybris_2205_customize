@@ -15,6 +15,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.payment.constants.GeneratedPaymentConstants.Enumerations.PaymentTransactionType;
 import de.hybris.platform.payment.dto.TransactionStatus;
 import de.hybris.platform.payment.dto.TransactionStatusDetails;
@@ -24,6 +25,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import de.hybris.platform.util.Config;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -133,7 +135,25 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 //    BLS-67 Update Order Status Terminology in Order Details
       populateOrderStatusEligibleFeatures(source,target);
       populateUpdatedOrderStatus(source, target);
+      populateInboundTrackingNumbers(source, target);
   }
+
+    private void populateInboundTrackingNumbers(OrderModel source, OrderHistoryData target) {
+      Set<ConsignmentModel> consignmentModels = source.getConsignments();
+      List<String> inboundTrackingNumbers = new ArrayList<String>();
+
+      if(CollectionUtils.isNotEmpty(consignmentModels)){
+          for(ConsignmentModel model : consignmentModels){
+              List<PackagingInfoModel> packagingInfoModels = model.getPackaginginfos();
+              for(PackagingInfoModel packagingInfoModel : packagingInfoModels){
+                  if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber())){
+                      inboundTrackingNumbers.add("https://www.ups.com/uel/llp/" + packagingInfoModel.getInBoundTrackingNumber());
+                  }
+              }
+          }
+      }
+      target.setInboundTrackingURLs(inboundTrackingNumbers);
+    }
 
     /**
      *

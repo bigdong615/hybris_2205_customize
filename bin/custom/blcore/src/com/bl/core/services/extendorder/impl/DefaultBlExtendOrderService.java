@@ -7,10 +7,12 @@ import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.services.extendorder.BlExtendOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 
+import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -40,6 +42,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import javax.annotation.Resource;
 
 /**
  * This method created for cloning and updating extend order
@@ -47,6 +53,7 @@ import org.apache.commons.lang3.ObjectUtils;
  */
 public class DefaultBlExtendOrderService implements BlExtendOrderService {
 
+  private static final Logger LOG = Logger.getLogger(DefaultBlExtendOrderService.class);
   private ModelService modelService;
   private KeyGenerator orderIDGenerator;
   private UserService userService;
@@ -54,6 +61,8 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
   private BaseStoreService baseStoreService;
   private BlStockLevelDao blStockLevelDao;
   private DefaultBlESPEventService defaultBlESPEventService;
+  @Resource(name = "defaultBlUserService")
+  private DefaultBlUserService defaultBlUserService;
 
   /**
    * This method created to clone the extend order from order model
@@ -285,6 +294,15 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
         if (CollectionUtils.isNotEmpty(allocatedProductCodes) && serialStocks.stream()
             .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
           serialStocks.forEach(stock -> {
+
+            try {
+              BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                      "Reserve stock for serial product {}, for stock date {} while extends rental date before change Hard Assign {}, reserve status {}, associated order {}"
+                              + ",current date {} current user {}",stock.getSerialProductCode(), stock.getDate(), stock.getHardAssigned(), stock.getReservedStatus(),
+                      stock.getOrder(), new Date(), (defaultBlUserService.getCurrentUser()!=null? defaultBlUserService.getCurrentUser().getUid():"In Automation"));
+            }catch (Exception e){
+              BlLogger.logMessage(LOG,Level.ERROR,"Some error occur while reserve stock in replace serial flow",e);
+            }
             if(stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
               stock.setReservedStatus(true);
               stock.setOrder(stock.getOrder()+ "," +orderCode);
@@ -296,6 +314,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
               stock.setReservedStatus(true);
               stock.setOrder(orderCode);
             }
+
           });
           this.getModelService().saveAll(serialStocks);
         }

@@ -6,6 +6,7 @@ import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
@@ -60,6 +61,9 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
 
     @Resource(name="blOrderService")
     private BlOrderService blOrderService;
+    @Resource(name = "defaultBlUserService")
+    private DefaultBlUserService defaultBlUserService;
+
 
 
 
@@ -235,6 +239,14 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
             if(CollectionUtils.isNotEmpty(serialStocks))
             {
                 serialStocks.forEach(stock -> {
+                    try{
+                        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                                "Reserve stock for serial product {}, for stock date {} while creating new order entry before change Hard Assign {}, reserve status {}, associated order {}"
+                                        + ",current date {} current user {}",stock.getSerialProductCode(), stock.getDate(), stock.getHardAssigned(), stock.getReservedStatus(),
+                                stock.getOrder(), new Date(), (defaultBlUserService.getCurrentUser()!=null? defaultBlUserService.getCurrentUser().getUid():"In Automation"));
+                    }catch (Exception e){
+                        BlLogger.logMessage(LOG,Level.ERROR,"Some error occur while reserve stock in creating new order entry flow",e);
+                    }
                     if(stock.getDate().equals(consignment.getOptimizedShippingStartDate()) && StringUtils.isNotBlank(stock.getOrder())){
                         stock.setReservedStatus(true);
                         stock.setOrder(stock.getOrder()+ "," + orderEntryModel.getOrder().getCode());

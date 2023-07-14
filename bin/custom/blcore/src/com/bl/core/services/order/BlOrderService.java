@@ -76,4 +76,5 @@ public interface BlOrderService {
   public void commitOrderToAvalara(final AbstractOrderModel order);
 
   boolean isRentalOrderOnly(final AbstractOrderModel order);
+  void updateActualRentalDatesForOrder(final AbstractOrderModel abstractOrderModel);
 }

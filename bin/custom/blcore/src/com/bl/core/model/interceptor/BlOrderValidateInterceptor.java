@@ -38,7 +38,8 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderMode
 	@Override
 	public void onValidate(final OrderModel orderModel, final InterceptorContext interceptorContext) throws InterceptorException
 	{
-		validateRentalDateChange(orderModel, interceptorContext);
+		/*if(orderModel instanceof OrderModel)
+			validateRentalDateChange(orderModel, interceptorContext);*/
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderMode
 			{
 				throw new InterceptorException("Rental Start Date should not be a date later than Rental End Date");
 			}
-			if(interceptorContext.isModified(orderModel, AbstractOrderModel.RENTALSTARTDATE)|| interceptorContext.isModified(orderModel, AbstractOrderModel.RENTALENDDATE)) {
+			/*if(interceptorContext.isModified(orderModel, AbstractOrderModel.RENTALSTARTDATE)|| interceptorContext.isModified(orderModel, AbstractOrderModel.RENTALENDDATE)) {
 				final BaseStoreModel baseStore = getBaseStoreService()
 						.getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
 				for (AbstractOrderEntryModel orderEntry : orderModel.getEntries()) {
@@ -77,7 +78,7 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderMode
 						throw new InterceptorException("Stock is not available for the extended dates");
 					}
 				}
-			}
+			}*/
 		}
 	}
 

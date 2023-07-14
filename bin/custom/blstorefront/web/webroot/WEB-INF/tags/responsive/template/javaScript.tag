@@ -776,8 +776,13 @@ console.log("First start");
                                                  pagination : false,
                                                  arrows     : true,
                                                  keyboard   : false,
-                                                 fixedHeight  : 380,
-                                             } );
+                                                 fixedHeight : 515,
+                                                                       breakpoints : {
+                                                                           '600': {
+                                                                          fixedHeight : 315,
+                                                                      }
+                                                                     },
+                                                                  } );
 
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();
@@ -813,8 +818,13 @@ console.log("First start");
                                                  pagination : false,
                                                  arrows     : true,
                                                  keyboard   : false,
-                                                 fixedHeight : 380,
-                                             } );
+                                                 fixedHeight : 515,
+                                                                       breakpoints : {
+                                                                           '600': {
+                                                                          fixedHeight : 315,
+                                                                      }
+                                                                     },
+                                                                  } );
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();
                                                }
@@ -1104,8 +1114,13 @@ console.log("First start");
                  pagination : false,
                  arrows     : true,
                  keyboard   : false,
-                 fixedHeight : 380,
-             } );
+                 fixedHeight : 515,
+                                       breakpoints : {
+                                           '600': {
+                                          fixedHeight : 315,
+                                      }
+                                     },
+                                  } );
              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
              primarySlider.sync( secondarySlider ).mount();
 
@@ -1137,8 +1152,13 @@ console.log("First start");
                                                  pagination : false,
                                                  arrows     : true,
                                                  keyboard   : false,
-                                                 fixedHeight : 380,
-                                             } );
+                                                  fixedHeight : 515,
+                                                                        breakpoints : {
+                                                                            '600': {
+                                                                           fixedHeight : 315,
+                                                                       }
+                                                                      },
+                                                                   } );
                                              primarySlider.sync( secondarySlider ).mount();
                                               }
          // BL:574 code ends here part2
@@ -1243,8 +1263,13 @@ console.log("3 end");
                  pagination : false,
                  arrows     : true,
                  keyboard   : false,
-                 fixedHeight : 380,
-             } );
+                 fixedHeight : 515,
+                                       breakpoints : {
+                                           '600': {
+                                          fixedHeight : 315,
+                                      }
+                                     },
+                                  } );
              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
              primarySlider.sync( secondarySlider ).mount();
 
@@ -1276,8 +1301,13 @@ console.log("3 end");
                                                  pagination : false,
                                                  arrows     : true,
                                                  keyboard   : false,
-                                                 fixedHeight : 380,
-                                             } );
+                                                  fixedHeight : 515,
+                                                                        breakpoints : {
+                                                                            '600': {
+                                                                           fixedHeight : 315,
+                                                                       }
+                                                                      },
+                                                                   } );
                                              primarySlider.sync( secondarySlider ).mount();
                                               }
          // BL:574 code ends here part2
