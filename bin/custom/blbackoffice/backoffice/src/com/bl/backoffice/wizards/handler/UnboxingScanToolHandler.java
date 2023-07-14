@@ -26,7 +26,6 @@ import com.bl.backoffice.wizards.util.WebScanToolUtil;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
-import com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService;
 import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
@@ -50,7 +49,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	private NotificationService notificationService;
 	private BlInventoryScanToolService blInventoryScanToolService;
 
-	DefaultBlInventoryScanToolService defaultBlInventoryScanToolService;
+	//DefaultBlInventoryScanToolService defaultBlInventoryScanToolService;
 	private static final NotificationEvent.Level NOTIFICATION_LEVEL_FAILURE = NotificationEvent.Level.FAILURE;
 	private static final NotificationEvent.Level NOTIFICATION_LEVEL_WARNING = NotificationEvent.Level.WARNING;
 	private static final NotificationEvent.Level NOTIFICATION_LEVEL_SUCCESS = NotificationEvent.Level.SUCCESS;
@@ -405,9 +404,9 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 				blScannedProduct.forEach(scannedProduct -> {
 					if (null != blLocalInventoryLocation)
 					{
-						defaultBlInventoryScanToolService.setBlInventoryLocation(blLocalInventoryLocation);
+						getBlInventoryScanToolService().setBlInventoryLocation(blLocalInventoryLocation);
 
-						defaultBlInventoryScanToolService.setBlLocationScanHistory(scannedProduct, true, blLocalInventoryLocation);
+						getBlInventoryScanToolService().setBlLocationScanHistory(scannedProduct, true, blLocalInventoryLocation);
 
 					}
 				});

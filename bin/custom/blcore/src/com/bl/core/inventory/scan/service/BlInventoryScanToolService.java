@@ -367,4 +367,17 @@ public interface BlInventoryScanToolService {
 	public void setBlLocationScanHistoryForPackageScan(final BlSerialProductModel blSerialProduct, final boolean unboxStatus,
 			final BlInventoryLocationModel blLocalInventoryLocation);
 
+	/**
+	 * @param blLocalInventoryLocation
+	 */
+	void setBlInventoryLocation(BlInventoryLocationModel blLocalInventoryLocation);
+
+	/**
+	 * @param scannedProduct
+	 * @param b
+	 * @param blLocalInventoryLocation
+	 */
+	void setBlLocationScanHistory(BlSerialProductModel scannedProduct, boolean b,
+			BlInventoryLocationModel blLocalInventoryLocation);
+
 }

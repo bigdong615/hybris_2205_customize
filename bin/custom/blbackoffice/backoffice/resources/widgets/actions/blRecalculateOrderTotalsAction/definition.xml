@@ -4,7 +4,7 @@
 <action-definition id="de.hybris.ordermanagementbackoffice.actions.order.recalculatetotals" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
 
-    <name>Recalculate order totals</name>
+    <name>recalculatetotals.action</name>
     <description>Recalculate order totals</description>
     <author>hybris</author>
     <version>1.0</version>
@@ -13,6 +13,10 @@
 
     <inputType>de.hybris.platform.core.model.order.OrderModel</inputType>
     <outputType>java.lang.Object</outputType>
+
+    <settings>
+        <setting key="viewMode" default-value="iconAndText"/>
+    </settings>
 
     <!-- folder icons with the icons must be created in the following directory: myextension/backoffice/resources/widgets/actions/myaction -->
     <iconUri>icons/icon_action_recalculate_order_totals_default.png</iconUri>
