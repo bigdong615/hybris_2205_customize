@@ -404,21 +404,21 @@ public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
 			AtomicInteger postDaysToAdd = new AtomicInteger(0);
 
 			// getting shipping optimize date
-			List<ShippingOptimizationModel> shippingOptimizationModels = commerceDeliveryModeStrategy
+			List<ShippingOptimizationModel> shippingOptimizationModels = getCommerceDeliveryModeStrategy()
 					.getShippingOptimizeData(zoneDeliveryMode, abstractOrderModel.getDeliveryAddress());
-			// updating pre and post date
-			shippingOptimizationModels = commerceDeliveryModeStrategy
+			// updating pre-post date
+			shippingOptimizationModels = getCommerceDeliveryModeStrategy()
 					.updatePreAndPostServiceDays(zoneDeliveryMode, shippingOptimizationModels,
 							preDaysToDeduct, postDaysToAdd);
 
 			// updating actual rental start and end date on order.
-			commerceDeliveryModeStrategy
+			getCommerceDeliveryModeStrategy()
 					.updateActualRentalDate(abstractOrderModel, BlDateTimeUtils.getDateInStringFormat(
 							abstractOrderModel.getRentalStartDate()), BlDateTimeUtils.getDateInStringFormat(
 							abstractOrderModel.getRentalEndDate()), preDaysToDeduct, postDaysToAdd);
 
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-					"ActualRentalStart {} and ActualRentalEnd {} Date updated on {} for delivery mode {}",
+					"ActualRentalStart {} and ActualRentalEnd {} Date updated on {} for delivery mode {} while modify rental date",
 					abstractOrderModel.getActualRentalStartDate(),
 					abstractOrderModel.getActualRentalEndDate(), abstractOrderModel.getCode(),
 					zoneDeliveryMode.getCode());

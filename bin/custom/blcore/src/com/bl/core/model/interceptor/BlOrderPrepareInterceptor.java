@@ -10,7 +10,6 @@ import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
-import com.bl.core.model.ShippingOptimizationModel;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.services.order.BlOrderService;
@@ -27,9 +26,7 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.notificationservices.service.NotificationService;
 import de.hybris.platform.order.strategies.impl.EventPublishingSubmitOrderStrategy;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
@@ -46,22 +43,6 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -69,6 +50,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 
 /**
@@ -85,11 +71,6 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   private BusinessProcessService businessProcessService;
 	private BlCommerceStockService blCommerceStockService;
 	private BaseStoreService baseStoreService;
-
-  @Resource
-  private transient NotificationService notificationService;
-
-	@Resource(name = "blOrderService")
 	private BlOrderService blOrderService;
 
 
@@ -129,6 +110,13 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	  if (getDefaultBlUserService().isCsUser() && abstractOrderModel.getIsRentalOrder() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
 				|| interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALENDDATE)))
 		{
+			final Date rentalStartDate = abstractOrderModel.getRentalStartDate();
+			final Date rentalEndDate = abstractOrderModel.getRentalEndDate();
+			if (DateUtils.isSameDay(rentalStartDate, rentalEndDate) || rentalStartDate.compareTo(rentalEndDate) > 0
+					|| rentalEndDate.compareTo(rentalStartDate) < 0)
+			{
+				throw new InterceptorException("Rental Start Date should not be a date later than Rental End Date");
+			}
 			modifyOrderDate(abstractOrderModel);
 		}
 		
@@ -436,7 +424,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		OrderModel orderModel= null;
 		if(abstractOrderModel instanceof OrderModel) {
 			orderModel = (OrderModel) abstractOrderModel;
-			blOrderService.updateActualRentalDatesForOrder(abstractOrderModel);
+			getBlOrderService().updateActualRentalDatesForOrder(abstractOrderModel);
 
 			if(!checkIsStockAvailableForModifyDate(abstractOrderModel)){
 				throw new InterceptorException("Can't modify rental date due unavailable of stock for new duration");
@@ -449,7 +437,6 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 				consignmentModel.getOrder()
 						.setActualRentalEndDate(abstractOrderModel.getActualRentalEndDate());
 			}
-
 				verifyOrderAndCreateBusinessProcess(orderModel);
 		}
 		abstractOrderModel.setOrderModifiedDate(new Date());
@@ -488,14 +475,13 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 
 		Set<StockLevelModel> allStock = new HashSet<>();
 		warehouses.forEach(warehouseModel -> {
-			final Collection<StockLevelModel> stockLevels = blCommerceStockService
+			final Collection<StockLevelModel> stockLevels = getBlCommerceStockService()
 					.getStockForProductCodesAndDate(productCodes,
 							warehouseModel, abstractOrderModel.getActualRentalStartDate(), abstractOrderModel.getActualRentalEndDate());
 			if(CollectionUtils.isNotEmpty(stockLevels)){
 				allStock.addAll(stockLevels);
 			}
 		});
-
 
 		Map<String, List<StockLevelModel>> productWiseAvailabilityMap;
 		 if (CollectionUtils.isNotEmpty(allStock)) {
@@ -855,5 +841,12 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		this.baseStoreService = baseStoreService;
 	}
 
+	public BlOrderService getBlOrderService() {
+		return blOrderService;
+	}
+
+	public void setBlOrderService(BlOrderService blOrderService) {
+		this.blOrderService = blOrderService;
+	}
 
 }

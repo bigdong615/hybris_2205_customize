@@ -250,7 +250,6 @@
   <bean id="blModifiedOrderAction" class="com.bl.Ordermanagement.actions.order.allocation.BlModifiedOrderAction">
     <property name="baseStoreService" ref="baseStoreService"/>
     <property name="blStockLevelDao" ref="blStockLevelDao"/>
-    <property name="blReshufflerService" ref="blReshufflerService"/>
     <property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter" />
     <property name="blOptimizeShippingFromWHService" ref="blOptimizeShippingFromWHService" />
     <property name="blCommerceStockService" ref="blCommerceStockService" />

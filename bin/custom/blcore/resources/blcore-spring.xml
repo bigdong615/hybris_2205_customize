@@ -1154,6 +1154,7 @@
 		<property name="businessProcessService" ref="businessProcessService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blOrderService" ref="blOrderService"/>
 	</bean>
 
 	<bean id="blOrderPrepareInterceptorMapping"

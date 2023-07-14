@@ -245,7 +245,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
    * @param entry the map with orders and associated unallocated products
    * @param warehouses list of warehouses
    */
-  public boolean fulfillFromWH(final WarehouseModel location,
+  private boolean fulfillFromWH(final WarehouseModel location,
       final Entry<AbstractOrderModel, Set<String>> entry,
       final List<WarehouseModel> warehouses) {
     final AbstractOrderModel order = entry.getKey();

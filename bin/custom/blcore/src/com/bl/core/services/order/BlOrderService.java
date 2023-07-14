@@ -4,7 +4,6 @@ import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
