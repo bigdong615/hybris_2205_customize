@@ -31,6 +31,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcessModel> {
 
@@ -65,7 +66,7 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
                     consignmentEntryModel.setItems(new HashMap<>());
                     consignmentEntryModel.setSerialProducts(Collections.emptyList());
                 });
-                releaseStockForGivenSerial(olderProductCode, consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate());
+                releaseStockForGivenSerial(olderProductCode, consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(), order.getCode());
                 consignmentModel.setOptimizedShippingStartDate(order.getActualRentalStartDate());
                 consignmentModel.setOptimizedShippingEndDate(order.getActualRentalEndDate());
             });
@@ -257,14 +258,32 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
     }
 
 
-    private void releaseStockForGivenSerial(Set<String> productsCode, Date startDate, Date endDate) {
+    private void releaseStockForGivenSerial(Set<String> productsCode, Date startDate, Date endDate, String orderCode) {
         final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
                 .findALLSerialStockLevelsForDateAndCodes(productsCode, startDate,
                         endDate);
         if (CollectionUtils.isNotEmpty(serialStock)) {
             serialStock.forEach(stockLevel -> {
-                stockLevel.setReservedStatus(false);
-                stockLevel.setOrder(null);
+                if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1 && stockLevel.getDate().equals(startDate)){
+                    stockLevel.setReservedStatus(false);
+                    String[] orders = stockLevel.getOrder().split(",");
+                    List<String> arr_new = Arrays.asList(orders);
+                    List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+                    stockLevel.setOrder(String.join(",",updateOrders));
+
+                }
+                else if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1 && stockLevel.getDate().equals(endDate)){
+                    stockLevel.setReservedStatus(true);
+                    String[] orders = stockLevel.getOrder().split(",");
+                    List<String> arr_new = Arrays.asList(orders);
+                    List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+                    stockLevel.setOrder(String.join(",",updateOrders));
+
+                }
+                else {
+                    stockLevel.setReservedStatus(false);
+                    stockLevel.setOrder(null);
+                }
             });
             modelService.saveAll(serialStock);
         }

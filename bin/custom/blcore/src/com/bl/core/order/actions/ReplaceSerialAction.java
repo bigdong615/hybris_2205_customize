@@ -218,6 +218,10 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
             stockLevel.setReservedStatus(true);
             stockLevel.setOrder(StringUtils.isNotBlank(stockLevel.getOrder()) ? stockLevel.getOrder() + "," +consignmentModel.getOrder().getCode() : consignmentModel.getOrder().getCode());
           }
+          else if(stockLevel.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && StringUtils.isBlank(stockLevel.getOrder())) {
+            stockLevel.setReservedStatus(false);
+            stockLevel.setOrder(consignmentModel.getOrder().getCode());
+          }
           else {
             stockLevel.setOrder(consignmentModel.getOrder().getCode());
             stockLevel.setReservedStatus(true);

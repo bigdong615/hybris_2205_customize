@@ -486,6 +486,10 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
           stock.setReservedStatus(true);
           stock.setOrder(stock.getOrder()+ "," + entry.getOrderEntry().getOrder().getCode());
         }
+        else if(stock.getDate().equals(entry.getConsignment().getOptimizedShippingEndDate()) && StringUtils.isBlank(stock.getOrder())) {
+          stock.setReservedStatus(false);
+          stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+        }
         else {
           stock.setReservedStatus(true);
           stock.setOrder(entry.getOrderEntry().getOrder().getCode());

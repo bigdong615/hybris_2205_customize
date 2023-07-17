@@ -201,10 +201,6 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
                     consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), order.getCode());
 
             serialStocksForOptimizedDates.forEach(stock -> {
-              Calendar cal = Calendar.getInstance();
-              cal.setTime(consignment.getOptimizedShippingStartDate());
-              cal.add(Calendar.DATE, 1);
-              Date plusOneDate = cal.getTime();
               if(stock.getDate().equals(consignment.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
                 stock.setReservedStatus(true);
                 stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + order.getCode() : order.getCode());
