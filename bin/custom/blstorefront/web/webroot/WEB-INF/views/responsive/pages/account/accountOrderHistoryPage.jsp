@@ -257,7 +257,7 @@
                                             <c:choose>
                                                 <c:when test="${fn:length(order.inboundTrackingURLs) > 1}">
                                                     <li>
-                                                        <a href="#" onclick="openModalAndPrintList(${order.inboundTrackingURLs})">
+                                                        <a href="#" onclick="openModalAndPrintList(['https://www.ups.com/uel/llp/794645308427', 'https://www.ups.com/uel/llp/794645308421'])">
                                                             <spring:theme code="order.myaccount.print.return.label" />
                                                         </a>
                                                     </li>
@@ -324,45 +324,42 @@
 
 <script>
     function openModalAndPrintList(list) {
+      //var list = ['https://www.google.com','https://www.facebook.com'];
       // Create the modal element
       var modal = document.createElement('div');
       modal.classList.add('modal');
-
       // Create the content of the modal
       var modalContent = document.createElement('div');
       modalContent.classList.add('modal-content');
-
       // Create the list element
       var listElement = document.createElement('ul');
-
       // Loop through the list and create list items
       for (var i = 0; i < list.length; i++) {
         var listItem = document.createElement('li');
-        listItem.textContent = list[i];
+      //listItem.textContent = list[i];
+      let anchorTag = document.createElement('a');
+      let textToLink = document.createTextNode(list[i]);
+      anchorTag.appendChild(textToLink);
+      anchorTag.href = list[i];
+      anchorTag.setAttribute("target","_blank");
+      listItem.appendChild(anchorTag);
         listElement.appendChild(listItem);
       }
-
       // Add the list to the modal content
       modalContent.appendChild(listElement);
-
       // Create the close button
       var closeButton = document.createElement('span');
       closeButton.classList.add('close');
-      closeButton.textContent = 'Close';
+      closeButton.textContent = 'X';
       closeButton.addEventListener('click', closeModal);
-
       // Add the close button to the modal content
       modalContent.appendChild(closeButton);
-
       // Add the modal content to the modal
       modal.appendChild(modalContent);
-
       // Add the modal to the document body
       document.body.appendChild(modal);
-
       // Show the modal
       modal.style.display = 'block';
-
       // Function to close the modal
       function closeModal() {
         modal.style.display = 'none';
