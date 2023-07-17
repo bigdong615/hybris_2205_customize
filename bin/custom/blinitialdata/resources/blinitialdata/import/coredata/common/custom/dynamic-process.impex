@@ -11,3 +11,17 @@ INSERT_UPDATE DynamicProcessDefinition; code[unique=true]            ; active ; 
 <end id=""failed"" state=""FAILED"">Replace serial failed.</end>
 <end id=""end"" state=""SUCCEEDED"">Success</end>
 </process>"
+
+INSERT_UPDATE DynamicProcessDefinition; code[unique=true]            ; active ; content
+                                      ; modifyOrderProcess ; true   ; "<process  xmlns=""http://www.hybris.de/xsd/processdefinition""
+  start=""modifiedOrderAction""
+  name=""modifyOrderProcess""
+  processClass=""de.hybris.platform.orderprocessing.model.OrderProcessModel"">
+<action id=""modifiedOrderAction"" bean=""blModifiedOrderAction"">
+<transition name=""OK"" to=""end""/>
+<transition name=""NOK"" to = ""error""/>
+</action>
+<end id=""error"" state=""ERROR"">Serial updation failed while modify rental dates.</end>
+<end id=""failed"" state=""FAILED"">Some error occure while updating serial while modify rental dates</end>
+<end id=""end"" state=""SUCCEEDED"">Serial successfuly updated on order</end>
+</process>"
