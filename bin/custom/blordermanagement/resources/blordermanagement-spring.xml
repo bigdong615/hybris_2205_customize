@@ -256,6 +256,7 @@
     <property name="blProductService" ref="productService" />
     <property name="blAssignSerialService" ref="blAssignSerialService"/>
 <property name="blAllocationService" ref="allocationService"/>
+      <property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
     <property name="modelService" ref="modelService"/>
   </bean>
 
