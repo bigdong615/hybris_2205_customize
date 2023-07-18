@@ -107,7 +107,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 				orderModel.setOrderID(orderModel.getCode());
 			}
 		}
-	  if (abstractOrderModel.getIsRentalOrder() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
+	  if ((abstractOrderModel instanceof OrderModel) && abstractOrderModel.getIsRentalOrder() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
 				|| interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALENDDATE)))
 		{
 			if (getDefaultBlUserService().isCsUser())
@@ -124,9 +124,6 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 					BlLogger.logFormatMessageInfo(LOG,Level.INFO, "we can not update stock table and serial,since order {} was is in {} status",abstractOrderModel.getCode(),abstractOrderModel.getStatus().getCode());
 					throw new InterceptorException("We can't modify rental date as order is in "+abstractOrderModel.getStatus().getCode()+" status");
 				}
-
-			}else{
-				throw new InterceptorException("You don't have access to modify Rental Start or Rental End Date. Please check with Customer support Agent");
 			}
 		}
 		
