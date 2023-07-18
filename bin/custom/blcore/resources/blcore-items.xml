@@ -151,7 +151,6 @@
         <enumtype generate="true" code="CarrierEnum" autocreate="true" dynamic="true">
             <value code="UPS"/>
             <value code="FEDEX"/>
-            <value code="UPSSTORE"/>
         </enumtype>
 
         <enumtype generate="true" code="ShippingMethodTypeEnum" autocreate="true" dynamic="true">
