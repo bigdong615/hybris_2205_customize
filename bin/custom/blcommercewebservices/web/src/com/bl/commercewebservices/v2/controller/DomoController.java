@@ -97,6 +97,7 @@ import io.swagger.annotations.ApiParam;
 
 
 @Controller
+@Secured("ROLE_CLIENT")
 @RequestMapping(value = "/{baseSiteId}")
 @Api(tags = "Domo")
 public class DomoController extends BaseCommerceController
@@ -710,7 +711,6 @@ public class DomoController extends BaseCommerceController
 		return stockLevelListData;
 	}
 
-	@Secured("ROLE_CLIENT")
 	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
 	@RequestMapping(value = "/notes", method = RequestMethod.GET)
 	@ResponseBody
