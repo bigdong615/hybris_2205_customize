@@ -10,6 +10,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
@@ -35,6 +36,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcessModel> {
@@ -50,6 +52,8 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
     private BlAssignSerialService blAssignSerialService;
     private BlAllocationService blAllocationService;
     private BlConsignmentEntryService blConsignmentEntryService;
+    @Resource(name = "defaultBlUserService")
+    private DefaultBlUserService defaultBlUserService;
 
     @Override
     public void executeAction(OrderProcessModel process)
@@ -348,8 +352,19 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
                         endDate);
         if (CollectionUtils.isNotEmpty(serialStock)) {
             serialStock.forEach(stockLevel -> {
+                try {
+                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                            "Release stock for serial product {}, for stock date {} while modify rental date before change Hard Assign {} , reserve status {}, associated order {}"
+                                    + ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
+                            stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+                } catch (Exception e) {
+                    BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in modify rental date flow", e);
+                }
                 stockLevel.setReservedStatus(false);
                 stockLevel.setOrder(null);
+                BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                        "Stock status is changed to {} for the serial product {} ", stockLevel.getReservedStatus(),
+                        stockLevel.getSerialProductCode());
             });
             modelService.saveAll(serialStock);
         }
