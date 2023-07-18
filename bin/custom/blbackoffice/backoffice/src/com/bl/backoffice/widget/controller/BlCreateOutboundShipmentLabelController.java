@@ -9,11 +9,7 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -110,6 +106,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
 		deliveryDate.setValue(getDeliveryDateFromOrder(inputObject));
 		destinationState.setValue(getDestinationStateValue(inputObject));
+		setSignatureRequiredForUPS();
 	}
 
 	private String getDeliveryDateFromOrder(final ConsignmentModel consignment)
@@ -272,11 +269,12 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		setOptimizedShippingMethodComboBox(selectedShippingType);
 		if (selectedShippingType.equalsIgnoreCase("FEDEX"))
 		{
+			signatureSelection.setChecked(Boolean.FALSE);
 			signatureSelection.setDisabled(Boolean.TRUE);
 		}
 		else
 		{
-			signatureSelection.setDisabled(Boolean.FALSE);
+			setSignatureRequiredForUPS();
 		}
 	}
 
@@ -339,6 +337,21 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		shippingTypesList.add(CarrierEnum.UPS.getCode());
 		shippingTypesList.add(CarrierEnum.FEDEX.getCode());
 		return shippingTypesList;
+	}
+
+	/**
+	 * This method is used to check the Signature Required checkbox for UPS on outbound label generator depending on the field at shipment level.
+	 */
+	public void setSignatureRequiredForUPS() {
+		if (selectedConsignment.isSignatureRequired() == Boolean.TRUE)
+		{
+			signatureSelection.setChecked(Boolean.TRUE);
+			signatureSelection.setDisabled(Boolean.TRUE);
+		}
+		else
+		{
+			signatureSelection.setDisabled(Boolean.FALSE);
+		}
 	}
 
 
