@@ -27,6 +27,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -264,27 +265,24 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
                         endDate);
         if (CollectionUtils.isNotEmpty(serialStock)) {
             serialStock.forEach(stockLevel -> {
-                if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1 && stockLevel.getDate().equals(startDate)){
-                    stockLevel.setReservedStatus(false);
+
+                if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1){
                     String[] orders = stockLevel.getOrder().split(",");
                     List<String> arr_new = Arrays.asList(orders);
                     List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
                     stockLevel.setOrder(String.join(",",updateOrders));
-
                 }
-                else if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1 && stockLevel.getDate().equals(endDate)){
-                    stockLevel.setReservedStatus(true);
-                    String[] orders = stockLevel.getOrder().split(",");
-                    List<String> arr_new = Arrays.asList(orders);
-                    List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
-                    stockLevel.setOrder(String.join(",",updateOrders));
-
-                }
-                else {
-                    stockLevel.setReservedStatus(false);
+                else{
                     stockLevel.setOrder(null);
                 }
+                stockLevel.setReservedStatus(false);
+
             });
+            Optional<StockLevelModel> lastStock = serialStock.stream().filter(stock -> stock.getDate().equals(endDate) && StringUtils.isNotBlank(stock.getOrder())).findAny();
+            if(lastStock.isPresent()){
+                lastStock.get().setReservedStatus(true);
+
+            }
             modelService.saveAll(serialStock);
         }
     }

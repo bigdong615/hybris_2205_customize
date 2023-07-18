@@ -25,14 +25,7 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.task.RetryLaterException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -209,28 +202,23 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           } catch (Exception e) {
             BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in replace serial flow", e);
           }
-
-          if(stockLevel.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && stockLevel.getOrder().split(",").length > 1) {
-            stockLevel.setReservedStatus(true);
-            stockLevel.setOrder(StringUtils.isNotBlank(stockLevel.getOrder()) ? stockLevel.getOrder() + "," +consignmentModel.getOrder().getCode() : consignmentModel.getOrder().getCode());
-          }
-          else if(stockLevel.getDate().equals(consignmentModel.getOptimizedShippingStartDate()) && stockLevel.getOrder().split(",").length > 1) {
-            stockLevel.setReservedStatus(true);
-            stockLevel.setOrder(StringUtils.isNotBlank(stockLevel.getOrder()) ? stockLevel.getOrder() + "," +consignmentModel.getOrder().getCode() : consignmentModel.getOrder().getCode());
-          }
-          else if(stockLevel.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && StringUtils.isBlank(stockLevel.getOrder())) {
-            stockLevel.setReservedStatus(false);
-            stockLevel.setOrder(consignmentModel.getOrder().getCode());
+          if(StringUtils.isNotBlank(stockLevel.getOrder())){
+            stockLevel.setOrder(StringUtils.isNotBlank(stockLevel.getOrder()) ? stockLevel.getOrder() + "," + consignmentModel.getOrder().getCode() : consignmentModel.getOrder().getCode());
           }
           else {
             stockLevel.setOrder(consignmentModel.getOrder().getCode());
-            stockLevel.setReservedStatus(true);
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-                    "Stock status is changed to {} for the serial product {} for the order {} ", stockLevel.getReservedStatus(),
-                    stockLevel.getSerialProductCode(), stockLevel.getOrder());
-
           }
+          stockLevel.setReservedStatus(true);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                  "Stock status is changed to {} for the serial product {} for the order {} ", stockLevel.getReservedStatus(),
+                  stockLevel.getSerialProductCode(), stockLevel.getOrder());
+
+
         } );
+        Optional<StockLevelModel> lastStock = stockLevelModels.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate())).findAny();
+        if(lastStock.isPresent()){
+          lastStock.get().setReservedStatus(false);
+        }
         modelService.saveAll(stockLevelModels);
         return true;
       }

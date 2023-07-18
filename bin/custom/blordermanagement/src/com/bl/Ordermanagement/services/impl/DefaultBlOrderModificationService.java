@@ -37,6 +37,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -263,28 +264,28 @@ public class DefaultBlOrderModificationService
 						BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in order modification flow", e);
 					}
 					final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serial);
-					if(null != stockLevel.getOrder() && stockLevel.getDate().equals(optimizedShippingStartDate) && stockLevel.getOrder().split(",").length > 1){
-						stockLevel.setReservedStatus(false);
-						String[] orders = stockLevel.getOrder().split(",");
-						List<String> arr_new = Arrays.asList(orders);
-						List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
-						stockLevel.setOrder(String.join(",",updateOrders));
-					}
-					else if(null != stockLevel.getOrder() && stockLevel.getDate().equals(optimizedShippingEndDate) && stockLevel.getOrder().split(",").length > 1){
-						stockLevel.setReservedStatus(true);
-						String[] orders = stockLevel.getOrder().split(",");
-						List<String> arr_new = Arrays.asList(orders);
-						List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
-						stockLevel.setOrder(String.join(",",updateOrders));
-					}
-					else {
-						stockLevel.setHardAssigned(false);
-						stockLevel.setReservedStatus(false);
-						stockLevel.setOrder(null);
 
+					if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1){
+						String[] orders = stockLevel.getOrder().split(",");
+						List<String> arr_new = Arrays.asList(orders);
+						List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+						stockLevel.setOrder(String.join(",",updateOrders));
 					}
+					else{
+						stockLevel.setOrder(null);
+					}
+					stockLevel.setReservedStatus(false);
+					stockLevel.setHardAssigned(false);
+
 					getModelService().save(stockLevel);
 				});
+
+				Optional<StockLevelModel> lastStock = findSerialStockLevelForDate.stream().filter(stock -> stock.getDate().equals(optimizedShippingEndDate) && StringUtils.isNotBlank(stock.getOrder())).findAny();
+				if(lastStock.isPresent()){
+					lastStock.get().setReservedStatus(true);
+					modelService.save(lastStock.get());
+				}
+
 				if(isUsedGearOrder)
 				{
 					((BlSerialProductModel) serial).setSerialStatus(SerialStatusEnum.ACTIVE);

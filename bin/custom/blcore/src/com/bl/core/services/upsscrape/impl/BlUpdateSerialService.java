@@ -25,12 +25,7 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -251,22 +246,14 @@ public class BlUpdateSerialService implements UpdateSerialService {
           BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in UPS scrub response flow", e);
         }
         stockLevel.setHardAssigned(true);
-        if(stockLevel.getDate().equals(optimizedShippingEndDate) && StringUtils.isNotBlank(stockLevel.getOrder())){
-           stockLevel.setReservedStatus(true);
-           stockLevel.setOrder(stockLevel.getOrder()+ "," + abstractOrderModel.getCode());
+        if(StringUtils.isNotBlank(stockLevel.getOrder())){
+          stockLevel.setOrder(StringUtils.isNotBlank(stockLevel.getOrder()) ? stockLevel.getOrder() + "," + abstractOrderModel.getCode() : abstractOrderModel.getCode());
         }
-        else if(stockLevel.getDate().equals(optimizedShippingEndDate) && StringUtils.isBlank(stockLevel.getOrder())){
-            stockLevel.setReservedStatus(false);
-            stockLevel.setOrder(abstractOrderModel.getCode());
-        }
-        else if(stockLevel.getDate().equals(optimizedShippingStartDate) && StringUtils.isNotBlank(stockLevel.getOrder())){
-          stockLevel.setReservedStatus(true);
-          stockLevel.setOrder(stockLevel.getOrder()+","+abstractOrderModel.getCode());
-        }
-        else{
-          stockLevel.setReservedStatus(true);
+        else {
           stockLevel.setOrder(abstractOrderModel.getCode());
         }
+        stockLevel.setReservedStatus(true);
+
 
         ((BlSerialProductModel) serialProduct).setHardAssigned(true); // NOSONAR
         getModelService().save(stockLevel);
@@ -274,6 +261,12 @@ public class BlUpdateSerialService implements UpdateSerialService {
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
                 stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct.getCode());
       });
+      Optional<StockLevelModel> lastStock = findSerialStockLevelForDate.stream().filter(stock -> stock.getDate().equals(optimizedShippingEndDate)&&
+              StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().split(",").length == 1).findAny();
+      if(lastStock.isPresent()){
+        lastStock.get().setReservedStatus(false);
+        getModelService().save(lastStock.get());
+      }
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct.getCode());
     }
   }

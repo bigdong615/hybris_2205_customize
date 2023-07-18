@@ -273,28 +273,25 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
           } catch (Exception e) {
             BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in re-shuffler job flow", e);
           }
-          if(null != stock.getOrder() && stock.getDate().equals(consignmentModel.getOptimizedShippingStartDate()) && stock.getOrder().split(",").length > 1){
-            stock.setReservedStatus(false);
+          if(null != stock.getOrder() && stock.getOrder().split(",").length > 1){
             String[] orders = stock.getOrder().split(",");
             List<String> arr_new = Arrays.asList(orders);
             List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(consignmentModel.getOrder().getCode())).collect(Collectors.toList());
             stock.setOrder(String.join(",",updateOrders));
           }
-          else if(null != stock.getOrder() && stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && stock.getOrder().split(",").length > 1){
-            stock.setReservedStatus(true);
-            String[] orders = stock.getOrder().split(",");
-            List<String> arr_new = Arrays.asList(orders);
-            List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(consignmentModel.getOrder().getCode())).collect(Collectors.toList());
-            stock.setOrder(String.join(",",updateOrders));
-          }
-          else {
-            stock.setReservedStatus(false);
+          else{
             stock.setOrder(null);
           }
+          stock.setReservedStatus(false);
+
           BlLogger.logFormatMessageInfo(LOG, Level.INFO,
               "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
               stock.getSerialProductCode());
         });
+        Optional<StockLevelModel> lastStock = stocks.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())).findAny();
+        if(lastStock.isPresent()){
+          lastStock.get().setReservedStatus(true);
+        }
         this.getModelService().saveAll(stocks);
         BlLogger.logFormatMessageInfo(LOG, Level.INFO,
             "Consignment to be deleted {} ", consignmentModel.getCode());
@@ -478,26 +475,23 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
         } catch (Exception e) {
           BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in re-shuffler flow", e);
         }
-        if(stock.getDate().equals(entry.getConsignment().getOptimizedShippingStartDate()) && StringUtils.isNotBlank(stock.getOrder())){
-          stock.setReservedStatus(true);
-          stock.setOrder(stock.getOrder()+ "," + entry.getOrderEntry().getOrder().getCode());
-        }
-        else if(stock.getDate().equals(entry.getConsignment().getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
-          stock.setReservedStatus(true);
-          stock.setOrder(stock.getOrder()+ "," + entry.getOrderEntry().getOrder().getCode());
-        }
-        else if(stock.getDate().equals(entry.getConsignment().getOptimizedShippingEndDate()) && StringUtils.isBlank(stock.getOrder())) {
-          stock.setReservedStatus(false);
-          stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+
+        if(StringUtils.isNotBlank(stock.getOrder())){
+          stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + entry.getOrderEntry().getOrder().getCode() : entry.getOrderEntry().getOrder().getCode());
         }
         else {
-          stock.setReservedStatus(true);
           stock.setOrder(entry.getOrderEntry().getOrder().getCode());
         }
+        stock.setReservedStatus(true);
+
         BlLogger.logFormatMessageInfo(LOG, Level.INFO,
             "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
             stock.getSerialProductCode());
       });
+      Optional<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(entry.getConsignment().getOptimizedShippingEndDate())).findAny();
+      if(lastStock.isPresent()){
+        lastStock.get().setReservedStatus(false);
+      }
       this.getModelService().saveAll(serialStocks);
     }
   }

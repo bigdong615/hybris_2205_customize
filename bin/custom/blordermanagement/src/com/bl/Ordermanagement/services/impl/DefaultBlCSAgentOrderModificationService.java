@@ -247,19 +247,19 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
                     }catch (Exception e){
                         BlLogger.logMessage(LOG,Level.ERROR,"Some error occur while reserve stock in creating new order entry flow",e);
                     }
-                    if(stock.getDate().equals(consignment.getOptimizedShippingStartDate()) && StringUtils.isNotBlank(stock.getOrder())){
-                        stock.setReservedStatus(true);
-                        stock.setOrder(stock.getOrder()+ "," + orderEntryModel.getOrder().getCode());
+                    if(StringUtils.isNotBlank(stock.getOrder())){
+                        stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + orderEntryModel.getOrder().getCode() : orderEntryModel.getOrder().getCode());
                     }
-                    else if(stock.getDate().equals(consignment.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
-                        stock.setReservedStatus(true);
-                        stock.setOrder(stock.getOrder()+ "," + orderEntryModel.getOrder().getCode());
-                    }
-                    else{
-                        stock.setReservedStatus(true);
+                    else {
                         stock.setOrder(orderEntryModel.getOrder().getCode());
                     }
+                    stock.setReservedStatus(true);
+
                 });
+                Optional<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(consignment.getOptimizedShippingEndDate())).findAny();
+                if(lastStock.isPresent()){
+                    lastStock.get().setReservedStatus(false);
+                }
                 modelService.saveAll(serialStocks);
             }
         }

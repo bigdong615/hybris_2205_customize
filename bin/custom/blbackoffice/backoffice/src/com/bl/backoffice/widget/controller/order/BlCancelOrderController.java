@@ -239,27 +239,17 @@ public class BlCancelOrderController extends DefaultWidgetController {
                 } catch (Exception e) {
                     BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in cancel flow", e);
                 }
-                if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1 && stockLevel.getDate().equals(optimizedShippingStartDate)){
-                    stockLevel.setReservedStatus(false);
+                if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1){
                     String[] orders = stockLevel.getOrder().split(",");
                     List<String> arr_new = Arrays.asList(orders);
                     List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(abstractOrderModel.getCode())).collect(Collectors.toList());
                     stockLevel.setOrder(String.join(",",updateOrders));
-
                 }
-                else if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1 && stockLevel.getDate().equals(finalOptimizedShippingEndDate)){
-                    stockLevel.setReservedStatus(true);
-                    String[] orders = stockLevel.getOrder().split(",");
-                    List<String> arr_new = Arrays.asList(orders);
-                    List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(abstractOrderModel.getCode())).collect(Collectors.toList());
-                    stockLevel.setOrder(String.join(",",updateOrders));
-
-                }
-                else {
-                    stockLevel.setHardAssigned(false);
-                    stockLevel.setReservedStatus(false);
+                else{
                     stockLevel.setOrder(null);
                 }
+                stockLevel.setReservedStatus(false);
+                stockLevel.setHardAssigned(false);
 
                 stockLevel.setSerialStatus(SerialStatusEnum.ACTIVE);
                 if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalOrder())) {
@@ -273,6 +263,12 @@ public class BlCancelOrderController extends DefaultWidgetController {
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
                         stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct.getCode());
             });
+            Optional<StockLevelModel> lastStock = findSerialStockLevelForDate.stream().filter(stock -> stock.getDate().equals(finalOptimizedShippingEndDate) && StringUtils.isNotBlank(stock.getOrder())).findAny();
+            if(lastStock.isPresent()){
+                lastStock.get().setReservedStatus(true);
+                modelService.save(lastStock.get());
+            }
+
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct.getCode());
         }
         else {

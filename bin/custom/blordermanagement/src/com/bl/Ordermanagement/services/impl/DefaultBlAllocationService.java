@@ -201,35 +201,21 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
                     consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), order.getCode());
 
             serialStocksForOptimizedDates.forEach(stock -> {
-              if(stock.getDate().equals(consignment.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())){
-                stock.setReservedStatus(true);
+              if(StringUtils.isNotBlank(stock.getOrder())){
                 stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + order.getCode() : order.getCode());
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-                        "Stock status is changed to {} for the serial product {} for the order {} having stock date as {}", stock.getReservedStatus(),
-                        stock.getSerialProductCode(), stock.getOrder(), stock.getDate());
-              }
-              else if(stock.getDate().equals(consignment.getOptimizedShippingEndDate()) && StringUtils.isBlank(stock.getOrder())) {
-                stock.setReservedStatus(false);
-                stock.setOrder(order.getCode());
-              }
-              else if(stock.getDate().equals(consignment.getOptimizedShippingStartDate())) {
-                stock.setReservedStatus(true);
-                stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + order.getCode() : order.getCode());
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-                        "Stock status is changed to {} for the serial product {} for the order {} having stock date as", stock.getReservedStatus(),
-                        stock.getSerialProductCode(), stock.getOrder(), stock.getDate());
               }
               else {
-                stock.setReservedStatus(true);
                 stock.setOrder(order.getCode());
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-                        "Stock status is changed to {} for the serial product {} for the order {} having stock date as", stock.getReservedStatus(),
-                        stock.getSerialProductCode(), stock.getOrder(), stock.getDate());
               }
+              stock.setReservedStatus(true);
+
             });
 
             //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
-
+            Optional<StockLevelModel> lastStock = serialStocksForOptimizedDates.stream().filter(stock -> stock.getDate().equals(consignment.getOptimizedShippingEndDate())).findAny();
+            if(lastStock.isPresent()){
+              lastStock.get().setReservedStatus(false);
+            }
             this.getModelService().saveAll(serialStocksForOptimizedDates);
 
             return consignment;
