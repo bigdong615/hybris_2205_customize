@@ -851,3 +851,27 @@ input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!im
   margin-right: auto;
 }
 
+.modal-content-return-label{
+margin: auto !important;
+padding: 30px !important;
+position: relative !important;
+top: 30% !important;
+max-width: 40% !important;
+}
+
+.closeButton {
+ max-width: 100px;
+ text-align: center;
+ text-decoration: none;
+ display: inline-block;
+ font-size: 16px;
+ margin: 4px 2px;
+ cursor: pointer;
+}
+.modalColor
+{
+ background-color: #F3F3F3;
+}
+.view-links .dropdown-menu>li>a {
+    padding: 0px 2px 0 0;
+}
