@@ -147,7 +147,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
               List<PackagingInfoModel> packagingInfoModels = model.getPackaginginfos();
               for(PackagingInfoModel packagingInfoModel : packagingInfoModels){
                   if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber())){
-                      inboundTrackingNumbers.add("https://www.ups.com/uel/llp/" + packagingInfoModel.getInBoundTrackingNumber());
+                  	inboundTrackingNumbers.add("'" + "https://www.ups.com/uel/llp/" + packagingInfoModel.getInBoundTrackingNumber() + "'");
                   }
               }
           }
