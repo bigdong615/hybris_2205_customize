@@ -247,4 +247,17 @@
     <property name="businessProcessService" ref="businessProcessService"/>
   </bean>
 
+  <bean id="blModifiedOrderAction" class="com.bl.Ordermanagement.actions.order.allocation.BlModifiedOrderAction">
+    <property name="baseStoreService" ref="baseStoreService"/>
+    <property name="blStockLevelDao" ref="blStockLevelDao"/>
+    <property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter" />
+    <property name="blOptimizeShippingFromWHService" ref="blOptimizeShippingFromWHService" />
+    <property name="blCommerceStockService" ref="blCommerceStockService" />
+    <property name="blProductService" ref="productService" />
+    <property name="blAssignSerialService" ref="blAssignSerialService"/>
+<property name="blAllocationService" ref="allocationService"/>
+      <property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+    <property name="modelService" ref="modelService"/>
+  </bean>
+
 </beans>

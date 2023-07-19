@@ -1,9 +1,5 @@
 package com.bl.core.inventory.scan.service;
 
-import com.bl.core.model.BlInventoryLocationModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -11,6 +7,10 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import com.bl.core.model.BlInventoryLocationModel;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 
 /**
  * {javadoc}
@@ -91,7 +91,7 @@ public interface BlInventoryScanToolService {
      * method will fetch ConfigurationKey by its key from dao
      */
     String getConfigKeyFromScanConfiguration(final String key);
-    
+
     /**
      * Checks if is valid tech eng location barcode.
      *
@@ -100,7 +100,7 @@ public interface BlInventoryScanToolService {
      * @return the int
      */
     int isValidTechEngLocationBarcode(final List<String> barcodes, final List<String> memberAllowedLocationList);
-    
+
     /**
      * Do tech eng serial location update.
      *
@@ -108,7 +108,7 @@ public interface BlInventoryScanToolService {
      * @return the map
      */
     Map<String,List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes);
-    
+
  	/**
  	 * method will verify the list of bin barcodes and result into list of failed barcodes that has
  	 *         been failed to update its location in db
@@ -121,20 +121,20 @@ public interface BlInventoryScanToolService {
  	/**
  	 * method will verify the list of barcodes and result into list of failed barcodes that are not
  	 * valid as per the order
- 	 * 
+ 	 *
  	 * @param barcodes for SerialProducts
  	 * @param selectedConsignment for ConsignmentModel
  	 * @return Map<String, List<BlProductModel>>
  	 */
  	public Map<String, List<BlProductModel>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
- 	
+
 	/**
 	 * This method will check valid tracking Id scanned or not and return int with appropriate notification
 	 * @param barcodes for serial product
 	 * @return the int
 	 */
 	public int checkValidTrackingId(final String barcodes);
-	
+
 	/**
 	 * method will verify the list of bin barcodes and result into list of failed barcodes that has
 	 *         been failed to update its location in db
@@ -150,7 +150,7 @@ public interface BlInventoryScanToolService {
 	public void updateToUpsBound();
 
 	/**
-	 * This method will verify valid location and return int with appropriate notification 
+	 * This method will verify valid location and return int with appropriate notification
 	 * @param barcodes for serial products
 	 * @param defaultLocations for locations
 	 * @param memberAllowedLocationList for allowed members
@@ -158,7 +158,7 @@ public interface BlInventoryScanToolService {
 	 */
 	public int checkLocationWithType(final List<String> barcodes, final List<String> defaultLocations,
 			final List<String> memberAllowedLocationList);
-    
+
  	/**
 	  * This method will check the valid Location provided in barcode list and return int with appropriate
 	  * notification number to notify employee for DirtyCart and DirtyPriorityCart
@@ -248,7 +248,7 @@ public interface BlInventoryScanToolService {
 	 * @return true if BIN update parent location
 	 */
 	int doBINScanFromWebScanTool(final List<String> barcodeList);
-	
+
 	/**
 	 * Gets the status of location Dirty cart.
 	 *
@@ -263,7 +263,7 @@ public interface BlInventoryScanToolService {
 	 * @return List of scanned barcodes with products
 	 */
 	List<String> getSuccessString(final List<String> barcodeList);
-	
+
 	/**
 	 * method will verify the list of bin barcodes and result into list of failed barcodes that has been failed to update
 	 * @param barcodes as List<String>
@@ -287,7 +287,7 @@ public interface BlInventoryScanToolService {
 	 * @param blInventoryLocationModel
 	 */
 	void removeSerialsAndParentLocationFromBinOcLocation(final BlInventoryLocationModel blInventoryLocationModel);
-	
+
 	/**
 	 * Check if first entry is location.
 	 *
@@ -295,14 +295,14 @@ public interface BlInventoryScanToolService {
 	 * @return true, if successful
 	 */
 	public boolean checkIfFirstEntryIsLocation(final List<String> barcodes);
-	
+
 	/**
 	 * method will be used to update last scan location on serial
 	 * @param consignmentModel
 	 * @param barcodes
 	 */
 	public void updateSerialLastScanLocation(final ConsignmentModel consignmentModel,final String parentLocation);
-	
+
 	/**
 	 * Check if location is bin.
 	 *
@@ -362,5 +362,22 @@ public interface BlInventoryScanToolService {
 	 * @return the serial products by barcode
 	 */
 	public Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode, final String version);
+
+
+	public void setBlLocationScanHistoryForPackageScan(final BlSerialProductModel blSerialProduct, final boolean unboxStatus,
+			final BlInventoryLocationModel blLocalInventoryLocation);
+
+	/**
+	 * @param blLocalInventoryLocation
+	 */
+	void setBlInventoryLocation(BlInventoryLocationModel blLocalInventoryLocation);
+
+	/**
+	 * @param scannedProduct
+	 * @param b
+	 * @param blLocalInventoryLocation
+	 */
+	void setBlLocationScanHistory(BlSerialProductModel scannedProduct, boolean b,
+			BlInventoryLocationModel blLocalInventoryLocation);
 
 }

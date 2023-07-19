@@ -610,6 +610,7 @@
 		<property name="modelService" ref="modelService"/>
 		<property name="blRepairLogDao" ref="blRepairLogDao" />
 		<property name="defaultBlESPEventService" ref="blEspEventService"/>
+		<property name="commerceDeliveryModeStrategy" ref="commerceDeliveryModeStrategy"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 
@@ -1150,6 +1151,10 @@
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
 		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
 		<property name="blEspEventService" ref="blEspEventService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blOrderService" ref="blOrderService"/>
 	</bean>
 
 	<bean id="blOrderPrepareInterceptorMapping"
@@ -2315,6 +2320,10 @@
 
 	<bean id="blSubpartsRenderedHandler" class="com.bl.core.model.handler.BlSubpartsRenderedHandler">
 			<property name="modelService" ref="modelService"/>
+	</bean>
+	
+	<bean id="blProductSearchTermValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductSearchTermValueProvider" parent="abstractPropertyFieldValueProvider">
+		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
 
 </beans>

@@ -1,6 +1,5 @@
 package com.bl.core.model.interceptor;
 
-
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
@@ -13,9 +12,11 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.services.customer.impl.DefaultBlUserService;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.services.order.note.BlOrderNoteService;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.shipping.strategy.impl.DefaultBlShippingOptimizationStrategy;
+import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
@@ -25,37 +26,35 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.notificationservices.service.NotificationService;
 import de.hybris.platform.order.strategies.impl.EventPublishingSubmitOrderStrategy;
+import de.hybris.platform.orderprocessing.model.OrderProcessModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 
 /**
@@ -69,7 +68,12 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   private BlOrderNoteService blOrderNoteService;
   private EventPublishingSubmitOrderStrategy eventPublishingSubmitOrderStrategy;
   private DefaultBlESPEventService blEspEventService;
-  
+  private BusinessProcessService businessProcessService;
+	private BlCommerceStockService blCommerceStockService;
+	private BaseStoreService baseStoreService;
+	private BlOrderService blOrderService;
+
+
 	@Resource(name = "blDeliveryModeService")
 	private BlDeliveryModeService blDeliveryModeService;
 
@@ -103,10 +107,24 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 				orderModel.setOrderID(orderModel.getCode());
 			}
 		}
-	  if (getDefaultBlUserService().isCsUser() && abstractOrderModel.getIsRentalOrder() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
+	  if ((abstractOrderModel instanceof OrderModel) && abstractOrderModel.getIsRentalOrder() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
 				|| interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALENDDATE)))
 		{
-			modifyOrderDate(abstractOrderModel);
+			if (getDefaultBlUserService().isCsUser())
+			{
+				final Date rentalStartDate = abstractOrderModel.getRentalStartDate();
+				final Date rentalEndDate = abstractOrderModel.getRentalEndDate();
+				if (DateUtils.isSameDay(rentalStartDate, rentalEndDate) || rentalStartDate.compareTo(rentalEndDate) > 0
+						|| rentalEndDate.compareTo(rentalStartDate) < 0) {
+					throw new InterceptorException("Rental Start Date should not be a date later than Rental End Date");
+				}
+				else if (abstractOrderModel.getStatus().equals(OrderStatus.PENDING) || abstractOrderModel.getStatus().equals(OrderStatus.RECEIVED_MANUAL_REVIEW) || abstractOrderModel.getStatus().equals(OrderStatus.RECEIVED_IN_VERIFICATION)){
+					modifyOrderDate(abstractOrderModel);
+				}else{
+					BlLogger.logFormatMessageInfo(LOG,Level.INFO, "we can not update stock table and serial,since order {} was is in {} status",abstractOrderModel.getCode(),abstractOrderModel.getStatus().getCode());
+					throw new InterceptorException("We can't modify rental date as order is in "+abstractOrderModel.getStatus().getCode()+" status");
+				}
+			}
 		}
 		
      final Set<ConsignmentModel> consignmentModels = abstractOrderModel.getConsignments();
@@ -408,25 +426,85 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 *
 	 * @param abstractOrderModel
 	 */
-	private void modifyOrderDate(final AbstractOrderModel abstractOrderModel)
+	private void modifyOrderDate(final AbstractOrderModel abstractOrderModel) throws InterceptorException
 	{
-		final DeliveryModeModel deliveryMode = abstractOrderModel.getDeliveryMode();
-		final SourcingLocation sourcingLocation = new SourcingLocation();
-		final AtomicBoolean isGroundAvailability = new AtomicBoolean();
-		if(CollectionUtils.isNotEmpty(abstractOrderModel.getConsignments())) {
-			for (final ConsignmentModel consignmentModel : abstractOrderModel.getConsignments()) {
-				consignmentModel.getOrder().setRentalStartDate(abstractOrderModel.getRentalStartDate());
-				consignmentModel.getOrder().setRentalEndDate(abstractOrderModel.getRentalEndDate());
-				updateShippingOptimizationDate(abstractOrderModel, sourcingLocation, isGroundAvailability, consignmentModel);
+		OrderModel orderModel= null;
+		if(abstractOrderModel instanceof OrderModel) {
+			orderModel = (OrderModel) abstractOrderModel;
+			getBlOrderService().updateActualRentalDatesForOrder(abstractOrderModel);
+
+			if(!checkIsStockAvailableForModifyDate(abstractOrderModel)){
+				throw new InterceptorException("Can't modify rental date due unavailable of stock for new duration");
 			}
-		}
-		if (deliveryMode instanceof ZoneDeliveryModeModel)
-		{
-			updateActualRentalDatesForOrder(abstractOrderModel, deliveryMode);
+
+			if (CollectionUtils.isNotEmpty(abstractOrderModel.getConsignments())) {
+				ConsignmentModel consignmentModel = abstractOrderModel.getConsignments().iterator().next();
+				consignmentModel.getOrder()
+						.setActualRentalStartDate(abstractOrderModel.getActualRentalStartDate());
+				consignmentModel.getOrder()
+						.setActualRentalEndDate(abstractOrderModel.getActualRentalEndDate());
+			}
+				verifyOrderAndCreateBusinessProcess(orderModel);
 		}
 		abstractOrderModel.setOrderModifiedDate(new Date());
 	}
 
+	public void verifyOrderAndCreateBusinessProcess(final OrderModel order){
+		OrderProcessModel orderProcess = (OrderProcessModel) getBusinessProcessService()
+				.createProcess(
+						"modifyOrder_" + order.getCode() + "_" + System.currentTimeMillis(),
+						"modifyOrderProcess");
+		orderProcess.setOrder(order);
+		modelService.save(orderProcess);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+				"Starting Business process {} for modify order {}", orderProcess.getCode(),order.getCode());
+// Then start the process
+		getBusinessProcessService().startProcess(orderProcess);
+	}
+
+	private boolean checkIsStockAvailableForModifyDate(final AbstractOrderModel abstractOrderModel)
+	{
+
+		final Set<String> productCodes = abstractOrderModel.getEntries().stream().filter(entry -> !entry.isBundleMainEntry())
+				.map(entry -> entry.getProduct().getCode()).collect(Collectors.toSet());
+
+		final BaseStoreModel baseStoreModel = getBaseStoreService()
+				.getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+		//Get all warehouses
+		final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
+
+		Set<StockLevelModel> allStock = new HashSet<>();
+		warehouses.forEach(warehouseModel -> {
+			final Collection<StockLevelModel> stockLevels = getBlCommerceStockService()
+					.getStockForProductCodesAndDate(productCodes,
+							warehouseModel, abstractOrderModel.getActualRentalStartDate(), abstractOrderModel.getActualRentalEndDate());
+			if(CollectionUtils.isNotEmpty(stockLevels)){
+				allStock.addAll(stockLevels);
+			}
+		});
+
+		Map<String, List<StockLevelModel>> productWiseAvailabilityMap;
+		 if (CollectionUtils.isNotEmpty(allStock)) {
+			productWiseAvailabilityMap = allStock.stream()
+					.collect(Collectors.groupingBy(StockLevelModel::getProductCode));
+
+			for (String skuProduct : productCodes) {
+				final Long availableQty = getAvailabilityForProduct(skuProduct, productWiseAvailabilityMap);
+				final Optional<AbstractOrderEntryModel> orderEntryModel = abstractOrderModel.getEntries()
+						.stream().filter(orderEntry -> orderEntry.getProduct().getCode()
+										.equals(skuProduct)).findFirst();
+
+				if (orderEntryModel.isPresent()) {
+					final AbstractOrderEntryModel orderEntry = orderEntryModel.get();
+					final Long unallocatedQty = orderEntry.getQuantity();
+					if (unallocatedQty > availableQty) {
+						return false;
+					}
+				}
+			}
+		}else{ return false;}
+		return true;
+	}
 	/**
 	 * It triggers Exception Extra Item event.
 	 *
@@ -548,23 +626,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		}
 	}	
 	
-	/**
-	 * This method will update the actual rental order date for order
-	 *
-	 * @param abstractOrderModel
-	 * @param deliveryMode
-	 */
-	private void updateActualRentalDatesForOrder(final AbstractOrderModel abstractOrderModel, final DeliveryModeModel deliveryMode)
-	{
-		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) deliveryMode;
-		final DateFormat dateFormat = new SimpleDateFormat(BlCoreConstants.DATE_FORMAT);
 
-		BlDateTimeUtils.updateActualRentalStartDate(abstractOrderModel, zoneDeliveryMode, dateFormat);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "ActaualRentalStartDate updated to {} for order {}", abstractOrderModel.getActualRentalStartDate(),abstractOrderModel.getCode());
-		
-		BlDateTimeUtils.updateActualRentalEndDate(abstractOrderModel, zoneDeliveryMode, dateFormat);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "ActaualRentalEndDate updated to {} for order {}", abstractOrderModel.getActualRentalEndDate(),abstractOrderModel.getCode());
-	}
 	
 	/**
 	 * This method will create sourcing location data
@@ -668,6 +730,22 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		return Boolean.FALSE;
 	}
 
+	public Long getAvailabilityForProduct(final String skuProduct, final
+	Map<String, List<StockLevelModel>> availabilityMap) {
+		Long stockLevel = 0L;
+		if (MapUtils.isNotEmpty(availabilityMap)) {
+			final List<StockLevelModel> stockLevelList =
+					Objects.isNull(availabilityMap.get(skuProduct)) ? Collections.emptyList() :
+							availabilityMap.get(skuProduct);
+			final Set<String> serialProductCodes = stockLevelList.stream()
+					.map(StockLevelModel::getSerialProductCode).collect(Collectors.toSet());
+
+			stockLevel = Long.valueOf(serialProductCodes.size());
+		}
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+				"available quantity {} for the product {} ", stockLevel, skuProduct);
+		return stockLevel;
+	}
   public BlOrderNoteService getBlOrderNoteService() {
     return blOrderNoteService;
   }
@@ -738,4 +816,37 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 			orderModel.setOrderShippedStatusDate(new Date());
 		}
 	}
+
+	public BusinessProcessService getBusinessProcessService() {
+		return businessProcessService;
+	}
+	public void setBusinessProcessService(
+			BusinessProcessService businessProcessService) {
+		this.businessProcessService = businessProcessService;
+	}
+
+	public BlCommerceStockService getBlCommerceStockService() {
+		return blCommerceStockService;
+	}
+
+	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService) {
+		this.blCommerceStockService = blCommerceStockService;
+	}
+	
+	public BaseStoreService getBaseStoreService() {
+		return baseStoreService;
+	}
+
+	public void setBaseStoreService(BaseStoreService baseStoreService) {
+		this.baseStoreService = baseStoreService;
+	}
+
+	public BlOrderService getBlOrderService() {
+		return blOrderService;
+	}
+
+	public void setBlOrderService(BlOrderService blOrderService) {
+		this.blOrderService = blOrderService;
+	}
+
 }

@@ -135,6 +135,7 @@ public class ProductsController extends BaseController
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
 
+	@Secured("ROLE_CLIENT")
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(nickname = "getProducts", value = "Get a list of products and additional data", notes = "Returns a list of products and additional data, such as available facets, "
