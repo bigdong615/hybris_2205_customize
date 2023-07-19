@@ -908,6 +908,7 @@
 		<property name="shipmentPackage" type="java.util.List&lt;com.bl.facades.shipment.data.PackageTypeData>" />
 		<property name="paymentInformation" type="com.bl.facades.shipment.data.UpsPaymentInformation" />
 		<property name="signatureRequired" type="boolean" />
+		<property name="holdAtUpsStore" type="boolean" />
 	</bean>
 	
 	<bean class="com.bl.facades.shipment.data.LabelSpecificationData">

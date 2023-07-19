@@ -54,6 +54,10 @@
                          style=""/>
       </row>
       <row>
+                   <label value="Hold at UPS Store" width="50%" />
+                <checkbox id="holdAtUps" class="oms-widget-ups-hold-list-container__checkbox"/>
+      </row>
+      <row>
                    <label value="Signature Required" width="50%" />
                 <checkbox id="signatureSelection" class="oms-widget-signature-list-container__checkbox"/>
       </row>
