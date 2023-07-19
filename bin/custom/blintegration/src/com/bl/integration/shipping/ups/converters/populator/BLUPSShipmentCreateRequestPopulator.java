@@ -4,6 +4,8 @@
 package com.bl.integration.shipping.ups.converters.populator;
 
 import com.ups.xmlschema.xoltws.ship.v1.*;
+import com.ups.xmlschema.xoltws.ship.v1.ShipmentType.ShipmentServiceOptions;
+
 import de.hybris.platform.commercefacades.user.data.AddressData;
 
 import java.util.ArrayList;
@@ -121,6 +123,11 @@ public class BLUPSShipmentCreateRequestPopulator
 			final PackageServiceOptionsType packageServiceOptions = new PackageServiceOptionsType();
 			packageServiceOptions.setDeliveryConfirmation(deliveryConfirmation);
 			pkg1.setPackageServiceOptions(packageServiceOptions);
+		}
+		if(shipmentData.isHoldAtUpsStore()) {
+			ShipmentServiceOptions shipmentServiceOptions = new ShipmentServiceOptions();
+			shipmentServiceOptions.setHoldForPickupIndicator("true");
+			shipmentType.setShipmentServiceOptions(shipmentServiceOptions);
 		}
 
 		final ShipUnitOfMeasurementType shipUnitOfMeasurementType = new ShipUnitOfMeasurementType();

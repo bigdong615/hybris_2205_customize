@@ -1,6 +1,5 @@
 package com.bl.backoffice.widget.controller;
 
-import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
@@ -10,7 +9,11 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TimeZone;
 
 import javax.annotation.Resource;
 
@@ -62,6 +65,8 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	private Textbox destinationState;
 	@Wire
 	private Checkbox signatureSelection;
+	@Wire
+	private Checkbox holdAtUps;
 
 	protected static final String OUT_CONFIRM = "confirmOutput";
 	protected static final String COMPLETE = "completed";
@@ -102,17 +107,9 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		this.getWidgetInstanceManager()
 				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.outbound.label.heading")));
 		shippingTypeList = new ListModelList<>(getShippingTypeList());
-
-		if(null != inputObject.getDeliveryMode() && (inputObject.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel)
-				&& inputObject.getDeliveryMode().getCode().contains("UPS_STORE")){
-			shippingTypeList.addToSelection(CarrierEnum.UPSSTORE.getCode());
-			shippingTypeComboBox.setModel(shippingTypeList);
-			setOptimizedShippingMethodComboBox(CarrierEnum.UPSSTORE.getCode());
-		}else{
-			shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
-			shippingTypeComboBox.setModel(shippingTypeList);
-			setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
-		}
+		shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
+		shippingTypeComboBox.setModel(shippingTypeList);
+		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
 
 		deliveryDate.setValue(getDeliveryDateFromOrder(inputObject));
 		destinationState.setValue(getDestinationStateValue(inputObject));
@@ -168,7 +165,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.GENERATE_OUTBOUND_LABEL, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void generateOutboundLabel() throws IOException
 	{
-		
+
 		final Map<String, Integer> sequenceMap = new HashedMap();
 		getModelService().refresh(selectedConsignment);
 		final List<PackagingInfoModel> packages = selectedConsignment.getPackaginginfos();
@@ -192,11 +189,12 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 			}
 			carrier = selectedShippingType.equals(CarrierEnum.UPS.getCode()) ? CarrierEnum.UPS : CarrierEnum.FEDEX;
 		}
-		
+
 		final boolean isOptimizedShippingMethodChanged = StringUtils.isNotBlank(selectedShippingType)
 				&& BooleanUtils.isFalse(selectedShippingType.equals(BlintegrationConstants.DEFAULT_SHIPPING_CODE))
 				&& Objects.nonNull(carrier) && Objects.nonNull(selectedOptimizedShippingMethodModel);
 		final boolean isSignatureRequired = getSignatureRequired();
+		final boolean holdAtUpsStore = getHoldAtUpsStore();
 		final List<String> errorPackages = Lists.newArrayList();
 		if (carrier.getCode().equals(CarrierEnum.FEDEX) && isSignatureRequired)
 		{
@@ -205,7 +203,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
 			processLabelCreation(packageCount, sequenceNumber, carrier, selectedOptimizedShippingMethodModel,
-					isOptimizedShippingMethodChanged, errorPackages, packagingInfoModel, isSignatureRequired);
+					isOptimizedShippingMethodChanged, errorPackages, packagingInfoModel, isSignatureRequired, holdAtUpsStore);
 		}
 		if (CollectionUtils.isNotEmpty(errorPackages))
 		{
@@ -221,14 +219,14 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 
 	private void processLabelCreation(final int packageCount, final Map<String, Integer> sequenceNumber, final CarrierEnum carrier,
 			final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged,
-			final List<String> errorPackages, final PackagingInfoModel packagingInfoModel, final boolean isSignatureRequired)
+			final List<String> errorPackages, final PackagingInfoModel packagingInfoModel, final boolean isSignatureRequired, boolean holdAtUpsStore)
 	{
 		try
 		{
 			if (isOptimizedShippingMethodChanged)
 			{
 				final boolean isSuccess = getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel, packageCount,
-						sequenceNumber, carrier, selectedOptimizedShippingMethodModel, isSignatureRequired);
+						sequenceNumber, carrier, selectedOptimizedShippingMethodModel, isSignatureRequired, holdAtUpsStore);
 				if (BooleanUtils.isFalse(isSuccess))
 				{
 					errorPackages.add(packagingInfoModel.getPackageId());
@@ -237,7 +235,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 			else
 			{
 				final boolean isSuccess = getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel, packageCount,
-						sequenceNumber, isSignatureRequired);
+						sequenceNumber, isSignatureRequired, holdAtUpsStore);
 				if (BooleanUtils.isFalse(isSuccess))
 				{
 					errorPackages.add(packagingInfoModel.getPackageId());
@@ -262,6 +260,11 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		return this.signatureSelection.isChecked();
 	}
 
+	private boolean getHoldAtUpsStore()
+	{
+		return this.holdAtUps.isChecked();
+	}
+
 	private String getSelectedShippingType()
 	{
 		return Objects.nonNull(this.shippingTypeComboBox.getSelectedItem()) ? this.shippingTypeComboBox.getSelectedItem().getValue()
@@ -279,6 +282,8 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		setOptimizedShippingMethodComboBox(selectedShippingType);
 		if (selectedShippingType.equalsIgnoreCase("FEDEX"))
 		{
+			holdAtUps.setChecked(Boolean.FALSE);
+			holdAtUps.setDisabled(Boolean.TRUE);
 			signatureSelection.setChecked(Boolean.FALSE);
 			signatureSelection.setDisabled(Boolean.TRUE);
 		}
@@ -316,17 +321,6 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 				}
 			}
 		}
-		else if (selectedShippingType.equalsIgnoreCase(CarrierEnum.UPSSTORE.getCode()))
-		{
-			optimizedShippingMethodList.clearSelection();
-			for (final OptimizedShippingMethodModel optimizedShippingMethod : allOptimizedShippingMethodList)
-			{
-				if (null != optimizedShippingMethod.getCarrier() && optimizedShippingMethod.getCarrier().equals(CarrierEnum.UPSSTORE))
-				{
-					carrierBasedOptimizedShippingMethodList.add(optimizedShippingMethod.getName());
-				}
-			}
-		}
 		else
 		{
 			carrierBasedOptimizedShippingMethodList.clear();
@@ -355,7 +349,6 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		//shippingTypesList.add(BlintegrationConstants.DEFAULT_SHIPPING_CODE);
 		shippingTypesList.add(CarrierEnum.UPS.getCode());
 		shippingTypesList.add(CarrierEnum.FEDEX.getCode());
-		shippingTypesList.add(CarrierEnum.UPSSTORE.getCode());
 		return shippingTypesList;
 	}
 
@@ -510,6 +503,23 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	{
 		this.signatureSelection = signatureSelection;
 	}
+
+	/**
+	 * @return the holdAtUps
+	 */
+	public Checkbox getHoldAtUps()
+	{
+		return holdAtUps;
+	}
+
+	/**
+	 * @param holdAtUps the holdAtUps to set
+	 */
+	public void setHoldAtUps(final Checkbox holdAtUps)
+	{
+		this.holdAtUps = holdAtUps;
+	}
+
 
 }
 
