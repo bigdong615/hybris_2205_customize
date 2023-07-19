@@ -107,17 +107,24 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 				orderModel.setOrderID(orderModel.getCode());
 			}
 		}
-	  if (getDefaultBlUserService().isCsUser() && abstractOrderModel.getIsRentalOrder() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
+	  if ((abstractOrderModel instanceof OrderModel) && abstractOrderModel.getIsRentalOrder() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
 				|| interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALENDDATE)))
 		{
-			final Date rentalStartDate = abstractOrderModel.getRentalStartDate();
-			final Date rentalEndDate = abstractOrderModel.getRentalEndDate();
-			if (DateUtils.isSameDay(rentalStartDate, rentalEndDate) || rentalStartDate.compareTo(rentalEndDate) > 0
-					|| rentalEndDate.compareTo(rentalStartDate) < 0)
+			if (getDefaultBlUserService().isCsUser())
 			{
-				throw new InterceptorException("Rental Start Date should not be a date later than Rental End Date");
+				final Date rentalStartDate = abstractOrderModel.getRentalStartDate();
+				final Date rentalEndDate = abstractOrderModel.getRentalEndDate();
+				if (DateUtils.isSameDay(rentalStartDate, rentalEndDate) || rentalStartDate.compareTo(rentalEndDate) > 0
+						|| rentalEndDate.compareTo(rentalStartDate) < 0) {
+					throw new InterceptorException("Rental Start Date should not be a date later than Rental End Date");
+				}
+				else if (abstractOrderModel.getStatus().equals(OrderStatus.PENDING) || abstractOrderModel.getStatus().equals(OrderStatus.RECEIVED_MANUAL_REVIEW) || abstractOrderModel.getStatus().equals(OrderStatus.RECEIVED_IN_VERIFICATION)){
+					modifyOrderDate(abstractOrderModel);
+				}else{
+					BlLogger.logFormatMessageInfo(LOG,Level.INFO, "we can not update stock table and serial,since order {} was is in {} status",abstractOrderModel.getCode(),abstractOrderModel.getStatus().getCode());
+					throw new InterceptorException("We can't modify rental date as order is in "+abstractOrderModel.getStatus().getCode()+" status");
+				}
 			}
-			modifyOrderDate(abstractOrderModel);
 		}
 		
      final Set<ConsignmentModel> consignmentModels = abstractOrderModel.getConsignments();
@@ -442,14 +449,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		abstractOrderModel.setOrderModifiedDate(new Date());
 	}
 
-	private void verifyOrderAndCreateBusinessProcess(final OrderModel order){
-		if (order.getStatus().equals(OrderStatus.PENDING) || order.getStatus().equals(OrderStatus.RECEIVED_MANUAL_REVIEW) || order.getStatus().equals(OrderStatus.RECEIVED_IN_VERIFICATION)){
-			createAndExecuteBusinessProcess(order);
-		}else{
-			BlLogger.logFormatMessageInfo(LOG,Level.INFO, "we can not update stock table and serial,since order {} was is in {} status",order.getCode(),order.getStatus().getCode());
-		}
-	}
-	public void createAndExecuteBusinessProcess(final OrderModel order){
+	public void verifyOrderAndCreateBusinessProcess(final OrderModel order){
 		OrderProcessModel orderProcess = (OrderProcessModel) getBusinessProcessService()
 				.createProcess(
 						"modifyOrder_" + order.getCode() + "_" + System.currentTimeMillis(),
@@ -502,7 +502,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 					}
 				}
 			}
-		}
+		}else{ return false;}
 		return true;
 	}
 	/**
