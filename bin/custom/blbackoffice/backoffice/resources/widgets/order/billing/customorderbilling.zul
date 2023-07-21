@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2018 SAP SE or an SAP affiliate company.
+ All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+<widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+        sclass="oms-widget-cancelorder-configuration" xmlns:h="http://www.w3.org/1999/xhtml"
+        id="cancelorderview" height="100%" width="100%">
+
+    <separator width="100%" sclass="oms-widget-cancelorder-configuration--separator"/>
+
+    <hlayout sclass="oms-widget-cancelorder-header">
+
+         <vbox>
+           <label sclass="oms-widget-billing-label-box" value="Total Amount Due" width="100%" />
+           <textbox sclass="oms-widget-billing-input-text-box" readonly="true" id="totalAmountDue" width="190px" height="10px"/>
+         </vbox>
+
+         <button id="createBill" label="Create Bill"
+                         sclass="y-btn-primary oms-widget-billing-configuration-button" />
+         <button id="deleteBill" label="Delete Bill"
+                         sclass="y-btn-primary oms-widget-billing-configuration-button" />
+         <button id="capturePayment" label="Capture Payment"
+         				sclass="y-btn-primary oms-widget-billing-configuration-button" />
+
+
+    </hlayout>
+
+    <separator width="100%" sclass="oms-widget-cancelorder-configuration--separator"/>
+
+    <hlayout width="100%" sclass="oms-widget-cancelorder-list">
+        <div sclass="oms-widget-cancelorder-list-container">
+            <grid id="orderEntries1" sclass="oms-widget-cancelorder-body">
+                <columns>
+                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
+                        <combobox   xmlns:w="client" id="deliveryModeCombobox"
+                                                                model="${each.deliveryModeCombobox}"
+                                                                sclass="oms-widget-updateorder__template-reason"
+                                                                style="">
+                                                        <template name="model">
+                                                            <comboitem label="${forEachStatus.previous.each} ${each}"
+                                                            forEach="${each.code}" />
+                                                        </template>
+                       </combobox>
+                    </column>
+                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
+                        <label value="Bill Paid" width="100%"/>
+                        <radio label="Bill Paid" checked="true"/>
+                    </column>
+                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
+                        <button id="sendInvoice" label="Send Invoice"
+                        sclass="y-btn-primary oms-widget-billing-configuration-button" />
+                    </column>
+                    </columns>
+
+            </grid>
+        </div>
+    </hlayout>
+
+    
+    <html><![CDATA[
+		<script type="text/javascript">
+
+		</script>
+	]]>
+    </html>
+</widget>

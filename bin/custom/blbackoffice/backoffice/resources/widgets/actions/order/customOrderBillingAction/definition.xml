@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<action-definition id="com.bl.blbackoffice.actions.order.customOrderBillingAction"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+
+	<name>Billing</name>
+	<description>Billing Transaction Action</description>
+	<author>braintree</author>
+	<version>0.1</version>
+
+	<actionClassName>com.bl.backoffice.actions.order.BlCustomOrderBillingAction</actionClassName>
+	<inputType>com.braintree.model.BrainTreeTransactionDetailModel</inputType>
+	<outputType>com.braintree.model.BrainTreeTransactionDetailModel</outputType>
+
+	<iconUri>icons/icon_action_billing_default.png</iconUri>
+	<iconDisabledUri>icons/icon_action_billing_disabled.png</iconDisabledUri>
+	<iconHoverUri>icons/icon_action_billing_hover.png</iconHoverUri>
+
+	<settings>
+		<setting key="viewMode" default-value="iconAndText"/>
+	</settings>
+
+	<!-- Sockets definition-->
+	<sockets>
+		<output id="customOrderBillingContext"/>
+	</sockets>
+
+</action-definition>
