@@ -80,7 +80,7 @@ public interface BlReallocationService {
       final OrderProcessModel process);
 
   void removeReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus,
-		WarehouseModel warehouse);
+                                            WarehouseModel warehouse, String code);
   
   boolean reAssignSerialReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus,
 			WarehouseModel warehouse, String orderCode);

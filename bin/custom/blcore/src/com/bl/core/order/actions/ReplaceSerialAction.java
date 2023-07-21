@@ -25,18 +25,12 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.task.RetryLaterException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -71,7 +65,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
     BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Stock size {} for associated order stock for serial {}",associatedOrderStocks.size(),serialCode);
     if(CollectionUtils.isNotEmpty(associatedOrderStocks)) {
       try {
-        updateSerialOnOrder(serialProcessModel.getOldSerialProduct(), associatedOrderStocks);
+            updateSerialOnOrder(serialProcessModel.getOldSerialProduct(), associatedOrderStocks);
       }catch (Exception ex){
         BlLogger.logMessage(LOG,Level.ERROR,"Some error occurred while replacement of serial ",ex);
         return Transition.NOK;
@@ -83,7 +77,6 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
 
   private void updateSerialOnOrder(final BlSerialProductModel blSerialProduct,List<StockLevelModel> associatedOrderStocks){
 
-
     final Map<String, List<StockLevelModel>> stockLevelsOrderWise = associatedOrderStocks.stream()
         .collect(Collectors.groupingBy(StockLevelModel::getOrder));
     BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the order {} in which need to replace serial from {} to new one",stockLevelsOrderWise.keySet().toString(),blSerialProduct.getCode());
@@ -91,6 +84,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
     for(Map.Entry<String,List<StockLevelModel>> orderCodeEntry :stockLevelsOrderWise.entrySet()){
       String orderCode = orderCodeEntry.getKey();
       try {
+
         AtomicReference<Boolean> isSerialUpdated = new AtomicReference<>(false);
         final Map<String, List<StockLevelModel>> stockLevelsProductWise = orderCodeEntry.getValue()
             .stream().collect(Collectors.groupingBy(StockLevelModel::getProductCode));
@@ -100,9 +94,18 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           productCode.add(productCodeEntry.getKey());
           Set<String> oldSerialProductCode = productCodeEntry.getValue().stream()
               .collect(Collectors.groupingBy(StockLevelModel::getSerialProductCode)).keySet();
-          final AbstractOrderModel order = getOrderDao().getOrderByCode(orderCode);
-          filterOrderEntryAndAssignSerial(order, oldSerialProductCode, isSerialUpdated,
-              productCode);
+          if(orderCode.contains(",")){
+            for(String orderNo : orderCode.split(",")){
+            final AbstractOrderModel order = getOrderDao().getOrderByCode(orderNo);
+            filterOrderEntryAndAssignSerial(order, oldSerialProductCode, isSerialUpdated,
+                    productCode);
+            }
+          }
+          else {
+            final AbstractOrderModel order = getOrderDao().getOrderByCode(orderCode);
+            filterOrderEntryAndAssignSerial(order, oldSerialProductCode, isSerialUpdated,
+                    productCode);
+          }
           if (isSerialUpdated.get()) {
             List<StockLevelModel> stockLevelModelList = orderCodeEntry.getValue();
             stockLevelModelList.forEach(stockLevel -> {
@@ -121,6 +124,8 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           }
           break;
         }
+
+
       }catch (Exception ex){
         BlLogger.logMessage(LOG,Level.ERROR,"Some error occurred while replacement of serial for the order:"+orderCode,ex);
       }
@@ -197,12 +202,23 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           } catch (Exception e) {
             BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in replace serial flow", e);
           }
-          stockLevel.setOrder(consignmentModel.getOrder().getCode());
+          if(StringUtils.isNotBlank(stockLevel.getOrder())){
+            stockLevel.setOrder(StringUtils.isNotBlank(stockLevel.getOrder()) ? stockLevel.getOrder() + "," + consignmentModel.getOrder().getCode() : consignmentModel.getOrder().getCode());
+          }
+          else {
+            stockLevel.setOrder(consignmentModel.getOrder().getCode());
+          }
           stockLevel.setReservedStatus(true);
           BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-              "Stock status is changed to {} for the serial product {} for the order {} ", stockLevel.getReservedStatus(),
-              stockLevel.getSerialProductCode(), stockLevel.getOrder());
+                  "Stock status is changed to {} for the serial product {} for the order {} ", stockLevel.getReservedStatus(),
+                  stockLevel.getSerialProductCode(), stockLevel.getOrder());
+
+
         } );
+        Optional<StockLevelModel> lastStock = stockLevelModels.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate())).findAny();
+        if(lastStock.isPresent()){
+          lastStock.get().setReservedStatus(false);
+        }
         modelService.saveAll(stockLevelModels);
         return true;
       }
