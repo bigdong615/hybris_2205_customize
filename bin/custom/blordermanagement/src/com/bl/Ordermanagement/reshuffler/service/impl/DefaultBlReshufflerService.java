@@ -667,9 +667,16 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
           final Set<String> ordersNotToBeFulfilled = stocks.stream().map(StockLevelModel::getOrder)
               .collect(Collectors.toSet());
           ordersNotToBeFulfilled.forEach(orderCode -> {
-            final AbstractOrderModel orderModel = getOrderDao().getOrderByCode(orderCode);
-            orderModel.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
-            orderModel.setManualReviewStatusByReshuffler(true);
+            if(orderCode.contains(",")){
+              final AbstractOrderModel orderModel = getOrderDao().getOrderByCode(orderCode.split(",")[0]);
+              orderModel.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
+              orderModel.setManualReviewStatusByReshuffler(true);
+            }
+            else {
+              final AbstractOrderModel orderModel = getOrderDao().getOrderByCode(orderCode);
+              orderModel.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
+              orderModel.setManualReviewStatusByReshuffler(true);
+            }
           });
           getModelService().saveAll();
           BlLogger.logFormatMessageInfo(LOG, Level.INFO,

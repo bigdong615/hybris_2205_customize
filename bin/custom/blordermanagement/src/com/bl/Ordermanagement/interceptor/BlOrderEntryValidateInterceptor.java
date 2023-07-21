@@ -364,9 +364,20 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 					} catch (Exception e) {
 						BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in create consignment flow", e);
 					}
+					if(org.apache.commons.lang.StringUtils.isNotBlank(stock.getOrder())){
+						stock.setOrder(org.apache.commons.lang.StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + orderEntryModel.getOrder().getCode() : orderEntryModel.getOrder().getCode());
+					}
+					else {
+						stock.setOrder(orderEntryModel.getOrder().getCode());
+					}
 					stock.setReservedStatus(true);
-					stock.setOrder(orderEntryModel.getOrder().getCode());
+
+
 				});
+				Optional<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(consignment.getOptimizedShippingEndDate())).findAny();
+				if(lastStock.isPresent()){
+					lastStock.get().setReservedStatus(false);
+				}
 				modelService.saveAll(serialStocks);
 			}
 		}

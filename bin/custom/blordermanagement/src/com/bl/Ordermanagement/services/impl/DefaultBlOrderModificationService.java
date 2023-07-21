@@ -33,21 +33,11 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.task.TaskConditionModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -190,7 +180,7 @@ public class DefaultBlOrderModificationService
 				{
 					final boolean isRentalOrder = consignment.getOrder().getIsRentalOrder();
 					updateStockForSerial(consignment.getOptimizedShippingStartDate(),
-							isRentalOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial, !isRentalOrder);
+							isRentalOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial, !isRentalOrder,consignment.getOrder().getCode());
 				}
 			});
 			if (CollectionUtils.isEmpty(updatedSerialList))
@@ -254,13 +244,16 @@ public class DefaultBlOrderModificationService
 	 * method is used to update stock from removed entry
 	 *
 	 * @param serial
+	 * @param orderCode
 	 */
-	public void updateStockForSerial(final Date optimizedShippingStartDate, final Date optimizedShippingEndDate, final BlProductModel serial,final boolean isUsedGearOrder)
+	public void updateStockForSerial(final Date optimizedShippingStartDate, final Date optimizedShippingEndDate, final BlProductModel serial, final boolean isUsedGearOrder, String orderCode)
 	{
 		if (serial instanceof BlSerialProductModel)
 		{
-			final Collection<StockLevelModel> findSerialStockLevelForDate = getBlStockLevelDao().findSerialStockLevelForDate(
+			 Collection<StockLevelModel> findSerialStockLevelForDate = getBlStockLevelDao().findSerialStockLevelForDate(
 					serial.getCode(), optimizedShippingStartDate, optimizedShippingEndDate);
+			findSerialStockLevelForDate = findSerialStockLevelForDate.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(orderCode)).collect(Collectors.toList());
+
 			if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
 			{
 				findSerialStockLevelForDate.forEach(stockLevel -> {
@@ -273,11 +266,28 @@ public class DefaultBlOrderModificationService
 						BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in order modification flow", e);
 					}
 					final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serial);
-					stockLevel.setHardAssigned(false);
+
+					if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1){
+						String[] orders = stockLevel.getOrder().split(",");
+						List<String> arr_new = Arrays.asList(orders);
+						List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+						stockLevel.setOrder(String.join(",",updateOrders));
+					}
+					else{
+						stockLevel.setOrder(null);
+					}
 					stockLevel.setReservedStatus(false);
-					stockLevel.setOrder(null);
+					stockLevel.setHardAssigned(false);
+
 					getModelService().save(stockLevel);
 				});
+
+				Optional<StockLevelModel> lastStock = findSerialStockLevelForDate.stream().filter(stock -> stock.getDate().equals(optimizedShippingEndDate) && StringUtils.isNotBlank(stock.getOrder())).findAny();
+				if(lastStock.isPresent()){
+					lastStock.get().setReservedStatus(true);
+					modelService.save(lastStock.get());
+				}
+
 				if(isUsedGearOrder)
 				{
 					((BlSerialProductModel) serial).setSerialStatus(SerialStatusEnum.ACTIVE);
@@ -412,11 +422,11 @@ public class DefaultBlOrderModificationService
 						consignmentEntry.setQuantity(consignmentEntry.getQuantity()-1);
 						updateConsignmentEntry(serialProduct, consignmentEntry, products, itemMap);
 						updateStockForSerial(consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(),
-								serialProduct, false);
+								serialProduct, false, orderModel.getCode());
 					} else {
 						consignmentEntriesToRemove.add(consignmentEntry);
 						updateStockForSerial(consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(),
-								serialProduct, false);
+								serialProduct, false, orderModel.getCode());
 					}
 					break;
 				}

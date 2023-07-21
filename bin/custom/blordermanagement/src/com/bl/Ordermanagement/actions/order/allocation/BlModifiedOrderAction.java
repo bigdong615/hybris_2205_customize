@@ -33,11 +33,13 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcessModel> {
 
@@ -75,7 +77,7 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
                     consignmentEntryModel.setItems(new HashMap<>());
                     consignmentEntryModel.setSerialProducts(Collections.emptyList());
                 });
-                releaseStockForGivenSerial(olderProductCode, consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate());
+                releaseStockForGivenSerial(olderProductCode, consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(), order.getCode());
                 consignmentModel.setOptimizedShippingStartDate(order.getActualRentalStartDate());
                 consignmentModel.setOptimizedShippingEndDate(order.getActualRentalEndDate());
             });
@@ -346,10 +348,12 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
     }
 
 
-    private void releaseStockForGivenSerial(Set<String> productsCode, Date startDate, Date endDate) {
-        final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
+    private void releaseStockForGivenSerial(Set<String> productsCode, Date startDate, Date endDate, String orderCode) {
+         Collection<StockLevelModel> serialStock = getBlStockLevelDao()
                 .findALLSerialStockLevelsForDateAndCodes(productsCode, startDate,
                         endDate);
+        serialStock = serialStock.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(orderCode)).collect(Collectors.toList());
+
         if (CollectionUtils.isNotEmpty(serialStock)) {
             serialStock.forEach(stockLevel -> {
                 try {
@@ -360,12 +364,28 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
                 } catch (Exception e) {
                     BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in modify rental date flow", e);
                 }
+
+                if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1){
+                    String[] orders = stockLevel.getOrder().split(",");
+                    List<String> arr_new = Arrays.asList(orders);
+                    List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+                    stockLevel.setOrder(String.join(",",updateOrders));
+                }
+                else{
+                    stockLevel.setOrder(null);
+                }
                 stockLevel.setReservedStatus(false);
-                stockLevel.setOrder(null);
+
                 BlLogger.logFormatMessageInfo(LOG, Level.INFO,
                         "Stock status is changed to {} for the serial product {} ", stockLevel.getReservedStatus(),
                         stockLevel.getSerialProductCode());
+
             });
+            Optional<StockLevelModel> lastStock = serialStock.stream().filter(stock -> stock.getDate().equals(endDate) && StringUtils.isNotBlank(stock.getOrder())).findAny();
+            if(lastStock.isPresent()){
+                lastStock.get().setReservedStatus(true);
+
+            }
             modelService.saveAll(serialStock);
         }
     }

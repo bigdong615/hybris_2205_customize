@@ -365,7 +365,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 		 }
 		 blReallocationService.removeReserveStocksForSerialProducts(new HashSet<>(serialsCodesToRemove),
 				 consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.TRUE,
-				 consignment.getWarehouse());
+				 consignment.getWarehouse(), consignment.getOrder().getCode());
      }
 
   /**

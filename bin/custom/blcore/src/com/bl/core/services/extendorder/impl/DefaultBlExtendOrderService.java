@@ -29,14 +29,8 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -294,6 +288,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
         if (CollectionUtils.isNotEmpty(allocatedProductCodes) && serialStocks.stream()
             .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
           serialStocks.forEach(stock -> {
+
             try {
               BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
                       "Reserve stock for serial product {}, for stock date {} while extends rental date before change Hard Assign {}, reserve status {}, associated order {}"
@@ -302,9 +297,23 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
             }catch (Exception e){
               BlLogger.logMessage(LOG,Level.ERROR,"Some error occur while reserve stock in replace serial flow",e);
             }
+
+            if(StringUtils.isNotBlank(stock.getOrder())){
+              stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + consignmentModel.getOrder().getCode() : consignmentModel.getOrder().getCode());
+            }
+            else {
+              stock.setOrder(orderCode);
+            }
             stock.setReservedStatus(true);
-            stock.setOrder(orderCode);
+
+
           });
+          Optional<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) &&
+                  StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().split(",").length == 1).findAny();
+          if(lastStock.isPresent()){
+            lastStock.get().setReservedStatus(false);
+          }
+
           this.getModelService().saveAll(serialStocks);
         }
       });
