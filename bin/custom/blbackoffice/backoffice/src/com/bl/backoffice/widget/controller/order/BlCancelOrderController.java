@@ -224,8 +224,10 @@ public class BlCancelOrderController extends DefaultWidgetController {
         if(null == optimizedShippingEndDate) {
             optimizedShippingEndDate = BlDateTimeUtils.getNextYearsSameDay();
         }
-        final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao
+        Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao
                 .findSerialStockLevelForDate(serialProduct.getCode(), optimizedShippingStartDate, optimizedShippingEndDate);
+        findSerialStockLevelForDate = findSerialStockLevelForDate.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(abstractOrderModel.getCode())).collect(Collectors.toList());
+
         if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
         {
             Date finalOptimizedShippingEndDate = optimizedShippingEndDate;
