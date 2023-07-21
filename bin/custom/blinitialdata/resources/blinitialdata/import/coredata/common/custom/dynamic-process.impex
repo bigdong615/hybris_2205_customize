@@ -12,6 +12,7 @@ INSERT_UPDATE DynamicProcessDefinition; code[unique=true]            ; active ; 
 <end id=""end"" state=""SUCCEEDED"">Success</end>
 </process>"
 
+## This business process will work when we modify rental date from backoffice for customer support agent.
 INSERT_UPDATE DynamicProcessDefinition; code[unique=true]            ; active ; content
                                       ; modifyOrderProcess ; true   ; "<process  xmlns=""http://www.hybris.de/xsd/processdefinition""
   start=""modifiedOrderAction""

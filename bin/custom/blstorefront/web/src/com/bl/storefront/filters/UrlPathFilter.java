@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UrlPathHelper;
@@ -71,6 +72,9 @@ public class UrlPathFilter extends OncePerRequestFilter
 					return;
 				}
 			}
+		}
+		if(StringUtils.isNotBlank(request.getRequestURL().toString()) && request.getRequestURL().toString().contains("pdf")){
+			response.setHeader("Link", "<"+request.getRequestURL()+"?context="+request.getParameter("context")+";> rel='canonical'");
 		}
 		getDefaultFilter().doFilter(request, response, filterChain);
 	}
