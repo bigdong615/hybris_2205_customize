@@ -250,8 +250,10 @@ public class DefaultBlOrderModificationService
 	{
 		if (serial instanceof BlSerialProductModel)
 		{
-			final Collection<StockLevelModel> findSerialStockLevelForDate = getBlStockLevelDao().findSerialStockLevelForDate(
+			 Collection<StockLevelModel> findSerialStockLevelForDate = getBlStockLevelDao().findSerialStockLevelForDate(
 					serial.getCode(), optimizedShippingStartDate, optimizedShippingEndDate);
+			findSerialStockLevelForDate = findSerialStockLevelForDate.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(orderCode)).collect(Collectors.toList());
+
 			if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
 			{
 				findSerialStockLevelForDate.forEach(stockLevel -> {

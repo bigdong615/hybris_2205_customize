@@ -260,9 +260,11 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
                         consignmentModel.getOptimizedShippingEndDate(),
                         consignmentModel.getOptimizedShippingEndDate(), Boolean.FALSE);
 
-        final Collection<StockLevelModel> stocks = Stream
+         Collection<StockLevelModel> stocks = Stream
                 .concat(stocksWithTrueStatus.stream(), stockWithFalseStatus.stream())
                 .collect(Collectors.toList());
+        stocks = stocks.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(consignmentModel.getOrder().getCode())).collect(Collectors.toList());
+
 
         stocks.forEach(stock -> {
           try {

@@ -274,15 +274,15 @@ public class DefaultBlReallocationService implements BlReallocationService {
   
   @Override
   public void removeReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus, WarehouseModel warehouse, String orderCode) {
-	    final Collection<StockLevelModel> serialStocks = blStockLevelDao
+	     Collection<StockLevelModel> serialStocks = blStockLevelDao
 	        .findSerialStockLevelsForDateAndCodesForWarehouse(serialProductCodes, startDay,
 	      		  endDay, reservedStatus, warehouse);
 
         final Collection<StockLevelModel> lastSerialStock = blStockLevelDao
             .findSerialStockLevelsForDateAndCodesForWarehouse(serialProductCodes, endDay,
                     endDay, Boolean.FALSE, warehouse);
-
-	    if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
+    serialStocks = serialStocks.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(orderCode)).collect(Collectors.toList());
+    if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
 	        .allMatch(stock -> serialProductCodes.contains(stock.getSerialProductCode()))) {
 	      serialStocks.forEach(stock -> {
             try {

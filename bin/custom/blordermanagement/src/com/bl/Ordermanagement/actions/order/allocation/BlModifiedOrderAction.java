@@ -349,9 +349,11 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
 
 
     private void releaseStockForGivenSerial(Set<String> productsCode, Date startDate, Date endDate, String orderCode) {
-        final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
+         Collection<StockLevelModel> serialStock = getBlStockLevelDao()
                 .findALLSerialStockLevelsForDateAndCodes(productsCode, startDate,
                         endDate);
+        serialStock = serialStock.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(orderCode)).collect(Collectors.toList());
+
         if (CollectionUtils.isNotEmpty(serialStock)) {
             serialStock.forEach(stockLevel -> {
                 try {
