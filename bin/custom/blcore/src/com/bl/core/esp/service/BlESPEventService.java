@@ -204,4 +204,12 @@ public interface BlESPEventService {
      * @param requestedDate requestedDate
      */
     void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData,final Date requestedDate);
+
+    /**
+     * Send Order Verification Required by calling Order Verification ESP Event API
+     *
+     * @param orderModel
+     */
+     void sendOrderPendingVerificationsEvent(final OrderModel orderModel);
+
 }
