@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "blstorefront",
   "version": "0.0.0",
   "description": "For maintain and scan deliverable JS Libraries of the accelerator",

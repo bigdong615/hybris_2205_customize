@@ -21,4 +21,3 @@ yacceleratorstorefront.additionalWebSpringConfigs.blconfigurablebundleaddon=clas
 yb2bacceleratorstorefront.additionalWebSpringConfigs.blconfigurablebundleaddon=classpath:/blconfigurablebundleaddon/web/spring/blconfigurablebundleaddon-web-spring.xml
 
 blconfigurablebundleaddon.javascript.paths.responsive=/responsive/common/js/blconfigurablebundleaddon.js
-blconfigurablebundleaddon.css.paths.responsive=/responsive/common/css/blconfigurablebundleaddon.css
