@@ -298,7 +298,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
               BlLogger.logMessage(LOG,Level.ERROR,"Some error occur while reserve stock in replace serial flow",e);
             }
 
-            if(StringUtils.isNotBlank(stock.getOrder())){
+            if(StringUtils.isNotBlank(stock.getOrder()) && !stock.getOrder().equals(consignmentModel.getOrder().getCode())){
               stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + consignmentModel.getOrder().getCode() : consignmentModel.getOrder().getCode());
             }
             else {
