@@ -11,65 +11,145 @@
  license agreement you entered into with SAP.
 -->
 <widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
-        sclass="oms-widget-cancelorder-configuration" xmlns:h="http://www.w3.org/1999/xhtml"
-        id="cancelorderview" height="100%" width="100%">
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+    sclass="oms-widget-updateorder-configuration"
+	id="updatecustomeraddressview" height="100%" width="100%">
 
-    <separator width="100%" sclass="oms-widget-cancelorder-configuration--separator"/>
+<div sclass="oms-widget-billing-firstlist-container" style="display:flex;column-gap: 20px;">
 
-    <hlayout sclass="oms-widget-cancelorder-header">
+            <div width="538px" style="text-align:end;">
+                 <label sclass="oms-widget-billing-label-box" value="Total Amount Due" width="100%"
+                 style="float:left; margin-left: -36px;"/>
+                 <textbox sclass="oms-widget-billing-input-text-box" readonly="true"
+                     id="totalAmountDue" width="190px" height="12px"/>
+           </div>
+            <div width="100px" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
+                <button id="createBill" label="Create Bill"
+                       sclass="y-btn-primary oms-widget-billing-configuration-button" />
+            </div>
+            <div width="100px" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
+                   <button id="deleteBill" label="Delete Bill"
+                       sclass="y-btn-primary oms-widget-billing-configuration-button" />
+            </div>
+            <div width="100px" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
+                   <button id="capturePayment" label="Capture Payment"
+                       sclass="y-btn-primary oms-widget-billing-configuration-button" />
+            </div>
 
-         <vbox>
-           <label sclass="oms-widget-billing-label-box" value="Total Amount Due" width="100%" />
-           <textbox sclass="oms-widget-billing-input-text-box" readonly="true" id="totalAmountDue" width="190px" height="10px"/>
-         </vbox>
+  </div>
 
-         <button id="createBill" label="Create Bill"
-                         sclass="y-btn-primary oms-widget-billing-configuration-button" />
-         <button id="deleteBill" label="Delete Bill"
-                         sclass="y-btn-primary oms-widget-billing-configuration-button" />
-         <button id="capturePayment" label="Capture Payment"
-         				sclass="y-btn-primary oms-widget-billing-configuration-button" />
-
-
-    </hlayout>
-
-    <separator width="100%" sclass="oms-widget-cancelorder-configuration--separator"/>
-
-    <hlayout width="100%" sclass="oms-widget-cancelorder-list">
-        <div sclass="oms-widget-cancelorder-list-container">
-            <grid id="orderEntries1" sclass="oms-widget-cancelorder-body">
+   <div sclass="oms-widget-billing-thirdlist-container">
+            <grid id="orderEntriesActions" sclass="oms-widget-billing-body" >
                 <columns>
-                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="350px">
                         <combobox   xmlns:w="client" id="deliveryModeCombobox"
-                                                                model="${each.deliveryModeCombobox}"
-                                                                sclass="oms-widget-updateorder__template-reason"
-                                                                style="">
-                                                        <template name="model">
-                                                            <comboitem label="${forEachStatus.previous.each} ${each}"
-                                                            forEach="${each.code}" />
-                                                        </template>
+                           model="${each.deliveryModeCombobox}"
+                           sclass="oms-widget-updateorder__template-reason"
+                           style="width:200px;">
+                       <template name="model">
+                       <comboitem label="${forEachStatus.previous.each} ${each}"
+                           forEach="${each.code}" />
+                       </template>
                        </combobox>
                     </column>
-                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
-                        <label value="Bill Paid" width="100%"/>
-                        <radio label="Bill Paid" checked="true"/>
+                    <column width="350px" style="text-align-last: right;">
+                        <label value="Bill Paid" width="100%" style="padding:10px;"/>
+                        <radio label="True" checked="false"/>
+                        <radio label="False" checked="true"/>
                     </column>
-                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="371px" style="text-align:end;">
                         <button id="sendInvoice" label="Send Invoice"
-                        sclass="y-btn-primary oms-widget-billing-configuration-button" />
+                        sclass="y-btn-primary oms-widget-billing-configuration-button" style="margin-bottom: 6px;margin-top: 7px;width: 50%;"/>
                     </column>
                     </columns>
 
             </grid>
         </div>
-    </hlayout>
 
-    
-    <html><![CDATA[
-		<script type="text/javascript">
+        <hlayout width="100%" >
+                 <div >
+                            <grid id="orderEntries" mold="paging" sclass="table-scroll-cancel-popup-orderEntries" pageSize="4">
+                                <custom-attributes org.zkoss.zul.grid.autoSort="true" />
+                                <columns>
+                                    <column width="40px">
+                                        <checkbox id="globalCancelEntriesSelection" class="oms-widget-billing-thirdlist-container__checkbox"/>
+                                                  <!-- onCheck='Clients.evalJavaScript("onOrderSelect()")' -->
+                                    </column>
+                                    <column width="150px" sort="auto" sortDirection="ascending">
+                                        <label value="Product Name" width="100%"/>
+                                    </column>
+                                    <column width="150px" style="padding-left:5px">
+                                        <label value="Serial Number" width="100%"/>
+                                    </column>
+                                    <column width="120px"  style="padding-left:2px">
+                                        <label value="Amount" width="100%"/>
+                                    </column>
+                                    <column width="160px"  style="padding-left:2px">
+                                        <label value="Damage Waiver" width="100%"/>
+                                    </column>
+                                    <column width="120px" >
+                                        <label value="Sub Total" width="100%"/>
+                                    </column>
+                                    <column width="30px">
+                                      <checkbox id="ProcessingFee" class="oms-widget-billing-thirdlist-container__checkbox"/>
+                                    </column>
+                                    <column width="120px" >
+                                        <label value="Processing Fee" width="100%"/>
+                                    </column>
+                                    <column width="70px" >
+                                        <label value="Tax" width="100%"/>
+                                    </column>
+                                    <column width="120px">
+                                        <label value="Unpaid Bill Note" width="150%"/>
+                                    </column>
+                                </columns>
+                                <rows>
+                                    <template name="model">
+                                        <row style="">
+                                            <textbox value="${each.orderEntry.product.code}" width="200px" name="code_${each.orderEntry.product.code}"
+                                                     id="code_${each.orderEntry.product.code}" readonly="true"/>
+                                            <textbox value="${each.orderEntry.product.name}" width="200px" name="name_${each.orderEntry.product.code}"
+                                                     id="name_${each.orderEntry.product.code}" readonly="true"/>
+                                            <textbox value="${each.deliveryModeName}" width="200px" name="delivery_${each.orderEntry.product.code}"
+                                                     id="delivery_${each.orderEntry.product.code}" readonly="true"/>
+                                            <textbox value="${each.orderEntry.basePrice}" width="110px" name="price_${each.orderEntry.product.code}"
+                                                     id="price_${each.orderEntry.product.code}" readonly="true"/>
+                                            <textbox value="NA" width="132px" name="shipping_${each.orderEntry.product.code}"
+                                                     id="shipping_${each.orderEntry.product.code}" readonly="true"/>
+                                            <checkbox value="${each.tax}" class="oms-widget-billing-thirdlist-container__checkbox" width="130px"
+                                                      name="avalaraLineTax_${each.orderEntry.product.code}" id="avalaraLineTax_${each.orderEntry.product.code}"
+                                                      label="${each.orderEntry.avalaraLineTax eq null ? 0.0 : each.orderEntry.avalaraLineTax}"
+                                                      disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
+                                            <checkbox value="${each.waiver}" class="oms-widget-billing-thirdlist-container__checkbox" width="153px"
+                                                      name="waiver_${each.orderEntry.product.code}" id="waiver_${each.orderEntry.product.code}"
+                                                      label="${each.orderEntry.gearGuardWaiverSelected ? each.orderEntry.gearGuardWaiverPrice :
+                                                            each.orderEntry.gearGuardProFullWaiverSelected ? each.orderEntry.gearGuardProFullWaiverPrice : 0.0 }"
+                                                      disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
+                                            <textbox value="${each.refundedAmount}" width="152px" class="oms-widget-cancelorder--qty-label"
+                                                     name="refundedAmount_${each.orderEntry.product.code}" id="refundedAmount_${each.orderEntry.product.code}" readonly="true"/>
+                                            <intbox value="${each.quantityAvailableToCancel}" width="152px" class="oms-widget-cancelorder--qty-label"
+                                                    name="quantityAvailableToCancel_${each.orderEntry.product.code}" readonly="true"
+                                                    id="quantityAvailableToCancel_${each.orderEntry.product.code}"/>
+                                            <intbox value="${each.quantityToCancel}" width="152px"
+                                                    constraint="no empty,no negative: Quantity Must be Greater Than Zero"
+                                                    style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray;text-align:center;'
+                                                    : 'text-align:center;'}" disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"
+                                                    name="quantityToCancel_${each.orderEntry.product.code}" id="quantityToCancel_${each.orderEntry.product.code}"/>
+                                            <doublebox width="152px" style="text-align:center;" name="amount_${each.orderEntry.product.code}" id="amount_${each.orderEntry.product.code}"
+                                                    value="${each.amount}" constraint="no empty,no negative: Quantity Must be Greater Than Zero"
+                                                    disabled="true"/>
 
-		</script>
-	]]>
-    </html>
+                                            <textbox value="${each.cancelOrderEntryComment}" maxlength="255" sclass="oms-widget-cancelorder__template-comment"
+                                                     placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}" width="194px"
+                                                     style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray' : ''}"
+                                                     name="cancelOrderEntryComment_${each.orderEntry.product.code}" id="cancelOrderEntryComment_${each.orderEntry.product.code}"
+                                                     disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
+                                        </row>
+                                    </template>
+                                </rows>
+                            </grid>
+                        </div>
+                    </hlayout>
+
 </widget>
+

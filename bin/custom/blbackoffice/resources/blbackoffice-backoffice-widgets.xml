@@ -248,8 +248,8 @@
 			<setting key="widgetStyleClass" type="String"/>
 			<setting key="__externalLocationPath" type="String">extension://braintreecustomersupport1811backoffice</setting>
 			<setting key="widgetStyleAttribute" type="String"/>
-			<setting key="_width" type="String">700px</setting>
-			<setting key="_height" type="String">150px</setting>
+			<setting key="_width" type="String">1140px</setting>
+			<setting key="_height" type="String">650px</setting>
 			<virtual-sockets />
 		</widget>
 
