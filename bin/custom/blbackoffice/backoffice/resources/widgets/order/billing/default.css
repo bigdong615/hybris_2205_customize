@@ -1,0 +1,101 @@
+
+.oms-widget-billing-label-box .z-label{
+float:left;
+margin-left: -36px;
+}
+
+.oms-widget-billing-buttons .z-div{
+text-align:center;
+margin-bottom: 13px;
+}
+
+
+.oms-widget-billing-thirdlist-container{
+border-top: 1px solid var(--bo-list-border-color);
+}
+
+.oms-widget-billing-thirdlist-container .z-grid-header{
+background: transparent;
+}
+
+.oms-widget-billing-thirdlist-container__checkbox.z-checkbox {
+  display: block;
+  padding-left: 16px; }
+  .oms-widget-billing-thirdlist-container__checkbox.z-checkbox label {
+    display: inline;
+    padding-right: 0;
+    margin-left: 3px; }
+  .oms-widget-billing-thirdlist-container__checkbox.z-checkbox > input {
+    width: 0; }
+
+.oms-widget-billing-listbox-header .z-column-content {
+  padding: 30px; }
+
+.oms-widget-billing-configuration-button{
+margin-left: 124px;
+margin-top: 18px;
+}
+
+.table-scroll-cancel-popup-orderEntries {
+  width:100% !important;
+  overflow: scroll !important;
+  height: 100% !important;
+}
+
+.table-scroll-cancel-popup-orderEntries {
+  width:100% !important;
+  overflow: scroll !important;
+  height: 100% !important;
+}
+
+.oms-widget-billing-list .z-hlayout-inner {
+  display: inherit !important;
+}
+.oms-widget-billing-list div.z-grid-header th.z-column, div.z-grid-header th.z-auxheader {
+  border-bottom:1px solid #e4e3e3 !important;
+}
+.oms-widget-billing-list .z-hlayout {
+    white-space: nowrap !important;
+}
+
+.oms-widget-billing-list .z-grid-body {
+    overflow: initial !important;
+}
+
+.oms-widget-billing-list .z-grid-header {
+    width: 100% !important;
+    display: contents !important;
+}
+.oms-widget-billing-list th:nth-child(9) {
+  display:none !important;
+}
+.oms-widget-billing-list td:nth-child(9) {
+  display:none !important;
+}
+.oms-widget-billing-list th:nth-child(14) {
+  width:384px !important;
+  float: left;
+  margin: 3px 0 0 0;
+}
+.oms-widget-billing-list td:nth-child(14) {
+  width:384px !important;
+  float: left;
+}
+.oms-widget-billing-list .z-combobox .z-combobox-input, .z-bandbox .z-bandbox-input {
+  margin-bottom: 0;
+  width: 100% !important;
+}
+.oms-widget-billing-list input.z-textbox {
+  border-width: 1px;
+  border-style: solid;
+  width: -webkit-fill-available !important;
+  margin: 0 7px 0 0px;
+}
+.oms-widget-billing-list .z-columns-bar {
+  background: #fff;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+}
+.oms-widget-billing-list .z-combobox, .z-bandbox {
+  width: 100% !important;
+}
