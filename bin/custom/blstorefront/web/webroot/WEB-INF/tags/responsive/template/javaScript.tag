@@ -110,7 +110,6 @@
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/litepicker_search.js"></script>
 		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
     	<script src="${commonResourcePathHtml}/js/mburger.js"></script>
