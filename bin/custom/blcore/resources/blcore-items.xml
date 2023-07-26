@@ -3460,6 +3460,12 @@
                         <modifiers read="true" write="true" optional="true"/>
                         <description>Address ID as unique identifier for legacy addresses</description>
                     </attribute>
+                    <attribute qualifier="signatureRequired" type="boolean">
+                        <description>Flag to identify whether signature is required or not for order </description>
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <persistence type="property" />
+                        <defaultvalue>false</defaultvalue>
+                    </attribute>
                 </attributes>
             </itemtype>
 
