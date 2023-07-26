@@ -12,15 +12,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.bl.logging.BlLogger;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UrlPathHelper;
+import org.apache.log4j.Logger;
 
 /**
  */
 public class UrlPathFilter extends OncePerRequestFilter
 {
+	private static final Logger LOG = Logger.getLogger(UrlPathFilter.class);
 	private UrlPathHelper urlPathHelper;
 	private Map<String, Filter> urlPathMapping;
 	private Filter defaultFilter;
@@ -73,9 +77,14 @@ public class UrlPathFilter extends OncePerRequestFilter
 				}
 			}
 		}
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url before cononical link for pdf 1: {}",request.getRequestURL());
 		if(StringUtils.isNotBlank(request.getRequestURL().toString()) && request.getRequestURL().toString().contains("pdf")){
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url Inside before set cononical link for pdf 2: {}",request.getRequestURL());
 			response.setHeader("Link", "<"+request.getRequestURL()+"?context="+request.getParameter("context")+";> rel='canonical'");
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url inside after cononical link for pdf 3: {}",response.getHeader("Link"));
 		}
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url After cononical link for pdf 4: {}",request.getRequestURL());
+
 		getDefaultFilter().doFilter(request, response, filterChain);
 	}
 }
