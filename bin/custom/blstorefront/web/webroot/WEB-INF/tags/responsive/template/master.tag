@@ -65,6 +65,12 @@
   <link rel="canonical" href="https://www.borrowlenses.com${request.getAttribute('javax.servlet.forward.request_uri')}" />
 	</c:if>
 
+
+    <%-- BLS-416: Add schema.org information to the Homepage --%>
+    <c:if test="${cmsPage.uid eq 'homepage'}">
+        <analytics:schemaOrg/>
+    </c:if>
+
 </head>
 <body class="${pageBodyCssClasses} ${cmsPageRequestContextData.liveEdit ? ' yCmsLiveEdit' : ''} language-${fn:escapeXml(currentLanguage.isocode)}">
 
