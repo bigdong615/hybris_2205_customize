@@ -353,10 +353,12 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 	}
 
 	/**
-	 * This method is used to check the Signature Required checkbox for UPS on outbound label generator depending on the field at shipment level.
+	 * This method is used to check the Signature Required checkbox for UPS on outbound label generator depending on the field at address level.
 	 */
 	public void setSignatureRequiredForUPS() {
-		if (selectedConsignment.isSignatureRequired() == Boolean.TRUE)
+		final AbstractOrderModel orderModel = selectedConsignment.getOrder();
+		if(Objects.nonNull(orderModel) && Objects.nonNull(orderModel.getDeliveryAddress())
+				&& orderModel.getDeliveryAddress().isSignatureRequired() == Boolean.TRUE)
 		{
 			signatureSelection.setChecked(Boolean.TRUE);
 			signatureSelection.setDisabled(Boolean.TRUE);
