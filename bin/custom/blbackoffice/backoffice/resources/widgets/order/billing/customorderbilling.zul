@@ -42,20 +42,19 @@
             <grid id="orderEntriesActions" sclass="oms-widget-billing-body" >
                 <columns>
                     <column width="350px">
-                        <combobox   xmlns:w="client" id="deliveryModeCombobox"
-                           model="${each.deliveryModeCombobox}"
+                        <combobox   xmlns:w="client" id="missingItemToolCombobox"
+                           model="${each.missingItemToolCombobox}"
                            sclass="oms-widget-updateorder__template-reason"
                            style="width:200px;">
-                       <template name="model">
-                       <comboitem label="${forEachStatus.previous.each} ${each}"
-                           forEach="${each.code}" />
-                       </template>
+
                        </combobox>
                     </column>
                     <column width="350px" style="text-align-last: right;">
                         <label value="Bill Paid" width="100%" style="padding:10px;"/>
+                        <radiogroup sclass="" style="text-align-last: right;">
                         <radio label="True" checked="false"/>
                         <radio label="False" checked="true"/>
+                        </radiogroup>
                     </column>
                     <column width="371px" style="text-align:end;">
                         <button id="sendInvoice" label="Send Invoice"
@@ -93,57 +92,45 @@
                                     <column width="30px">
                                       <checkbox id="ProcessingFee" class="oms-widget-billing-thirdlist-container__checkbox"/>
                                     </column>
-                                    <column width="120px" >
+                                    <column width="100px" >
                                         <label value="Processing Fee" width="100%"/>
                                     </column>
-                                    <column width="70px" >
+                                    <column width="50px" >
                                         <label value="Tax" width="100%"/>
                                     </column>
-                                    <column width="120px">
+                                    <column width="220px">
                                         <label value="Unpaid Bill Note" width="150%"/>
                                     </column>
                                 </columns>
                                 <rows>
                                     <template name="model">
                                         <row style="">
-                                            <textbox value="${each.orderEntry.product.code}" width="200px" name="code_${each.orderEntry.product.code}"
-                                                     id="code_${each.orderEntry.product.code}" readonly="true"/>
-                                            <textbox value="${each.orderEntry.product.name}" width="200px" name="name_${each.orderEntry.product.code}"
-                                                     id="name_${each.orderEntry.product.code}" readonly="true"/>
-                                            <textbox value="${each.deliveryModeName}" width="200px" name="delivery_${each.orderEntry.product.code}"
-                                                     id="delivery_${each.orderEntry.product.code}" readonly="true"/>
-                                            <textbox value="${each.orderEntry.basePrice}" width="110px" name="price_${each.orderEntry.product.code}"
-                                                     id="price_${each.orderEntry.product.code}" readonly="true"/>
-                                            <textbox value="NA" width="132px" name="shipping_${each.orderEntry.product.code}"
-                                                     id="shipping_${each.orderEntry.product.code}" readonly="true"/>
-                                            <checkbox value="${each.tax}" class="oms-widget-billing-thirdlist-container__checkbox" width="130px"
-                                                      name="avalaraLineTax_${each.orderEntry.product.code}" id="avalaraLineTax_${each.orderEntry.product.code}"
-                                                      label="${each.orderEntry.avalaraLineTax eq null ? 0.0 : each.orderEntry.avalaraLineTax}"
-                                                      disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
-                                            <checkbox value="${each.waiver}" class="oms-widget-billing-thirdlist-container__checkbox" width="153px"
-                                                      name="waiver_${each.orderEntry.product.code}" id="waiver_${each.orderEntry.product.code}"
-                                                      label="${each.orderEntry.gearGuardWaiverSelected ? each.orderEntry.gearGuardWaiverPrice :
-                                                            each.orderEntry.gearGuardProFullWaiverSelected ? each.orderEntry.gearGuardProFullWaiverPrice : 0.0 }"
-                                                      disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
-                                            <textbox value="${each.refundedAmount}" width="152px" class="oms-widget-cancelorder--qty-label"
-                                                     name="refundedAmount_${each.orderEntry.product.code}" id="refundedAmount_${each.orderEntry.product.code}" readonly="true"/>
-                                            <intbox value="${each.quantityAvailableToCancel}" width="152px" class="oms-widget-cancelorder--qty-label"
-                                                    name="quantityAvailableToCancel_${each.orderEntry.product.code}" readonly="true"
-                                                    id="quantityAvailableToCancel_${each.orderEntry.product.code}"/>
-                                            <intbox value="${each.quantityToCancel}" width="152px"
-                                                    constraint="no empty,no negative: Quantity Must be Greater Than Zero"
-                                                    style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray;text-align:center;'
-                                                    : 'text-align:center;'}" disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"
-                                                    name="quantityToCancel_${each.orderEntry.product.code}" id="quantityToCancel_${each.orderEntry.product.code}"/>
-                                            <doublebox width="152px" style="text-align:center;" name="amount_${each.orderEntry.product.code}" id="amount_${each.orderEntry.product.code}"
-                                                    value="${each.amount}" constraint="no empty,no negative: Quantity Must be Greater Than Zero"
-                                                    disabled="true"/>
+                                            <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
+                                                      name="globalShippingSelectionChk" id="" visible="true"/>
+                                            <textbox value="${each.productName}" width="200px" name="name_${each.productName}"
+                                                     readonly="true"/>
+                                            <textbox value="${each.serialNo}" width="200px" name="serial_${each.serialNo}"
+                                                      readonly="true"/>
+                                            <textbox value="${each.amount}" width="200px" name="name_${each.amount}"
+                                                      readonly="true"/>
+                                            <radiogroup sclass="" style="text-align-last: right;">
 
-                                            <textbox value="${each.cancelOrderEntryComment}" maxlength="255" sclass="oms-widget-cancelorder__template-comment"
-                                                     placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}" width="194px"
-                                                     style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray' : ''}"
-                                                     name="cancelOrderEntryComment_${each.orderEntry.product.code}" id="cancelOrderEntryComment_${each.orderEntry.product.code}"
-                                                     disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
+                                            <radio label="True" checked="${each.damageWaiver}"/>
+                                            <radio label="False" checked="!${each.damageWaiver}"/>
+                                            </radiogroup>
+                                            <textbox value="${each.subtotal}" width="200px" name="nasub_${each.subtotal}"
+                                                      readonly="true"/>
+                                            <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
+                                                      name="processingfeeSelectionChk" id="" visible="true"/>
+                                            <textbox value="5.00" width="200px" name="nasub_${each.amount}"
+                                                     readonly="true"/>
+                                            <textbox value="${each.tax}" width="200px" name="tx_${each.tax}"
+                                                     readonly="true"/>
+                                            <textbox value="${each.unpaidBillNotes}" width="400px" name="unpaid_${each.unpaidBillNotes}"
+                                                     readonly="true"/>
+
+
+
                                         </row>
                                     </template>
                                 </rows>
