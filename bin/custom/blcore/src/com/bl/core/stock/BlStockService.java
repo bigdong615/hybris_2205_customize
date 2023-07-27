@@ -5,6 +5,7 @@ import de.hybris.platform.servicelayer.exceptions.BusinessException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
@@ -80,6 +81,9 @@ public interface BlStockService
 	 * @param blSerialProduct the serial product model
 	 */
 	void findAndUpdateBufferInvInStockRecords(final BlSerialProductModel blSerialProduct);
+
+	void releaseStockForGivenSerial(final Set<String> productsCode, final Date startDate,final Date endDate, final String orderCode);
+	void removeOrderFromStock(final Set<String> productsCode,final SerialStatusEnum status,final Date startDate,final Date endDate,final String orderCode);
 
 	/**
 	 * It defines the active status based on serial status of the product
