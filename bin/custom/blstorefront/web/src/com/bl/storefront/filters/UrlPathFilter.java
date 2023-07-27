@@ -64,6 +64,14 @@ public class UrlPathFilter extends OncePerRequestFilter
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException
 	{
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url before cononical link for pdf 1: {}",request.getRequestURL());
+		if(StringUtils.isNotBlank(request.getRequestURL().toString()) && request.getRequestURL().toString().contains("pdf")){
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url Inside before set cononical link for pdf 2: {}",request.getRequestURL());
+			response.setHeader("Link", "<"+request.getRequestURL()+"?context="+request.getParameter("context")+";> rel='canonical'");
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url inside after cononical link for pdf 3: {}",response.getHeader("Link"));
+		}
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url After cononical link for pdf 4: {}",request.getRequestURL());
+
 		final Map<String, Filter> mapping = getUrlPathMapping();
 		if (mapping != null && !mapping.isEmpty())
 		{
@@ -77,13 +85,6 @@ public class UrlPathFilter extends OncePerRequestFilter
 				}
 			}
 		}
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url before cononical link for pdf 1: {}",request.getRequestURL());
-		if(StringUtils.isNotBlank(request.getRequestURL().toString()) && request.getRequestURL().toString().contains("pdf")){
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url Inside before set cononical link for pdf 2: {}",request.getRequestURL());
-			response.setHeader("Link", "<"+request.getRequestURL()+"?context="+request.getParameter("context")+";> rel='canonical'");
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url inside after cononical link for pdf 3: {}",response.getHeader("Link"));
-		}
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Request Url After cononical link for pdf 4: {}",request.getRequestURL());
 
 		getDefaultFilter().doFilter(request, response, filterChain);
 	}
