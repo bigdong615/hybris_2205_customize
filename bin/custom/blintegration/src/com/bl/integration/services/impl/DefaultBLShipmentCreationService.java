@@ -51,6 +51,8 @@ import com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateR
 import com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateResponsePopulator;
 import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fedex.ship.stub.ProcessShipmentReply;
 import com.fedex.ship.stub.ProcessShipmentRequest;
 import com.fedex.ship.stub.ShipServiceLocator;
@@ -79,7 +81,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	private ModelService modelService;
 
 	private MediaService mediaService;
-	
+
 	private BLUPSShipmentCreateRequestPopulator blUPSShipmentCreateRequestPopulator;
 
 	private BLUPSShipmentCreateResponsePopulator blUPSShipmentCreateResponsePopulator;
@@ -150,7 +152,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 					upsShipmentResponseData.setStatusCode(errorDetails.getPrimaryErrorCode().getCode());
 					upsShipmentResponseData.setErrorDescription(errorDetails.getPrimaryErrorCode().getDescription());
 					upsShipmentResponseData.setStatusMessage(ex.getMessage());
-					BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, ex, 
+					BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, ex,
 							"UPS Exception Status Code : {} Description : {}", upsShipmentResponseData.getStatusCode(),
 							upsShipmentResponseData.getErrorDescription());
 				}
@@ -196,6 +198,16 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		{
 			masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExReturnShipmentRequest(packagingInfo, packageCount,
 					sequenceMap.get(packagingInfo.getPackageId()).toString(), warehouseModel);
+		}
+		try
+		{
+			final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "creating fedEx shipment request {}",
+					ow.writeValueAsString(masterRequest));
+		}
+		catch (final Exception e)
+		{
+			// XXX: handle exception
 		}
 		try
 		{
@@ -390,7 +402,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		}
 		return false;
 	}
-	
+
 	/**
 	 * This method is used to create media model for printing shipping label
 	 * @param zplCode
