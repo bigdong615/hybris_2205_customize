@@ -71,6 +71,10 @@
         <analytics:schemaOrg/>
     </c:if>
 
+    <%-- BLS-417: Add schema.org information to the PDP --%>
+    <c:if test="${cmsPage.uid eq 'productDetails'}">
+        <analytics:pdpSchemaOrg/>
+    </c:if>
 </head>
 <body class="${pageBodyCssClasses} ${cmsPageRequestContextData.liveEdit ? ' yCmsLiveEdit' : ''} language-${fn:escapeXml(currentLanguage.isocode)}">
 
