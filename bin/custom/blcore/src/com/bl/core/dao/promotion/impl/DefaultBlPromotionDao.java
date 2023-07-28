@@ -54,7 +54,8 @@ public class DefaultBlPromotionDao extends DefaultPromotionDao implements BlProm
 	public PromotionSourceRuleModel getPromotionByCodeAndCouponCondition(final String promoGroup, final String ruleStatus,
 			final String code)
 	{
-		final String codeString = "\"" + code + "\"";
+		final String[] parts = code.split("-");
+		final String codeString = "\"" + parts[0] + "\"";
 		final String get_promotion_by_code_and_condition = SELECT + "{pr." + ItemModel.PK + "}" + FROM + "{"
 				+ PromotionSourceRuleModel._TYPECODE + " as pr} " + WHERE + PR + PromotionSourceRuleModel.WEBSITE + "} = ({{" + SELECT
 				+ "{pg." + ItemModel.PK + "}" + FROM + "{" + PromotionGroupModel._TYPECODE + " as pg} " + WHERE + " {pg."
