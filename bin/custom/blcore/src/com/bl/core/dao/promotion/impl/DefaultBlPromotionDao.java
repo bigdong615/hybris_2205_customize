@@ -55,6 +55,7 @@ public class DefaultBlPromotionDao extends DefaultPromotionDao implements BlProm
 			final String code)
 	{
 		final String[] parts = code.split("-");
+
 		final String codeString = "\"" + parts[0] + "\"";
 		final String get_promotion_by_code_and_condition = SELECT + "{pr." + ItemModel.PK + "}" + FROM + "{"
 				+ PromotionSourceRuleModel._TYPECODE + " as pr} " + WHERE + PR + PromotionSourceRuleModel.WEBSITE + "} = ({{" + SELECT
