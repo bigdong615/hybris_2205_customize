@@ -1,6 +1,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <script type="application/ld+json">
 {
@@ -25,7 +26,7 @@
                 <c:url var="offerURL" value="${jalosession.tenant.config.getParameter('website.bl.https')}/buy${product.url}"/>
                 "url": "${offerURL}",
                 "priceCurrency": "USD",
-                "price": "${product.serialproducts[0].finalSalePrice.formattedValue}"
+                "price": "<fmt:formatNumber type="number" maxFractionDigits="2" value="${product.serialproducts[0].finalSalePrice.value}"/>"
             </c:when>
             <c:otherwise>
                 <c:url var="offerURL" value=""/>
