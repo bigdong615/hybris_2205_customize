@@ -202,12 +202,12 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		try
 		{
 			final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "creating fedEx shipment request {}",
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "creating fedEx shipment request {}",
 					ow.writeValueAsString(masterRequest));
 		}
-		catch (final Exception e)
+		catch (final Exception exception)
 		{
-			// XXX: handle exception
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception occurred  {}", exception);
 		}
 		try
 		{
@@ -550,7 +550,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	/**
 	 * @param modelService the modelService to set
 	 */
-	public void setModelService(ModelService modelService)
+	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
 	}
@@ -566,7 +566,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	/**
 	 * @param mediaService the mediaService to set
 	 */
-	public void setMediaService(MediaService mediaService)
+	public void setMediaService(final MediaService mediaService)
 	{
 		this.mediaService = mediaService;
 	}
