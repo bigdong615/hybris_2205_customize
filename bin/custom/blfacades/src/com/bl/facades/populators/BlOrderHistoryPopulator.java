@@ -138,23 +138,35 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
       populateInboundTrackingNumbers(source, target);
   }
 
-    private void populateInboundTrackingNumbers(OrderModel source, OrderHistoryData target) {
-      Set<ConsignmentModel> consignmentModels = source.getConsignments();
-      List<String> inboundTrackingNumbers = new ArrayList<String>();
-
-      if(CollectionUtils.isNotEmpty(consignmentModels)){
-          for(ConsignmentModel model : consignmentModels){
-              List<PackagingInfoModel> packagingInfoModels = model.getPackaginginfos();
-              for(PackagingInfoModel packagingInfoModel : packagingInfoModels){
-                  if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber())){
-                      inboundTrackingNumbers.add("https://www.ups.com/uel/llp/" + packagingInfoModel.getInBoundTrackingNumber());
-                  }
-              }
-          }
-      }
-      target.setInboundTrackingURLs(inboundTrackingNumbers);
-    }
-
+  private void populateInboundTrackingNumbers(final OrderModel source, final OrderHistoryData target) {
+     final Set<ConsignmentModel> consignmentModels = source.getConsignments();
+     if(CollectionUtils.isNotEmpty(consignmentModels)){
+     	final List<String> inboundTrackingNumbers = new ArrayList<String>();
+         for(final ConsignmentModel model : consignmentModels){
+             final List<PackagingInfoModel> packagingInfoModels = model.getPackaginginfos();
+             for(final PackagingInfoModel packagingInfoModel : packagingInfoModels){
+                 if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber())){
+                 	inboundTrackingNumbers.add("'" + "https://www.ups.com/uel/llp/" + packagingInfoModel.getInBoundTrackingNumber() + "'");
+                 }
+             }
+         }
+         if(inboundTrackingNumbers.size()!=1) {
+         	target.setInboundTrackingURLs(inboundTrackingNumbers);
+         }
+         else {
+        	 inboundTrackingNumbers.clear();
+        	 for(final ConsignmentModel model : consignmentModels){
+               final List<PackagingInfoModel> packagingInfoModels = model.getPackaginginfos();
+               for(final PackagingInfoModel packagingInfoModel : packagingInfoModels){
+                   if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber())){
+							  inboundTrackingNumbers.add("https://www.ups.com/uel/llp/" + packagingInfoModel.getInBoundTrackingNumber());
+                   }
+               }
+           }
+        	 target.setInboundTrackingURLs(inboundTrackingNumbers);
+         }
+     	}
+  	}
     /**
      *
      * @param source

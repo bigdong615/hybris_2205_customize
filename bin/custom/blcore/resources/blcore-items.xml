@@ -3475,6 +3475,12 @@
                         <modifiers read="true" write="true" optional="true"/>
                         <description>Address ID as unique identifier for legacy addresses</description>
                     </attribute>
+                    <attribute qualifier="signatureRequired" type="boolean">
+                        <description>Flag to identify whether signature is required or not for order </description>
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <persistence type="property" />
+                        <defaultvalue>false</defaultvalue>
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -3747,12 +3753,6 @@
                         <modifiers read="true" write="false" optional="true" />
                         <description>Gets the overall list of the subparts in consignment entries. </description>
                         <persistence type="dynamic" attributeHandler="blSubpartsRenderedHandler" />
-                    </attribute>
-                    <attribute qualifier="signatureRequired" type="boolean">
-                        <description>Flag to identify whether signature is required or not for shipment </description>
-                        <modifiers read="true" write="true" search="true" optional="true" />
-                        <persistence type="property" />
-                        <defaultvalue>false</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>

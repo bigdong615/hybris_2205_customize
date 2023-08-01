@@ -81,7 +81,7 @@ public class BLFedExShipmentCreateRequestPopulator
 		// Create TransactionDetail for FedEx Shipment
 		final TransactionDetail transactionDetail = new TransactionDetail();
 		final StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(consignment.getOrder().getCode()).append(BlintegrationConstants.HYPHEN).append(BlintegrationConstants.OUT_BOUND_LABEL).append(BlintegrationConstants.HYPHEN).append(System.currentTimeMillis());		
+		stringBuilder.append(consignment.getOrder().getCode()).append(BlintegrationConstants.HYPHEN).append(BlintegrationConstants.OUT_BOUND_LABEL).append(BlintegrationConstants.HYPHEN).append(System.currentTimeMillis());
 		transactionDetail.setCustomerTransactionId(stringBuilder.toString()); //
 		processShipmentRequest.setTransactionDetail(transactionDetail);
 
@@ -199,7 +199,7 @@ public class BLFedExShipmentCreateRequestPopulator
 	/*
 	 * private void setServiceTypeOnRequestedShipment(final ConsignmentModel consignment, final RequestedShipment
 	 * requestedShipment) { final String serviceMethod = consignment.getOptimizedShippingType().getCode();
-	 * 
+	 *
 	 * if (StringUtils.isNotEmpty(serviceMethod)) { if
 	 * (serviceMethod.equals(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode())) {
 	 * requestedShipment.setServiceType(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode()); } else if
@@ -431,10 +431,9 @@ public class BLFedExShipmentCreateRequestPopulator
 	{
 
 		final LabelSpecification labelSpecification = new LabelSpecification(); // Label specification
-		labelSpecification.setImageType(ShippingDocumentImageType.PNG);// Image types PDF, PNG, DPL, ...
+		labelSpecification.setImageType(ShippingDocumentImageType.ZPLII);// Image types PDF, PNG, DPL, ...
 		labelSpecification.setLabelFormatType(LabelFormatType.COMMON2D); //LABEL_DATA_ONLY, COMMON2D
-
-
+		//labelSpecification.setLabelStockType(LabelStockType.value1);
 		return labelSpecification;
 	}
 

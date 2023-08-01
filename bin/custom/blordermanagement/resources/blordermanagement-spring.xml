@@ -221,6 +221,7 @@
 		<property name="blStockLevelDao" ref="blStockLevelDao" />
 		<property name="blProductService" ref="productService"/>
 		<property name="blOptimizeShippingFromWHService" ref="blOptimizeShippingFromWHService"/>
+        <property name="blStockService" ref="blStockService"/>
   </bean>
 
   <alias alias="blOptimizeShippingFromWHService" name="defaultBlOptimizeShippingFromWHService"/>
@@ -257,6 +258,7 @@
     <property name="blAssignSerialService" ref="blAssignSerialService"/>
 <property name="blAllocationService" ref="allocationService"/>
       <property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+      <property name="blStockService" ref="blStockService"/>
     <property name="modelService" ref="modelService"/>
   </bean>
 

@@ -257,7 +257,7 @@
                                             <c:choose>
                                                 <c:when test="${fn:length(order.inboundTrackingURLs) > 1}">
                                                     <li>
-                                                        <a href="#" onclick="openModalAndPrintList(${order.inboundTrackingURLs})">
+                                                     <a href="#" onclick="openModalAndPrintList(${order.inboundTrackingURLs})">
                                                             <spring:theme code="order.myaccount.print.return.label" />
                                                         </a>
                                                     </li>
@@ -324,49 +324,58 @@
 
 <script>
     function openModalAndPrintList(list) {
-      // Create the modal element
-      var modal = document.createElement('div');
-      modal.classList.add('modal');
-
-      // Create the content of the modal
-      var modalContent = document.createElement('div');
-      modalContent.classList.add('modal-content');
-
-      // Create the list element
-      var listElement = document.createElement('ul');
-
-      // Loop through the list and create list items
-      for (var i = 0; i < list.length; i++) {
-        var listItem = document.createElement('li');
-        listItem.textContent = list[i];
+    //var list = ['https://www.google.com','https://www.facebook.com'];
+    // Create the modal element
+    var modal = document.createElement('div');
+    modal.classList.add('modal');
+    var title = document.createElement('h5');
+    title.textContent = 'Print Return Labels';
+    var subtitle = document.createElement('h7');
+    subtitle.textContent = 'Click the links below to re-print your return label(s) or to get a digital code to show at the store.';
+    var empty = document.createElement('p');
+    // Create the content of the modal
+    var modalContent = document.createElement('div');
+    modalContent.classList.add('modalColor');
+    modalContent.appendChild(title);
+    modalContent.appendChild(subtitle);
+    modalContent.appendChild(empty);
+    // Create the close button
+    var closeButton = document.createElement('button');
+    closeButton.classList.add('btn');
+    closeButton.classList.add('btn-primary');
+    closeButton.classList.add('closeButton');
+    closeButton.textContent = 'Close';
+    closeButton.addEventListener('click', closeModal);
+    modalContent.classList.add('modal-content-return-label');
+    // Create the list element
+    var listElement = document.createElement('ul');
+    // Loop through the list and create list items
+    for (var i = 0; i < list.length; i++) {
+    	var listItem = document.createElement('li');
+        //listItem.textContent = list[i];
+        let anchorTag = document.createElement('a');
+        let textToLink = document.createTextNode(list[i]);
+        anchorTag.appendChild(textToLink);
+        anchorTag.href = list[i];
+        anchorTag.setAttribute("target","_blank");
+        listItem.appendChild(anchorTag);
         listElement.appendChild(listItem);
       }
-
-      // Add the list to the modal content
-      modalContent.appendChild(listElement);
-
-      // Create the close button
-      var closeButton = document.createElement('span');
-      closeButton.classList.add('close');
-      closeButton.textContent = 'Close';
-      closeButton.addEventListener('click', closeModal);
-
-      // Add the close button to the modal content
-      modalContent.appendChild(closeButton);
-
-      // Add the modal content to the modal
-      modal.appendChild(modalContent);
-
-      // Add the modal to the document body
-      document.body.appendChild(modal);
-
-      // Show the modal
-      modal.style.display = 'block';
-
-      // Function to close the modal
-      function closeModal() {
-        modal.style.display = 'none';
+    // Add the list to the modal content
+    modalContent.appendChild(listElement);
+	// Add the close button to the modal content
+	modalContent.appendChild(closeButton);
+	// Add the modal content to the modal
+	modal.appendChild(modalContent);
+	// Add the modal to the document body
+	document.body.appendChild(modal);
+	// Show the modal
+	modal.style.display = 'block';
+	// Function to close the modal
+	function closeModal() {
+		modal.style.display = 'none';
         document.body.removeChild(modal);
-      }
-    }
+    	}
+	}
+
 </script>

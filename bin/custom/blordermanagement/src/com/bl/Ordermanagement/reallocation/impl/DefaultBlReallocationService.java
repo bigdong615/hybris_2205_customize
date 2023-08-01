@@ -34,15 +34,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
@@ -260,22 +252,37 @@ public class DefaultBlReallocationService implements BlReallocationService {
         } catch (Exception e) {
           BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in reallocation flow", e);
         }
+        if(StringUtils.isNotBlank(stock.getOrder())){
+          stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + entry.getOrderEntry().getOrder().getCode() : entry.getOrderEntry().getOrder().getCode());
+        }
+        else {
+          stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+        }
         stock.setReservedStatus(true);
-        stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
             "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
             stock.getSerialProductCode());
       });
+      Optional<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(entry.getConsignment().getOptimizedShippingEndDate())).findAny();
+      if(lastStock.isPresent()){
+        lastStock.get().setReservedStatus(false);
+      }
       this.getModelService().saveAll(serialStocks);
     }
   }
   
   @Override
-  public void removeReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus, WarehouseModel warehouse) {
-	    final Collection<StockLevelModel> serialStocks = blStockLevelDao
+  public void removeReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus, WarehouseModel warehouse, String orderCode) {
+	     Collection<StockLevelModel> serialStocks = blStockLevelDao
 	        .findSerialStockLevelsForDateAndCodesForWarehouse(serialProductCodes, startDay,
 	      		  endDay, reservedStatus, warehouse);
-	    if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
+
+        final Collection<StockLevelModel> lastSerialStock = blStockLevelDao
+            .findSerialStockLevelsForDateAndCodesForWarehouse(serialProductCodes, endDay,
+                    endDay, Boolean.FALSE, warehouse);
+    serialStocks = serialStocks.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(orderCode)).collect(Collectors.toList());
+    if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
 	        .allMatch(stock -> serialProductCodes.contains(stock.getSerialProductCode()))) {
 	      serialStocks.forEach(stock -> {
             try {
@@ -286,16 +293,48 @@ public class DefaultBlReallocationService implements BlReallocationService {
             } catch (Exception e) {
               BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in reallocate or reassign flow", e);
             }
-	        stock.setReservedStatus(false);
-	        stock.setOrder(StringUtils.EMPTY);
+
+            if(null != stock.getOrder() && stock.getOrder().split(",").length > 1){
+              String[] orders = stock.getOrder().split(",");
+              List<String> arr_new = Arrays.asList(orders);
+              List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+              stock.setOrder(String.join(",",updateOrders));
+            }
+            else{
+              stock.setOrder(StringUtils.EMPTY);
+            }
+            stock.setReservedStatus(false);
+            stock.setHardAssigned(false);
+
 	        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 	            "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
 	            stock.getSerialProductCode());
 	      });
+          Optional<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(endDay) && StringUtils.isNotBlank(stock.getOrder())).findAny();
+          if(lastStock.isPresent()){
+            lastStock.get().setReservedStatus(true);
+          }
 	      this.getModelService().saveAll(serialStocks);
 	    }
+    if (CollectionUtils.isNotEmpty(lastSerialStock) && lastSerialStock.stream()
+            .allMatch(lastStock -> serialProductCodes.contains(lastStock.getSerialProductCode()))) {
+      lastSerialStock.forEach(lastStock -> {
+        if(null != lastStock.getOrder() && lastStock.getOrder().split(",").length > 1 && lastStock.getDate().equals(endDay)){
+          lastStock.setReservedStatus(true);
+          String[] orders = lastStock.getOrder().split(",");
+          List<String> arr_new = Arrays.asList(orders);
+          List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
+          lastStock.setOrder(String.join(",",updateOrders));
+        }
+        else {
+          lastStock.setReservedStatus(false);
+          lastStock.setOrder(StringUtils.EMPTY);
+        }
+      });
+    }
+    this.getModelService().saveAll(lastSerialStock);
 	  }
-  
+
   @Override
   public boolean reAssignSerialReserveStocksForSerialProducts(Set<String> serialProductCodes, Date startDay, Date endDay, Boolean reservedStatus, WarehouseModel warehouse, String orderCode) {
 	    final Collection<StockLevelModel> serialStocks = blStockLevelDao

@@ -41,7 +41,16 @@
 					<a href="#">${fn:escapeXml(breadcrumb.name)}</a>&gt;
 			</c:when>
 			<c:otherwise>
-					<a href="${fn:escapeXml(breadcrumbUrl)}">${fn:escapeXml(breadcrumb.name)}</a>&gt;
+			    <c:choose>
+    			    <c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true'}">
+    			        <c:if test="${status.first eq 'true' && breadcrumb.name eq 'Used Gear'}">
+                            <a href="${fn:escapeXml(breadcrumbUrl)}">${fn:escapeXml(breadcrumb.name)}</a>&gt;
+    			        </c:if>
+	    		    </c:when>
+	    		    <c:otherwise>
+                        <a href="${fn:escapeXml(breadcrumbUrl)}">${fn:escapeXml(breadcrumb.name)}</a>&gt;
+	    		    </c:otherwise>
+	    		</c:choose>
 			</c:otherwise>
 		</c:choose>
 	</c:forEach>

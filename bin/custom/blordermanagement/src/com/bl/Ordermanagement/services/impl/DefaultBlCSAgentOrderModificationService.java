@@ -26,6 +26,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -246,9 +247,19 @@ public class DefaultBlCSAgentOrderModificationService implements BlCSAgentOrderM
                     }catch (Exception e){
                         BlLogger.logMessage(LOG,Level.ERROR,"Some error occur while reserve stock in creating new order entry flow",e);
                     }
+                    if(StringUtils.isNotBlank(stock.getOrder())){
+                        stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + orderEntryModel.getOrder().getCode() : orderEntryModel.getOrder().getCode());
+                    }
+                    else {
+                        stock.setOrder(orderEntryModel.getOrder().getCode());
+                    }
                     stock.setReservedStatus(true);
-                    stock.setOrder(orderEntryModel.getOrder().getCode());
+
                 });
+                Optional<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(consignment.getOptimizedShippingEndDate())).findAny();
+                if(lastStock.isPresent()){
+                    lastStock.get().setReservedStatus(false);
+                }
                 modelService.saveAll(serialStocks);
             }
         }

@@ -13,6 +13,7 @@ import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -33,11 +34,13 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcessModel> {
 
@@ -52,6 +55,7 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
     private BlAssignSerialService blAssignSerialService;
     private BlAllocationService blAllocationService;
     private BlConsignmentEntryService blConsignmentEntryService;
+    private BlStockService blStockService;
     @Resource(name = "defaultBlUserService")
     private DefaultBlUserService defaultBlUserService;
 
@@ -75,7 +79,7 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
                     consignmentEntryModel.setItems(new HashMap<>());
                     consignmentEntryModel.setSerialProducts(Collections.emptyList());
                 });
-                releaseStockForGivenSerial(olderProductCode, consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate());
+                getBlStockService().releaseStockForGivenSerial(olderProductCode, consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(), order.getCode());
                 consignmentModel.setOptimizedShippingStartDate(order.getActualRentalStartDate());
                 consignmentModel.setOptimizedShippingEndDate(order.getActualRentalEndDate());
             });
@@ -345,31 +349,6 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
         });
     }
 
-
-    private void releaseStockForGivenSerial(Set<String> productsCode, Date startDate, Date endDate) {
-        final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
-                .findALLSerialStockLevelsForDateAndCodes(productsCode, startDate,
-                        endDate);
-        if (CollectionUtils.isNotEmpty(serialStock)) {
-            serialStock.forEach(stockLevel -> {
-                try {
-                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-                            "Release stock for serial product {}, for stock date {} while modify rental date before change Hard Assign {} , reserve status {}, associated order {}"
-                                    + ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
-                            stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
-                } catch (Exception e) {
-                    BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in modify rental date flow", e);
-                }
-                stockLevel.setReservedStatus(false);
-                stockLevel.setOrder(null);
-                BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-                        "Stock status is changed to {} for the serial product {} ", stockLevel.getReservedStatus(),
-                        stockLevel.getSerialProductCode());
-            });
-            modelService.saveAll(serialStock);
-        }
-    }
-
     private boolean allUnallocatedProductsFulfilled(final AbstractOrderModel order) {
         return order.getEntries().stream().allMatch(entry ->
                 entry.getQuantity() == entry.getSerialProducts().size());
@@ -459,5 +438,12 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
 
     public void setBlConsignmentEntryService(BlConsignmentEntryService blConsignmentEntryService) {
         this.blConsignmentEntryService = blConsignmentEntryService;
+    }
+    public BlStockService getBlStockService() {
+        return blStockService;
+    }
+
+    public void setBlStockService(BlStockService blStockService) {
+        this.blStockService = blStockService;
     }
 }

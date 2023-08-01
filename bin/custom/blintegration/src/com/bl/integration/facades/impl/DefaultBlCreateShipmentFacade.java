@@ -1,9 +1,5 @@
 package com.bl.integration.facades.impl;
 
-import com.bl.core.enums.ShippingLabelTypeEnum;
-import com.bl.core.model.OptimizedShippingMethodModel;
-import com.bl.core.model.ShippingLabelHistoryModel;
-import com.google.common.collect.Lists;
 import de.hybris.platform.catalog.model.CatalogUnawareMediaModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -31,6 +27,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.bl.core.enums.CarrierEnum;
+import com.bl.core.enums.ShippingLabelTypeEnum;
+import com.bl.core.model.OptimizedShippingMethodModel;
+import com.bl.core.model.ShippingLabelHistoryModel;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.populators.BLFedExShippingDataPopulator;
@@ -39,11 +38,14 @@ import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
 import com.bl.shipment.data.UPSShipmentPackageResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fedex.ship.stub.CompletedShipmentDetail;
 import com.fedex.ship.stub.NotificationSeverityType;
 import com.fedex.ship.stub.ProcessShipmentReply;
 import com.fedex.ship.stub.ShipmentRateDetail;
 import com.fedex.ship.stub.ShipmentRating;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -77,38 +79,38 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 *
 	 * @param packagingInfo
 	 *           as Package Info
-	 * @throws IOException 
+	 * @throws IOException
 	 * @throws ParseException
 	 */
 	@Override
 	public boolean createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
-			final Map<String, Integer> sequenceMap, final boolean isSignatureRequired) throws IOException
+			final Map<String, Integer> sequenceMap, final boolean isSignatureRequired, final boolean holdAtUpsStore) throws IOException
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.UPS_SHIPMENT_MSG);
 
 		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
 		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
-		return processLabelGeneration(packagingInfo, packageCount, delivertCarrier, sequenceMap, null, isSignatureRequired);
+		return processLabelGeneration(packagingInfo, packageCount, delivertCarrier, sequenceMap, null, isSignatureRequired, holdAtUpsStore);
 	}
 
 	@Override
 	public boolean createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
 			final Map<String, Integer> sequenceMap, final CarrierEnum shippingType,
-			final OptimizedShippingMethodModel optimizedShippingMethod, final boolean isSignatureRequired) throws IOException
+			final OptimizedShippingMethodModel optimizedShippingMethod, final boolean isSignatureRequired, final boolean holdAtUpsStore) throws IOException
 	{
-		return processLabelGeneration(packagingInfo, packageCount, shippingType, sequenceMap, optimizedShippingMethod, isSignatureRequired);
+		return processLabelGeneration(packagingInfo, packageCount, shippingType, sequenceMap, optimizedShippingMethod, isSignatureRequired, holdAtUpsStore);
 	}
 
 	private boolean processLabelGeneration(final PackagingInfoModel packagingInfo, final int packageCount,
 			final CarrierEnum delivertCarrier, final Map<String, Integer> sequenceMap,
-			final OptimizedShippingMethodModel optimizedShippingMethod, final boolean isSignatureRequired) throws IOException
+			final OptimizedShippingMethodModel optimizedShippingMethod, final boolean isSignatureRequired, final boolean holdAtUpsStore) throws IOException
 	{
 		if (StringUtils.isNotBlank(delivertCarrier.getCode())
 				&& CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService()
 					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo,
-							optimizedShippingMethod, isSignatureRequired), packagingInfo);
+							optimizedShippingMethod, isSignatureRequired, holdAtUpsStore), packagingInfo);
 			if (upsResponse != null)
 			{
 				saveResponseOnOutboundPackage(upsResponse, packagingInfo, delivertCarrier, optimizedShippingMethod);
@@ -130,7 +132,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 *
 	 * @param packagingInfo
 	 *           as Package Info
-	 * @throws IOException 
+	 * @throws IOException
 	 * @throws ParseException
 	 */
 	@Override
@@ -175,6 +177,17 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	{
 		final ProcessShipmentReply masterReply = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount,
 				sequenceMap, warehouseModel);
+		try
+		{
+			final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "creating fedEx shipment response {}",
+					ow.writeValueAsString(masterReply));
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception occurred  {}", exception);
+		}
+
 
 		if (masterReply!=null && isResponseOk(masterReply.getHighestSeverity())) // check if the call was successful
 		{
@@ -249,12 +262,100 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 			packagingInfo.setInBoundTrackingNumber(trackingNumber);
 			labelTypeEnum = ShippingLabelTypeEnum.INBOUND;
 		}
+
+		//Saving the label media information for Inbound flow
+		if (labelTypeEnum.equals(ShippingLabelTypeEnum.INBOUND))
+		{
+			if (null != completedShipmentDetails.getCompletedPackageDetails())
+			{
+
+				final StringBuilder buffer = new StringBuilder();
+
+				try
+				{
+					packagingInfo.setInBoundGraphicImage(
+							completedShipmentDetails.getCompletedPackageDetails()[0].getLabel().getParts()[0].getImage().toString());
+
+					convertFedExImage(completedShipmentDetails.getCompletedPackageDetails()[0].getLabel().getParts()[0].getImage(),
+							packagingInfo, buffer);
+
+					final CatalogUnawareMediaModel createCatalogUnawareMediaModel = getBlShipmentCreationService()
+							.createCatalogUnawareMediaModel(buffer.toString(), trackingNumber, BlintegrationConstants.INBOUND_PACKAGE);
+					if (packagingInfo.getInBoundShippingMedia() != null)
+					{
+						getModelService().remove(packagingInfo.getInBoundShippingMedia());
+					}
+
+					packagingInfo.setInBoundShippingMedia(createCatalogUnawareMediaModel);
+					packagingInfo.setInBoundShippingLabel(buffer.toString());
+				}
+				catch (final Exception exception)
+				{
+					BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred when converting the graphic image for the package {} ",
+							packagingInfo.getPk().toString(), exception);
+				}
+			}
+		}
+		else
+		{
+			//Saving the label media information for Outbound flow
+
+			if (null != completedShipmentDetails.getCompletedPackageDetails())
+			{
+				final StringBuilder buffer = new StringBuilder();
+
+				try
+				{
+					packagingInfo.setOutBoundGraphicImage(
+							completedShipmentDetails.getCompletedPackageDetails()[0].getLabel().getParts()[0].getImage().toString());
+
+					convertFedExImage(completedShipmentDetails.getCompletedPackageDetails()[0].getLabel().getParts()[0].getImage(),
+							packagingInfo, buffer);
+
+					final CatalogUnawareMediaModel createCatalogUnawareMediaModel = getBlShipmentCreationService()
+							.createCatalogUnawareMediaModel(buffer.toString(), trackingNumber, BlintegrationConstants.OUTBOUND_PACKAGE);
+					if (packagingInfo.getOutBoundShippingMedia() != null)
+					{
+						getModelService().remove(packagingInfo.getOutBoundShippingMedia());
+					}
+
+					packagingInfo.setOutBoundShippingMedia(createCatalogUnawareMediaModel);
+					packagingInfo.setOutBoundShippingLabel(buffer.toString());
+				}
+				catch (final Exception exception)
+				{
+					BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred when converting the graphic image for the package {} ",
+							packagingInfo.getPk().toString(), exception);
+				}
+			}
+		}
+
 		setTotalChargesOnPackage(completedShipmentDetails.getShipmentRating(), packagingInfo);
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
 		createShippingLabelHistory(labelTypeEnum, packagingInfo, trackingNumber, StringUtils.EMPTY, StringUtils.EMPTY, null, null, null);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Tracking Id {} generated for package {}",
 				completedShipmentDetails.getMasterTrackingId().getTrackingNumber(), packagingInfo.getPackageId());
+	}
+
+	private void convertFedExImage(final byte[] image, final PackagingInfoModel packagingInfo, final StringBuilder buffer)
+	{
+		//final byte[] image = Base64.decodeBase64(graphicImage);
+		final InputStream is = new ByteArrayInputStream(image);
+		String st = null;
+		try
+		{
+			final BufferedReader br = new BufferedReader(new InputStreamReader(is));
+			while ((st = br.readLine()) != null)
+			{
+				buffer.append(st);
+			}
+		}
+		catch (final IOException e)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred when converting the graphic image for the package {} ",
+					packagingInfo.getPk().toString(), e);
+		}
 	}
 
 	/**
@@ -281,7 +382,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 *
 	 * @param upsResponse
 	 * @param packagingInfo
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void saveResponseOnInBoundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo) throws IOException
 	{
@@ -310,7 +411,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 *
 	 * @param upsResponse
 	 * @param packagingInfo
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void saveResponseOnOutboundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo, final CarrierEnum shippingType,
 			final OptimizedShippingMethodModel optimizedShippingMethod) throws IOException
