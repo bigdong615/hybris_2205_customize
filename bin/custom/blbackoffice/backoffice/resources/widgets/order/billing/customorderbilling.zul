@@ -20,20 +20,20 @@
             <div width="538px" style="text-align:end;">
                  <label sclass="oms-widget-billing-label-box" value="Total Amount Due" width="100%"
                  style="float:left; margin-left: -36px;"/>
-                 <textbox sclass="oms-widget-billing-input-text-box" readonly="true"
+                 <textbox sclass="oms-widget-billing-input-text-box" readonly="false"
                      id="totalAmountDue" width="190px" height="12px"/>
            </div>
-            <div width="100px" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
+            <div width="" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
                 <button id="createBill" label="Create Bill"
-                       sclass="y-btn-primary oms-widget-billing-configuration-button" />
+                       sclass="y-btn-info oms-widget-billing-cta-configuration-button" />
             </div>
-            <div width="100px" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
+            <div width="" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
                    <button id="deleteBill" label="Delete Bill"
-                       sclass="y-btn-primary oms-widget-billing-configuration-button" />
+                       sclass="y-btn-primary oms-widget-billing-cta-configuration-button" />
             </div>
-            <div width="100px" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
+            <div width="" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
                    <button id="capturePayment" label="Capture Payment"
-                       sclass="y-btn-primary oms-widget-billing-configuration-button" />
+                       sclass="y-btn-primary oms-widget-billing-cta-configuration-button" />
             </div>
 
   </div>
@@ -45,7 +45,7 @@
                         <combobox   xmlns:w="client" id="missingItemToolCombobox"
                            model="${each.missingItemToolCombobox}"
                            sclass="oms-widget-updateorder__template-reason"
-                           style="width:200px;">
+                           style="width:200px;" placeholder="Choose a reason">
 
                        </combobox>
                     </column>
@@ -57,7 +57,7 @@
                         </radiogroup>
                     </column>
                     <column width="371px" style="text-align:end;">
-                        <button id="sendInvoice" label="Send Invoice"
+                        <button id="sendInvoice" label="Send Invoice" target="_blank"
                         sclass="y-btn-primary oms-widget-billing-configuration-button" style="margin-bottom: 6px;margin-top: 7px;width: 50%;"/>
                     </column>
                     </columns>
@@ -74,19 +74,19 @@
                                         <checkbox id="globalCancelEntriesSelection" class="oms-widget-billing-thirdlist-container__checkbox"/>
                                                   <!-- onCheck='Clients.evalJavaScript("onOrderSelect()")' -->
                                     </column>
-                                    <column width="150px" sort="auto" sortDirection="ascending">
+                                    <column width="280px" sort="auto" sortDirection="ascending">
                                         <label value="Product Name" width="100%"/>
                                     </column>
                                     <column width="150px" style="padding-left:5px">
                                         <label value="Serial Number" width="100%"/>
                                     </column>
-                                    <column width="120px"  style="padding-left:2px">
+                                    <column width="110px"  style="padding-left:2px">
                                         <label value="Amount" width="100%"/>
                                     </column>
-                                    <column width="160px"  style="padding-left:2px">
+                                    <column width="150px"  style="padding-left:2px">
                                         <label value="Damage Waiver" width="100%"/>
                                     </column>
-                                    <column width="120px" >
+                                    <column width="110px" >
                                         <label value="Sub Total" width="100%"/>
                                     </column>
                                     <column width="30px">
@@ -95,10 +95,10 @@
                                     <column width="100px" >
                                         <label value="Processing Fee" width="100%"/>
                                     </column>
-                                    <column width="50px" >
+                                    <column width="70px" >
                                         <label value="Tax" width="100%"/>
                                     </column>
-                                    <column width="220px">
+                                    <column width="450px">
                                         <label value="Unpaid Bill Note" width="150%"/>
                                     </column>
                                 </columns>
@@ -107,7 +107,7 @@
                                         <row style="">
                                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
                                                       name="globalShippingSelectionChk" id="" visible="true"/>
-                                            <textbox value="${each.productName}" width="200px" name="name_${each.productName}"
+                                            <textbox value="${each.productName}" width="280px" name="name_${each.productName}"
                                                      readonly="true"/>
                                             <textbox value="${each.serialNo}" width="200px" name="serial_${each.serialNo}"
                                                       readonly="true"/>
@@ -121,15 +121,13 @@
                                             <textbox value="${each.subtotal}" width="200px" name="nasub_${each.subtotal}"
                                                       readonly="true"/>
                                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
-                                                      name="processingfeeSelectionChk" id="" visible="true"/>
+                                                      name="processingfeeSelectionChk" id="" visible="true" checked="${each.processingFee}"/>
                                             <textbox value="5.00" width="200px" name="nasub_${each.amount}"
                                                      readonly="true"/>
                                             <textbox value="${each.tax}" width="200px" name="tx_${each.tax}"
+                                                     readonly="false"/>
+                                            <textbox value="${each.unpaidBillNotes}" width="450px" name="unpaid_${each.unpaidBillNotes}"
                                                      readonly="true"/>
-                                            <textbox value="${each.unpaidBillNotes}" width="400px" name="unpaid_${each.unpaidBillNotes}"
-                                                     readonly="true"/>
-
-
 
                                         </row>
                                     </template>

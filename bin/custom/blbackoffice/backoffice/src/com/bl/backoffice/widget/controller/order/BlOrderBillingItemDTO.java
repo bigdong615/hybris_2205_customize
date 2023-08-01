@@ -1,6 +1,8 @@
 package com.bl.backoffice.widget.controller.order;
 
-public class BlOrderBillingItemDTO {
+import de.hybris.platform.omsbackoffice.dto.OrderEntryToCancelDto;
+
+public class BlOrderBillingItemDTO implements Comparable<BlOrderBillingItemDTO> {
 
     private String productName;
     private String serialNo;
@@ -88,5 +90,10 @@ public class BlOrderBillingItemDTO {
 
     public void setUnpaidBillNotes(String unpaidBillNotes) {
         this.unpaidBillNotes = unpaidBillNotes;
+    }
+
+    @Override
+    public int compareTo(BlOrderBillingItemDTO o) {
+        return 0;
     }
 }

@@ -35,6 +35,10 @@ background: transparent;
 margin-left: 124px;
 margin-top: 18px;
 }
+.oms-widget-billing-cta-configuration-button{
+  margin-left:10px;
+  margin-top:18px;
+}
 
 .table-scroll-cancel-popup-orderEntries {
   width:100% !important;
