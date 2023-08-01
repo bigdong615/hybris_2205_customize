@@ -22,7 +22,7 @@
                 "priceCurrency": "USD",
                 "price": "${product.price.value}"
             </c:when>
-            <c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true'}">
+            <c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true' && not empty product.serialproducts}">
                 <c:url var="offerURL" value="${jalosession.tenant.config.getParameter('website.bl.https')}/buy${product.url}"/>
                 "url": "${offerURL}",
                 "priceCurrency": "USD",
