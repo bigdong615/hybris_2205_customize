@@ -36,11 +36,6 @@
             </c:otherwise>
 	    </c:choose>
 	  },
-	  "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "<c:choose><c:when test="${product.averageRating > 0}">${product.reviewRating}</c:when><c:otherwise>0</c:otherwise></c:choose>",
-      "reviewCount": "<c:choose><c:when test="${product.numberOfReviews > 0}">${product.reviewRating}</c:when><c:otherwise>0</c:otherwise></c:choose>"
-    },
     "breadcrumbList": {
   	"@type": "BreadcrumbList",
 		  "itemListElement": [{
