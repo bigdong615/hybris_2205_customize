@@ -377,9 +377,13 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
                       sourcingResult)
           ).collect(Collectors.toSet());
       entries.forEach( consignmentEntryModel -> {
+        AbstractOrderEntryModel orderEntry = consignmentEntryModel.getOrderEntry();
+
         final Set<BlSerialProductModel> serialProductModels =
             null == result.getSerialProductMap() ? new HashSet<>() : result.getSerialProductMap()
                 .get(consignmentEntryModel.getOrderEntry().getEntryNumber());
+
+        orderEntry.setUnAllocatedQuantity(orderEntry.getQuantity()-serialProductModels.size());
         reserveStocksForSerialProductsThroughReshuffler(serialProductModels, consignmentEntryModel);
       });
       entries.addAll(consignment.getConsignmentEntries());
@@ -441,6 +445,7 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
           serialProducts.add((BlSerialProductModel) serial);
         }
       });
+      orderEntry.setUnAllocatedQuantity(orderEntry.getUnAllocatedQuantity() - Long.valueOf(serialProducts.size()));
       orderEntry.setSerialProducts(new ArrayList<>(serialProducts));
       entry.setQuantity(Long.valueOf(serialProducts.size()));
       entry.setSerialProducts(

@@ -13,11 +13,11 @@ import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -27,29 +27,18 @@ import de.hybris.platform.tx.Transaction;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * It is to allocate the unallocated products
@@ -59,6 +48,9 @@ import org.apache.log4j.Logger;
 public class DefaultBlReshufflerService implements BlReshufflerService {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlReshufflerService.class);
+  private final List<SerialStatusEnum> repairStatus = Arrays.asList(SerialStatusEnum.REPAIR, SerialStatusEnum.REPAIR_NEEDED, SerialStatusEnum.REPAIR_AWAITING_QUOTES, SerialStatusEnum.REPAIR_PARTS_NEEDED, SerialStatusEnum.REPAIR_SEND_TO_VENDOR, SerialStatusEnum.REPAIR_IN_HOUSE);
+
+
   private BlOrderDao orderDao;
   private BlCommerceStockService blCommerceStockService;
   private BaseStoreService baseStoreService;
@@ -68,6 +60,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
   private BlStockLevelDao blStockLevelDao;
   private BlProductService blProductService;
   private BlOptimizeShippingFromWHService blOptimizeShippingFromWHService;
+  private BlStockService blStockService;
 
   /**
    * {@inheritDoc}
@@ -161,43 +154,70 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                     .getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
             //Get all warehouses
             final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
-            //It filters the orders which needs to be processed and ignore the orders which contains the SKU (when total number
-            // of sku needed for orders, will ship on same day, is not sufficient to fulfill from main and buffer inventory
-          final Map<AbstractOrderModel, Set<String>> filteredOrdersForSoftAssignSerialInRepair =filterOrdersForProcessingSoftAssignedSerials(finalSortedOrders);
-            final Map<AbstractOrderModel, Set<String>> filteredOrderForLateSerial = filterOrdersForProcessingLateSerials(
-                    finalSortedOrders, warehouses, currentDate);
-            filteredOrderForLateSerial.putAll(filteredOrdersForSoftAssignSerialInRepair);
-            processOrders(filteredOrderForLateSerial, warehouses);
+           // Filter order which serial either late or repair status.
+          final Map<AbstractOrderModel, Set<String>> mapOfRepairAndLateOrders =  filterRepairAndLateProduct(finalSortedOrders);
+            processOrders(mapOfRepairAndLateOrders, warehouses);
         }
     }
 
-  private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessingSoftAssignedSerials(List<AbstractOrderModel> todayOrdersToBeProcessed) {
-    Map<AbstractOrderModel, Set<String>> mapOfRepairOrders = new HashMap<>();
-    for (AbstractOrderModel order: todayOrdersToBeProcessed) {
-      Set<String> productSet = new HashSet<>();
-      for(AbstractOrderEntryModel entryModel: order.getEntries())
-      {
-        if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
-          for (BlProductModel productModel : entryModel.getSerialProducts()) {
-            if (productModel instanceof BlSerialProductModel) {
-              BlSerialProductModel serialProductModel = (BlSerialProductModel) productModel;
-              if (serialProductModel.getSoftAssigned() && (serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_NEEDED) ||
-                      serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_AWAITING_QUOTES) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_PARTS_NEEDED) || serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_SEND_TO_VENDOR) ||
-                      serialProductModel.getSerialStatus().equals(SerialStatusEnum.REPAIR_IN_HOUSE))) {
-                entryModel.setSerialProducts(Collections.emptyList());
-                productSet.add(entryModel.getProduct().getCode());
-                modelService.save(entryModel);
-                break;
+  /**
+   * This method used to filter order which serial is either late or repair status.
+   * @param todayOrdersToBeProcessed
+   * @return
+   */
+  private Map<AbstractOrderModel, Set<String>> filterRepairAndLateProduct(List<AbstractOrderModel> todayOrdersToBeProcessed) {
+    Map<AbstractOrderModel, Set<String>> mapOfRepairAndLateOrders = new HashMap<>();
+    for (AbstractOrderModel order : todayOrdersToBeProcessed) {
+      final Set<String> productSet = new HashSet<>();
+      for (AbstractOrderEntryModel entryModel : order.getEntries()) {
+        if (CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
+          final List<BlProductModel> repairAndLateSerials = new ArrayList<>();
+          final List<BlProductModel> remainingSerials = new ArrayList<>();
+          entryModel.getSerialProducts().forEach(blProductModel -> {
+            if (blProductModel instanceof BlSerialProductModel) {
+              final BlSerialProductModel serialProductModel = (BlSerialProductModel) blProductModel;
+              if ((serialProductModel.getSoftAssigned() && repairStatus.contains(serialProductModel.getSerialStatus())) || (serialProductModel.getSerialStatus().equals(SerialStatusEnum.LATE))) {
+                repairAndLateSerials.add(serialProductModel);
+              } else {
+                remainingSerials.add(serialProductModel);
               }
             }
+          });
+          if (CollectionUtils.isNotEmpty(repairAndLateSerials)) {
+            releaseStockAndUpdateEntry(entryModel, repairAndLateSerials, remainingSerials);
+            entryModel.setSerialProducts(Collections.emptyList());
+            entryModel.setUnAllocatedQuantity(entryModel.getQuantity());
+            productSet.add(entryModel.getProduct().getCode());
           }
         }
       }
-      if (!productSet.isEmpty()){
-        mapOfRepairOrders.put(order, productSet);
+      if (!productSet.isEmpty()) {
+        mapOfRepairAndLateOrders.put(order, productSet);
       }
     }
-    return mapOfRepairOrders;
+    return mapOfRepairAndLateOrders;
+  }
+
+  private void releaseStockAndUpdateEntry(AbstractOrderEntryModel entryModel, List<BlProductModel> repairAndLateSerials, List<BlProductModel> remainingSerials) {
+    entryModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
+      Set<BlProductModel> inActiveSerial = consignmentEntryModel.getSerialProducts().stream().filter(blProductModel -> repairAndLateSerials.contains(blProductModel)).collect(Collectors.toSet());
+      Set<BlProductModel> activeSerial = consignmentEntryModel.getSerialProducts().stream().filter(blProductModel -> remainingSerials.contains(blProductModel)).collect(Collectors.toSet());
+
+      final Set<String> serialCodes = new HashSet<>();
+      inActiveSerial.forEach(serial ->{
+        serialCodes.add(serial.getCode());
+        getBlStockService().removeOrderFromStock(serialCodes,((BlSerialProductModel)serial).getSerialStatus(), consignmentEntryModel.getConsignment().getOptimizedShippingStartDate(), consignmentEntryModel.getConsignment().getOptimizedShippingEndDate(), entryModel.getOrder().getCode());
+      serialCodes.removeAll(serialCodes);
+      });
+
+      activeSerial.forEach(productModel -> serialCodes.add(productModel.getCode()));
+      if (!serialCodes.isEmpty()) {
+        getBlStockService().releaseStockForGivenSerial(serialCodes, consignmentEntryModel.getConsignment().getOptimizedShippingStartDate(), consignmentEntryModel.getConsignment().getOptimizedShippingEndDate(), entryModel.getOrder().getCode());
+      }
+      consignmentEntryModel.setConsignmentEntryStatus(new HashMap<>());
+      consignmentEntryModel.setItems(new HashMap<>());
+      consignmentEntryModel.setSerialProducts(Collections.emptyList());
+    });
   }
 
   /**
@@ -226,6 +246,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
           BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while fulfilling the order", ex);
         } finally {
           if(fulfillmentCompleted){
+            modelService.saveAll(entry.getKey().getEntries());
             tx.commit();
             BlLogger.logFormatMessageInfo(LOG, Level.INFO,
                 "Order fulfillment is successful for the order {} ", entry.getKey().getCode());
@@ -693,34 +714,6 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     return ordersWithUnallocatedProducts;
   }
 
-
-    private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessingLateSerials(final List<AbstractOrderModel> todayOrdersToBeProcessed,
-                                                                           final List<WarehouseModel> warehouses, final Date currentDate) {
-
-    Map<AbstractOrderModel, Set<String>> mapOfLateOrders = new HashMap<>();
-    for (AbstractOrderModel order: todayOrdersToBeProcessed) {
-      Set<String> productSet = new HashSet<>();
-            for(AbstractOrderEntryModel entryModel: order.getEntries())
-            {
-                if(CollectionUtils.isNotEmpty(entryModel.getSerialProducts())) {
-                  for (BlProductModel serialProductModel : entryModel.getSerialProducts()) {
-                    if (serialProductModel instanceof BlSerialProductModel && ((BlSerialProductModel) serialProductModel).getSerialStatus().equals(SerialStatusEnum.LATE)) {
-                        entryModel.setSerialProducts(Collections.emptyList());
-                        productSet.add(entryModel.getProduct().getCode());
-                        modelService.save(entryModel);
-                        modelService.refresh(order);
-                       break;
-                    }
-                  }
-                }
-            }
-         if (!productSet.isEmpty()){
-          mapOfLateOrders.put(order, productSet);
-          }
-        }
-    return mapOfLateOrders;
-    }
-
   public BlOrderDao getOrderDao() {
     return orderDao;
   }
@@ -802,6 +795,13 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
   public void setBlOptimizeShippingFromWHService(
       BlOptimizeShippingFromWHService blOptimizeShippingFromWHService) {
     this.blOptimizeShippingFromWHService = blOptimizeShippingFromWHService;
+  }
+  public BlStockService getBlStockService() {
+    return blStockService;
+  }
+
+  public void setBlStockService(BlStockService blStockService) {
+    this.blStockService = blStockService;
   }
 
 }

@@ -119,6 +119,9 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	@Wire
 	private Textbox pickUpPersonPhone;
 
+	@Wire
+	private Combobox isSignatureRequired;
+
 	private OrderModel orderModel;
 
 	private transient ModelService modelService;
@@ -151,6 +154,8 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 	private ListModelList isPickupStore = new ListModelList();
 	private ListModelList isUpsStore = new ListModelList();
+
+	private ListModelList signatureRequired = new ListModelList();
 
 	private final List<RegionData> blRegionCode = i18NFacade.getRegionsForCountryIso(BlInventoryScanLoggingConstants.COUNTRY_CODE);
 
@@ -204,6 +209,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		isPickupStore();
 
 		isUpsStore();
+		isSignatureRequired();
 
 		getBlRegionData(blRegionCode);
 
@@ -254,6 +260,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		validateZipCodeForDelivery(sameDayCityReqData);
 		isPickupStore();
 		isUpsStore();
+		isSignatureRequired();
 	}
 
 	/**
@@ -424,6 +431,9 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		getOrderModel().getDeliveryAddress().setPickStoreAddress(
 				"true".equalsIgnoreCase(this.isUPSStoreAddress.getValue().trim()) ? Boolean.TRUE : Boolean.FALSE);
 
+		getOrderModel().getDeliveryAddress().setSignatureRequired(
+				"true".equalsIgnoreCase(this.isSignatureRequired.getValue().trim()) ? Boolean.TRUE : Boolean.FALSE);
+
 		modelService.save(addressModel);
 		modelService.refresh(addressModel);
 		orderModel.setOrderModifiedDate(new Date());
@@ -566,6 +576,30 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		regionCombobox.setModel(listModelList);
 	}
 
+
+	/**
+	 * This method is called when we will change the value of isSignatureRequired
+	 */
+	@ViewEvent(componentID = "isSignatureRequired", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
+	public void signatureRequired()
+	{
+		signatureRequired.addToSelection(this.isSignatureRequired.getValue());
+	}
+
+	/**
+	 * This method is used to check isSignatureRequired or not
+	 */
+	private void isSignatureRequired()
+	{
+		signatureRequired = new ListModelList<>(getBooleanValueList());
+
+		final boolean isSignatureRequiredSelected = getOrderModel().getDeliveryAddress().isSignatureRequired()
+				? signatureRequired.addToSelection(Boolean.TRUE)
+				: signatureRequired.addToSelection(Boolean.FALSE);
+		isSignatureRequired.setModel(signatureRequired);
+
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "isSignatureRequiredSelected {}", isSignatureRequiredSelected);
+	}
 
 	/**
 	 * This method is used to get region date on popup
