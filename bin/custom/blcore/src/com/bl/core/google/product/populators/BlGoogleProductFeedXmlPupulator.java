@@ -34,6 +34,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 {
 	private static final Logger LOG = Logger.getLogger(BlGoogleProductFeedXmlPupulator.class);
 	public static final String BL_WEBSITE_BASE_URL = "website.bl.https";
+	public static final String SITE_CURRENCY = " USD";
 	private DefaultBlDeliveryModeService blDeliveryModeService;
 	private ModelService modelService;
 	private BlStockService blStockService;
@@ -93,10 +94,10 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 				item.setGtin(product.getUpc());
 			}
 
-			item.setPrice(getSerialPrice(product));
+			item.setPrice(getSerialPrice(product) + SITE_CURRENCY);
 			shipping.setCountry("US");
 			final double price = getShippingPrice(product);
-			shipping.setPrice(String.valueOf(price));
+			shipping.setPrice(String.valueOf(price) + SITE_CURRENCY);
 			item.setShipping(shipping);
 			items.add(item);
 		}
