@@ -119,9 +119,8 @@ public class DefaultBlStockService implements BlStockService
 		final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(blSerialProduct);
 		if (CollectionUtils.isEmpty(stockLevels))
 		{
-				Stream.iterate(currentDate, date -> date.plusDays(1)).limit(ChronoUnit.DAYS.between(currentDate, formattedEndDate))
-						.forEach(date -> createStockLevelForSerial(blSerialProduct,
-								Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())));
+			Stream.iterate(currentDate, date -> date.plusDays(1)).limit(ChronoUnit.DAYS.between(currentDate, formattedEndDate))
+					.forEach(date -> findAndCreateStockLevelForSerial(blSerialProduct,date));
 		}
 		else
 		{
@@ -600,8 +599,14 @@ public class DefaultBlStockService implements BlStockService
 				if (null != serial.getSerialStatus() && !((SerialStatusEnum.COMING_FROM_PURCHASE).equals(serial.getSerialStatus()))
 						&& null != serial.getWarehouseLocation() && !SerialStatusEnum.STOLEN.equals(serial.getSerialStatus()))
 				{
-					final Date stockDate = Boolean.FALSE.equals(serial.getForRent()) ? null : date;
-					createStockLevelForSerial(serial, stockDate);
+					if (Boolean.FALSE.equals(serial.getForRent()))
+					{
+						findAndCreateStockLevelForUsedGearSerial(serial);
+					}
+					else
+					{
+						findAndCreateStockLevelForSerial(serial, date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+					}
 				}
 			}
 		}
