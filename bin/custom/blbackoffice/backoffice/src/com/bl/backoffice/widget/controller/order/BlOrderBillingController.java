@@ -124,7 +124,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 .getLabel(MISSING_ITEM_TOOL)).append(
                 this.getOrderModel().getCode()).toString());
         getMissingItemReasons();
-        DisableOrEnableFields(Boolean.TRUE);
+        disableOrEnableFields(Boolean.TRUE);
 
     }
 
@@ -164,7 +164,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
         this.orderEntriesForBilling = new ArrayList<>();
         this.billingChargesReason.addToSelection(this.missingItemToolCombobox.getValue());
         initializePopupRequiredFields(getOrderModel());
-        DisableOrEnableFields(Boolean.FALSE);
+        disableOrEnableFields(Boolean.FALSE);
         this.totalAmountDueDouble.setValue(0.0d);
         this.globalProcessingFeeChkbox.setChecked(Boolean.FALSE);
         this.globalBillEntriesSelection.setChecked(Boolean.FALSE);
@@ -177,7 +177,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
         final AtomicDouble lineItemTotals = new AtomicDouble(0.0d);
         for (final Component row : this.getOrderEntriesGridRows()) {
             if (((Checkbox) row.getChildren().iterator().next()).isChecked()) {
-                final String amountDue =  ((Textbox)row.getChildren().get(3)).getValue();
+                final String amountDue =  ((Textbox)row.getChildren().get(5)).getValue();
                 final String processingFee = ((Textbox)row.getChildren().get(7)).getValue();
                 final String tax = ((Textbox)row.getChildren().get(8)).getValue();
                 if (((Checkbox) row.getChildren().get(6)).isChecked()) {
@@ -269,7 +269,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
     {
         if(itemDTO.isDamageWaiver()== Boolean.TRUE)
         {
-            itemDTO.setSubtotal(itemDTO.getAmount() + itemDTO.getAmount() * 12/100);
+            itemDTO.setSubtotal(itemDTO.getAmount() * 12/100);
         }
         else
         {
@@ -324,7 +324,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
         itemDTO.setUnpaidBillNotes(missingItemToolCombobox.getValue() + " "+ itemDTO.getProductName() + " - " + "Serial# " + serialProduct.getCode());
     }
 
-    private void DisableOrEnableFields(Boolean b)
+    private void disableOrEnableFields(Boolean b)
     {
         this.createBill.setDisabled(b);
         this.deleteBill.setDisabled(b);
@@ -383,7 +383,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
                 List<String> unPaidBillNotes = new ArrayList<>();
                 for(Component billNotes : checkedEntries){
-                    unPaidBillNotes.add((((InputElement) billNotes.getChildren().get(9)).getText())); //processingFee.add(new BigDecimal(((InputElement) fee.getChildren().get(7)).getText()));
+                    unPaidBillNotes.add((((InputElement) billNotes.getChildren().get(9)).getText()));
                 }
                 billingChargeModel.setUnPaidBillingNotes(unPaidBillNotes);
 
@@ -392,6 +392,17 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 billingChargeModel.setChargedAmount(totalAmount);
                 getModelService().save(billingChargeModel);
                 getModelService().refresh(this.getOrderModel());
+                final CustomerModel customerModel = (CustomerModel) this.getOrderModel().getUser();
+                List<BlItemsBillingChargeModel> billModels = new ArrayList<>();
+                if(!CollectionUtils.isEmpty(customerModel.getOutstandingBills())){
+                    billModels.addAll(customerModel.getOutstandingBills());
+                    billModels.add(billingChargeModel);
+                }
+                else {
+                    billModels = Arrays.asList(billingChargeModel);
+                }
+                customerModel.setOutstandingBills(billModels);
+                getModelService().save(customerModel);
                 Messagebox.show("Successfully created the bill for order " + "" + this.getOrderModel().getCode()  , "SUCCESS", Messagebox.OK, Messagebox.INFORMATION);
 
             }
@@ -401,7 +412,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
         }
         catch (ModelSavingException exception) {
-            System.out.println("unable to save bcz " + exception);
+            BlLogger.logMessage(LOG , Level.ERROR , "Error while saving the Billing model for order {} due to {} " , this.getOrderModel().getCode(),exception);
         }
 
     }
@@ -431,12 +442,10 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
         String orderCode = this.getOrderModel().getCode();
         String paymentInfoId = String.valueOf(this.getOrderModel().getPaymentInfo().getOriginal().getPk());
-        // = request.getParameter("paymentId");
         String paymentMethodNonce = ((BrainTreePaymentInfoModel) this.getOrderModel().getPaymentInfo()).getNonce();
-        // = request.getParameter("paymentNonce");
-        String billPayTotal = this.totalAmountDue;//request.getParameter("payBillTotal");
-        String poNumber = ""; //request.getParameter("extendPoNumber");
-        String poNotes = "";//request.getParameter("extendPoNotes");
+        String billPayTotal = this.totalAmountDue;
+        String poNumber = "";
+        String poNotes = "";
 
         boolean isSuccess = false;
         double payBillAmount = Double.parseDouble(billPayTotal);
@@ -450,21 +459,9 @@ public class BlOrderBillingController extends DefaultWidgetController {
             if (isSuccess) {
                 try {
                     blOrderFacade.setResolvedStatusOnRepairLog(orderCode);
-                    final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
-                    //order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
-                    //PriceData payBillTotal = convertDoubleToPriceData(payBillAmount, order);
-                    //orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
-                    //model.addAttribute(ORDER_DATA, orderDetails);
-                    final Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+                    final Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setOrderPayBillFlagTrue(order);
                     blEspEventService.triggerBillPaidEspEvent(billPayTotal, billingChargeTypeMap, (OrderModel) order);
-                    //final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
-                    //BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
-                    //storeCmsPageInModel(model, payBillSuccessPage);
-                    // setUpMetaDataForContentPage(model, payBillSuccessPage);
-                    //model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
-                    //ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
-                    //return getViewForPage(model);
-                    Messagebox.show("Payment capture button clicked.", "SUCCESS", Messagebox.OK, Messagebox.INFORMATION);
+                    Messagebox.show("Payment capture done.", "SUCCESS", Messagebox.OK, Messagebox.INFORMATION);
                 }
                 catch (final Exception e) {
                     BlLogger.logMessage(LOG , Level.ERROR , "Error while executing getPayBillDetailsForOrder " , e);
@@ -472,10 +469,9 @@ public class BlOrderBillingController extends DefaultWidgetController {
             }
             else {
                 Messagebox.show("Payment capture button clicked.", "ERROR", Messagebox.OK, Messagebox.ERROR);
-                //return REDIRECT_PREFIX + MY_ACCOUNT + orderCode + PAY_BILL;
+
             }
-            //return REDIRECT_PREFIX + MY_ACCOUNT + orderCode + PAY_BILL;
-            Messagebox.show("Payment capture button clicked.", "ERROR", Messagebox.OK, Messagebox.ERROR);
+                Messagebox.show("Payment capture button clicked.", "ERROR", Messagebox.OK, Messagebox.ERROR);
 
         }
     }
@@ -509,10 +505,6 @@ public class BlOrderBillingController extends DefaultWidgetController {
             }
             return isSuccess;
         }
-    }
-
-    private PriceData convertDoubleToPriceData(final Double price , final AbstractOrderModel orderModel) {
-        return priceDataFactory.create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
     }
 
     @ViewEvent(componentID = "sendInvoice", eventName = "onClick")
