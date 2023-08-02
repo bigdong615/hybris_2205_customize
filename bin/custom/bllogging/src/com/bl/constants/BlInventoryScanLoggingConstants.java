@@ -390,6 +390,10 @@ public class BlInventoryScanLoggingConstants {
 	 public static final String SUCCESS_SERIAL = "succesfully_scan_serial";
 	 public static final String PACKAGE_SCAN_ERROR_KEY = "blbackoffice.package.scan.error.message";
 
+     public static final String ON_CHECK = "onCheck";
+
+    public static final String ORDER_BILL_SPLIT_STRING = "_damageWaiver";
+
 
     private BlInventoryScanLoggingConstants() { }
 

@@ -1,8 +1,6 @@
 package com.bl.backoffice.widget.controller.order;
 
-import de.hybris.platform.omsbackoffice.dto.OrderEntryToCancelDto;
-
-public class BlOrderBillingItemDTO implements Comparable<BlOrderBillingItemDTO> {
+public class BlOrderBillingItemDTO implements Comparable<BlOrderBillingItemDTO>{
 
     private String productName;
     private String serialNo;

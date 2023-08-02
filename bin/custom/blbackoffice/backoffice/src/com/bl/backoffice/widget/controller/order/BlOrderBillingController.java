@@ -1,6 +1,6 @@
 package com.bl.backoffice.widget.controller.order;
 
-
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.enums.BillInfoStatus;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
@@ -8,28 +8,30 @@ import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.logging.BlLogger;
+import com.bl.tax.populators.BlTaxServiceRequestPopulator;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.google.common.util.concurrent.AtomicDouble;
 import com.hybris.backoffice.i18n.BackofficeLocaleService;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
-import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
@@ -38,6 +40,7 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.*;
 import org.zkoss.zul.impl.InputElement;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -45,21 +48,63 @@ import java.util.stream.Collectors;
 
 public class BlOrderBillingController extends DefaultWidgetController {
 
-    private static final Logger LOGGER = Logger.getLogger(BlOrderBillingController.class);
-
+    private static final Logger LOG = Logger.getLogger(BlOrderBillingController.class);
     private static final String IN_SOCKET = "inputObject";
     private OrderModel orderModel;
     @Wire
     private Combobox missingItemToolCombobox;
-    private List<String> billingChargesReason = new ArrayList<>();
+
+    @Wire
+    private Checkbox globalBillEntriesSelection;
+
+    @Wire
+    private Doublebox totalAmountDueDouble;
+
+    @Wire
+    private Button createBill;
+
+    @Wire
+    private Button deleteBill;
+
+    @Wire
+    private Button capturePayment;
+
+    @Wire
+    private Button sendInvoice;
+
+    @Wire
+    private Radio billPaidTrue;
+
+    @Wire
+    private Radio billPaidFalse;
+
+    @Wire
+    private Checkbox globalProcessingFeeChkbox;
+
+    @Wire
+    private Textbox selectedProduct;
+
+    @Wire
+    private Textbox selectedProcessingFee;
+
+
+    private ListModelList billingChargesReason = new ListModelList();
+
     @WireVariable
     private transient EnumerationService enumerationService;
     @WireVariable
     private transient BackofficeLocaleService cockpitLocaleService;
     @Wire
     private Grid orderEntries;
+
     @WireVariable
     private transient ModelService modelService;
+
+    private static final String MISSING_ITEM_TOOL = "customersupportbackoffice.billing.widget.title";
+    private transient List<BlOrderBillingItemDTO> orderEntriesForBilling;
+
+    private final Set<BlProductModel> allSerialProducts = new HashSet<>();
+
     private String totalAmountDue;
 
     private transient BlOrderFacade blOrderFacade;
@@ -68,24 +113,19 @@ public class BlOrderBillingController extends DefaultWidgetController {
     private transient BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private transient PriceDataFactory priceDataFactory;
     private transient DefaultBlESPEventService blEspEventService;
-
-    private static final String MISSING_ITEM_TOOL = "customersupportbackoffice.billing.widget.title";
-    private transient List<BlOrderBillingItemDTO> orderEntriesForBilling;
     private static final int DECIMAL_PRECISION = 2;
     private transient BrainTreeTransactionService brainTreeTransactionService;
 
 
-
     @SocketEvent(socketId = IN_SOCKET)
-    public void initPartialRefundForm(final OrderModel inputOrder) {
+    public void initOrderBillingForm(final OrderModel inputOrder) {
         this.setOrderModel(inputOrder);
         this.getWidgetInstanceManager().setTitle(new StringBuilder(this.getWidgetInstanceManager()
                 .getLabel(MISSING_ITEM_TOOL)).append(
                 this.getOrderModel().getCode()).toString());
         getMissingItemReasons();
-        this.initializePopupRequiredFields(inputOrder);
-        this.getOrderEntries().setModel(new ListModelList<>(this.orderEntriesForBilling));
-        this.getOrderEntries().renderAll();
+        DisableOrEnableFields(Boolean.TRUE);
+
     }
 
     private void getMissingItemReasons() {
@@ -96,6 +136,64 @@ public class BlOrderBillingController extends DefaultWidgetController {
         this.missingItemToolCombobox.setModel(new ListModelArray<>(this.billingChargesReason));
     }
 
+    /**
+     * This method is called when we will change the value of missingItemToolCombobox
+     */
+    @ViewEvent(componentID = "globalBillEntriesSelection", eventName = BlInventoryScanLoggingConstants.ON_CHECK)
+    public void checkGlobalBillEntriesSelection() {
+        applyToGridBillEntriesSelection();
+        calculateLineItemTotalAmountDue();
+    }
+
+    /**
+     * This method is called when we will change the value of missingItemToolCombobox
+     */
+    @ViewEvent(componentID = "globalProcessingFeeChkbox", eventName = BlInventoryScanLoggingConstants.ON_CHECK)
+    public void checkGlobalProcessingFeeSelection() {
+        applyToGridProcessingFeeSelection();
+        calculateLineItemTotalAmountDue();
+    }
+
+    /**
+     * This method is called when we will change the value of missingItemToolCombobox
+     */
+    @ViewEvent(componentID = "missingItemToolCombobox", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
+    public void changedMissingItemToolCombobox()
+    {
+        getModelService().refresh(orderModel);
+        this.orderEntriesForBilling = new ArrayList<>();
+        this.billingChargesReason.addToSelection(this.missingItemToolCombobox.getValue());
+        initializePopupRequiredFields(getOrderModel());
+        DisableOrEnableFields(Boolean.FALSE);
+        this.totalAmountDueDouble.setValue(0.0d);
+        this.globalProcessingFeeChkbox.setChecked(Boolean.FALSE);
+        this.globalBillEntriesSelection.setChecked(Boolean.FALSE);
+        this.getOrderEntries().setModel(new ListModelList<>(this.orderEntriesForBilling));
+        this.getOrderEntries().renderAll();
+
+    }
+
+    private void calculateLineItemTotalAmountDue() {
+        final AtomicDouble lineItemTotals = new AtomicDouble(0.0d);
+        for (final Component row : this.getOrderEntriesGridRows()) {
+            if (((Checkbox) row.getChildren().iterator().next()).isChecked()) {
+                final String amountDue =  ((Textbox)row.getChildren().get(3)).getValue();
+                final String processingFee = ((Textbox)row.getChildren().get(7)).getValue();
+                final String tax = ((Textbox)row.getChildren().get(8)).getValue();
+                if (((Checkbox) row.getChildren().get(6)).isChecked()) {
+                    lineItemTotals.addAndGet(Double.parseDouble(amountDue) + Double.parseDouble(processingFee) + Double.parseDouble(tax));
+                }
+                else {
+                    lineItemTotals.addAndGet(Double.parseDouble(amountDue) + Double.parseDouble(tax));
+                }
+            }
+        }
+
+        this.totalAmountDueDouble.setValue(lineItemTotals.doubleValue());
+    }
+
+
+
     private void initializePopupRequiredFields(OrderModel inputOrder) {
         this.orderEntriesForBilling = new ArrayList<>();
 
@@ -105,17 +203,142 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 itemDTO.setProductName(abstractOrderEntryModel.getProduct().getName());
                 itemDTO.setSerialNo(serialProduct.getCode());
                 itemDTO.setAmount(((BlProductModel) abstractOrderEntryModel.getProduct()).getRetailPrice() !=null ? ((BlProductModel) abstractOrderEntryModel.getProduct()).getRetailPrice() : 0.0);
-                itemDTO.setDamageWaiver(abstractOrderEntryModel.getGearGuardProFullWaiverSelected());
-                Double subtotal = ((BlProductModel) abstractOrderEntryModel.getProduct()).getRetailPrice() !=null ? ((BlProductModel) abstractOrderEntryModel.getProduct()).getRetailPrice() * 12/100 : 0.0 ;
-                itemDTO.setSubtotal(subtotal);
-                itemDTO.setProcessingFee(Boolean.TRUE);
-                itemDTO.setTax(24.05);
-                itemDTO.setUnpaidBillNotes("Missing Item " + abstractOrderEntryModel.getProduct().getName() + " - " + "Serial# " + serialProduct.getCode());
+                setDamageWaiver(itemDTO,abstractOrderEntryModel);
+                setSubTotal(itemDTO);
+                setProcessingFee(itemDTO);
+                itemDTO.setTax(22.5);
+                setUnpaidBillNotes(itemDTO,serialProduct);
+                setSerialProductCodes(serialProduct);
                 this.orderEntriesForBilling.add(itemDTO);
 
             });
         });
 
+    }
+    @ViewEvent(componentID = "selectedProduct", eventName = "onChange")
+    public void billSelectedProduct()
+    {
+
+        final String[] selctedCheckBoxArray = this.selectedProduct.getValue().split(BlInventoryScanLoggingConstants.ORDER_BILL_SPLIT_STRING);
+        if( this.selectedProduct != null && this.selectedProduct.getValue().contains(BlInventoryScanLoggingConstants.ORDER_BILL_SPLIT_STRING)) {
+            for (final BlOrderBillingItemDTO orderBillingItemDTO : this.orderEntriesForBilling) {
+                if (orderBillingItemDTO.getSerialNo().equals(selctedCheckBoxArray[0])) {
+                    setSubTotal(orderBillingItemDTO);
+                }
+            }
+
+        }
+        calculateLineItemTotalAmountDue();
+
+    }
+
+    private void setDamageWaiver(BlOrderBillingItemDTO itemDTO, AbstractOrderEntryModel abstractOrderEntryModel)
+    {
+        String selectedBillingChargesReason= missingItemToolCombobox.getValue();
+        if(selectedBillingChargesReason!=null || !selectedBillingChargesReason.isEmpty())
+        {
+            if(selectedBillingChargesReason.equals("MISSING CHARGE"))
+            {
+                if(abstractOrderEntryModel.getGearGuardProFullWaiverSelected() ==Boolean.TRUE)
+                {
+                    itemDTO.setDamageWaiver(Boolean.TRUE);
+                }
+
+            }
+            else if(selectedBillingChargesReason.equals("REPAIR CHARGE")
+                    || selectedBillingChargesReason.equals("CUSTOMER RESPONSIBLE REPAIRS"))
+            {
+                if(abstractOrderEntryModel.getGearGuardWaiverSelected()== Boolean.TRUE)
+                {
+                    itemDTO.setDamageWaiver(Boolean.TRUE);
+                }
+
+            }
+            else if(abstractOrderEntryModel.getNoDamageWaiverSelected() == Boolean.TRUE)
+            {
+                itemDTO.setDamageWaiver(Boolean.FALSE);
+            }
+            else
+            {
+                itemDTO.setDamageWaiver(Boolean.TRUE);
+            }
+        }
+    }
+
+    private void setSubTotal(BlOrderBillingItemDTO itemDTO)
+    {
+        if(itemDTO.isDamageWaiver()== Boolean.TRUE)
+        {
+            itemDTO.setSubtotal(itemDTO.getAmount() + itemDTO.getAmount() * 12/100);
+        }
+        else
+        {
+            itemDTO.setSubtotal(itemDTO.getAmount());
+        }
+    }
+
+    private void setProcessingFee(BlOrderBillingItemDTO itemDTO)
+    {
+        itemDTO.setProcessingFee(Boolean.TRUE);
+    }
+
+    /**
+     * Apply to grid.
+     *
+     *
+     */
+    private void applyToGridBillEntriesSelection() {
+        for (final Component row : this.getOrderEntriesGridRows()) {
+            if (this.globalBillEntriesSelection.isChecked() == Boolean.TRUE) {
+                ((Checkbox) row.getChildren().iterator().next()).setChecked(Boolean.TRUE);
+            } else {
+                ((Checkbox) row.getChildren().iterator().next()).setChecked(Boolean.FALSE);
+            }
+        }
+    }
+
+    private void applyToGridProcessingFeeSelection()
+    {
+        for (final Component row : this.getOrderEntriesGridRows()) {
+            if(this.globalProcessingFeeChkbox.isChecked() == Boolean.TRUE) {
+                ((Checkbox) row.getChildren().get(6)).setChecked(Boolean.TRUE);
+            }
+            else {
+                ((Checkbox) row.getChildren().get(6)).setChecked(Boolean.FALSE);
+            }
+        }
+    }
+
+    /**
+     * Gets order entries grid rows.
+     *
+     * @return the order entries grid rows
+     */
+    private List<Component> getOrderEntriesGridRows()
+    {
+        return this.getOrderEntries().getRows().getChildren();
+    }
+
+    private void setUnpaidBillNotes(BlOrderBillingItemDTO itemDTO,BlProductModel serialProduct)
+    {
+        itemDTO.setUnpaidBillNotes(missingItemToolCombobox.getValue() + " "+ itemDTO.getProductName() + " - " + "Serial# " + serialProduct.getCode());
+    }
+
+    private void DisableOrEnableFields(Boolean b)
+    {
+        this.createBill.setDisabled(b);
+        this.deleteBill.setDisabled(b);
+        this.capturePayment.setDisabled(b);
+        this.sendInvoice.setDisabled(b);
+        this.billPaidFalse.setDisabled(b);
+        this.billPaidTrue.setDisabled(b);
+        this.globalProcessingFeeChkbox.setDisabled(b);
+        this.globalBillEntriesSelection.setDisabled(b);
+    }
+
+    private void setSerialProductCodes(BlProductModel serialProduct)
+    {
+        this.allSerialProducts.add(serialProduct);
     }
 
     @ViewEvent(componentID = "createBill", eventName = BlCustomCancelRefundConstants.ON_CLICK)
@@ -138,7 +361,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
                 BigDecimal taxAmount = BigDecimal.valueOf(0.0);
                 for(Component input : checkedEntries){
-                   taxAmount = taxAmount.add(new BigDecimal(((InputElement) input.getChildren().get(8)).getText()));
+                    taxAmount = taxAmount.add(new BigDecimal(((InputElement) input.getChildren().get(8)).getText()));
                 }
                 billingChargeModel.setTaxAmount(taxAmount);
 
@@ -193,7 +416,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 getModelService().refresh(this.getOrderModel());
                 Messagebox.show("All the bills associated with the order are deleted now.", "SUCCESS", Messagebox.OK, Messagebox.INFORMATION);
             } catch (Exception ex) {
-                BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR, "Unable to delete the Bills for the order : {} due to {}" ,
+                BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Unable to delete the Bills for the order : {} due to {}" ,
                         this.getOrderModel().getCode(), ex);
             }
         }
@@ -235,16 +458,16 @@ public class BlOrderBillingController extends DefaultWidgetController {
                     final Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
                     blEspEventService.triggerBillPaidEspEvent(billPayTotal, billingChargeTypeMap, (OrderModel) order);
                     //final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
-                            //BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
+                    //BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
                     //storeCmsPageInModel(model, payBillSuccessPage);
-                   // setUpMetaDataForContentPage(model, payBillSuccessPage);
+                    // setUpMetaDataForContentPage(model, payBillSuccessPage);
                     //model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
-                            //ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+                    //ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
                     //return getViewForPage(model);
                     Messagebox.show("Payment capture button clicked.", "SUCCESS", Messagebox.OK, Messagebox.INFORMATION);
                 }
                 catch (final Exception e) {
-                    BlLogger.logMessage(LOGGER , Level.ERROR , "Error while executing getPayBillDetailsForOrder " , e);
+                    BlLogger.logMessage(LOG , Level.ERROR , "Error while executing getPayBillDetailsForOrder " , e);
                 }
             }
             else {
@@ -299,11 +522,6 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
 
 
-    private List<Component> getOrderEntriesGridRows()
-    {
-        return this.getOrderEntries().getRows().getChildren();
-    }
-
     public OrderModel getOrderModel() {
         return orderModel;
     }
@@ -336,8 +554,14 @@ public class BlOrderBillingController extends DefaultWidgetController {
         return this.cockpitLocaleService;
     }
 
-    protected ModelService getModelService()
-    {
-        return this.modelService;
+
+    public ModelService getModelService() {
+        return modelService;
     }
+
+    public void setModelService(ModelService modelService) {
+        this.modelService = modelService;
+    }
+
+
 }

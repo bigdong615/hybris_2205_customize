@@ -20,8 +20,10 @@
             <div width="538px" style="text-align:end;">
                  <label sclass="oms-widget-billing-label-box" value="Total Amount Due" width="100%"
                  style="float:left; margin-left: -36px;"/>
-                 <textbox sclass="oms-widget-billing-input-text-box" readonly="false"
-                     id="totalAmountDue" width="190px" height="12px"/>
+                 <doublebox sclass="oms-widget-billing-input-text-box" readonly="true"
+                     id="totalAmountDueDouble" width="190px" height="12px"/>
+           <textbox sclass="oms-widget-billing-inputtext-box" id="selectedProduct" visible="false"
+                                                         width="140px"/>
            </div>
             <div width="" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
                 <button id="createBill" label="Create Bill"
@@ -52,8 +54,8 @@
                     <column width="350px" style="text-align-last: right;">
                         <label value="Bill Paid" width="100%" style="padding:10px;"/>
                         <radiogroup sclass="" style="text-align-last: right;">
-                        <radio label="True" checked="false"/>
-                        <radio label="False" checked="true"/>
+                        <radio label="True" checked="false" id="billPaidTrue"/>
+                        <radio label="False" checked="true" id="billPaidFalse"/>
                         </radiogroup>
                     </column>
                     <column width="371px" style="text-align:end;">
@@ -71,7 +73,7 @@
                                 <custom-attributes org.zkoss.zul.grid.autoSort="true" />
                                 <columns>
                                     <column width="40px">
-                                        <checkbox id="globalCancelEntriesSelection" class="oms-widget-billing-thirdlist-container__checkbox"/>
+                                        <checkbox id="globalBillEntriesSelection" class="oms-widget-billing-thirdlist-container__checkbox"/>
                                                   <!-- onCheck='Clients.evalJavaScript("onOrderSelect()")' -->
                                     </column>
                                     <column width="280px" sort="auto" sortDirection="ascending">
@@ -90,7 +92,7 @@
                                         <label value="Sub Total" width="100%"/>
                                     </column>
                                     <column width="30px">
-                                      <checkbox id="ProcessingFee" class="oms-widget-billing-thirdlist-container__checkbox"/>
+                                      <checkbox id="globalProcessingFeeChkbox" class="oms-widget-billing-thirdlist-container__checkbox"/>
                                     </column>
                                     <column width="100px" >
                                         <label value="Processing Fee" width="100%"/>
@@ -106,26 +108,25 @@
                                     <template name="model">
                                         <row style="">
                                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
-                                                      name="globalShippingSelectionChk" id="" visible="true"/>
+                                                      id="${each.serialNo}_SerialProduct" visible="true" onCheck="doIndicate()"/>
                                             <textbox value="${each.productName}" width="280px" name="name_${each.productName}"
                                                      readonly="true"/>
                                             <textbox value="${each.serialNo}" width="200px" name="serial_${each.serialNo}"
                                                       readonly="true"/>
                                             <textbox value="${each.amount}" width="200px" name="name_${each.amount}"
-                                                      readonly="true"/>
+                                                      readonly="false"/>
                                             <radiogroup sclass="" style="text-align-last: right;">
-
-                                            <radio label="True" checked="${each.damageWaiver}"/>
-                                            <radio label="False" checked="!${each.damageWaiver}"/>
+                                            <radio label="True" checked="${each.damageWaiver}" disabled="${!each.damageWaiver}" id="${each.serialNo}_damageWaiverTrue" onCheck="doIndicate()"/>
+                                            <radio label="False" checked="${!each.damageWaiver}" id="${each.serialNo}_damageWaiverFalse" onCheck="doIndicate()"/>
                                             </radiogroup>
                                             <textbox value="${each.subtotal}" width="200px" name="nasub_${each.subtotal}"
                                                       readonly="true"/>
                                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
-                                                      name="processingfeeSelectionChk" id="" visible="true" checked="${each.processingFee}"/>
+                                                      name="processingfeeSelectionChk" id="${each.serialNo}_ProcessingFee" visible="true" checked="${each.processingFee}" onCheck="doIndicate()"/>
                                             <textbox value="5.00" width="200px" name="nasub_${each.amount}"
                                                      readonly="true"/>
                                             <textbox value="${each.tax}" width="200px" name="tx_${each.tax}"
-                                                     readonly="false"/>
+                                                     readonly="true"/>
                                             <textbox value="${each.unpaidBillNotes}" width="450px" name="unpaid_${each.unpaidBillNotes}"
                                                      readonly="true"/>
 
@@ -133,6 +134,14 @@
                                     </template>
                                 </rows>
                             </grid>
+
+                            <zscript><![CDATA[
+                                        void doIndicate() {
+                            				selectedProduct.setValue(self.getId()+"##"+self.isChecked());
+                            				Events.postEvent("onChange", selectedProduct, null);
+                                        }
+
+                                    ]]></zscript>
                         </div>
                     </hlayout>
 
