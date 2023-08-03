@@ -128,7 +128,7 @@
                                             <textbox value="${each.tax}" width="200px" name="tx_${each.tax}"
                                                      readonly="true"/>
                                             <textbox value="${each.unpaidBillNotes}" width="450px" name="unpaid_${each.unpaidBillNotes}"
-                                                     readonly="true"/>
+                                                     readonly="false"/>
 
                                         </row>
                                     </template>

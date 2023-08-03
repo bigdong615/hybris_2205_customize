@@ -220,10 +220,18 @@ public class BlOrderBillingController extends DefaultWidgetController {
     {
 
         final String[] selctedCheckBoxArray = this.selectedProduct.getValue().split(BlInventoryScanLoggingConstants.ORDER_BILL_SPLIT_STRING);
-        if( this.selectedProduct != null && this.selectedProduct.getValue().contains(BlInventoryScanLoggingConstants.ORDER_BILL_SPLIT_STRING)) {
-            for (final BlOrderBillingItemDTO orderBillingItemDTO : this.orderEntriesForBilling) {
-                if (orderBillingItemDTO.getSerialNo().equals(selctedCheckBoxArray[0])) {
-                    setSubTotal(orderBillingItemDTO);
+        if(this.selectedProduct != null && this.selectedProduct.getValue().contains(BlInventoryScanLoggingConstants.ORDER_BILL_SPLIT_STRING))
+        {
+            for (final Component row : this.getOrderEntriesGridRows()) {
+                if (((Textbox) row.getChildren().get(2)).getValue().equals(selctedCheckBoxArray[0])) {
+                    Double amount=Double.parseDouble(((Textbox) row.getChildren().get(3)).getValue());
+                    if(selctedCheckBoxArray[1].contains("False")) {
+                        ((Textbox) row.getChildren().get(5)).setValue(amount.toString());
+                    }
+                    else {
+                        amount=amount * 12/100;
+                        ((Textbox) row.getChildren().get(5)).setValue(amount.toString());
+                    }
                 }
             }
 
