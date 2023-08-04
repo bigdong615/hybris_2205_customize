@@ -54,8 +54,8 @@
                     <column width="350px" style="text-align-last: right;">
                         <label value="Bill Paid" width="100%" style="padding:10px;"/>
                         <radiogroup sclass="" style="text-align-last: right;">
-                        <radio label="True" checked="false" id="billPaidTrue"/>
-                        <radio label="False" checked="true" id="billPaidFalse"/>
+                            <radio label="True" checked="${billPaidTrue.checked}" id="billPaidTrue"/>
+                            <radio label="False" checked="${billPaidFalse.checked}" id="billPaidFalse"/>
                         </radiogroup>
                     </column>
                     <column width="371px" style="text-align:end;">
