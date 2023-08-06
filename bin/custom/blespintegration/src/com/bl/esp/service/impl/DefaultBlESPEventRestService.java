@@ -21,6 +21,7 @@ import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
+import com.bl.esp.dto.pendingverification.PendingVerificationEventRequest;
 import com.bl.esp.dto.pickedup.OrderPickedUpEventRequest;
 import com.bl.esp.dto.readyforpickup.OrderReadyForPickupEventRequest;
 import com.bl.esp.dto.refund.OrderRefundEventRequest;
@@ -252,4 +253,9 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
       ESPEmailCommonEventRequest emailRequiredEventRequest){
     return super.getTokenAndTriggerEvent(emailRequiredEventRequest);
   }
+
+    @Override
+    public ESPEventResponseWrapper sendOrderPendingVerification(PendingVerificationEventRequest pendingVerificationEventRequest) {
+        return super.getTokenAndTriggerEvent(pendingVerificationEventRequest);
+    }
 }

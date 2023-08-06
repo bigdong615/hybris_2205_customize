@@ -1267,6 +1267,10 @@
 					property="currentObject"/>
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.orderdepositrequiredaction"
 					property="currentObject"/>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.verificationreminder"
+						  property="currentObject"/>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.pendingverifications"
+						  property="currentObject"/>
 
 			</y:group>
 		</y:actions>

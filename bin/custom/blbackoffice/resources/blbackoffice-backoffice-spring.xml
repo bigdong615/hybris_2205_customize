@@ -132,4 +132,7 @@
 	<bean id="blInventoryCycleCountProductNameRenderer" class="com.bl.backoffice.renderer.BlInventoryCycleCountProductNameRenderer" />
 
 
+	<bean id="pendingVerificationsAction" class="com.bl.backoffice.actions.PendingVerificationsAction" >
+		<property name="defaultBlESPEventService" ref="blEspEventService"/>
+	</bean>
 </beans>

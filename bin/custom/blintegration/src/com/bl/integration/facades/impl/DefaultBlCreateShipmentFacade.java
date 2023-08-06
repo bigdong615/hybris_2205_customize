@@ -38,6 +38,8 @@ import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
 import com.bl.shipment.data.UPSShipmentPackageResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fedex.ship.stub.CompletedShipmentDetail;
 import com.fedex.ship.stub.NotificationSeverityType;
 import com.fedex.ship.stub.ProcessShipmentReply;
@@ -175,6 +177,17 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	{
 		final ProcessShipmentReply masterReply = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount,
 				sequenceMap, warehouseModel);
+		try
+		{
+			final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "creating fedEx shipment response {}",
+					ow.writeValueAsString(masterReply));
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception occurred  {}", exception);
+		}
+
 
 		if (masterReply!=null && isResponseOk(masterReply.getHighestSeverity())) // check if the call was successful
 		{
@@ -249,12 +262,100 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 			packagingInfo.setInBoundTrackingNumber(trackingNumber);
 			labelTypeEnum = ShippingLabelTypeEnum.INBOUND;
 		}
+
+		//Saving the label media information for Inbound flow
+		if (labelTypeEnum.equals(ShippingLabelTypeEnum.INBOUND))
+		{
+			if (null != completedShipmentDetails.getCompletedPackageDetails())
+			{
+
+				final StringBuilder buffer = new StringBuilder();
+
+				try
+				{
+					packagingInfo.setInBoundGraphicImage(
+							completedShipmentDetails.getCompletedPackageDetails()[0].getLabel().getParts()[0].getImage().toString());
+
+					convertFedExImage(completedShipmentDetails.getCompletedPackageDetails()[0].getLabel().getParts()[0].getImage(),
+							packagingInfo, buffer);
+
+					final CatalogUnawareMediaModel createCatalogUnawareMediaModel = getBlShipmentCreationService()
+							.createCatalogUnawareMediaModel(buffer.toString(), trackingNumber, BlintegrationConstants.INBOUND_PACKAGE);
+					if (packagingInfo.getInBoundShippingMedia() != null)
+					{
+						getModelService().remove(packagingInfo.getInBoundShippingMedia());
+					}
+
+					packagingInfo.setInBoundShippingMedia(createCatalogUnawareMediaModel);
+					packagingInfo.setInBoundShippingLabel(buffer.toString());
+				}
+				catch (final Exception exception)
+				{
+					BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred when converting the graphic image for the package {} ",
+							packagingInfo.getPk().toString(), exception);
+				}
+			}
+		}
+		else
+		{
+			//Saving the label media information for Outbound flow
+
+			if (null != completedShipmentDetails.getCompletedPackageDetails())
+			{
+				final StringBuilder buffer = new StringBuilder();
+
+				try
+				{
+					packagingInfo.setOutBoundGraphicImage(
+							completedShipmentDetails.getCompletedPackageDetails()[0].getLabel().getParts()[0].getImage().toString());
+
+					convertFedExImage(completedShipmentDetails.getCompletedPackageDetails()[0].getLabel().getParts()[0].getImage(),
+							packagingInfo, buffer);
+
+					final CatalogUnawareMediaModel createCatalogUnawareMediaModel = getBlShipmentCreationService()
+							.createCatalogUnawareMediaModel(buffer.toString(), trackingNumber, BlintegrationConstants.OUTBOUND_PACKAGE);
+					if (packagingInfo.getOutBoundShippingMedia() != null)
+					{
+						getModelService().remove(packagingInfo.getOutBoundShippingMedia());
+					}
+
+					packagingInfo.setOutBoundShippingMedia(createCatalogUnawareMediaModel);
+					packagingInfo.setOutBoundShippingLabel(buffer.toString());
+				}
+				catch (final Exception exception)
+				{
+					BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred when converting the graphic image for the package {} ",
+							packagingInfo.getPk().toString(), exception);
+				}
+			}
+		}
+
 		setTotalChargesOnPackage(completedShipmentDetails.getShipmentRating(), packagingInfo);
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
 		createShippingLabelHistory(labelTypeEnum, packagingInfo, trackingNumber, StringUtils.EMPTY, StringUtils.EMPTY, null, null, null);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Tracking Id {} generated for package {}",
 				completedShipmentDetails.getMasterTrackingId().getTrackingNumber(), packagingInfo.getPackageId());
+	}
+
+	private void convertFedExImage(final byte[] image, final PackagingInfoModel packagingInfo, final StringBuilder buffer)
+	{
+		//final byte[] image = Base64.decodeBase64(graphicImage);
+		final InputStream is = new ByteArrayInputStream(image);
+		String st = null;
+		try
+		{
+			final BufferedReader br = new BufferedReader(new InputStreamReader(is));
+			while ((st = br.readLine()) != null)
+			{
+				buffer.append(st);
+			}
+		}
+		catch (final IOException e)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred when converting the graphic image for the package {} ",
+					packagingInfo.getPk().toString(), e);
+		}
 	}
 
 	/**
