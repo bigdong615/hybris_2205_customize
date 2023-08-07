@@ -158,6 +158,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	public boolean checkInvalidPromotions(final String voucherCode, final String errorKey, final Model model,
 			final RedirectAttributes redirectAttributes)
 	{
+		LOG.info("checkInvalidPromotions" + voucherCode);
 		setDefaults(false);
 		return processValidation(voucherCode, errorKey, model, redirectAttributes);
 	}
@@ -193,6 +194,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	private boolean processValidation(final String voucherCode, final String errorKey, final Model model,
 			final RedirectAttributes redirectAttributes)
 	{
+		LOG.info("processValidation" + voucherCode);
 		if (StringUtils.isNotBlank(voucherCode))
 		{
 			setVoucherCode(voucherCode);
@@ -218,6 +220,8 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	private boolean validateAllConditions(final String voucherCode, final Model model, final RedirectAttributes redirectAttributes,
 			final PromotionSourceRuleModel promotionSourceRule)
 	{
+		LOG.info("validateAllConditions" + voucherCode);
+
 		final boolean isValidPromotion = isPromotionPresent(model, redirectAttributes, promotionSourceRule);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Promotion with code {} is Valid : {}", voucherCode, isValidPromotion);
 		return isValidPromotion;
@@ -239,12 +243,16 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	{
 		if (Objects.isNull(promotionSourceRule))
 		{
+			LOG.info("isPromotionPresent" + promotionSourceRule.getCode());
 			addAndLogMessage("promotion.validation.message.not.found", null, model, redirectAttributes);
 			return false;
 		}
+		LOG.info("isPromotionPresent11" + promotionSourceRule.getCode());
 		convertRuleConditionsFromSourceRule(promotionSourceRule);
 		if (Objects.isNull(getExtendedOrder()))
 		{
+			LOG.info("isPromotionPresent1122" + promotionSourceRule.getCode());
+
 			populateAndSetCartRao();
 		}
 		return isPromotionYetToStart(model, redirectAttributes, promotionSourceRule);
@@ -258,6 +266,8 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	 */
 	private void convertRuleConditionsFromSourceRule(final PromotionSourceRuleModel promotionSourceRule)
 	{
+		LOG.info("convertRuleConditionsFromSourceRule" + promotionSourceRule.getCode());
+
 		final Map<String, RuleConditionDefinitionData> conditionDefinitions = getRuleConditionsRegistry()
 				.getConditionDefinitionsForRuleTypeAsMap(promotionSourceRule.getClass());
 		setRuleConditions(
@@ -289,6 +299,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	private boolean isPromotionYetToStart(final Model model, final RedirectAttributes redirectAttributes,
 			final PromotionSourceRuleModel promotionSourceRule)
 	{
+		LOG.info("isPromotionYetToStart");
 		if (Objects.nonNull(promotionSourceRule.getStartDate()) && promotionSourceRule.getStartDate().compareTo(new Date()) > 0)
 		{
 			addAndLogMessage("promotion.validation.message.not.started", new Object[]
@@ -310,6 +321,8 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	private boolean isPromotionIsExpired(final Model model, final RedirectAttributes redirectAttributes,
 			final PromotionSourceRuleModel promotionSourceRule)
 	{
+		LOG.info("isPromotionIsExpired");
+
 		if (Objects.nonNull(promotionSourceRule.getEndDate()) && promotionSourceRule.getEndDate().compareTo(new Date()) < 0)
 		{
 			addAndLogMessage("promotion.validation.message.expired", null, model, redirectAttributes);
@@ -330,14 +343,25 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	private boolean checkForStackability(final Model model, final RedirectAttributes redirectAttributes,
 			final PromotionSourceRuleModel promotionSourceRule)
 	{
+		final AbstractOrderModel cartOrOrder = Objects.nonNull(getExtendedOrder()) ? getExtendedOrder()
+				: getBlCartService().getSessionCart();
+		final AbstractRuleModel nonStackableAppliedPromo = getNonStackableAppliedPromo(cartOrOrder.getAllPromotionResults());
+		if (Objects.nonNull(cartOrOrder) && CollectionUtils.isNotEmpty(cartOrOrder.getAllPromotionResults()))
+		{
+			if (nonStackableAppliedPromo.getRuleGroup().isExclusive())
+			{
+				addAndLogMessage("promotion.validation.message.stack.error", null, model, redirectAttributes);
+				return false;
+			}
+		}
 		if (Objects.nonNull(promotionSourceRule) && Objects.nonNull(promotionSourceRule.getRuleGroup())
 				&& promotionSourceRule.getRuleGroup().isExclusive())
 		{
-			final AbstractOrderModel cartOrOrder = Objects.nonNull(getExtendedOrder()) ? getExtendedOrder()
-					: getBlCartService().getSessionCart();
+
 			if (Objects.nonNull(cartOrOrder) && CollectionUtils.isNotEmpty(cartOrOrder.getAllPromotionResults()))
 			{
-				final AbstractRuleModel nonStackableAppliedPromo = getNonStackableAppliedPromo(cartOrOrder.getAllPromotionResults());
+
+
 				if (isPromoNotStackable(promotionSourceRule, nonStackableAppliedPromo))
 				{
 					addAndLogMessage("promotion.validation.message.stack.error", null, model, redirectAttributes);
@@ -360,6 +384,9 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	private boolean isPromoNotStackable(final PromotionSourceRuleModel promotionSourceRule,
 			final AbstractRuleModel nonStackableAppliedPromo)
 	{
+		LOG.info("isPromoNotStackable" + promotionSourceRule.getPriority());
+		LOG.info("isPromoNotStackable" + nonStackableAppliedPromo.getPriority());
+
 		return Objects.nonNull(nonStackableAppliedPromo) && Objects.nonNull(nonStackableAppliedPromo.getPriority())
 				&& Objects.nonNull(promotionSourceRule.getPriority())
 				&& nonStackableAppliedPromo.getPriority().compareTo(promotionSourceRule.getPriority()) >= 0;
@@ -545,8 +572,10 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 		{
 			final RuleConditionData ruleConditionData = getRuleConditionDataByDefinitionId(
 					BlControllerConstants.Y_RENTAL_ARRIVAL_DATE_CONDITION);
-			final RuleParameterData ruleParameterData = getRuleParameterData(ruleConditionData, BlControllerConstants.RENTAL_ARRIVAL_DATE);
-			if (isOperatorEligibleForArrivalDateCheck(ruleConditionData) && Objects.nonNull(ruleParameterData) && ruleParameterData.getValue() instanceof Date)
+			final RuleParameterData ruleParameterData = getRuleParameterData(ruleConditionData,
+					BlControllerConstants.RENTAL_ARRIVAL_DATE);
+			if (isOperatorEligibleForArrivalDateCheck(ruleConditionData) && Objects.nonNull(ruleParameterData)
+					&& ruleParameterData.getValue() instanceof Date)
 			{
 				final Date promoConditionArrivaldate = (Date) ruleParameterData.getValue();
 				final Date arrivalDate = Objects.nonNull(getExtendedOrder()) ? getExtendedOrder().getRentalStartDate()
@@ -578,12 +607,11 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	 */
 	private RuleParameterData getRuleParameterData(final RuleConditionData ruleConditionData, final String ruleParameterKey)
 	{
-		return Objects.nonNull(ruleConditionData)
-				&& checkIfRuleParameterDataIsAvailable(ruleConditionData, ruleParameterKey)
-						? ruleConditionData.getParameters().get(ruleParameterKey)
-						: null;
+		return Objects.nonNull(ruleConditionData) && checkIfRuleParameterDataIsAvailable(ruleConditionData, ruleParameterKey)
+				? ruleConditionData.getParameters().get(ruleParameterKey)
+				: null;
 	}
-	
+
 	/**
 	 * Checks if is operator eligible for arrival date check.
 	 *
