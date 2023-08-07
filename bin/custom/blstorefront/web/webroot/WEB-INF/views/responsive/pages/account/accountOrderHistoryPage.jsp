@@ -253,7 +253,7 @@
 													code="order.myaccount.print.invoice" />
 										</a></li>
 
-                                        <c:if test="${not empty order.inboundTrackingURLs}">
+                                        <c:if test="${not empty order.inboundTrackingURLs && order.inboundTrackingURLs ne FEDEX}">
                                             <c:choose>
                                                 <c:when test="${fn:length(order.inboundTrackingURLs) > 1}">
                                                     <li>
@@ -271,6 +271,14 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </c:if>
+                                        <c:if test="${not empty order.inboundTrackingURLs && order.inboundTrackingURLs eq FEDEX}">
+                                        	<li>
+                                            	<a href="#" onclick="openModalAndPrintList(${order.inboundTrackingURLs})">
+                                               		<spring:theme code="order.myaccount.print.return.label" />
+                                                </a>
+                                        	</li>
+                                        </c:if>
+                                        
 									</ul>
                 						</div>
                 					</div>
