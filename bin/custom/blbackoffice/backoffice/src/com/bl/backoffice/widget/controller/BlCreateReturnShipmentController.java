@@ -1,15 +1,6 @@
 package com.bl.backoffice.widget.controller;
 
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.enums.BlackoutDateTypeEnum;
-import com.bl.core.enums.CarrierEnum;
-import com.bl.core.model.OptimizedShippingMethodModel;
-import com.bl.core.model.ShippingOptimizationModel;
-import com.bl.core.shipping.service.BlDeliveryModeService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.google.common.collect.Maps;
 import de.hybris.platform.core.model.user.AddressModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
@@ -17,7 +8,14 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -38,11 +36,19 @@ import org.zkoss.zul.Messagebox;
 import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.enums.CarrierEnum;
+import com.bl.core.model.OptimizedShippingMethodModel;
+import com.bl.core.model.ShippingOptimizationModel;
+import com.bl.core.shipping.service.BlDeliveryModeService;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
@@ -74,7 +80,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 	@Resource(name = "blDeliveryStateSourcingLocationFilter")
 	private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
-	
+
 	@Resource(name = "blShipmentCreationService")
 	private DefaultBLShipmentCreationService blShipmentCreationService;
 
@@ -113,9 +119,23 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		warehouseList.addToSelection(BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
 		warehouseCombobox.setModel(warehouseList);
 		shippingTypeList = new ListModelList<>(getShippingTypeList());
-		shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
+
+		final String deliveryMode = selectedConsignment.getDeliveryMode().getCode();
+		if (deliveryMode.startsWith(CarrierEnum.UPS.getCode()))
+		{
+			shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
+			setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode(), inputObject,
+					BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
+		}
+		else
+		{
+			shippingTypeList.addToSelection(CarrierEnum.FEDEX.getCode());
+			setOptimizedShippingMethodComboBox(CarrierEnum.FEDEX.getCode(), inputObject,
+					BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
+		}
+
 		shippingTypeComboBox.setModel(shippingTypeList);
-		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode(), inputObject, BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
+
 	}
 
 	/**
@@ -129,7 +149,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 	/**
 	 * this method will be used to generate return shipment
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.GENERATE_INBOUND_LABEL, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void generateInboundLabel() throws IOException
@@ -220,7 +240,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 * this method will be used to create shipment for optimized warehouse
 	 *
 	 * @param packages
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private List<String> createShipmentForOptimizedWarehouse(final List<PackagingInfoModel> packages, final CarrierEnum carrier,
 	 		final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged) throws IOException
@@ -228,7 +248,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		final WarehouseModel stateWarehouse = getBlDeliveryStateSourcingLocationFilter()
 				.applyFilter(selectedConsignment.getOrder());
 		final List<String> errorPackages = Lists.newArrayList();
-		
+
 //    BLS-39 : Need to set warehouse on the basis of delivery postalCode
 //		if (stateWarehouse.equals(selectedConsignment.getWarehouse()))
 //		{
@@ -238,7 +258,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 //		{
 //			errorPackages.addAll(startShipmentCreationProcess(packages, selectedConsignment.getWarehouse()));
 //		}
-		
+
 		errorPackages.addAll(startShipmentCreationProcess(packages, stateWarehouse, carrier, selectedOptimizedShippingMethodModel, isOptimizedShippingMethodChanged));
 		return errorPackages;
 	}
@@ -250,7 +270,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 * @param activeWarehouseList
 	 */
 	private List<String> createShipmentForSelectedWarehouse(final List<PackagingInfoModel> packages,
-			final List<WarehouseModel> activeWarehouseList, CarrierEnum carrier, OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, boolean isOptimizedShippingMethodChanged)
+			final List<WarehouseModel> activeWarehouseList, final CarrierEnum carrier, final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged)
 	{
 		final Optional<WarehouseModel> selectedWarehouse = activeWarehouseList.stream().filter(warehouse -> this.warehouseCombobox.getSelectedItem().getValue().equals(warehouse.getCode())).findAny();
 		final List<String> errorPackages = Lists.newArrayList();
@@ -273,7 +293,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 *
 	 * @param packages
 	 * @param stateWarehouse
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private List<String> startShipmentCreationProcess(final List<PackagingInfoModel> packages, final WarehouseModel stateWarehouse, final CarrierEnum carrier,
 			final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged) throws IOException
@@ -302,16 +322,16 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		return errorPackages;
 	}
 
-	private void updateOptimizedEndDateOnConsignment(PackagingInfoModel packagingInfoModel, WarehouseModel stateWarehouse) {
+	private void updateOptimizedEndDateOnConsignment(final PackagingInfoModel packagingInfoModel, final WarehouseModel stateWarehouse) {
 
-		ConsignmentModel consignmentModel = packagingInfoModel.getConsignment();
+		final ConsignmentModel consignmentModel = packagingInfoModel.getConsignment();
 		if(null != consignmentModel && !(stateWarehouse.getCode().equalsIgnoreCase(consignmentModel.getWarehouse().getCode())))
 		{
-			String postalCode = consignmentModel.getOrder().getDeliveryAddress().getPostalcode().toString();
-			String carrierID = consignmentModel.getDeliveryMode().getCode();
-			int carrier = carrierID.contains(BlInventoryScanLoggingConstants.UPS) ? BlInventoryScanLoggingConstants.TWO : BlInventoryScanLoggingConstants.ONE;
-			String homeBaseID = stateWarehouse.getName();
-			int homeBase = homeBaseID.equalsIgnoreCase(BlInventoryScanLoggingConstants.MA) ? BlInventoryScanLoggingConstants.TWO : BlInventoryScanLoggingConstants.ONE;
+			final String postalCode = consignmentModel.getOrder().getDeliveryAddress().getPostalcode().toString();
+			final String carrierID = consignmentModel.getDeliveryMode().getCode();
+			final int carrier = carrierID.contains(BlInventoryScanLoggingConstants.UPS) ? BlInventoryScanLoggingConstants.TWO : BlInventoryScanLoggingConstants.ONE;
+			final String homeBaseID = stateWarehouse.getName();
+			final int homeBase = homeBaseID.equalsIgnoreCase(BlInventoryScanLoggingConstants.MA) ? BlInventoryScanLoggingConstants.TWO : BlInventoryScanLoggingConstants.ONE;
 
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "carrier : "+carrier+ " postalCode : "+postalCode+ " homeBase : "+homeBase);
 
@@ -331,10 +351,10 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 				if(CollectionUtils.isNotEmpty(shippingOptimizationModels))
 				{
-					int inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
+					final int inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
 					final String rentalEndDate = BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalEndDate());
 					final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
-					Date optimizedShippingEndDate = BlDateTimeUtils.addDaysInRentalDates(inboundServiceDays, rentalEndDate, blackOutDates);
+					final Date optimizedShippingEndDate = BlDateTimeUtils.addDaysInRentalDates(inboundServiceDays, rentalEndDate, blackOutDates);
 					consignmentModel.setOptimizedShippingEndDate(optimizedShippingEndDate);
 					getModelService().save(consignmentModel);
 					getModelService().refresh(consignmentModel);
@@ -352,11 +372,13 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 	}
 
-	static <T> Collector<T, ?, List<T>> minList(Comparator<? super T> comp) {
+	static <T> Collector<T, ?, List<T>> minList(final Comparator<? super T> comp) {
 		return Collector.of(ArrayList::new, (list, t) -> {
 			int c;
 			if (list.isEmpty() || (c = comp.compare(t, list.get(0))) == 0)
+			{
 				list.add(t);
+			}
 			else if (c < 0) {
 				/*
 				 * We have found a smaller element than what we already have. Clear the list and
@@ -367,9 +389,13 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 			}
 		}, (list1, list2) -> {
 			if (comp.compare(list1.get(0), list2.get(0)) < 0)
+			{
 				return list1;
+			}
 			else if (comp.compare(list1.get(0), list2.get(0)) > 0)
+			{
 				return list2;
+			}
 			else {
 				list1.addAll(list2);
 				return list1;
@@ -435,7 +461,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		return blShipmentCreationService;
 	}
 
-	public void setBlShipmentCreationService(DefaultBLShipmentCreationService blShipmentCreationService)
+	public void setBlShipmentCreationService(final DefaultBLShipmentCreationService blShipmentCreationService)
 	{
 		this.blShipmentCreationService = blShipmentCreationService;
 	}
@@ -444,7 +470,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		return modelService;
 	}
 
-	public void setModelService(ModelService modelService) {
+	public void setModelService(final ModelService modelService) {
 		this.modelService = modelService;
 	}
 
@@ -452,7 +478,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		return zoneDeliveryModeService;
 	}
 
-	public void setZoneDeliveryModeService(BlDeliveryModeService zoneDeliveryModeService) {
+	public void setZoneDeliveryModeService(final BlDeliveryModeService zoneDeliveryModeService) {
 		this.zoneDeliveryModeService = zoneDeliveryModeService;
 	}
 
@@ -460,7 +486,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		return blDatePickerService;
 	}
 
-	public void setBlDatePickerService(BlDatePickerService blDatePickerService) {
+	public void setBlDatePickerService(final BlDatePickerService blDatePickerService) {
 		this.blDatePickerService = blDatePickerService;
 	}
 
@@ -531,34 +557,34 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		}
 		final int carrierId = BlInventoryScanLoggingConstants.TWO;
 		final String addressZip = getAddressZip(consignmentModel.getShippingAddress());
-		AtomicInteger postDaysToAdd = new AtomicInteger(0);
+		final AtomicInteger postDaysToAdd = new AtomicInteger(0);
 
-		List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecords(carrierId, warehouseCode, addressZip) : Collections.EMPTY_LIST;
+		final List<ShippingOptimizationModel> shippingOptimizationModels = StringUtils.isNotBlank(addressZip) ? getZoneDeliveryModeService().getOptimizedShippingRecords(carrierId, warehouseCode, addressZip) : Collections.EMPTY_LIST;
 
 		updatePostServiceDays(postDaysToAdd, shippingOptimizationModels);
 
 		if(postDaysToAdd.get() <= BlInventoryScanLoggingConstants.THREE)
 		{
-			List<String> groundShippingMethods = optimizedShippingMethodList.stream().filter(s -> s.contains("GROUND")).collect(Collectors.toList());
-			String defaultShippingMethod = CollectionUtils.isNotEmpty(groundShippingMethods) ? groundShippingMethods.stream().findFirst().get() : StringUtils.EMPTY;
+			final List<String> groundShippingMethods = optimizedShippingMethodList.stream().filter(s -> s.contains("GROUND")).collect(Collectors.toList());
+			final String defaultShippingMethod = CollectionUtils.isNotEmpty(groundShippingMethods) ? groundShippingMethods.stream().findFirst().get() : StringUtils.EMPTY;
 			optimizedShippingMethodList.addToSelection(defaultShippingMethod);
 		}
 		else
 		{
-			List<String> groundShippingMethods = optimizedShippingMethodList.stream().filter(s -> s.contains("THREE DAY SELECT")).collect(Collectors.toList());
-			String defaultShippingMethod = CollectionUtils.isNotEmpty(groundShippingMethods) ? groundShippingMethods.stream().findFirst().get() : StringUtils.EMPTY;
+			final List<String> groundShippingMethods = optimizedShippingMethodList.stream().filter(s -> s.contains("THREE DAY SELECT")).collect(Collectors.toList());
+			final String defaultShippingMethod = CollectionUtils.isNotEmpty(groundShippingMethods) ? groundShippingMethods.stream().findFirst().get() : StringUtils.EMPTY;
 			optimizedShippingMethodList.addToSelection(defaultShippingMethod);
 		}
 	}
 
-	private static void updatePostServiceDays(AtomicInteger postDaysToAdd, List<ShippingOptimizationModel> shippingOptimizationModels)
+	private static void updatePostServiceDays(final AtomicInteger postDaysToAdd, List<ShippingOptimizationModel> shippingOptimizationModels)
 	{
 		if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
 			shippingOptimizationModels = shippingOptimizationModels.stream().collect(minList(Comparator.comparing(ShippingOptimizationModel::getServiceDays)));
 		}
 
 		if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
-			for(ShippingOptimizationModel model : shippingOptimizationModels)
+			for(final ShippingOptimizationModel model : shippingOptimizationModels)
 			{
 				if(model.getInbound() == BlInventoryScanLoggingConstants.ONE) {
 					postDaysToAdd.set(model.getServiceDays());
@@ -608,7 +634,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		return blOptimizedShippingMethodGenericDao;
 	}
 
-	public void setBlOptimizedShippingMethodGenericDao(GenericDao<OptimizedShippingMethodModel> blOptimizedShippingMethodGenericDao) {
+	public void setBlOptimizedShippingMethodGenericDao(final GenericDao<OptimizedShippingMethodModel> blOptimizedShippingMethodGenericDao) {
 		this.blOptimizedShippingMethodGenericDao = blOptimizedShippingMethodGenericDao;
 	}
 }
