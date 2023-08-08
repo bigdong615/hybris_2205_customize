@@ -107,9 +107,19 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		this.getWidgetInstanceManager()
 				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.outbound.label.heading")));
 		shippingTypeList = new ListModelList<>(getShippingTypeList());
-		shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
-		shippingTypeComboBox.setModel(shippingTypeList);
-		setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
+		final String deliveryMode = selectedConsignment.getDeliveryMode().getCode();
+		if (deliveryMode.startsWith(CarrierEnum.UPS.getCode()))
+		{
+			shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
+			shippingTypeComboBox.setModel(shippingTypeList);
+			setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode());
+		}
+		else
+		{
+			shippingTypeList.addToSelection(CarrierEnum.FEDEX.getCode());
+			shippingTypeComboBox.setModel(shippingTypeList);
+			setOptimizedShippingMethodComboBox(CarrierEnum.FEDEX.getCode());
+		}
 
 		deliveryDate.setValue(getDeliveryDateFromOrder(inputObject));
 		destinationState.setValue(getDestinationStateValue(inputObject));
@@ -219,7 +229,7 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 
 	private void processLabelCreation(final int packageCount, final Map<String, Integer> sequenceNumber, final CarrierEnum carrier,
 			final OptimizedShippingMethodModel selectedOptimizedShippingMethodModel, final boolean isOptimizedShippingMethodChanged,
-			final List<String> errorPackages, final PackagingInfoModel packagingInfoModel, final boolean isSignatureRequired, boolean holdAtUpsStore)
+			final List<String> errorPackages, final PackagingInfoModel packagingInfoModel, final boolean isSignatureRequired, final boolean holdAtUpsStore)
 	{
 		try
 		{
