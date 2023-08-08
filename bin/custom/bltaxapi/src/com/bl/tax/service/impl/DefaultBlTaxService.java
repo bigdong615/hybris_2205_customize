@@ -2,6 +2,7 @@ package com.bl.tax.service.impl;
 
 import com.bl.tax.ResponseData;
 import com.bl.tax.TaxResponse;
+import com.bl.tax.billing.BillingPojo;
 import com.bl.tax.resttemplate.BlRestTemplate;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -23,6 +24,7 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
   private BlRestTemplate blRestTemplate;
   private Populator<REQUEST, SERVICEREQUEST> requestPopulator;
   private Populator<SERVICERESPONSE, RESPONSE> responsePopulator;
+  private Populator<BillingPojo, SERVICEREQUEST> billingRequestPopulator;
   private Populator<TaxResponse, AbstractOrderModel> blAvalaraTaxPopulator;
   private Populator<ResponseEntity<SERVICERESPONSE> ,ResponseData> blResponseDetailsAndLoggingPopulator;
 
@@ -150,6 +152,14 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
   public void setBlPayBillTaxResponsePopulator(
       Populator<SERVICERESPONSE, RESPONSE> blPayBillTaxResponsePopulator) {
     this.blPayBillTaxResponsePopulator = blPayBillTaxResponsePopulator;
+  }
+
+  public Populator<BillingPojo, SERVICEREQUEST> getBillingRequestPopulator() {
+    return billingRequestPopulator;
+  }
+
+  public void setBillingRequestPopulator(Populator<BillingPojo, SERVICEREQUEST> billingRequestPopulator) {
+    this.billingRequestPopulator = billingRequestPopulator;
   }
 
 }

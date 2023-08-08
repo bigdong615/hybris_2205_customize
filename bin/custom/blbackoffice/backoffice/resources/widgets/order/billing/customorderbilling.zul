@@ -18,7 +18,7 @@
 <div sclass="oms-widget-billing-firstlist-container" style="display:flex;column-gap: 20px;">
 
             <div width="538px" style="text-align:end;">
-                 <label sclass="oms-widget-billing-label-box" value="Total Amount Due" width="100%"
+                 <label sclass="oms-widget-billing-label-box" value="${labels.customersupportbackoffice.billing.totalamountdue}" width="100%"
                  style="float:left; margin-left: -36px;"/>
                  <doublebox sclass="oms-widget-billing-input-text-box" readonly="true"
                      id="totalAmountDueDouble" width="190px" height="12px"/>
@@ -26,15 +26,15 @@
                                                          width="140px"/>
            </div>
             <div width="" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
-                <button id="createBill" label="Create Bill"
+                <button id="createBill" label="${labels.customersupportbackoffice.billing.button.createbill}"
                        sclass="y-btn-info oms-widget-billing-cta-configuration-button" />
             </div>
             <div width="" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
-                   <button id="deleteBill" label="Delete Bill"
+                   <button id="deleteBill" label="${labels.customersupportbackoffice.billing.button.deletebill}"
                        sclass="y-btn-primary oms-widget-billing-cta-configuration-button" />
             </div>
             <div width="" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
-                   <button id="capturePayment" label="Capture Payment"
+                   <button id="capturePayment" label="${labels.customersupportbackoffice.billing.button.capturepayment}"
                        sclass="y-btn-primary oms-widget-billing-cta-configuration-button" />
             </div>
 
@@ -59,7 +59,7 @@
                         </radiogroup>
                     </column>
                     <column width="371px" style="text-align:end;">
-                        <button id="sendInvoice" label="Send Invoice" target="_blank"
+                        <button id="sendInvoice" label="${labels.customersupportbackoffice.billing.button.sendInvoice}" target="_blank"
                         sclass="y-btn-primary oms-widget-billing-configuration-button" style="margin-bottom: 6px;margin-top: 7px;width: 50%;"/>
                     </column>
                     </columns>
@@ -77,31 +77,31 @@
                                                   <!-- onCheck='Clients.evalJavaScript("onOrderSelect()")' -->
                                     </column>
                                     <column width="280px" sort="auto" sortDirection="ascending">
-                                        <label value="Product Name" width="100%"/>
+                                        <label value="${labels.customersupportbackoffice.billing.label.productName}" width="100%"/>
                                     </column>
                                     <column width="150px" style="padding-left:5px">
-                                        <label value="Serial Number" width="100%"/>
+                                        <label value="${labels.customersupportbackoffice.billing.label.serialNumber}" width="100%"/>
                                     </column>
                                     <column width="110px"  style="padding-left:2px">
-                                        <label value="Amount" width="100%"/>
+                                        <label value="${labels.customersupportbackoffice.billing.label.amount}" width="100%"/>
                                     </column>
                                     <column width="150px"  style="padding-left:2px">
-                                        <label value="Damage Waiver" width="100%"/>
+                                        <label value="${labels.customersupportbackoffice.billing.label.damageWaiver}" width="100%"/>
                                     </column>
                                     <column width="110px" >
-                                        <label value="Sub Total" width="100%"/>
+                                        <label value="${labels.customersupportbackoffice.billing.label.subTotal}" width="100%"/>
                                     </column>
                                     <column width="30px">
                                       <checkbox id="globalProcessingFeeChkbox" class="oms-widget-billing-thirdlist-container__checkbox"/>
                                     </column>
                                     <column width="100px" >
-                                        <label value="Processing Fee" width="100%"/>
+                                        <label value="${labels.customersupportbackoffice.billing.label.processingFee}" width="100%"/>
                                     </column>
                                     <column width="70px" >
-                                        <label value="Tax" width="100%"/>
+                                        <label value="${labels.customersupportbackoffice.billing.label.tax}" width="100%"/>
                                     </column>
                                     <column width="450px">
-                                        <label value="Unpaid Bill Note" width="150%"/>
+                                        <label value="${labels.customersupportbackoffice.billing.label.unpaidBillNote}" width="150%"/>
                                     </column>
                                 </columns>
                                 <rows>

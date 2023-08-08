@@ -11,7 +11,9 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.logging.BlLogger;
+import com.bl.tax.billing.BillingPojo;
 import com.bl.tax.populators.BlTaxServiceRequestPopulator;
+import com.bl.tax.service.impl.DefaultBlAvalaraTaxService;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.transaction.service.BrainTreeTransactionService;
@@ -115,6 +117,8 @@ public class BlOrderBillingController extends DefaultWidgetController {
     private transient BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private transient PriceDataFactory priceDataFactory;
     private transient DefaultBlESPEventService blEspEventService;
+
+    private transient DefaultBlAvalaraTaxService defaultBlAvalaraTaxService;
     private static final int DECIMAL_PRECISION = 2;
     private transient BrainTreeTransactionService brainTreeTransactionService;
     @Resource
@@ -154,6 +158,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
     @ViewEvent(componentID = "globalBillEntriesSelection", eventName = BlInventoryScanLoggingConstants.ON_CHECK)
     public void checkGlobalBillEntriesSelection() {
         applyToGridBillEntriesSelection();
+        setTax();
         calculateLineItemTotalAmountDue();
     }
 
@@ -231,7 +236,6 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 setDamageWaiver(itemDTO,abstractOrderEntryModel);
                 setSubTotal(itemDTO);
                 setProcessingFee(itemDTO);
-                itemDTO.setTax(22.5);
                 setUnpaidBillNotes(itemDTO,serialProduct);
                 setSerialProductCodes(serialProduct);
                 this.orderEntriesForBilling.add(itemDTO);
@@ -261,6 +265,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
             }
 
         }
+        setTax();
         calculateLineItemTotalAmountDue();
 
     }
@@ -314,6 +319,38 @@ public class BlOrderBillingController extends DefaultWidgetController {
     {
         itemDTO.setProcessingFee(Boolean.TRUE);
     }
+
+    /**
+     * This method will calculate tax and wil get displayed on tax field.
+     */
+    private void setTax() {
+
+        String selectedBillingChargesReason = missingItemToolCombobox.getValue();
+        if(billPaidTrue.isSelected()==Boolean.FALSE) {
+            try {
+                BillingPojo billing = new BillingPojo();
+                for (final Component row : this.getOrderEntriesGridRows()) {
+                    if (((Checkbox) row.getChildren().iterator().next()).isChecked()) {
+                        final String amountDue = ((Textbox) row.getChildren().get(5)).getValue();
+                        final String serialNo = ((Textbox) row.getChildren().get(2)).getValue();
+                        final String productName = ((Textbox) row.getChildren().get(1)).getValue();
+                        billing.setOrder(this.getOrderModel());
+                        billing.setBillPaid(billPaidTrue.isSelected() ? Boolean.TRUE : Boolean.FALSE);
+                        billing.setAmount(Double.parseDouble(amountDue));
+                        billing.setBillingChargesReason(ItemBillingChargeTypeEnum.valueOf(selectedBillingChargesReason));
+                        billing.setSerialNo(serialNo);
+                        billing.setProductName(productName);
+                        Double billingTax = getDefaultBlAvalaraTaxService().processBillingTax(billing);
+                        ((Textbox) row.getChildren().get(8)).setValue(billingTax.toString());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 
     /**
      * Apply to grid.
@@ -633,4 +670,11 @@ public class BlOrderBillingController extends DefaultWidgetController {
     }
 
 
+    public DefaultBlAvalaraTaxService getDefaultBlAvalaraTaxService() {
+        return defaultBlAvalaraTaxService;
+    }
+
+    public void setDefaultBlAvalaraTaxService(DefaultBlAvalaraTaxService defaultBlAvalaraTaxService) {
+        this.defaultBlAvalaraTaxService = defaultBlAvalaraTaxService;
+    }
 }

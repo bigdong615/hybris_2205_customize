@@ -38,6 +38,7 @@
   <bean id="defaultBlAvalaraTaxService" class="com.bl.tax.service.impl.DefaultBlAvalaraTaxService" parent="defaultBlTaxService">
     <property name="servicePathUrl" value="${bl.avalara.tax.service.url}"/>
     <property name="requestPopulator" ref="blTaxServiceRequestPopulator"/>
+    <property name="billingRequestPopulator" ref="blBillingTaxServiceRequestPopulator"/>
     <property name="responsePopulator" ref="blTaxServiceResponsePopulator"/>
     <property name="blAvalaraTaxPopulator" ref="blAvalaraTaxPopulator"/>
   </bean>
@@ -46,6 +47,12 @@
   <bean id="blTaxServiceRequestPopulator" class="com.bl.tax.populators.BlTaxServiceRequestPopulator">
     <property name="productService" ref="productService"/>
     <property name="defaultWarehouseService" ref="warehouseService"/>
+    <property name="sessionService" ref="sessionService"/>
+    <property name="configurationService" ref="configurationService"/>
+  </bean>
+
+  <!--Added for creating request for billing tax -->
+  <bean id="blBillingTaxServiceRequestPopulator" class="com.bl.tax.populators.BlBillingTaxServiceRequestPopulator">
     <property name="sessionService" ref="sessionService"/>
     <property name="configurationService" ref="configurationService"/>
   </bean>
