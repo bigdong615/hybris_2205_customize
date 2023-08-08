@@ -7,11 +7,12 @@
 {
   "@context": "https://schema.org/",
     "@type": "Product",
-	  "name": "${product.name}",<c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
+	  "name": "${product.name}",
 	  "image": 
-	       [
-	       "${container.product.url}",</c:forEach>
-	       ],
+	    [ <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
+	       "${container.product.url}",
+	       </c:forEach>
+	     ],
 	  "brand": {
 	    "@type": "Brand",
 	    "name": "${product.manufacturer}"
