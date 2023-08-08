@@ -9,10 +9,10 @@
     "@type": "Product",
 	  "name": "${product.name}",
 	  "image": 
-	  <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
-	  
+	    [ <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
 	       "${container.product.url}",
 	       </c:forEach>
+	     ],
 	  "brand": {
 	    "@type": "Brand",
 	    "name": "${product.manufacturer}"
