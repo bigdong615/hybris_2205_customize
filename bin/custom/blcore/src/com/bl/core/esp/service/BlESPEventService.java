@@ -204,4 +204,6 @@ public interface BlESPEventService {
      * @param requestedDate requestedDate
      */
     void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData,final Date requestedDate);
+
+    void sendBillPaidESPEvent(final OrderModel orderModel);
 }

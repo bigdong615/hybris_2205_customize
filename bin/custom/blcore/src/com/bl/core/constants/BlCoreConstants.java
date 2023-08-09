@@ -691,6 +691,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String POSTAL_CODE = "postalCode";
 	public static final String CARRIER_ID = "carrierID";
 
+	public static final String ORDER_BILL_PAID_RECEIPT_DEFINITION="order.bill.paid.receipt.event.definition.key";
+	public static final String ORDER_BILL_PAID_RECEIPT_TEMPLATE="order.bill.paid.receipt.event.template";
+
 	private BlCoreConstants()
 	{
 		//empty

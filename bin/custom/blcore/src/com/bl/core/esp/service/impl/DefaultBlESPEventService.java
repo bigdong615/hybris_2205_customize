@@ -1,6 +1,8 @@
 package com.bl.core.esp.service.impl;
 
 
+import com.bl.core.esp.populators.*;
+import com.bl.esp.dto.billpaid.OrderBillReceiptEventRequest;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -38,31 +40,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator;
-import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
-import com.bl.core.esp.populators.BlExtraItemRequestPopulator;
-import com.bl.core.esp.populators.BlFreeGiftCardPurchaseEventPopulator;
-import com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator;
-import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
-import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
-import com.bl.core.esp.populators.BlOrderDepositRequestPopulator;
-import com.bl.core.esp.populators.BlOrderDepositRequiredRequestPopulator;
-import com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator;
-import com.bl.core.esp.populators.BlOrderGiftCardPurchaseEventPopulator;
-import com.bl.core.esp.populators.BlOrderManualAllocationRequestPopulator;
-import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
-import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
-import com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator;
-import com.bl.core.esp.populators.BlOrderPullBackItemRemovedRequestPopulator;
-import com.bl.core.esp.populators.BlOrderPullBackItemsAddedRequestPopulator;
-import com.bl.core.esp.populators.BlOrderReadyForPickupRequestPopulator;
-import com.bl.core.esp.populators.BlOrderRefundRequestPopulator;
-import com.bl.core.esp.populators.BlOrderShippedRequestPopulator;
-import com.bl.core.esp.populators.BlOrderUnboxedRequestPopulator;
-import com.bl.core.esp.populators.BlOrderVerificationCOIneededRequestPopulator;
-import com.bl.core.esp.populators.BlOrderVerificationCompletedRequestPopulator;
-import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
-import com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.BlStoredEspEventModel;
@@ -117,6 +94,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderNewShippingRequestPopulator blOrderNewShippingRequestPopulator;
     private BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator;
     private BlOrderExceptionsRequestPopulator blOrderExceptionsRequestPopulator;
+    private BlOrderBillPaidReceiptRequestPopulator blOrderBillPaidReceiptRequestPopulator;
     private BlOrderUnboxedRequestPopulator blOrderUnboxedRequestPopulator;
     private BlOrderPaymentDeclinedRequestPopulator blOrderPaymentDeclinedRequestPopulator;
     private BlOrderVerificationRequiredRequestPopulator blOrderVerificationRequiredRequestPopulator;
@@ -1020,6 +998,25 @@ public class DefaultBlESPEventService implements BlESPEventService {
     return decimalFormat.format(amount);
   }
 
+    @Override
+    public void sendBillPaidESPEvent(final OrderModel orderModel) {
+        if (Objects.nonNull(orderModel)) {
+            final OrderBillReceiptEventRequest orderBillReceiptEventRequest = new OrderBillReceiptEventRequest();
+            getBlOrderBillPaidReceiptRequestPopulator().populate(orderModel,
+                    orderBillReceiptEventRequest);
+            ESPEventResponseWrapper espEventResponseWrapper = null;
+            try
+            {
+                // Call send bill paid ESP Event API
+                espEventResponseWrapper = getBlESPEventRestService().sendBillPaidESP(
+                        orderBillReceiptEventRequest);
+            }catch (final BlESPIntegrationException exception){
+                persistESPEventDetail(null, EspEventTypeEnum.ORDER_BILL_PAID,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+            }
+            // Save send bill paid ESP Event Detail
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_BILL_PAID,orderModel.getCode(),null, null);
+        }
+    }
 
   public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
         return blOrderConfirmationRequestPopulator;
@@ -1270,4 +1267,11 @@ public class DefaultBlESPEventService implements BlESPEventService {
       final BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator) {
     this.blESPEmailCommonRequestPopulator = blESPEmailCommonRequestPopulator;
   }
+
+    public BlOrderBillPaidReceiptRequestPopulator getBlOrderBillPaidReceiptRequestPopulator() {
+        return blOrderBillPaidReceiptRequestPopulator;
+    }
+    public void setBlOrderBillPaidReceiptRequestPopulator(BlOrderBillPaidReceiptRequestPopulator blOrderBillPaidReceiptRequestPopulator) {
+        this.blOrderBillPaidReceiptRequestPopulator = blOrderBillPaidReceiptRequestPopulator;
+    }
 }

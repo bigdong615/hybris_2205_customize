@@ -1,6 +1,7 @@
 package com.bl.esp.service.impl;
 
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
+import com.bl.esp.dto.billpaid.OrderBillReceiptEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
@@ -252,4 +253,10 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
       ESPEmailCommonEventRequest emailRequiredEventRequest){
     return super.getTokenAndTriggerEvent(emailRequiredEventRequest);
   }
+
+    @Override
+    public ESPEventResponseWrapper sendBillPaidESP( final OrderBillReceiptEventRequest orderBillReceiptEventRequest){
+        return super.getTokenAndTriggerEvent(orderBillReceiptEventRequest);
+    }
+
 }

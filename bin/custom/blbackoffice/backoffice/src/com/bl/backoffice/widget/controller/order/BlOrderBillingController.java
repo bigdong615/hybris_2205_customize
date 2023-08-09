@@ -28,6 +28,7 @@ import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -188,6 +189,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
         this.getOrderEntries().setModel(new ListModelList<>(this.orderEntriesForBilling));
         this.getOrderEntries().renderAll();
         checkIfBillIsPaid();
+        applyToGridBillEntriesSelection();
 
     }
 
@@ -369,12 +371,15 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     private void applyToGridProcessingFeeSelection()
     {
-        for (final Component row : this.getOrderEntriesGridRows()) {
-            if(this.globalProcessingFeeChkbox.isChecked() == Boolean.TRUE) {
-                ((Checkbox) row.getChildren().get(6)).setChecked(Boolean.TRUE);
-            }
-            else {
-                ((Checkbox) row.getChildren().get(6)).setChecked(Boolean.FALSE);
+        if (this.getOrderModel().getStatus().equals(OrderStatus.COMPLETED)) {
+            this.getOrderEntriesGridRows().stream().forEach(gridRow -> ((Checkbox) gridRow.getChildren().iterator().next()).setDisabled(Boolean.TRUE));
+        } else {
+            for (final Component row : this.getOrderEntriesGridRows()) {
+                if (this.globalProcessingFeeChkbox.isChecked() == Boolean.TRUE) {
+                    ((Checkbox) row.getChildren().get(6)).setChecked(Boolean.TRUE);
+                } else {
+                    ((Checkbox) row.getChildren().get(6)).setChecked(Boolean.FALSE);
+                }
             }
         }
     }
@@ -396,9 +401,16 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     private void disableOrEnableFields(Boolean b)
     {
-        this.createBill.setDisabled(b);
-        this.deleteBill.setDisabled(b);
-        this.capturePayment.setDisabled(b);
+        if(this.getOrderModel().getStatus().equals(OrderStatus.COMPLETED)){
+            this.createBill.setDisabled(Boolean.TRUE);
+            this.deleteBill.setDisabled(Boolean.TRUE);
+            this.capturePayment.setDisabled(Boolean.TRUE);
+        }
+        else {
+            this.createBill.setDisabled(b);
+            this.deleteBill.setDisabled(b);
+            this.capturePayment.setDisabled(b);
+        }
         this.sendInvoice.setDisabled(b);
         this.billPaidFalse.setDisabled(b);
         this.billPaidTrue.setDisabled(b);
@@ -623,7 +635,12 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     @ViewEvent(componentID = "sendInvoice", eventName = "onClick")
     public void sendBillingInvoice(){
-        Messagebox.show("Send Invoice button clicked.", "SUCCESS", Messagebox.OK, Messagebox.INFORMATION);
+        if(calculateTotalBillPay().compareTo(BigDecimal.ZERO)  <= 0 && !CollectionUtils.isEmpty(this.getOrderModel().getOrderBills())) {
+            blEspEventService.sendBillPaidESPEvent(orderModel);
+            Messagebox.show("Bill invoice send successfully ", "SUCCESS", Messagebox.OK, Messagebox.INFORMATION);
+        }else {
+            Messagebox.show("Payment not done.Can't send bill invoice", "SUCCESS", Messagebox.OK, Messagebox.INFORMATION);
+        }
     }
 
 

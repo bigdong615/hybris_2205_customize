@@ -1632,6 +1632,7 @@
 		<property name="blOrderGiftCardPurchaseEventPopulator" ref="blOrderGiftCardPurchaseEventPopulator"/>
 		<property name="blFreeGiftCardPurchaseEventPopulator" ref="blFreeGiftCardPurchaseEventPopulator"/>
 		<property name="blESPEmailCommonRequestPopulator" ref="blESPEmailCommonRequestPopulator"/>
+		<property name="blOrderBillPaidReceiptRequestPopulator" ref="blOrderBillPaidReceiptRequestPopulator"/>
 	</bean>
 
 
@@ -2325,5 +2326,7 @@
 	<bean id="blProductSearchTermValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductSearchTermValueProvider" parent="abstractPropertyFieldValueProvider">
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
+
+	<bean id="blOrderBillPaidReceiptRequestPopulator" class="com.bl.core.esp.populators.BlOrderBillPaidReceiptRequestPopulator" parent="espEventCommonPopulator"/>
 
 </beans>
