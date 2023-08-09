@@ -23,6 +23,7 @@ import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
+import com.bl.esp.dto.pendingverification.PendingVerificationEventRequest;
 import com.bl.esp.dto.pickedup.OrderPickedUpEventRequest;
 import com.bl.esp.dto.readyforpickup.OrderReadyForPickupEventRequest;
 import com.bl.esp.dto.refund.OrderRefundEventRequest;
@@ -241,4 +242,11 @@ public interface BlESPEventRestService {
       ESPEmailCommonEventRequest emailRequiredEventRequest);
 
   ESPEventResponseWrapper sendBillPaidESP( final OrderBillReceiptEventRequest orderBillReceiptEventRequest);
+    /**
+     * Send Pending Verification by calling Order Pending Verification ESP Event API
+     * @param pendingVerificationEventRequest order deposit request
+     * @return ESPEventResponseWrapper
+     */
+    ESPEventResponseWrapper sendOrderPendingVerification(
+            final PendingVerificationEventRequest pendingVerificationEventRequest);
 }

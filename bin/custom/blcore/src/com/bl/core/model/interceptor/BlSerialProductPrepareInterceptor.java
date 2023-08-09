@@ -340,21 +340,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		}
 
 	/**
-	 * It updates the stock records as reserved status is false
-	 *
-	 * @param blSerialProduct
-	 *           the bl serial product
-	 * @param initialValue
-	 */
-	private void updateStockRecordsAsUnavailable(final BlSerialProductModel blSerialProduct, final Object initialValue) {
-		if (initialValue.equals(SerialStatusEnum.COMING_FROM_PURCHASE) && null != blSerialProduct.getWarehouseLocation()
-				&& Boolean.TRUE.equals(blSerialProduct.getForRent()))
-		{
-			getBlStockService().createStockRecordsForNewSerialProducts(blSerialProduct);
-		}
-	}
-
-	/**
 	 * It creates the stock records for new products
 	 *
 	 * @param blSerialProduct

@@ -694,6 +694,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_BILL_PAID_RECEIPT_DEFINITION="order.bill.paid.receipt.event.definition.key";
 	public static final String ORDER_BILL_PAID_RECEIPT_TEMPLATE="order.bill.paid.receipt.event.template";
 
+	public static final String PENDING_VERIFICATION_MESSAGE_BOX_TITLE = "success.message.pendingverification.title";
+	public static final String PENDING_VERIFICATION_MESSAGE_BOX_TEXT = "success.message.pendingverification.emailsent";
+	public static final String PENDING_VERIFICATION_MESSAGE_BOX_ERROR_TEXT = "error.message.pendingverification.emailsent";
+	public static final String PENDING_VERIFICATION_EVENT_DEFINITION_KEY = "order.verification.pending.event.definition.key";
+	public static final String PENDING_VERIFICATION_EVENT_TEMPLATE = "order.verification.pending.event.template";
+	public static final String VERIFICATION_REMINDER_EVENT_TEMPLATE = "order.verification.reminder.event.template";
 	private BlCoreConstants()
 	{
 		//empty

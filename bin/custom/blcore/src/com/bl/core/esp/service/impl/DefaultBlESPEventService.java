@@ -3,6 +3,7 @@ package com.bl.core.esp.service.impl;
 
 import com.bl.core.esp.populators.*;
 import com.bl.esp.dto.billpaid.OrderBillReceiptEventRequest;
+import com.bl.esp.dto.pendingverification.PendingVerificationEventRequest;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -115,6 +116,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator;
     private BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator;
     private BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator;
+    private BlOrderPendingVerificationsPopulator blOrderPendingVerificationsPopulator;
     @Value("${back.in.stock.email.request.event.template.key}")
     private String backInStockTemplate;
     /**
@@ -987,7 +989,28 @@ public class DefaultBlESPEventService implements BlESPEventService {
           exception.getRequestString());
     }
   }
-  /**
+
+    /**
+     *
+     * @param orderModel
+     */
+    @Override
+    public void sendOrderPendingVerificationsEvent(OrderModel orderModel) {
+       final PendingVerificationEventRequest pendingVerificationEventRequest=new PendingVerificationEventRequest();
+       getBlOrderPendingVerificationsPopulator().populate(orderModel,pendingVerificationEventRequest);
+        ESPEventResponseWrapper espEventResponseWrapper = null;
+        try
+        {
+            // Call send order deposit required ESP Event API
+            espEventResponseWrapper = getBlESPEventRestService().sendOrderPendingVerification(
+                    pendingVerificationEventRequest);
+        }catch (final BlESPIntegrationException exception){
+            persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_PENDING,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+        }
+        // Save send order confirmation ESP Event Detail
+        persistESPEventDetail(espEventResponseWrapper,EspEventTypeEnum.VERIFICATION_PENDING ,orderModel.getCode(),null, null);
+    }
+    /**
    * Format amount string.
    * @param amount the amount
    * @return the string
@@ -1273,5 +1296,11 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
     public void setBlOrderBillPaidReceiptRequestPopulator(BlOrderBillPaidReceiptRequestPopulator blOrderBillPaidReceiptRequestPopulator) {
         this.blOrderBillPaidReceiptRequestPopulator = blOrderBillPaidReceiptRequestPopulator;
+    public BlOrderPendingVerificationsPopulator getBlOrderPendingVerificationsPopulator() {
+        return blOrderPendingVerificationsPopulator;
+    }
+
+    public void setBlOrderPendingVerificationsPopulator(BlOrderPendingVerificationsPopulator blOrderPendingVerificationsPopulator) {
+        this.blOrderPendingVerificationsPopulator = blOrderPendingVerificationsPopulator;
     }
 }

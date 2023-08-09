@@ -1633,6 +1633,7 @@
 		<property name="blFreeGiftCardPurchaseEventPopulator" ref="blFreeGiftCardPurchaseEventPopulator"/>
 		<property name="blESPEmailCommonRequestPopulator" ref="blESPEmailCommonRequestPopulator"/>
 		<property name="blOrderBillPaidReceiptRequestPopulator" ref="blOrderBillPaidReceiptRequestPopulator"/>
+		<property name="blOrderPendingVerificationsPopulator" ref="blOrderPendingVerificationsPopulator"/>
 	</bean>
 
 
@@ -2328,5 +2329,6 @@
 	</bean>
 
 	<bean id="blOrderBillPaidReceiptRequestPopulator" class="com.bl.core.esp.populators.BlOrderBillPaidReceiptRequestPopulator" parent="espEventCommonPopulator"/>
+	<bean id="blOrderPendingVerificationsPopulator" class="com.bl.core.esp.populators.BlOrderPendingVerificationsPopulator" parent="espEventCommonPopulator"/>
 
 </beans>
