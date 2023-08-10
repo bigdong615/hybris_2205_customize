@@ -290,10 +290,8 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
               "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
               stock.getSerialProductCode());
         });
-        Optional<StockLevelModel> lastStock = stocks.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())).findAny();
-        if(lastStock.isPresent()){
-          lastStock.get().setReservedStatus(true);
-        }
+        Collection<StockLevelModel> lastStock = stocks.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) && StringUtils.isNotBlank(stock.getOrder())).collect(Collectors.toList());
+        lastStock.forEach(ls-> ls.setReservedStatus(true));
         this.getModelService().saveAll(stocks);
         BlLogger.logFormatMessageInfo(LOG, Level.INFO,
             "Consignment to be deleted {} ", consignmentModel.getCode());
@@ -495,10 +493,8 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
             "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
             stock.getSerialProductCode());
       });
-      Optional<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(entry.getConsignment().getOptimizedShippingEndDate())).findAny();
-      if(lastStock.isPresent()){
-        lastStock.get().setReservedStatus(false);
-      }
+      Collection<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(entry.getConsignment().getOptimizedShippingEndDate())).collect(Collectors.toList());
+      lastStock.forEach(ls -> ls.setReservedStatus(false));
       this.getModelService().saveAll(serialStocks);
     }
   }

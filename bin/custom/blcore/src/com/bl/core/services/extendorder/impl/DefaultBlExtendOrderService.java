@@ -32,6 +32,8 @@ import de.hybris.platform.store.services.BaseStoreService;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -308,11 +310,9 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
 
 
           });
-          Optional<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) &&
-                  StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().split(",").length == 1).findAny();
-          if(lastStock.isPresent()){
-            lastStock.get().setReservedStatus(false);
-          }
+          Collection<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) &&
+                  StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().split(",").length == 1).collect(Collectors.toList());
+          lastStock.forEach(ls-> ls.setReservedStatus(false));
 
           this.getModelService().saveAll(serialStocks);
         }

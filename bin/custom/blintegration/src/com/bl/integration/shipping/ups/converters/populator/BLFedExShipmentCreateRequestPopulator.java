@@ -26,6 +26,7 @@ import com.fedex.ship.stub.CustomerReferenceType;
 import com.fedex.ship.stub.Dimensions;
 import com.fedex.ship.stub.DropoffType;
 import com.fedex.ship.stub.LabelFormatType;
+import com.fedex.ship.stub.LabelPrintingOrientationType;
 import com.fedex.ship.stub.LabelSpecification;
 import com.fedex.ship.stub.LinearUnits;
 import com.fedex.ship.stub.Party;
@@ -433,6 +434,7 @@ public class BLFedExShipmentCreateRequestPopulator
 		final LabelSpecification labelSpecification = new LabelSpecification(); // Label specification
 		labelSpecification.setImageType(ShippingDocumentImageType.ZPLII);// Image types PDF, PNG, DPL, ...
 		labelSpecification.setLabelFormatType(LabelFormatType.COMMON2D); //LABEL_DATA_ONLY, COMMON2D
+		labelSpecification.setLabelPrintingOrientation(LabelPrintingOrientationType.BOTTOM_EDGE_OF_TEXT_FIRST);
 		//labelSpecification.setLabelStockType(LabelStockType.value1);
 		return labelSpecification;
 	}
