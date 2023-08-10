@@ -71,16 +71,14 @@ public class PendingVerificationsAction extends AbstractComponentWidgetAdapterAw
         if (isErrorMessage) {
 
             Messagebox
-						.show(getConfigurationService().getConfiguration()
-								.getString(BlCoreConstants.PENDING_VERIFICATION_MESSAGE_BOX_ERROR_TEXT),
-                            Localization.getLocalizedString(BlCoreConstants.PENDING_VERIFICATION_MESSAGE_BOX_TITLE), Messagebox.OK,
+						.show(getConfigurationService().getConfiguration().getString(BlCoreConstants.PENDING_VERIFICATION_MESSAGE_BOX_ERROR_TEXT),
+								getConfigurationService().getConfiguration().getString(BlCoreConstants.PENDING_VERIFICATION_MESSAGE_BOX_TITLE), Messagebox.OK,
                             Messagebox.ERROR);
 
         } else {
             Messagebox
-						.show(getConfigurationService().getConfiguration()
-								.getString(BlCoreConstants.PENDING_VERIFICATION_MESSAGE_BOX_TEXT),
-                            Localization.getLocalizedString(BlCoreConstants.PENDING_VERIFICATION_MESSAGE_BOX_TITLE), Messagebox.OK,
+						.show(getConfigurationService().getConfiguration().getString(BlCoreConstants.PENDING_VERIFICATION_MESSAGE_BOX_TEXT),
+								getConfigurationService().getConfiguration().getString(BlCoreConstants.PENDING_VERIFICATION_MESSAGE_BOX_TITLE), Messagebox.OK,
                             Messagebox.INFORMATION);
         }
     }

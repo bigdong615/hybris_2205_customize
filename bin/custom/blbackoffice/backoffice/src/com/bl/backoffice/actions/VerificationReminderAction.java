@@ -70,16 +70,14 @@ public class VerificationReminderAction extends AbstractComponentWidgetAdapterAw
        if (isErrorMessage) {
 
            Messagebox
-					  .show(getConfigurationService().getConfiguration()
-							  .getString(BlCoreConstants.VERIFICATION_REMINDER_MESSAGE_BOX_ERROR_TEXT),
-                           Localization.getLocalizedString(BlCoreConstants.VERIFICATION_REMINDER_MESSAGE_BOX_TITLE), Messagebox.OK,
+					  .show(getConfigurationService().getConfiguration().getString(BlCoreConstants.VERIFICATION_REMINDER_MESSAGE_BOX_ERROR_TEXT),
+							  getConfigurationService().getConfiguration().getString(BlCoreConstants.VERIFICATION_REMINDER_MESSAGE_BOX_TITLE), Messagebox.OK,
                            Messagebox.ERROR);
 
        } else {
            Messagebox
-					  .show(getConfigurationService().getConfiguration()
-							  .getString(BlCoreConstants.VERIFICATION_REMINDER_MESSAGE_BOX_TEXT),
-                           Localization.getLocalizedString(BlCoreConstants.VERIFICATION_REMINDER_MESSAGE_BOX_TITLE), Messagebox.OK,
+					  .show(getConfigurationService().getConfiguration().getString(BlCoreConstants.VERIFICATION_REMINDER_MESSAGE_BOX_TEXT),
+							  getConfigurationService().getConfiguration().getString(BlCoreConstants.VERIFICATION_REMINDER_MESSAGE_BOX_TITLE), Messagebox.OK,
                            Messagebox.INFORMATION);
        }
    }
