@@ -22,6 +22,7 @@ import com.hybris.backoffice.i18n.BackofficeLocaleService;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
+import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.hybris.cockpitng.util.notifications.event.NotificationEvent;
 import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.OrderData;
@@ -326,8 +327,6 @@ public class BlOrderBillingController extends DefaultWidgetController {
      * This method will calculate tax and wil get displayed on tax field.
      */
     private void setTax() {
-
-        String selectedBillingChargesReason = missingItemToolCombobox.getValue();
         if(billPaidTrue.isSelected()==Boolean.FALSE) {
             try {
                 BillingPojo billing = new BillingPojo();
@@ -339,7 +338,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
                         billing.setOrder(this.getOrderModel());
                         billing.setBillPaid(billPaidTrue.isSelected() ? Boolean.TRUE : Boolean.FALSE);
                         billing.setAmount(Double.parseDouble(amountDue));
-                        billing.setBillingChargesReason(ItemBillingChargeTypeEnum.valueOf(selectedBillingChargesReason));
+                        billing.setBillingChargesReason(getBillingChargesReason());
                         billing.setSerialNo(serialNo);
                         billing.setProductName(productName);
                         Double billingTax = getDefaultBlAvalaraTaxService().processBillingTax(billing);
@@ -360,11 +359,17 @@ public class BlOrderBillingController extends DefaultWidgetController {
      *
      */
     private void applyToGridBillEntriesSelection() {
-        for (final Component row : this.getOrderEntriesGridRows()) {
-            if (this.globalBillEntriesSelection.isChecked() == Boolean.TRUE) {
-                ((Checkbox) row.getChildren().iterator().next()).setChecked(Boolean.TRUE);
-            } else {
-                ((Checkbox) row.getChildren().iterator().next()).setChecked(Boolean.FALSE);
+        if (this.getOrderModel().getStatus().equals(OrderStatus.COMPLETED)) {
+            this.globalBillEntriesSelection.setDisabled(Boolean.TRUE);
+            this.globalProcessingFeeChkbox.setDisabled(Boolean.TRUE);
+            this.getOrderEntriesGridRows().stream().forEach(gridRow -> ((Checkbox) gridRow.getChildren().iterator().next()).setDisabled(Boolean.TRUE));
+        } else {
+            for (final Component row : this.getOrderEntriesGridRows()) {
+                if (this.globalBillEntriesSelection.isChecked() == Boolean.TRUE) {
+                    ((Checkbox) row.getChildren().iterator().next()).setChecked(Boolean.TRUE);
+                } else {
+                    ((Checkbox) row.getChildren().iterator().next()).setChecked(Boolean.FALSE);
+                }
             }
         }
     }
@@ -437,8 +442,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 billingChargeModel.setBillStatus(BillInfoStatus.NEW_BILL);
                 billingChargeModel.setOrder(this.getOrderModel());
                 billingChargeModel.setBillPaid(Boolean.FALSE);
-                List<ItemBillingChargeTypeEnum> enums = this.getEnumerationService().getEnumerationValues(ItemBillingChargeTypeEnum.class);
-                billingChargeModel.setBillChargeType(enums.get(0));
+                billingChargeModel.setBillChargeType(getBillingChargesReason());
                 billingChargeModel.setOrderCode(this.getOrderModel().getCode());
 
                 BigDecimal taxAmount =  sumValues(checkedEntries, 8);
@@ -485,6 +489,18 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     }
 
+    private ItemBillingChargeTypeEnum getBillingChargesReason()
+    {
+        String selectedBillingChargesReason = missingItemToolCombobox.getValue();
+        for(ItemBillingChargeTypeEnum itemBillingChargeTypeEnum : this.getEnumerationService().getEnumerationValues(ItemBillingChargeTypeEnum.class))
+        {
+            if(selectedBillingChargesReason.equals(this.getEnumerationService().getEnumerationName(itemBillingChargeTypeEnum, this.getLocale())))
+            {
+                return itemBillingChargeTypeEnum;
+            }
+        }
+       return ItemBillingChargeTypeEnum.valueOf(selectedBillingChargesReason);
+    }
     private BigDecimal sumValues(List<Component> components, int index) {
         BigDecimal sum = BigDecimal.ZERO;
         for(Component component : components){
@@ -615,7 +631,8 @@ public class BlOrderBillingController extends DefaultWidgetController {
     }
 
     private void updateSerialStatusForPaidBills(final AbstractOrderModel order) {
-        List < BlItemsBillingChargeModel > paidBillsWithMissingCharge = order.getOrderBills().stream().filter(bill -> bill.isBillPaid() && bill.getBillChargeType().getCode().equals("MISSING_CHARGE")).collect(Collectors.toList());
+        List < BlItemsBillingChargeModel > paidBillsWithMissingCharge = order.getOrderBills().stream().filter(bill ->
+                bill.isBillPaid() && bill.getBillChargeType().getCode().equals(this.billingChargesReason)).collect(Collectors.toList());
         List < String > serialsWithMissingStatus = new ArrayList < > ();
         paidBillsWithMissingCharge.forEach(pBill ->  serialsWithMissingStatus.addAll(pBill.getSerialCodes()));
 

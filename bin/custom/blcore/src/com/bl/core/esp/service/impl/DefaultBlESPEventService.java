@@ -1296,6 +1296,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
     public void setBlOrderBillPaidReceiptRequestPopulator(BlOrderBillPaidReceiptRequestPopulator blOrderBillPaidReceiptRequestPopulator) {
         this.blOrderBillPaidReceiptRequestPopulator = blOrderBillPaidReceiptRequestPopulator;
+    }
     public BlOrderPendingVerificationsPopulator getBlOrderPendingVerificationsPopulator() {
         return blOrderPendingVerificationsPopulator;
     }
