@@ -112,7 +112,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
 	public BlSerialProductModel getBlSerialProductByBarcode(final String barcode) {
 		final String barcodeList = "SELECT {bsp.pk} FROM {BlSerialProduct! as bsp}, {CatalogVersion as cv}, " +
 				"{Catalog as c}, {ArticleApprovalStatus as aas} WHERE {cv.catalog} = {c.pk} and {bsp.catalogVersion} = " +
-				"{cv.pk} and {c.id} = 'blProductCatalog' and {cv.version} = 'Staged' and {aas.code} = 'approved' and {barcode} = ?barcode";
+				"{cv.pk} and {c.id} = 'blProductCatalog' and {cv.version} = 'Online' and {aas.code} = 'approved' and {barcode} = ?barcode";
 		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
 		query.addQueryParameter("barcode", barcode);
 		final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel>search(query).getResult();

@@ -374,10 +374,9 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 
 
 				});
-				Optional<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(consignment.getOptimizedShippingEndDate())).findAny();
-				if(lastStock.isPresent()){
-					lastStock.get().setReservedStatus(false);
-				}
+				Collection<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(consignment.getOptimizedShippingEndDate())).collect(Collectors.toList());
+				lastStock.forEach(ls -> ls.setReservedStatus(false));
+
 				modelService.saveAll(serialStocks);
 			}
 		}

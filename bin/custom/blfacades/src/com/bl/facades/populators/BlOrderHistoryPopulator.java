@@ -145,8 +145,11 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
          for(final ConsignmentModel model : consignmentModels){
              final List<PackagingInfoModel> packagingInfoModels = model.getPackaginginfos();
              for(final PackagingInfoModel packagingInfoModel : packagingInfoModels){
-                 if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber())){
+                 if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getCarrier()!=null && !packagingInfoModel.getCarrier().getCode().equalsIgnoreCase("FEDEX")){
                  	inboundTrackingNumbers.add("'" + "https://www.ups.com/uel/llp/" + packagingInfoModel.getInBoundTrackingNumber() + "'");
+                 }
+                 else if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getCarrier()!=null && packagingInfoModel.getCarrier().getCode().equalsIgnoreCase("FEDEX")) {
+               	  inboundTrackingNumbers.add("FEDEX");
                  }
              }
          }
@@ -158,9 +161,12 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
         	 for(final ConsignmentModel model : consignmentModels){
                final List<PackagingInfoModel> packagingInfoModels = model.getPackaginginfos();
                for(final PackagingInfoModel packagingInfoModel : packagingInfoModels){
-                   if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber())){
+               	if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getCarrier()!=null && !packagingInfoModel.getCarrier().getCode().equalsIgnoreCase("FEDEX")){
 							  inboundTrackingNumbers.add("https://www.ups.com/uel/llp/" + packagingInfoModel.getInBoundTrackingNumber());
                    }
+               	 else if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getCarrier()!=null && packagingInfoModel.getCarrier().getCode().equalsIgnoreCase("FEDEX")) {
+               		 inboundTrackingNumbers.add("FEDEX");
+               	 }
                }
            }
         	 target.setInboundTrackingURLs(inboundTrackingNumbers);

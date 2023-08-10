@@ -96,24 +96,26 @@
 											target="_blank"> <spring:theme
 													code="order.myaccount.print.invoice" /></a></li>
 
-                                        <c:if test="${not empty order.inboundTrackingURLs}">
-                                            <c:choose>
-                                                <c:when test="${fn:length(order.inboundTrackingURLs) > 1}">
-                                                    <li>
-                                                        <a href="#" onclick="openModalAndPrintList(${order.inboundTrackingURLs})">
-                                                            <spring:theme code="order.myaccount.print.return.label" />
-                                                        </a>
-                                                    </li>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <li>
-                                                        <a href="${order.inboundTrackingURLs[0]}" target="_blank">
-                                                            <spring:theme code="order.myaccount.print.return.label" />
-                                                        </a>
-                                                    </li>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </c:if>
+                                        <c:if test="${not empty order.inboundTrackingURLs && order.inboundTrackingURLs[0] ne 'FEDEX'}">
+											<c:choose>
+												<c:when test="${fn:length(order.inboundTrackingURLs) > 1}">
+													<li><a href="#"
+														onclick="openModalAndPrintList(${order.inboundTrackingURLs})">
+															<spring:theme code="order.myaccount.print.return.label" />
+													</a></li>
+												</c:when>
+												<c:otherwise>
+													<li><a href="${order.inboundTrackingURLs[0]}" target="_blank"> 
+													<spring:theme code="order.myaccount.print.return.label" />
+													</a></li>
+												</c:otherwise>
+											</c:choose>
+										</c:if>
+										<c:if test="${not empty order.inboundTrackingURLs && order.inboundTrackingURLs[0] eq 'FEDEX'}">
+											<li><a href="#" onclick="openFedExModalAndPrintList()">
+													<spring:theme code="order.myaccount.print.return.label" />
+											</a></li>
+										</c:if>
 									</ul>
                 						</div>
                 					</div>
@@ -253,24 +255,26 @@
 													code="order.myaccount.print.invoice" />
 										</a></li>
 
-                                        <c:if test="${not empty order.inboundTrackingURLs}">
-                                            <c:choose>
-                                                <c:when test="${fn:length(order.inboundTrackingURLs) > 1}">
-                                                    <li>
-                                                     <a href="#" onclick="openModalAndPrintList(${order.inboundTrackingURLs})">
-                                                            <spring:theme code="order.myaccount.print.return.label" />
-                                                        </a>
-                                                    </li>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <li>
-                                                        <a href="${order.inboundTrackingURLs[0]}" target="_blank">
-                                                            <spring:theme code="order.myaccount.print.return.label" />
-                                                        </a>
-                                                    </li>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </c:if>
+										<c:if test="${not empty order.inboundTrackingURLs && order.inboundTrackingURLs[0] ne 'FEDEX'}">
+											<c:choose>
+												<c:when test="${fn:length(order.inboundTrackingURLs) > 1}">
+													<li><a href="#"
+														onclick="openModalAndPrintList(${order.inboundTrackingURLs})">
+															<spring:theme code="order.myaccount.print.return.label" />
+													</a></li>
+												</c:when>
+												<c:otherwise>
+													<li><a href="${order.inboundTrackingURLs[0]}" target="_blank"> 
+													<spring:theme code="order.myaccount.print.return.label" />
+													</a></li>
+												</c:otherwise>
+											</c:choose>
+										</c:if>
+										<c:if test="${not empty order.inboundTrackingURLs && order.inboundTrackingURLs[0] eq 'FEDEX'}">
+											<li><a href="#" onclick="openFedExModalAndPrintList()">
+													<spring:theme code="order.myaccount.print.return.label" />
+											</a></li>
+										</c:if>
 									</ul>
                 						</div>
                 					</div>
@@ -377,5 +381,47 @@
         document.body.removeChild(modal);
     	}
 	}
+    
+    function openFedExModalAndPrintList() {
+        var subtitle1 = document.createElement('h7');
+        subtitle1.textContent = 'Please ';
+        var subtitle2 = document.createElement('h7');
+        subtitle2.textContent = ' for return labels. ';
+        var a = document.createElement('a');
+        var linkText = document.createTextNode("contact customer service");
+        a.appendChild(linkText);
+        a.title = "Please contact customer service";
+        a.href = "https://support.borrowlenses.com/s/article/contactinfo";
+        // Create the modal element
+        var modal = document.createElement('div');
+        modal.classList.add('modal');
+        // Create the content of the modal
+        var modalContent = document.createElement('div');
+        modalContent.classList.add('modalColor');
+        modalContent.appendChild(subtitle1);
+        modalContent.appendChild(a);
+        modalContent.appendChild(subtitle2);
+        // Create the close button
+        var closeButton = document.createElement('button');
+        closeButton.classList.add('btn');
+        closeButton.classList.add('btn-primary');
+        closeButton.classList.add('closeButton');
+        closeButton.textContent = 'Close';
+        closeButton.addEventListener('click', closeModal);
+        modalContent.classList.add('modal-content-return-label');
+        // Add the close button to the modal content
+        modalContent.appendChild(closeButton);
+        // Add the modal content to the modal
+        modal.appendChild(modalContent);
+        // Add the modal to the document body
+        document.body.appendChild(modal);
+        // Show the modal
+        modal.style.display = 'block';
+        // Function to close the modal
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.removeChild(modal);
+        }
+    }
 
 </script>
