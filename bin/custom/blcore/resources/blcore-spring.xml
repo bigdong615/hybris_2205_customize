@@ -2330,5 +2330,8 @@
 	</bean>
 
 	<bean id="blOrderPendingVerificationsPopulator" class="com.bl.core.esp.populators.BlOrderPendingVerificationsPopulator" parent="espEventCommonPopulator"/>
+	
+	<bean id="blOrderVerificationReminderPopulator" class="com.bl.core.esp.populators.BlOrderVerificationReminderPopulator" parent="espEventCommonPopulator"/>
+	
 
 </beans>
