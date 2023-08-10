@@ -212,10 +212,9 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
             });
 
             //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
-            Optional<StockLevelModel> lastStock = serialStocksForOptimizedDates.stream().filter(stock -> stock.getDate().equals(consignment.getOptimizedShippingEndDate())).findAny();
-            if(lastStock.isPresent()){
-              lastStock.get().setReservedStatus(false);
-            }
+            Collection<StockLevelModel> lastStocks = serialStocksForOptimizedDates.stream().filter(stock -> stock.getDate().equals(consignment.getOptimizedShippingEndDate())).collect(Collectors.toList());
+            lastStocks.forEach(ls -> ls.setReservedStatus(false));
+
             this.getModelService().saveAll(serialStocksForOptimizedDates);
 
             return consignment;
@@ -251,7 +250,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         return consignment;
       }
     } catch (final Exception ex) {
-      throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
+       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
     }
   }
 
