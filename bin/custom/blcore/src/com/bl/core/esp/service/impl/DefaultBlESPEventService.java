@@ -2,7 +2,6 @@ package com.bl.core.esp.service.impl;
 
 
 import com.bl.core.esp.populators.*;
-import com.bl.esp.dto.pendingverification.PendingVerificationEventRequest;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -68,6 +67,8 @@ import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
+import com.bl.esp.dto.pendingverification.PendingVerificationEventRequest;
+import com.bl.esp.dto.pendingverification.VerificationReminderEventRequest;
 import com.bl.esp.dto.pickedup.OrderPickedUpEventRequest;
 import com.bl.esp.dto.readyforpickup.OrderReadyForPickupEventRequest;
 import com.bl.esp.dto.refund.OrderRefundEventRequest;
@@ -115,7 +116,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator;
     private BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator;
     private BlOrderPendingVerificationsPopulator blOrderPendingVerificationsPopulator;
-    @Value("${back.in.stock.email.request.event.template.key}")
+	 private BlOrderVerificationReminderPopulator blOrderVerificationReminderPopulator;
+	 @Value("${back.in.stock.email.request.event.template.key}")
     private String backInStockTemplate;
     /**
      * This method created to prepare the request and response from ESP service
@@ -1008,6 +1010,31 @@ public class DefaultBlESPEventService implements BlESPEventService {
         // Save send order confirmation ESP Event Detail
         persistESPEventDetail(espEventResponseWrapper,EspEventTypeEnum.VERIFICATION_PENDING ,orderModel.getCode(),null, null);
     }
+
+	 /**
+	  *
+	  * @param orderModel
+	  */
+	 @Override
+	 public void sendOrderVerificationReminderEvent(OrderModel orderModel)
+	 {
+		 final VerificationReminderEventRequest verificationReminderEventRequest = new VerificationReminderEventRequest();
+		 getBlOrderVerificationReminderPopulator().populate(orderModel, verificationReminderEventRequest);
+		 ESPEventResponseWrapper espEventResponseWrapper = null;
+		 try
+		 {
+			 // Call send order deposit required ESP Event API
+			 espEventResponseWrapper = getBlESPEventRestService().sendOrderVerificationReminder(verificationReminderEventRequest);
+		 }
+		 catch (final BlESPIntegrationException exception)
+		 {
+			 persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_PENDING, orderModel.getCode(), exception.getMessage(),
+					 exception.getRequestString());
+		 }
+		 // Save send order confirmation ESP Event Detail
+		 persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.VERIFICATION_PENDING, orderModel.getCode(), null, null);
+	 }
+
     /**
    * Format amount string.
    * @param amount the amount
@@ -1277,4 +1304,14 @@ public class DefaultBlESPEventService implements BlESPEventService {
     public void setBlOrderPendingVerificationsPopulator(BlOrderPendingVerificationsPopulator blOrderPendingVerificationsPopulator) {
         this.blOrderPendingVerificationsPopulator = blOrderPendingVerificationsPopulator;
     }
+
+	 public BlOrderVerificationReminderPopulator getBlOrderVerificationReminderPopulator()
+	 {
+		 return blOrderVerificationReminderPopulator;
+	 }
+
+	 public void setBlOrderVerificationReminderPopulator(BlOrderVerificationReminderPopulator blOrderVerificationReminderPopulator)
+	 {
+		 this.blOrderVerificationReminderPopulator = blOrderVerificationReminderPopulator;
+	 }
 }
