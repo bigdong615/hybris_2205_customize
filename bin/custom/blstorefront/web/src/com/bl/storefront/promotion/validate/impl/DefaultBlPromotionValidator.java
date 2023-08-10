@@ -28,6 +28,7 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -457,6 +458,20 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	}
 
 	/**
+	 * Checks if is first time user.
+	 *
+	 * @return true, if is first time user
+	 */
+	private BigDecimal getCartTotalValue()
+	{
+		if (Objects.nonNull(getCartRao()))
+		{
+			return getCartRao().getTotal();
+		}
+		return null;
+	}
+
+	/**
 	 * Check if promotion already used.
 	 *
 	 * @param redirectAttributes
@@ -551,10 +566,175 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 				return false;
 			}
 		}
-		return checkItemsForPromotion(model, redirectAttributes, promotionSourceRule);
+		final boolean isCartTotalValueValid = checkCartValue(model, redirectAttributes, promotionSourceRule);
+		if (isCartTotalValueValid)
+		{
+			return checkItemsForPromotion(model, redirectAttributes, promotionSourceRule);
+		}
+		else
+		{
+			addAndLogMessage("promotion.validation.message.for.carttotal.failure", null, model, redirectAttributes);
+			return false;
+		}
+		//return checkItemsForPromotion(model, redirectAttributes, promotionSourceRule);
 	}
 
 
+
+	/**
+	 * @param model
+	 * @param redirectAttributes
+	 * @param promotionSourceRule
+	 * @return
+	 */
+	private boolean checkCartValue(final Model model, final RedirectAttributes redirectAttributes,
+			final PromotionSourceRuleModel promotionSourceRule)
+	{
+		if (promotionSourceRule.getConditions().contains(BlControllerConstants.Y_CART_TOTAL))
+		{
+			final RuleConditionData ruleConditionData = getRuleConditionDataByDefinitionId(BlControllerConstants.Y_CART_TOTAL);
+			final RuleParameterData ruleParameterData = getRuleParameterData(ruleConditionData, BlControllerConstants.OPERATOR);
+			final RuleParameterData ruleParameterValueData = getRuleParameterData(ruleConditionData, BlControllerConstants.VALUE);
+
+			final boolean isCartvaluevalid = isValidForCartTotal(ruleParameterData, ruleConditionData, model, redirectAttributes,
+					ruleParameterValueData);
+			if (isCartvaluevalid)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+
+		}
+		return true;
+
+	}
+
+	/**
+	 * @param ruleParameterData
+	 * @param ruleConditionData
+	 * @param model
+	 * @param redirectAttributes
+	 * @param ruleParameterValueData
+	 * @return
+	 */
+	private boolean isValidForCartTotal(final RuleParameterData ruleParameterData, final RuleConditionData ruleConditionData,
+			final Model model, final RedirectAttributes redirectAttributes, final RuleParameterData ruleParameterValueData)
+	{
+		if (Objects.nonNull(ruleParameterData))
+		{
+			final String operatorToExecute = ((AmountOperator) ruleParameterData.getValue()).toString();
+			final BigDecimal cvalue = getCartTotalValue();
+			final String extractedNumberString = ruleParameterValueData.getValue().toString().replaceAll("[^0-9]", "");
+			final BigDecimal pvalue = new BigDecimal(extractedNumberString);
+
+			switch (operatorToExecute)
+			{
+				case "EQUAL":
+					return isCValueExactPvalue(pvalue, cvalue, model, redirectAttributes);
+				case "GREATER_THAN_OR_EQUAL":
+					return isCvalueGreatEqualThenPValue(pvalue, cvalue, model, redirectAttributes);
+				case "GREATER_THAN":
+					return isCvalueGreatThenPValue(pvalue, cvalue, model, redirectAttributes);
+				case "LESS_THAN_OR_EQUAL":
+					return isCvalueLessThenEqualPValue(pvalue, cvalue, model, redirectAttributes);
+				case "LESS_THAN":
+					return isCvalueLessThenPValue(pvalue, cvalue, model, redirectAttributes);
+				default:
+					return false;
+			}
+		}
+		return false;
+	}
+
+
+
+	/**
+	 * @param pvalue
+	 * @param cvalue
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	private boolean isCvalueLessThenPValue(final BigDecimal pvalue, final BigDecimal cvalue, final Model model,
+			final RedirectAttributes redirectAttributes)
+	{
+		if (cvalue.compareTo(pvalue) < -1)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param pvalue
+	 * @param cvalue
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	private boolean isCvalueLessThenEqualPValue(final BigDecimal pvalue, final BigDecimal cvalue, final Model model,
+			final RedirectAttributes redirectAttributes)
+	{
+		if (cvalue.compareTo(pvalue) <= -1)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param pvalue
+	 * @param cvalue
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	private boolean isCvalueGreatThenPValue(final BigDecimal pvalue, final BigDecimal cvalue, final Model model,
+			final RedirectAttributes redirectAttributes)
+	{
+		if (pvalue.compareTo(cvalue) < -1)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param pvalue
+	 * @param cvalue
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	private boolean isCvalueGreatEqualThenPValue(final BigDecimal pvalue, final BigDecimal cvalue, final Model model,
+			final RedirectAttributes redirectAttributes)
+	{
+		if (pvalue.compareTo(cvalue) <= -1)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param pvalue
+	 * @param cvalue
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	private boolean isCValueExactPvalue(final BigDecimal pvalue, final BigDecimal cvalue, final Model model,
+			final RedirectAttributes redirectAttributes)
+	{
+		if (pvalue == cvalue)
+		{
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Check if promotion is eligible for arrival date.
@@ -714,6 +894,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 				? getCartRao().getRentalDurationDays().intValue()
 				: 0;
 	}
+
 
 	/**
 	 * Checks if is rental days less then specified days.
