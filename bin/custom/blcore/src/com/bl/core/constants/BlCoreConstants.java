@@ -695,7 +695,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String PENDING_VERIFICATION_MESSAGE_BOX_ERROR_TEXT = "error.message.pendingverification.emailsent";
 	public static final String PENDING_VERIFICATION_EVENT_DEFINITION_KEY = "order.verification.pending.event.definition.key";
 	public static final String PENDING_VERIFICATION_EVENT_TEMPLATE = "order.verification.pending.event.template";
+	public static final String VERIFICATION_REMINDER_EVENT_DEFINITION_KEY = "order.verification.reminder.event.definition.key";
 	public static final String VERIFICATION_REMINDER_EVENT_TEMPLATE = "order.verification.reminder.event.template";
+	public static final String VERIFICATION_REMINDER_MESSAGE_BOX_TITLE = "success.message.verificationreminder.title";
+	public static final String VERIFICATION_REMINDER_MESSAGE_BOX_TEXT = "success.message.verificationreminder.emailsent";
+	public static final String VERIFICATION_REMINDER_MESSAGE_BOX_ERROR_TEXT = "error.message.verificationreminder.emailsent";
 	private BlCoreConstants()
 	{
 		//empty

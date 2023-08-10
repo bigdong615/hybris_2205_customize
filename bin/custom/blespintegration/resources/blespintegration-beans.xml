@@ -1358,6 +1358,40 @@
 		</property>
 	</bean>
 
+	<!-- Verification Reminder Event Request Object-->
+	<bean class="com.bl.esp.dto.pendingverification.VerificationReminderEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.pendingverification.data.VerificationReminder" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+	
+	<!-- Verification Reminder ESP-->
+	<bean class="com.bl.esp.dto.pendingverification.data.VerificationReminder" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="expectedShipDate" type="java.util.Date" equals="true">
+			<annotations>@JsonProperty("Expected Ship Date")</annotations>
+		</property>
+		<property name="dateplaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+		<property name="shippingmethodtype" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("shipping method type")</annotations>
+		</property>
+		<property name="shippingmethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("shipping method")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("status")</annotations>
+		</property>
+		<property name="verificationlevel" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("verification level")</annotations>
+		</property>
+	</bean>
 
 
 </beans>

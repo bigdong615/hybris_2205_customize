@@ -211,5 +211,7 @@ public interface BlESPEventService {
      * @param orderModel
      */
      void sendOrderPendingVerificationsEvent(final OrderModel orderModel);
+     
+     void sendOrderVerificationReminderEvent(final OrderModel orderModel);
 
 }
