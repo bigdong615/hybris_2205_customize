@@ -344,6 +344,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	private boolean checkForStackability(final Model model, final RedirectAttributes redirectAttributes,
 			final PromotionSourceRuleModel promotionSourceRule)
 	{
+
 		final AbstractOrderModel cartOrOrder = Objects.nonNull(getExtendedOrder()) ? getExtendedOrder()
 				: getBlCartService().getSessionCart();
 		final AbstractRuleModel nonStackableAppliedPromo = getNonStackableAppliedPromo(cartOrOrder.getAllPromotionResults());
@@ -576,7 +577,6 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 			addAndLogMessage("promotion.validation.message.for.carttotal.failure", null, model, redirectAttributes);
 			return false;
 		}
-		//return checkItemsForPromotion(model, redirectAttributes, promotionSourceRule);
 	}
 
 
@@ -835,7 +835,16 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 				}
 			}
 		}
-		return checkItemsForPromotion(model, redirectAttributes, promotionSourceRule);
+		final boolean isCartTotalValueValid = checkCartValue(model, redirectAttributes, promotionSourceRule);
+		if (isCartTotalValueValid)
+		{
+			return checkItemsForPromotion(model, redirectAttributes, promotionSourceRule);
+		}
+		else
+		{
+			addAndLogMessage("promotion.validation.message.for.carttotal.failure", null, model, redirectAttributes);
+			return false;
+		}
 	}
 
 	/**
