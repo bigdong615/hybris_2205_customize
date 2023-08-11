@@ -875,3 +875,29 @@ max-width: 40% !important;
 .view-links .dropdown-menu>li>a {
     padding: 0px 2px 0 0;
 }
+
+.close {
+  font-size: 25px;
+  font-weight: 300;
+  margin-right: 10px;
+}
+
+
+
+.modal-backdrop-calendar {
+    position: initial !important;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 100vw;
+    height: auto;
+    background-color: rgb(237, 237, 237);
+}
+
+.modal-backdrop-calendar.show {
+    opacity: .5;
+}
+
+.fade {
+    transition: opacity .15s linear;
+}
