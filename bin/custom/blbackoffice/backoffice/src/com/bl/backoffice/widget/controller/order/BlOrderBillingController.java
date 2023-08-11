@@ -638,7 +638,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
         order.getEntries().forEach(abstractOrderEntryModel -> {
             abstractOrderEntryModel.getSerialProducts().forEach(blProductModel -> {
-                if(serialsWithMissingStatus.contains(blProductModel.getCode()) && abstractOrderEntryModel.getNoDamageWaiverSelected() == Boolean.TRUE){
+                if(serialsWithMissingStatus.contains(blProductModel.getCode()) && abstractOrderEntryModel.getGearGuardProFullWaiverSelected() == Boolean.FALSE){
                     ((BlSerialProductModel) blProductModel).setSerialStatus(SerialStatusEnum.STOLEN_PAID_IN_FULL);
                 }
                 else if(serialsWithMissingStatus.contains(blProductModel.getCode()) && abstractOrderEntryModel.getGearGuardProFullWaiverSelected() == Boolean.TRUE){

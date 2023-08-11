@@ -1337,18 +1337,6 @@
 		<property name="rentalEndDate" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Rental_End_Date ")</annotations>
 		</property>
-		<property name="actualReturnDate " type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Actual_Return_Date ")</annotations>
-		</property>
-		<property name="subtotal " type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Order_Subtotal ")</annotations>
-		</property>
-		<property name="orderTax " type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Order_Tax ")</annotations>
-		</property>
-		<property name="orderDiscount " type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Order_Discount ")</annotations>
-		</property>
 		<property name="orderTotal " type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Order_Total ")</annotations>
 		</property>
@@ -1363,9 +1351,6 @@
 		</property>
 		<property name="billBalance " type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Bill_Balance ")</annotations>
-		</property>
-		<property name="Bill_Notes" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Bill_Notes")</annotations>
 		</property>
 		<property name="customerInfo " type="com.bl.esp.dto.customer.data.CustomerInfoData" equals="true">
 			<annotations>@JsonProperty("Customer_Info ")</annotations>
@@ -1423,13 +1408,7 @@
 		<property name="itemBillAmount " type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Item_Bill_Amount ")</annotations>
 		</property>
-		<property name="itemBillFees" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Item_Bill_Fees")</annotations>
-		</property>
-		<property name="itemBillTotal" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Item_Bill_Total")</annotations>
-		</property>
-		<property name="itemNotes" type="java.lang.String" equals="true">
+		<property name="itemNotes" type="java.util.List&lt;String&gt;" equals="true">
 			<annotations>@JsonProperty("Item_Notes")</annotations>
 		</property>
 	</bean>
