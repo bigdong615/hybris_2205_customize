@@ -30,6 +30,8 @@
                  <span id="litepicker" class="rental-dates d-none d-md-inline"><i class="icon-calendar"></i> Rental Dates :</span>
 				<input type="text" id="litepicker_search" class="form-control"
 					placeholder="<spring:theme code="text.hero.banner.searchbox.datepicker.placeholder" />" autocomplete="off">
+					<span id="resetCalendar" class="close resetCalendar">&times;</span>
+					
 			</c:if>
 			<c:if test="${positionAttribute == 'MobileHomePageBannerSearchBoxSlot'}">
 				<input type="text" id="js-site-search-input-mob"
