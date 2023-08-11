@@ -1518,3 +1518,17 @@ const formatToPhone = (event) => {
 
 
 
+$('#resetCalendar').on("click", function(event) {
+	$.ajax({
+		url: ACC.config.encodedContextPath + '/resetDatepicker',
+		type: "GET",
+		success: function(data) {
+			if (data == 'success')
+				window.location.reload();
+		},
+		error: function(xhr, textStatus, error) {
+
+		}
+	});
+});
+
