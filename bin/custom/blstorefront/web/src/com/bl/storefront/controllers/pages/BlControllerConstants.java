@@ -254,6 +254,8 @@ public class BlControllerConstants
 	public static final String LESS_THAN_OR_EQUAL = AmountOperator.LESS_THAN_OR_EQUAL.toString();
 	public static final String ANALYTICS_TRACKING_ID_GA4 = "google.analytics.tracking.id.ga4";
 	public static final String ANALYTICS_TRACKING_ID_GA4_ENABLED = "google.analytics.tracking.id.ga4.enabled";
+	public static final String Y_CART_TOTAL = "y_cart_total";
+	public static final String VALUE = "value";
 
 	private BlControllerConstants()
 	{
