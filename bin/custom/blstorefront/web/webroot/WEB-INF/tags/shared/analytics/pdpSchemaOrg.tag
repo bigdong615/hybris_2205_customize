@@ -10,13 +10,16 @@
 	  "name": "${product.name}",
 	  "image": 
 	    [ <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
+	    <c:choose>
 	    
-	     <c:when test="${not status.last}">
+	     <c:when test="${not varStatus.last}">
 	        "${container.product.url}"
 	     </c:when>
 	     <c:otherwise>
 	       "${container.product.url}",
 	       </c:otherwise>
+	      </c:choose>
+
 	       </c:forEach>
 	     ],
 	  "brand": {
