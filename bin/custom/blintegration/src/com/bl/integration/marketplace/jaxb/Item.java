@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlType;
 		"gtin",
 		"mpn",
 		"price",
+		"sale_price",
+		"sale_price_effective_date",
 		"shipping"
 })
 @XmlRootElement(name = "item")

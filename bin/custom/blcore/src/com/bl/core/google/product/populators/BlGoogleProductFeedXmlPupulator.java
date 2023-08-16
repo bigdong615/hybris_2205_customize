@@ -106,12 +106,13 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 			item.setShipping(shipping);
 			final Date date = new Date();
 			final BaseStoreModel baseStore = getBaseStoreService().getAllBaseStores().get(0);
-			if (baseStore.getSaleStartDate().compareTo(date) * date.compareTo(baseStore.getSaleEndDate()) > 0)
+			if ((baseStore.getSaleStartDate()!=null && baseStore.getSaleEndDate()!=null) && baseStore.getSaleStartDate().compareTo(date) * date.compareTo(baseStore.getSaleEndDate()) > 0)
 			{
-				final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+				final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 				final String startDate = format.format(baseStore.getSaleStartDate());
 				final String endDate = format.format(baseStore.getSaleEndDate());
-				item.setSale_price_effective_date(startDate + "/" + endDate);
+				item.setSale_price_effective_date(startDate + "-0800/" + endDate + "-0800");
+				item.setSale_price(getSerialForPrice(product));
 			}
 			items.add(item);
 		}
@@ -146,32 +147,50 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 					&& getBlCommerceStockService().isUsedGearSerialNotAssignedToRentalOrder(serial.getCode())
 					&& serial.getApprovalStatus().getCode().equalsIgnoreCase("approved"))
 			{
-
 				final BlProductModel skuProduct = serial.getBlProduct();
 				if (Objects.nonNull(serial.getFinalSalePrice()) && Objects.nonNull(skuProduct))
 				{
 					final BigDecimal finalSalePrice = serial.getFinalSalePrice().setScale(BlCoreConstants.DECIMAL_PRECISION,
 							BlCoreConstants.ROUNDING_MODE);
-					final Integer forSaleDiscount = skuProduct.getForSaleDiscount();
-					if (Objects.nonNull(forSaleDiscount))
-					{
-						final BigDecimal calculatedIncentivizedPrice = finalSalePrice
-								.subtract(finalSalePrice.multiply(BigDecimal.valueOf(forSaleDiscount))
-										.divide(BigDecimal.valueOf(BlCoreConstants.DIVIDE_BY_HUNDRED))
-										.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
-						prices.add(calculatedIncentivizedPrice);
-					}
-					else
-					{
 						prices.add(finalSalePrice);
-					}
 				}
-
 			}
 		}
 		if (prices.isEmpty())
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Price found for Bl product : {} ", product.getCode());
+			return price;
+		}
+		else
+		{
+			return new TreeSet<BigDecimal>(prices).first().toString();
+		}
+	}
+
+	private String getSerialForPrice(final BlProductModel product)
+	{
+		final String price = StringUtils.EMPTY;
+		final List<BigDecimal> prices = new ArrayList<BigDecimal>();
+		for (final BlSerialProductModel serial : product.getSerialProducts())
+		{
+			if (getBlStockService().isVisibleInPdp(serial.getSerialStatus()) && serial.getForSale()
+					&& getBlCommerceStockService().isUsedGearSerialNotAssignedToRentalOrder(serial.getCode())
+					&& serial.getApprovalStatus().getCode().equalsIgnoreCase("approved"))
+			{
+
+				final BlProductModel skuProduct = serial.getBlProduct();
+				if (Objects.nonNull(serial.getFinalSalePrice()) && Objects.nonNull(skuProduct)
+						&& serial.getIncentivizedPrice() != null)
+				{
+					final BigDecimal incentivizedPrice = serial.getIncentivizedPrice().setScale(BlCoreConstants.DECIMAL_PRECISION,
+							BlCoreConstants.ROUNDING_MODE);
+					prices.add(incentivizedPrice);
+				}
+			}
+		}
+		if (prices.isEmpty())
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Incentived Price found for Bl product : {} ", product.getCode());
 			return price;
 		}
 		else
