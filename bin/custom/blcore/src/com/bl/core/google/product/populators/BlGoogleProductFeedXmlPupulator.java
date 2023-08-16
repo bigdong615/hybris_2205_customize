@@ -5,10 +5,14 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -39,6 +43,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 	private ModelService modelService;
 	private BlStockService blStockService;
 	private BlCommerceStockService blCommerceStockService;
+	private BaseStoreService baseStoreService;
 	private ConfigurationService configurationService;
 
 	@Override
@@ -99,6 +104,15 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 			final double price = getShippingPrice(product);
 			shipping.setPrice(String.valueOf(price) + SITE_CURRENCY);
 			item.setShipping(shipping);
+			final Date date = new Date();
+			final BaseStoreModel baseStore = getBaseStoreService().getAllBaseStores().get(0);
+			if (baseStore.getSaleStartDate().compareTo(date) * date.compareTo(baseStore.getSaleEndDate()) > 0)
+			{
+				final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+				final String startDate = format.format(baseStore.getSaleStartDate());
+				final String endDate = format.format(baseStore.getSaleEndDate());
+				item.setSale_price_effective_date(startDate + "/" + endDate);
+			}
 			items.add(item);
 		}
 		target.setItems(items);
@@ -151,7 +165,6 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 					{
 						prices.add(finalSalePrice);
 					}
-
 				}
 
 			}
@@ -216,5 +229,16 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 	{
 		this.configurationService = configurationService;
 	}
+
+	public BaseStoreService getBaseStoreService()
+	{
+		return baseStoreService;
+	}
+
+	public void setBaseStoreService(final BaseStoreService baseStoreService)
+	{
+		this.baseStoreService = baseStoreService;
+	}
+
 
 }

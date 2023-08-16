@@ -4008,7 +4008,17 @@
                       <description>Blocked Ip List</description>
                       <modifiers read="true" write="true" search="false" optional="true" />
                        <persistence type="property" />
-                </attribute>
+                	</attribute>
+                	<attribute autocreate="true" qualifier="saleStartDate" type="java.util.Date">
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <persistence type="property" />
+                        <description>Userd gear sale Start Date</description>
+                    </attribute>
+                    <attribute autocreate="true" qualifier="saleEndDate" type="java.util.Date">
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <persistence type="property" />
+                        <description>Userd gear sale End Date</description>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
