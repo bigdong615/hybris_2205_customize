@@ -2119,13 +2119,30 @@
 			<advanced-search:field-list>
 				<advanced-search:field name="barcode" selected="true" mandatory="false"/>
 				<advanced-search:field name="testingStatus" selected="true" mandatory="false"/>
+				<advanced-search:field name="blProduct" selected="true" mandatory="false"/>
 				<advanced-search:field name="serialStatus" selected="false" mandatory="false"/>
 				<advanced-search:field name="forSale" selected="false" mandatory="false"/>
 				<advanced-search:field name="productId" selected="false" mandatory="false"/>
+				<advanced-search:field name="ocLocation" selected="false" mandatory="false"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
-	
+
+	<context merge-by="type" parent="GenericItem" type="BlSerialProduct"  extends="BlSerialProduct" component="listview">
+		<list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+			<list-view:column qualifier="code"/>
+			<list-view:column qualifier="name"/>
+			<list-view:column qualifier="productStatus" spring-bean="productStatusRenderer" label="product.status.column.label"/>
+			<list-view:column qualifier="catalogVersion"/>
+				<list-view:column qualifier="serialStatus"/>
+			<list-view:column qualifier="blProduct.code" label="product.code.column.label"/>
+			<list-view:column qualifier="blProduct.name" label="product.name.column.label"/>
+			<list-view:column qualifier="associatedShippedConsignment"/>
+			<list-view:column qualifier="ocLocation"/>
+			<list-view:column qualifier="lastLocationScanParent"/>
+		</list-view:list-view>
+	</context>
+
 	<context type="BlItemsBillingCharge" component="base">
 		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
 			<y:labels>
