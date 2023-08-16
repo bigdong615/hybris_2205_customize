@@ -13,10 +13,10 @@
 	    <c:choose>
 	    
 	     <c:when test="${not varStatus.last}">
-	        "${container.product.url}"
+	        "${container.product.url}",
 	     </c:when>
 	     <c:otherwise>
-	       "${container.product.url}",
+	       "${container.product.url}"
 	       </c:otherwise>
 	      </c:choose>
 
