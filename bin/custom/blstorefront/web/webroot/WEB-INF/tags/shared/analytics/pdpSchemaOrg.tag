@@ -49,7 +49,24 @@
             </c:otherwise>
 	    </c:choose>
 	  },
-    "breadcrumbList": {
+   
+   "mainEntityOfPage":{
+   "@type": "ItemPage",
+       <c:choose>
+            <c:when test="${IsRentalPage eq 'true' && product.forRent eq 'true'}">
+                <c:url var="offerURL" value="${jalosession.tenant.config.getParameter('website.bl.https')}/rent${product.url}"/>
+                 "@id": "${offerURL}",
+            </c:when>
+            <c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true' && not empty product.serialproducts}">
+                <c:url var="offerURL" value="${jalosession.tenant.config.getParameter('website.bl.https')}/buy${product.url}"/>
+                 "@id": "${offerURL}",
+            </c:when>
+            <c:otherwise>
+                <c:url var="offerURL" value=""/>
+                "@id": "${offerURL}",
+            </c:otherwise>
+	    </c:choose>
+    "breadcrumb": {
   	"@type": "BreadcrumbList",
 		  "itemListElement": [{
 		    "@type": "ListItem",
@@ -77,6 +94,7 @@
 		  }
 		  </c:if>
 		  ]
+  }
   }
 }
 </script>
