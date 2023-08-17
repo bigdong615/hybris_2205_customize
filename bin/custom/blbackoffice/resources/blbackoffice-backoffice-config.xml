@@ -2124,6 +2124,7 @@
 				<advanced-search:field name="forSale" selected="false" mandatory="false"/>
 				<advanced-search:field name="productId" selected="false" mandatory="false"/>
 				<advanced-search:field name="ocLocation" selected="false" mandatory="false"/>
+				<advanced-search:field name="productType"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>

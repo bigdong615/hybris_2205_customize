@@ -145,10 +145,10 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
          for(final ConsignmentModel model : consignmentModels){
              final List<PackagingInfoModel> packagingInfoModels = model.getPackaginginfos();
              for(final PackagingInfoModel packagingInfoModel : packagingInfoModels){
-                 if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getCarrier()!=null && !packagingInfoModel.getCarrier().getCode().equalsIgnoreCase("FEDEX")){
+                 if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getLabelURL()!=null && packagingInfoModel.getLabelURL().contains("ups")){
                  	inboundTrackingNumbers.add("'" + "https://www.ups.com/uel/llp/" + packagingInfoModel.getInBoundTrackingNumber() + "'");
                  }
-                 else if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getCarrier()!=null && packagingInfoModel.getCarrier().getCode().equalsIgnoreCase("FEDEX")) {
+                 else if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getLabelURL()!=null && packagingInfoModel.getLabelURL().contains("fedex")) {
                	  inboundTrackingNumbers.add("FEDEX");
                  }
              }
@@ -161,10 +161,10 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
         	 for(final ConsignmentModel model : consignmentModels){
                final List<PackagingInfoModel> packagingInfoModels = model.getPackaginginfos();
                for(final PackagingInfoModel packagingInfoModel : packagingInfoModels){
-               	if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getCarrier()!=null && !packagingInfoModel.getCarrier().getCode().equalsIgnoreCase("FEDEX")){
+               	if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getLabelURL()!=null && packagingInfoModel.getLabelURL().contains("ups")){
 							  inboundTrackingNumbers.add("https://www.ups.com/uel/llp/" + packagingInfoModel.getInBoundTrackingNumber());
                    }
-               	 else if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getCarrier()!=null && packagingInfoModel.getCarrier().getCode().equalsIgnoreCase("FEDEX")) {
+               	 else if(StringUtils.isNotBlank(packagingInfoModel.getInBoundTrackingNumber()) && packagingInfoModel.getLabelURL()!=null && packagingInfoModel.getLabelURL().contains("fedex")){
                		 inboundTrackingNumbers.add("FEDEX");
                	 }
                }
