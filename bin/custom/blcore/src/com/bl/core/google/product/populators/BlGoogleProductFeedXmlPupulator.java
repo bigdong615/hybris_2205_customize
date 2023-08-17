@@ -113,7 +113,7 @@ public class BlGoogleProductFeedXmlPupulator implements Populator<List<BlProduct
 				final String endDate = format.format(baseStore.getSaleEndDate());
 				item.setSale_price_effective_date(startDate + "-0800/" + endDate + "-0800");
 				item.setSale_price(getSerialForPrice(product));
-				if (!item.getSale_price().isBlank())
+				if (item.getSale_price().isBlank())
 				{
 					item.setSale_price(item.getPrice());
 				}
