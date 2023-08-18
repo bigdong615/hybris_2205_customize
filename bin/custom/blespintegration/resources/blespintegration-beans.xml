@@ -1324,94 +1324,55 @@
 
 	<!--start billin relted data-->
 	<bean class="com.bl.esp.dto.billpaid.data.OrderBillReceiptData"
-		  extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		  extends="com.bl.esp.dto.common.data.ESPEmailCommonRequestData">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
 		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="orderId" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Order_Id")</annotations>
+		</property>
 		<property name="datePlaced" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Date Placed")</annotations>
+			<annotations>@JsonProperty("Date_Placed")</annotations>
 		</property>
 		<property name="rentalStartDate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Rental Start Date")</annotations>
+			<annotations>@JsonProperty("Rental_Start_Date")</annotations>
 		</property>
 		<property name="rentalEndDate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Rental_End_Date ")</annotations>
+			<annotations>@JsonProperty("Rental_End_Date")</annotations>
 		</property>
 		<property name="orderTotal " type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Order_Total ")</annotations>
+			<annotations>@JsonProperty("Order_Total")</annotations>
 		</property>
 		<property name="status" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Order_Status ")</annotations>
+			<annotations>@JsonProperty("Order_Status")</annotations>
 		</property>
 		<property name="orderStatusSub " type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Order_Status_Sub")</annotations>
 		</property>
 		<property name="billAmount " type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Bill_Amount ")</annotations>
+			<annotations>@JsonProperty("Bill_Amount")</annotations>
 		</property>
 		<property name="billBalance " type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Bill_Balance ")</annotations>
+			<annotations>@JsonProperty("Bill_Balance")</annotations>
 		</property>
-		<property name="customerInfo " type="com.bl.esp.dto.customer.data.CustomerInfoData" equals="true">
-			<annotations>@JsonProperty("Customer_Info ")</annotations>
+		<property name="billTax" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Bill_Tax")</annotations>
 		</property>
-		<property name="itemsInfo " type="java.util.List&lt;com.bl.esp.dto.billpaid.data.OrderBillItemInfoData&gt;"
+		<property name="billFees" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Bill_Fees")</annotations>
+		</property>
+		<property name="billItemsAmount" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Bill_Items_Amount")</annotations>
+		</property>
+		<property name="customerInfo " type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Customer_Info")</annotations>
+		</property>
+		<property name="itemsInfo " type="java.lang.String"
 				  equals="true">
 			<annotations>@JsonProperty("Items_Info")</annotations>
 		</property>
 	</bean>
-	<bean class="com.bl.esp.dto.customer.data.CustomerInfoData">
-		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
-		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
-		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
-		<property name="customerName" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Customer_Name")</annotations>
-		</property>
-		<property name="customerAddressLine1" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Customer_Address_1")</annotations>
-		</property>
-		<property name="customerAddressLine2" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Customer_Address_2")</annotations>
-		</property>
-		<property name="customerCity" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Customer_City")</annotations>
-		</property>
-		<property name="customerState" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Customer_State")</annotations>
-		</property>
-		<property name="customerZipcode" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Customer_Zipcode")</annotations>
-		</property>
-		<property name="customerPhone" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Customer_Phone")</annotations>
-		</property>
-		<property name="customerEmail" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Customer_Email")</annotations>
-		</property>
-		<property name="paymentSummary" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Payment_Summary")</annotations>
-		</property>
-	</bean>
-	<bean class="com.bl.esp.dto.billpaid.data.OrderBillItemInfoData">
-		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
-		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
-		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
-		<property name="itemId" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Item_Id")</annotations>
-		</property>
-		<property name="itemTitle" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Item_Title")</annotations>
-		</property>
-		<property name="itemIssue" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Item_Issue")</annotations>
-		</property>
-		<property name="itemBillAmount " type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Item_Bill_Amount ")</annotations>
-		</property>
-		<property name="itemNotes" type="java.util.List&lt;String&gt;" equals="true">
-			<annotations>@JsonProperty("Item_Notes")</annotations>
-		</property>
-	</bean>
+
 	<!-- Order Bill Paid Event Request Object-->
 	<bean class="com.bl.esp.dto.billpaid.OrderBillReceiptEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>

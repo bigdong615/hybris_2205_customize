@@ -35,6 +35,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.enumeration.EnumerationService;
+import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -117,7 +118,6 @@ public class BlOrderBillingController extends DefaultWidgetController {
     private transient BlOrderFacade blOrderFacade;
 
     private transient BrainTreeCheckoutFacade brainTreeCheckoutFacade;
-    private transient PriceDataFactory priceDataFactory;
     private transient DefaultBlESPEventService blEspEventService;
 
     private transient DefaultBlAvalaraTaxService defaultBlAvalaraTaxService;
@@ -131,8 +131,10 @@ public class BlOrderBillingController extends DefaultWidgetController {
     private static final String NO_BILL_TO_DELETE = "blbackoffice.order.billing.tool.wizard.notification.no.bill.delete";
     private static final String CAPTURE_SUCCESS = "blbackoffice.order.billing.tool.wizard.notification.bill.capture.success";
     private static final String CAPTURE_ERROR = "blbackoffice.order.billing.tool.wizard.notification.bill.capture.error";
-    private static final String CAPTURE_DATA_ERROR = "blbackoffice.order.billing.tool.wizard.notification.bill.capture.data.error";
     private static final String CAPTURE_AMOUNT_ERROR = "blbackoffice.order.billing.tool.wizard.notification.bill.capture.amount.error";
+    private static final String BILL_INVOICE_SUCCESS = "blbackoffice.order.billing.tool.wizard.notification.bill.invoice.success";
+    private static final String BILL_INVOICE_FAILURE = "blbackoffice.order.billing.tool.wizard.notification.bill.invoice.failure";
+    private static final String BILL_INVOICE_EXCEPTION = "blbackoffice.order.billing.tool.wizard.notification.bill.invoice.exception";
 
 
     @SocketEvent(socketId = IN_SOCKET)
@@ -450,6 +452,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
                 List<String> serialCodes = createStringList(checkedEntries, 2);
                 billingChargeModel.setSerialCodes(serialCodes);
+                updateSerialCodes(serialCodes,checkedEntries);
 
                 BigDecimal chargedAmount = sumValues(checkedEntries, 5);
                 BigDecimal processingFee = sumValues(checkedEntries, 7);
@@ -458,6 +461,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 billingChargeModel.setUnPaidBillingNotes(unPaidBillNotes);
 
                 totalAmount = totalAmount.add(chargedAmount).add(taxAmount).add(processingFee);
+
 
                 billingChargeModel.setChargedAmount(totalAmount);
                 getModelService().save(billingChargeModel);
@@ -486,6 +490,32 @@ public class BlOrderBillingController extends DefaultWidgetController {
         catch (ModelSavingException exception) {
             BlLogger.logMessage(LOG , Level.ERROR , "Error while saving the Billing model for order {} due to {} " , this.getOrderModel().getCode(),exception);
         }
+
+    }
+
+    private void updateSerialCodes(List<String> serialCodes, List<Component> checkedEntries) {
+
+        List<String> updateSerials = new ArrayList<>();
+        for (String code : serialCodes) {
+            String mainProduct = "";
+            String subTotal = "";
+
+            for (Component comp : checkedEntries) {
+                InputElement codeElement = (InputElement) comp.getChildren().get(2);
+
+                if (code.equals(codeElement.getText())) {
+                    mainProduct = ((InputElement) comp.getChildren().get(1)).getText();
+                    subTotal = ((InputElement) comp.getChildren().get(5)).getText();
+                    break; // No need to continue searching once found
+                }
+            }
+            if(StringUtils.isNotBlank(mainProduct) && StringUtils.isNotBlank(subTotal)){
+                String updatedCode = code + "," + mainProduct + "," + subTotal;
+                updateSerials.add(updatedCode);
+            }
+        }
+        serialCodes.clear();
+        serialCodes.addAll(updateSerials);
 
     }
 
@@ -547,50 +577,76 @@ public class BlOrderBillingController extends DefaultWidgetController {
     public void captureBillPayment(){
 
         final BigDecimal totalBillPay = calculateTotalBillPay();
+        if (totalBillPay.compareTo(BigDecimal.ZERO) <= 0) {
+            notifyAmountError();
+            return;
+        }
+        String orderCode = this.getOrderModel().getCode();
+        AbstractOrderModel order = this.getOrderModel();
+        String poNumber = "";
+        String poNotes = "";
 
-        if(totalBillPay.compareTo(BigDecimal.ZERO)  > 0) {
+        CustomerModel customerModel = (CustomerModel) order.getUser();
+        String paymentInfoId = "";
+        String paymentMethodNonce = "";
 
-            String orderCode = this.getOrderModel().getCode();
-            CustomerModel customerModel = (CustomerModel) this.getOrderModel().getUser();
-            String paymentInfoId = String.valueOf(customerModel.getDefaultPaymentInfo().getPk());
-            String paymentMethodNonce = ((BrainTreePaymentInfoModel) customerModel.getDefaultPaymentInfo()).getNonce();
+            if(customerModel.getDefaultPaymentInfo() != null){
+                paymentInfoId = String.valueOf(customerModel.getDefaultPaymentInfo().getPk());
+                paymentMethodNonce = ((BrainTreePaymentInfoModel) customerModel.getDefaultPaymentInfo()).getNonce();
+            }
+            else if (!order.getPaymentTransactions().isEmpty()) {
+                PaymentTransactionModel paymentTransaction = order.getPaymentTransactions().get(0);
+                paymentInfoId = String.valueOf(paymentTransaction.getInfo().getPk());
+                paymentMethodNonce = ((BrainTreePaymentInfoModel) paymentTransaction.getInfo()).getNonce();
+            }
 
             final BigDecimal payBillAmount = totalBillPay;
-            String poNumber = "";
-            String poNotes = "";
+
 
             boolean isSuccess = false;
-            AbstractOrderModel order = null;
             if ((!orderCode.isEmpty() && !paymentInfoId.isEmpty()) || !poNumber.isEmpty()) {
-                order = this.getOrderModel();
-
                 isSuccess = capturePayment(paymentInfoId, paymentMethodNonce, payBillAmount, poNumber,
                         poNotes, order);
 
                 if (isSuccess) {
-                    try {
-                        blOrderFacade.setResolvedStatusOnRepairLog(orderCode);
-                        final Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setOrderPayBillFlagTrue(order);
-                        blEspEventService.triggerBillPaidEspEvent(totalBillPay.toString(), billingChargeTypeMap, (OrderModel) order);
-                        getModelService().refresh(this.getOrderModel());
-                        checkIfBillIsPaid();
-                        updateSerialStatusForPaidBills(order);
-                        notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
-                                NotificationEvent.Level.INFO, this.getLabel(CAPTURE_SUCCESS));
-                    } catch (final Exception e) {
-                        BlLogger.logMessage(LOG, Level.ERROR, "Error while executing getPayBillDetailsForOrder ", e);
-                    }
+                    handleSuccessfulPayment(orderCode, totalBillPay);
                 } else {
-                    notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
-                            NotificationEvent.Level.INFO, this.getLabel(CAPTURE_ERROR));
+                    handleFailedPayment();
 
                 }
             }
+    }
+    private void handleSuccessfulPayment(String orderCode, BigDecimal totalBillPay) {
+        try {
+            blOrderFacade.setResolvedStatusOnRepairLog(orderCode);
+            Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setOrderPayBillFlagTrue(getOrderModel());
+            blEspEventService.triggerBillPaidEspEvent(totalBillPay.toString(), billingChargeTypeMap, (OrderModel) getOrderModel());
+            getModelService().refresh(this.getOrderModel());
+            checkIfBillIsPaid();
+            updateSerialStatusForPaidBills(getOrderModel());
+            notifySuccess(CAPTURE_SUCCESS);
+        } catch (Exception e) {
+            BlLogger.logMessage(LOG, Level.ERROR, "Error while executing getPayBillDetailsForOrder ", e);
         }
-        else{
-            notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
-                    NotificationEvent.Level.INFO, this.getLabel(CAPTURE_AMOUNT_ERROR));
-        }
+    }
+
+    private void handleFailedPayment() {
+        notifyError(CAPTURE_ERROR);
+    }
+
+    private void notifySuccess(String messageKey) {
+        notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+                NotificationEvent.Level.INFO, getLabel(messageKey));
+    }
+
+    private void notifyError(String messageKey) {
+        notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+                NotificationEvent.Level.INFO, getLabel(messageKey));
+    }
+
+    private void notifyAmountError() {
+        notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+                NotificationEvent.Level.INFO, getLabel(CAPTURE_AMOUNT_ERROR));
     }
 
     private BigDecimal calculateTotalBillPay() {
@@ -651,15 +707,22 @@ public class BlOrderBillingController extends DefaultWidgetController {
     }
 
     @ViewEvent(componentID = "sendInvoice", eventName = "onClick")
-    public void sendBillingInvoice(){
-        if(calculateTotalBillPay().compareTo(BigDecimal.ZERO)  <= 0 && !CollectionUtils.isEmpty(this.getOrderModel().getOrderBills())) {
-            blEspEventService.sendBillPaidESPEvent(orderModel);
-            Messagebox.show("Bill invoice send successfully ", "SUCCESS", Messagebox.OK, Messagebox.INFORMATION);
-        }else {
-            Messagebox.show("Payment not done.Can't send bill invoice", "SUCCESS", Messagebox.OK, Messagebox.INFORMATION);
+    public void sendBillingInvoice() {
+        try {
+            if (calculateTotalBillPay().compareTo(BigDecimal.ZERO) <= 0 && !CollectionUtils.isEmpty(this.getOrderModel().getOrderBills())) {
+                blEspEventService.sendBillPaidESPEvent(orderModel);
+                notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+                        NotificationEvent.Level.INFO, this.getLabel(BILL_INVOICE_SUCCESS));
+            } else {
+                notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+                        NotificationEvent.Level.INFO, this.getLabel(BILL_INVOICE_FAILURE));
+            }
+        } catch (Exception ex) {
+            notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+                    NotificationEvent.Level.INFO, this.getLabel(BILL_INVOICE_EXCEPTION));
+            BlLogger.logMessage(LOG, Level.ERROR, "Error while executing sendBillingInvoice() ", ex);
         }
     }
-
 
 
     public OrderModel getOrderModel() {
