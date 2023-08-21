@@ -291,7 +291,8 @@ public class BlOrderBillingController extends DefaultWidgetController {
             else if(selectedBillingChargesReason.equals("REPAIR CHARGE")
                     || selectedBillingChargesReason.equals("CUSTOMER RESPONSIBLE REPAIRS"))
             {
-                if(abstractOrderEntryModel.getGearGuardWaiverSelected()== Boolean.TRUE)
+                if(abstractOrderEntryModel.getGearGuardProFullWaiverSelected() ==Boolean.TRUE
+                        || abstractOrderEntryModel.getGearGuardWaiverSelected()== Boolean.TRUE)
                 {
                     itemDTO.setDamageWaiver(Boolean.TRUE);
                 }
@@ -303,7 +304,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
             }
             else
             {
-                itemDTO.setDamageWaiver(Boolean.TRUE);
+                itemDTO.setDamageWaiver(Boolean.FALSE);
             }
         }
     }
@@ -688,10 +689,11 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     private void updateSerialStatusForPaidBills(final AbstractOrderModel order) {
         List < BlItemsBillingChargeModel > paidBillsWithMissingCharge = order.getOrderBills().stream().filter(bill ->
-                bill.isBillPaid() && bill.getBillChargeType().getCode().equals(this.billingChargesReason)).collect(Collectors.toList());
+                bill.isBillPaid() && bill.getBillChargeType().getCode().equals("MISSING_CHARGE")).collect(Collectors.toList());
         List < String > serialsWithMissingStatus = new ArrayList < > ();
-        paidBillsWithMissingCharge.forEach(pBill ->  serialsWithMissingStatus.addAll(pBill.getSerialCodes()));
-
+        paidBillsWithMissingCharge.forEach(pBill ->pBill.getSerialCodes().forEach(code -> {
+            serialsWithMissingStatus.add(code.split(",")[0]);
+        }));
         order.getEntries().forEach(abstractOrderEntryModel -> {
             abstractOrderEntryModel.getSerialProducts().forEach(blProductModel -> {
                 if(serialsWithMissingStatus.contains(blProductModel.getCode()) && abstractOrderEntryModel.getGearGuardProFullWaiverSelected() == Boolean.FALSE){
