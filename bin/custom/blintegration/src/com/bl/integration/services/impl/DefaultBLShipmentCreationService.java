@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.OptimizedShippingMethodModel;
 import com.bl.facades.shipment.data.UpsShippingRequestData;
 import com.bl.integration.Soap.logging.handler.SOAPLoggingHandler;
 import com.bl.integration.constants.BlintegrationConstants;
@@ -186,18 +187,19 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	 */
 	@Override
 	public ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
-			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel)
+			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel,
+			final OptimizedShippingMethodModel optimizedShippingMethod)
 	{
 		ProcessShipmentRequest masterRequest = new ProcessShipmentRequest();
 		if (warehouseModel == null)
 		{
 			masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExShipmentRequest(packagingInfo, packageCount,
-					sequenceMap.get(packagingInfo.getPackageId()).toString());
+					sequenceMap.get(packagingInfo.getPackageId()).toString(), optimizedShippingMethod);
 		}
 		else
 		{
 			masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExReturnShipmentRequest(packagingInfo, packageCount,
-					sequenceMap.get(packagingInfo.getPackageId()).toString(), warehouseModel);
+					sequenceMap.get(packagingInfo.getPackageId()).toString(), warehouseModel, optimizedShippingMethod);
 		}
 		try
 		{
