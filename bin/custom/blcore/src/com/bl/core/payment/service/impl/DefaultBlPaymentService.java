@@ -6,25 +6,29 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.logging.BlLogger;
+import com.braintree.command.result.BrainTreeVoidResult;
 import com.braintree.exceptions.BraintreeErrorException;
+import com.braintree.method.BrainTreePaymentService;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import com.braintreegateway.Transaction;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.payment.commands.request.VoidRequest;
 import de.hybris.platform.payment.dto.TransactionStatus;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
@@ -37,6 +41,8 @@ public class DefaultBlPaymentService implements BlPaymentService
 	private BlOrderDao orderDao;
 	private BrainTreeTransactionService brainTreeTransactionService;
 	private ModelService modelService;
+	private BrainTreePaymentService brainTreePaymentService;
+
 
 	/**
 	 * {@inheritDoc}
@@ -80,10 +86,38 @@ public class DefaultBlPaymentService implements BlPaymentService
 				return Boolean.TRUE;
 			}
 			else if(authEntry != null && authEntry.getAmount().intValue() > BlInventoryScanLoggingConstants.ONE) {
-				return  getBrainTreeTransactionService().captureAuthorizationTransaction(
-						order, authEntry.getAmount(), authEntry.getRequestId());
+				BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Before payment capture order total is {} and auth amount is {} for the order {} ", String.valueOf(order.getTotalPrice()),authEntry.getAmount().intValue(),order.getCode());
+				      if(Double.compare(authEntry.getAmount().doubleValue(),order.getTotalPrice())==0) {
+					     BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Authorized amount and order total are same for the order {}",order.getCode());
+					       return getBrainTreeTransactionService().captureAuthorizationTransaction(
+							  order, authEntry.getAmount(), authEntry.getRequestId());
+				        }
+				      else {
+						  BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Before voiding the authorized amount for the order {}",order.getCode());
+					        //Voiding the previous authorized amount which is not matching with current order total.
+						    final VoidRequest voidRequest = new VoidRequest(order.getUser().getUid(), authEntry.getRequestId(), StringUtils.EMPTY, StringUtils.EMPTY);
+						    final BrainTreeVoidResult voidResult = getBrainTreePaymentService().voidTransaction(voidRequest);
+						    if (voidResult.isSuccess()) {
+							authEntry.setTransactionStatus(Transaction.Status.VOIDED.name());
+							modelService.save(authEntry);
+							} else {
+								LOG.error("Error, message: " + voidResult.getErrorMessage());
+								throw new BraintreeErrorException(voidResult.getErrorMessage(), voidResult.getTransactionId());
+							}
+							//Creating new authorization transaction with the current order total.
+						    return createNewAuthorizationAndCapture(order);
+
+				            }
 			}
-			else {
+			else if( authEntry ==null && CollectionUtils.isNotEmpty(order.getGiftCard()))
+			{
+				BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Creating authorization entry when gift card applied order is modified for the order {}",order.getCode());
+				//Creating new authorization transaction with the current order total for gift card applied order.
+				return createNewAuthorizationAndCapture(order);
+			}
+			else
+			{
+				BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Authorization entry is present only for $1 for the order {}",order.getCode());
 				if(order.getTotalPrice() > BlInventoryScanLoggingConstants.ZERO) {
 					return getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
 							order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null);
@@ -109,6 +143,25 @@ public class DefaultBlPaymentService implements BlPaymentService
 		final List<OrderModel> orders = getOrderDao().getOrdersToVoidTransactions();
 		orders.stream().forEach(order ->
 				getBrainTreeTransactionService().voidAuthTransaction(order));
+	}
+
+	/**
+	 *
+	 * @param order
+	 * @return
+	 * @throws BraintreeErrorException
+	 */
+	public boolean createNewAuthorizationAndCapture(OrderModel order) throws BraintreeErrorException {
+
+		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Creating new authorization for capture payment for the order {}",order.getCode());
+		getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order,
+				BigDecimal.valueOf(order.getTotalPrice()),
+				Boolean.FALSE, null);
+
+		final PaymentTransactionEntryModel newAuthEntry = getAUthEntry(order);
+		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Capturing new authorized amount {} for the order {}",newAuthEntry.getAmount(),order.getCode());
+		return getBrainTreeTransactionService().captureAuthorizationTransaction(
+				order, newAuthEntry.getAmount(), newAuthEntry.getRequestId());
 	}
 
 	/**
@@ -185,5 +238,14 @@ public class DefaultBlPaymentService implements BlPaymentService
 	public void setModelService(final ModelService modelService) {
 		this.modelService = modelService;
 	}
+
+	public BrainTreePaymentService getBrainTreePaymentService() {
+		return brainTreePaymentService;
+	}
+
+	public void setBrainTreePaymentService(BrainTreePaymentService brainTreePaymentService) {
+		this.brainTreePaymentService = brainTreePaymentService;
+	}
+
 
 }
