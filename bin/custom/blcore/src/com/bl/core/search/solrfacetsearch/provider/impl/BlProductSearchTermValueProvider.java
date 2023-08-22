@@ -38,7 +38,7 @@ public class BlProductSearchTermValueProvider extends AbstractPropertyFieldValue
 			final Object model)
 	{
 
-		return addFieldValues(new ArrayList<>(), indexedProperty, extractProductCode(((BlProductModel) model).getName()));
+		return addFieldValues(new ArrayList<>(), indexedProperty, ((BlProductModel) model).getName());
 
 	}
 
@@ -66,17 +66,4 @@ public class BlProductSearchTermValueProvider extends AbstractPropertyFieldValue
 		this.fieldNameProvider = fieldNameProvider;
 	}
 
-	private String extractProductCode(final String input)
-	{
-		if (input != null)
-		{
-			//return input.replaceAll("[^\\d-.]", " ").replaceAll("\\s+", " ").trim();
-			return input.replaceAll("[A-Za-z]+|([^-\\d.])|(-)(?=[A-Za-z])", " ").replaceAll("\\s+", " ").trim().replaceAll("^-|-$",
-					"");
-		}
-		else
-		{
-			return null;
-		}
-	}
 }
