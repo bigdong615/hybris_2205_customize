@@ -125,9 +125,24 @@ public class BLUPSShipmentCreateRequestPopulator
 			pkg1.setPackageServiceOptions(packageServiceOptions);
 		}
 		if(shipmentData.isHoldAtUpsStore()) {
-			ShipmentServiceOptions shipmentServiceOptions = new ShipmentServiceOptions();
-			shipmentServiceOptions.setHoldForPickupIndicator("true");
-			shipmentType.setShipmentServiceOptions(shipmentServiceOptions);
+			IndicationType indication = new IndicationType();
+			indication.setCode("01");
+			List<IndicationType> indications = new ArrayList<IndicationType>();
+			indications.add(indication);
+			shipmentType.getShipmentIndicationType().add(indication);
+			AlternateDeliveryAddressType alternateDeliveryAddress =  new AlternateDeliveryAddressType();
+			alternateDeliveryAddress.setAttentionName(shipperType.getAttentionName());
+			alternateDeliveryAddress.setName(shipperType.getName());
+			AddressData alternateAddress = shipmentData.getShipper().getPaymentAddress();
+			//alternateDeliveryAddress.setUPSAccessPointID("GB00088");
+			ADLAddressType address = new ADLAddressType();
+			address.getAddressLine().add(alternateAddress.getLine1());
+			address.setCity(alternateAddress.getTown());
+			address.setStateProvinceCode(alternateAddress.getRegion().getIsocodeShort());
+			address.setPostalCode(alternateAddress.getPostalCode());
+			address.setCountryCode(alternateAddress.getCountry().getIsocode());
+			alternateDeliveryAddress.setAddress(address);
+			shipmentType.setAlternateDeliveryAddress(alternateDeliveryAddress);
 		}
 
 		final ShipUnitOfMeasurementType shipUnitOfMeasurementType = new ShipUnitOfMeasurementType();
