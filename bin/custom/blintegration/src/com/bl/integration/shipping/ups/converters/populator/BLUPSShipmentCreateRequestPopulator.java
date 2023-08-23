@@ -125,9 +125,18 @@ public class BLUPSShipmentCreateRequestPopulator
 			pkg1.setPackageServiceOptions(packageServiceOptions);
 		}
 		if(shipmentData.isHoldAtUpsStore()) {
-			ShipmentServiceOptions shipmentServiceOptions = new ShipmentServiceOptions();
-			shipmentServiceOptions.setHoldForPickupIndicator("true");
-			shipmentType.setShipmentServiceOptions(shipmentServiceOptions);
+			IndicationType indication = new IndicationType();
+			indication.setCode("01");
+			List<IndicationType> indications = new ArrayList<IndicationType>();
+			indications.add(indication);
+			//ShipmentServiceOptions shipmentServiceOptions = new ShipmentServiceOptions();
+			//shipmentServiceOptions.setHoldForPickupIndicator("1");
+			//shipmentType.setShipmentServiceOptions(shipmentServiceOptions);
+
+			
+			shipmentType.getShipmentIndicationType().add(indication);
+			AlternateDeliveryAddressType alternateDeliveryAddress =  new AlternateDeliveryAddressType();
+			alternateDeliveryAddress.setAttentionName(shipperType.getAttentionName());
 		}
 
 		final ShipUnitOfMeasurementType shipUnitOfMeasurementType = new ShipUnitOfMeasurementType();
