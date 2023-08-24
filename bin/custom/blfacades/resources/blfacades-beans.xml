@@ -927,6 +927,7 @@
 		<property name="attentionName" type="String"/>
 		<property name="phone" type="com.bl.facades.shipment.data.ShipmentPhoneData"/>
 		<property name="address" type="de.hybris.platform.commercefacades.user.data.AddressData" />
+		<property name="paymentAddress" type="de.hybris.platform.commercefacades.user.data.AddressData" />
 	</bean>
 	
 	<bean class="com.bl.facades.shipment.data.ShipToData">

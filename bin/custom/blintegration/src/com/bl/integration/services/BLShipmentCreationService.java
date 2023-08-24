@@ -10,6 +10,7 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.util.List;
 import java.util.Map;
 
+import com.bl.core.model.OptimizedShippingMethodModel;
 import com.bl.facades.shipment.data.UpsShippingRequestData;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
 import com.fedex.ship.stub.ProcessShipmentReply;
@@ -38,7 +39,9 @@ public interface BLShipmentCreationService
 	 * @param warehouseModel as WarehouseModel
 	 * @return ProcessShipmentReply
 	 */
-	ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount, final Map<String, Integer> sequenceMap,final WarehouseModel warehouseModel);
+	ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
+			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel,
+			OptimizedShippingMethodModel optimizedShippingMethod);
 
 	/**
 	 * method will used to check the order status for shipment
@@ -46,7 +49,7 @@ public interface BLShipmentCreationService
 	 * @return boolean
 	 */
 	public boolean checkOrderStatus(final ConsignmentModel consignment);
-	
+
 	/**
 	 * Gets the package for serial.
 	 *
@@ -57,7 +60,7 @@ public interface BLShipmentCreationService
 	 * @return the package for serial
 	 */
 	PackagingInfoModel getPackageForSerial(final ConsignmentModel consignment, final String serialCode);
-	
+
 	/**
 	 * This method is used to get the sequence number for shipment
 	 * @param sequenceMap as SequenceMap
@@ -67,12 +70,15 @@ public interface BLShipmentCreationService
 	 */
 	Map<String, Integer> getSequenceNumber(final Map<String, Integer> sequenceMap, final List<PackagingInfoModel> packages,
 			final int packageCount);
-	
-	
+
+
 	/**
 	 * This method is used to check Order and Consignment status for hiding the shipment modules
 	 * @param consignment
 	 * @return
 	 */
 	boolean checkOrderAndConsignmentStatus(final ConsignmentModel consignment);
+
+
+
 }
