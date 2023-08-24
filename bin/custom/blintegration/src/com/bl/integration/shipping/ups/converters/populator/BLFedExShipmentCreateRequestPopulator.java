@@ -17,6 +17,7 @@ import org.apache.axis.types.NonNegativeInteger;
 import org.apache.axis.types.PositiveInteger;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.bl.core.model.OptimizedShippingMethodModel;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.fedex.ship.stub.Address;
 import com.fedex.ship.stub.ClientDetail;
@@ -72,7 +73,8 @@ public class BLFedExShipmentCreateRequestPopulator
 	 * @param sequenceNumber
 	 * @return
 	 */
-	public ProcessShipmentRequest createFedExShipmentRequest(final PackagingInfoModel packagingInfo, final int packageCount, final String sequenceNumber)
+	public ProcessShipmentRequest createFedExShipmentRequest(final PackagingInfoModel packagingInfo, final int packageCount,
+			final String sequenceNumber, final OptimizedShippingMethodModel optimizedShippingMethod)
 	{
 		final ConsignmentModel consignment = packagingInfo.getConsignment();
 		final ProcessShipmentRequest processShipmentRequest = new ProcessShipmentRequest(); // Build a request object
@@ -89,7 +91,7 @@ public class BLFedExShipmentCreateRequestPopulator
 		//Create RequestedShipment for FedEx Shipment
 		final RequestedShipment requestedShipment = new RequestedShipment();
 
-		createRequestedShipmentData(packagingInfo, sequenceNumber, consignment, requestedShipment, null);
+		createRequestedShipmentData(packagingInfo, sequenceNumber, consignment, requestedShipment, null, optimizedShippingMethod);
 		//
 		processShipmentRequest.setRequestedShipment(requestedShipment);
 		//
@@ -105,7 +107,8 @@ public class BLFedExShipmentCreateRequestPopulator
 	 * @return
 	 */
 	public ProcessShipmentRequest createFedExReturnShipmentRequest(final PackagingInfoModel packagingInfo,
-			final int packageCount, final String sequenceNumber, final WarehouseModel warehouseModel)
+			final int packageCount, final String sequenceNumber, final WarehouseModel warehouseModel,
+			final OptimizedShippingMethodModel optimizedShippingMethod)
 	{
 		final ConsignmentModel consignment = packagingInfo.getConsignment();
 		final ProcessShipmentRequest processShipmentRequest = new ProcessShipmentRequest(); // Build a request object
@@ -122,7 +125,8 @@ public class BLFedExShipmentCreateRequestPopulator
 		//Create RequestedShipment for FedEx Shipment
 		final RequestedShipment requestedShipment = new RequestedShipment();
 
-		createRequestedShipmentData(packagingInfo, sequenceNumber, consignment, requestedShipment, warehouseModel);
+		createRequestedShipmentData(packagingInfo, sequenceNumber, consignment, requestedShipment, warehouseModel,
+				optimizedShippingMethod);
 		//
 		processShipmentRequest.setRequestedShipment(requestedShipment);
 		//
@@ -154,11 +158,16 @@ public class BLFedExShipmentCreateRequestPopulator
 	 * @param requestedShipment
 	 */
 	private void createRequestedShipmentData(final PackagingInfoModel packagingInfo, final String sequenceNumber,
-			final ConsignmentModel consignment, final RequestedShipment requestedShipment, final WarehouseModel stateWarehouse)
+			final ConsignmentModel consignment, final RequestedShipment requestedShipment, final WarehouseModel stateWarehouse,
+			final OptimizedShippingMethodModel optimizedShippingMethod)
 	{
+		//consignment.getOptimizedShippingType().getServiceTypeDesc();
 		requestedShipment.setShipTimestamp(getShipTimeStamp());
 		setDropoffTypeOnRequestedShipment(requestedShipment);
-		requestedShipment.setServiceType(BlintegrationConstants.FEDEX_SERVICE_TYPE);
+
+
+		requestedShipment.setServiceType(optimizedShippingMethod.getServiceTypeCode());
+		//requestedShipment.setServiceType(BlintegrationConstants.FEDEX_SERVICE_TYPE);
 		//setServiceTypeOnRequestedShipment(consignment, requestedShipment);
 
 		requestedShipment.setPackagingType(BlintegrationConstants.FEDEX_PACKAGING_TYPE);
@@ -219,6 +228,8 @@ public class BLFedExShipmentCreateRequestPopulator
 	 * (serviceMethod.equals(OptimizedShippingMethodEnum.NEXT_DAY_AIR_SAT.getCode())) {
 	 * requestedShipment.setServiceType(OptimizedShippingMethodEnum.NEXT_DAY_AIR_SAT.getCode()); } } }
 	 */
+
+
 
 	/**
 	 * This method is used to set DropOff Type on FedEx Shipment Request

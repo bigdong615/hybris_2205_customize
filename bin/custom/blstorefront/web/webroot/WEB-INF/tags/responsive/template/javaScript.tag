@@ -15,7 +15,7 @@
 	</c:when>
 	<c:otherwise>
 		<%-- jquery --%>
-		<script src="${commonResourcePathHtml}/js/jquery-3.5.1.min.js"></script>
+		<script src="${commonResourcePathHtml}/js/jquery-3.7.0.min.js"></script>
 		<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 		<%-- plugins --%>
 		<script src="${commonResourcePathHtml}/js/enquire.min.js"></script>
@@ -578,13 +578,17 @@ console.log("First start");
                 numberOfColumns: 1,
                 autoApply: false,
                 format: "MMM D",
-                resetButton: () => {
-    				 let btn = document.createElement('button');
-    				 btn.innerText = 'Reset';
-    				 btn.className = 'reset-button';
-    				 btn.addEventListener('click', (evt) => {
-    				 evt.preventDefault();
-    				 $.ajax({
+               
+             tooltipNumber: (totalDays) => {
+              return totalDays - 1;
+            },
+
+                setup: (picker) => {
+                //For mobile view, we dont need cancel button, so we changed cancel label to reset
+          			picker.on('button:cancel',() => {
+          				
+          			//To reset the calendar
+                     $.ajax({
                         url: ACC.config.encodedContextPath + '/resetDatepicker',
                         type: "GET",
                         success: function (data) {
@@ -595,14 +599,7 @@ console.log("First start");
                            
                         }
                     });
-    				});
-    				return btn;
-    				},
-             tooltipNumber: (totalDays) => {
-              return totalDays - 1;
-            },
-
-                setup: (picker) => {
+          			});
           			picker.on('button:apply', (date1, date2) => {
           				var searchText = document.getElementById('js-site-search-input-mob').value;
           				trackDateSelection(date1,date2);
@@ -643,7 +640,7 @@ console.log("First start");
                       //Set Sunday to be the first day in the calendar's header
                          firstDay: 0,
                       //Change the defaul button values
-                         buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
+                           buttonText: {"apply":"Apply", cancel: isMobile == true ? "Reset" : ""}
             });
             
             
