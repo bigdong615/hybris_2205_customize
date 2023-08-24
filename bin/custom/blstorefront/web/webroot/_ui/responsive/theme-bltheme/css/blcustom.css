@@ -424,7 +424,7 @@ margin: 0;
   margin-right: 0;
 }
 .litepicker .container__footer {
-  padding:15px 17px 46px;
+  padding:15px 17px 20px;
   display: flex;
 }
 .litepicker .preview-date-range {
