@@ -410,8 +410,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 			{
 				final AbstractRuleEngineRuleModel rule = ((RuleBasedPromotionModel) promotion).getRule();
 				final AbstractRuleModel sourceRule = rule.getSourceRule();
-				if (Objects.nonNull(sourceRule) && Objects.nonNull(sourceRule.getRuleGroup())
-						&& sourceRule.getRuleGroup().isExclusive())
+				if (Objects.nonNull(sourceRule) && Objects.nonNull(sourceRule.getRuleGroup()))
 				{
 					return sourceRule;
 				}
