@@ -32,7 +32,7 @@ public class SiteMapController extends AbstractController
 	@Resource(name = "siteBaseUrlResolutionService")
 	private SiteBaseUrlResolutionService siteBaseUrlResolutionService;
 
-	@RequestMapping(value = "sitemap.xml", method = RequestMethod.GET, produces = "application/xml")
+	@RequestMapping(value = "/sitemap.xml", method = RequestMethod.GET, produces = "application/xml")
 	public String getSitemapXml(final Model model, final HttpServletResponse response)
 	{
 		final CMSSiteModel currentSite = cmsSiteService.getCurrentSite();
