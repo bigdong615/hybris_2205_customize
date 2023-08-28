@@ -21,7 +21,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -138,12 +141,6 @@ public class BlSiteMapMediaJob extends AbstractJobPerformable<SiteMapMediaCronJo
 	{
 		final CatalogUnawareMediaModel media = modelService.create(CatalogUnawareMediaModel.class);
 		media.setCode(siteMapFile.getName());
-		try{
-			media.setFolder(getMediaService().getFolder("assets"));
-		}
-		catch (NoSuchElementException ex){
-			LOG.error(ex);
-		}
 		modelService.save(media);
 
 		try (InputStream siteMapInputStream = new FileInputStream(siteMapFile))
