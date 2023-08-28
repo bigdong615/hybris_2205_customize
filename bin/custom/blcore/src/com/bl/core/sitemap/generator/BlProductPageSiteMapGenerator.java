@@ -38,7 +38,7 @@ public class BlProductPageSiteMapGenerator extends BlAbstractSiteMapGenerator<Pr
 			final Map<String, Object> params = new HashMap<String, Object>();
 			params.put("approvalStatus", ArticleApprovalStatus.APPROVED);
 
-			List<ProductModel> productList = doSearch(query, params, ProductModel.class);
+			final List<ProductModel> productList = doSearch(query, params, ProductModel.class);
 			LOG.info("BlProductPageSiteMapGenerator ProductCount : " + productList.size());
 			return productList;
 		}
