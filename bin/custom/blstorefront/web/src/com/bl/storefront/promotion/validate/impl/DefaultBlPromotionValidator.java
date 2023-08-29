@@ -432,11 +432,16 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 			final PromotionSourceRuleModel promotionSourceRule)
 	{
 		if (promotionSourceRule.getConditions().contains(BlControllerConstants.Y_FIRST_TIME_USER_CONDITION)
-				&& checkRuleForPromotionCondition(promotionSourceRule, BlControllerConstants.CHECK_FIRST_TIME_USER)
-				&& BooleanUtils.isFalse(isFirstTimeUser()))
+				&& checkRuleForPromotionCondition(promotionSourceRule, BlControllerConstants.CHECK_FIRST_TIME_USER))
 		{
-			addAndLogMessage("promotion.validation.message.first.time.user", null, model, redirectAttributes);
-			return false;
+			if (BooleanUtils.isTrue(getUserService().isAnonymousUser(getUserService().getCurrentUser()))) {
+				addAndLogMessage("promotion.validation.message.first.time.anonymousUser", null, model, redirectAttributes);
+				return false;
+			}
+			if(BooleanUtils.isFalse(isFirstTimeUser())) {
+				addAndLogMessage("promotion.validation.message.first.time.user", null, model, redirectAttributes);
+				return false;
+			}
 		}
 		return checkIfPromotionAlreadyUsed(model, redirectAttributes, promotionSourceRule);
 	}
