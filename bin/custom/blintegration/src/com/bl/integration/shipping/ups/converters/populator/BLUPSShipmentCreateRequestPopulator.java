@@ -133,7 +133,7 @@ public class BLUPSShipmentCreateRequestPopulator
 			AlternateDeliveryAddressType alternateDeliveryAddress =  new AlternateDeliveryAddressType();
 			alternateDeliveryAddress.setAttentionName(shipperType.getAttentionName());
 			alternateDeliveryAddress.setName(shipperType.getName());
-			AddressData alternateAddress = shipmentData.getShipper().getPaymentAddress();
+			AddressData alternateAddress = shipmentData.getShipper().getAddress();
 			//alternateDeliveryAddress.setUPSAccessPointID("GB00088");
 			ADLAddressType address = new ADLAddressType();
 			address.getAddressLine().add(alternateAddress.getLine1());
