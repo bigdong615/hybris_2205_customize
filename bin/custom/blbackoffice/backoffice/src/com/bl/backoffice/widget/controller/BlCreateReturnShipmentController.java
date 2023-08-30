@@ -116,7 +116,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		this.getWidgetInstanceManager()
 				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.inbound.label.heading")));
 		warehouseList = new ListModelList<>(getWarehouseList());
-		warehouseList.addToSelection(BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
+		warehouseList.addToSelection(BlintegrationConstants.WAREHOUSE_CA);
 		warehouseCombobox.setModel(warehouseList);
 		shippingTypeList = new ListModelList<>(getShippingTypeList());
 
@@ -411,8 +411,8 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	private List<String> getWarehouseList()
 	{
 		final List<String> valueList = new ArrayList<>();
-		valueList.add(BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
-		valueList.add(BlintegrationConstants.WAREHOUSE_MA);
+		//valueList.add(BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
+		//valueList.add(BlintegrationConstants.WAREHOUSE_MA);
 		valueList.add(BlintegrationConstants.WAREHOUSE_CA);
 		return valueList;
 	}
