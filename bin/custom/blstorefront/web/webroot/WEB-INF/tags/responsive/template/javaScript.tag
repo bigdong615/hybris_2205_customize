@@ -15,7 +15,7 @@
 	</c:when>
 	<c:otherwise>
 		<%-- jquery --%>
-		<script src="${commonResourcePathHtml}/js/jquery-3.7.0.min.js"></script>
+		<script src="${commonResourcePathHtml}/js/jquery-3.5.1.min.js"></script>
 		<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 		<%-- plugins --%>
 		<script src="${commonResourcePathHtml}/js/enquire.min.js"></script>
