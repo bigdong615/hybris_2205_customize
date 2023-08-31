@@ -125,13 +125,13 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		{
 			shippingTypeList.addToSelection(CarrierEnum.UPS.getCode());
 			setOptimizedShippingMethodComboBox(CarrierEnum.UPS.getCode(), inputObject,
-					BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
+					BlintegrationConstants.WAREHOUSE_CA);
 		}
 		else
 		{
 			shippingTypeList.addToSelection(CarrierEnum.FEDEX.getCode());
 			setOptimizedShippingMethodComboBox(CarrierEnum.FEDEX.getCode(), inputObject,
-					BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
+					BlintegrationConstants.WAREHOUSE_CA);
 		}
 
 		shippingTypeComboBox.setModel(shippingTypeList);
@@ -184,7 +184,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 		final List<WarehouseModel> activeWarehouseList = blWarehouseGenericDao.find();
 		final List<String> errorPackages = Lists.newArrayList();
-		if (!BlintegrationConstants.DEFAULT_WAREHOUSE_CODE.equalsIgnoreCase(this.warehouseCombobox.getSelectedItem().getValue()))
+		if (!(BlintegrationConstants.DEFAULT_WAREHOUSE_CODE.equalsIgnoreCase(this.warehouseCombobox.getSelectedItem().getValue())))
 		{
 			errorPackages.addAll(createShipmentForSelectedWarehouse(packages, activeWarehouseList, carrier, selectedOptimizedShippingMethodModel,
 			isOptimizedShippingMethodChanged));
@@ -226,7 +226,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	{
 		final String selectedShippingType = this.shippingTypeComboBox.getSelectedItem().getValue();
 		shippingTypeList.addToSelection(selectedShippingType);
-		setOptimizedShippingMethodComboBox(selectedShippingType, selectedConsignment, BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
+		setOptimizedShippingMethodComboBox(selectedShippingType, selectedConsignment, BlintegrationConstants.WAREHOUSE_CA);
 	}
 
 	@ViewEvent(componentID = "optimizedShippingMethodComboBox", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
