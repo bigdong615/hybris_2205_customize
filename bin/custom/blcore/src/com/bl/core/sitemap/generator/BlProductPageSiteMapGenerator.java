@@ -3,6 +3,8 @@
  */
 package com.bl.core.sitemap.generator;
 
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.model.BlProductModel;
 import de.hybris.platform.acceleratorservices.sitemap.data.SiteMapUrlData;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.cms2.model.site.CMSSiteModel;
@@ -12,6 +14,7 @@ import de.hybris.platform.core.model.product.ProductModel;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -38,7 +41,9 @@ public class BlProductPageSiteMapGenerator extends BlAbstractSiteMapGenerator<Pr
 			final Map<String, Object> params = new HashMap<String, Object>();
 			params.put("approvalStatus", ArticleApprovalStatus.APPROVED);
 
-			final List<ProductModel> productList = doSearch(query, params, ProductModel.class);
+			List<ProductModel> productList = doSearch(query, params, ProductModel.class);
+			productList = productList.stream().filter(productModel -> ((BlProductModel) productModel).getSerialProducts().size() > 0 &&
+					!((BlProductModel) productModel).getProductType().getCode().equals(ProductTypeEnum.SUBPARTS.getCode())).collect(Collectors.toList());
 			LOG.info("BlProductPageSiteMapGenerator ProductCount : " + productList.size());
 			return productList;
 		}
