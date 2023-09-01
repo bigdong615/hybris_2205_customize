@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   [y] hybris Platform
+
+     Copyright (c) 2018 SAP SE or an SAP affiliate company.
+     All rights reserved.
+
+     This software is the confidential and proprietary information of SAP
+     ("Confidential Information"). You shall not disclose such Confidential
+     Information and shall use it only in accordance with the terms of the     license agreement you entered into with SAP.
+-->
+    <widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+            sclass="oms-widget-reallocationconsignment-configuration" height="100%" width="100%"
+            id="pickerScan">
+
+        <div id="barcodesSectionId" style="width:50%;float:left;">
+        <grid style="margin-left:50px;margin-top:10px;width:52%;">
+            <rows>
+                <row>
+                  <label value="${labels.blbackoffice.picker.scan.title.code}" width="70%"/>
+
+                </row>
+                <row>
+                    <hlayout>
+                      <!-- <textbox id="barcodeInputField" multiline="true" width="100%" height="150px" style="margin-left:0px; margin-right:100px"  onCreate="self.focus()"/>-->
+                      <textbox id="scanningArea" width="100%" height="150px" multiline="true"  style="margin-left:0px; margin-right:100px;" onCreate="self.focus()"/> 
+                    </hlayout>
+
+                    <hlayout>
+
+                        <combobox   xmlns:w="client" id="warehousesCombox"
+                                    model="${each.warehousesCombox}"
+                                    sclass="oms-widget-updateorder__template-reason"
+                                    style="margin-right:0px;">
+                            <template name="model">
+                                <comboitem label="${forEachStatus.previous.each} ${each}"
+                                           forEach="${each.code}" />
+                            </template>
+                        </combobox>
+                    </hlayout>
+                </row>
+            </rows>
+        </grid>
+            <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%;width:55%;margin-left: 100px;text-align: left;">
+
+                <button id="scanOrder"
+                        label="${labels.blbackoffice.bulk.scan.order.button}"
+                        sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
+                <button id="cancel"
+                        label="${labels.blbackoffice.order.scan.cancel.button}"
+                        sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
+            </div>
+        </div>
+
+    </widget>

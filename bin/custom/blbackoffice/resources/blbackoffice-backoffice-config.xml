@@ -2746,8 +2746,9 @@
 			<n:navigation-node id="blinventoryscan_name">
 				<n:navigation-node id="WebScanTool"/>
 			</n:navigation-node>
-			<n:navigation-node id="OrderConsolidationTool" code="OrderConsolidationTool"/>        
-        </n:explorer-tree>
+			<n:navigation-node id="OrderConsolidationTool" code="OrderConsolidationTool"/>
+			<n:navigation-node id="PickerScanTool" code="PickerScanTool"/>
+		</n:explorer-tree>
     </context>
     
    <context component="explorer-tree" principal="repairmemberuserrole">
