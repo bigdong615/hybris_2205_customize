@@ -64,6 +64,27 @@
 	<c:if test="${cmsPage.uid eq 'productGrid' || cmsPage.uid eq 'search' || cmsPage.uid eq 'searchEmpty' || cmsPage.uid eq 'productDetails'}">
   <link rel="canonical" href="https://www.borrowlenses.com${request.getAttribute('javax.servlet.forward.request_uri')}" />
 	</c:if>
+	
+	<c:if test="${cmsPage.uid eq 'productGrid' || cmsPage.uid eq 'search'}">
+	<c:set var="hasPreviousPage" value="${searchPageData.pagination.currentPage > 0}"/>
+          <c:set var="hasNextPage" value="${(searchPageData.pagination.currentPage + 1) < searchPageData.pagination.numberOfPages}"/>
+          <c:if test="${hasPreviousPage}">
+             <spring:url value="${searchPageData.currentQuery.url}" var="previousPageUrl" htmlEscape="true">
+                <spring:param name="page" value="${searchPageData.pagination.currentPage - 1}"/>
+             </spring:url>
+          </c:if>
+          <c:if test="${hasNextPage}">
+             <spring:url value="${searchPageData.currentQuery.url}" var="nextPageUrl" htmlEscape="true">
+                <spring:param name="page" value="${searchPageData.pagination.currentPage + 1}"/>
+             </spring:url>
+          </c:if>
+           <c:if test="${hasPreviousPage}">
+          <link rel="prev" href="https://www.borrowlenses.com${previousPageUrl}<c:if test="${cmsPage.uid eq 'search'}">&blPageType=${blPageType} </c:if>" />
+          </c:if>
+           <c:if test="${hasNextPage}">
+          <link rel="next" href="https://www.borrowlenses.com${nextPageUrl}<c:if test="${cmsPage.uid eq 'search'}">&blPageType=${blPageType} </c:if>" />
+          </c:if>
+	</c:if>
 
 
     <%-- BLS-416: Add schema.org information to the Homepage --%>
