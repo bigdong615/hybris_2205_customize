@@ -84,8 +84,8 @@ public class UsedProductPageController extends AbstractBlProductPageController {
 		 final ContentPageModel errorPage = getContentPageForLabelOrId(ERROR_CMS_PAGE);
 		 storeCmsPageInModel(model, errorPage);
 		 setUpMetaDataForContentPage(model, errorPage);
-		 GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
-		 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+		 //GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
+		 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		 return ControllerConstants.Views.Pages.Error.ErrorNotFoundPage;
     }
   }
