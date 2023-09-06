@@ -1087,6 +1087,11 @@
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                         <description>Defines Category is Rental</description>
                     </attribute>
+                    <attribute qualifier="rentalPageTitleTag" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Category Title Tag for Rental Page</description>
+                    </attribute>
 
                 </attributes>
             </itemtype>
