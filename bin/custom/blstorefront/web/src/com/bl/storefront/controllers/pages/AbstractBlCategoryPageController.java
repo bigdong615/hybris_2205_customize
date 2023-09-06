@@ -320,7 +320,17 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      */
     private void populateRequiredDataForCategory(final Model model , final CategoryModel category ,
         final ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData ,final HttpServletRequest request, final String searchQuery) {
-        updatePageTitle(category, model);
+
+        if(category.isRentalCategory())
+        {
+            updatePageTitleForRentalCategory(category, model);
+        }
+        else
+        {
+            updatePageTitle(category, model);
+        }
+
+
         // To check whether the category is Rental Gear
         addModelAttributeForRentalAndUsedCategory(category,model);
 
@@ -401,6 +411,13 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                 model.addAttribute(BlControllerConstants.CLEAR_BRANDS, facetNameList.get(0));
             }
     }
+
+    private void updatePageTitleForRentalCategory(CategoryModel category, Model model)
+    {
+        storeContentPageTitleInModel(model, category.getRentalPageTitleTag());
+    }
+
+
 
 }
 
