@@ -1,5 +1,6 @@
 package com.bl.backoffice.widget.controller;
 
+import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -8,6 +9,7 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +17,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Combobox;
@@ -31,8 +34,6 @@ import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 
-//import net.sf.cglib.core.CollectionUtils;
-
 
 public class BlPickerScanController extends DefaultWidgetController
 {
@@ -41,7 +42,6 @@ public class BlPickerScanController extends DefaultWidgetController
 	protected static final String IN_SOCKET = "nodeSelected";
 	protected static final String OUT_CONFIRM = "confirmOutput";
 	protected static final String COMPLETE = "completed";
-	private static final String HIDE_DIV = "resize:none;display:none";
 
 	@Resource(name = "baseStoreService")
 	private BaseStoreService baseStoreService;
@@ -51,7 +51,8 @@ public class BlPickerScanController extends DefaultWidgetController
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
-
+	@Resource(name="userService")
+	private UserService userService;
 
 	@Wire
 	private Div pickerDataHeader;
@@ -59,37 +60,23 @@ public class BlPickerScanController extends DefaultWidgetController
 	@Wire
 	Textbox scanningArea;
 
-	/*
-	 * @Wire Textbox textInput;
-	 */
 	@Wire
 	private Combobox warehousesCombox;
 
-	List<ConsignmentModel> consignmentModels;
-	List<ConsignmentModel> filterConsignmentModels;
-
-
-	private transient WebScanToolData shippingScanToolData;
+	UserModel user;
+	List<ConsignmentModel> allConsignments;
+	List<ConsignmentModel> remainingConsignments;
 
 	@SocketEvent(socketId = IN_SOCKET)
 	public void initLoadPage(final Object inputObject)
 	{
-		//  selectedConsignment = inputObject;
-		shippingScanToolData = new WebScanToolData();
 		this.getWidgetInstanceManager()
 				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.picker.scan.heading")));
-		// this.pickerDataHeader.setStyle(HIDE_DIV);
 		final BaseStoreModel baseStoreModel = baseStoreService.getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
 		//Get all warehouses
 		final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
-
 		warehousesCombox.setModel(new ListModelList<>(warehouses));
-	}
-
-	@ViewEvent(componentID = BlInventoryScanLoggingConstants.CANCEL_EVENT, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
-	public void cancel()
-	{
-		this.sendOutput(OUT_CONFIRM, COMPLETE);
+		user=userService.getCurrentUser();
 	}
 
 	@ViewEvent(componentID = "scanOrder", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
@@ -97,64 +84,90 @@ public class BlPickerScanController extends DefaultWidgetController
 	{
 		if (StringUtils.isEmpty(scanningArea.getText()))
 		{
-			LOG.info("plese enter atleast one order");
-			//  System.out.println(textInput.getText());
-
+			Messagebox.show("Please enter atleast one Order");
 		}
 		else if (this.warehousesCombox.getSelectedItem().getValue() == null)
 		{
-			LOG.info("please select warehouse");
+			Messagebox.show("Please select warehouse");
 		}
 		else
 		{
-			LOG.info("going for order processing");
-			//   System.out.println(textInput.getText());
+			LOG.info("Processing order for picker scan");
 			final Object value = this.warehousesCombox.getSelectedItem().getValue();
 			if (value instanceof WarehouseModel)
 			{
 				final WarehouseModel warehouseModel = (WarehouseModel) value;
 				final String orders = scanningArea.getText();
 				final String[] orderList = orders.split("\n");
-
 				getConsignment(warehouseModel, orderList);
 			}
 
 		}
 	}
 
-	private UserService userService;
-
 	private void getConsignment(final WarehouseModel selectedWarehouse, final String[] orderList)
 	{
-		consignmentModels = blConsignmentDao.getConsignmentByOrderAndWarehouseCode(selectedWarehouse, orderList);
-		final UserModel user = userService.getCurrentUser();
+		allConsignments = blConsignmentDao.getConsignmentByOrderAndWarehouseCode(selectedWarehouse, orderList);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Number of consignment come from DB for given warehouse {} and order code {} is {}",
+				selectedWarehouse.getCode(),orderList,allConsignments.size());
 		if (user != null)
 		{
-
-			// EmployeeModel employeeModel = (EmployeeModel)user;
-			if (CollectionUtils.isNotEmpty(consignmentModels))
-			{
-				final List<ConsignmentModel> filterConsignmentModels = consignmentModels.stream()
+			if (CollectionUtils.isNotEmpty(allConsignments)) {
+				final List<ConsignmentModel> associatedOtherUserConsignments = allConsignments.stream()
 						.filter(consignment -> StringUtils.isNotBlank(consignment.getPicker())
 								&& !consignment.getPicker().equals(user.getUid()))
 						.collect(Collectors.toList());
-				if (CollectionUtils.isEmpty(filterConsignmentModels))
-				{
-					consignmentModels.forEach(consignment -> consignment.setPicker(user.getUid()));
-					modelService.saveAll(consignmentModels);
-					LOG.info("All the consignment for given warehouse updated with");
-					Messagebox.show("All the order updated");
-				}
-				else
-				{
+				if (CollectionUtils.isEmpty(associatedOtherUserConsignments)) {
+					updatePickerAndSaveConsignment(allConsignments);
+				} else {
+					remainingConsignments = new ArrayList<>(allConsignments);
+					remainingConsignments.removeAll(associatedOtherUserConsignments);
+					BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Number of associated order consignment {}",associatedOtherUserConsignments.size());
+					BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Number of remaining order consignment {} ", remainingConsignments.size());
+					this.sendOutput(OUT_CONFIRM, COMPLETE);
 
-
-					Messagebox.show("userID is already assigned to some order number");
+					Messagebox.show("Some order already associated with other user. Do you want to assign you?", "Picker Confirmation", new Messagebox.Button[]
+							{Messagebox.Button.YES, Messagebox.Button.NO},null, Messagebox.QUESTION, null, clickEvent -> {
+						if (Messagebox.Button.YES == clickEvent.getButton())
+						{
+							updateCurrentUserToAllConsignment();
+						}else{
+							updateCurrentUserToRemainingConsignment();
+						}
+					}, null);
 
 				}
 			}
-
 		}
+	}
+	public void updateCurrentUserToAllConsignment()
+	{
+		LOG.info(" this is from update all");
+		updatePickerAndSaveConsignment(allConsignments);
+	}
+
+	public void updateCurrentUserToRemainingConsignment()
+	{
+		LOG.info(" this is from updateSelected");
+		updatePickerAndSaveConsignment(remainingConsignments);
+	}
+
+	private void updatePickerAndSaveConsignment(List<ConsignmentModel> consingmentList){
+		if (CollectionUtils.isNotEmpty(consingmentList))
+		{
+			consingmentList.forEach(consignment -> consignment.setPicker(user.getUid()));
+			modelService.saveAll(consingmentList);
+			LOG.info("All the consignment for given warehouse updated with user :"+user.getUid());
+			Messagebox.show("All the Consignment updated with user :"+user.getUid());
+		}else {
+			Messagebox.show("Consignment list are Empty");
+		}
+	}
+
+	@ViewEvent(componentID = BlInventoryScanLoggingConstants.CANCEL_EVENT, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
+	public void cancel()
+	{
+		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
 }

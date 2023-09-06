@@ -16,12 +16,7 @@ import de.hybris.platform.servicelayer.search.SearchResult;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Validate;
@@ -74,7 +69,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 	private static final String CONSIGNMENT_ENTRY_BY_PK = "SELECT {ce:" + ItemModel.PK + "} from {"
 			+ ConsignmentEntryModel._TYPECODE + " as ce} WHERE {ce:" + ItemModel.PK + "} = ?consignmentPK";
 
-	private final String CONSIGNMENT_BY_ORDER_AND_WAREHOUSE = "Select {cons.pk} * from {Consignment as cons},{Warehouse as w},{Order as o} where {cons.order}={o.pk} and {cons.warehouse}= {w.pk} and {w.code}= ?warehoseCode and {o.code} in ?orderList ";
+	private final String CONSIGNMENT_BY_ORDER_AND_WAREHOUSE = "Select {cons.pk} from {Consignment as cons},{Warehouse as w},{Order as o} where {cons.order}={o.pk} and {cons.warehouse}= {w.pk} and {w.code}= ?warehouseCode  and {o.code} in (?orderList)";
 
 	/**
 	 * Get consignments
@@ -291,23 +286,20 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 		return consignments;
 	}
 
-	public List<ConsignmentModel> getConsignmentByOrderAndWarehouseCode(final WarehouseModel warehouse, final String orderlist[])
+	public List<ConsignmentModel> getConsignmentByOrderAndWarehouseCode(final WarehouseModel warehouse, final String orderList[])
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_BY_ORDER_AND_WAREHOUSE);
-		fQuery.addQueryParameter("warehoseCode", warehouse.getCode());
-		fQuery.addQueryParameter("orderList", orderlist);
-
+		final List<String> orders = Arrays.asList(orderList);
+		fQuery.addQueryParameter("warehouseCode", warehouse.getCode());
+		fQuery.addQueryParameter("orderList", orders);
 		final SearchResult<ConsignmentModel> result = getFlexibleSearchService().search(fQuery);
 		final List<ConsignmentModel> consignmentModels = result.getResult();
-
-
 		if (CollectionUtils.isEmpty(consignmentModels))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No Consignments available for given order and warehouse");
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No Consignments available for given order {} and warehouse {}",orders,warehouse.getCode());
 			return Collections.emptyList();
 		}
-
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No of consignments available for given order and warehouse is {}",
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Number of consignments available for given order {} and warehouse is {}",
 				consignmentModels.size());
 
 		return consignmentModels;
