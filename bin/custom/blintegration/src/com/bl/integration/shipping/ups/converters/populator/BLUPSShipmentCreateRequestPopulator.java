@@ -76,7 +76,15 @@ public class BLUPSShipmentCreateRequestPopulator
 		/** Creating ShipTo **/
 
 		final ShipToType shipToType = new ShipToType();
-		populateShipToData(shipToType, shipmentData.getShipTo());
+		if(shipmentData.isHoldAtUpsStore()) {
+			AddressData address = shipmentData.getShipTo().getAddress();
+			shipmentData.getShipTo().setAddress(shipmentData.getShipper().getPaymentAddress());
+			populateShipToData(shipToType, shipmentData.getShipTo());
+			shipmentData.getShipTo().setAddress(address);
+		}
+		else {
+			populateShipToData(shipToType, shipmentData.getShipTo());
+		}
 		shipmentType.setShipTo(shipToType);
 
 		/** Creating ShipFrom **/
