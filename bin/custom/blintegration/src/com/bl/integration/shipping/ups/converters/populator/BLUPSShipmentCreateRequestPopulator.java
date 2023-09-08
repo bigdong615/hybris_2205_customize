@@ -76,7 +76,15 @@ public class BLUPSShipmentCreateRequestPopulator
 		/** Creating ShipTo **/
 
 		final ShipToType shipToType = new ShipToType();
-		populateShipToData(shipToType, shipmentData.getShipTo());
+		if(shipmentData.isHoldAtUpsStore()) {
+			AddressData address = shipmentData.getShipTo().getAddress();
+			shipmentData.getShipTo().setAddress(shipmentData.getShipper().getPaymentAddress());
+			populateShipToData(shipToType, shipmentData.getShipTo());
+			shipmentData.getShipTo().setAddress(address);
+		}
+		else {
+			populateShipToData(shipToType, shipmentData.getShipTo());
+		}
 		shipmentType.setShipTo(shipToType);
 
 		/** Creating ShipFrom **/
@@ -131,10 +139,9 @@ public class BLUPSShipmentCreateRequestPopulator
 			indications.add(indication);
 			shipmentType.getShipmentIndicationType().add(indication);
 			AlternateDeliveryAddressType alternateDeliveryAddress =  new AlternateDeliveryAddressType();
-			alternateDeliveryAddress.setAttentionName(shipperType.getAttentionName());
-			alternateDeliveryAddress.setName(shipperType.getName());
-			AddressData alternateAddress = shipmentData.getShipper().getPaymentAddress();
-			//alternateDeliveryAddress.setUPSAccessPointID("GB00088");
+			alternateDeliveryAddress.setAttentionName(shipmentData.getShipTo().getAttentionName());
+			alternateDeliveryAddress.setName(shipmentData.getShipTo().getName());
+			AddressData alternateAddress = shipmentData.getShipTo().getAddress();
 			ADLAddressType address = new ADLAddressType();
 			address.getAddressLine().add(alternateAddress.getLine1());
 			address.setCity(alternateAddress.getTown());
