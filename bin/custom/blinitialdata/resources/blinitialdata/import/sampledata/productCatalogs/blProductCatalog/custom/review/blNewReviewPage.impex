@@ -1,0 +1,92 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2000-2016 SAP SE or an SAP affiliate company.
+# All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+#
+# Import the CMS content for the Borrow Lenses site
+#
+
+#% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs core_data_homepage.impex =========================");
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$lang=en
+$picture=media(code, $contentCV);
+
+# Import modulegen config properties into impex macros
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true]
+$jarResourceCms=$config-jarResourceCmsValue
+
+###  Page Template For Borrow Lenses ContactUs Page  ###
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]          ; name                    ; frontendTemplateName ;restrictedPageTypes(code) ; active[default=true]
+                           ;                    ; blReviewPageTemplate ; Bl Review Page Template ; review/reviewPage    ; CategoryPage,ContentPage
+
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='blReviewPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                    ;                                                                       ;                           ; wide
+                              ; SiteLogoHeaderSlot                 ;                                                                       ;                           ; logo
+                              ; HeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; HeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; NavigationPromoSlot                ;                                                                       ;                           ; logo
+                              ; NavigationBarSlot                  ;                                                                       ;                           ; navigation
+                              ; NavigationBarMobileSlot            ;                                                                       ;                           ; navigation
+                              ; MiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; FooterSlot                         ;                                                                       ;                           ; footer
+                              ; FooterSubscriptionSlot             ;                                                                       ;                           ; wide
+                              ; FooterCopyRightslot                ;                                                                       ;                           ; wide
+                              ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                              ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; BreadcrumbSection                 ;                                                                        ;                           ;wide
+                              ; reviewPageSearchBoxSlot              ;                                                                       ;                           ; searchbox
+                              #; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox
+                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                              ; TopHeaderSlot                    ;                                                                             ;                           ; wide
+                              ; Section1Slot                   ;                                             ;                           ; wide
+                              ; Section2Slot                  ;                                             ;                           ; wide
+                              ; Section3Slot                  ;                                             ;                           ; wide
+                              ; Section4Slot                  ;                                             ;                          ;wide
+                              ; Section5Slot                  ;                                             ;                           ; wide
+                              ; Section6Slot                  ;                                             ;                          ;wide
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                                          ; position[unique=true]                   ; pageTemplate(uid,$contentCV)[unique=true][default='blReviewPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
+                                     ;                         ; PromoBannerSlot-writereview                     ; PromoBannerSlot                    ;                                                                         ; PromoBannerSlot                     ; true
+                                     ;                         ; SiteLogoHeaderSlot-writereview                  ; SiteLogoHeaderSlot                 ;                                                                         ; SiteLogoHeaderSlot                  ; true
+                                     ;                         ; NavigationPromoSlot-writereview                 ; NavigationPromoSlot                ;                                                                         ; NavigationPromoSlot                 ; true
+                                     ;                         ; NavigationBarSlot-writereview                   ; NavigationBarSlot                  ;                                                                         ; NavigationBarSlot                   ; true
+                                     ;                         ; NavigationBarMobileSlot-writereview             ; NavigationBarMobileSlot            ;                                                                         ; NavigationBarMobileSlot             ; true
+                                     ;                         ; HeaderLinkForSupportSlot-writereview            ; HeaderLinkForSupportSlot           ;                                                                         ; HeaderLinkForSupportSlot            ; true
+                                     ;                         ; HeaderLinkForShipOrPickupSlot-writerevie        ; HeaderLinkForShipOrPickupSlot      ;                                                                         ; HeaderLinkForShipOrPickupSlot       ; true
+                                     ;                         ; MiniCartSlot-writereview                        ; MiniCartSlot                       ;                                                                         ; MiniCartSlot                        ; true
+                                     ;                         ; FooterSlot-writereview                          ; FooterSlot                         ;                                                                         ; FooterSlot                          ; true
+                                     ;                         ; FooterSubscriptionSlot-writereview              ; FooterSubscriptionSlot             ;                                                                         ; FooterSubscriptionSlot              ; true
+                                     ;                         ; FooterCopyRightslot-writereview                 ; FooterCopyRightslot                ;                                                                         ; FooterCopyRightslot                 ; true
+                                     ;                         ; MobileHeaderLinkForShipOrPickupSlot-writereview ; MobileHeaderLinkForShipOrPickupSlot;                                                                         ; MobileHeaderLinkForShipOrPickupSlot ; true
+                                     ;                         ; MobileHeaderLinkForSupportSlot-writereview      ; MobileHeaderLinkForSupportSlot     ;                                                                         ; MobileHeaderLinkForSupportSlot      ; true
+                                     ;                         ; MobileHeaderLinkForAccountSlot-writereview      ; MobileHeaderLinkForAccountSlot     ;                                                                         ; MobileHeaderLinkForAccountSlot      ; true
+                                     ;                         ; MobileHeaderBottomInfo-writereview              ; MobileHeaderBottomInfo             ;                                                                         ; MobileHeaderBottomInfo              ; true
+                                     ;                         ; MobileMiniCartSlot-writereview                  ; MobileMiniCartSlot                 ;                                                                         ; MobileMiniCartSlot                  ; true
+                                     ;                         ; SocialMediaSectionSlot-writereview              ; SocialMediaSectionSlot             ;                                                                         ; SocialMediaSectionSlot              ; true
+                                     ;                         ; TopHeaderSlot-writereview                       ; TopHeaderSlot                      ;                                                                         ; TopHeaderSlot                       ; true
+                                     ;                         ; BreadcrumbSlot-writereview                      ; BreadcrumbSection                  ;                                                                         ; BreadcrumbSlot                      ; true
+
+
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
+                          ;                    ; blWriteReviewPage ; Bl Reveiw Page ; blReviewPageTemplate           ; /writerview
+
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]             ; name                     ; active
+                         ;                   ; reviewPageSearchBoxSlot ; review page search Slot   ; true
+
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]     ; position[unique=true]; page(uid,$contentCV)[unique=true][default='blWriteReviewPage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                    ; SearchBoxSlot-writereview ; reviewPageSlot       ;                                                          ; reviewPageSearchBoxSlot                   ; true
+
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]             ; cmsComponents(uid,$contentCV)
+                   ;                    ; reviewPageSearchBoxSlot ; BlSearchBox

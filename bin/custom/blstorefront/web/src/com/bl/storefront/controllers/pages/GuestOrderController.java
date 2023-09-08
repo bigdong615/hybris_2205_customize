@@ -56,7 +56,7 @@ public class GuestOrderController extends AbstractPageController
 		{
 			LOG.warn("Attempted to load an order that does not exist or is not visible");
 			model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
-			GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
+			//GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return ControllerConstants.Views.Pages.Error.ErrorNotFoundPage;
 		}
