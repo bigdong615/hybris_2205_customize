@@ -136,6 +136,7 @@
 	</c:when>
 	
 	<c:when test="${currentPageType == 'productsearch'}">
+		<!-- <%=HybrisDataConverter.getSearchPageScript()%> -->
 		
 		<script type="text/javascript">
 		
@@ -156,6 +157,7 @@
 	</c:when>
 	
 	<c:when test="${currentPageType == 'category'}">
+	<!--	<%=HybrisDataConverter.getCategoryScript()%> -->
 	
 	<script type="text/javascript">
 		
@@ -177,6 +179,7 @@
 	</c:when>
 	
 	<c:when test="${currentPageType == 'product'}">
+	<!--	<%=HybrisDataConverter.getProductPageScript()%> -->
 	
 	<script type="text/javascript">
 		
@@ -198,6 +201,7 @@
 	</c:when>
 	
 	<c:when test="${currentPageType == 'cart'}">
+	<!--	<%=HybrisDataConverter.getCartScript()%> -->
 	
 	<script type="text/javascript">
 		
@@ -219,6 +223,7 @@
 	</c:when>
 	
 	<c:when test="${currentPageType == 'profile'}">
+	<!--	<%=HybrisDataConverter.getCustomerDetailScript()%> -->
 	
 	<script type="text/javascript">
 		
@@ -240,6 +245,7 @@
 	</c:when>
 	
 	<c:when test="${currentPageType == 'orderconfirmation'}">
+	<!--	<%=HybrisDataConverter.getOrderConfirmationScript()%> -->
 	
 	<script type="text/javascript">
 	<c:set var="paymentType" value="${orderData.paymentInfo != null ? 'card': 'gift-card'}"/>
@@ -420,6 +426,7 @@
 	
 	
 	<c:otherwise>
+		<!-- <%=HybrisDataConverter.getGenericPageScript()%> -->
 		
 		<script type="text/javascript">
 		${currentPageType}
