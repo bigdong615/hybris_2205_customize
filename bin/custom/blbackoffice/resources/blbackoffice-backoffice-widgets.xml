@@ -226,7 +226,30 @@
                         <setting key="_width" type="String">1520px</setting>
                         <setting key="_height" type="String">650px</setting>
                         <virtual-sockets />
-                    </widget> 
+                    </widget>
+
+		<widget id="inboundTrackingScanTool_propertyextractor" widgetDefinitionId="custom.bl.widgets.inboundTrackingScan" slotId="cockpitWidgetChildrenInvisible"
+				template="true">
+
+			<instance-settings socketEventRoutingMode="LAST_USED">
+				<create onInit="false" reuseExisting="true">
+					<all-incoming-events/>
+				</create>
+				<close>
+					<all-outgoing-events/>
+				</close>
+				<select onInit="false">
+					<all-incoming-events/>
+				</select>
+			</instance-settings>
+
+			<setting key="widgetStyleClass" type="String"></setting>
+			<setting key="__externalLocationPath" type="String">extension://warehousingbackoffice</setting>
+			<setting key="widgetStyleAttribute" type="String"></setting>
+			<setting key="_width" type="String">1020px</setting>
+			<setting key="_height" type="String">650px</setting>
+			<virtual-sockets />
+		</widget>
                     
 		
 	</widget-extension>
@@ -268,6 +291,19 @@
 				<setting key="socketDataType_$T" type="String" value="java.lang.String"/>
 			</widget>
 			<setting key="expression" type="String" value="#root?.id EQ 'OrderConsolidationTool'"/>
+			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
+		</widget>
+	</widget-extension>
+
+	<widget-extension widgetId="mainSlot">
+		<widget id="InboundTrackingScanTool_conditionevaluator" widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+				slotId="cockpitWidgetChildrenInvisible" template="false">
+			<widget id="InboundTrackingScanTool_propertyextractor" widgetDefinitionId="custom.bl.widgets.inboundTrackingScan"
+					slotId="cockpitWidgetChildrenInvisible" template="true">
+				<setting key="expression" type="String" value="id"/>
+				<setting key="socketDataType_$T" type="String" value="java.lang.String"/>
+			</widget>
+			<setting key="expression" type="String" value="#root?.id EQ 'InboundTrackingScanTool'"/>
 			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
 		</widget>
 	</widget-extension>
@@ -334,6 +370,9 @@
    <!-- order consolidation tool -->
     <widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="OrderConsolidationTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="OrderConsolidationTool_conditionevaluator" outputId="true" targetWidgetId="OrderConsolidationTool_propertyextractor" inputId="nodeSelected"/>
+
+	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="InboundTrackingScanTool_conditionevaluator" inputId="input"/>
+	<widget-connection sourceWidgetId="InboundTrackingScanTool_conditionevaluator" outputId="true" targetWidgetId="InboundTrackingScanTool_propertyextractor" inputId="nodeSelected"/>
 
 	
 	<!--BL-863 : Widgets Definition for Front Team Payment Captured Widget -->
