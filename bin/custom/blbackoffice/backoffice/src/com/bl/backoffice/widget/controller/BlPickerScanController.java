@@ -142,13 +142,11 @@ public class BlPickerScanController extends DefaultWidgetController
 	}
 	public void updateCurrentUserToAllConsignment()
 	{
-		LOG.info(" this is from update all");
 		updatePickerAndSaveConsignment(allConsignments);
 	}
 
 	public void updateCurrentUserToRemainingConsignment()
 	{
-		LOG.info(" this is from updateSelected");
 		updatePickerAndSaveConsignment(remainingConsignments);
 	}
 

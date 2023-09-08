@@ -299,8 +299,8 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No Consignments available for given order {} and warehouse {}",orders,warehouse.getCode());
 			return Collections.emptyList();
 		}
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Number of consignments available for given order {} and warehouse is {}",
-				consignmentModels.size());
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Number of consignments available for given order {} and warehouse {} is {}",
+				orders,warehouse.getCode(),consignmentModels.size());
 
 		return consignmentModels;
 
