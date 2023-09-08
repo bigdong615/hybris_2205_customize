@@ -75,7 +75,7 @@ public class DefaultPageController extends AbstractPageController
 			model.addAttribute(WebConstants.MODEL_KEY_ADDITIONAL_BREADCRUMB,
 			model.addAttribute(WebConstants.MODEL_KEY_ADDITIONAL_BREADCRUMB,
 			resourceBreadcrumbBuilder.getBreadcrumbs("breadcrumb.not.found")));
-			GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
+			//GlobalMessages.addErrorMessage(model, "system.error.page.not.found");
 
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
