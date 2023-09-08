@@ -25,8 +25,13 @@
 	</p>
 	<div class="notification notification-tip link mt-4">
 		<spring:theme code="bl.verification.document.page.msg" />
+    </div>
 
-	</div>
+   <c:if test="${isAnyDocumentUploaded}">
+   <div class="notification notification-warning">
+   		<spring:theme code="bl.verification.document.page.uploaded.msg" />
+   </div>
+   </c:if>
 	<h5 class="mt-5">
 		<spring:theme code="bl.verification.document.required.doc" />
 	</h5>
@@ -42,7 +47,15 @@
 			</p>
 		</div>
 		<div class="col-lg-4 text-lg-end">
-			<form:form id="documentUploadForm"
+
+        <c:choose>
+             <c:when test="${isDocumentUploaded['DRIVING_LICENSE']}">
+          		<button id="uploaded_drivingLicense" type="button" class="btn btn-primary " style="width: 165px;margin-left: 118px;">
+                      <spring:theme code="bl.verification.documents.uploaded"/>
+          	    </button>
+             </c:when>
+             <c:otherwise>
+			   <form:form id="documentUploadForm"
 				action="${uploadDocument}?${CSRFToken.parameterName}=${CSRFToken.token}"
 				method="post" modelAttribute="verificationDocumentForm"
 				enctype="multipart/form-data">
@@ -51,7 +64,10 @@
 					id="drivingLicenseUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="DRIVING_LICENSE" />
-			</form:form>
+			   </form:form>
+			 </c:otherwise>
+		</c:choose>
+
 
 			<c:forEach items="${UploadedDocument['DRIVING_LICENSE']}"
 				var="uploadedDocument" varStatus="loopindex">
@@ -116,7 +132,14 @@
 			</p>
 		</div>
 		<div class="col-lg-4 text-lg-end">
-			<form:form id="documentUploadForm"
+		  <c:choose>
+             <c:when test="${isDocumentUploaded['UTILITY_BILL']}">
+                <button id="uploaded_utilityBill" type="button" class="btn btn-primary " style="width: 165px;margin-left: 118px;">
+                   <spring:theme code="bl.verification.documents.uploaded"/>
+                </button>
+             </c:when>
+             <c:otherwise>
+		       <form:form id="documentUploadForm"
 				action="${uploadDocument}?${CSRFToken.parameterName}=${CSRFToken.token}"
 				method="post" modelAttribute="verificationDocumentForm"
 				enctype="multipart/form-data">
@@ -126,8 +149,9 @@
 					id="utilityBillUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="UTILITY_BILL">
-			</form:form>
-
+			   </form:form>
+             </c:otherwise>
+          </c:choose>
 
 			<c:forEach items="${UploadedDocument['UTILITY_BILL']}"
 				var="uploadedDocument">
@@ -173,7 +197,15 @@
 			</p>
 		</div>
 		<div class="col-lg-4 text-lg-end">
-			<form:form id="documentUploadForm"
+
+		  <c:choose>
+              <c:when test="${isDocumentUploaded['INSURANCE_CERTIFICATE']}">
+                 <button id="uploaded_insuranceCertificate" type="button" class="btn btn-primary " style="width: 165px;margin-left: 118px;">
+                   <spring:theme code="bl.verification.documents.uploaded"/>
+                 </button>
+              </c:when>
+              <c:otherwise>
+		       <form:form id="documentUploadForm"
 				action="${uploadDocument}?${CSRFToken.parameterName}=${CSRFToken.token}"
 				method="post" modelAttribute="verificationDocumentForm"
 				enctype="multipart/form-data">
@@ -184,8 +216,9 @@
 				</label>
 				<input type="hidden" name="documentType"
 					value="INSURANCE_CERTIFICATE">
-			</form:form>
-
+			   </form:form>
+              </c:otherwise>
+          </c:choose>
 
 			<c:forEach items="${UploadedDocument['INSURANCE_CERTIFICATE']}"
 				var="uploadedDocument" varStatus="loopindex">
@@ -230,7 +263,14 @@
 			</p>
 		</div>
 		<div class="col-lg-4 text-lg-end">
-			<form:form id="documentUploadForm"
+		 <c:choose>
+           <c:when test="${isDocumentUploaded['EXTRA_DOCUMENT1']}">
+              <button id="uploaded_extraDocument1" type="button" class="btn btn-primary " style="width: 165px;margin-left: 118px;">
+                <spring:theme code="bl.verification.documents.uploaded"/>
+              </button>
+           </c:when>
+           <c:otherwise>
+             <form:form id="documentUploadForm"
 				action="${uploadDocument}?${CSRFToken.parameterName}=${CSRFToken.token}"
 				method="post" modelAttribute="verificationDocumentForm"
 				enctype="multipart/form-data">
@@ -240,8 +280,9 @@
 					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT1">
-			</form:form>
-
+			 </form:form>
+           </c:otherwise>
+         </c:choose>
 			<c:forEach items="${UploadedDocument['EXTRA_DOCUMENT1']}"
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
@@ -278,7 +319,14 @@
 			</p>
 		</div>
 		<div class="col-lg-4 text-lg-end">
-			<form:form id="documentUploadForm"
+		  <c:choose>
+            <c:when test="${isDocumentUploaded['EXTRA_DOCUMENT2']}">
+               <button id="uploaded_extraDocument2" type="button" class="btn btn-primary " style="width: 165px;margin-left: 118px;">
+               <spring:theme code="bl.verification.documents.uploaded"/>
+               </button>
+            </c:when>
+            <c:otherwise>
+              <form:form id="documentUploadForm"
 				action="${uploadDocument}?${CSRFToken.parameterName}=${CSRFToken.token}"
 				method="post" modelAttribute="verificationDocumentForm"
 				enctype="multipart/form-data">
@@ -288,8 +336,9 @@
 					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT2">
-			</form:form>
-
+			  </form:form>
+		    </c:otherwise>
+		  </c:choose>
 
 			<c:forEach items="${UploadedDocument['EXTRA_DOCUMENT2']}"
 				var="uploadedDocument" varStatus="loopindex">
@@ -328,8 +377,14 @@
 			</p>
 		</div>
 		<div class="col-lg-4 text-lg-end">
-
-			<form:form id="documentUploadForm"
+		 <c:choose>
+            <c:when test="${isDocumentUploaded['EXTRA_DOCUMENT3']}">
+             <button id="uploaded_extraDocument3" type="button" class="btn btn-primary " style="width: 165px;margin-left: 118px;">
+             <spring:theme code="bl.verification.documents.uploaded"/>
+             </button>
+             </c:when>
+             <c:otherwise>
+		       <form:form id="documentUploadForm"
 				action="${uploadDocument}?${CSRFToken.parameterName}=${CSRFToken.token}"
 				method="post" modelAttribute="verificationDocumentForm"
 				enctype="multipart/form-data">
@@ -339,7 +394,9 @@
 					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT3">
-			</form:form>
+			   </form:form>
+             </c:otherwise>
+         </c:choose>
 
 			<c:forEach items="${UploadedDocument['EXTRA_DOCUMENT3']}"
 				var="uploadedDocument" varStatus="loopindex">
@@ -374,6 +431,14 @@
 			</p>
 		</div>
 		<div class="col-lg-4 text-lg-end">
+		 <c:choose>
+          <c:when test="${isDocumentUploaded['EXTRA_DOCUMENT4']}">
+           <button id="uploaded_extraDocument4" type="button" class="btn btn-primary " style="width: 165px;margin-left: 118px;">
+           <spring:theme code="bl.verification.documents.uploaded"/>
+           </button>
+          </c:when>
+          <c:otherwise>
+
 			<form:form id="documentUploadForm"
 				action="${uploadDocument}?${CSRFToken.parameterName}=${CSRFToken.token}"
 				method="post" modelAttribute="verificationDocumentForm"
@@ -385,6 +450,8 @@
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT4">
 			</form:form>
+          </c:otherwise>
+         </c:choose>
 
 			<c:forEach items="${UploadedDocument['EXTRA_DOCUMENT4']}"
 				var="uploadedDocument" varStatus="loopindex">
@@ -421,7 +488,14 @@
 			</p>
 		</div>
 		<div class="col-lg-4 text-lg-end">
-			<form:form id="documentUploadForm"
+		  <c:choose>
+           <c:when test="${isDocumentUploaded['EXTRA_DOCUMENT5']}">
+           <button id="uploaded_extraDocument5" type="button" class="btn btn-primary " style="width: 165px;margin-left: 118px;">
+           <spring:theme code="bl.verification.documents.uploaded"/>
+           </button>
+           </c:when>
+           <c:otherwise>
+		     <form:form id="documentUploadForm"
 				action="${uploadDocument}?${CSRFToken.parameterName}=${CSRFToken.token}"
 				method="post" modelAttribute="verificationDocumentForm"
 				enctype="multipart/form-data">
@@ -431,8 +505,9 @@
 					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT5">
-			</form:form>
-
+			 </form:form>
+           </c:otherwise>
+          </c:choose>
 			<c:forEach items="${UploadedDocument['EXTRA_DOCUMENT5']}"
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
