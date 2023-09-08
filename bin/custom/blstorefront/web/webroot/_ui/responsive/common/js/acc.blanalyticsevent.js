@@ -58,14 +58,14 @@ function trackDateSelection(date1, date2) {
 	diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 	var daysInAdvance = diffDays + 1;
 // Track tealium event while selecting date.
-	utag.link({
-      "tealium_event"    : "search_rental_date",
-      "SBD_view_with_dates"   : '"'+lengthOfRental+'"',
-      "SBD_days_in_future"     : '"'+daysInAdvance+'"'
-  });
+	//utag.link({
+     // "tealium_event"    : "search_rental_date",
+      //"SBD_view_with_dates"   : '"'+lengthOfRental+'"',
+      //"SBD_days_in_future"     : '"'+daysInAdvance+'"'
+//  });
 // Track GA event while selecting date.
-	window.mediator.publish('searchRentalDate', {
-		daysInAdvance: daysInAdvance,
-		lengthOfRental: lengthOfRental
-	});
+	//window.mediator.publish('searchRentalDate', {
+	//	daysInAdvance: daysInAdvance,
+	//	lengthOfRental: lengthOfRental
+	//});
 }

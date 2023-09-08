@@ -144,14 +144,14 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                        var quantity = $('#quantity').val();
                                        ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
                                       // Tealium event for ATC
-                                       utag.link({
-                                           "tealium_event" : "cart_add",
-                                           "productSKU"    : '["'+productCode+'"]',
-                                           "ProductName"   : '["'+productName+'"]',
-                                           "quantity"      : '["'+quantity+'"]',
-                                           "add_to_cart_rental"  : "1",
-                                           "isBuy"            : "0"
-                                       });
+                                      // utag.link({
+                                        //   "tealium_event" : "cart_add",
+                                        //   "productSKU"    : '["'+productCode+'"]',
+                                         //  "ProductName"   : '["'+productName+'"]',
+                                         //  "quantity"      : '["'+quantity+'"]',
+                                          // "add_to_cart_rental"  : "1",
+                                           //"isBuy"            : "0"
+                                       //});
 
                                       //On empty cart page, add class on close & continue shopping button of add to rental modal.
                                       $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
@@ -1030,14 +1030,14 @@ function startUsedGearCartTimer() {
                        var quantity =1;
                        ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
                        // Tealium event for ATC
-                       utag.link({
-                             "tealium_event" : "cart_add",
-                              "productSKU"    : '["'+productCode+'"]',
-                              "ProductName"   : '["'+productName+'"]',
-                              "quantity"      : '["'+quantity+'"]',
-                               "add_to_cart_used"  : "1",
-                               "isBuy"            : "1"
-                                });
+                      // utag.link({
+                       //      "tealium_event" : "cart_add",
+                        //      "productSKU"    : '["'+productCode+'"]',
+                         //     "ProductName"   : '["'+productName+'"]',
+                           //   "quantity"      : '["'+quantity+'"]',
+                            //   "add_to_cart_used"  : "1",
+                              // "isBuy"            : "1"
+                             //   });
                     		redirectToCart = true;
                     		startUsedGearCartTimer();
                     	}
