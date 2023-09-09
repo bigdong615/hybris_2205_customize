@@ -41,7 +41,7 @@
 				merchant_group_id : '${merchantGroupId}',
 				merchant_id : '${merchantID}',
 				page_id : '${fn:substring(product.code, 0, 41)}',
-				review_wrapper_url : '${baseUrl}/rent/product/${product.code}/writeReview/?pr_page_id= ${fn:substring(product.code, 0, 41)}',
+				review_wrapper_url : '${baseUrl}/writereview/?pr_page_id=${fn:substring(product.code, 0, 41)}',
 				REVIEW_DISPLAY_SNAPSHOT_TYPE : 'SIMPLE',
 				REVIEW_DISPLAY_PAGINATION_TYPE : 'VERTICAL',
 				style_sheet: '${fn:escapeXml(themeResourcePath)}/css/powereview.css',
@@ -66,3 +66,5 @@
 				}
 			});
 </script>
+
+

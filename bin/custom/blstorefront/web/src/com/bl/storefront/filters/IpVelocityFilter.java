@@ -51,7 +51,8 @@ public class IpVelocityFilter extends OncePerRequestFilter
 
 			}
 		}
-		LOG.info("Current User Ip is " + userIp);
+		//changed from INFO to DEBUG
+		LOG.debug("Current User Ip is " + userIp);
 		filterChain.doFilter(request, response);
 
 	}
