@@ -44,4 +44,44 @@
     </div>
 
 
+    <div style="margin:30px;" id="inboundTrackingSacntoolDataHeader">
+        <hlayout width="100%"  sclass="oms-widget-reassignserial-list">
+            <div style="height:304px;" sclass="oms-widget-reassignserial-list-container">
+                <grid id="inboundTrackingScanToolData" mold="paging" style="overflow-y: initial;"
+                      pageSize="10" width="100%" height="100%">
+                    <columns  style="background-color:#d5d8dc;">
+                        <column width="7%" sclass="oms-widget-reassignserial-listbox-header">
+                            <label value="${labels.blbackoffice.consolidation.tool.product.name}" width="100%"> Product Name </label>
+                        </column>
+                        <column width="6%" sclass="oms-widget-reassignserial-listbox-header">
+                            <label value="${labels.blbackoffice.consolidation.tool.location}" width="100%"> Product Code </label>
+                        </column>
+                        <column width="6%" sclass="oms-widget-reassignserial-listbox-header">
+                            <label value="${labels.blbackoffice.consolidation.tool.parentLocation}" width="100%" > Serial No </label>
+                        </column>
+                        <column width="3%" sclass="oms-widget-reassignserial-listbox-header">
+                            <label value="${labels.blbackoffice.consolidation.tool.barCode}" width="100%"> shipment Start Date </label>
+                        </column>
+
+                    </columns>
+                    <rows >
+                        <template name="model">
+                            <row>
+                                <label value="${each.productName}" width="100%"/>
+                                <label value="${each.productCode}" width="100%" style="font-weight:bold;font-size:15px;"/>
+                                <label value="${each.serialNo}" width="100%"/>
+                                <label value="${each.shipmentStartDate}" width="80%"/>
+
+                                    <button id="checkSerial" label="Send Invoice" target="_blank"
+                                            sclass="y-btn-primary oms-widget-billing-configuration-button" style="margin-bottom: 6px;margin-top: 7px;width: 50%;"/>
+
+                            </row>
+                        </template>
+                    </rows>
+                </grid>
+            </div>
+        </hlayout>
+    </div>
+
+
 </widget>
