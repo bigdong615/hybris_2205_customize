@@ -2115,6 +2115,11 @@
   		<property name="commonI18NService" ref="commonI18NService"/>  		
 	</bean>
 	
+	<bean id="blProductOrderCountValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductOrderCountValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+  		<property name="defaultBlProductDao" ref="defaultBlProductDao"/>  		
+	</bean>
+	
 	<bean id="blBigDecimalValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BigDecimalValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>

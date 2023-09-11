@@ -11,6 +11,8 @@ import de.hybris.platform.product.daos.impl.DefaultProductDao;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -86,6 +88,9 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
             + " as p} WHERE {p:" + BlSerialProductModel.PRODUCTID + "} = ?productId" + " AND {p:" + BlSerialProductModel.CATALOGVERSION
             + "} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE + " as cv} WHERE {cv:" + CatalogVersionModel.CATALOG + "} in ({{SELECT {c:pk} FROM {" + CatalogModel._TYPECODE
             + " as c} WHERE {c:" + CatalogModel.ID + "} = ?catalog}})}})";
+
+  private static final String GET_ORDER_COUNT_FOR_PRODUCT = "select {o.pk} from {Order as o}, {Product as p}, {AbstractOrderEntry as ao}\r\n"
+		  + "where  {o.pk} = {ao.order} and {ao.product} = {p.pk} and {p.code} = ?code and {p.creationtime} >?formattedDate ";
 
     /**
    * @param typecode
@@ -242,6 +247,29 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
   {
 	  validateParameterNotNull(code, "Product code must not be null!");
 	  return find(Collections.singletonMap(ProductModel.PK, (Object) code));
+  }
+
+  @Override
+  public int getOrderCountByProduct(final String code)
+  {
+
+	  final LocalDate today = LocalDate.now();
+	  final LocalDate ninetyDaysAgo = today.minusDays(90);
+	  final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	  final String formattedDate = ninetyDaysAgo.format(formatter);
+	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDER_COUNT_FOR_PRODUCT);
+	  fQuery.addQueryParameter("code", code);
+	  fQuery.addQueryParameter("formattedDate", formattedDate);
+	  final SearchResult<StockLevelModel> result = getFlexibleSearchService().search(fQuery);
+	  final int orderCount;
+	  if (result.getResult() != null)
+	  {
+		  return result.getResult().size();
+	  }
+	  else
+	  {
+		  return 0;
+	  }
   }
 
 }
