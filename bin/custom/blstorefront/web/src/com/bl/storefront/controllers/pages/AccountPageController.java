@@ -12,11 +12,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractSearchPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateEmailForm;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePasswordForm;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateProfileForm;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.*;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.AddressValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.EmailValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.PasswordValidator;
@@ -1223,6 +1219,7 @@ public class AccountPageController extends AbstractSearchPageController
     model.addAttribute("verificationDocumentForm",verificationDocumentForm);
 		final Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
 		model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
+		setFlagForUploadedDocuments(uploadedDocumentFromCustomer, model);
 		final ContentPageModel varificationImagesPage = getContentPageForLabelOrId(VERIFICATION_IMAGES_CMS_PAGE);
 		storeCmsPageInModel(model, varificationImagesPage);
 		setUpMetaDataForContentPage(model, varificationImagesPage);
@@ -1626,6 +1623,26 @@ public class AccountPageController extends AbstractSearchPageController
 
 		getGenerateInvoicePdfService().generateInvoicePdf(orderDetails, request, response);
 
+	}
+
+	/**
+	 * BLS-442 - This method is used to set the flag as true for uploaded documents and that flag is used to show the button as uploaded.
+	 * @param uploadedDocumentFromCustomer
+	 * @param model
+	 */
+	 public void setFlagForUploadedDocuments(Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer, Model model) {
+		final Map<String, Boolean> isDocumentUploaded = new HashMap<>();
+		for (String key : uploadedDocumentFromCustomer.keySet()) {
+			 List<VerificationDocumentMediaModel> media = uploadedDocumentFromCustomer.get(key);
+
+			 for (VerificationDocumentMediaModel mediaModel : media) {
+				 if (!mediaModel.isRemovedByCustomer()) {
+					 isDocumentUploaded.put(mediaModel.getDocumentType().toString(), Boolean.TRUE);
+				 }
+			 }
+		 }
+		 model.addAttribute("isDocumentUploaded",isDocumentUploaded);
+		 model.addAttribute("isAnyDocumentUploaded",isDocumentUploaded.values().contains(Boolean.TRUE)?Boolean.TRUE: Boolean.FALSE);
 	}
 
 	/**
