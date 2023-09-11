@@ -5,6 +5,7 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.catalog.model.CatalogModel;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.product.daos.impl.DefaultProductDao;
@@ -89,8 +90,10 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
             + "} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE + " as cv} WHERE {cv:" + CatalogVersionModel.CATALOG + "} in ({{SELECT {c:pk} FROM {" + CatalogModel._TYPECODE
             + " as c} WHERE {c:" + CatalogModel.ID + "} = ?catalog}})}})";
 
-  private static final String GET_ORDER_COUNT_FOR_PRODUCT = "select {o.pk} from {Order as o}, {Product as p}, {AbstractOrderEntry as ao}\r\n"
-		  + "where  {o.pk} = {ao.order} and {ao.product} = {p.pk} and {p.code} = ?code and {p.creationtime} >?formattedDate ";
+  private static final String GET_ORDER_COUNT_FOR_PRODUCT = "select {o.pk} from {order as o "
+		  + "join AbstractOrderEntry as ao on {o.pk} = {ao.order} " 
+		  + "join Product as p on {p.pk} = {ao.product} "
+		  + "} where {p.code} = ?code and {o.creationtime} > ?formattedDate ";
 
     /**
    * @param typecode
@@ -260,7 +263,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDER_COUNT_FOR_PRODUCT);
 	  fQuery.addQueryParameter("code", code);
 	  fQuery.addQueryParameter("formattedDate", formattedDate);
-	  final SearchResult<StockLevelModel> result = getFlexibleSearchService().search(fQuery);
+	  final SearchResult<OrderModel> result = getFlexibleSearchService().search(fQuery);
 	  final int orderCount;
 	  if (result.getResult() != null)
 	  {
