@@ -15,6 +15,9 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.*;
 
 import javax.annotation.Resource;
+import javax.sound.sampled.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,7 @@ public class BlInboundTrackingScanController extends DefaultWidgetController {
     private static final Logger LOG = Logger.getLogger(BlInboundTrackingScanController.class);
     protected static final String OUT_CONFIRM = "confirmOutput";
     protected static final String COMPLETE = "completed";
+    private static final int BUFFER_SIZE = 4096;
 
     protected static final String IN_SOCKET = "nodeSelected";
     private Textbox textInput;
@@ -96,11 +100,33 @@ public class BlInboundTrackingScanController extends DefaultWidgetController {
     public void checkSerialFutureorders()
     {
         Messagebox.show("checkSerial clicked");
-        playSound();
+
+        try {
+            playSound();
+        }
+        catch (Exception ex){
+            LOG.error("error during the sound play");
+        }
     }
 
-    private void playSound() {
+    private void playSound() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         LOG.info("play Sound worked");
+        String audioFilePath = "audios/announcement-sound-4-21464.mp3";
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(audioFilePath);
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(inputStream);
+        AudioFormat audioFormat = audioStream.getFormat();
+        DataLine.Info info = new DataLine.Info(Clip.class, audioFormat);
+        SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(info);
+        sourceDataLine.open(audioFormat);
+        sourceDataLine.start();
+        byte[] bufferBytes = new byte[BUFFER_SIZE];
+        int readBytes = -1;
+        while ((readBytes = audioStream.read(bufferBytes)) != -1) {
+            sourceDataLine.write(bufferBytes, 0, readBytes);
+        }
+        sourceDataLine.drain();
+        sourceDataLine.close();
+        audioStream.close();
     }
 
 
