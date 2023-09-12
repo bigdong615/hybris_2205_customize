@@ -86,7 +86,7 @@ public class BlPickerScanController extends DefaultWidgetController
 		{
 			Messagebox.show("Please enter atleast one Order");
 		}
-		else if (this.warehousesCombox.getSelectedItem().getValue() == null)
+		else if (this.warehousesCombox.getSelectedItem()==null || this.warehousesCombox.getSelectedItem().getValue() == null)
 		{
 			Messagebox.show("Please select warehouse");
 		}
@@ -99,7 +99,13 @@ public class BlPickerScanController extends DefaultWidgetController
 				final WarehouseModel warehouseModel = (WarehouseModel) value;
 				final String orders = scanningArea.getText();
 				final String[] orderList = orders.split("\n");
-				getConsignment(warehouseModel, orderList);
+				try {
+					getConsignment(warehouseModel, orderList);
+				}catch (Exception e){
+					Messagebox.show("Some error occur while processing consignment");
+					BlLogger.logMessage(LOG,Level.ERROR,"Some error occur while processing consignment",e);
+
+				}
 			}
 
 		}
@@ -108,8 +114,6 @@ public class BlPickerScanController extends DefaultWidgetController
 	private void getConsignment(final WarehouseModel selectedWarehouse, final String[] orderList)
 	{
 		allConsignments = blConsignmentDao.getConsignmentByOrderAndWarehouseCode(selectedWarehouse, orderList);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Number of consignment come from DB for given warehouse {} and order code {} is {}",
-				selectedWarehouse.getCode(),orderList,allConsignments.size());
 		if (user != null)
 		{
 			if (CollectionUtils.isNotEmpty(allConsignments)) {

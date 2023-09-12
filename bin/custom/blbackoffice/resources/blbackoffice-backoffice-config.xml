@@ -2440,6 +2440,7 @@
 			</n:navigation-node>
 			<n:navigation-node id="OrderConsolidationTool" code="OrderConsolidationTool"/>
 			<n:type-node code="CronJob" id="CronJob"/>
+			<n:navigation-node id="PickerScanTool" code="PickerScanTool"/>
 		</n:explorer-tree>
 	</context>
 	
