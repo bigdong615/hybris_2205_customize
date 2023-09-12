@@ -190,7 +190,13 @@ public class DefaultBlStockService implements BlStockService
 		}
 	}
 
-  private void createAndExecuteBusinessProcess(final BlSerialProductModel blSerialProduct) {
+	public void findAndReserveAllStock(final BlSerialProductModel blSerialProduct) {
+		final Collection<StockLevelModel> stockLevelModelsBasedOnDates = getStockLevelModelsBasedOnDates(blSerialProduct);
+		stockLevelModelsBasedOnDates.forEach(stockLevel -> stockLevel.setReservedStatus(true));
+		modelService.saveAll(stockLevelModelsBasedOnDates);
+	}
+
+	private void createAndExecuteBusinessProcess(final BlSerialProductModel blSerialProduct) {
     ReallocateSerialProcessModel reallocateSerialProcess = (ReallocateSerialProcessModel) getBusinessProcessService()
         .createProcess(
             "reallocateSerial_" + blSerialProduct.getCode() + "_" + System.currentTimeMillis(),

@@ -993,7 +993,6 @@
 		<property name="orderDao" ref="orderDao"/>
 		<property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
 		<property name="modelService" ref="modelService"/>
-		<property name="brainTreePaymentService" ref="brainTreePaymentService"/>
 	</bean>
 
 	<bean id="blAuthorizePaymentJob" class="com.bl.core.job.BlAuthorizePaymentJob" parent="abstractJobPerformable">
