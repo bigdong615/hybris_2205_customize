@@ -2287,4 +2287,10 @@
 		</y:actions>
 	</context>
 	
+	<context component="cs-explorer-tree" module="customersupportbackoffice" principal="customersupportadministratorrole,customersupportmanagerrole,customersupportagentrole">
+		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" title="customer_support">
+			<n:navigation-node id="ProductAvailCheckTool"/>
+		</n:explorer-tree>
+	</context>
+	
 </config>
