@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+ Copyright (c) 2018 SAP SE or an SAP affiliate company.
+ All rights reserved.
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+<widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+        sclass="oms-widget-reallocationconsignment-configuration" height="100%" width="100%"
+        id="ProductAvailCheckTool">
+    <div id="inboundTrackingScanSectionId" style="width:75%;float:left;">
+        <grid style="margin-left:50px;margin-top:10px;width:52%;">
+            <rows>
+                <row>
+                    <label value="${labels.blbackoffice.inbound.tracking.scan.title.code}" width="70%"/>
+                </row>
+                <row>
+                    <hlayout>
+                        <textbox id="textInput" multiline="false" width="200px" style="margin-left:0px;" submitByEnter="true" forward="onOK=scanBarCodes.onClick"/>
+                    </hlayout>
+                </row>
+            </rows>
+        </grid>
+        <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%;width:55%;margin-left: 100px;text-align: left;">
+            <button id="scanBarCodes"
+                    label="${labels.blbackoffice.inbound.scan.barcodes.button}"
+                    sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" >Submit</button>
+            <button id="cancel"
+                    label="${labels.blbackoffice.inbound.scan.cancel.button}"
+                    sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" >Cancel</button>
+        </div>
+    </div>
+    <div style="margin:30px;" id="inboundTrackingSacntoolDataHeader">
+        <hlayout width="100%"  sclass="oms-widget-reassignserial-list">
+            <div style="height:304px;" sclass="oms-widget-reassignserial-list-container">
+                <grid id="inboundTrackingScanToolData" mold="paging" style="overflow-y: initial;"
+                      pageSize="10" width="100%" height="100%">
+                    <columns  style="background-color:#d5d8dc;">
+                        <column width="7%" sclass="oms-widget-reassignserial-listbox-header">
+                            <label value="${labels.blbackoffice.consolidation.tool.product.name}" width="100%"> Product Name </label>
+                        </column>
+                        <column width="6%" sclass="oms-widget-reassignserial-listbox-header">
+                            <label value="${labels.blbackoffice.consolidation.tool.location}" width="100%"> Product Code </label>
+                        </column>
+                        <column width="6%" sclass="oms-widget-reassignserial-listbox-header">
+                            <label value="${labels.blbackoffice.consolidation.tool.parentLocation}" width="100%" > Serial No </label>
+                        </column>
+                        <column width="3%" sclass="oms-widget-reassignserial-listbox-header">
+                            <label value="${labels.blbackoffice.consolidation.tool.barCode}" width="100%"> shipment Start Date </label>
+                        </column>
+                    </columns>
+                    <rows >
+                        <template name="model">
+                            <row>
+                                <label value="${each.productName}" width="100%"/>
+                                <label value="${each.productCode}" width="100%" style="font-weight:bold;font-size:15px;"/>
+                                <label value="${each.serialNo}" width="100%"/>
+                                <label value="${each.shipmentStartDate}" width="80%"/>
+                                    <button id="checkSerial" label="Send Invoice" target="_blank"
+                                            sclass="y-btn-primary oms-widget-billing-configuration-button" style="margin-bottom: 6px;margin-top: 7px;width: 50%;"/>
+                            </row>
+                        </template>
+                    </rows>
+                </grid>
+            </div>
+        </hlayout>
+    </div>
+</widget>
