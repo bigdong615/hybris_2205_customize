@@ -36,10 +36,10 @@
 
             <button id="scanBarCodes"
                     label="${labels.blbackoffice.inbound.scan.barcodes.button}"
-                    sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" >Submit</button>
+                    sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
             <button id="cancel"
                     label="${labels.blbackoffice.inbound.scan.cancel.button}"
-                    sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" >Cancel</button>
+                    sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
         </div>
     </div>
 
