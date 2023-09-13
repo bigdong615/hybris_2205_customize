@@ -86,6 +86,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 							currentDate, futureDate);
 					stockLevels.forEach(stockLevel -> {
 						stockLevel.setSerialStatus(serial.getSerialStatus());
+						stockLevel.setReservedStatus(Boolean.TRUE);
 						stockLevel.setOrder(order.getCode());
 						getModelService().save(stockLevel);
 					});
