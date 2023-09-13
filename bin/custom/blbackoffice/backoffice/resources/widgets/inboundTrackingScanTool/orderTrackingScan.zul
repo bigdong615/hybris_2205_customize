@@ -72,9 +72,6 @@
                                 <label value="${each.serialNo}" width="100%"/>
                                 <label value="${each.shipmentStartDate}" width="80%"/>
 
-                                    <button id="checkSerial" label="Send Invoice" target="_blank"
-                                            sclass="y-btn-primary oms-widget-billing-configuration-button" style="margin-bottom: 6px;margin-top: 7px;width: 50%;"/>
-
                             </row>
                         </template>
                     </rows>
