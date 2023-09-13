@@ -190,9 +190,9 @@ public class DefaultBlStockService implements BlStockService
 		}
 	}
 
-	public void findAndReserveAllStock(final BlSerialProductModel blSerialProduct) {
+	public void findAndUpdateAllStock(final BlSerialProductModel blSerialProduct,Boolean reservedStatus) {
 		final Collection<StockLevelModel> stockLevelModelsBasedOnDates = getStockLevelModelsBasedOnDates(blSerialProduct);
-		stockLevelModelsBasedOnDates.forEach(stockLevel -> stockLevel.setReservedStatus(true));
+		stockLevelModelsBasedOnDates.forEach(stockLevel -> stockLevel.setReservedStatus(reservedStatus));
 		modelService.saveAll(stockLevelModelsBasedOnDates);
 	}
 

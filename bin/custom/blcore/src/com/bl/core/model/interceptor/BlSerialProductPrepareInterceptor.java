@@ -325,7 +325,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.APPROVALSTATUS))
 			{
 				if (blSerialProduct.getApprovalStatus().equals(ArticleApprovalStatus.UNAPPROVED)){
-					getBlStockService().findAndReserveAllStock(blSerialProduct);
+					getBlStockService().findAndUpdateAllStock(blSerialProduct,Boolean.TRUE);
+				}else if(blSerialProduct.getApprovalStatus().equals(ArticleApprovalStatus.APPROVED)){
+					getBlStockService().findAndUpdateAllStock(blSerialProduct,Boolean.FALSE);
 				}
 			}
 		} catch(final Exception ex)
