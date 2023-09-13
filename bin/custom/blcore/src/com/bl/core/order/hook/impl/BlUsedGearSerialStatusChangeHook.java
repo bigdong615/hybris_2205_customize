@@ -3,6 +3,7 @@ package com.bl.core.order.hook.impl;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlStockService;
 import com.bl.core.utils.BlUpdateStagedProductUtils;
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
@@ -26,6 +27,7 @@ public class BlUsedGearSerialStatusChangeHook implements CommercePlaceOrderMetho
 
 	private ModelService modelService;
 	private BlCartService blCartService;
+	private BlStockService blStockService;
 
 	/**
 	 * {@inheritDoc}
@@ -50,6 +52,7 @@ public class BlUsedGearSerialStatusChangeHook implements CommercePlaceOrderMetho
 					blSerialProductModel.setHardAssigned(true);
 					setBufferInventoryFlag(blSerialProductModel);
 					getModelService().save(blSerialProductModel);
+					getBlStockService().findAndUpdateStockRecords(blSerialProductModel, true);
 					getModelService().refresh(order);
 				}
 			}
@@ -110,6 +113,22 @@ public class BlUsedGearSerialStatusChangeHook implements CommercePlaceOrderMetho
 
 	public void setBlCartService(BlCartService blCartService) {
 		this.blCartService = blCartService;
+	}
+	/**
+	 * @return the blStockService
+	 */
+	public BlStockService getBlStockService()
+	{
+		return blStockService;
+	}
+
+	/**
+	 * @param blStockService
+	 *           the blStockService to set
+	 */
+	public void setBlStockService(final BlStockService blStockService)
+	{
+		this.blStockService = blStockService;
 	}
 
 }
