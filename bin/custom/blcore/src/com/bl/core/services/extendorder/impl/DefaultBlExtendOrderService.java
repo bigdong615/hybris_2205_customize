@@ -290,7 +290,6 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
         if (CollectionUtils.isNotEmpty(allocatedProductCodes) && serialStocks.stream()
             .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
           serialStocks.forEach(stock -> {
-
             try {
               BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
                       "Reserve stock for serial product {}, for stock date {} while extends rental date before change Hard Assign {}, reserve status {}, associated order {}"
@@ -299,21 +298,11 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
             }catch (Exception e){
               BlLogger.logMessage(LOG,Level.ERROR,"Some error occur while reserve stock in replace serial flow",e);
             }
-
-            if(StringUtils.isNotBlank(stock.getOrder()) && !stock.getOrder().equals(consignmentModel.getOrder().getCode())){
-              stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + consignmentModel.getOrder().getCode() : consignmentModel.getOrder().getCode());
-            }
-            else {
-              stock.setOrder(orderCode);
-            }
+            stock.setOrder(orderCode);
             stock.setReservedStatus(true);
 
 
           });
-          Collection<StockLevelModel> lastStock = serialStocks.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate()) &&
-                  StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().split(",").length == 1).collect(Collectors.toList());
-          lastStock.forEach(ls-> ls.setReservedStatus(false));
-
           this.getModelService().saveAll(serialStocks);
         }
       });

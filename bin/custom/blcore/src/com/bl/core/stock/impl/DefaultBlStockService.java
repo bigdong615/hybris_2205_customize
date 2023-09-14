@@ -236,11 +236,10 @@ public class DefaultBlStockService implements BlStockService
 			});
 	}
 
-	public void releaseStockForGivenSerial(final Set<String> productsCode, final Date startDate, final Date endDate, final String orderCode) {
-		Collection<StockLevelModel> serialStock = getBlStockLevelDao()
+	public void releaseStockForGivenSerial(final Set<String> productsCode, final Date startDate, final Date endDate) {
+		final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
 				.findALLSerialStockLevelsForDateAndCodes(productsCode, startDate,
 						endDate);
-		serialStock = serialStock.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(orderCode)).collect(Collectors.toList());
 
 		if (CollectionUtils.isNotEmpty(serialStock)) {
 			serialStock.forEach(stockLevel -> {
@@ -252,37 +251,22 @@ public class DefaultBlStockService implements BlStockService
 				} catch (Exception e) {
 					BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in modify rental date flow", e);
 				}
-
-				if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1){
-					String[] orders = stockLevel.getOrder().split(",");
-					List<String> arr_new = Arrays.asList(orders);
-					List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
-					stockLevel.setOrder(String.join(",",updateOrders));
-				}
-				else{
-					stockLevel.setOrder(null);
-				}
 				stockLevel.setReservedStatus(false);
+				stockLevel.setOrder(null);
 
 				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 						"Stock status is changed to {} for the serial product {} ", stockLevel.getReservedStatus(),
 						stockLevel.getSerialProductCode());
 
 			});
-			Optional<StockLevelModel> lastStock = serialStock.stream().filter(stock -> stock.getDate().equals(endDate) && StringUtils.isNotBlank(stock.getOrder())).findAny();
-			if(lastStock.isPresent()){
-				lastStock.get().setReservedStatus(true);
-
-			}
 			modelService.saveAll(serialStock);
 		}
 	}
 
 	public void removeOrderFromStock(final Set<String> productsCode,final SerialStatusEnum status,final Date startDate,final Date endDate,final String orderCode) {
-		Collection<StockLevelModel> serialStock = getBlStockLevelDao()
+		final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
 				.findALLSerialStockLevelsForDateAndCodes(productsCode, startDate,
 						endDate);
-		serialStock = serialStock.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(orderCode)).collect(Collectors.toList());
 
 		if (CollectionUtils.isNotEmpty(serialStock)) {
 			serialStock.forEach(stockLevel -> {
@@ -294,17 +278,8 @@ public class DefaultBlStockService implements BlStockService
 				} catch (Exception e) {
 					BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in modify rental date flow", e);
 				}
-
-				if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1){
-					String[] orders = stockLevel.getOrder().split(",");
-					List<String> arr_new = Arrays.asList(orders);
-					List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
-					stockLevel.setOrder(String.join(",",updateOrders));
-				}
-				else{
-					stockLevel.setOrder(null);
-				}
 				stockLevel.setSerialStatus(status);
+				stockLevel.setOrder(null);
 				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 						"Stock status is changed to {} for the serial product {} ", stockLevel.getReservedStatus(),
 						stockLevel.getSerialProductCode());
@@ -678,7 +653,7 @@ public class DefaultBlStockService implements BlStockService
 		stockLevel.setAvailable(0);
 		stockLevel.setSerialProductCode(serial.getCode());
 		stockLevel.setSerialStatus(serial.getSerialStatus());
-		if(isInactiveStatus(serial.getSerialStatus())) {
+		if(isInactiveStatus(serial.getSerialStatus()) || !serial.getApprovalStatus().equals(ArticleApprovalStatus.APPROVED)) {
 			stockLevel.setReservedStatus(Boolean.TRUE);
 		} else {
 			stockLevel.setReservedStatus(Boolean.FALSE);
