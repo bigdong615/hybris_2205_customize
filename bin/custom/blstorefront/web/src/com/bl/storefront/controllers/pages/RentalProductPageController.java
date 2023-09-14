@@ -1,11 +1,13 @@
 package com.bl.storefront.controllers.pages;
 
-import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
+import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
+import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.product.ProductService;
 import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 
 import java.io.UnsupportedEncodingException;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.productreference.impl.DefaultBlProductFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 
@@ -51,6 +54,15 @@ public class RentalProductPageController extends AbstractBlProductPageController
 
   @Resource(name = "stockNotificationFacade")
   private StockNotificationFacade stockNotificationFacade;
+
+  @Resource(name = "blProductFacade")
+  private DefaultBlProductFacade defaultBlProductFacade;
+
+  @Resource(name = "productService")
+  private ProductService productService;
+
+  protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE,
+		  ProductOption.REQUIRED_DATA, ProductOption.GALLERY, ProductOption.STOCK, ProductOption.REQUIRED_WISHLIST);
 
 
   /**
@@ -74,7 +86,7 @@ public class RentalProductPageController extends AbstractBlProductPageController
     try {
       final String productCode = decodeWithScheme(encodedProductCode, UTF_8);
       final ProductData productData = productFacade
-          .getProductForCodeAndOptions(productCode, null);
+				.getProductForCodeAndOptions(productCode, PRODUCT_OPTIONS);
       productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
       model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
 		BlLogger.logMessage(LOG, Level.INFO, "************ Is rental page flag *** ***********" + true);
@@ -106,6 +118,15 @@ public class RentalProductPageController extends AbstractBlProductPageController
               ProductOption.REQUIRED_WISHLIST));
       model.addAttribute(BlControllerConstants.IS_WATCHING,
           stockNotificationFacade.isWatchingProduct(productData));
+
+		final ProductModel currentProduct = productService.getProductForCode(productCode);
+		final List<ProductReferenceData> productReferences = defaultBlProductFacade.getProductReferencesForCode(currentProduct,
+				PRODUCT_OPTIONS, 5);
+
+
+		model.addAttribute("productReferences", productReferences);
+		model.addAttribute("rentalStartDate",
+				rentalDatesFromSession != null ? rentalDatesFromSession.getSelectedFromDate() : StringUtils.EMPTY);
       return productDetail(encodedProductCode, options, productData, model, request, response);
     } catch(final Exception ex){
       BlLogger.logMessage(LOG, Level.ERROR,"Product Not found for Code{}",encodedProductCode, ex);

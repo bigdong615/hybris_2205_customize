@@ -192,6 +192,104 @@
     				id: "${currentUserId}",
   					status: "${currentUserStatus}"
 			  	};
+			  
+			  {	
+			  "products":[
+			  {
+			  	"id": "${product.code}",
+			  	"name": "${product.name}",
+          		"brand": "${product.manufacturer}",
+          		<c:choose>
+				  <c:when test="${not empty product.categoriesList[0]}">
+					"category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
+				  </c:when>
+				  <c:when test="${not empty product.categoriesList[1]}">
+					"subCategory2": "${ycommerce:encodeJavaScript(product.categoriesList[1].code)}",
+				  </c:when>
+				  <c:when test="${not empty product.categoriesList[2]}">
+				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
+				  </c:when>
+			    </c:choose>
+         		"variant" : "${ycommerce:encodeJavaScript(blPageType)}",
+         		"daysUntilRental": "${rentalDate.numberOfDays}",
+  				"rentalStartDate": "${rentalStartDate}",
+  				"rentalDuration": "${rentalDate.numberOfDays}"
+         		"stockStatus" : "${product.stock.stockLevelStatus.code}"
+			  	"value": {
+       					"displayGross": "${product.price.formattedValue}",
+     					 },
+     			"discount": {
+        			  "lines": [
+         				        {
+            		              "value": {
+            		                     "displayGross": "${product.price.formattedValue}"
+            		                    },
+           		                 "code": "",
+         			  			 }
+       					       ]
+    			         	}		 
+			  	 }	
+			  	 ],
+			  	},
+			  	
+			  	 "modules": [
+   							 {
+   							   "id": "${categories}-modules-pdp",
+   							   "name": "new-rentals",
+     							"placement": "pdp-add-products",
+     						   "items": [
+			                    <c:forEach items='${productReferences}' var='productReference' varStatus='status'>
+       							  {
+         							 "id": "${productReference.target.code}",
+          							 "type": "product",
+        							  "position": "${status.index}"
+       							 }
+       							 <c:if test='${not status.last}'>
+												,
+								</c:if>
+               			</c:forEach>
+               			]
+               			}
+               			],
+               			
+               			
+               			
+               		"assets": 
+   							 {
+     						   "products": [
+			           <c:forEach items='${productReferences}' var='productReference' varStatus='status'>
+                      
+       							  {
+         							"id": "${productReference.target.code}",
+       								 "name": "${productReference.target.name}",
+       								 "brand": "${productReference.target.manufacturer}",
+        							<c:choose>
+				 						 <c:when test="${not empty productReference.target.categoriesList[0]}">
+											"category": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[0].code)}",
+				  						 </c:when>
+				 					     <c:when test="${not empty productReference.target.categoriesList[1]}">
+											"subCategory2": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[1].code)}",
+				 						 </c:when>
+				  						 <c:when test="${not empty productReference.target.categoriesList[2]}">
+				   						    "subCategory3": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[2].code)}",
+				 						 </c:when>
+			    					 </c:choose>
+        							 "variant": "${productReference.target.productType}",
+        							 "daysUntilRental": "${rentalDate.numberOfDays}",
+        							 "rentalDuration": "${rentalDate.numberOfDays}",
+       								 "value": {
+         								 "displayGross": "${productReference.target.price.formattedValue}"
+          
+        								}
+       							 }
+       							 
+       							 <c:if test='${not status.last}'>
+												,
+								</c:if>
+               			</c:forEach>
+               			   ]
+               			  }
+               			}
 			  	
 		</script>
 		
@@ -282,10 +380,10 @@
 			  	
 			  	dmpgDl.transaction = 
 			  	{
-    				id: "${orderCode}",
-  					daysUntilRental: "logged-in",
-  					rentalStartDate: "${orderData.rentalStartDateForJs.replace(' ','').replace(',','-')}",
-  					rentalDuration: "${orderData.rentalEndDate} - {orderData.rentalStartDate}"
+    				"id": "${orderCode}",
+  					"daysUntilRental": "logged-in",
+  					"rentalStartDate": "${orderData.rentalStartDateForJs.replace(' ','').replace(',','-')}",
+  					"rentalDuration": "${orderData.rentalEndDate} - {orderData.rentalStartDate}"
   					"cart" : 
 			  			{
 			  				"lines" : [

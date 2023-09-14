@@ -1,11 +1,8 @@
 package com.bl.facades.populators;
 
-import com.bl.core.model.BlProductModel;
-import com.bl.core.product.service.BlProductService;
-import com.bl.facades.product.data.BlBundleReferenceData;
-import com.google.common.collect.Lists;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
+import de.hybris.platform.catalog.model.classification.ClassificationClassModel;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -18,14 +15,22 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+
+import com.bl.core.model.BlProductModel;
+import com.bl.core.product.service.BlProductService;
+import com.bl.facades.product.data.BlBundleReferenceData;
+import com.google.common.collect.Lists;
 
 /*
  * This populator is used for populating bl Rental Product related specific product attribute.
@@ -52,6 +57,22 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         target.setSpecifications(source.getSpecifications());
         target.setForRent(BooleanUtils.toBoolean(source.getForRent()));
         target.setShortDescription(source.getShortDescription());
+		  final Collection<de.hybris.platform.commercefacades.product.data.CategoryData> categoryDataList = new ArrayList<de.hybris.platform.commercefacades.product.data.CategoryData>();
+		  source.getSupercategories().forEach(categoryModel -> {
+			  final de.hybris.platform.commercefacades.product.data.CategoryData categoryData = new de.hybris.platform.commercefacades.product.data.CategoryData();
+			  if (!(categoryModel instanceof ClassificationClassModel))
+			  {
+				  if (categoryModel != null)
+				  {
+					  categoryData.setCode(categoryModel.getCode());
+					  categoryDataList.add(categoryData);
+
+				  }
+			  }
+		  });
+
+
+		  target.setCategoriesList(categoryDataList);
         target.setRentalVideosLink(
                 populateVideo(CollectionUtils.emptyIfNull(source.getRentalVideosLink())));
         target.setRentalNote(source.getDisplayNotes());
@@ -66,7 +87,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         {
             final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(source
                 .getProductReferences()));
-          List<BlBundleReferenceData> list= new ArrayList<>();
+          final List<BlBundleReferenceData> list= new ArrayList<>();
               if (CollectionUtils.isNotEmpty(productReferences)) {
                 productReferences.stream().filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType())).forEach(productReferenceModel -> {
                 final BlBundleReferenceData referenceData = new BlBundleReferenceData();
@@ -78,7 +99,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
 
         }
         target.setProductType(source.getProductType().getCode());
-      
+
         target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
         target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
 
@@ -125,12 +146,12 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
     {
         return getPriceDataFactory().create(PriceDataType.BUY, priceValue, getCommonI18NService().getCurrentCurrency());
     }
-    
+
     public ModelService getModelService() {
         return modelService;
     }
 
-    public void setModelService(ModelService modelService) {
+    public void setModelService(final ModelService modelService) {
         this.modelService = modelService;
     }
 
@@ -139,7 +160,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
     }
 
     public void setImageConverter(
-            Converter<MediaModel, ImageData> imageConverter) {
+            final Converter<MediaModel, ImageData> imageConverter) {
         this.imageConverter = imageConverter;
     }
 
@@ -147,7 +168,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         return blProductTagPopulator;
     }
 
-    public void setBlProductTagPopulator(Populator<BlProductModel, ProductData> blProductTagPopulator) {
+    public void setBlProductTagPopulator(final Populator<BlProductModel, ProductData> blProductTagPopulator) {
         this.blProductTagPopulator = blProductTagPopulator;
     }
 
@@ -156,7 +177,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
     }
 
     public void setPriceDataFactory(
-        PriceDataFactory priceDataFactory) {
+        final PriceDataFactory priceDataFactory) {
         this.priceDataFactory = priceDataFactory;
     }
 
@@ -165,7 +186,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
     }
 
     public void setCommonI18NService(
-        CommonI18NService commonI18NService) {
+        final CommonI18NService commonI18NService) {
         this.commonI18NService = commonI18NService;
     }
 
@@ -173,7 +194,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
     return productService;
   }
 
-  public void setProductService(BlProductService productService) {
+  public void setProductService(final BlProductService productService) {
     this.productService = productService;
   }
 }

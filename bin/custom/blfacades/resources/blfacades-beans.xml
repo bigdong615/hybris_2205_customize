@@ -181,7 +181,9 @@
 		<property name="europe1PriceFactory_PPG" type="java.lang.String"/>
 		<property name="europe1PriceFactory_PTG" type="java.lang.String"/>
 		<property name="visibleOnStoreFront" type="boolean"/>
-		<property name="primaryKey" type="java.lang.String"/>		
+		<property name="primaryKey" type="java.lang.String"/>	
+		<property name="categoriesList"
+		          type="java.util.Collection&lt;de.hybris.platform.commercefacades.product.data.CategoryData>"/>		
   </bean>
     
 	<bean class="com.bl.facades.product.data.GenderData">
