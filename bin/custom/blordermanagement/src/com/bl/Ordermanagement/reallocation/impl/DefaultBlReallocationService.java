@@ -281,7 +281,6 @@ public class DefaultBlReallocationService implements BlReallocationService {
               BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in reallocate or reassign flow", e);
             }
             stock.setReservedStatus(false);
-            stock.setHardAssigned(false);
             stock.setOrder(StringUtils.EMPTY);
 
 	        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
