@@ -3744,6 +3744,11 @@
                         <description>Gets the overall list of the subparts in consignment entries. </description>
                         <persistence type="dynamic" attributeHandler="blSubpartsRenderedHandler" />
                     </attribute>
+                    <attribute qualifier="picker" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>This will help to identify processing user</description>
+                    </attribute>
                 </attributes>
             </itemtype>
 

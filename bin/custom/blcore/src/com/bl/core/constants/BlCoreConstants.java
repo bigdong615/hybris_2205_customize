@@ -67,7 +67,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String STAFF_PICK = "staffPick";
 	public static final String UPCOMING = "upComing";
 	public static final String NEW = "New";
-	public static final String POPULAR = "Popular";
+	public static final String POPULAR = "Featured";
 	public static final String GREAT_VALUE = "greatValue";
 	public static final String GREAT_VALUE_STRING = "Great Value";
 	public static final String STAFF_PICK_STRING = "Staff Pick";
@@ -679,7 +679,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String UPS_SCRAPE_JOB_NO_OF_REPETITIONS_KEY = "ups.scrape.job.no.of.repetitions";
 	public static final String UPS_SCRAPE_JOB_NO_OF_ADDED_DAYS_KEY = "ups.scrape.job.days.to.add.number";
     public static final String PRODUCT_ID = "productId";
-	
+
 	public static final String PREVIOUS_YEAR_END_DATE = "previousYearEndDate";
 	public static final String FRAUD_CHECKED = "FRAUD_CHECKED";
 	public static final String PARTIAL_CAPTURE = "PARTIAL_CAPTURE";

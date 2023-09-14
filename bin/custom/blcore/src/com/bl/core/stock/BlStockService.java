@@ -118,5 +118,6 @@ public interface BlStockService
 	public void findAndUpdateStockRecordsForSerialCode(final BlSerialProductModel blSerialProduct, String intialCode);
 
 	boolean isVisibleInPdp(final SerialStatusEnum currentStatus);
+	void findAndUpdateAllStock(final BlSerialProductModel blSerialProduct,Boolean reservedStatus);
 
 }

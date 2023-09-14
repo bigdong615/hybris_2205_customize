@@ -190,7 +190,13 @@ public class DefaultBlStockService implements BlStockService
 		}
 	}
 
-  private void createAndExecuteBusinessProcess(final BlSerialProductModel blSerialProduct) {
+	public void findAndUpdateAllStock(final BlSerialProductModel blSerialProduct,Boolean reservedStatus) {
+		final Collection<StockLevelModel> stockLevelModelsBasedOnDates = getStockLevelModelsBasedOnDates(blSerialProduct);
+		stockLevelModelsBasedOnDates.forEach(stockLevel -> stockLevel.setReservedStatus(reservedStatus));
+		modelService.saveAll(stockLevelModelsBasedOnDates);
+	}
+
+	private void createAndExecuteBusinessProcess(final BlSerialProductModel blSerialProduct) {
     ReallocateSerialProcessModel reallocateSerialProcess = (ReallocateSerialProcessModel) getBusinessProcessService()
         .createProcess(
             "reallocateSerial_" + blSerialProduct.getCode() + "_" + System.currentTimeMillis(),
@@ -526,7 +532,8 @@ public class DefaultBlStockService implements BlStockService
 	 */
 	private void upDateWarehouseAndSaveStockRecord(final StockLevelModel stockLevel, final WarehouseModel warehouseLocation) {
 		stockLevel.setWarehouse(warehouseLocation);
-		try {
+		getModelService().save(stockLevel);
+		/*try {
 			getModelService().save(stockLevel);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Warehouse {} updated for stock record {} of serial product {} ",
 					warehouseLocation.getCode(), stockLevel.getPk(), stockLevel.getSerialProductCode());
@@ -535,7 +542,7 @@ public class DefaultBlStockService implements BlStockService
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
 					"Exception occurred while updating the warehouse {} in stock record {} after update for the serial product {} ",
 					warehouseLocation.getCode(), stockLevel.getPk(), stockLevel.getSerialProductCode());
-		}
+		}*/
 	}
 
 	/**

@@ -993,7 +993,6 @@
 		<property name="orderDao" ref="orderDao"/>
 		<property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
 		<property name="modelService" ref="modelService"/>
-		<property name="brainTreePaymentService" ref="brainTreePaymentService"/>
 	</bean>
 
 	<bean id="blAuthorizePaymentJob" class="com.bl.core.job.BlAuthorizePaymentJob" parent="abstractJobPerformable">
@@ -2114,6 +2113,11 @@
     <bean id="blOtherProductTypeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlOtherProductTypeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
   		<property name="commonI18NService" ref="commonI18NService"/>  		
+	</bean>
+	
+	<bean id="blProductOrderCountValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductOrderCountValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+  		<property name="defaultBlProductDao" ref="defaultBlProductDao"/>  		
 	</bean>
 	
 	<bean id="blBigDecimalValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BigDecimalValueProvider" parent="abstractPropertyFieldValueProvider">
