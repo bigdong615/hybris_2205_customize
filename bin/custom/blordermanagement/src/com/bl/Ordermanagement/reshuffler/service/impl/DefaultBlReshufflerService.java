@@ -212,7 +212,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 
       activeSerial.forEach(productModel -> serialCodes.add(productModel.getCode()));
       if (!serialCodes.isEmpty()) {
-        getBlStockService().releaseStockForGivenSerial(serialCodes, consignmentEntryModel.getConsignment().getOptimizedShippingStartDate(), consignmentEntryModel.getConsignment().getOptimizedShippingEndDate(), entryModel.getOrder().getCode());
+        getBlStockService().releaseStockForGivenSerial(serialCodes, consignmentEntryModel.getConsignment().getOptimizedShippingStartDate(), consignmentEntryModel.getConsignment().getOptimizedShippingEndDate());
       }
       consignmentEntryModel.setConsignmentEntryStatus(new HashMap<>());
       consignmentEntryModel.setItems(new HashMap<>());
@@ -688,16 +688,9 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
           final Set<String> ordersNotToBeFulfilled = stocks.stream().map(StockLevelModel::getOrder)
               .collect(Collectors.toSet());
           ordersNotToBeFulfilled.forEach(orderCode -> {
-            if(orderCode.contains(",")){
-              final AbstractOrderModel orderModel = getOrderDao().getOrderByCode(orderCode.split(",")[0]);
-              orderModel.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
-              orderModel.setManualReviewStatusByReshuffler(true);
-            }
-            else {
               final AbstractOrderModel orderModel = getOrderDao().getOrderByCode(orderCode);
               orderModel.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
               orderModel.setManualReviewStatusByReshuffler(true);
-            }
           });
           getModelService().saveAll();
           BlLogger.logFormatMessageInfo(LOG, Level.INFO,
