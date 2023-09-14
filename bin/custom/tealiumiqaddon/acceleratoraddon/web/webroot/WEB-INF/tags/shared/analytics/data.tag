@@ -195,7 +195,7 @@
 			  
 			  {	
 			  "products":[
-			  {
+			  	{
 			  	"id": "${product.code}",
 			  	"name": "${product.name}",
           		"brand": "${product.manufacturer}",
@@ -258,7 +258,6 @@
    							 {
      						   "products": [
 			           <c:forEach items='${productReferences}' var='productReference' varStatus='status'>
-                      
        							  {
          							"id": "${productReference.target.code}",
        								 "name": "${productReference.target.name}",
@@ -274,14 +273,13 @@
 				   						    "subCategory3": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[2].code)}",
 				 						 </c:when>
 			    					 </c:choose>
-        							 "variant": "${productReference.target.productType}",
+        							 "variant": "${ycommerce:encodeJavaScript(blPageType)}",
         							 "daysUntilRental": "${rentalDate.numberOfDays}",
         							 "rentalDuration": "${rentalDate.numberOfDays}",
        								 "value": {
          								 "displayGross": "${productReference.target.price.formattedValue}"
-          
         								}
-       							 }
+       							    }
        							 
        							 <c:if test='${not status.last}'>
 												,
@@ -290,7 +288,6 @@
                			   ]
                			  }
                			}
-			  	
 		</script>
 		
 	</c:when>
