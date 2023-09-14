@@ -1274,7 +1274,7 @@
                 <entry key="DEFAULT"
                        value="deliveryPointOfService(DEFAULT),status,statusDisplay,trackingID,entries(DEFAULT),code,statusDate,shippingAddress(DEFAULT)"/>
                 <entry key="FULL" 
-                	   value="code,trackingID,status,statusDisplay,primaryKey,statusDate,entries,shippingAddress,orderCode,deliveryPointOfService,orderCode,shippingDate,deliveryMode,warehouseCode,packagingInfo,createdTS,nameddeliverydate,optimizedShippingStartDate,optimizedshippingenddate,modifiedTS,actualShippingDateToCustomer,shipmentBlShippedStatusDate,taskAssignmentWorkflow,optimizedshippingtype,carrier,optimizedShippingMethodType,cleanCompleteConsignment,threeDayGroundAvailability,internalTransferConsignment,ordertransferconsignment,optimizedRentalEndDateChangedByJob,rentalEndDate,rentalStartDate,orderNotes"/>
+                	   value="code,trackingID,status,statusDisplay,primaryKey,statusDate,entries,shippingAddress,orderCode,deliveryPointOfService,orderCode,shippingDate,deliveryMode,warehouseCode,packagingInfo,createdTS,nameddeliverydate,optimizedShippingStartDate,optimizedshippingenddate,modifiedTS,actualShippingDateToCustomer,shipmentBlShippedStatusDate,taskAssignmentWorkflow,optimizedshippingtype,carrier,optimizedShippingMethodType,cleanCompleteConsignment,threeDayGroundAvailability,internalTransferConsignment,ordertransferconsignment,optimizedRentalEndDateChangedByJob,rentalEndDate,rentalStartDate,orderNotes,picker"/>
             </map>
         </property>
     </bean>

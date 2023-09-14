@@ -99,6 +99,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			setLastUserChangedConditionRating(blSerialProduct, ctx);
 			setFlagForBufferedInventoryOnSerial(blSerialProduct);
 			updateStockRecordsOnSerialCodeUpdate(blSerialProduct, ctx);
+			updateStockRecordOnSerialApprovalStatusChange(blSerialProduct,ctx);
 		}
 	}
 
@@ -316,6 +317,26 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		}
 	}
 
+	private void updateStockRecordOnSerialApprovalStatusChange(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
+	{
+		try
+		{
+			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProductModel.APPROVALSTATUS);
+			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.APPROVALSTATUS))
+			{
+				if (blSerialProduct.getApprovalStatus().equals(ArticleApprovalStatus.UNAPPROVED)){
+					getBlStockService().findAndUpdateAllStock(blSerialProduct,Boolean.TRUE);
+				}else if(blSerialProduct.getApprovalStatus().equals(ArticleApprovalStatus.APPROVED)){
+					getBlStockService().findAndUpdateAllStock(blSerialProduct,Boolean.FALSE);
+				}
+			}
+		} catch(final Exception ex)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
+					"Exception occurred while updating the stock records on serial approaval status change to inactive of serial product {} ",
+					blSerialProduct.getCode());
+		}
+	}
 		/**
 		 * It updates the stock records when serial status of a serial product is changed
 		 *

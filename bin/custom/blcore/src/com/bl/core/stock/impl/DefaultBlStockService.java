@@ -190,7 +190,13 @@ public class DefaultBlStockService implements BlStockService
 		}
 	}
 
-  private void createAndExecuteBusinessProcess(final BlSerialProductModel blSerialProduct) {
+	public void findAndUpdateAllStock(final BlSerialProductModel blSerialProduct,Boolean reservedStatus) {
+		final Collection<StockLevelModel> stockLevelModelsBasedOnDates = getStockLevelModelsBasedOnDates(blSerialProduct);
+		stockLevelModelsBasedOnDates.forEach(stockLevel -> stockLevel.setReservedStatus(reservedStatus));
+		modelService.saveAll(stockLevelModelsBasedOnDates);
+	}
+
+	private void createAndExecuteBusinessProcess(final BlSerialProductModel blSerialProduct) {
     ReallocateSerialProcessModel reallocateSerialProcess = (ReallocateSerialProcessModel) getBusinessProcessService()
         .createProcess(
             "reallocateSerial_" + blSerialProduct.getCode() + "_" + System.currentTimeMillis(),
@@ -230,11 +236,10 @@ public class DefaultBlStockService implements BlStockService
 			});
 	}
 
-	public void releaseStockForGivenSerial(final Set<String> productsCode, final Date startDate, final Date endDate, final String orderCode) {
-		Collection<StockLevelModel> serialStock = getBlStockLevelDao()
+	public void releaseStockForGivenSerial(final Set<String> productsCode, final Date startDate, final Date endDate) {
+		final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
 				.findALLSerialStockLevelsForDateAndCodes(productsCode, startDate,
 						endDate);
-		serialStock = serialStock.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(orderCode)).collect(Collectors.toList());
 
 		if (CollectionUtils.isNotEmpty(serialStock)) {
 			serialStock.forEach(stockLevel -> {
@@ -246,37 +251,22 @@ public class DefaultBlStockService implements BlStockService
 				} catch (Exception e) {
 					BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in modify rental date flow", e);
 				}
-
-				if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1){
-					String[] orders = stockLevel.getOrder().split(",");
-					List<String> arr_new = Arrays.asList(orders);
-					List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
-					stockLevel.setOrder(String.join(",",updateOrders));
-				}
-				else{
-					stockLevel.setOrder(null);
-				}
 				stockLevel.setReservedStatus(false);
+				stockLevel.setOrder(null);
 
 				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 						"Stock status is changed to {} for the serial product {} ", stockLevel.getReservedStatus(),
 						stockLevel.getSerialProductCode());
 
 			});
-			Optional<StockLevelModel> lastStock = serialStock.stream().filter(stock -> stock.getDate().equals(endDate) && StringUtils.isNotBlank(stock.getOrder())).findAny();
-			if(lastStock.isPresent()){
-				lastStock.get().setReservedStatus(true);
-
-			}
 			modelService.saveAll(serialStock);
 		}
 	}
 
 	public void removeOrderFromStock(final Set<String> productsCode,final SerialStatusEnum status,final Date startDate,final Date endDate,final String orderCode) {
-		Collection<StockLevelModel> serialStock = getBlStockLevelDao()
+		final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
 				.findALLSerialStockLevelsForDateAndCodes(productsCode, startDate,
 						endDate);
-		serialStock = serialStock.stream().filter(stock -> StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().contains(orderCode)).collect(Collectors.toList());
 
 		if (CollectionUtils.isNotEmpty(serialStock)) {
 			serialStock.forEach(stockLevel -> {
@@ -288,17 +278,8 @@ public class DefaultBlStockService implements BlStockService
 				} catch (Exception e) {
 					BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in modify rental date flow", e);
 				}
-
-				if(null != stockLevel.getOrder() && stockLevel.getOrder().split(",").length > 1){
-					String[] orders = stockLevel.getOrder().split(",");
-					List<String> arr_new = Arrays.asList(orders);
-					List<String> updateOrders = arr_new.stream().filter(lst -> !lst.equals(orderCode)).collect(Collectors.toList());
-					stockLevel.setOrder(String.join(",",updateOrders));
-				}
-				else{
-					stockLevel.setOrder(null);
-				}
 				stockLevel.setSerialStatus(status);
+				stockLevel.setOrder(null);
 				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 						"Stock status is changed to {} for the serial product {} ", stockLevel.getReservedStatus(),
 						stockLevel.getSerialProductCode());
@@ -526,7 +507,8 @@ public class DefaultBlStockService implements BlStockService
 	 */
 	private void upDateWarehouseAndSaveStockRecord(final StockLevelModel stockLevel, final WarehouseModel warehouseLocation) {
 		stockLevel.setWarehouse(warehouseLocation);
-		try {
+		getModelService().save(stockLevel);
+		/*try {
 			getModelService().save(stockLevel);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Warehouse {} updated for stock record {} of serial product {} ",
 					warehouseLocation.getCode(), stockLevel.getPk(), stockLevel.getSerialProductCode());
@@ -535,7 +517,7 @@ public class DefaultBlStockService implements BlStockService
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
 					"Exception occurred while updating the warehouse {} in stock record {} after update for the serial product {} ",
 					warehouseLocation.getCode(), stockLevel.getPk(), stockLevel.getSerialProductCode());
-		}
+		}*/
 	}
 
 	/**
@@ -671,7 +653,7 @@ public class DefaultBlStockService implements BlStockService
 		stockLevel.setAvailable(0);
 		stockLevel.setSerialProductCode(serial.getCode());
 		stockLevel.setSerialStatus(serial.getSerialStatus());
-		if(isInactiveStatus(serial.getSerialStatus())) {
+		if(isInactiveStatus(serial.getSerialStatus()) || !serial.getApprovalStatus().equals(ArticleApprovalStatus.APPROVED)) {
 			stockLevel.setReservedStatus(Boolean.TRUE);
 		} else {
 			stockLevel.setReservedStatus(Boolean.FALSE);

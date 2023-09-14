@@ -94,18 +94,9 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           productCode.add(productCodeEntry.getKey());
           Set<String> oldSerialProductCode = productCodeEntry.getValue().stream()
               .collect(Collectors.groupingBy(StockLevelModel::getSerialProductCode)).keySet();
-          if(orderCode.contains(",")){
-            for(String orderNo : orderCode.split(",")){
-            final AbstractOrderModel order = getOrderDao().getOrderByCode(orderNo);
-            filterOrderEntryAndAssignSerial(order, oldSerialProductCode, isSerialUpdated,
-                    productCode);
-            }
-          }
-          else {
             final AbstractOrderModel order = getOrderDao().getOrderByCode(orderCode);
             filterOrderEntryAndAssignSerial(order, oldSerialProductCode, isSerialUpdated,
                     productCode);
-          }
           if (isSerialUpdated.get()) {
             List<StockLevelModel> stockLevelModelList = orderCodeEntry.getValue();
             stockLevelModelList.forEach(stockLevel -> {
@@ -124,8 +115,6 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           }
           break;
         }
-
-
       }catch (Exception ex){
         BlLogger.logMessage(LOG,Level.ERROR,"Some error occurred while replacement of serial for the order:"+orderCode,ex);
       }
@@ -202,12 +191,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           } catch (Exception e) {
             BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in replace serial flow", e);
           }
-          if(StringUtils.isNotBlank(stockLevel.getOrder())){
-            stockLevel.setOrder(StringUtils.isNotBlank(stockLevel.getOrder()) ? stockLevel.getOrder() + "," + consignmentModel.getOrder().getCode() : consignmentModel.getOrder().getCode());
-          }
-          else {
-            stockLevel.setOrder(consignmentModel.getOrder().getCode());
-          }
+          stockLevel.setOrder(consignmentModel.getOrder().getCode());
           stockLevel.setReservedStatus(true);
           BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
                   "Stock status is changed to {} for the serial product {} for the order {} ", stockLevel.getReservedStatus(),
@@ -215,10 +199,6 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
 
 
         } );
-        Optional<StockLevelModel> lastStock = stockLevelModels.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate())).findAny();
-        if(lastStock.isPresent()){
-          lastStock.get().setReservedStatus(false);
-        }
         modelService.saveAll(stockLevelModels);
         return true;
       }

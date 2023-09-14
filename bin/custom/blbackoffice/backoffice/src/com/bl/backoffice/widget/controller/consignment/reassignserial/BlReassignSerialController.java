@@ -186,7 +186,7 @@ public class BlReassignSerialController  extends DefaultWidgetController {
 				  {
 					  blReallocationService.removeReserveStocksForSerialProducts(new HashSet<>(serialsCodesToRemove),
 							  consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), Boolean.TRUE,
-							  consignment.getWarehouse(), consignment.getOrder().getCode());
+							  consignment.getWarehouse());
 				  /*}
 				  }
 				  else

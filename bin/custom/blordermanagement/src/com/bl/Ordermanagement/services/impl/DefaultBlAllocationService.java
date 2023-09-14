@@ -38,11 +38,17 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.warehousing.allocation.impl.DefaultAllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
-
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -179,20 +185,10 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
             this.optimizeShippingMethodForConsignment(consignment, result);
             this.getModelService().save(consignment);
 
-            final Collection<StockLevelModel> serialStocksForOptimizedDatesWithFalse = blStockLevelDao
+            final Collection<StockLevelModel> serialStocksForOptimizedDates  = blStockLevelDao
                 .findSerialStockLevelsForDateAndCodes(new HashSet<>(allocatedProductCodes),
                     consignment.getOptimizedShippingStartDate(),
                     consignment.getOptimizedShippingEndDate(), Boolean.FALSE);
-
-
-            final Collection<StockLevelModel> serialStocksForOptimizedEndDate = blStockLevelDao
-                    .findSerialStockLevelsForDateAndCodes(new HashSet<>(allocatedProductCodes),
-                            consignment.getOptimizedShippingEndDate(),
-                            consignment.getOptimizedShippingEndDate(), Boolean.TRUE);
-
-            final Collection<StockLevelModel> serialStocksForOptimizedDates = Stream
-                    .concat(serialStocksForOptimizedDatesWithFalse.stream(), serialStocksForOptimizedEndDate.stream())
-                    .collect(Collectors.toList());
 
 
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
@@ -201,20 +197,16 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
                     consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(), order.getCode());
 
             serialStocksForOptimizedDates.forEach(stock -> {
-              if(StringUtils.isNotBlank(stock.getOrder())){
-                stock.setOrder(StringUtils.isNotBlank(stock.getOrder()) ? stock.getOrder() + "," + order.getCode() : order.getCode());
-              }
-              else {
-                stock.setOrder(order.getCode());
-              }
               stock.setReservedStatus(true);
+              stock.setOrder(order.getCode());
+              stock.setOrder(order.getCode());
+              BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                      "Stock status is changed to {} for the serial product {} for the order {} ", stock.getReservedStatus(),
+                      stock.getSerialProductCode(), stock.getOrder());
 
             });
 
             //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
-            Collection<StockLevelModel> lastStocks = serialStocksForOptimizedDates.stream().filter(stock -> stock.getDate().equals(consignment.getOptimizedShippingEndDate())).collect(Collectors.toList());
-            lastStocks.forEach(ls -> ls.setReservedStatus(false));
-
             this.getModelService().saveAll(serialStocksForOptimizedDates);
 
             return consignment;
