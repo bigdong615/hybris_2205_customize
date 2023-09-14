@@ -89,6 +89,7 @@ public class BlDomoConsignmentPopulator implements Populator<ConsignmentModel, C
 		target.setRentalStartDate(source.getRentalStartDate());
 		target.setRentalEndDate(source.getRentalEndDate());
 		target.setPrimaryKey(source.getPk().toString());
+		target.setPicker(source.getPicker());
 		//		String entriesPk = null;
 		//		if (source.getConsignmentEntries() != null)
 		//		{
