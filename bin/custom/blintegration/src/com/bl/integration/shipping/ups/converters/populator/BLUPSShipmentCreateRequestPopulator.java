@@ -80,6 +80,8 @@ public class BLUPSShipmentCreateRequestPopulator
 			AddressData address = shipmentData.getShipTo().getAddress();
 			shipmentData.getShipTo().setAddress(shipmentData.getShipper().getPaymentAddress());
 			populateShipToData(shipToType, shipmentData.getShipTo());
+			shipToType.setName(shipToType.getAttentionName());
+			shipToType.setAttentionName("");
 			shipmentData.getShipTo().setAddress(address);
 		}
 		else {
