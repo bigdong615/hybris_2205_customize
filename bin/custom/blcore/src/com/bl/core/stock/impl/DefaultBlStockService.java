@@ -678,7 +678,7 @@ public class DefaultBlStockService implements BlStockService
 		stockLevel.setAvailable(0);
 		stockLevel.setSerialProductCode(serial.getCode());
 		stockLevel.setSerialStatus(serial.getSerialStatus());
-		if(isInactiveStatus(serial.getSerialStatus())) {
+		if(isInactiveStatus(serial.getSerialStatus()) || !serial.getApprovalStatus().equals(ArticleApprovalStatus.APPROVED)) {
 			stockLevel.setReservedStatus(Boolean.TRUE);
 		} else {
 			stockLevel.setReservedStatus(Boolean.FALSE);

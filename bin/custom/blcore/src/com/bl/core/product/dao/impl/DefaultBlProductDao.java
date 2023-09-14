@@ -111,7 +111,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
     fQuery.addQueryParameter(BlCoreConstants.DISCONTINUED, false);
     fQuery.addQueryParameter(BlCoreConstants.APPROVED, ArticleApprovalStatus.APPROVED.getCode());
     fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CATALOG, BlCoreConstants.CATALOG_VALUE);
-    fQuery.addQueryParameter(BlCoreConstants.VERSION, BlCoreConstants.STAGED);
+    fQuery.addQueryParameter(BlCoreConstants.VERSION, BlCoreConstants.ONLINE);
 	 fQuery.addQueryParameter("subParts", "SUBPARTS");
     final SearchResult result = getFlexibleSearchService().search(fQuery);
     final List<BlProductModel> skuProducts = result.getResult();
