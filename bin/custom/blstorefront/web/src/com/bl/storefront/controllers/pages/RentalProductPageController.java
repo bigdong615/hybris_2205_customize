@@ -11,8 +11,10 @@ import de.hybris.platform.product.ProductService;
 import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -125,8 +127,27 @@ public class RentalProductPageController extends AbstractBlProductPageController
 
 
 		model.addAttribute("productReferences", productReferences);
+
+		String convertedStartDate = "";
+		try
+		{
+			final SimpleDateFormat formatteInput = new SimpleDateFormat(BlCoreConstants.DATE_FORMAT);
+			final SimpleDateFormat formatterOutput = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
+			if (null != rentalDatesFromSession.getSelectedFromDate())
+			{
+				final Date convertedDate = formatteInput.parse(rentalDatesFromSession.getSelectedFromDate());
+				convertedStartDate = formatterOutput.format(convertedDate);
+			}
+		}
+		catch (final Exception e)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Issue while converting date", e);
+		}
+
 		model.addAttribute("rentalStartDate",
-				rentalDatesFromSession != null ? rentalDatesFromSession.getSelectedFromDate() : StringUtils.EMPTY);
+				rentalDatesFromSession != null ? convertedStartDate : StringUtils.EMPTY);
+
+
       return productDetail(encodedProductCode, options, productData, model, request, response);
     } catch(final Exception ex){
       BlLogger.logMessage(LOG, Level.ERROR,"Product Not found for Code{}",encodedProductCode, ex);
