@@ -1255,6 +1255,7 @@ public class AccountPageController extends AbstractSearchPageController
 		final VerificationDocumentData documentData = getVerificationDocumentData(
 				verificationDocumentForm);
 		blVerificationDocumentFacade.uploadDocument(documentData);
+		redirectModel.addFlashAttribute("isAnyDocumentUploaded",Boolean.TRUE);
 		final Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
     redirectModel.addFlashAttribute("documentName", documentData.getDocument().getOriginalFilename());
 		redirectModel.addFlashAttribute("type",documentData.getDocumentType());
@@ -1642,7 +1643,6 @@ public class AccountPageController extends AbstractSearchPageController
 			 }
 		 }
 		 model.addAttribute("isDocumentUploaded",isDocumentUploaded);
-		 model.addAttribute("isAnyDocumentUploaded",isDocumentUploaded.values().contains(Boolean.TRUE)?Boolean.TRUE: Boolean.FALSE);
 	}
 
 	/**
