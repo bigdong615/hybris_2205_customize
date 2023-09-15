@@ -1170,6 +1170,7 @@
 		<property name="isChargeDeposit" type="java.lang.Boolean"/>
 		<property name="isModifyOrderPayment" type="java.lang.Boolean"/>
 		<property name="inboundTrackingURLs" type="java.util.List&lt;String>"/>
+		<property name="isCancellable" type="java.lang.Boolean"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->

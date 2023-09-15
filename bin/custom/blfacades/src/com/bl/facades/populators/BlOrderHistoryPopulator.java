@@ -136,6 +136,10 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
       populateOrderStatusEligibleFeatures(source,target);
       populateUpdatedOrderStatus(source, target);
       populateInboundTrackingNumbers(source, target);
+      Date date = new Date();
+      if(source.getIsRentalOrder() && date.before(source.getActualRentalStartDate()) && (source.getStatus().equals(OrderStatus.PENDING) || source.getStatus().equals(OrderStatus.RECEIVED_MANUAL_REVIEW) || source.getStatus().equals(OrderStatus.RECEIVED_IN_VERIFICATION) || source.getStatus().equals(OrderStatus.VERIFICATION_REQUIRED))) {
+      	target.setIsCancellable(true);
+      }
   }
 
   private void populateInboundTrackingNumbers(final OrderModel source, final OrderHistoryData target) {

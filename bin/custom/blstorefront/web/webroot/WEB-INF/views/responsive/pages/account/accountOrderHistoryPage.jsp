@@ -275,6 +275,14 @@
 													<spring:theme code="order.myaccount.print.return.label" />
 											</a></li>
 										</c:if>
+										<c:if test="${order.isCancellable eq true }">
+										<li>
+											<c:url value="/my-account/order/${order.code}/cancel" var="orderCode" />
+											<a href="${orderCode}">
+												<spring:theme code="order.myaccount.cancel.order" />
+											</a>
+										<li>
+										</c:if>
 									</ul>
                 						</div>
                 					</div>
