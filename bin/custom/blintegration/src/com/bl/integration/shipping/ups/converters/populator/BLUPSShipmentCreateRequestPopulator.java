@@ -217,7 +217,7 @@ public class BLUPSShipmentCreateRequestPopulator
 		shipper.setName(shipperData.getName());
 		shipper.setShipperNumber(shipperData.getShipperNumber());
 
-		shipper.setAttentionName(shipperData.getAttentionName());
+		//shipper.setAttentionName(shipperData.getAttentionName());
 		final AddressData shipperAddressData = shipperData.getAddress();
 		final ShipAddressType shipperAddress = new ShipAddressType();
 		final List<String> addressLineList = shipperAddress.getAddressLine();
