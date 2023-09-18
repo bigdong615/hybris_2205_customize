@@ -2444,12 +2444,6 @@
 		</n:explorer-tree>
 	</context>
 
-	<context component="explorer-tree" principal="blinventoryuserrole">
-		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
-			<n:navigation-node id="ProductAvailCheckTool" code="ProductAvailCheckTool"/>
-		</n:explorer-tree>
-	</context>
-
 	<context parent="GenericItem" type="Order" component="cs-editor-area">
         <editorArea:editorArea name="Order editor area" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
             <editorArea:tab name="customersupportbackoffice.order.tab.consignments">
