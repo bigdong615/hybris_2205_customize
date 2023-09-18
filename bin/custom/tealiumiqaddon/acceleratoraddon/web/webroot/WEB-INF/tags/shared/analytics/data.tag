@@ -11,10 +11,10 @@
 <%--           ------            Get Page Type         ------           --%>
 
 <c:set var="testPageType" value="${ fn:toLowerCase(pageType) }"/>
-<c:set var="currentUserId" value="${ycommerce:encodeJavaScript(cmsPageRequestContextData.user.uid)}"/>
+<c:set var="currentUserId" value="${ycommerce:encodeJavaScript(cmsPageRequestContextData.user.customerID)}"/>
 <c:set var="blPageType" value="${IsRentalPage ? 'rental gear' : 'used gear'}"/>
 <c:set var="variantName" value="${ blPageType == 'rentalGear' ? 'Rental gear' : 'Used gear'}"/>
-<c:set var="currentUserStatus" value="${ (ycommerce:encodeJavaScript(cmsPageRequestContextData.user.uid)) =='anonymous' ? 'anonymous' : 'logged-in'}"/>
+<c:set var="currentUserStatus" value="${ (ycommerce:encodeJavaScript(cmsPageRequestContextData.user.uid)) =='anonymous' ? 'logged-out' : 'logged-in'}"/>
 
 
 <c:choose>
@@ -32,7 +32,7 @@
  <c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
  	<c:set var="totalSearchResults" value="${searchPageData.pagination.totalNumberOfResults}" />
  	<c:set var="searchKeyword" value="${searchPageData.freeTextSearch}" />
- 	<c:set var="blPageType" value="${IsRentalPage ? 'Rental' : 'Used'}"/>
+ 	<c:set var="blPageType" value="${IsRentalPage ? 'rental' : 'used'}"/>
  </c:when>
  </c:choose>
 
@@ -42,7 +42,7 @@
 	   <c:set var="rentalDays" value="${rentalDate.numberOfDays}" />
                 </c:if>
 		<c:set var="categories" value="" />
-		<c:set var="blPageType" value="${IsRentalPage ? 'Rental' : 'Used'}"/>
+		<c:set var="blPageType" value="${IsRentalPage ? 'rental' : 'used'}"/>
 		<c:forEach items="${product.categories}" var="category">
 			<c:set var="categories">${ycommerce:encodeJavaScript(category.name)}</c:set>
 		</c:forEach>
@@ -50,7 +50,7 @@
 		<c:if test="${not empty product.stock.stockLevelStatus.code}">
     <c:set var="stockStatus" value="${fn:trim(product.stock.stockLevelStatus.code)}" />
 		</c:if>
-		<c:set var="stockStatus" value="${empty stockStatus ? 'Item In Stock' : 'Item Out of Stock'}" />
+		<c:set var="stockStatus" value="${empty stockStatus ? 'in stock' : 'Item Out of Stock'}" />
 
 	</c:when>
 </c:choose>
@@ -129,9 +129,11 @@
     				id: "${currentUserId }",
   					status: "${currentUserStatus}"
 			  	};
-
+			dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};
 		</script>
-		
 		
 	</c:when>
 	
@@ -151,6 +153,40 @@
     				id: "${ currentUserId }",
   					status: "${currentUserStatus}"
 			  	};
+			  dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};
+			  	
+			  	dmpgDl.products = [
+			  	
+			  	 <c:forEach items='${searchPageData.results}' var='product' varStatus='status'>
+			  	{
+			  	"id": "${product.code}",
+			  	"name": "${product.name}",
+          		"brand": "${product.manufacturer}",
+          		<c:choose>
+				  <c:when test="${not empty product.categoriesList[0]}">
+					"category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
+				  </c:when>
+				  <c:when test="${not empty product.categoriesList[1]}">
+					"subCategory2": "${ycommerce:encodeJavaScript(product.categoriesList[1].code)}",
+				  </c:when>
+				  <c:when test="${not empty product.categoriesList[2]}">
+				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
+				  </c:when>
+			    </c:choose>
+         		"variant" : "${ycommerce:encodeJavaScript(blPageType)}",
+         		"listName": "${searchKeyword}",
+  				"index": "${status.index}",
+			  	"value": {
+       					"displayGross": "${product.price.formattedValue.replace('$','')}",
+     					 }
+			  	 },	
+			  	 
+			  	 </c:forEach>
+			  	 ]
+			  	}
 			  	
 		</script>
 	</c:when>
@@ -171,7 +207,40 @@
     				id: "${currentUserId}",
   					status: "${currentUserStatus}"
 			  	};
+			 dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};
 
+			dmpgDl.products = [
+			  	
+			  	 <c:forEach items='${searchPageData.results}' var='product' varStatus='status'>
+			  	{
+			  	"id": "${product.code}",
+			  	"name": "${product.name}",
+          		"brand": "${product.manufacturer}",
+          		<c:choose>
+				  <c:when test="${not empty product.categoriesList[0]}">
+					"category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
+				  </c:when>
+				  <c:when test="${not empty product.categoriesList[1]}">
+					"subCategory2": "${ycommerce:encodeJavaScript(product.categoriesList[1].code)}",
+				  </c:when>
+				  <c:when test="${not empty product.categoriesList[2]}">
+				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
+				  </c:when>
+			    </c:choose>
+         		"variant" : "${ycommerce:encodeJavaScript(blPageType)}",
+         		"listName": "${searchKeyword}",
+  				"index": "${status.index}",
+			  	"value": 
+			  	    {
+       				  "displayGross": "${product.price.formattedValue.replace('$','')}",
+     		    	 }
+			  	 },	
+			  	 
+			  	 </c:forEach>
+			  	 ]
 		</script>
 		
 	</c:when>
@@ -190,11 +259,17 @@
 			dmpgDl.user = 
 			  	{
     				id: "${currentUserId}",
-  					status: "${currentUserStatus}"
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${rentalDate.selectedDays}",
+  					"rentalStartDate": "${rentalStartDate}",
+  					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
+			  	dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};
 			  
-			  {	
-			  "products":[
+			  dmpgDl.products = [
 			  	{
 			  	"id": "${product.code}",
 			  	"name": "${product.name}",
@@ -211,28 +286,15 @@
 				  </c:when>
 			    </c:choose>
          		"variant" : "${ycommerce:encodeJavaScript(blPageType)}",
-         		"daysUntilRental": "${rentalDate.numberOfDays}",
-  				"rentalStartDate": "${rentalStartDate}",
-  				"rentalDuration": "${rentalDate.numberOfDays}"
-         		"stockStatus" : "${product.stock.stockLevelStatus.code}"
-			  	"value": {
-       					"displayGross": "${product.price.formattedValue}",
-     					 },
-     			"discount": {
-        			  "lines": [
-         				        {
-            		              "value": {
-            		                     "displayGross": "${product.price.formattedValue}"
-            		                    },
-           		                 "code": "",
-         			  			 }
-       					       ]
-    			         	}		 
+         		"stockStatus" : "${product.stock.stockLevelStatus.code == 'inStock' ? 'in stock':'out of stock'}",
+			  	"value": 
+			  	    {
+       				   "displayGross": "${product.price.formattedValue.replace('$','')}",
+     				},
 			  	 }	
 			  	 ],
-			  	},
 			  	
-			  	 "modules": [
+			  	 dmpgDl.modules = [
    							 {
    							   "id": "${categories}-modules-pdp",
    							   "name": "new-rentals",
@@ -253,8 +315,7 @@
                			],
                			
                			
-               			
-               		"assets": 
+               		dmpgDl.assets = 
    							 {
      						   "products": [
 			           <c:forEach items='${productReferences}' var='productReference' varStatus='status'>
@@ -273,11 +334,9 @@
 				   						    "subCategory3": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[2].code)}",
 				 						 </c:when>
 			    					 </c:choose>
-        							 "variant": "${ycommerce:encodeJavaScript(blPageType)}",
-        							 "daysUntilRental": "${rentalDate.numberOfDays}",
-        							 "rentalDuration": "${rentalDate.numberOfDays}",
-       								 "value": {
-         								 "displayGross": "${productReference.target.price.formattedValue}"
+       								 "value": 
+       								    {
+         								 "displayGross": "${productReference.target.price.formattedValue.replace('$','')}"
         								}
        							    }
        							 
@@ -308,7 +367,10 @@
     				id: "${ currentUserId }",
   					status: "${currentUserStatus}"
 			  	};
-
+			dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};
 		</script>
 		
 	</c:when>
@@ -329,7 +391,10 @@
     				id: "${ currentUserId }",
   					status: "${currentUserStatus}"
 			  	};
-
+			dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};
 		</script>
 		
 	</c:when>
@@ -371,21 +436,24 @@
 			dmpgDl.user = 
 			  	{
     				id: "${ currentUserId }",
-  					status: "${currentUserStatus}"
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${daysUntilRental}",
+  					"rentalStartDate": "${orderData.rentalStartDateForJs.replace(' ','').replace(',','-')}",
+  					"rentalDuration": "${orderData.rentalDates.numberOfDays}"
 			  	};
-			  	
+			 dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};
 			  	
 			  	dmpgDl.transaction = 
 			  	{
     				"id": "${orderCode}",
-  					"daysUntilRental": "logged-in",
-  					"rentalStartDate": "${orderData.rentalStartDateForJs.replace(' ','').replace(',','-')}",
-  					"rentalDuration": "${orderData.rentalEndDate} - {orderData.rentalStartDate}"
   					"cart" : 
 			  			{
 			  				"lines" : [
 			  					{
-			  					 product: 
+			  					 "product": 
 			  					   {
 			  					   <c:forEach items='${orderData.entries}' var='entry' varStatus='status'>
 										{
@@ -403,11 +471,10 @@
 					  						 "subCategory2": "",
             								"subCategory3": "",
 					  						"variant": "${orderType}",
-            		  						"list_position": ${status.index},
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
              									 "displayGross": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
-              						 			"displayTax": "${ycommerce:encodeJavaScript(orderData.totalTax.value)}"
+              						 			"displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
          							 		 }
 					  					 }
 											<c:if test='${not status.last}'>
@@ -416,11 +483,11 @@
 			 						 </c:forEach>
 			 				 
   						
-			  				shipping : {
-			  					lines : [
+			  				"shipping" : {
+			  					"lines" : [
 			  						{
-    									tier: "${shipmentType}",
-  										method: "${ycommerce:encodeJavaScript(orderData.deliveryMode.code)}",
+    									"tier": "${shipmentType}",
+  										"method": "${ycommerce:encodeJavaScript(orderData.deliveryMode.code)}",
   										"value": {
              									 "displayGross": "${ycommerce:encodeJavaScript(orderData.deliveryCost.value)}",
               						 			 "displayTax": "${ycommerce:encodeJavaScript(orderData.totalTax.value)}"
@@ -428,7 +495,7 @@
   									}
   								]},
   					{
-			  			payment : [
+			  			"payment" : [
 			  			{
          				 "type": "${paymentType}",
          				 "value": {
@@ -436,10 +503,10 @@
           					}
   					],
   					{
-			  			value :
+			  			"value" :
 			  				{
-    							displayGross: "${ycommerce:encodeJavaScript(orderData.totalPrice.value)}",
-    							displayTax: "${ycommerce:encodeJavaScript(orderData.totalTax.value)}"
+    							"displayGross": "${ycommerce:encodeJavaScript(orderData.totalPrice.value)}",
+    							"displayTax": "${ycommerce:encodeJavaScript(orderData.totalTax.value)}"
   							}
   					 }
 			  		}
@@ -466,7 +533,10 @@
     				id: "${ currentUserId }",
   					status: "${currentUserStatus}"
 			  	};
-
+			dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};
 		</script>
 		
 	</c:when>
@@ -487,6 +557,10 @@
     				id: "${ currentUserId }",
   					status: "${currentUserStatus}"
 			  	};
+			dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};	
 		</script>
 		
 	</c:when>
@@ -508,6 +582,10 @@
     				id: "${ currentUserId }",
   					status: "${currentUserStatus}"
 			  	};
+			 dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};
 		</script>
 		
 	</c:when>
@@ -531,7 +609,10 @@
     				id: "${ currentUserId }",
   					status: "${currentUserStatus}"
 			  	};
-
+			dmpgDl.platform = 
+			   {
+ 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+				};
 		</script>
 		
 	</c:otherwise>

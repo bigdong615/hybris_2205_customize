@@ -5,21 +5,6 @@ package com.bl.storefront.controllers.pages;
 
 import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.model.GiftCardModel;
-import com.bl.core.model.GiftCardMovementModel;
-import com.bl.core.services.cart.BlCartService;
-import com.bl.core.services.gitfcard.BlGiftCardService;
-import com.bl.facades.cart.BlCartFacade;
-import com.bl.facades.giftcard.BlGiftCardFacade;
-import com.bl.facades.giftcard.data.BLGiftCardData;
-import com.bl.facades.shipping.BlCheckoutFacade;
-import com.bl.logging.BlLogger;
-import com.bl.storefront.controllers.ControllerConstants;
-import com.bl.storefront.controllers.ControllerConstants.Views.Fragments.Checkout;
-import com.bl.storefront.forms.GiftCardForm;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorfacades.flow.impl.SessionOverrideCheckoutFlowFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -53,21 +38,27 @@ import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -85,6 +76,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.services.gitfcard.BlGiftCardService;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.giftcard.BlGiftCardFacade;
+import com.bl.facades.giftcard.data.BLGiftCardData;
+import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.controllers.ControllerConstants.Views.Fragments.Checkout;
+import com.bl.storefront.forms.GiftCardForm;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
@@ -362,6 +369,27 @@ public class CheckoutController extends AbstractCheckoutController
 		setUpMetaDataForContentPage(model, checkoutOrderConfirmationPage);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 
+		final String convertedStartDate = "";
+		long daysUntilRental = 0L;
+		try
+		{
+			final Date currentDate = new Date();
+
+			final SimpleDateFormat formatteInput = new SimpleDateFormat("yyyy-MM-dd");
+			if (null != orderDetails.getRentalStartDateForJs())
+			{
+				final Date convertedRentalStartDate = formatteInput
+						.parse(orderDetails.getRentalStartDateForJs().replace(" ", "").replace(",", "-"));
+				daysUntilRental = getDateDiff(currentDate, convertedRentalStartDate, TimeUnit.DAYS); // 31
+
+				model.addAttribute("daysUntilRental", daysUntilRental);
+			}
+		}
+		catch (final Exception e)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Issue while converting date", e);
+		}
+
 		if (ResponsiveUtils.isResponsive())
 		{
 			return getViewForPage(model);
@@ -369,6 +397,14 @@ public class CheckoutController extends AbstractCheckoutController
 
 		return ControllerConstants.Views.Pages.Checkout.CheckoutConfirmationPage;
 	}
+
+	public static long getDateDiff(final Date date1, final Date date2,
+		    final TimeUnit timeUnit) {
+		    final long diffInMillies = date2.getTime() - date1.getTime();
+
+		    return timeUnit.convert(diffInMillies, timeUnit.MILLISECONDS);
+		  }
+
 
 	protected void processEmailAddress(final Model model, final OrderData orderDetails)
 	{
@@ -416,7 +452,7 @@ public class CheckoutController extends AbstractCheckoutController
 					.getGiftCardData();
 			final List<String> giftCardDataList = new ArrayList<>();
 			if (CollectionUtils.isNotEmpty(blGiftCardDataList)) {
-				for (BLGiftCardData giftCardData : blGiftCardDataList) {
+				for (final BLGiftCardData giftCardData : blGiftCardDataList) {
 					giftCardDataList.add(giftCardData.getCode());
 				}
 			}
@@ -501,7 +537,7 @@ public class CheckoutController extends AbstractCheckoutController
 	@PostMapping(value = "/removeGiftCard")
 	@ResponseBody
 	public String remove(final GiftCardForm giftCardForm, final HttpServletRequest request, final Model model) {
-		CartModel cartModel = blCartService.getSessionCart();
+		final CartModel cartModel = blCartService.getSessionCart();
 		try {
 			blGiftCardFacade.removeGiftCard(giftCardForm.getGiftCardCode(), cartModel);
 			return BlControllerConstants.TRUE_STRING;

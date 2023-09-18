@@ -89,6 +89,11 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		target.setNoDamageWaiverSelected(BooleanUtils.toBoolean(source.getNoDamageWaiverSelected()));
 		target.setGearGuardWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardWaiverSelected()));
 		target.setGearGuardProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardProFullWaiverSelected()));
+
+		if (null != source.getAvalaraLineTax())
+		{
+			target.setAvalaralinetax(source.getAvalaraLineTax());
+		}
 	}
 
 	/**
