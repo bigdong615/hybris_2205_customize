@@ -292,7 +292,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
         final Set<BlSerialProductModel> forSaleFalseSerials = getAllForSaleSerials(
             blConsignerSerials, false);
-        final Set<BlSerialProductModel> filterSerialsOnLocation = getFilteredSerialsOnLocation(forSaleFalseSerials);
+        final Set<BlSerialProductModel> filterSerialsOnLocation = getFilteredSerialsOnLocation(forSaleFalseSerials,quantity);
         final Set<BlSerialProductModel> unAssignedForSaleFalseSerials = new HashSet<>(
             getUnAssignedSerials(filterSerialsOnLocation, assignedSerials));
 
@@ -315,7 +315,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
           final Set<BlSerialProductModel> forSaleTrueSerials = getAllForSaleSerials(
               blConsignerSerials, true);
-          final Set<BlSerialProductModel> filterSerialsOnLocationForTrueSerials = getFilteredSerialsOnLocation(forSaleTrueSerials);
+          final Set<BlSerialProductModel> filterSerialsOnLocationForTrueSerials = getFilteredSerialsOnLocation(forSaleTrueSerials,quantity);
           final Set<BlSerialProductModel> unAssignedForSaleTrueSerials = new HashSet<>(
               getUnAssignedSerials(filterSerialsOnLocationForTrueSerials, assignedSerials));
 
@@ -377,7 +377,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     }
   }
 
-    private Set<BlSerialProductModel> getFilteredSerialsOnLocation(Set<BlSerialProductModel> serials) {
+    private Set<BlSerialProductModel> getFilteredSerialsOnLocation(Set<BlSerialProductModel> serials,final Long quantity) {
         Map<BlSerialProductModel, Integer> prioritySerialMap = new HashedMap();
         for (BlSerialProductModel serialProduct : serials) {
       	  if (Objects.nonNull(serialProduct.getOcLocationDetails()) && Objects.nonNull(serialProduct.getOcLocationDetails().getLocationPriority()))
@@ -393,15 +393,23 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
                }
            }
         }
-        if(!prioritySerialMap.isEmpty()) {
-          for (int i = 0; i < prioritySerialMap.size(); i++) {
-            int finalI = i;
-            Set<BlSerialProductModel> serialProductModelSet = prioritySerialMap.entrySet().stream().filter(e -> e.getValue() == finalI).map(Map.Entry::getKey).collect(Collectors.toSet());
-            if (!serialProductModelSet.isEmpty()) {
+
+      if(!prioritySerialMap.isEmpty()) {
+        Set<BlSerialProductModel> serialProductModelSet = new HashSet<>();
+        for (int i = 0; i < prioritySerialMap.size(); i++) {
+          int finalI = i;
+          Set<BlSerialProductModel> serialProductModel = prioritySerialMap.entrySet().stream().filter(e -> e.getValue() == finalI).map(Map.Entry::getKey).collect(Collectors.toSet());
+          if (!serialProductModelSet.isEmpty() ) {
+            if (serialProductModel.size()>serialProductModelSet.size()){
+              serialProductModelSet=serialProductModel;
+            }
+            if (serialProductModelSet.size() >= quantity) {
               return serialProductModelSet;
             }
           }
         }
+        return serialProductModelSet;
+      }
         return serials;
     }
 
