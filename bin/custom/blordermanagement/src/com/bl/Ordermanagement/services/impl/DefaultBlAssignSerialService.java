@@ -399,7 +399,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         for (int i = 0; i < prioritySerialMap.size(); i++) {
           int finalI = i;
           Set<BlSerialProductModel> serialProductModel = prioritySerialMap.entrySet().stream().filter(e -> e.getValue() == finalI).map(Map.Entry::getKey).collect(Collectors.toSet());
-          if (!serialProductModelSet.isEmpty() ) {
+          if (!serialProductModel.isEmpty() ) {
             if (serialProductModel.size()>serialProductModelSet.size()){
               serialProductModelSet=serialProductModel;
             }
