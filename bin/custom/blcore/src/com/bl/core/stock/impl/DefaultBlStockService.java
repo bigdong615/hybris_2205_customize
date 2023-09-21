@@ -205,8 +205,8 @@ public class DefaultBlStockService implements BlStockService
     reallocateSerialProcess.setOldSerialProduct(blSerialProduct);
     getModelService().save(reallocateSerialProcess);
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-        "Starting Business process {} for reallocation serial when serial status change from Active to inactive",
-        reallocateSerialProcess.getCode());
+        "Starting Business process {} for reallocation serial when serial status change from Active to inactive for the serial {}",
+        reallocateSerialProcess.getCode(),blSerialProduct.getCode());
 // Then start the process
     getBusinessProcessService().startProcess(reallocateSerialProcess);
   }
