@@ -20,11 +20,9 @@
         <li class="hidden-xs hidden-sm">
             <ul class="item__list--header">
                 <li class="item__toggle"></li>
-                <li class="item__image"></li>
                 <li class="item__info"><spring:theme code="basket.page.item"/></li>
                 <li class="item__deliverymode"><spring:theme code="text.account.cancel.delivery"/></li>
                 <li class="item__price"><spring:theme code="basket.page.price"/></li>
-                <li class="item__quantity"><spring:theme code="text.account.cancel.qty"/></li>
                 <li class="item__total--column"><spring:theme code="basket.page.total"/></li>
             </ul>
         </li>
@@ -112,8 +110,7 @@
                     <div class="item__quantity hidden-xs hidden-sm">
                     <span class="qtyValue">
                         <c:set var="key" value="${entry.entryNumber}"/>
-                        <form:input class="form-control js-update-entry-quantity-input" type="text" size="1"
-                                    path="cancelEntryQuantityMap[${key}]" readonly="true"/>
+                        
                     </span>
                     </div>
 
@@ -134,9 +131,7 @@
 
                         <%-- total --%>
 
-                    <div class="item__total js-item-total hidden-xs hidden-sm">
-                        <format:price priceData="${entry.cancelledItemsPrice}" displayFreeForZero="true"/>
-                    </div>
+                    
                         <%-- </ycommerce:testId> --%>
                 </li>
 
@@ -224,8 +219,7 @@
                             <div class="item__quantity hidden-xs hidden-sm">
                     <span class="qtyValue">
                         <c:set var="key" value="${nentry.entryNumber}"/>
-                        <form:input class="form-control js-update-entry-quantity-input" type="text" size="1"
-                                    path="cancelEntryQuantityMap[${key}]" readonly="true"/>
+                        
                     </span>
                             </div>
 
@@ -244,10 +238,8 @@
                                 </div>
                             </div>
 
-                                <%-- total --%>
-                            <div class="item__total js-item-total hidden-xs hidden-sm">
-                                <format:price priceData="${nentry.cancelledItemsPrice}" displayFreeForZero="true"/>
-                            </div>
+                             
+                            
                                 <%-- </ycommerce:testId> --%>
                         </li>
 
