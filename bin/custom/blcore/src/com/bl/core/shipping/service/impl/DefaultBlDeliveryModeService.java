@@ -1396,16 +1396,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
       			 outboundServiceDays =  model.getServiceDays();     	        		        		  
       		 }
       	 }
-         preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
-         postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : inboundServiceDays);
+         preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
+         postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : inboundServiceDays);
        }
        else if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && null != shippingOptimizationModels.get(0))
        {   	 
       	 inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
       	 outboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
 
-         preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
-         postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : inboundServiceDays);
+         preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
+         postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : inboundServiceDays);
        }
 		return CollectionUtils.isNotEmpty(shippingOptimizationModels) ? shippingOptimizationModels : Collections.EMPTY_LIST;
     }
