@@ -1,13 +1,5 @@
 package com.bl.core.promotions.ruledefinitions.actions;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.enums.BlackoutDateTypeEnum;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.price.service.BlCommercePriceService;
-import com.bl.core.services.cart.BlCartService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.ruleengineservices.rao.CartRAO;
@@ -17,6 +9,7 @@ import de.hybris.platform.ruleengineservices.rao.RuleEngineResultRAO;
 import de.hybris.platform.ruleengineservices.rule.evaluation.RuleActionContext;
 import de.hybris.platform.ruleengineservices.rule.evaluation.actions.AbstractRuleExecutableSupport;
 import de.hybris.platform.servicelayer.model.ModelService;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -24,9 +17,19 @@ import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.logging.BlLogger;
 
 /**
  * This action is created to allow extended free rental days
@@ -54,9 +57,9 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    * @return
    */
   @Override
-  public boolean performActionInternal(RuleActionContext context) {
+  public boolean performActionInternal(final RuleActionContext context) {
 
-    Integer freeRentalDays = context.getParameter(FREE_RENTAL_DAYS, Integer.class);
+    final Integer freeRentalDays = context.getParameter(FREE_RENTAL_DAYS, Integer.class);
     return this.performAction(context, freeRentalDays);
   }
 
@@ -68,7 +71,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    * @return will return true if action performed
    */
   protected boolean performAction(final RuleActionContext context, final Integer freeRentalDays) {
-    CartRAO cartRAO = context.getCartRao();
+    final CartRAO cartRAO = context.getCartRao();
 
     if(freeRentalDays > 0 && cartRAO.getRentalDurationDays() > 0) {
       final BigDecimal newExtendedDaysSubtotal;
@@ -80,11 +83,14 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
       final BigDecimal existingSubTotal = getPromotionRentalDurationPrice(cartRAO,context, cartRAO.getRentalDurationDays());
 
       if( BlDateTimeUtils.getDaysBetweenDates(cartRAO.getRentalArrivalDate(),updatedRentalToDate) == rentalDays) {
-        getBlDatePickerService().addRentalDatesIntoSession(BlDateTimeUtils.convertDateToStringDate(cartRAO.getRentalArrivalDate(), BlCoreConstants.DATE_FORMAT), BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT));
+
+			getBlDatePickerService().addRentalDatesIntoSession(
+					BlDateTimeUtils.convertDateToStringDate(cartRAO.getRentalArrivalDate(), BlCoreConstants.DATE_FORMAT),
+					BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT), "", "");
         getCartService().updatePromotionalEndDate(updatedRentalToDate);
         cartRAO.setRentalToDate(updatedRentalToDate);
       }
-      BigDecimal finalDiscount = newExtendedDaysSubtotal.subtract(existingSubTotal).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+      final BigDecimal finalDiscount = newExtendedDaysSubtotal.subtract(existingSubTotal).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
       BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Old sub Total:{}", existingSubTotal);
       //set values on cartRao
       cartRAO.setSubTotal(newExtendedDaysSubtotal);
@@ -94,7 +100,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
       final DiscountRAO discount = this.getRuleEngineCalculationService().addOrderLevelDiscount(cartRAO, true, finalDiscount);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Discount calculated for free extended rental days is : {}" ,finalDiscount);
 
-      RuleEngineResultRAO result = context.getRuleEngineResultRao();
+      final RuleEngineResultRAO result = context.getRuleEngineResultRao();
       result.getActions().add(discount);
       this.setRAOMetaData(context, discount);
       context.scheduleForUpdate(cartRAO, discount);
@@ -135,7 +141,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    */
   private BigDecimal getPromotionRentalDurationPrice(final CartRAO cartRao, final RuleActionContext context, final Integer rentalDays) {
     BigDecimal totalRentalPrice = BigDecimal.ZERO;
-    for (OrderEntryRAO entry : cartRao.getEntries()) {
+    for (final OrderEntryRAO entry : cartRao.getEntries()) {
       if (Objects.nonNull(entry.getPrice()) && rentalDays > 0) {
         final BlProductModel blProduct = (BlProductModel) this.findProduct(entry.getProductCode(), context);
         if(blProduct != null) {
@@ -165,10 +171,10 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    * @return
    */
   protected ProductModel findProduct(final String productCode, final RuleActionContext context) {
-    ProductModel product = null;
+    final ProductModel product = null;
     try {
      return this.getProductService().getProductForCode(productCode);
-    } catch (Exception var5) {
+    } catch (final Exception var5) {
       BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "no product found for code {} in rule {} cannot apply rule action.", productCode, this.getRuleCode(context), var5 );
 
     }
@@ -209,7 +215,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
     return blDatePickerService;
   }
 
-  public void setBlDatePickerService(BlDatePickerService blDatePickerService) {
+  public void setBlDatePickerService(final BlDatePickerService blDatePickerService) {
     this.blDatePickerService = blDatePickerService;
   }
 
@@ -219,7 +225,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
     return productService;
   }
 
-  public void setProductService(ProductService productService) {
+  public void setProductService(final ProductService productService) {
     this.productService = productService;
   }
 
@@ -228,7 +234,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
     return cartService;
   }
 
-  public void setCartService(BlCartService cartService) {
+  public void setCartService(final BlCartService cartService) {
     this.cartService = cartService;
   }
 
@@ -237,7 +243,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
   }
 
   public void setBlCommercePriceService(
-      BlCommercePriceService blCommercePriceService) {
+      final BlCommercePriceService blCommercePriceService) {
     this.blCommercePriceService = blCommercePriceService;
   }
 
@@ -245,7 +251,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
     return modelService;
   }
 
-  public void setModelService(ModelService modelService) {
+  public void setModelService(final ModelService modelService) {
     this.modelService = modelService;
   }
 }
