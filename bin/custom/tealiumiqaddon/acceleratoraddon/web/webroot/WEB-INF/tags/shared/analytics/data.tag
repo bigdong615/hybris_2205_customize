@@ -12,7 +12,7 @@
 
 <c:set var="testPageType" value="${ fn:toLowerCase(pageType) }"/>
 <c:set var="currentUserId" value="${ycommerce:encodeJavaScript(cmsPageRequestContextData.user.customerID)}"/>
-<c:set var="blPageType" value="${IsRentalPage ? 'rental gear' : 'used gear'}"/>
+
 <c:set var="variantName" value="${ blPageType == 'rentalGear' ? 'Rental gear' : 'Used gear'}"/>
 <c:set var="currentUserStatus" value="${ (ycommerce:encodeJavaScript(cmsPageRequestContextData.user.uid)) =='anonymous' ? 'logged-out' : 'logged-in'}"/>
 
@@ -32,10 +32,10 @@
  <c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
  	<c:set var="totalSearchResults" value="${searchPageData.pagination.totalNumberOfResults}" />
  	<c:set var="searchKeyword" value="${searchPageData.freeTextSearch}" />
- 	<c:set var="blPageType" value="${IsRentalPage ? 'rental' : 'used'}"/>
+ 	<c:set var="blCategoryPageType" value="${blPageType == 'rentalgear' ? 'rental' : 'used'}"/>
  </c:when>
  </c:choose>
-
+<c:set var="blPageType" value="${IsRentalPage ? 'rental' : 'used'}"/>
 <c:choose>
 	<c:when test="${pageType == 'PRODUCT'}">
 	 <c:if test="${not empty rentalDate.selectedFromDate}">
@@ -176,9 +176,10 @@
 				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
 				  </c:when>
 			    </c:choose>
-         		"variant" : "${ycommerce:encodeJavaScript(blPageType)}",
+         		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType)}",
          		"listName": "${searchKeyword}",
-  				"index": "${status.index}",
+         		"stockAvailability" : "${product.stock.stockLevelStatus.code == 'inStock' ? 'in stock':'out of stock'}",
+  				"index": "${status.index + 1}",
 			  	"value": {
        					"displayGross": "${product.price.formattedValue.replace('$','')}",
      					 }
@@ -200,7 +201,7 @@
 
 			dmpgDl.screen = 
 				{
-  					type: "${blPageType}_Category"
+  					type: "${blCategoryPageType}_Category"
 				};
 			dmpgDl.user = 
 			  	{
@@ -230,9 +231,10 @@
 				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
 				  </c:when>
 			    </c:choose>
-         		"variant" : "${ycommerce:encodeJavaScript(blPageType)}",
+         		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType)}",
          		"listName": "${searchKeyword}",
-  				"index": "${status.index}",
+  				"index": "${status.index+1}",
+  				"stockAvailability" : "${product.stock.stockLevelStatus.code == 'inStock' ? 'in stock':'out of stock'}",
 			  	"value": 
 			  	    {
        				  "displayGross": "${product.price.formattedValue.replace('$','')}",
@@ -260,7 +262,7 @@
 			  	{
     				id: "${currentUserId}",
   					status: "${currentUserStatus}",
-  					"daysUntilRental": "${rentalDate.selectedDays}",
+  					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalStartDate}",
   					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
@@ -275,8 +277,8 @@
 			  	"name": "${product.name}",
           		"brand": "${product.manufacturer}",
           		<c:choose>
-				  <c:when test="${not empty product.categoriesList[0]}">
-					"category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
+				 <c:when test="${not empty product.categoriesList[0]}">
+				 "category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
 				  </c:when>
 				  <c:when test="${not empty product.categoriesList[1]}">
 					"subCategory2": "${ycommerce:encodeJavaScript(product.categoriesList[1].code)}",
@@ -290,26 +292,26 @@
 			  	"value": 
 			  	    {
        				   "displayGross": "${product.price.formattedValue.replace('$','')}",
-     				},
+     				}
 			  	 }	
 			  	 ],
 			  	
 			  	 dmpgDl.modules = [
-   							 {
-   							   "id": "${categories}-modules-pdp",
-   							   "name": "new-rentals",
-     							"placement": "pdp-add-products",
-     						   "items": [
-			                    <c:forEach items='${productReferences}' var='productReference' varStatus='status'>
-       							  {
-         							 "id": "${productReference.target.code}",
-          							 "type": "product",
-        							  "position": "${status.index}"
-       							 }
-       							 <c:if test='${not status.last}'>
-												,
-								</c:if>
-               			</c:forEach>
+   					{
+   					 "id": "${categories}-modules-pdp",
+   					 "name": "dont-forget",
+     				 "placement": "pdp-add-products",
+     				 "items": [
+			           <c:forEach items='${productReferences}' var='productReference' varStatus='status'>
+       					 {
+         				 "id": "${productReference.target.code}",
+          				 "type": "product",
+        				 "position": "${status.index}"
+       					 }
+       				<c:if test='${not status.last}'>
+						,
+					</c:if>
+               		</c:forEach>
                			]
                			}
                			],
@@ -334,6 +336,7 @@
 				   						    "subCategory3": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[2].code)}",
 				 						 </c:when>
 			    					 </c:choose>
+			    					 "variant" : "${ycommerce:encodeJavaScript(blPageType)}",
        								 "value": 
        								    {
          								 "displayGross": "${productReference.target.price.formattedValue.replace('$','')}"
@@ -353,6 +356,22 @@
 	
 	<c:when test="${currentPageType == 'cart'}">
 	
+	<c:set var="orderType" value=""/>
+					<c:choose>
+    					<c:when test="${cartData.hasGiftCart}">
+                          <c:set var="orderType" value="Gift Cart"/>
+    					</c:when>
+   					   <c:when test="${cartData.isRetailGearOrder eq true}">
+       					 <c:set var="orderType" value="New Gear"/>
+   					   </c:when>
+   					  <c:when test="${cartData.isRentalCart}">
+       					 <c:set var="orderType" value="rental"/>
+    				  </c:when>
+   					 <c:otherwise>
+      				   <c:set var="orderType" value="used"/>
+    				</c:otherwise>
+				</c:choose>
+	
 	<script type="text/javascript">
 		
           window.dmpgDl = window.dmpgDl || {};
@@ -364,13 +383,56 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${ currentUserId }",
-  					status: "${currentUserStatus}"
+    				id: "${currentUserId}",
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+  					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
 			dmpgDl.platform = 
 			   {
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};
+				
+				 dmpgDl.cart  = 
+				    {
+				    "lines": [
+				         <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+        					{
+        					"product": {
+        					  {
+			  	"id": "${entry.product.code}",
+			  	"name": "${entry.product.name}",
+          		"brand": "${entry.product.manufacturer}",
+          		<c:choose>
+				  <c:when test="${not empty entry.product.categoriesList[0]}">
+					"category": "${ycommerce:encodeJavaScript(entry.product.categoriesList[0].code)}",
+				  </c:when>
+				  <c:when test="${not empty entry.product.categoriesList[1]}">
+					"subCategory2": "${ycommerce:encodeJavaScript(entry.product.categoriesList[1].code)}",
+				  </c:when>
+				  <c:when test="${not empty entry.product.categoriesList[2]}">
+				    "subCategory3": "${ycommerce:encodeJavaScript(entry.product.categoriesList[2].code)}",
+				  </c:when>
+			    </c:choose>
+			    "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         		"variant" : "${ycommerce:encodeJavaScript(orderType)}",
+         		"stockAvailability" : "${entry.product.stock.stockLevelStatus.code == 'inStock' ? 'in stock':'out of stock'}",
+			  	"value": 
+			  	    {
+       				   "displayGross": "${entry.basePrice.value}",
+     				}
+			  	 }	
+        					}
+        					<c:if test='${not status.last}'>,</c:if>
+        			  </c:forEach>
+        				
+        			],
+        			
+        			
+			  	}
+			  	
+			  	}
 		</script>
 		
 	</c:when>
@@ -438,7 +500,7 @@
     				id: "${ currentUserId }",
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${daysUntilRental}",
-  					"rentalStartDate": "${orderData.rentalStartDateForJs.replace(' ','').replace(',','-')}",
+  					"rentalStartDate": "${orderData.rentalStartDateForTealium}",
   					"rentalDuration": "${orderData.rentalDates.numberOfDays}"
 			  	};
 			 dmpgDl.platform = 
@@ -489,8 +551,7 @@
     									"tier": "${shipmentType}",
   										"method": "${ycommerce:encodeJavaScript(orderData.deliveryMode.code)}",
   										"value": {
-             									 "displayGross": "${ycommerce:encodeJavaScript(orderData.deliveryCost.value)}",
-              						 			 "displayTax": "${ycommerce:encodeJavaScript(orderData.totalTax.value)}"
+             									 "displayGross": "${ycommerce:encodeJavaScript(orderData.deliveryCost.formattedValue.replace('$',''))}"
          							 		 }
   									}
   								]},

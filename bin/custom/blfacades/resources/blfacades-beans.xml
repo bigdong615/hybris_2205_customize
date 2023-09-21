@@ -218,9 +218,12 @@
                 this will be removed) -->
   <bean class="com.bl.facades.product.data.RentalDateDto">
     <property name="selectedFromDate" type="String"/>
+    <property name="selectedFromDateMMDDYYY" type="String"/>
     <property name="selectedToDate" type="String"/>
     <property name="numberOfDays" type="String"/>
     <property name="selectedDays" type="String"/>
+    <property name="daysUntilRental" type="String"/>
+    
   </bean>
 
 <!-- DTO to store Serial Product Data -->

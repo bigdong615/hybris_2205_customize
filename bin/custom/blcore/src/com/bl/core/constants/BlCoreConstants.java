@@ -88,6 +88,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String PRODUCT_CODE = "productCode";
 	public static final String SERIAL_PRODUCT_CODE = "serialProductCode";
 	public static final String START_DATE = "startDate";
+	public static final String START_DATE_MMDDYYYY = "startDateMMDDDYYY";
+	public static final String DAYS_UNTIL_RETAIL = "daysUntilRental";
 	public static final String END_DATE = "endDate";
 	public static final String WAREHOUSES = "warehouses";
 	public static final String RESERVED_STATUS = "reservedStatus";

@@ -370,6 +370,7 @@ public class CheckoutController extends AbstractCheckoutController
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 
 		final String convertedStartDate = "";
+		String convertedStartDateForTealium = "";
 		long daysUntilRental = 0L;
 		try
 		{
@@ -382,6 +383,13 @@ public class CheckoutController extends AbstractCheckoutController
 						.parse(orderDetails.getRentalStartDateForJs().replace(" ", "").replace(",", "-"));
 				daysUntilRental = getDateDiff(currentDate, convertedRentalStartDate, TimeUnit.DAYS); // 31
 
+				final SimpleDateFormat formatterOutput = new SimpleDateFormat(BlCoreConstants.SQL_DATE_FORMAT);
+				if (null != convertedRentalStartDate)
+				{
+					convertedStartDateForTealium = formatterOutput.format(convertedRentalStartDate);
+				}
+
+				model.addAttribute("rentalStartDateForTealium", convertedStartDateForTealium);
 				model.addAttribute("daysUntilRental", daysUntilRental);
 			}
 		}

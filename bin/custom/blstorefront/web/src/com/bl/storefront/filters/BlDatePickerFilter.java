@@ -1,21 +1,23 @@
 package com.bl.storefront.filters;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.services.cart.BlCartService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.facades.product.data.RentalDateDto;
-
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.io.IOException;
 import java.time.LocalDate;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.product.data.RentalDateDto;
 
 
 /**
@@ -49,7 +51,7 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 		}
 		else {
 			getBlDatePickerService().removeRentalDatesFromSession();
-			CartModel cart= getBlCartService().getSessionCart();
+			final CartModel cart= getBlCartService().getSessionCart();
 			cart.setRentalStartDate(null);
 			cart.setRentalEndDate(null);
 			modelService.save(cart);
@@ -67,6 +69,8 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 
 		final LocalDate currentDate = LocalDate.now();
 		final String selectedFromDate = rentalDateDto.getSelectedFromDate();
+		final String selectedFromDateMMDDYYYY = rentalDateDto.getSelectedFromDateMMDDYYY();
+		final String daysUntilRental = rentalDateDto.getDaysUntilRental();
 		String selectedToDate = rentalDateDto.getSelectedToDate();
 		final String selectedDuration = rentalDateDto.getSelectedDays();
 		final LocalDate startDate = BlDateTimeUtils.convertStringDateToLocalDate(selectedFromDate,
@@ -81,7 +85,8 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 		else
 		{
 			selectedToDate = getBlCartService().getSessionCart().getRentalEndDate() != null ? BlDateTimeUtils.convertDateToStringDate(getBlCartService().getSessionCart().getRentalEndDate(),BlCoreConstants.DATE_FORMAT) : selectedToDate;
-			getBlDatePickerService().addRentalDatesIntoSession(selectedFromDate, selectedToDate);
+			getBlDatePickerService().addRentalDatesIntoSession(selectedFromDate, selectedToDate, selectedFromDateMMDDYYYY,
+					daysUntilRental);
 			getBlDatePickerService().addSelectedRentalDurationIntoSession(selectedDuration);
 		}
 	}
@@ -108,16 +113,16 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 		return blCartService;
 	}
 
-	public void setBlCartService(BlCartService blCartService) {
+	public void setBlCartService(final BlCartService blCartService) {
 		this.blCartService = blCartService;
 	}
-	
+
 	public ModelService getModelService()
 	{
 		return modelService;
 	}
 
-	public void setModelService(ModelService modelService)
+	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
 	}

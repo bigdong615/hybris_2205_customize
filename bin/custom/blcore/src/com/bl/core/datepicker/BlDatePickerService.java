@@ -1,13 +1,13 @@
 package com.bl.core.datepicker;
 
-import com.bl.core.enums.BlackoutDateTypeEnum;
-import com.bl.facades.product.data.RentalDateDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.facades.product.data.RentalDateDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 /**
@@ -59,8 +59,9 @@ public interface BlDatePickerService
 	 * @param startDate the rental start date
 	 * @param endDate the rental end date
 	 */
-	public void addRentalDatesIntoSession(final String startDate, final String endDate);
-	
+	public void addRentalDatesIntoSession(final String startDate, final String endDate, final String selectedFromDateMMDDYYYY,
+			final String daysUntilRental);
+
 	/**
 	 * Gets the list of black out dates with time as 00:00:00 am from current base store.
 	 *

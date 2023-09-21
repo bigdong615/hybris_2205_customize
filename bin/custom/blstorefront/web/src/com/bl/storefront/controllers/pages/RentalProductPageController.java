@@ -132,7 +132,7 @@ public class RentalProductPageController extends AbstractBlProductPageController
 		try
 		{
 			final SimpleDateFormat formatteInput = new SimpleDateFormat(BlCoreConstants.DATE_FORMAT);
-			final SimpleDateFormat formatterOutput = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
+			final SimpleDateFormat formatterOutput = new SimpleDateFormat(BlCoreConstants.SQL_DATE_FORMAT);
 			if (null != rentalDatesFromSession.getSelectedFromDate())
 			{
 				final Date convertedDate = formatteInput.parse(rentalDatesFromSession.getSelectedFromDate());

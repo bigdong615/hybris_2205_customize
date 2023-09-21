@@ -3,11 +3,13 @@ package com.bl.core.datepicker.impl;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.store.services.BaseStoreService;
 
+import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.Cookie;
@@ -62,12 +64,44 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 				final RentalDateDto rentalDateDto = new RentalDateDto();
 				rentalDateDto.setSelectedFromDate(lSelectedDates[0]);
 				rentalDateDto.setSelectedToDate(lSelectedDates[1]);
+
+				String convertedStartDate = "";
+				try
+				{
+					long daysUntilRental = 0L;
+					final SimpleDateFormat formatteInput = new SimpleDateFormat(BlCoreConstants.DATE_FORMAT);
+					final SimpleDateFormat formatterOutput = new SimpleDateFormat(BlCoreConstants.SQL_DATE_FORMAT);
+					if (null != lSelectedDates[0])
+					{
+						final Date convertedDate = formatteInput.parse(lSelectedDates[0]);
+						convertedStartDate = formatterOutput.format(convertedDate);
+
+						rentalDateDto.setSelectedFromDateMMDDYYY(convertedStartDate);
+
+						final Date currentDate = new Date();
+						daysUntilRental = getDateDiff(currentDate, convertedDate, TimeUnit.DAYS); // 31
+
+						rentalDateDto.setDaysUntilRental("" + daysUntilRental);
+					}
+				}
+				catch (final Exception e)
+				{
+					BlLogger.logMessage(LOG, Level.ERROR, "Issue while converting date", e);
+				}
+
 				// duration days fixed picked from date picker
 				rentalDateDto.setSelectedDays(rentalDuration);
 				return rentalDateDto;
 			}
 		}
 		return null;
+	}
+
+	public static long getDateDiff(final Date date1, final Date date2, final TimeUnit timeUnit)
+	{
+		final long diffInMillies = date2.getTime() - date1.getTime();
+
+		return timeUnit.convert(diffInMillies, timeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -85,11 +119,14 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	 * @inheritDoc
 	 */
 	@Override
-	public void addRentalDatesIntoSession(final String startDate, final String endDate)
+	public void addRentalDatesIntoSession(final String startDate, final String endDate, final String startDateMMDDDYYY,
+			final String daysUntilRental)
 	{
 		final Map<String, String> datepickerDates = new HashMap<>();
 		datepickerDates.put(BlCoreConstants.START_DATE, startDate);
 		datepickerDates.put(BlCoreConstants.END_DATE, endDate);
+		datepickerDates.put(BlCoreConstants.START_DATE_MMDDYYYY, startDateMMDDDYYY);
+		datepickerDates.put(BlCoreConstants.DAYS_UNTIL_RETAIL, daysUntilRental);
 		getSessionService().setAttribute(BlCoreConstants.SELECTED_DATE_MAP, datepickerDates);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "date from {} to {} set into session", startDate, endDate);
 	}
@@ -129,11 +166,15 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 			final RentalDateDto date = new RentalDateDto();
 			final String startDate = rentalDate.get(BlCoreConstants.START_DATE);
 			final String endDate = rentalDate.get(BlCoreConstants.END_DATE);
+			final String startDateMMDDYY = rentalDate.get(BlCoreConstants.START_DATE_MMDDYYYY);
+			final String daysUntilRental = rentalDate.get(BlCoreConstants.DAYS_UNTIL_RETAIL);
 			final String selectedDurationDays = selectedDuration.get(BlCoreConstants.SELECTED_DURATION);
 			if (null != startDate && null != endDate)
 			{
 				date.setSelectedFromDate(startDate);
 				date.setSelectedToDate(endDate);
+				date.setSelectedFromDateMMDDYYY(startDateMMDDYY);
+				date.setDaysUntilRental(daysUntilRental);
 				date.setNumberOfDays(String.valueOf(
 						ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlCoreConstants.DATE_FORMAT),
 								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT))));
