@@ -16,6 +16,7 @@
 <c:set var="variantName" value="${ blPageType == 'rentalGear' ? 'Rental gear' : 'Used gear'}"/>
 <c:set var="currentUserStatus" value="${ (ycommerce:encodeJavaScript(cmsPageRequestContextData.user.uid)) =='anonymous' ? 'logged-out' : 'logged-in'}"/>
 
+<c:set var="datesSettedInSession" value="${empty rentalDate.selectedFromDate ? false : true}" />
 
 <c:choose>
 	<c:when test="${ not empty testPageType }">
@@ -126,8 +127,11 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${currentUserId }",
-  					status: "${currentUserStatus}"
+    				id: "${currentUserId}",
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+  					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
 			dmpgDl.platform = 
 			   {
@@ -150,8 +154,11 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${ currentUserId }",
-  					status: "${currentUserStatus}"
+    				id: "${currentUserId}",
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+  					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
 			  dmpgDl.platform = 
 			   {
@@ -178,7 +185,7 @@
 			    </c:choose>
          		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType)}",
          		"listName": "${searchKeyword}",
-         		"stockAvailability" : "${product.stock.stockLevelStatus.code == 'inStock' ? 'in stock':'out of stock'}",
+         		"stockAvailability" : "${product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock'}",
   				"index": "${status.index + 1}",
 			  	"value": {
        					"displayGross": "${product.price.formattedValue.replace('$','')}",
@@ -206,7 +213,10 @@
 			dmpgDl.user = 
 			  	{
     				id: "${currentUserId}",
-  					status: "${currentUserStatus}"
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+  					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
 			 dmpgDl.platform = 
 			   {
@@ -234,7 +244,7 @@
          		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType)}",
          		"listName": "${searchKeyword}",
   				"index": "${status.index+1}",
-  				"stockAvailability" : "${product.stock.stockLevelStatus.code == 'inStock' ? 'in stock':'out of stock'}",
+  				"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
        				  "displayGross": "${product.price.formattedValue.replace('$','')}",
@@ -288,7 +298,7 @@
 				  </c:when>
 			    </c:choose>
          		"variant" : "${ycommerce:encodeJavaScript(blPageType)}",
-         		"stockStatus" : "${product.stock.stockLevelStatus.code == 'inStock' ? 'in stock':'out of stock'}",
+         		"stockStatus" : "${product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock'}",
 			  	"value": 
 			  	    {
        				   "displayGross": "${product.price.formattedValue.replace('$','')}",
@@ -417,7 +427,7 @@
 			    </c:choose>
 			    "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          		"variant" : "${ycommerce:encodeJavaScript(orderType)}",
-         		"stockAvailability" : "${entry.product.stock.stockLevelStatus.code == 'inStock' ? 'in stock':'out of stock'}",
+         		"stockAvailability" : "${entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock'}",
 			  	"value": 
 			  	    {
        				   "displayGross": "${entry.basePrice.value}",
@@ -428,7 +438,11 @@
         			  </c:forEach>
         				
         			],
-        			
+        			"value" :
+			  				{
+    							"displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}",
+    							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
+  							}
         			
 			  	}
 			  	
@@ -450,8 +464,11 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${ currentUserId }",
-  					status: "${currentUserStatus}"
+    				id: "${currentUserId}",
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+  					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
 			dmpgDl.platform = 
 			   {
@@ -591,8 +608,11 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${ currentUserId }",
-  					status: "${currentUserStatus}"
+    				id: "${currentUserId}",
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+  					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
 			dmpgDl.platform = 
 			   {
@@ -615,8 +635,11 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${ currentUserId }",
-  					status: "${currentUserStatus}"
+    				id: "${currentUserId}",
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+  					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
 			dmpgDl.platform = 
 			   {
@@ -640,8 +663,11 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${ currentUserId }",
-  					status: "${currentUserStatus}"
+    				id: "${currentUserId}",
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+  					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
 			 dmpgDl.platform = 
 			   {
@@ -667,8 +693,11 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${ currentUserId }",
-  					status: "${currentUserStatus}"
+    				id: "${currentUserId}",
+  					status: "${currentUserStatus}",
+  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+  					"rentalDuration": "${rentalDate.selectedDays}"
 			  	};
 			dmpgDl.platform = 
 			   {
