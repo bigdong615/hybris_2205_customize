@@ -306,7 +306,7 @@
        					 {
          				 "id": "${productReference.target.code}",
           				 "type": "product",
-        				 "position": "${status.index}"
+        				 "position": "${status.index + 1}"
        					 }
        				<c:if test='${not status.last}'>
 						,
