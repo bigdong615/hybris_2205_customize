@@ -33,7 +33,7 @@
  <c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
  	<c:set var="totalSearchResults" value="${searchPageData.pagination.totalNumberOfResults}" />
  	<c:set var="searchKeyword" value="${searchPageData.freeTextSearch}" />
- 	<c:set var="blCategoryPageType" value="${blPageType == 'rentalgear' ? 'rental' : 'used'}"/>
+ 	<c:set var="blCategoryPageType" value="${blPageType == 'rentalgear' ? 'Rental' : 'Used'}"/>
  </c:when>
  </c:choose>
 <c:set var="blPageType" value="${IsRentalPage ? 'rental' : 'used'}"/>
@@ -183,7 +183,7 @@
 				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
 				  </c:when>
 			    </c:choose>
-         		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType)}",
+         		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType).toLowerCase()}",
          		"listName": "${searchKeyword}",
          		"stockAvailability" : "${product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock'}",
   				"index": "${status.index + 1}",
@@ -208,7 +208,16 @@
 
 			dmpgDl.screen = 
 				{
-  					type: "${blCategoryPageType}_Category"
+				<c:choose>
+				<c:when test="${ blCategoryPageType == 'Rental' }">
+					<c:set var="categoryScreenName" value="${blCategoryPageType}_${categoryName}" />
+				</c:when>
+				<c:otherwise>
+					<c:set var="categoryScreenName" value="${blCategoryPageType}" />
+				</c:otherwise>
+			</c:choose>
+				
+  					"type": "${categoryScreenName}"
 				};
 			dmpgDl.user = 
 			  	{
@@ -241,7 +250,7 @@
 				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
 				  </c:when>
 			    </c:choose>
-         		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType)}",
+         		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType).toLowerCase()}",
          		"listName": "${searchKeyword}",
   				"index": "${status.index+1}",
   				"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
@@ -266,7 +275,7 @@
 
 			dmpgDl.screen = 
 				{
-  					type: "${blPageType}_product"
+  					type: "${blPageType}_${product.code}"
 				};
 			dmpgDl.user = 
 			  	{
@@ -410,33 +419,46 @@
 				         <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
         					{
         					"product": {
-        					  {
-			  	"id": "${entry.product.code}",
-			  	"name": "${entry.product.name}",
-          		"brand": "${entry.product.manufacturer}",
-          		<c:choose>
-				  <c:when test="${not empty entry.product.categoriesList[0]}">
-					"category": "${ycommerce:encodeJavaScript(entry.product.categoriesList[0].code)}",
-				  </c:when>
-				  <c:when test="${not empty entry.product.categoriesList[1]}">
-					"subCategory2": "${ycommerce:encodeJavaScript(entry.product.categoriesList[1].code)}",
-				  </c:when>
-				  <c:when test="${not empty entry.product.categoriesList[2]}">
-				    "subCategory3": "${ycommerce:encodeJavaScript(entry.product.categoriesList[2].code)}",
-				  </c:when>
-			    </c:choose>
-			    "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
-         		"variant" : "${ycommerce:encodeJavaScript(orderType)}",
-         		"stockAvailability" : "${entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock'}",
-			  	"value": 
-			  	    {
-       				   "displayGross": "${entry.basePrice.value}",
-     				}
-			  	 }	
-        					}
-        					<c:if test='${not status.last}'>,</c:if>
+			  					"id": "${entry.product.code}",
+			  					"name": "${entry.product.name}",
+          						"brand": "${entry.product.manufacturer}",
+          						<c:choose>
+				 		   		 <c:when test="${not empty entry.product.categoriesList[0]}">
+								"category": "${ycommerce:encodeJavaScript(entry.product.categoriesList[0].code)}",
+				 		    	</c:when>
+				 				 <c:when test="${not empty entry.product.categoriesList[1]}">
+								"subCategory2": "${ycommerce:encodeJavaScript(entry.product.categoriesList[1].code)}",
+				 				 </c:when>
+				  				<c:when test="${not empty entry.product.categoriesList[2]}">
+				   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.categoriesList[2].code)}",
+				  				</c:when>
+			    				</c:choose>
+			   					 "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"variant" : "${ycommerce:encodeJavaScript(orderType)}",
+         						"stockAvailability" : "${entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock'}",
+			  					"value": 
+			  	  			 	 {
+       				  		   	   "displayGross": "${entry.basePrice.value}",
+     							  }
+			  				 }	
+        					}<c:if test='${not status.last}'>,</c:if>
+        					
+        					
+        				<c:if test='${not entry.gearGuardWaiverSelected}'>
+        				<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "1234waiver",
+         					    "name": "Gear Guard",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						 "value": {
+           							 "displayGross": "${entry.gearGuardProFullWaiverPrice.formattedValue.replace('$','')}",
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+                        </c:if>	
         			  </c:forEach>
-        				
         			],
         			"value" :
 			  				{
@@ -555,10 +577,8 @@
              									 "displayGross": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
               						 			"displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
          							 		 }
-					  					 }
-											<c:if test='${not status.last}'>
-												,
-											</c:if>
+					  					 }<c:if test='${not status.last}'>,</c:if>
+											
 			 						 </c:forEach>
 			 				 
   						
