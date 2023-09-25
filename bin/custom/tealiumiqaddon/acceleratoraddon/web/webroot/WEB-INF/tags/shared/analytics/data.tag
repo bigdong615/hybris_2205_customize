@@ -513,7 +513,7 @@
     				id: "${ currentUserId }",
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${daysUntilRental}",
-  					"rentalStartDate": "${orderData.rentalStartDateForTealium}",
+  					"rentalStartDate": "${rentalStartDateForTealium}",
   					"rentalDuration": "${orderData.rentalDates.numberOfDays}"
 			  	};
 			 dmpgDl.platform = 
@@ -527,11 +527,9 @@
   					"cart" : 
 			  			{
 			  				"lines" : [
-			  					{
-			  					 "product": 
-			  					   {
 			  					   <c:forEach items='${orderData.entries}' var='entry' varStatus='status'>
-										{
+			  					      {
+			  					          "product":  {
 					  						"id": "${ycommerce:encodeJavaScript(entry.product.code)}",
 					 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
 											 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
@@ -549,13 +547,14 @@
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
              									 "displayGross": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
-              						 			"displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
+              						 			 "displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
          							 		 }
+         							 		}
 					  					 }<c:if test='${not status.last}'>,</c:if>
 											
 			 						 </c:forEach>
-			 				 
-  						
+  						     ],
+  						     
 			  				"shipping" : {
 			  					"lines" : [
 			  						{
@@ -566,7 +565,7 @@
          							 		 }
   									}
   								]},
-  					{
+  								
 			  			"payment" : [
 			  			{
          				 "type": "${paymentType}",
@@ -574,6 +573,7 @@
           					  "displayGross": "${ycommerce:encodeJavaScript(orderData.totalPrice.value)}"
           					}
   					],
+  					
   					{
 			  			"value" :
 			  				{
@@ -582,9 +582,6 @@
   							}
   					 }
 			  		}
-			  	}
-			  	}
-			  	
 		</script>
 		
 	</c:when>
