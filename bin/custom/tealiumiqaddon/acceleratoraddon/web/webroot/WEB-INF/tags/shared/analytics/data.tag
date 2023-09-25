@@ -36,14 +36,14 @@
  	<c:set var="blCategoryPageType" value="${blPageType == 'rentalgear' ? 'Rental' : 'Used'}"/>
  </c:when>
  </c:choose>
-<c:set var="blPageType" value="${IsRentalPage ? 'rental' : 'used'}"/>
+<c:set var="blPageType" value="${IsRentalPage ? 'Rental' : 'Used'}"/>
 <c:choose>
 	<c:when test="${pageType == 'PRODUCT'}">
 	 <c:if test="${not empty rentalDate.selectedFromDate}">
 	   <c:set var="rentalDays" value="${rentalDate.numberOfDays}" />
                 </c:if>
 		<c:set var="categories" value="" />
-		<c:set var="blPageType" value="${IsRentalPage ? 'rental' : 'used'}"/>
+		<c:set var="blPageType" value="${IsRentalPage ? 'Rental' : 'Used'}"/>
 		<c:forEach items="${product.categories}" var="category">
 			<c:set var="categories">${ycommerce:encodeJavaScript(category.name)}</c:set>
 		</c:forEach>
@@ -185,7 +185,7 @@
 			    </c:choose>
          		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType).toLowerCase()}",
          		"listName": "${searchKeyword}",
-         		"stockAvailability" : "${product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock'}",
+         		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
   				"index": "${status.index + 1}",
 			  	"value": {
        					"displayGross": "${product.price.formattedValue.replace('$','')}",
@@ -306,8 +306,8 @@
 				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
 				  </c:when>
 			    </c:choose>
-         		"variant" : "${ycommerce:encodeJavaScript(blPageType)}",
-         		"stockStatus" : "${product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock'}",
+         		"variant" : "${ycommerce:encodeJavaScript(blPageType.toLowerCase())}",
+         		"stockStatus" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
        				   "displayGross": "${product.price.formattedValue.replace('$','')}",
@@ -326,10 +326,7 @@
          				 "id": "${productReference.target.code}",
           				 "type": "product",
         				 "position": "${status.index + 1}"
-       					 }
-       				<c:if test='${not status.last}'>
-						,
-					</c:if>
+       					 }<c:if test='${not status.last}'>,</c:if>
                		</c:forEach>
                			]
                			}
@@ -355,16 +352,12 @@
 				   						    "subCategory3": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[2].code)}",
 				 						 </c:when>
 			    					 </c:choose>
-			    					 "variant" : "${ycommerce:encodeJavaScript(blPageType)}",
+			    					 "variant" : "${ycommerce:encodeJavaScript(blPageType).toLowerCase()}",
        								 "value": 
        								    {
          								 "displayGross": "${productReference.target.price.formattedValue.replace('$','')}"
         								}
-       							    }
-       							 
-       							 <c:if test='${not status.last}'>
-												,
-								</c:if>
+       							    }<c:if test='${not status.last}'>,</c:if>
                			</c:forEach>
                			   ]
                			  }
@@ -435,29 +428,13 @@
 			    				</c:choose>
 			   					 "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"variant" : "${ycommerce:encodeJavaScript(orderType)}",
-         						"stockAvailability" : "${entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock'}",
+         						"stockAvailability" : "${datesSettedInSession ? (entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  					"value": 
 			  	  			 	 {
-       				  		   	   "displayGross": "${entry.basePrice.value}",
+       				  		   	   "displayGross": "${entry.basePrice.value}"
      							  }
 			  				 }	
         					}<c:if test='${not status.last}'>,</c:if>
-        					
-        					
-        				<c:if test='${not entry.gearGuardWaiverSelected}'>
-        				<c:if test='${status.last}'>,</c:if>
-        					{
-          					 "product": {
-          						"id": "1234waiver",
-         					    "name": "Gear Guard",
-          						"parentProductId": "${entry.product.code}",
-          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
-         						 "value": {
-           							 "displayGross": "${entry.gearGuardProFullWaiverPrice.formattedValue.replace('$','')}",
-          								  }
-       								   }
-      						}<c:if test='${not status.last}'>,</c:if>
-                        </c:if>	
         			  </c:forEach>
         			],
         			"value" :
@@ -465,9 +442,7 @@
     							"displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}",
     							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
   							}
-        			
 			  	}
-			  	
 			  	}
 		</script>
 		
@@ -562,14 +537,14 @@
 					 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
 											 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
 					 						 <c:choose>
-												<c:when test="${not empty entry.product.categories}">
-												"category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
-												</c:when>
+											 <c:when test="${not empty entry.product.categories}">
+											 "category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
+											</c:when>
 											<c:otherwise>
-												"category": "",
+											"category": "",
 											</c:otherwise>
 					  						</c:choose>
-					  						 "subCategory2": "",
+					  						"subCategory2": "",
             								"subCategory3": "",
 					  						"variant": "${orderType}",
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
