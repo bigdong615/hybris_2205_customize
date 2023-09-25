@@ -11,6 +11,7 @@ import de.hybris.platform.order.impl.DefaultZoneDeliveryModeService;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 
@@ -1387,25 +1388,44 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     	  }
     	 
        if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
-      	 for(ShippingOptimizationModel model : shippingOptimizationModels) 
-      	 {
-      		 if(model.getInbound() == BlInventoryScanLoggingConstants.ONE) {
-      			 inboundServiceDays =  model.getServiceDays();     	        		  
-      		 }
-      		 else{
-      			 outboundServiceDays =  model.getServiceDays();     	        		        		  
-      		 }
-      	 }
+      	 for(ShippingOptimizationModel model : shippingOptimizationModels) {
+             if (model.getInbound() == BlInventoryScanLoggingConstants.ONE) {
+                 inboundServiceDays = model.getServiceDays();
+             } else {
+                 outboundServiceDays = model.getServiceDays();
+             }
+         }
+           final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(
+                   BlCoreConstants.BASE_STORE_ID);
+           if(baseStore.isBusySeason()){
+               // 1. Ordering today(19/9) for delivery NEXT BUSINESS DAY (20/9)
+		        //  a.Optimized start date: Today (19/09)
+		        //  b.Optimized end date: rental end date + 2 business days (27/09)
+			       // b.1.UNLESS service days = 1
+                        //  b.1.1 If above is true, rental end date + 1 business day
+
          preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
          postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : inboundServiceDays);
+       }
+           else {
+               preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
+               postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : inboundServiceDays);
+           }
        }
        else if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && null != shippingOptimizationModels.get(0))
        {   	 
       	 inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
       	 outboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
 
-         preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
-         postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : inboundServiceDays);
+           if(getBaseStoreService().getCurrentBaseStore().isBusySeason()){
+               preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
+               postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : inboundServiceDays);
+           }
+           else {
+               preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
+               postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : inboundServiceDays);
+           }
+
        }
 		return CollectionUtils.isNotEmpty(shippingOptimizationModels) ? shippingOptimizationModels : Collections.EMPTY_LIST;
     }
