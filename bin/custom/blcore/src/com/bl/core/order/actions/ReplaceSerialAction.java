@@ -96,8 +96,12 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
               .collect(Collectors.groupingBy(StockLevelModel::getSerialProductCode)).keySet();
             final AbstractOrderModel order = getOrderDao().getOrderByCode(orderCode);
             if(BooleanUtils.isTrue(order.getIsRentalOrder())) {
-              filterOrderEntryAndAssignSerial(order, oldSerialProductCode, isSerialUpdated,
-                      productCode);
+              Date todaysDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+              ConsignmentModel consignmentModel = order.getConsignments().iterator().next();
+              if (null != consignmentModel &&  todaysDate.before(consignmentModel.getOptimizedShippingStartDate())) {
+                filterOrderEntryAndAssignSerial(order, oldSerialProductCode, isSerialUpdated,
+                        productCode);
+              }
             }
           List<StockLevelModel> stockLevelModelList = orderCodeEntry.getValue();
           if (isSerialUpdated.get()) {
