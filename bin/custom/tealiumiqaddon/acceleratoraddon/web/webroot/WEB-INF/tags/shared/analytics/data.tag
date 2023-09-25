@@ -188,10 +188,9 @@
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
   				"index": "${status.index + 1}",
 			  	"value": {
-       					"displayGross": "${product.price.formattedValue.replace('$','')}",
+       					"displayGross": "${product.price.formattedValue.replace('$','')}"
      					 }
 			  	 },	
-			  	 
 			  	 </c:forEach>
 			  	 ]
 			  	}
@@ -256,7 +255,7 @@
   				"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
-       				  "displayGross": "${product.price.formattedValue.replace('$','')}",
+       				  "displayGross": "${product.price.formattedValue.replace('$','')}"
      		    	 }
 			  	 },	
 			  	 
@@ -310,7 +309,7 @@
          		"stockStatus" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
-       				   "displayGross": "${product.price.formattedValue.replace('$','')}",
+       				   "displayGross": "${product.price.formattedValue.replace('$','')}"
      				}
 			  	 }	
 			  	 ],
