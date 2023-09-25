@@ -1402,6 +1402,7 @@
 	  <property name="rentalStartDate" type="java.util.Date"/>
 	  <property name="orderNotes" type="java.lang.String"/>
 	  <property name="primaryKey" type="java.lang.String"/>
+	  <property name="picker" type="java.lang.String"/>
 	</bean>
 	
 	
