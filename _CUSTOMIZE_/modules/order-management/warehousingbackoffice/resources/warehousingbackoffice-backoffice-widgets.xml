@@ -771,7 +771,7 @@
     <widget-connection sourceWidgetId="warehousingAllConsignments" outputId="outContext" targetWidgetId="warehousingRefineBy" inputId="inputContext" />
     <widget-connection sourceWidgetId="warehousingRefineBy" outputId="outputContext" targetWidgetId="warehousingAdvancedSearch" inputId="initContext"/>
     
-	<widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.createpackageaction" outputId="blCreatePackageContext" targetWidgetId="createPackagePopup" inputId="inputObject" />
+    <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.createpackageaction" outputId="blCreatePackageContext" targetWidgetId="createPackagePopup" inputId="inputObject" />
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.shippingscanaction" outputId="blShippingScanContext" targetWidgetId="createShippingScanPopup" inputId="inputObject" />
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.packagescanaction" outputId="blPackageScanContext" targetWidgetId="createPackageScanPopup" inputId="inputObject" />
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.capturepaymentaction" outputId="blCapturePaymentContext" targetWidgetId="capturePaymentPopup" inputId="inputObject" />
