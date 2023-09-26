@@ -95,9 +95,12 @@
 
 <div id="productLocationKey" >
 <label value="Product Location Key" width="100%" style="font-weight: bold;font-size: 18px;"/>
-<hlayout>
+ <hlayout width="100%"  sclass="oms-widget-reassignserial-list">
+        <div style="height:304px;" sclass="oms-widget-reassignserial-list-container" >
 
-                           <grid id="productLocationKeyGrid" style="border:1px solid black;overflow-x:scroll; height:250px">
+
+                           <grid id="productLocationKeyGrid"  width="100%" height="150px" hflex="min">
+ <custom-attributes org.zkoss.zul.nativebar="false"/>
                                      <columns>
                                       <column width="600px">
                                            <label value="Ordered by most desirable (easiest to fulfill)" width="100%"/>
@@ -133,6 +136,7 @@
 
                                       </rows>
                            </grid>
+                           </div>
 </hlayout>
                            </div>
 

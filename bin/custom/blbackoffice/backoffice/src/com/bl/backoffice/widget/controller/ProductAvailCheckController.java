@@ -101,40 +101,54 @@ public class ProductAvailCheckController extends DefaultWidgetController {
                         .collect(Collectors.groupingBy(StockLevelModel::getSerialProductCode));
                 Collection<BlSerialProductModel> blSerialProducts = productDao.getBlSerialProductsForCodes(stockLevelsSerialWise.keySet());
 //    System.out.println("Size of all serial product which come from stock table:" + blSerialProducts.size());
-                final List<BlSerialProductModel> nonBufferProducts = blSerialProducts.stream()
-                        .filter(serial -> BooleanUtils.isFalse(serial.getIsBufferedInventory()))
-                        .collect(Collectors.toList());
+                if(CollectionUtils.isNotEmpty(blSerialProducts)) {
+                    final List<BlSerialProductModel> nonBufferProducts = blSerialProducts.stream()
+                            .filter(serial -> BooleanUtils.isFalse(serial.getIsBufferedInventory()))
+                            .collect(Collectors.toList());
 //    System.out.println("After removed buffer product i.e non buffer product size:" + nonBufferProducts.size());
-                final List<BlSerialProductModel> consignerSerial = nonBufferProducts.stream().filter(serial -> "BL".equalsIgnoreCase(serial.getOwnedBy()))
-                        .collect(Collectors.toList());
+                    final List<BlSerialProductModel> consignerSerial = nonBufferProducts.stream().filter(serial -> "BL".equalsIgnoreCase(serial.getOwnedBy()))
+                            .collect(Collectors.toList());
 //    System.out.println("After filter consigner serial i.e. owned by BL serial size:" + consignerSerial.size())
-                final Map<BlProductModel,
-                        List<BlSerialProductModel>> availableSerialMap = consignerSerial.stream().collect(Collectors.groupingBy(BlSerialProductModel::getBlProduct));
-                availableSerialMap.values().forEach(serialProductList -> {
-                    serialProductList.forEach(serialProduct -> {
+                    final Map<BlProductModel,
+                            List<BlSerialProductModel>> availableSerialMap = consignerSerial.stream().collect(Collectors.groupingBy(BlSerialProductModel::getBlProduct));
+                    availableSerialMap.values().forEach(serialProductList -> {
+                        serialProductList.forEach(serialProduct -> {
 
-                        ProductAvailCheckToolData productAvailCheckToolData1 = new ProductAvailCheckToolData();
-                        productAvailCheckToolData1.setProductCode(serialProduct.getBlProduct().getCode());
-                        productAvailCheckToolData1.setArticleNumber(serialProduct.getCode());
-                        productAvailCheckToolData1.setBarcode(serialProduct.getBarcode());
-                        productAvailCheckToolData1.setSerialStatus(serialProduct.getSerialStatus().getCode());
-                        productAvailCheckToolData1.setWarehouseLocation(serialProduct.getWarehouseLocation().getName());
-                        productAvailCheckToolData1.setOcLocation(serialProduct.getOcLocation());
-                        productAvailCheckToolData1.setLastLocationScanParent(serialProduct.getLastLocationScanParent());
-                        productAvailCheckToolData.add(productAvailCheckToolData1);
+                            ProductAvailCheckToolData productAvailCheckToolData1 = new ProductAvailCheckToolData();
+                            productAvailCheckToolData1.setProductCode(serialProduct.getBlProduct().getCode());
+                            productAvailCheckToolData1.setArticleNumber(serialProduct.getCode());
+                            productAvailCheckToolData1.setBarcode(serialProduct.getBarcode());
+                            productAvailCheckToolData1.setSerialStatus(serialProduct.getSerialStatus().getCode());
+                            productAvailCheckToolData1.setWarehouseLocation(serialProduct.getWarehouseLocation().getName());
+                            productAvailCheckToolData1.setOcLocation(serialProduct.getOcLocation());
+                            productAvailCheckToolData1.setLastLocationScanParent(serialProduct.getLastLocationScanParent());
+                            productAvailCheckToolData.add(productAvailCheckToolData1);
+                        });
                     });
-                });
-                this.productAvailCheckToolDataHeader.setStyle("resize:none;display:block");
-                this.getProductAvailCheckToolDataGrid().setModel(new ListModelList<>(productAvailCheckToolData));
-                this.getProductAvailCheckToolDataGrid().renderAll();
+                    getRenderData(productAvailCheckToolData);
+                }
+                else {
+                    Messagebox.show("No serial product found for given product codes"+stockLevelsSerialWise.keySet());
+                    getRenderData(productAvailCheckToolData);
+                }
             }
             else {
-                Messagebox.show("No available stock found for product for given duration"+productCode.getText());
+                Messagebox.show("No available stock found for product for given duration "+productCode.getText());
+                getRenderData(productAvailCheckToolData);
             }
         }
     }
 
-
+    /**
+     * This method is used to set the data in model and render it on the popup.
+     * @param productAvailCheckToolData
+     */
+    public void getRenderData(List<ProductAvailCheckToolData> productAvailCheckToolData)
+    {
+            this.productAvailCheckToolDataHeader.setStyle("resize:none;display:block");
+            this.getProductAvailCheckToolDataGrid().setModel(new ListModelList<>(productAvailCheckToolData));
+            this.getProductAvailCheckToolDataGrid().renderAll();
+    }
     public Grid getProductAvailCheckToolDataGrid() {
         return productAvailCheckToolDataGrid;
     }

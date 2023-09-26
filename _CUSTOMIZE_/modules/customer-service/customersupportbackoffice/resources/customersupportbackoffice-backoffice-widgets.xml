@@ -77,21 +77,6 @@
                             <setting key="socketDataType_$T" type="String">com.hybris.cockpitng.tree.node.TypeNode</setting>
                             <virtual-sockets />
                         </widget>
-						
-						   <!--Product Avail Check -->
-
-                        <widget id="ProductAvailCheckTool_conditionevaluator" widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
-                                slotId="cockpitWidgetChildrenInvisible" template="false">
-                            <widget id="ProductAvailCheckTool_propertyextractor" widgetDefinitionId="custom.bl.widgets.productAvailCheck"
-                                    slotId="cockpitWidgetChildrenInvisible" template="true">
-                                <setting key="expression" type="String" value="id"/>
-                                <setting key="socketDataType_$T" type="String" value="java.lang.String"/>
-                            </widget>
-                            <setting key="expression" type="String" value="#root?.id EQ 'ProductAvailCheckTool'"/>
-                            <setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
-                        </widget>
-
-
 
                         <setting key="explorerTreeConfigCtx" type="String">cs-explorer-tree</setting>
                        <!--  <setting key="widgetStyleClass" type="String">y-customersupport-explorer-tree</setting> -->
@@ -580,30 +565,6 @@
                     <setting key="_height" type="String">420px</setting>
                     <virtual-sockets />
                 </widget>
-				
-				<!-- Product Avail Check tool-->
-                <widget id="ProductAvailCheckTool_propertyextractor" widgetDefinitionId="custom.bl.widgets.productAvailCheck" slotId="cockpitWidgetChildrenInvisible"
-                        template="true">
-                    <instance-settings socketEventRoutingMode="LAST_USED">
-                        <create onInit="false" reuseExisting="true">
-                            <all-incoming-events/>
-                        </create>
-                        <close>
-                            <all-outgoing-events/>
-                        </close>
-                        <select onInit="false">
-                            <all-incoming-events/>
-                        </select>
-                    </instance-settings>
-                    <setting key="widgetStyleClass" type="String"></setting>
-                    <setting key="__externalLocationPath" type="String">extension://warehousingbackoffice</setting>
-                    <setting key="widgetStyleAttribute" type="String"></setting>
-                    <setting key="_width" type="String">1520px</setting>
-                    <setting key="_height" type="String">650px</setting>
-                    <virtual-sockets />
-                </widget>
-                <!--Product Avail Check tool-->
-
 
                 <widget id="orderProcessExecutor" widgetDefinitionId="de.hybris.ordermanagementbackoffice.widgets.orderprocessexecutor"
                         slotId="cockpitWidgetChildrenInvisible" template="false">
@@ -749,9 +710,5 @@
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.moreinforequiredaction" outputId="blMoreInfoRequiredContext" targetWidgetId="blMoreInfoRequiredPopup" inputId="inputObject" />
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.orderdepositrequiredaction" outputId="blOrderDepositRequiredContext" targetWidgetId="blDepositRequiredPopup" inputId="inputObject" />
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.cancel.order.blcancelorderaction" outputId="customBlCancelOrderContext" targetWidgetId="blCustomOrderCancelPopup" inputId="inputObject" />
-
- <!-- Product Avail Check Tool Section -->
-    <widget-connection sourceWidgetId="csExplorerTree" outputId="nodeSelected" targetWidgetId="ProductAvailCheckTool_conditionevaluator" inputId="input"/>
-    <widget-connection sourceWidgetId="ProductAvailCheckTool_conditionevaluator" outputId="true" targetWidgetId="ProductAvailCheckTool_propertyextractor" inputId="nodeSelected"/>
 
 </widgets>
