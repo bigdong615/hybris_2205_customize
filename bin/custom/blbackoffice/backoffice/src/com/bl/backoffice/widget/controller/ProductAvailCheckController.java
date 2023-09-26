@@ -75,7 +75,7 @@ public class ProductAvailCheckController extends DefaultWidgetController {
             Messagebox.show("Please Enter Product Code");
         }
         else{
-            final List<String> productCodeList = Arrays.asList(productCode.getText());
+            final List<String> productCodeList = Arrays.asList(productCode.getText().split(","));
             final String selectedFromDate = rentalStartDate.getText();
             final String selectedToDate = rentalEndDate.getText();
             Set<String> productCodeSets = new HashSet<String>(productCodeList);
