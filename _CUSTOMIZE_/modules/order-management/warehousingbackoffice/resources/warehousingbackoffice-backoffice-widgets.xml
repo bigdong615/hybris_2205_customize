@@ -812,7 +812,7 @@
     <widget-connection sourceWidgetId="warehousingRefineBy" outputId="outputContext" targetWidgetId="warehousingAdvancedSearch" inputId="initContext"/>
 
     <!-- Product Avail Check Tool Section -->
-    <widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="ProductAvailCheckTool_conditionevaluator" inputId="input"/>
+    <widget-connection sourceWidgetId="warehousingExplorerTree" outputId="nodeSelected" targetWidgetId="ProductAvailCheckTool_conditionevaluator" inputId="input"/>
     <widget-connection sourceWidgetId="ProductAvailCheckTool_conditionevaluator" outputId="true" targetWidgetId="ProductAvailCheckTool_propertyextractor" inputId="nodeSelected"/>
 
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.createpackageaction" outputId="blCreatePackageContext" targetWidgetId="createPackagePopup" inputId="inputObject" />

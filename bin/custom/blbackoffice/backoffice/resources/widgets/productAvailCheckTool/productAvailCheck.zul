@@ -93,4 +93,47 @@
                             </hlayout>
                            </div>
 
+<div id="productLocationKey" >
+<label value="Product Location Key" width="100%" style="font-weight: bold;font-size: 18px;"/>
+<hlayout>
+
+                           <grid id="productLocationKeyGrid" style="border:1px solid black;overflow-x:scroll; height:250px">
+                                     <columns>
+                                      <column width="600px">
+                                           <label value="Ordered by most desirable (easiest to fulfill)" width="100%"/>
+                                      </column>
+                                      <column width="600px">
+                                          <label value="Additional locations (requires further investigation)" width="100%"/>
+                                      </column>
+                                      </columns>
+                                      <rows>
+                                           <row>
+                                             <textbox value="CAR000 S00 = In the cage" width="600px"
+                                                      readonly="true"/>
+                                             <textbox value="CA DECLINED00 S00 = Item on an order that was declined." width="600px"
+                                                      readonly="true"/>
+                                           </row>
+                                           <row>
+                                             <textbox value="CAM CLEAN000 S00 = On a clean cart" width="600px" readonly="true"/>
+
+                                             <textbox value="CAM SHP PREPPED000 S00 = Item is prepped for an order" width="600px"
+                                                                                                   readonly="true"/>
+                                           </row>
+                                           <row>
+                                             <textbox value="CAM GB PHOTO000 S00 = On a clean cart" width="600px" readonly="true"/>
+                                               <textbox value="CAM SHP PULLED000 S00 = Item is pulled to an order" width="600px"
+                                                        readonly="true"/>
+                                             </row>
+                                             <row>
+                                               <textbox value="CAM DIRTY000 S00 = On a dirty cart needing to go through Gear Techs." width="600px"
+                                                        readonly="true"/>
+                                               <textbox value="CAM READYTOSHIP000 S00 = Item is ready to ship on an order" width="600px"
+                                                                                                              readonly="true"/>
+                                             </row>
+
+                                      </rows>
+                           </grid>
+</hlayout>
+                           </div>
+
 </widget>

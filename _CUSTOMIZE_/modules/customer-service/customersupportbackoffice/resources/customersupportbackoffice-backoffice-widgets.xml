@@ -751,7 +751,7 @@
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.cancel.order.blcancelorderaction" outputId="customBlCancelOrderContext" targetWidgetId="blCustomOrderCancelPopup" inputId="inputObject" />
 
  <!-- Product Avail Check Tool Section -->
-    <widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="ProductAvailCheckTool_conditionevaluator" inputId="input"/>
+    <widget-connection sourceWidgetId="csExplorerTree" outputId="nodeSelected" targetWidgetId="ProductAvailCheckTool_conditionevaluator" inputId="input"/>
     <widget-connection sourceWidgetId="ProductAvailCheckTool_conditionevaluator" outputId="true" targetWidgetId="ProductAvailCheckTool_propertyextractor" inputId="nodeSelected"/>
 
 </widgets>
