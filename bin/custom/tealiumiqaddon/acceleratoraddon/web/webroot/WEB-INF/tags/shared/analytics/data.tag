@@ -574,7 +574,6 @@
           					}
   					],
   					
-  					{
 			  			"value" :
 			  				{
     							"displayGross": "${ycommerce:encodeJavaScript(orderData.totalPrice.value)}",
@@ -589,6 +588,7 @@
 	<c:when test="${currentPageType == 'shippingpage'}">
 	
 	<script type="text/javascript">
+	<c:set var="paymentType" value="${cartData.paymentInfo != null ? 'card': 'gift-card'}"/>
 		
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [];
@@ -609,14 +609,57 @@
 			   {
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};
+				
+			dmpgDl.transaction = 
+			  	{
+  					"cart" : 
+			  			{
+			  				"lines" : [
+			  					   <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+			  					      {
+			  					          "product":  {
+					  						"id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+					 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+											 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
+					 						 <c:choose>
+											 <c:when test="${not empty entry.product.categories}">
+											 "category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
+											</c:when>
+											<c:otherwise>
+											"category": "",
+											</c:otherwise>
+					  						</c:choose>
+					  						"subCategory2": "",
+            								"subCategory3": "",
+					  						"variant": "${orderType}",
+					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+					  						"value": {
+             									 "displayGross": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+              						 			 "displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
+         							 		 }
+         							 		}
+					  					 }<c:if test='${not status.last}'>,</c:if>
+											
+			 						 </c:forEach>
+  						     ],
+  					
+			  			"value" :
+			  				{
+    							"displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}",
+    							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
+  							}
+  					 }
+			  		}
 		</script>
 		
 	</c:when>
 	
 	<c:when test="${currentPageType == 'paymentpage'}">
-	
 	<script type="text/javascript">
-		
+	<c:set var="paymentType" value="${cartData.paymentInfo != null ? 'card': 'gift-card'}"/>
+		<c:set var="shipmentType" value="${cartData.deliveryMode.code.startsWith('UPS_STORE') ? 'Ship to UPS Store' : 'Ship to Home'}"/>
+	
+	
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [];
 
@@ -636,15 +679,67 @@
 			   {
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};	
+				
+				dmpgDl.transaction = 
+			  	{
+  					"cart" : 
+			  			{
+			  				"lines" : [
+			  					   <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+			  					      {
+			  					          "product":  {
+					  						"id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+					 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+											 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
+					 						 <c:choose>
+											 <c:when test="${not empty entry.product.categories}">
+											 "category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
+											</c:when>
+											<c:otherwise>
+											"category": "",
+											</c:otherwise>
+					  						</c:choose>
+					  						"subCategory2": "",
+            								"subCategory3": "",
+					  						"variant": "${orderType}",
+					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+					  						"value": {
+             									 "displayGross": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+              						 			 "displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
+         							 		 }
+         							 		}
+					  					 }<c:if test='${not status.last}'>,</c:if>
+											
+			 						 </c:forEach>
+  						     ],
+  						     
+			  				"shipping" : {
+			  					"lines" : [
+			  						{
+    									"tier": "${shipmentType}",
+  										"method": "${ycommerce:encodeJavaScript(cartData.deliveryMode.code)}",
+  										"value": {
+             									 "displayGross": "${ycommerce:encodeJavaScript(cartData.deliveryCost.formattedValue.replace('$',''))}"
+         							 		 }
+  									}
+  								]},
+			  			"value" :
+			  				{
+    							"displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}",
+    							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
+  							}
+  					 }
+			  		}
 		</script>
 		
 	</c:when>
 	
 	<c:when test="${currentPageType == 'reviewsummarypage'}">
 	
-	<script type="text/javascript">
-		
-		
+		<script type="text/javascript">
+	<c:set var="paymentType" value="${cartData.paymentInfo != null ? 'card': 'gift-card'}"/>
+	<c:set var="shipmentType" value="${cartData.deliveryMode.code.startsWith('UPS_STORE') ? 'Ship to UPS Store' : 'Ship to Home'}"/>
+	
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [];
 
@@ -664,10 +759,66 @@
 			   {
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};
+				dmpgDl.transaction = 
+			  	{
+  					"cart" : 
+			  			{
+			  				"lines" : [
+			  					   <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+			  					      {
+			  					          "product":  {
+					  						"id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+					 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+											 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
+					 						 <c:choose>
+											 <c:when test="${not empty entry.product.categories}">
+											 "category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
+											</c:when>
+											<c:otherwise>
+											"category": "",
+											</c:otherwise>
+					  						</c:choose>
+					  						"subCategory2": "",
+            								"subCategory3": "",
+					  						"variant": "${orderType}",
+					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+					  						"value": {
+             									 "displayGross": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+              						 			 "displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
+         							 		 }
+         							 		}
+					  					 }<c:if test='${not status.last}'>,</c:if>
+											
+			 						 </c:forEach>
+  						     ],
+  						     
+			  				"shipping" : {
+			  					"lines" : [
+			  						{
+    									"tier": "${shipmentType}",
+  										"method": "${ycommerce:encodeJavaScript(cartData.deliveryMode.code)}",
+  										"value": {
+             									 "displayGross": "${ycommerce:encodeJavaScript(cartData.deliveryCost.formattedValue.replace('$',''))}"
+         							 		 }
+  									}
+  								]},
+  								
+			  			"payment" : [
+			  			{
+         				 "type": "${paymentType}",
+         				 "value": {
+          					  "displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}"
+          					}
+  					],
+			  			"value" :
+			  				{
+    							"displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}",
+    							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
+  							}
+  					 }
+			  		}
 		</script>
-		
 	</c:when>
-	
 	
 	
 	<c:otherwise>

@@ -284,21 +284,21 @@ function reverseTraverseOnShipping() {
           }
 
        // track Tealium event on continue shipping.
-       utag.link({
+      /* utag.link({
              "tealium_event"    : "continue_shipping_click",
              "shipping_method"   : "Ship It-Ship to home",
              "shipping_method_not_available"     : "0"
-         });
+         });*/
         ACC.track.trackShippingSelection('Ship It','Ship to home','Item In Stock');
       }
       else
       {
         // track Tealium event on continue shipping.
-              utag.link({
+             /* utag.link({
               "tealium_event"    : "continue_shipping_click",
               "shipping_method"   : "Ship It-Ship to home",
               "shipping_method_not_available"     : "1"
-               });
+               });*/
         ACC.track.trackShippingSelection('Ship It','Ship to home','Item Out of Stock');
       	window.location.reload();
       }
@@ -373,11 +373,11 @@ function reverseTraverseOnShipping() {
  function shipToUPSStoreLocationContinue(shippingMethod, mainContinue) {
 	 hideErrorForInputValidation();
      if($('#changeUPSStoreButton').is(":visible")) {
-         utag.link({
+        /* utag.link({
            "tealium_event"    : "continue_shipping_click",
            "shipping_method"   : "Ship It-Ship to UPS",
-           "shipping_method_not_available"     : "0"
-         });
+           "shipping_method_not_available"     : "0" 
+         });*/
          ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
          var deliveryMethod = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val();
          if(checkShippingBlackout(deliveryMethod)) {
@@ -408,7 +408,7 @@ function reverseTraverseOnShipping() {
          		url: ACC.config.encodedContextPath + '/cart/deliverycost',
          		type: "GET",
          		success: function (data) {
-         		 $('#cart-shipping-cost').text(data.deliveryCost.formattedValue);
+         		/* $('#cart-shipping-cost').text(data.deliveryCost.formattedValue);*/
                             calculateCartTotal();
          		}
          });
@@ -639,11 +639,11 @@ function reverseTraverseOnShipping() {
 	 hideErrorForInputValidation();
      if($('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id') != undefined || !mainContinue) {
         // track Tealium event on continue shipping.
-        utag.link({
+       /* utag.link({
          "tealium_event"    : "continue_shipping_click",
          "shipping_method"   : "PickUP",
          "shipping_method_not_available"     : "0"
-        });
+        });*/
         ACC.track.trackShippingSelection('PickUP','','Item In Stock');
         var deliveryMode = $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id');
         if(checkShippingBlackout(deliveryMode)) {
@@ -1115,11 +1115,11 @@ function reverseTraverseOnShipping() {
     else if(checkAvailability(deliveryMode))
     {
         // track Tealium event on continue shipping.
-           utag.link({
+          /* utag.link({
            "tealium_event"    : "continue_shipping_click",
            "shipping_method"   : "Same Day Delivery",
            "shipping_method_not_available"     : "0"
-           });
+           });*/
         ACC.track.trackShippingSelection('Same Day Delivery','','Item In Stock');
         if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
             savedAddress = $('#same-day-address-div #delivery-saved-addresses-dropdown').find('select[id="ship-it-savedAddresses"]').val();
@@ -1207,11 +1207,11 @@ function reverseTraverseOnShipping() {
       else
       {
        // track Tealium event on continue shipping.
-          utag.link({
+         /* utag.link({
           "tealium_event"    : "continue_shipping_click",
           "shipping_method"   : "Same Day Delivery",
           "shipping_method_not_available"     : "1"
-         });
+         });*/
        ACC.track.trackShippingSelection('Same Day Delivery','','Item Out of Stock');
       	window.location.reload();
     }
@@ -1930,11 +1930,11 @@ function reverseTraverseOnShipping() {
                  if(data != null) {
                      if(upsStoreAddress != null) {
                         // track Tealium event on continue shipping.
-                          utag.link({
+                         /* utag.link({
                           "tealium_event"    : "continue_shipping_click",
                           "shipping_method"   : "Ship It-Ship to UPS",
                           "shipping_method_not_available"     : "0"
-                        });
+                        });*/
                         ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
                         addNewAddress(upsStoreAddress, deliveryMethod)
                             .then((data) => {
@@ -1952,11 +1952,11 @@ function reverseTraverseOnShipping() {
                             })
                      } else {
                        // track Tealium event on continue shipping.
-                         utag.link({
+                        /* utag.link({
                          "tealium_event"    : "continue_shipping_click",
                          "shipping_method"   : "PickUP",
                          "shipping_method_not_available"     : "0"
-                                  });
+                                  });*/
                         ACC.track.trackShippingSelection('PickUP','','Item In Stock');
                         saveDeliveryMode(deliveryMethod, status,mainContinue)
                             .then((data) => {
@@ -1981,19 +1981,19 @@ function reverseTraverseOnShipping() {
      {
      if(upsStoreAddress != null) {
         // track Tealium event on continue shipping.
-             utag.link({
+            /* utag.link({
               "tealium_event"    : "continue_shipping_click",
               "shipping_method"   : "Ship It-Ship to UPS",
               "shipping_method_not_available"     : "1"
-                                          });
+                                          });*/
        ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item Out of Stock');
        }else{
          // track Tealium event on continue shipping.
-          utag.link({
+         /* utag.link({
          "tealium_event"    : "continue_shipping_click",
          "shipping_method"   : "PickUP",
          "shipping_method_not_available"     : "1"
-                });
+                });*/
         ACC.track.trackShippingSelection('PickUP','','Item Out of Stock');
        }
      	window.location.reload();
@@ -2225,21 +2225,21 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
           }
 
        // track Tealium event on continue shipping.
-       utag.link({
+       /*utag.link({
              "tealium_event"    : "continue_shipping_click",
              "shipping_method"   : "Ship It-Ship to home",
              "shipping_method_not_available"     : "0"
-         });
+         });*/
         ACC.track.trackShippingSelection('Ship It','Ship to home','Item In Stock');
       }
       else
       {
         // track Tealium event on continue shipping.
-              utag.link({
+             /* utag.link({
               "tealium_event"    : "continue_shipping_click",
               "shipping_method"   : "Ship It-Ship to home",
               "shipping_method_not_available"     : "1"
-               });
+               });*/
         ACC.track.trackShippingSelection('Ship It','Ship to home','Item Out of Stock');
       	window.location.reload();
       }
@@ -2337,11 +2337,11 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
   function shipToUPSStoreLocationContinueForReplacementOrder(shippingMethod) {
   hideErrorForInputValidation();
       if($('#changeUPSStoreButton').is(":visible")) {
-          utag.link({
+         /* utag.link({
             "tealium_event"    : "continue_shipping_click",
             "shipping_method"   : "Ship It-Ship to UPS",
             "shipping_method_not_available"     : "0"
-          });
+          });*/
           ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
           var deliveryMethod = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val();
           if(checkShippingBlackout(deliveryMethod))
@@ -2386,11 +2386,11 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
       else if(checkAvailability(deliveryMode))
       {
           // track Tealium event on continue shipping.
-             utag.link({
+            /* utag.link({
              "tealium_event"    : "continue_shipping_click",
              "shipping_method"   : "Same Day Delivery",
              "shipping_method_not_available"     : "0"
-             });
+             });*/
           ACC.track.trackShippingSelection('Same Day Delivery','','Item In Stock');
           if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
               savedAddress = $('#same-day-address-div #delivery-saved-addresses-dropdown').find('select[id="ship-it-savedAddresses"]').val();
@@ -2465,11 +2465,11 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
         else
         {
          // track Tealium event on continue shipping.
-            utag.link({
+           /* utag.link({
             "tealium_event"    : "continue_shipping_click",
             "shipping_method"   : "Same Day Delivery",
             "shipping_method_not_available"     : "1"
-           });
+           });*/
          ACC.track.trackShippingSelection('Same Day Delivery','','Item Out of Stock');
         	window.location.reload();
       }
@@ -2658,11 +2658,11 @@ function onClickOfSaveSuggestedAddressForReplacementOrder() {
  	 hideErrorForInputValidation();
       if($('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id') != undefined) {
          // track Tealium event on continue shipping.
-         utag.link({
+        /* utag.link({
           "tealium_event"    : "continue_shipping_click",
           "shipping_method"   : "PickUP",
           "shipping_method_not_available"     : "0"
-         });
+         });*/
          ACC.track.trackShippingSelection('PickUP','','Item In Stock');
          var deliveryMode = $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id');
          if(checkShippingBlackout(deliveryMode)) {
@@ -2712,11 +2712,11 @@ function onClickOfSaveSuggestedAddressForReplacementOrder() {
                  if(data != null) {
                      if(upsStoreAddress != null) {
                         // track Tealium event on continue shipping.
-                          utag.link({
+                         /* utag.link({
                           "tealium_event"    : "continue_shipping_click",
                           "shipping_method"   : "Ship It-Ship to UPS",
                           "shipping_method_not_available"     : "0"
-                        });
+                        });*/
                         ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
                         addNewAddress(upsStoreAddress, deliveryMethod)
                             .then((data) => {
@@ -2727,11 +2727,11 @@ function onClickOfSaveSuggestedAddressForReplacementOrder() {
                             })
                      } else {
                        // track Tealium event on continue shipping.
-                         utag.link({
+                        /* utag.link({
                          "tealium_event"    : "continue_shipping_click",
                          "shipping_method"   : "PickUP",
                          "shipping_method_not_available"     : "0"
-                                  });
+                                  });*/
                         ACC.track.trackShippingSelection('PickUP','','Item In Stock');
                         saveDeliveryModeForOrderReplacement(deliveryMethod, status);
                      }
@@ -2749,19 +2749,19 @@ function onClickOfSaveSuggestedAddressForReplacementOrder() {
      {
      if(upsStoreAddress != null) {
         // track Tealium event on continue shipping.
-             utag.link({
+            /* utag.link({
               "tealium_event"    : "continue_shipping_click",
               "shipping_method"   : "Ship It-Ship to UPS",
               "shipping_method_not_available"     : "1"
-                                          });
+                                          });*/
        ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item Out of Stock');
        }else{
          // track Tealium event on continue shipping.
-          utag.link({
+          /*utag.link({
          "tealium_event"    : "continue_shipping_click",
          "shipping_method"   : "PickUP",
          "shipping_method_not_available"     : "1"
-                });
+                });*/
         ACC.track.trackShippingSelection('PickUP','','Item Out of Stock');
        }
      	window.location.reload();
