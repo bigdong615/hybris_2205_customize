@@ -184,7 +184,6 @@
 				  </c:when>
 			    </c:choose>
          		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType).toLowerCase()}",
-         		"listName": "${searchKeyword}",
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
   				"index": "${status.index + 1}",
 			  	"value": {
@@ -306,7 +305,7 @@
 				  </c:when>
 			    </c:choose>
          		"variant" : "${ycommerce:encodeJavaScript(blPageType.toLowerCase())}",
-         		"stockStatus" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
+         		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
        				   "displayGross": "${product.price.formattedValue.replace('$','')}"
@@ -407,7 +406,7 @@
 				
 				 dmpgDl.cart  = 
 				    {
-				    "lines": [
+				    "lines": [  
 				         <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
         					{
         					"product": {
@@ -434,6 +433,40 @@
      							  }
 			  				 }	
         					}<c:if test='${not status.last}'>,</c:if>
+        					
+        					
+        					 <c:if test="${entry.product.manufacturerAID ne '9'}">
+        					<c:choose>
+             	<c:when test="${entry.gearGuardProFullWaiverSelected}">
+             	<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "${entry.product.code}-gearguard",
+         					    "name": "Gear Guard",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"value": {
+           							       "displayGross": "${entry.gearGuardProFullWaiverPrice.formattedValue.replace('$','')}"
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+             	</c:when>
+             	<c:when test="${entry.gearGuardWaiverSelected}">
+             	<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "${entry.product.code}-gearguard",
+         					    "name": "Gear Guard",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"value": {
+           							       "displayGross": "${entry.gearGuardWaiverPrice.formattedValue.replace('$','')}"
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+             	</c:when>
+             	</c:choose>
+        					 </c:if>
         			  </c:forEach>
         			],
         			"value" :
@@ -441,7 +474,6 @@
     							"displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}",
     							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
   							}
-			  	}
 			  	}
 		</script>
 		
