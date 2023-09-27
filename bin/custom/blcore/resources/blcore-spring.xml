@@ -816,7 +816,9 @@
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 		<property name="searchRestrictionService" ref="searchRestrictionService"/>
 		<property name="sessionService" ref="sessionService"/>
-
+	</bean>
+	<bean id="removeSerialAction" class="com.bl.core.order.actions.RemoveSerialAssignToFutureConsignmentAction" parent="abstractAction">
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 	</bean>
 
 	<alias alias="productDao" name="defaultBlProductDao"/>
@@ -1524,6 +1526,7 @@
 	<bean id="defaultBlConsignmentEntryService" class="com.bl.core.services.consignment.entry.impl.DefaultBlConsignmentEntryService">
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 		<property name="sessionService" ref="sessionService"/>
         <property name="searchRestrictionService" ref="searchRestrictionService"/>
 	</bean>
