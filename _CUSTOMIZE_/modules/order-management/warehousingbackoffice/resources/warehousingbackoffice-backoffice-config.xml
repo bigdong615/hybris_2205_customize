@@ -97,8 +97,8 @@
             </n:navigation-node>
             <n:navigation-node id="warehousing.treenode.returns">
                 <n:type-node id="warehousing.typenode.return.waiting.goods"/>
-		    <n:navigation-node id="ProductAvailCheckTool" code="ProductAvailCheckTool"/>
             </n:navigation-node>
+			<n:navigation-node id="ProductAvailCheckTool" code="ProductAvailCheckTool"/>
         </n:explorer-tree>
     </context>
 
