@@ -33,10 +33,10 @@
  <c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
  	<c:set var="totalSearchResults" value="${searchPageData.pagination.totalNumberOfResults}" />
  	<c:set var="searchKeyword" value="${searchPageData.freeTextSearch}" />
- 	<c:set var="blCategoryPageType" value="${blPageType == 'rentalgear' ? 'Rental' : 'Used'}"/>
+ 	<c:set var="blCategoryPageType" value="${blPageType.toLowerCase() == 'rentalgear' ? 'Rental' : 'Used'}"/>
  </c:when>
  </c:choose>
-<c:set var="blPageType" value="${IsRentalPage ? 'Rental' : 'Used'}"/>
+ <c:set var="blPageType" value="${IsRentalPage ? 'Rental' : 'Used'}"/>
 <c:choose>
 	<c:when test="${pageType == 'PRODUCT'}">
 	 <c:if test="${not empty rentalDate.selectedFromDate}">
@@ -442,7 +442,7 @@
         					{
           					 "product": {
           						"id": "${entry.product.code}-gearguard",
-         					    "name": "Gear Guard",
+         					    "name": "Gear Guard Plus",
           						"parentProductId": "${entry.product.code}",
           						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"value": {
