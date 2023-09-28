@@ -146,7 +146,16 @@
 		<script type="text/javascript">
 		
           window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+			{
+      			"event": "search.interact.manual.search",
+     			 "search": {       
+     			  "keyword": "${searchKeyword}",
+      			  "type": "",
+      			  "location": ""
+     		 }
+   		 }
+			];
 
 			dmpgDl.screen = 
 				{
