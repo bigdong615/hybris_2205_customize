@@ -436,11 +436,11 @@
 	<widget-connection sourceWidgetId="InventoryCycleCountScan_conditionevaluator" outputId="true" targetWidgetId="InventoryCycleCountScan_propertyextractor" inputId="genericInput"/>
 	<widget-connection sourceWidgetId="InventoryCycleCountScan_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
 
-	<!-- Product Avail Check Tool Section -->
+	<!-- Product Avail Check Tool Section for Inventory User-->
+	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="ProductAvailCheckTool_conditionevaluator" inputId="input"/>
+	<!-- Product Avail Check Tool Section for CS Agent-->
 	<widget-connection sourceWidgetId="csExplorerTree" outputId="nodeSelected" targetWidgetId="ProductAvailCheckTool_conditionevaluator" inputId="input"/>
-	<widget-connection sourceWidgetId="ProductAvailCheckTool_conditionevaluator" outputId="true" targetWidgetId="ProductAvailCheckTool_propertyextractor" inputId="nodeSelected"/>
-
-	<!-- Product Avail Check Tool Section -->
+	<!-- Product Avail Check Tool Section for Warehouseagent-->
 	<widget-connection sourceWidgetId="warehousingExplorerTree" outputId="nodeSelected" targetWidgetId="ProductAvailCheckTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="ProductAvailCheckTool_conditionevaluator" outputId="true" targetWidgetId="ProductAvailCheckTool_propertyextractor" inputId="nodeSelected"/>
 
