@@ -196,7 +196,7 @@
 			  	 <c:forEach items='${searchPageData.results}' var='product' varStatus='status'>
 			  	{
 			  	"id": "${product.code}",
-			  	"name": "${product.name}",
+			  	"name": "${product.displayName}",
           		"brand": "${product.manufacturer}",
           		<c:choose>
 				  <c:when test="${not empty product.categoriesList[0]}">
@@ -261,7 +261,7 @@
 			  	 <c:forEach items='${searchPageData.results}' var='product' varStatus='status'>
 			  	{
 			  	"id": "${product.code}",
-			  	"name": "${product.name}",
+			  	"name": "${product.displayName}",
           		"brand": "${product.manufacturer}",
           		<c:choose>
 				  <c:when test="${not empty product.categoriesList[0]}">
@@ -317,7 +317,7 @@
 			  dmpgDl.products = [
 			  	{
 			  	"id": "${product.code}",
-			  	"name": "${product.name}",
+			  	"name": "${product.displayName}",
           		"brand": "${product.manufacturer}",
           		<c:choose>
 				 <c:when test="${not empty product.categoriesList[0]}">

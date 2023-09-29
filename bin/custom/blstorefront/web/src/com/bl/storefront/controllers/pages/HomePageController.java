@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import de.hybris.platform.acceleratorfacades.productcarousel.ProductCarouselFacade;
 import de.hybris.platform.acceleratorservices.storefront.data.MetaElementData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
@@ -10,13 +11,18 @@ import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.AbstractPageModel;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
+import de.hybris.platform.cms2.servicelayer.services.CMSComponentService;
+import de.hybris.platform.cms2lib.model.components.ProductCarouselComponentModel;
 
 import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +37,7 @@ import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.subscription.BlEmailSubscriptionFacade;
+import com.bl.logging.BlLogger;
 
 /**
  * Controller for home page
@@ -41,6 +48,8 @@ public class HomePageController extends AbstractPageController
 {
 	private static final String LOGOUT = "logout";
 	private static final String ISRENTAL_CART = "isRentalCart";
+	private static final Logger LOG = Logger.getLogger(HomePageController.class);
+
 
 	@Resource(name = "cartFacade")
 	private BlCartFacade blCartFacade;
@@ -50,6 +59,12 @@ public class HomePageController extends AbstractPageController
 
 	@Value("${bl.google.site.verification}")
 	private String googleSiteVerification;
+
+	@Resource(name = "productCarouselFacade")
+	private ProductCarouselFacade productCarouselFacade;
+
+	@Resource(name = "cmsComponentService")
+	private CMSComponentService cmsComponentService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
@@ -76,6 +91,21 @@ public class HomePageController extends AbstractPageController
 		updatePageTitle(model, contentPage);
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
 		model.addAttribute(blCartFacade.identifyCartType(),true);
+		ProductCarouselComponentModel component = null;
+
+		BlLogger.logMessage(LOG, Level.INFO, "Before new rentals load", "" + System.currentTimeMillis());
+		try
+		{
+			component = (ProductCarouselComponentModel) cmsComponentService.getSimpleCMSComponent("HomePageFeaturedGearComponent");
+			model.addAttribute("newRentalProductsCarousel", component.getProducts());
+
+		}
+		catch (final Exception e)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Issue while getting new rental products in homepage", e);
+		}
+		BlLogger.logMessage(LOG, Level.INFO, "After new rentals load", "" + System.currentTimeMillis());
+
 		return getViewForPage(model);
 	}
 
