@@ -82,13 +82,11 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
       }else{
           cartModel.setActualRentalStartDate(startDay);
       }
-      LOG.info("Actual Rental Start Day : "+ startDay);
-
         // Commenting replacing below line to get Post Order Transit Date same as optimized shipping end date.
         // final Date endDay = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd.get(), rentalDateDto.getSelectedToDate(), blackOutDates);
 
         final Date endDay = BlDateTimeUtils.addDaysInRentalDates(postDaysToAdd.get(), rentalDateDto.getSelectedToDate(), blackOutDates);
-        LOG.info("Actual Rental End Day : "+ endDay);
+
       cartModel.setActualRentalEndDate(endDay);
 
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,

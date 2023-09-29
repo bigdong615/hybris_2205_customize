@@ -1398,14 +1398,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
            final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(
                    BlCoreConstants.BASE_STORE_ID);
            if(baseStore.isBusySeason()){
-               // 1. Ordering today(19/9) for delivery NEXT BUSINESS DAY (20/9)
-		        //  a.Optimized start date: Today (19/09)
-		        //  b.Optimized end date: rental end date + 2 business days (27/09)
-			       // b.1.UNLESS service days = 1
-                        //  b.1.1 If above is true, rental end date + 1 business day
 
-         preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
-         postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : inboundServiceDays);
+                preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
+                postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : inboundServiceDays);
        }
            else {
                preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
