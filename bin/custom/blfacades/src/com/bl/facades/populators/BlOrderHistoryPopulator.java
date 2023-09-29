@@ -240,8 +240,6 @@ private void populateUpdatedOrderStatus(OrderModel source, OrderHistoryData targ
 
         case INCOMPLETE_RECOVERED:
 
-        case ON_HOLD:
-
         case ON_VALIDATION:
 
         case ORDER_SPLIT:
@@ -339,7 +337,7 @@ private void populateUpdatedOrderStatus(OrderModel source, OrderHistoryData targ
    
    		case RECEIVED_IN_VERIFICATION:
    			
-   			target.setOrderStatus("Verfication Required");
+   			target.setOrderStatus("Verification Required");
    			break;
    
    		case RECEIVED_PAYMENT_DECLINED:
@@ -386,7 +384,11 @@ private void populateUpdatedOrderStatus(OrderModel source, OrderHistoryData targ
    			
    			target.setOrderStatus("Verfication Required");
    			break;
-   
+         
+   		case ON_HOLD:
+   			
+   			target.setOrderStatus("Pending");
+   			break;
    			
    		default:
    			break;

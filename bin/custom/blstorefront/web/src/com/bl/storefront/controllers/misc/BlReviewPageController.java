@@ -54,8 +54,8 @@ public class BlReviewPageController extends AbstractPageController {
 
     private void addReviewConfigs(Model model) {
         model.addAttribute("merchantAPI_Key", getConfigurationService().getConfiguration().getString("powerreviews.merchant.api", "54a82048-9c20-4a13-a01b-dd5b0415a965"));
-        model.addAttribute("merchantID", getConfigurationService().getConfiguration().getString("powerreviews.merchant.id ", "1415200746"));
-        model.addAttribute("merchantGroupId", getConfigurationService().getConfiguration().getString("powerreviews.merchant.groupid ", "2120371445"));
+        model.addAttribute("merchantID", getConfigurationService().getConfiguration().getString("powerreviews.merchant.id", "1415200746"));
+        model.addAttribute("merchantGroupId", getConfigurationService().getConfiguration().getString("powerreviews.merchant.groupid", "2120371445"));
     }
 
     @Override
