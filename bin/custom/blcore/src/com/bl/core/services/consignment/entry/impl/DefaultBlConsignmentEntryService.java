@@ -116,7 +116,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				}
 			});
 		}else {
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No any future consignment are associated with the given serial {}", blSerialProductModel.getCode());
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No any future consignment are associated for replacement of serial {}", blSerialProductModel.getCode());
 		}
 	}
 
