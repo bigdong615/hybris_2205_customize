@@ -137,6 +137,23 @@
 			   {
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};
+				
+			 dmpgDl.modules = [
+   					{
+   					 "id": "${categories}-modules-home",
+   					 "name": "new-rentals",
+     				 "placement": "home-new-products",
+     				 "items": [
+			           <c:forEach items='${newRentalProductsCarousel}' var='product' varStatus='status'>
+       					 {
+         				 "id": "${product.code}",
+          				 "type": "product",
+        				 "position": "${status.index + 1}"
+       					 }<c:if test='${not status.last}'>,</c:if>
+               		</c:forEach>
+               			]
+               			}
+               			],	
 		</script>
 		
 	</c:when>
@@ -151,8 +168,8 @@
       			"event": "search.interact.manual.search",
      			 "search": {       
      			  "keyword": "${searchKeyword}",
-      			  "type": "",
-      			  "location": ""
+      			  "type": "${datesSettedInSession ? 'date' : 'keyword'}",
+      			  "location": "hero"
      		 }
    		 }
 			];
