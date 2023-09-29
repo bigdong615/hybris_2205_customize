@@ -12,6 +12,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
     sclass="oms-widget-updateorder-configuration"
 	id="productAvailCheckTool" height="100%" width="100%">
+
    <div id="productAvailCheckId">
             <grid  hflex="1">
                 <columns>
@@ -29,12 +30,15 @@
             </grid>
            </div>
            <div sclass="oms-widget-billing-thirdlist-container" style="text-align: center;">
+
               <button id="productAvailCheck" style="width:200px;"
                  label="${labels.customersupportbackoffice.productAvailCheck.submit.button}"
                  sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" >Submit</button>
               <button id="cancel" style="width:200px;"
                   label="${labels.customersupportbackoffice.productAvailCheck.cancel.button}"
                    sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" >Cancel</button>
+
+
            </div>
         <div style="margin:30px;" id="productAvailCheckToolDataHeader">
                 <hlayout width="100%"  sclass="oms-widget-reassignserial-list">
@@ -88,4 +92,52 @@
                             </div>
                             </hlayout>
                            </div>
+
+<div id="productLocationKey" >
+<label value="Product Location Key" width="100%" style="font-weight: bold;font-size: 18px;"/>
+ <hlayout width="100%"  sclass="oms-widget-reassignserial-list">
+        <div style="height:304px;" sclass="oms-widget-reassignserial-list-container" >
+
+
+                           <grid id="productLocationKeyGrid"  width="100%" height="150px" hflex="min">
+ <custom-attributes org.zkoss.zul.nativebar="false"/>
+                                     <columns>
+                                      <column width="600px">
+                                           <label value="Ordered by most desirable (easiest to fulfill)" width="100%"/>
+                                      </column>
+                                      <column width="600px">
+                                          <label value="Additional locations (requires further investigation)" width="100%"/>
+                                      </column>
+                                      </columns>
+                                      <rows>
+                                           <row>
+                                             <textbox value="CAR000 S00 = In the cage" width="600px"
+                                                      readonly="true"/>
+                                             <textbox value="CA DECLINED00 S00 = Item on an order that was declined." width="600px"
+                                                      readonly="true"/>
+                                           </row>
+                                           <row>
+                                             <textbox value="CAM CLEAN000 S00 = On a clean cart" width="600px" readonly="true"/>
+
+                                             <textbox value="CAM SHP PREPPED000 S00 = Item is prepped for an order" width="600px"
+                                                                                                   readonly="true"/>
+                                           </row>
+                                           <row>
+                                             <textbox value="CAM GB PHOTO000 S00 = On a clean cart" width="600px" readonly="true"/>
+                                               <textbox value="CAM SHP PULLED000 S00 = Item is pulled to an order" width="600px"
+                                                        readonly="true"/>
+                                             </row>
+                                             <row>
+                                               <textbox value="CAM DIRTY000 S00 = On a dirty cart needing to go through Gear Techs." width="600px"
+                                                        readonly="true"/>
+                                               <textbox value="CAM READYTOSHIP000 S00 = Item is ready to ship on an order" width="600px"
+                                                                                                              readonly="true"/>
+                                             </row>
+
+                                      </rows>
+                           </grid>
+                           </div>
+</hlayout>
+                           </div>
+
 </widget>

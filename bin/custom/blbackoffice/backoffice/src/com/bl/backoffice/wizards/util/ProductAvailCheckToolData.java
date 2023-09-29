@@ -1,19 +1,17 @@
 package com.bl.backoffice.wizards.util;
 
 public class ProductAvailCheckToolData implements Comparable<ProductAvailCheckToolData>{
-
-    private String productCode;
+	private String productCode;
     private String articleNumber;
     private String barcode;
     private String serialStatus;
     private String warehouseLocation;
-
     private String ocLocation;
     private String lastLocationScanParent;
     public String getProductCode() {
         return productCode;
     }
-    public void setProductCode(String productCode) {
+    public void setProductCode(final String productCode) {
         this.productCode = productCode;
     }
 
@@ -21,7 +19,7 @@ public class ProductAvailCheckToolData implements Comparable<ProductAvailCheckTo
         return articleNumber;
     }
 
-    public void setArticleNumber(String articleNumber) {
+    public void setArticleNumber(final String articleNumber) {
         this.articleNumber = articleNumber;
     }
 
@@ -29,7 +27,7 @@ public class ProductAvailCheckToolData implements Comparable<ProductAvailCheckTo
         return barcode;
     }
 
-    public void setBarcode(String barcode) {
+    public void setBarcode(final String barcode) {
         this.barcode = barcode;
     }
 
@@ -37,7 +35,7 @@ public class ProductAvailCheckToolData implements Comparable<ProductAvailCheckTo
         return serialStatus;
     }
 
-    public void setSerialStatus(String serialStatus) {
+    public void setSerialStatus(final String serialStatus) {
         this.serialStatus = serialStatus;
     }
 
@@ -45,7 +43,7 @@ public class ProductAvailCheckToolData implements Comparable<ProductAvailCheckTo
         return warehouseLocation;
     }
 
-    public void setWarehouseLocation(String warehouseLocation) {
+    public void setWarehouseLocation(final String warehouseLocation) {
         this.warehouseLocation = warehouseLocation;
     }
 
@@ -53,7 +51,7 @@ public class ProductAvailCheckToolData implements Comparable<ProductAvailCheckTo
         return ocLocation;
     }
 
-    public void setOcLocation(String ocLocation) {
+    public void setOcLocation(final String ocLocation) {
         this.ocLocation = ocLocation;
     }
 
@@ -61,13 +59,12 @@ public class ProductAvailCheckToolData implements Comparable<ProductAvailCheckTo
         return lastLocationScanParent;
     }
 
-    public void setLastLocationScanParent(String lastLocationScanParent) {
+    public void setLastLocationScanParent(final String lastLocationScanParent) {
         this.lastLocationScanParent = lastLocationScanParent;
     }
 
-
     @Override
-    public int compareTo(ProductAvailCheckToolData o) {
+    public int compareTo(final ProductAvailCheckToolData o) {
         return 0;
     }
 }

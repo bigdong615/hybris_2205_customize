@@ -77,6 +77,7 @@
 			<n:type-node code="GiftCard" id="GiftCard"/>
 			<n:type-node code="Consignment" id="Shipment"/>
 			<n:type-node code="StockLevel" id="StockLevel"/>
+			<n:navigation-node id="ProductAvailCheckTool" code="ProductAvailCheckTool"/>
 		</n:explorer-tree>
 	</context>
 
@@ -2443,7 +2444,7 @@
 			<n:navigation-node id="PickerScanTool" code="PickerScanTool"/>
 		</n:explorer-tree>
 	</context>
-	
+
 	<context parent="GenericItem" type="Order" component="cs-editor-area">
         <editorArea:editorArea name="Order editor area" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
             <editorArea:tab name="customersupportbackoffice.order.tab.consignments">
