@@ -140,7 +140,7 @@
 				
 			 dmpgDl.modules = [
    					{
-   					 "id": "${categories}-modules-home",
+   					 "id": "modules-home",
    					 "name": "new-rentals",
      				 "placement": "home-new-products",
      				 "items": [
