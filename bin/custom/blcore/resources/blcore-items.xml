@@ -4029,6 +4029,12 @@
                         <persistence type="property" />
                         <description>Userd gear sale End Date</description>
                     </attribute>
+                    <attribute qualifier="busySeason" type="boolean">
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Flag to enable and disable busy season on checkout</description>
+                        <persistence type="property" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>

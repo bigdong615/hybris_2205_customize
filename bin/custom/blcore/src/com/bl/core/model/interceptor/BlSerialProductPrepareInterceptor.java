@@ -100,7 +100,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
 			updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
 			updateStockRecordsForBufferInventoryFlag(blSerialProduct, ctx);
-			removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
+			//removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
 			setLastUserChangedConditionRating(blSerialProduct, ctx);
 			setFlagForBufferedInventoryOnSerial(blSerialProduct);
 			updateStockRecordsOnSerialCodeUpdate(blSerialProduct, ctx);
