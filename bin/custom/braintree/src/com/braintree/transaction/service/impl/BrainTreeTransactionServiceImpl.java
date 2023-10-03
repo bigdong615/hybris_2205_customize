@@ -137,11 +137,20 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	@Override
 	public boolean createAuthorizationTransaction(Map<String, String> customFields)
 	{
+		final BrainTreeAuthorizationResult result;
 		final CartModel cart = cartService.getSessionCart();
 		try {
 			Map<String, String> customFields2 = getCustomFields(cart);
-			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, customFields2, 
-				getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE, null);
+			if(BooleanUtils.isFalse(cart.getIsRentalOrder()) && BooleanUtils.isFalse(cart.isGiftCardOrder())
+					&& BooleanUtils.isFalse(cart.getIsRetailGearOrder()))
+			{
+				result = brainTreeAuthorize(cart, customFields2,
+						BigDecimal.valueOf(cart.getTotalPrice()), Boolean.FALSE, null);
+			}
+			else{
+				result = brainTreeAuthorize(cart, customFields2,
+						getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE, null);
+			}
 			return handleAuthorizationResult(result, cart);
 		} catch(final Exception ex) {
 			BlLogger.logMessage(LOG, Level.ERROR,
@@ -343,14 +352,32 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			{
 				brainTreePaymentService.updatePaymentInfo(cart.getPaymentInfo(), result.getCreditCard());
 			}
+			setAuthorizedFlag(cart,Boolean.TRUE);
 			LOG.info("[BT AUTHORIZE] Transaction with code : " + paymentTransactionEntry.getCode() + " was created with status "
 					+ TransactionStatusDetails.SUCCESFULL.name());
 			return true;
 		}
 		else
 		{
+			setAuthorizedFlag(cart,Boolean.FALSE);
 			LOG.error("[BT AUTHORIZE] Failed!");
 			return false;
+		}
+	}
+
+	/**
+	 * This method is to set the authorized flag for used gear order
+	 * @param cart
+	 * @param flag
+	 */
+	private void setAuthorizedFlag(AbstractOrderModel cart,Boolean flag)
+	{
+		if(BooleanUtils.isFalse(cart.getIsRentalOrder()) && BooleanUtils.isFalse(cart.isGiftCardOrder())
+				&& BooleanUtils.isFalse(cart.getIsRetailGearOrder()))
+		{
+			cart.setIsAuthorised(flag);
+			cart.setIsAuthorizationAttempted(true);
+			getModelService().save(cart);
 		}
 	}
 
