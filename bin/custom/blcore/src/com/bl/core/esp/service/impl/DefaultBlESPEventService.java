@@ -1028,11 +1028,11 @@ public class DefaultBlESPEventService implements BlESPEventService {
 		 }
 		 catch (final BlESPIntegrationException exception)
 		 {
-			 persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_PENDING, orderModel.getCode(), exception.getMessage(),
+			 persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_REMINDER, orderModel.getCode(), exception.getMessage(),
 					 exception.getRequestString());
 		 }
 		 // Save send order confirmation ESP Event Detail
-		 persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.VERIFICATION_PENDING, orderModel.getCode(), null, null);
+		 persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.VERIFICATION_REMINDER, orderModel.getCode(), null, null);
 	 }
 
     /**

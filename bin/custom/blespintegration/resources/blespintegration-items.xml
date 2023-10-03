@@ -42,6 +42,7 @@
 				<value code="FREE_GIFT_CARD_PURCHASE" />
         <value code="BACK_IN_STOCK_EMAIL"/>
 				<value code="VERIFICATION_PENDING"/>
+				<value code="VERIFICATION_REMINDER"/>
 			</enumtype>
 			<enumtype generate="true" code="ESPEventStatus" autocreate="true" dynamic="true">
 					<value code="SUCCESS"/>
