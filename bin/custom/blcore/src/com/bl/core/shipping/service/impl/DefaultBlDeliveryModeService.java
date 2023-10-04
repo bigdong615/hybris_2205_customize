@@ -1386,7 +1386,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
    	 if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
     		  shippingOptimizationModels = shippingOptimizationModels.stream().collect(minList(Comparator.comparing(ShippingOptimizationModel::getServiceDays)));      		
     	  }
-    	 
+
+        final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(
+                BlCoreConstants.BASE_STORE_ID);
        if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
       	 for(ShippingOptimizationModel model : shippingOptimizationModels) {
              if (model.getInbound() == BlInventoryScanLoggingConstants.ONE) {
@@ -1395,8 +1397,6 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                  outboundServiceDays = model.getServiceDays();
              }
          }
-           final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(
-                   BlCoreConstants.BASE_STORE_ID);
            if(baseStore.isBusySeason()){
 
                 preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
@@ -1412,7 +1412,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
       	 inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
       	 outboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
 
-           if(getBaseStoreService().getCurrentBaseStore().isBusySeason()){
+           if(baseStore.isBusySeason()){
                preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
                postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : inboundServiceDays);
            }
