@@ -11,10 +11,12 @@
 var googleAnalyticsTrackingId = '${ycommerce:encodeJavaScript(googleAnalyticsTrackingId)}';
 var pageType = '';
 
+<%-- commented as its unused
 window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 gtag('config', googleAnalyticsTrackingId);
+--%>
 
 <c:set var="cartType" value=""/>
 <c:choose>
@@ -278,6 +280,10 @@ gtag('config', googleAnalyticsTrackingId);
 	</c:otherwise>
 </c:choose>
 
+
+<%--------- commented as its unused
+
+
 function trackAddToCart_google(productCode, productName,quantity,productBrand,productType,productCategory) {
 	gtag('event', 'add_to_cart', {
 	   "event_category": "Cart",
@@ -295,6 +301,8 @@ function trackAddToCart_google(productCode, productName,quantity,productBrand,pr
       ]
 	});
 }
+
+
 
 function trackRemoveFromCart(productCode,productName,initialQuantity) {
 	gtag('event', 'remove_from_cart', {
@@ -549,6 +557,9 @@ window.mediator.subscribe('placeOrderClick', function(data) {
      'non_interaction': true
    });
  }
+ 
+ 
+---------  %>
 
 
 </script>
