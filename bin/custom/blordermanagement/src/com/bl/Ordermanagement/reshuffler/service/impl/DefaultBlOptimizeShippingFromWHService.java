@@ -431,7 +431,7 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
           serialProducts.add((BlSerialProductModel) serial);
         }
       });
-      orderEntry.setUnAllocatedQuantity(orderEntry.getUnAllocatedQuantity() - Long.valueOf(serialProducts.size()));
+      //orderEntry.setUnAllocatedQuantity(orderEntry.getUnAllocatedQuantity() - Long.valueOf(serialProducts.size()));
       orderEntry.setSerialProducts(new ArrayList<>(serialProducts));
       entry.setQuantity(Long.valueOf(serialProducts.size()));
       entry.setSerialProducts(
