@@ -819,6 +819,7 @@
 	</bean>
 	<bean id="removeSerialAction" class="com.bl.core.order.actions.RemoveSerialAssignToFutureConsignmentAction" parent="abstractAction">
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 
 	<alias alias="productDao" name="defaultBlProductDao"/>
