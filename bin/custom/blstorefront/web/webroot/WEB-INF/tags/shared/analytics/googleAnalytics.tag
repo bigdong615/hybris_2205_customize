@@ -6,12 +6,16 @@
 <c:if test="${not empty googleAnalyticsTrackingId}">
 <script async src="https://www.googletagmanager.com/gtag/js?id=${ycommerce:encodeJavaScript(googleAnalyticsTrackingId)}"></script>
 <script>
+
+
+<%-- commented as its unused
+var pageType = '';
 /* Google Analytics */
 
 var googleAnalyticsTrackingId = '${ycommerce:encodeJavaScript(googleAnalyticsTrackingId)}';
-var pageType = '';
 
-<%-- commented as its unused
+
+
 window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -281,7 +285,7 @@ gtag('config', googleAnalyticsTrackingId);
 </c:choose>
 
 
-<%--------- commented as its unused
+<%-- commented as its unused
 
 
 function trackAddToCart_google(productCode, productName,quantity,productBrand,productType,productCategory) {
@@ -559,7 +563,7 @@ window.mediator.subscribe('placeOrderClick', function(data) {
  }
  
  
----------  %>
+--%>
 
 
 </script>
