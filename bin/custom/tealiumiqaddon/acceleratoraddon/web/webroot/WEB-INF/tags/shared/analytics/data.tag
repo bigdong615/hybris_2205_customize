@@ -153,7 +153,32 @@
                		</c:forEach>
                			]
                			}
-               			]
+               			],
+               			
+               			dmpgDl.assets = 
+   							 {
+     						   "products": [
+			           <c:forEach items='${newRentalProductsCarousel}' var='product' varStatus='status'>
+       							  {
+         							"id": "${product.code}",
+       								 "name": "${product.name}",
+       								 "brand": "${product.manufacturer}",
+				 					 <c:if test="${not empty product.categories[0]}">
+									 "category": "${ycommerce:encodeJavaScript(product.categories[0].code)}",</c:if>
+				 					  <c:if test="${not empty product.categories[1]}">
+									  "subCategory2": "${ycommerce:encodeJavaScript(product.categories[1].code)}",</c:if>
+				  					  <c:if test="${not empty product.categories[2]}">
+				   					  "subCategory3": "${ycommerce:encodeJavaScript(product.categories[2].code)}",</c:if>
+			    					 "variant" : "rental",
+       								 "value": 
+       								    {
+         								 "displayGross": "${product.price.formattedValue.replace('$','')}"
+        								}
+       							    }<c:if test='${not status.last}'>,</c:if>
+               			</c:forEach>
+               			   ]
+               			  }
+               			}
 		</script>
 		
 	</c:when>

@@ -13,7 +13,14 @@ import de.hybris.platform.cms2.model.pages.AbstractPageModel;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSComponentService;
 import de.hybris.platform.cms2lib.model.components.ProductCarouselComponentModel;
+import de.hybris.platform.commercefacades.product.ProductOption;
+import de.hybris.platform.commercefacades.product.data.ProductData;
+import de.hybris.platform.converters.ConfigurablePopulator;
+import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.servicelayer.dto.converter.Converter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -60,11 +67,21 @@ public class HomePageController extends AbstractPageController
 	@Value("${bl.google.site.verification}")
 	private String googleSiteVerification;
 
+	@Resource(name = "productConfiguredPopulator")
+	private ConfigurablePopulator<ProductModel, ProductData, ProductOption> productConfiguredPopulator;
+
 	@Resource(name = "productCarouselFacade")
 	private ProductCarouselFacade productCarouselFacade;
 
 	@Resource(name = "cmsComponentService")
 	private CMSComponentService cmsComponentService;
+
+	@Resource(name = "productConverter")
+	private Converter<ProductModel, ProductData> productConverter;
+
+	protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE,
+			ProductOption.CATEGORIES);
+
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
@@ -77,6 +94,7 @@ public class HomePageController extends AbstractPageController
 			@RequestParam(value = LOGOUT, defaultValue = "false") final boolean logout, final Model model,
 			final RedirectAttributes redirectModel,final HttpServletRequest request) throws CMSItemNotFoundException
 	{
+
 		if (logout)
 		{
 			return REDIRECT_PREFIX + ROOT;
@@ -97,7 +115,22 @@ public class HomePageController extends AbstractPageController
 		try
 		{
 			component = (ProductCarouselComponentModel) cmsComponentService.getSimpleCMSComponent("HomePageFeaturedGearComponent");
-			model.addAttribute("newRentalProductsCarousel", component.getProducts());
+
+			final List<ProductData> products = new ArrayList<>();
+
+			for (final ProductModel productModel : component.getProducts())
+			{
+				final ProductData productData = new ProductData();
+
+				if (PRODUCT_OPTIONS != null)
+				{
+					getProductConfiguredPopulator().populate(productModel, productData, PRODUCT_OPTIONS);
+
+					products.add(productData);
+				}
+			}
+
+			model.addAttribute("newRentalProductsCarousel", products);
 
 		}
 		catch (final Exception e)
@@ -121,5 +154,23 @@ public class HomePageController extends AbstractPageController
 		XSSFilterUtil.filter(emailId);
 		blEmailSubscriptionFacade.subscribe(emailId);
 
+	}
+
+	/**
+	 * @return the productConfiguredPopulator
+	 */
+	public ConfigurablePopulator<ProductModel, ProductData, ProductOption> getProductConfiguredPopulator()
+	{
+		return productConfiguredPopulator;
+	}
+
+	/**
+	 * @param productConfiguredPopulator
+	 *           the productConfiguredPopulator to set
+	 */
+	public void setProductConfiguredPopulator(
+			final ConfigurablePopulator<ProductModel, ProductData, ProductOption> productConfiguredPopulator)
+	{
+		this.productConfiguredPopulator = productConfiguredPopulator;
 	}
 }
