@@ -83,6 +83,7 @@ public class HomePageController extends AbstractPageController
 			ProductOption.CATEGORIES);
 
 
+
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
@@ -120,7 +121,7 @@ public class HomePageController extends AbstractPageController
 
 			for (final ProductModel productModel : component.getProducts())
 			{
-				final ProductData productData = new ProductData();
+				final ProductData productData = getProductConverter().convert(productModel);
 
 				if (PRODUCT_OPTIONS != null)
 				{
@@ -157,6 +158,26 @@ public class HomePageController extends AbstractPageController
 	}
 
 	/**
+	 * Gets the product options to populate products for carousel.
+	 *
+	 * @return the product options for carousel
+	 */
+	private List<ProductOption> getProductOptionsForCarousel()
+	{
+		return Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.GALLERY, ProductOption.STOCK,
+				ProductOption.REQUIRED_DATA, ProductOption.REQUIRED_WISHLIST);
+	}
+
+
+	/**
+	 * @return the productConverter
+	 */
+	public Converter<ProductModel, ProductData> getProductConverter()
+	{
+		return productConverter;
+	}
+
+	/**
 	 * @return the productConfiguredPopulator
 	 */
 	public ConfigurablePopulator<ProductModel, ProductData, ProductOption> getProductConfiguredPopulator()
@@ -172,5 +193,14 @@ public class HomePageController extends AbstractPageController
 			final ConfigurablePopulator<ProductModel, ProductData, ProductOption> productConfiguredPopulator)
 	{
 		this.productConfiguredPopulator = productConfiguredPopulator;
+	}
+
+	/**
+	 * @param productConverter
+	 *           the productConverter to set
+	 */
+	public void setProductConverter(final Converter<ProductModel, ProductData> productConverter)
+	{
+		this.productConverter = productConverter;
 	}
 }
