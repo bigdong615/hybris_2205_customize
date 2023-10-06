@@ -324,17 +324,18 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 
 	private void updateStockRecordOnSerialApprovalStatusChange(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
-		try
-		{
+		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProductModel.APPROVALSTATUS);
-			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.APPROVALSTATUS))
-			{
-				if (blSerialProduct.getApprovalStatus().equals(ArticleApprovalStatus.UNAPPROVED)){
-					getBlStockService().findAndUpdateAllStock(blSerialProduct,Boolean.TRUE);
-				}else if(blSerialProduct.getApprovalStatus().equals(ArticleApprovalStatus.APPROVED)){
-					getBlStockService().findAndUpdateAllStock(blSerialProduct,Boolean.FALSE);
+			if (null != initialValue && (initialValue instanceof ArticleApprovalStatus)){
+              ArticleApprovalStatus approvalStatus = (ArticleApprovalStatus) initialValue;
+				if (!approvalStatus.equals(blSerialProduct.getApprovalStatus())) {
+					if (blSerialProduct.getApprovalStatus().equals(ArticleApprovalStatus.UNAPPROVED)) {
+						getBlStockService().findAndUpdateAllStock(blSerialProduct, Boolean.TRUE);
+					} else if (blSerialProduct.getApprovalStatus().equals(ArticleApprovalStatus.APPROVED)) {
+						getBlStockService().findAndUpdateAllStock(blSerialProduct, Boolean.FALSE);
+					}
 				}
-			}
+		}
 		} catch(final Exception ex)
 		{
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
