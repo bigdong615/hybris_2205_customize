@@ -693,10 +693,9 @@
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};
 				
-			dmpgDl.transaction = 
-			  	{
-  					"cart" : 
+  					dmpgDl.cart = 
 			  			{
+			  			    "checkoutStep": "1",
 			  				"lines" : [
 			  					   <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
 			  					      {
@@ -723,6 +722,39 @@
          							 		}
 					  					 }<c:if test='${not status.last}'>,</c:if>
 											
+											
+											<c:if test="${entry.product.manufacturerAID ne '9'}">
+        					<c:choose>
+             	<c:when test="${entry.gearGuardProFullWaiverSelected}">
+             	<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "${entry.product.code}-gearguard",
+         					    "name": "Gear Guard Plus",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"value": {
+           							       "displayGross": "${entry.gearGuardProFullWaiverPrice.formattedValue.replace('$','')}"
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+             	</c:when>
+             	<c:when test="${entry.gearGuardWaiverSelected}">
+             	<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "${entry.product.code}-gearguard",
+         					    "name": "Gear Guard",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"value": {
+           							       "displayGross": "${entry.gearGuardWaiverPrice.formattedValue.replace('$','')}"
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+             	</c:when>
+             	</c:choose>
+        					 </c:if>
 			 						 </c:forEach>
   						     ],
   					
@@ -732,7 +764,6 @@
     							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
   							}
   					 }
-			  		}
 		</script>
 		
 	</c:when>
@@ -748,7 +779,7 @@
 
 			dmpgDl.screen = 
 				{
-  					type: "Cart_Delivery_Details"
+  					type: "Cart_Payment_Details"
 				};
 			dmpgDl.user = 
 			  	{
@@ -763,10 +794,9 @@
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};	
 				
-				dmpgDl.transaction = 
-			  	{
-  					"cart" : 
+  					dmpgDl.cart = 
 			  			{
+			  			    "checkoutStep": "2",
 			  				"lines" : [
 			  					   <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
 			  					      {
@@ -793,6 +823,41 @@
          							 		}
 					  					 }<c:if test='${not status.last}'>,</c:if>
 											
+											
+											
+											
+											<c:if test="${entry.product.manufacturerAID ne '9'}">
+        					<c:choose>
+             	<c:when test="${entry.gearGuardProFullWaiverSelected}">
+             	<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "${entry.product.code}-gearguard",
+         					    "name": "Gear Guard Plus",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"value": {
+           							       "displayGross": "${entry.gearGuardProFullWaiverPrice.formattedValue.replace('$','')}"
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+             	</c:when>
+             	<c:when test="${entry.gearGuardWaiverSelected}">
+             	<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "${entry.product.code}-gearguard",
+         					    "name": "Gear Guard",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"value": {
+           							       "displayGross": "${entry.gearGuardWaiverPrice.formattedValue.replace('$','')}"
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+             	</c:when>
+             	</c:choose>
+        					 </c:if>
 			 						 </c:forEach>
   						     ],
   						     
@@ -812,7 +877,6 @@
     							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
   							}
   					 }
-			  		}
 		</script>
 		
 	</c:when>
@@ -842,10 +906,9 @@
 			   {
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};
-				dmpgDl.transaction = 
-			  	{
-  					"cart" : 
+  					dmpgDl.cart =
 			  			{
+			  			    "checkoutStep": "3",
 			  				"lines" : [
 			  					   <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
 			  					      {
@@ -872,6 +935,40 @@
          							 		}
 					  					 }<c:if test='${not status.last}'>,</c:if>
 											
+											
+											
+											<c:if test="${entry.product.manufacturerAID ne '9'}">
+        					<c:choose>
+             	<c:when test="${entry.gearGuardProFullWaiverSelected}">
+             	<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "${entry.product.code}-gearguard",
+         					    "name": "Gear Guard Plus",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"value": {
+           							       "displayGross": "${entry.gearGuardProFullWaiverPrice.formattedValue.replace('$','')}"
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+             	</c:when>
+             	<c:when test="${entry.gearGuardWaiverSelected}">
+             	<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "${entry.product.code}-gearguard",
+         					    "name": "Gear Guard",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"value": {
+           							       "displayGross": "${entry.gearGuardWaiverPrice.formattedValue.replace('$','')}"
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+             	</c:when>
+             	</c:choose>
+        					 </c:if>
 			 						 </c:forEach>
   						     ],
   						     
@@ -899,7 +996,6 @@
     							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
   							}
   					 }
-			  		}
 		</script>
 	</c:when>
 	
