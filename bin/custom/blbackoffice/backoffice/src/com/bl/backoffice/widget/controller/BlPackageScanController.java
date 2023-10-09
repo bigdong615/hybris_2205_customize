@@ -1,5 +1,8 @@
 package com.bl.backoffice.widget.controller;
 
+import com.bl.constants.BlloggingConstants;
+import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
+import com.hybris.cockpitng.util.notifications.NotificationService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -60,6 +63,8 @@ public class BlPackageScanController extends DefaultWidgetController
 
 	@Resource(name = "blInventoryScanToolDao")
 	BlInventoryScanToolDao blInventoryScanToolDao;
+	@Resource
+	private transient NotificationService notificationService;
 
 	ConsignmentModel selectedConsignment = new ConsignmentModel();
 
@@ -452,7 +457,9 @@ public class BlPackageScanController extends DefaultWidgetController
 		{
 			getBlInventoryScanToolService().updateSerialLastScanLocation(selectedConsignment, lastScannedItem);
 			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
-			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+			notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+					NotificationEvent.Level.SUCCESS, this.getLabel(BlInventoryScanLoggingConstants.SHIPPING_AND_PACKAGE_SCANNING_SUCCESS_MSG));
+
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 		}
 
@@ -502,7 +509,9 @@ public class BlPackageScanController extends DefaultWidgetController
 					getBlInventoryScanToolService().updateToUpsBound();
 
 					BlLogger.logMessage(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
-					Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+					notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+							NotificationEvent.Level.SUCCESS, this.getLabel(BlInventoryScanLoggingConstants.SHIPPING_AND_PACKAGE_SCANNING_SUCCESS_MSG));
+
 					this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 
 					//					final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));

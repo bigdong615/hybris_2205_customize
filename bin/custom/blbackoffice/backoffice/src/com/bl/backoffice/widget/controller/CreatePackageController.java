@@ -5,6 +5,7 @@ package com.bl.backoffice.widget.controller;
 
 import com.bl.blbackoffice.dto.SerialProductDTO;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.constants.BlloggingConstants;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -14,11 +15,13 @@ import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.hybris.backoffice.i18n.BackofficeLocaleService;
+import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.core.events.CockpitEventQueue;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 
+import com.hybris.cockpitng.util.notifications.NotificationService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.WarehouseService;
@@ -27,11 +30,8 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
@@ -73,7 +73,7 @@ public class CreatePackageController extends DefaultWidgetController
 	private Grid serialEntries;
 
 	@Wire
-	private Checkbox serialEntry;
+	private Checkbox globalSerialEntrySelection;
 
 	@WireVariable
 	private transient WarehouseService warehouseService;
@@ -116,6 +116,8 @@ public class CreatePackageController extends DefaultWidgetController
 
 	@Resource(name = "productDao")
 	private BlProductDao productDao;
+	@Resource
+	private transient NotificationService notificationService;
 
 	@SocketEvent(socketId = "inputObject")
 	public void initReallocationConsignmentForm(final ConsignmentModel consignment)
@@ -127,7 +129,7 @@ public class CreatePackageController extends DefaultWidgetController
 			{
 				this.consignmentCode.setValue(consignment.getCode());
 				this.customerName.setValue(consignment.getOrder().getUser().getUid());
-				this.serialEntry.setChecked(false);
+				this.globalSerialEntrySelection.setChecked(false);
 				if (!CollectionUtils.isEmpty(consignment.getConsignmentEntries()))
 				{
 					getListOfPackedSerials(consignment);
@@ -150,6 +152,42 @@ public class CreatePackageController extends DefaultWidgetController
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception occour for {} ", e);
 		}
 	}
+
+	/**
+	 * This method is called when we will change the value of missingItemToolCombobox
+	 */
+	@ViewEvent(componentID = "globalSerialEntrySelection", eventName = "onClick")
+	public void checkGlobalSerialEntrySelection() {
+		applyToGridSerialEntriesSelection();
+	}
+	/**
+	 * Apply to grid.
+	 *
+	 *
+	 */
+	private void applyToGridSerialEntriesSelection() {
+
+			for (final Component row : this.getOrderEntriesGridRows()) {
+				if (this.globalSerialEntrySelection.isChecked() == Boolean.TRUE) {
+					((Checkbox) row.getChildren().iterator().next()).setChecked(Boolean.TRUE);
+					addOrRemoveAllSerialProduct(Boolean.TRUE);
+				} else {
+					((Checkbox) row.getChildren().iterator().next()).setChecked(Boolean.FALSE);
+					addOrRemoveAllSerialProduct(Boolean.FALSE);
+				}
+			}
+	}
+	private void addOrRemoveAllSerialProduct(Boolean selection) {
+		if (CollectionUtils.isNotEmpty(this.allSerialProducts)) {
+				if(selection) {
+					this.selectedSerialProducts.addAll(allSerialProducts);
+				}else{
+					this.selectedSerialProducts.removeAll(allSerialProducts);
+				}
+			}
+		}
+
+
 
 
 	/**
@@ -289,7 +327,13 @@ public class CreatePackageController extends DefaultWidgetController
 	{
 		if (CollectionUtils.isEmpty(this.selectedSerialProducts))
 		{
-			Messagebox.show("Atleast Select one Serial Product", "Error Occured", Messagebox.CANCEL, "icon");
+			Map params = new HashMap();
+			params.put("sclass", "myMessagebox");
+			Messagebox.show("Atleast Select one Serial Product",
+					"Error Occurred", new Messagebox.Button[]
+							{Messagebox.Button.OK},null , Messagebox.ERROR, null,
+					null, params);
+
 		}
 		else
 		{
@@ -316,7 +360,9 @@ public class CreatePackageController extends DefaultWidgetController
 
 	protected void showMessageBox()
 	{
-		Messagebox.show("Details Updated Successfully");
+		notificationService.notifyUser(org.apache.commons.lang3.StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+				NotificationEvent.Level.SUCCESS, this.getLabel("warehousingbackoffice.createpackage.tool.notification.successful.message"));
+
 		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 

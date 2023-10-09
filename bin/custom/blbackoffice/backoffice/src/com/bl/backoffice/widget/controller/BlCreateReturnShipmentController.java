@@ -1,5 +1,8 @@
 package com.bl.backoffice.widget.controller;
 
+import com.bl.constants.BlloggingConstants;
+import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
+import com.hybris.cockpitng.util.notifications.NotificationService;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -8,14 +11,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -95,6 +91,8 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 	@Resource(name = "blOptimizedShippingMethodGenericDao")
 	private GenericDao<OptimizedShippingMethodModel> blOptimizedShippingMethodGenericDao;
+	@Resource
+	private transient NotificationService notificationService;
 
 	private ListModelList<String> warehouseList = new ListModelList<>();
 	private ListModelList<String> shippingTypeList = new ListModelList<>();
@@ -195,12 +193,18 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		}
 		if (CollectionUtils.isNotEmpty(errorPackages))
 		{
+			Map params = new HashMap();
+			params.put("sclass", "myMessagebox");
 			Messagebox.show("Error while generating Inbound label for packages with ID : " + String.join(", ", errorPackages),
-					BlCoreConstants.ERROR_TITLE, Messagebox.OK, Messagebox.ERROR);
+					"Error Occurred", new Messagebox.Button[]
+							{Messagebox.Button.OK},null , Messagebox.ERROR, null,
+					null, params);
 		}
 		else
 		{
-			Messagebox.show("Inbound Label Generated Successfully", BlintegrationConstants.POPUP_TEXT, Messagebox.OK, "icon");
+			notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+					NotificationEvent.Level.SUCCESS, this.getLabel("blbackoffice.inbound.label.tool.notification.successful.message"));
+
 		}
 		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}

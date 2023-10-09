@@ -45,7 +45,7 @@
                   pageSize="6" width="100%"  height="250px;" style="overflow:auto;">
                 <columns>
                 	<column sclass="oms-widget-reallocationconsignment-listbox-header">
-                        <checkbox id="serialEntry" class="oms-widget-reallocationconsignment-list-container__checkbox" visible="false"/>
+                        <checkbox id="globalSerialEntrySelection" class="oms-widget-reallocationconsignment-list-container__checkbox" visible="true"/>
                     </column>
                     <column sclass="oms-widget-reallocationconsignment-listbox-header">
                         <label value="${labels.warehousingbackoffice.createpackage.productcode}" width="100%"/>
