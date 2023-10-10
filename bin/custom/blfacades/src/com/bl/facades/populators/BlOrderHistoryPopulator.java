@@ -262,13 +262,7 @@ private void populateUpdatedOrderStatus(OrderModel source, OrderHistoryData targ
 
         case RECEIVED:
 
-        case RECEIVED_MANUAL_REVIEW:
-
         case RECEIVED_PICKED_UP:
-
-        case RECEIVED_ROLLING:
-
-        case RECEIVED_SHIPPING_MANUAL_REVIEW:
 
         case RETURNED:
 
@@ -385,6 +379,12 @@ private void populateUpdatedOrderStatus(OrderModel source, OrderHistoryData targ
    			target.setOrderStatus("Verfication Required");
    			break;
          
+   		case RECEIVED_ROLLING:
+
+         case RECEIVED_SHIPPING_MANUAL_REVIEW:
+         	
+         case RECEIVED_MANUAL_REVIEW:
+         	
    		case ON_HOLD:
    			
    			target.setOrderStatus("Pending");
