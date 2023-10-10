@@ -61,5 +61,9 @@ public class DomoAddressPopulator extends BlAddressPopulator
 		target.setShippingAddress(source.getShippingAddress());
 		target.setUnloadingAddress(source.getUnloadingAddress());
 		target.setContactaAddress(source.getContactAddress());
+		if (source.getOwner() != null)
+		{
+			target.setOwnerPk(source.getOwner().getPk().toString());
+		}
 	}
 }

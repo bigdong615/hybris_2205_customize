@@ -43,6 +43,7 @@
         <collectiontype code="IpVelocityList" elementtype="java.lang.String" type="list"/>
 
         <collectiontype code="subpartsList" elementtype="BlSubparts" type="list"/>
+        <collectiontype code="SerialStatusEnumSet" elementtype="SerialStatusEnum" type="set"/>
 
     </collectiontypes>
 
@@ -4034,6 +4035,11 @@
                         <description>Flag to enable and disable busy season on checkout</description>
                         <persistence type="property" />
                         <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="serialStatus" type="SerialStatusEnumSet">
+                        <modifiers read="true" write="true" search="true" />
+                        <description> This is contain all the serial status for which need to remove serial from future consignment</description>
+                        <persistence type="property"/>
                     </attribute>
                 </attributes>
             </itemtype>
