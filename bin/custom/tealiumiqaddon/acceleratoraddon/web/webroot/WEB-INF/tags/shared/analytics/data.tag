@@ -178,7 +178,6 @@
                			</c:forEach>
                			   ]
                			  }
-               			}
 		</script>
 		
 	</c:when>
@@ -410,7 +409,7 @@
                			</c:forEach>
                			   ]
                			  }
-               			}
+               			
 		</script>
 		
 	</c:when>
