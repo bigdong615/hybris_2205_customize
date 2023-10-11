@@ -242,8 +242,6 @@
 			  	 },	
 			  	 </c:forEach>
 			  	 ]
-			  	}
-			  	
 		</script>
 	</c:when>
 	

@@ -152,6 +152,18 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                           // "add_to_cart_rental"  : "1",
                                            //"isBuy"            : "0"
                                        //});
+                                       
+                                        window.dmpgDl = window.dmpgDl || {};
+			                       		dmpgDl.events = [
+									  	 {
+      									 "event": "product.interact.manual.click.addToCart",
+      									 "product": {
+       										 "id": productCode ,
+       										 "stockAvailability": "yes",
+       										 "quantity": quantity
+     											    }
+  									  	 }
+									   ];
 
                                       //On empty cart page, add class on close & continue shopping button of add to rental modal.
                                       $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');

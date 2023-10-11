@@ -52,6 +52,16 @@
                                            }
                                        });
                                      }
+                                     
+                                      window.dmpgDl = window.dmpgDl || {};
+			                       		dmpgDl.events = [
+									  	 {
+      									 "event": "product.interact.manual.click.addToWishlist",
+      									 "product": {
+       											 "id": productCode
+      											}
+  									  	 }
+									   ];
                 });
 
 function addingProductToBookMark(productCode) {
