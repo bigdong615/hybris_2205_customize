@@ -51,10 +51,13 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 		}
 		else {
 			getBlDatePickerService().removeRentalDatesFromSession();
-			final CartModel cart= getBlCartService().getSessionCart();
-			cart.setRentalStartDate(null);
-			cart.setRentalEndDate(null);
-			modelService.save(cart);
+			if (getBlCartService().hasSessionCart())
+			{
+				final CartModel cart = getBlCartService().getSessionCart();
+				cart.setRentalStartDate(null);
+				cart.setRentalEndDate(null);
+				modelService.save(cart);
+			}
 		}
 		filterChain.doFilter(request, response);
 	}
