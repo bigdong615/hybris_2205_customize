@@ -80,6 +80,8 @@ public class BLUPSShipmentCreateRequestPopulator
 			AddressData address = shipmentData.getShipTo().getAddress();
 			shipmentData.getShipTo().setAddress(shipmentData.getShipper().getPaymentAddress());
 			populateShipToData(shipToType, shipmentData.getShipTo());
+			shipToType.setName(shipToType.getAttentionName());
+			shipToType.setAttentionName("");
 			shipmentData.getShipTo().setAddress(address);
 		}
 		else {
@@ -215,7 +217,7 @@ public class BLUPSShipmentCreateRequestPopulator
 		shipper.setName(shipperData.getName());
 		shipper.setShipperNumber(shipperData.getShipperNumber());
 
-		shipper.setAttentionName(shipperData.getAttentionName());
+		//shipper.setAttentionName(shipperData.getAttentionName());
 		final AddressData shipperAddressData = shipperData.getAddress();
 		final ShipAddressType shipperAddress = new ShipAddressType();
 		final List<String> addressLineList = shipperAddress.getAddressLine();

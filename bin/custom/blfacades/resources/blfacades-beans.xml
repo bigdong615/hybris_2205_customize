@@ -773,6 +773,7 @@
 	  	<property name="longitude" type="java.lang.Double"/>
 	  	<property name="phone2" type="String"/>
 	  	<property name="primaryKey" type="java.lang.String"/>
+	  	<property name="ownerPk" type="java.lang.String"/>
     </bean>
 <!--   	<bean class="de.hybris.platform.warehousingfacades.order.data.PackagingInfoData">
 		<property name="dimension" type="java.lang.String"/>
@@ -1402,6 +1403,7 @@
 	  <property name="rentalStartDate" type="java.util.Date"/>
 	  <property name="orderNotes" type="java.lang.String"/>
 	  <property name="primaryKey" type="java.lang.String"/>
+	  <property name="picker" type="java.lang.String"/>
 	</bean>
 	
 	

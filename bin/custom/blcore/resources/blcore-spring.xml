@@ -668,6 +668,8 @@
 		<property name="blOrderService" ref="blOrderService"/>
 		<property name="blProductService" ref="productService"/>
 		<property name="sessionService" ref="sessionService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -814,7 +816,10 @@
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 		<property name="searchRestrictionService" ref="searchRestrictionService"/>
 		<property name="sessionService" ref="sessionService"/>
-
+	</bean>
+	<bean id="removeSerialAction" class="com.bl.core.order.actions.RemoveSerialAssignToFutureConsignmentAction" parent="abstractAction">
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 
 	<alias alias="productDao" name="defaultBlProductDao"/>
@@ -993,7 +998,6 @@
 		<property name="orderDao" ref="orderDao"/>
 		<property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
 		<property name="modelService" ref="modelService"/>
-		<property name="brainTreePaymentService" ref="brainTreePaymentService"/>
 	</bean>
 
 	<bean id="blAuthorizePaymentJob" class="com.bl.core.job.BlAuthorizePaymentJob" parent="abstractJobPerformable">
@@ -1524,6 +1528,7 @@
 	<bean id="defaultBlConsignmentEntryService" class="com.bl.core.services.consignment.entry.impl.DefaultBlConsignmentEntryService">
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 		<property name="sessionService" ref="sessionService"/>
         <property name="searchRestrictionService" ref="searchRestrictionService"/>
 	</bean>
@@ -1635,8 +1640,7 @@
 		<property name="blFreeGiftCardPurchaseEventPopulator" ref="blFreeGiftCardPurchaseEventPopulator"/>
 		<property name="blESPEmailCommonRequestPopulator" ref="blESPEmailCommonRequestPopulator"/>
 		<property name="blOrderPendingVerificationsPopulator" ref="blOrderPendingVerificationsPopulator"/>
-
-
+		<property name="blOrderVerificationReminderPopulator" ref="blOrderVerificationReminderPopulator"/>
 	</bean>
 
 
@@ -2117,6 +2121,11 @@
   		<property name="commonI18NService" ref="commonI18NService"/>  		
 	</bean>
 	
+	<bean id="blProductOrderCountValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductOrderCountValueProvider" parent="abstractPropertyFieldValueProvider">
+  		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+  		<property name="defaultBlProductDao" ref="defaultBlProductDao"/>  		
+	</bean>
+	
 	<bean id="blBigDecimalValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BigDecimalValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
@@ -2335,6 +2344,9 @@
 	<bean id="blOrderPendingVerificationsPopulator" class="com.bl.core.esp.populators.BlOrderPendingVerificationsPopulator" parent="espEventCommonPopulator"/>
 	
 	<bean id="blOrderVerificationReminderPopulator" class="com.bl.core.esp.populators.BlOrderVerificationReminderPopulator" parent="espEventCommonPopulator"/>
-	
+
+	<bean id="updateStockRecordsOnSerialCodeUpdateAction" class="com.bl.core.product.action.UpdateStockRecordsOnSerialCodeUpdateAction" parent="abstractAction">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
 
 </beans>

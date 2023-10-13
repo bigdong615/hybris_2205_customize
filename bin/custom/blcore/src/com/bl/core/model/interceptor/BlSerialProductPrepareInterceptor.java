@@ -1,14 +1,17 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.model.*;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -64,6 +67,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private BlOrderService blOrderService;
 	private BlProductService blProductService;
 	private SessionService sessionService;
+	private ModelService modelService;
+	private BusinessProcessService businessProcessService;
 
 	private static final Logger LOG = Logger.getLogger(BlSerialProductPrepareInterceptor.class);
 
@@ -95,10 +100,11 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
 			updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
 			updateStockRecordsForBufferInventoryFlag(blSerialProduct, ctx);
-			removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
+			//removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
 			setLastUserChangedConditionRating(blSerialProduct, ctx);
 			setFlagForBufferedInventoryOnSerial(blSerialProduct);
 			updateStockRecordsOnSerialCodeUpdate(blSerialProduct, ctx);
+			updateStockRecordOnSerialApprovalStatusChange(blSerialProduct,ctx);
 		}
 	}
 
@@ -316,6 +322,27 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		}
 	}
 
+	private void updateStockRecordOnSerialApprovalStatusChange(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
+	{
+		try {
+			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProductModel.APPROVALSTATUS);
+			if (null != initialValue && (initialValue instanceof ArticleApprovalStatus)){
+              ArticleApprovalStatus approvalStatus = (ArticleApprovalStatus) initialValue;
+				if (!approvalStatus.equals(blSerialProduct.getApprovalStatus())) {
+					if (blSerialProduct.getApprovalStatus().equals(ArticleApprovalStatus.UNAPPROVED)) {
+						getBlStockService().findAndUpdateAllStock(blSerialProduct, Boolean.TRUE);
+					} else if (blSerialProduct.getApprovalStatus().equals(ArticleApprovalStatus.APPROVED)) {
+						getBlStockService().findAndUpdateAllStock(blSerialProduct, Boolean.FALSE);
+					}
+				}
+		}
+		} catch(final Exception ex)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
+					"Exception occurred while updating the stock records on serial approaval status change to inactive of serial product {} ",
+					blSerialProduct.getCode());
+		}
+	}
 		/**
 		 * It updates the stock records when serial status of a serial product is changed
 		 *
@@ -327,10 +354,11 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			private void updateStockRecordsOnSerialCodeUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 		{
 			try {
+
 				final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.CODE);
 				if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.CODE)) {
 
-					getBlStockService().findAndUpdateStockRecordsForSerialCode(blSerialProduct, initialValue.toString());
+					createAndExecuteBusinessProcess(blSerialProduct,initialValue.toString());
 				}
 			} catch(final Exception ex) {
 				BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
@@ -338,6 +366,22 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 						blSerialProduct.getCode());
 			}
 		}
+
+	private void createAndExecuteBusinessProcess(BlSerialProductModel blSerialProduct, String initialCode) {
+		UpdateStockRecordOnCodeUpdateProcessModel updateStockRecordOnCodeUpdateProcessModel = (UpdateStockRecordOnCodeUpdateProcessModel) getBusinessProcessService()
+				.createProcess(
+						"updateStockRecordOnCodeUpdate_" + initialCode + "_" + blSerialProduct.getCode() + "_" + System.currentTimeMillis(),
+						"updateStockRecordOnCodeUpdateProcess");
+
+		updateStockRecordOnCodeUpdateProcessModel.setOldSerialProduct(initialCode);
+		updateStockRecordOnCodeUpdateProcessModel.setNewSerialProduct(blSerialProduct);
+		getModelService().save(updateStockRecordOnCodeUpdateProcessModel);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				"Starting Business process {} update stock record when serial code gets changed",
+				updateStockRecordOnCodeUpdateProcessModel.getCode());
+// Then start the process
+		getBusinessProcessService().startProcess(updateStockRecordOnCodeUpdateProcessModel);
+	}
 
 	/**
 	 * It creates the stock records for new products
@@ -834,4 +878,19 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		this.sessionService = sessionService;
 	}
 
+	public ModelService getModelService() {
+		return modelService;
+	}
+
+	public void setModelService(ModelService modelService) {
+		this.modelService = modelService;
+	}
+
+	public BusinessProcessService getBusinessProcessService() {
+		return businessProcessService;
+	}
+
+	public void setBusinessProcessService(BusinessProcessService businessProcessService) {
+		this.businessProcessService = businessProcessService;
+	}
 }

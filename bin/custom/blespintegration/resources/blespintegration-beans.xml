@@ -1356,6 +1356,9 @@
 		<property name="verificationlevel" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("verification level")</annotations>
 		</property>
+		<property name="customername" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("customer name")</annotations>
+		</property>
 	</bean>
 
 	<!-- Verification Reminder Event Request Object-->
@@ -1390,6 +1393,9 @@
 		</property>
 		<property name="verificationlevel" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("verification level")</annotations>
+		</property>
+		<property name="customername" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("customer name")</annotations>
 		</property>
 	</bean>
 

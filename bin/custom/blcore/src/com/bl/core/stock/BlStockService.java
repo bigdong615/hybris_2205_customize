@@ -82,7 +82,7 @@ public interface BlStockService
 	 */
 	void findAndUpdateBufferInvInStockRecords(final BlSerialProductModel blSerialProduct);
 
-	void releaseStockForGivenSerial(final Set<String> productsCode, final Date startDate,final Date endDate, final String orderCode);
+	void releaseStockForGivenSerial(final Set<String> productsCode, final Date startDate,final Date endDate);
 	void removeOrderFromStock(final Set<String> productsCode,final SerialStatusEnum status,final Date startDate,final Date endDate,final String orderCode);
 
 	/**
@@ -118,5 +118,6 @@ public interface BlStockService
 	public void findAndUpdateStockRecordsForSerialCode(final BlSerialProductModel blSerialProduct, String intialCode);
 
 	boolean isVisibleInPdp(final SerialStatusEnum currentStatus);
+	void findAndUpdateAllStock(final BlSerialProductModel blSerialProduct,Boolean reservedStatus);
 
 }
