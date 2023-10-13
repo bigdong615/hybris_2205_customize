@@ -84,9 +84,10 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
 
       if( BlDateTimeUtils.getDaysBetweenDates(cartRAO.getRentalArrivalDate(),updatedRentalToDate) == rentalDays) {
 
+			//Need to revisit, not sending rental dates in formated way, for tealium
 			getBlDatePickerService().addRentalDatesIntoSession(
 					BlDateTimeUtils.convertDateToStringDate(cartRAO.getRentalArrivalDate(), BlCoreConstants.DATE_FORMAT),
-					BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT), "", "");
+					BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT), "", "", "");
         getCartService().updatePromotionalEndDate(updatedRentalToDate);
         cartRAO.setRentalToDate(updatedRentalToDate);
       }
