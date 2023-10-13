@@ -956,6 +956,23 @@ console.log("First start");
                         },
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
+                                           			console.log("pdp click apply date change");
+                                           			
+                                           			<%-- BLS-518 tealium event--%>
+                                           			 window.dmpgDl = window.dmpgDl || {};
+			                       	            	dmpgDl.events = [
+									  	 			 {
+      													 "event": "search.interact.manual.search",
+     													 "search": {
+      														  "type": "date",
+        													  "location": "pdp",
+      														  "startDate": date1.getFullYear()+ '-'+(date1.getMonth()+1)+'-'+date1.getDate() ,
+       														  "endDate": date2.getFullYear()+ '-'+(date2.getMonth()+1)+'-'+date2.getDate()
+      													}
+  									  				  }
+									 			  ];
+									   
+									              console.log(dmpgDl);
                                            			trackDateSelection(date1,date2);
                                           				$.ajax({
                                       	                    url: ACC.config.encodedContextPath + '/datepicker',

@@ -219,6 +219,7 @@
   <bean class="com.bl.facades.product.data.RentalDateDto">
     <property name="selectedFromDate" type="String"/>
     <property name="selectedFromDateMMDDYYY" type="String"/>
+    <property name="selectedToDateMMDDYYY" type="String"/>
     <property name="selectedToDate" type="String"/>
     <property name="numberOfDays" type="String"/>
     <property name="selectedDays" type="String"/>

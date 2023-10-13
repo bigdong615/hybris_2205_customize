@@ -131,7 +131,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
-  					"rentalDuration": "${rentalDate.selectedDays}"
+  					"rentalDuration": "${rentalDate.selectedDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			dmpgDl.platform = 
 			   {
@@ -172,7 +173,7 @@
 			    					 "variant" : "rental",
        								 "value": 
        								    {
-         								 "displayGross": "${product.price.formattedValue.replace('$','')}"
+         								 "displayGross": ${product.price.value}
         								}
        							    }<c:if test='${not status.last}'>,</c:if>
                			</c:forEach>
@@ -192,7 +193,7 @@
       			"event": "search.interact.manual.search",
      			 "search": {       
      			  "keyword": "${searchKeyword}",
-      			  "type": "${datesSettedInSession ? 'date' : 'keyword'}",
+      			  "type": "${datesSettedInSession ? 'date' : 'product'}",
       			  "location": "hero"
      		 }
    		 }
@@ -208,7 +209,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
-  					"rentalDuration": "${rentalDate.selectedDays}"
+  					"rentalDuration": "${rentalDate.selectedDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			  dmpgDl.platform = 
 			   {
@@ -237,7 +239,7 @@
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
   				"index": "${status.index + 1}",
 			  	"value": {
-       					"displayGross": "${product.price.formattedValue.replace('$','')}"
+       					"displayGross": ${product.price.value}
      					 }
 			  	 },	
 			  	 </c:forEach>
@@ -271,7 +273,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
-  					"rentalDuration": "${rentalDate.selectedDays}"
+  					"rentalDuration": "${rentalDate.selectedDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			 dmpgDl.platform = 
 			   {
@@ -302,7 +305,7 @@
   				"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
-       				  "displayGross": "${product.price.formattedValue.replace('$','')}"
+       				  "displayGross": ${product.price.value}
      		    	 }
 			  	 },	
 			  	 
@@ -329,7 +332,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalStartDate}",
-  					"rentalDuration": "${rentalDate.selectedDays}"
+  					"rentalDuration": "${rentalDate.selectedDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			  	dmpgDl.platform = 
 			   {
@@ -356,7 +360,7 @@
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
-       				   "displayGross": "${product.price.formattedValue.replace('$','')}"
+       				   "displayGross": ${product.price.value}
      				}
 			  	 }	
 			  	 ],
@@ -401,7 +405,7 @@
 			    					 "variant" : "${ycommerce:encodeJavaScript(blPageType).toLowerCase()}",
        								 "value": 
        								    {
-         								 "displayGross": "${productReference.target.price.formattedValue.replace('$','')}"
+         								 "displayGross": ${productReference.target.price.value}
         								}
        							    }<c:if test='${not status.last}'>,</c:if>
                			</c:forEach>
@@ -445,7 +449,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
-  					"rentalDuration": "${rentalDate.selectedDays}"
+  					"rentalDuration": "${rentalDate.selectedDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			dmpgDl.platform = 
 			   {
@@ -477,7 +482,7 @@
          						"stockAvailability" : "${datesSettedInSession ? (entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  					"value": 
 			  	  			 	 {
-       				  		   	   "displayGross": "${entry.basePrice.value}"
+       				  		   	   "displayGross": ${entry.basePrice.value}
      							  }
 			  				 }	
         					}<c:if test='${not status.last}'>,</c:if>
@@ -494,7 +499,7 @@
           						"parentProductId": "${entry.product.code}",
           						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"value": {
-           							       "displayGross": "${entry.gearGuardProFullWaiverPrice.formattedValue.replace('$','')}"
+           							       "displayGross": ${entry.gearGuardProFullWaiverPrice.value}
           								  }
        								   }
       						}<c:if test='${not status.last}'>,</c:if>
@@ -508,7 +513,7 @@
           						"parentProductId": "${entry.product.code}",
           						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"value": {
-           							       "displayGross": "${entry.gearGuardWaiverPrice.formattedValue.replace('$','')}"
+           							       "displayGross": ${entry.gearGuardWaiverPrice.value}
           								  }
        								   }
       						}<c:if test='${not status.last}'>,</c:if>
@@ -519,8 +524,8 @@
         			],
         			"value" :
 			  				{
-    							"displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}",
-    							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
+    							"displayGross": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+    							"displayTax": ${ycommerce:encodeJavaScript(cartData.totalTax.value)}
   							}
 			  	}
 		</script>
@@ -544,7 +549,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
-  					"rentalDuration": "${rentalDate.selectedDays}"
+  					"rentalDuration": "${rentalDate.selectedDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			dmpgDl.platform = 
 			   {
@@ -594,7 +600,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${daysUntilRental}",
   					"rentalStartDate": "${rentalStartDateForTealium}",
-  					"rentalDuration": "${orderData.rentalDates.numberOfDays}"
+  					"rentalDuration": "${orderData.rentalDates.numberOfDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			 dmpgDl.platform = 
 			   {
@@ -626,8 +633,8 @@
 					  						"variant": "${orderType}",
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
-             									 "displayGross": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
-              						 			 "displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
+             									 "displayGross": ${ycommerce:encodeJavaScript(entry.basePrice.value)},
+              						 			 "displayTax": ${ycommerce:encodeJavaScript(entry.avalaralinetax)}
          							 		 }
          							 		}
 					  					 }<c:if test='${not status.last}'>,</c:if>
@@ -641,7 +648,7 @@
     									"tier": "${shipmentType}",
   										"method": "${ycommerce:encodeJavaScript(orderData.deliveryMode.code)}",
   										"value": {
-             									 "displayGross": "${ycommerce:encodeJavaScript(orderData.deliveryCost.formattedValue.replace('$',''))}"
+             									 "displayGross": ${ycommerce:encodeJavaScript(orderData.deliveryCost.value)}
          							 		 }
   									}
   								]},
@@ -650,14 +657,15 @@
 			  			{
          				 "type": "${paymentType}",
          				 "value": {
-          					  "displayGross": "${ycommerce:encodeJavaScript(orderData.totalPrice.value)}"
+          					  "displayGross": ${ycommerce:encodeJavaScript(orderData.totalPrice.value)}
           					}
+          				}	
   					],
   					
 			  			"value" :
 			  				{
-    							"displayGross": "${ycommerce:encodeJavaScript(orderData.totalPrice.value)}",
-    							"displayTax": "${ycommerce:encodeJavaScript(orderData.totalTax.value)}"
+    							"displayGross": ${ycommerce:encodeJavaScript(orderData.totalPrice.value)},
+    							"displayTax": ${ycommerce:encodeJavaScript(orderData.totalTax.value)}
   							}
   					 }
 			  		}
@@ -683,7 +691,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
-  					"rentalDuration": "${rentalDate.selectedDays}"
+  					"rentalDuration": "${rentalDate.selectedDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			dmpgDl.platform = 
 			   {
@@ -713,8 +722,8 @@
 					  						"variant": "${orderType}",
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
-             									 "displayGross": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
-              						 			 "displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
+             									 "displayGross": ${ycommerce:encodeJavaScript(entry.basePrice.value)},
+              						 			 "displayTax": ${ycommerce:encodeJavaScript(entry.avalaralinetax)}
          							 		 }
          							 		}
 					  					 }<c:if test='${not status.last}'>,</c:if>
@@ -731,7 +740,7 @@
           						"parentProductId": "${entry.product.code}",
           						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"value": {
-           							       "displayGross": "${entry.gearGuardProFullWaiverPrice.formattedValue.replace('$','')}"
+           							       "displayGross": ${entry.gearGuardProFullWaiverPrice.value}
           								  }
        								   }
       						}<c:if test='${not status.last}'>,</c:if>
@@ -745,7 +754,7 @@
           						"parentProductId": "${entry.product.code}",
           						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"value": {
-           							       "displayGross": "${entry.gearGuardWaiverPrice.formattedValue.replace('$','')}"
+           							       "displayGross": ${entry.gearGuardWaiverPrice.value}
           								  }
        								   }
       						}<c:if test='${not status.last}'>,</c:if>
@@ -757,8 +766,8 @@
   					
 			  			"value" :
 			  				{
-    							"displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}",
-    							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
+    							"displayGross": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+    							"displayTax": ${ycommerce:encodeJavaScript(cartData.totalTax.value)}
   							}
   					 }
 		</script>
@@ -784,7 +793,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
-  					"rentalDuration": "${rentalDate.selectedDays}"
+  					"rentalDuration": "${rentalDate.selectedDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			dmpgDl.platform = 
 			   {
@@ -814,8 +824,8 @@
 					  						"variant": "${orderType}",
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
-             									 "displayGross": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
-              						 			 "displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
+             									 "displayGross": ${ycommerce:encodeJavaScript(entry.basePrice.value)},
+              						 			 "displayTax": ${ycommerce:encodeJavaScript(entry.avalaralinetax)}
          							 		 }
          							 		}
 					  					 }<c:if test='${not status.last}'>,</c:if>
@@ -834,7 +844,7 @@
           						"parentProductId": "${entry.product.code}",
           						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"value": {
-           							       "displayGross": "${entry.gearGuardProFullWaiverPrice.formattedValue.replace('$','')}"
+           							       "displayGross": ${entry.gearGuardProFullWaiverPrice.value}
           								  }
        								   }
       						}<c:if test='${not status.last}'>,</c:if>
@@ -848,7 +858,7 @@
           						"parentProductId": "${entry.product.code}",
           						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"value": {
-           							       "displayGross": "${entry.gearGuardWaiverPrice.formattedValue.replace('$','')}"
+           							       "displayGross": ${entry.gearGuardWaiverPrice.value}
           								  }
        								   }
       						}<c:if test='${not status.last}'>,</c:if>
@@ -864,14 +874,14 @@
     									"tier": "${shipmentType}",
   										"method": "${ycommerce:encodeJavaScript(cartData.deliveryMode.code)}",
   										"value": {
-             									 "displayGross": "${ycommerce:encodeJavaScript(cartData.deliveryCost.formattedValue.replace('$',''))}"
+             									 "": ${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}
          							 		 }
   									}
   								]},
 			  			"value" :
 			  				{
-    							"displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}",
-    							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
+    							"displayGross": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+    							"displayTax": ${ycommerce:encodeJavaScript(cartData.totalTax.value)}
   							}
   					 }
 		</script>
@@ -897,7 +907,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
-  					"rentalDuration": "${rentalDate.selectedDays}"
+  					"rentalDuration": "${rentalDate.selectedDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			 dmpgDl.platform = 
 			   {
@@ -926,8 +937,8 @@
 					  						"variant": "${orderType}",
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
-             									 "displayGross": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
-              						 			 "displayTax": "${ycommerce:encodeJavaScript(entry.avalaralinetax)}"
+             									 "displayGross": ${ycommerce:encodeJavaScript(entry.basePrice.value)},
+              						 			 "displayTax": ${ycommerce:encodeJavaScript(entry.avalaralinetax)}
          							 		 }
          							 		}
 					  					 }<c:if test='${not status.last}'>,</c:if>
@@ -945,7 +956,7 @@
           						"parentProductId": "${entry.product.code}",
           						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"value": {
-           							       "displayGross": "${entry.gearGuardProFullWaiverPrice.formattedValue.replace('$','')}"
+           							       "displayGross": ${entry.gearGuardProFullWaiverPrice.value}
           								  }
        								   }
       						}<c:if test='${not status.last}'>,</c:if>
@@ -959,7 +970,7 @@
           						"parentProductId": "${entry.product.code}",
           						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"value": {
-           							       "displayGross": "${entry.gearGuardWaiverPrice.formattedValue.replace('$','')}"
+           							       "displayGross": ${entry.gearGuardWaiverPrice.value}
           								  }
        								   }
       						}<c:if test='${not status.last}'>,</c:if>
@@ -975,7 +986,7 @@
     									"tier": "${shipmentType}",
   										"method": "${ycommerce:encodeJavaScript(cartData.deliveryMode.code)}",
   										"value": {
-             									 "displayGross": "${ycommerce:encodeJavaScript(cartData.deliveryCost.formattedValue.replace('$',''))}"
+             									 "displayGross": ${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}
          							 		 }
   									}
   								]},
@@ -984,13 +995,14 @@
 			  			{
          				 "type": "${paymentType}",
          				 "value": {
-          					  "displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}"
+          					  "displayGross": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)}
           					}
+          				}
   					],
 			  			"value" :
 			  				{
-    							"displayGross": "${ycommerce:encodeJavaScript(cartData.totalPrice.value)}",
-    							"displayTax": "${ycommerce:encodeJavaScript(cartData.totalTax.value)}"
+    							"displayGross": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+    							"displayTax": ${ycommerce:encodeJavaScript(cartData.totalTax.value)}
   							}
   					 }
 		</script>
@@ -1015,7 +1027,8 @@
   					status: "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
-  					"rentalDuration": "${rentalDate.selectedDays}"
+  					"rentalDuration": "${rentalDate.selectedDays}",
+  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 			  	};
 			dmpgDl.platform = 
 			   {

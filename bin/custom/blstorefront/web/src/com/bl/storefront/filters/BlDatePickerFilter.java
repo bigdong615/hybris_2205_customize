@@ -73,6 +73,7 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 		final LocalDate currentDate = LocalDate.now();
 		final String selectedFromDate = rentalDateDto.getSelectedFromDate();
 		final String selectedFromDateMMDDYYYY = rentalDateDto.getSelectedFromDateMMDDYYY();
+		final String selectedToDateMMDDYYYY = rentalDateDto.getSelectedToDateMMDDYYY();
 		final String daysUntilRental = rentalDateDto.getDaysUntilRental();
 		String selectedToDate = rentalDateDto.getSelectedToDate();
 		final String selectedDuration = rentalDateDto.getSelectedDays();
@@ -89,6 +90,7 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 		{
 			selectedToDate = getBlCartService().getSessionCart().getRentalEndDate() != null ? BlDateTimeUtils.convertDateToStringDate(getBlCartService().getSessionCart().getRentalEndDate(),BlCoreConstants.DATE_FORMAT) : selectedToDate;
 			getBlDatePickerService().addRentalDatesIntoSession(selectedFromDate, selectedToDate, selectedFromDateMMDDYYYY,
+					selectedToDateMMDDYYYY, 
 					daysUntilRental);
 			getBlDatePickerService().addSelectedRentalDurationIntoSession(selectedDuration);
 		}

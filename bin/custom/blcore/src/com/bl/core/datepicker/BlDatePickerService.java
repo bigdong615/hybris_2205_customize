@@ -60,6 +60,7 @@ public interface BlDatePickerService
 	 * @param endDate the rental end date
 	 */
 	public void addRentalDatesIntoSession(final String startDate, final String endDate, final String selectedFromDateMMDDYYYY,
+			final String selectedToDateMMDDYYYY,
 			final String daysUntilRental);
 
 	/**
