@@ -1067,7 +1067,6 @@
 		class="com.bl.core.order.hook.impl.BlUsedGearSerialStatusChangeHook">
 		<property name="modelService" ref="modelService" />
 		<property name="blCartService" ref="cartService"/>
-		<property name="blStockService" ref="blStockService"/>
 	</bean>
 
 	<bean id="commerceUsedGearSerialStatusHookMergeDirective"

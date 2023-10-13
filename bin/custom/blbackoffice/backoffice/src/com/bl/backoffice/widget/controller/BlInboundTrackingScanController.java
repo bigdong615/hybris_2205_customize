@@ -125,7 +125,7 @@ public class BlInboundTrackingScanController extends DefaultWidgetController {
         //get stock list of given serials for next 4 business days
         final Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
         final Date nextFourDaysDate = BlDateTimeUtils.getNextFourDaysDate();
-        Collection<StockLevelModel> givenSerialStocks = getBlStockLevelDao().findSerialStockLevelsForDateAndCodes(serialCodes,currentDate,nextFourDaysDate,true);
+        Collection<StockLevelModel> givenSerialStocks = getBlStockLevelDao().findALLSerialStockLevelsForDateAndCodes(serialCodes,currentDate,nextFourDaysDate);
         try {
         if(CollectionUtils.isNotEmpty(givenSerialStocks)){
            boolean stock = givenSerialStocks.stream().anyMatch(stockLevelModel -> StringUtils.isNotBlank(stockLevelModel.getOrder()));
