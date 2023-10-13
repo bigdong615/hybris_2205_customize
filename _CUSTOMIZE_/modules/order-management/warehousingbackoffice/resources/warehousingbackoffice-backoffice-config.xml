@@ -1613,7 +1613,6 @@
                 
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.shippingscanaction" property="currentObject" />
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.createpackageaction" property="currentObject" />
-                <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.clearpackageaction" property="currentObject" />
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.createshipmentaction" property="currentObject" />
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.createreturnlabelaction" property="currentObject" />
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.printshippinglabelaction" property="currentObject" />
@@ -1632,6 +1631,8 @@
                 <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.shipaction" property="currentObject"/>
                 <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.confirmpickupaction"
                           property="currentObject"/>
+			    <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.clearpackageaction" property="currentObject" />
+                
 
             </y:group>
         </y:actions>

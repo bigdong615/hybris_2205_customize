@@ -11,7 +11,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -106,8 +108,12 @@ public class PrintLabelAction extends AbstractComponentWidgetAdapterAware
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, e,
 					"PrintLabelAction :: perform :: Error occured while downloading shipment label for consignment : {}",
 					actionContext.getData().getCode());
+			Map params = new HashMap();
+			params.put("sclass", "myMessagebox");
 			Messagebox.show("Error occured while printing shipment label for consignment " + actionContext.getData().getCode(),
-					"Info", Messagebox.OK, "icon");
+					"Error Occurred", new Messagebox.Button[]
+							{Messagebox.Button.OK},null , Messagebox.ERROR, null,
+					null, params);
 			return new ActionResult<>(BlintegrationConstants.SUCCESS);
 		}
 		return new ActionResult<>(BlintegrationConstants.CLIENT_SIDE_ERROR);
