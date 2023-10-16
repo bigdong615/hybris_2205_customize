@@ -1,5 +1,6 @@
 package com.bl.backoffice.actions;
 
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -76,6 +77,28 @@ public class ClearPackageAction extends AbstractComponentWidgetAdapterAware
 		modelService.refresh(consignment);
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
 		return new ActionResult(BlintegrationConstants.SUCCESS);
+	}
+	/**
+	 * This method will be used to take confirmation for clear package
+	 *
+	 * @param actionContext
+	 * @return boolean
+	 */
+	public final boolean needsConfirmation(final ActionContext<ConsignmentModel> actionContext)
+	{
+		return true;
+	}
+
+
+	/**
+	 * This method will be used to get confirmation
+	 *
+	 * @param actionContext
+	 * @return boolean
+	 */
+	public final String getConfirmationMessage(final ActionContext<ConsignmentModel> actionContext)
+	{
+		return actionContext.getLabel("perform.clear.package");
 	}
 
 }

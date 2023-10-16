@@ -1,5 +1,8 @@
 package com.bl.backoffice.actions;
 
+import com.bl.constants.BlloggingConstants;
+import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
+import com.hybris.cockpitng.util.notifications.NotificationService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -7,6 +10,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Messagebox.Button;
 
@@ -68,6 +73,9 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 
 	private ConsignmentModel consignment;
 
+	@Resource
+	private transient NotificationService notificationService;
+
 	/**
 	 * This method is responsible for fetch the consignment which are not in CANCELLED, CHECKED_INVALID,
 	 * PAYMENT_NOT_AUTHORIZED and PAYMENT_DECLINED status
@@ -96,19 +104,17 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 		this.setConsignment(actionContext.getData());
 		if (getDefaultBlConsignmentService().isMainItemScanRemaining(actionContext.getData()))
 		{
-			Messagebox.show(BlCoreConstants.MAIN_ITEM_SCAN_REMAINING_ERROR_MSG, BlCoreConstants.ERROR_TITLE, Messagebox.OK,
-					Messagebox.ERROR);
+			showErrorMessage(BlCoreConstants.MAIN_ITEM_SCAN_REMAINING_ERROR_MSG,null);
 			return new ActionResult<>(BlintegrationConstants.SUCCESS);
 		}
 		else if (getDefaultBlConsignmentService().isSubpartScanRemaining(actionContext.getData()))
 		{
 			final List<String> remainingScanSubpartNames = getDefaultBlConsignmentService()
 					.getRemainingScanSubpartNames(this.getConsignment());
-			Messagebox.show(BlCoreConstants.SUBPART_SCAN_REMAINING_ERROR_MSG_1
+
+			showErrorMessage(BlCoreConstants.SUBPART_SCAN_REMAINING_ERROR_MSG_1
 					+ String.join(BlCoreConstants.COMMA_SEPRATOR, remainingScanSubpartNames)
-					+ BlCoreConstants.SUBPART_SCAN_REMAINING_ERROR_MSG_2, BlCoreConstants.ERROR_TITLE, new Button[]
-			{ Button.NO, Button.YES }, BlCustomCancelRefundConstants.OMS_WIDGET_CANCELORDER_CONFIRM_ICON,
-					this::processStatusChangeOnEvent);
+					+ BlCoreConstants.SUBPART_SCAN_REMAINING_ERROR_MSG_2,this::processStatusChangeOnEvent);
 			return new ActionResult<>(BlintegrationConstants.SUCCESS);
 		}
 		else
@@ -152,12 +158,13 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
       		getModelService().save(order);
       	}
       	this.sendOutput(OUT_CONFIRM, COMPLETE);
-      	Messagebox.show("Shipment changed to BL_SHIPPED status", BlintegrationConstants.POPUP_TEXT, Messagebox.OK, "icon");	
+      	notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+					NotificationEvent.Level.SUCCESS,"Shipment changed to BL_SHIPPED status");
+
 		}
 		else if(OrderStatus.RECEIVED_MANUAL_REVIEW.equals(consignmentModel.getOrder().getStatus()) || isProductAllocationRemaining(consignmentModel.getOrder()))
 		{
-			Messagebox.show("Order not mark to BL Shipped due to order being in manual review status (non-allocated items).", BlintegrationConstants.ERROR_TEXT,
-					Messagebox.OK, "icon");
+			showErrorMessage("Order not mark to BL Shipped due to order being in manual review status (non-allocated items).",null);
 		}		
 		else if (OrderStatus.PAYMENT_CAPTURED.equals(consignmentModel.getOrder().getStatus()) && !ConsignmentStatus.BL_SHIPPED.equals(consignmentModel.getStatus()))
 		{
@@ -190,7 +197,9 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 			}
 
 			this.sendOutput(OUT_CONFIRM, COMPLETE);
-			Messagebox.show("Shipment changed to BL_SHIPPED status", BlintegrationConstants.POPUP_TEXT, Messagebox.OK, "icon");			
+			notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+					NotificationEvent.Level.SUCCESS,"Shipment changed to BL_SHIPPED status");
+
 		}
 		else if(ConsignmentStatus.BL_SHIPPED.equals(consignmentModel.getStatus()))
 		{
@@ -212,6 +221,24 @@ public class ChangeShipmentStatusAction extends AbstractComponentWidgetAdapterAw
 	{
 		return BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder()) 
 				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
+	}
+
+	private void showErrorMessage(String errorMsg, EventListener<Messagebox.ClickEvent> listener)
+	{
+		Map params = new HashMap();
+		params.put("sclass", "myMessagebox");
+		if(listener!=null) {
+			Messagebox.show(errorMsg,
+					"Error Occurred",  new Button[]
+							{ Button.NO, Button.YES }, null, Messagebox.ERROR, null,
+					listener, params);
+		}
+		else {
+			Messagebox.show(errorMsg,
+					"Error Occurred", new Button[]
+							{Button.OK}, null, Messagebox.ERROR, null,
+					null, params);
+		}
 	}
 
 	/**

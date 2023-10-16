@@ -389,6 +389,7 @@ public class BlInventoryScanLoggingConstants {
 	 public static final String INCLUDED_SERIAL=  "already_included_serial";
 	 public static final String SUCCESS_SERIAL = "succesfully_scan_serial";
 	 public static final String PACKAGE_SCAN_ERROR_KEY = "blbackoffice.package.scan.error.message";
+     public static final String SHIPPING_AND_PACKAGE_SCANNING_SUCCESS_MSG = "blbackoffice.shipping.scan.tool.notification.successful.message";
 
 
     private BlInventoryScanLoggingConstants() { }
