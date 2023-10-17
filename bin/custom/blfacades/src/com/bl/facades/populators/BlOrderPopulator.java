@@ -4,6 +4,7 @@ import de.hybris.platform.commercefacades.order.converters.populator.OrderPopula
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
@@ -304,5 +305,6 @@ public class BlOrderPopulator extends OrderPopulator
 		target.setTotaltaxvaluesinternal(source.getTotalTaxValuesInternal());
 		target.setShopperIp(source.getShopperIp());
 		target.setPrimaryKey(source.getPk().toString());
+		target.setTotalitemsqty((double) source.getEntries().stream().mapToLong(AbstractOrderEntryModel::getQuantity).sum());
 	}
 }
