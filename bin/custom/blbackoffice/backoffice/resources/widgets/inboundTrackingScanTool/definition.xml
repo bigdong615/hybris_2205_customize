@@ -9,7 +9,7 @@
 	<defaultTitle>Inbound Tracking Scan</defaultTitle>
     <author>hybris</author>
     <version>0.1</version>
-    <view src="orderTrackingScan.zul" />
+    <view src="inboundTrackingScan.zul" />
     
     <sockets>
 		<output type="java.lang.String" id="confirmOutput" />

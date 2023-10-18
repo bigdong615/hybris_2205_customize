@@ -254,7 +254,7 @@
 		</widget>
                     
 		
-           <widget id="inboundTrackingScanTool_propertyextractor" widgetDefinitionId="custom.bl.widgets.inboundTrackingScan" slotId="cockpitWidgetChildrenInvisible"
+           <widget id="InboundTrackingScanTool_propertyextractor" widgetDefinitionId="custom.bl.widgets.inboundTrackingScan" slotId="cockpitWidgetChildrenInvisible"
               template="true">
               
               <instance-settings socketEventRoutingMode="LAST_USED">
@@ -273,7 +273,7 @@
 			<setting key="__externalLocationPath" type="String">extension://warehousingbackoffice</setting>
 			<setting key="widgetStyleAttribute" type="String"></setting>
 			
-			<setting key="_width" type="String">1520px</setting>
+			<setting key="_width" type="String">1120px</setting>
 			<setting key="_height" type="String">850px</setting>
 			
 			<virtual-sockets />

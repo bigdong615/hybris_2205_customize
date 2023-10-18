@@ -1,41 +1,73 @@
 package com.bl.backoffice.wizards.util;
 
+import de.hybris.platform.core.enums.OrderStatus;
+
+import java.util.List;
+
 public class OrderTrackingScanToolData {
 
-    private String serialNo;
-    private String productName;
-    private String productCode;
-    private String shipmentStartDate;
+    private String orderNumber;
+    private String customerEmail;
+    private String rentalStartDate;
+    private String rentalEndDate;
+    private String expectedReturnDate;
+    private OrderStatus status;
+    private List<SerialData> serialData;
 
-    public String getSerialNo() {
-        return serialNo;
+
+    public String getOrderNumber() {
+        return orderNumber;
     }
 
-    public void setSerialNo(String serialNo) {
-        this.serialNo = serialNo;
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getCustomerEmail() {
+        return customerEmail;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
     }
 
-    public String getProductCode() {
-        return productCode;
+    public String getRentalStartDate() {
+        return rentalStartDate;
     }
 
-    public void setProductCode(String productCode) {
-        this.productCode = productCode;
+    public void setRentalStartDate(String rentalStartDate) {
+        this.rentalStartDate = rentalStartDate;
     }
 
-    public String getShipmentStartDate() {
-        return shipmentStartDate;
+    public String getRentalEndDate() {
+        return rentalEndDate;
     }
 
-    public void setShipmentStartDate(String shipmentStartDate) {
-        this.shipmentStartDate = shipmentStartDate;
+    public void setRentalEndDate(String rentalEndDate) {
+        this.rentalEndDate = rentalEndDate;
+    }
+
+    public String getExpectedReturnDate() {
+        return expectedReturnDate;
+    }
+
+    public void setExpectedReturnDate(String expectedReturnDate) {
+        this.expectedReturnDate = expectedReturnDate;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public List<SerialData> getSerialData() {
+        return serialData;
+    }
+
+    public void setSerialData(List<SerialData> serialData) {
+        this.serialData = serialData;
     }
 }
