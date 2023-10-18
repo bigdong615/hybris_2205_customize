@@ -2443,7 +2443,6 @@
 			<n:type-node code="CronJob" id="CronJob"/>
 			<n:navigation-node id="PickerScanTool" code="PickerScanTool"/>
 			<n:navigation-node id="ProductAvailCheckTool" code="ProductAvailCheckTool"/>
-			<n:navigation-node id="InboundTrackingScanTool" code="InboundTrackingScanTool"/>
 		</n:explorer-tree>
 	</context>
 
