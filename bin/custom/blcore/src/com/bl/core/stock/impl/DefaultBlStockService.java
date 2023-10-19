@@ -229,9 +229,6 @@ public class DefaultBlStockService implements BlStockService
 					BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while remove order from stock in serial code update flow", e);
 				}
 				stockLevel.setSerialProductCode(blSerialProduct.getCode());
-				if(Objects.nonNull(stockLevel.getOrder())) {
-					stockLevel.setOrder(null);
-				}
 				saveStockRecord(stockLevel);
 			});
 	}
