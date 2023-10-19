@@ -354,11 +354,12 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			private void updateStockRecordsOnSerialCodeUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 		{
 			try {
-
 				final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.CODE);
-				if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.CODE)) {
-
-					createAndExecuteBusinessProcess(blSerialProduct,initialValue.toString());
+				if(null != initialValue && (initialValue instanceof String )){
+                 String initialCode = (String) initialValue;
+				 if(!initialCode.equals(blSerialProduct.getCode())){
+					 createAndExecuteBusinessProcess(blSerialProduct,initialValue.toString());
+				 }
 				}
 			} catch(final Exception ex) {
 				BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
