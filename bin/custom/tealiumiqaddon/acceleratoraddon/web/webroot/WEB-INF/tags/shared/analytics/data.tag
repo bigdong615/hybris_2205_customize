@@ -566,8 +566,10 @@
 	<c:set var="paymentType" value="${orderData.paymentInfo != null ? 'card': 'gift-card'}"/>
 	
 	<c:forEach items="${orderData.consignments}" var="consignment">
-	<c:set var="shipmentType" value="${consignment.optimizedShippingMethodType == 'WAREHOUSE2CUSTOMER' ? 'Ship to Home' : 'Ship to UPS Store'}"/>
+	<c:set var="shipmentType1" value="${consignment.optimizedShippingMethodType == 'WAREHOUSE2CUSTOMER' ? 'Ship to Home' : 'Ship to UPS Store'}"/>
 	 </c:forEach>
+	 
+	 <c:set var="shipmentType" value="${orderData.deliveryMode.code.startsWith('UPS_STORE') ? 'Ship to UPS Store' : 'Ship to Home'}"/>
 	
 	<c:set var="orderType" value=""/>
 					<c:choose>
@@ -584,8 +586,6 @@
       				   <c:set var="orderType" value="usedGear"/>
     				</c:otherwise>
 				</c:choose>
-
-
 		
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [];
@@ -601,7 +601,7 @@
   					"daysUntilRental": "${daysUntilRental}",
   					"rentalStartDate": "${rentalStartDateForTealium}",
   					"rentalDuration": "${orderData.rentalDates.numberOfDays}",
-  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+  					"rentalEndDate": "${orderData.rentalEndDateForJs.replace('/','-')}"
 			  	};
 			 dmpgDl.platform = 
 			   {
@@ -638,6 +638,43 @@
          							 		 }
          							 		}
 					  					 }<c:if test='${not status.last}'>,</c:if>
+											
+											
+											
+											<c:if test="${entry.product.manufacturerAID ne '9'}">
+        					<c:choose>
+             	<c:when test="${entry.gearGuardProFullWaiverSelected}">
+             	<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "${entry.product.code}-gearguard",
+         					    "name": "Gear Guard Plus",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"value": {
+           							       "displayGross": ${entry.gearGuardProFullWaiverPrice.value}
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+             	</c:when>
+             	<c:when test="${entry.gearGuardWaiverSelected}">
+             	<c:if test='${status.last}'>,</c:if>
+        					{
+          					 "product": {
+          						"id": "${entry.product.code}-gearguard",
+         					    "name": "Gear Guard",
+          						"parentProductId": "${entry.product.code}",
+          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+         						"value": {
+           							       "displayGross": ${entry.gearGuardWaiverPrice.value}
+          								  }
+       								   }
+      						}<c:if test='${not status.last}'>,</c:if>
+             	</c:when>
+             	</c:choose>
+        					 </c:if>
+											
+											
 											
 			 						 </c:forEach>
   						     ],
@@ -722,8 +759,7 @@
 					  						"variant": "${orderType}",
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
-             									 "displayGross": ${ycommerce:encodeJavaScript(entry.basePrice.value)},
-              						 			 "displayTax": ${ycommerce:encodeJavaScript(entry.avalaralinetax)}
+             									 "displayGross": ${ycommerce:encodeJavaScript(entry.basePrice.value)}
          							 		 }
          							 		}
 					  					 }<c:if test='${not status.last}'>,</c:if>
@@ -874,7 +910,7 @@
     									"tier": "${shipmentType}",
   										"method": "${ycommerce:encodeJavaScript(cartData.deliveryMode.code)}",
   										"value": {
-             									 "": ${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}
+             									 "displayGross" : ${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}
          							 		 }
   									}
   								]},
