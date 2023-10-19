@@ -137,4 +137,6 @@ public interface BlInventoryScanToolDao {
 		BlSerialProductModel getBlSerialProductByBarcode(String barcode);
 
     List<OrderEntryModel> getAllOrderEntries(String code, String s);
+
+    List<OrderModel> getOrdersWithTrackingNo(String trackingNo);
 }

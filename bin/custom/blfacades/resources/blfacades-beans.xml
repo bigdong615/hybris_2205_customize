@@ -497,6 +497,7 @@
         <property name="primaryKey" type="java.lang.String"/>
        	<property name="createdTS" type="java.util.Date"/>
 	  	<property name="modifiedTS" type="java.util.Date"/>
+	  	<property name="totalitemsqty" type="java.lang.Double"/>
   </bean>
   
   	<bean class="de.hybris.platform.commercefacades.order.data.OrderData" extends="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
@@ -692,6 +693,7 @@
         <property name="totaltaxvaluesinternal" type="java.lang.String"/>
         <property name="shopperIp" type="java.lang.String"/>
         <property name="primaryKey" type="java.lang.String"/>
+        <property name="totalitemsqty" type="java.lang.Double"/>
 	</bean>
   
 
