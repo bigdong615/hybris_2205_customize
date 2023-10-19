@@ -2774,6 +2774,7 @@
             <n:navigation-node id="blinventoryscan_name">
 				<n:navigation-node id="WebScanTool"/>
 			</n:navigation-node>
+			<n:navigation-node id="InboundTrackingScanTool" code="InboundTrackingScanTool"/>
         </n:explorer-tree>
     </context>
     

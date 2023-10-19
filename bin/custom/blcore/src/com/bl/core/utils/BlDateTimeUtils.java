@@ -948,4 +948,12 @@ public final class BlDateTimeUtils
 		return decimalFormat.format(amount);
 	}
 
+	public static Date getNextFourDaysDate()
+	{
+		final Date currentDate = new Date();
+		final Calendar calendar = Calendar.getInstance();
+		calendar.setTime(currentDate);
+		calendar.add(Calendar.DATE, 4);
+		return calendar.getTime();
+	}
 }
