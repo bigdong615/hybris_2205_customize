@@ -211,20 +211,25 @@ public class BlInboundTrackingScanController extends DefaultWidgetController {
          try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath);
              AudioInputStream audioStream = AudioSystem.getAudioInputStream(inputStream)) {
              AudioFormat audioFormat = audioStream.getFormat();
-             DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+             AudioFormat targetFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
+                     audioFormat.getSampleRate(), audioFormat.getSampleSizeInBits(),audioFormat.getChannels(), audioFormat.getFrameSize(), audioFormat.getFrameRate(),
+                      false);
+
+             AudioInputStream targetInputStream = AudioSystem.getAudioInputStream(targetFormat, audioStream);
+             DataLine.Info info = new DataLine.Info(SourceDataLine.class, targetFormat);
             try (SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(info)) {
-                sourceDataLine.open(audioFormat);
+                sourceDataLine.open(targetFormat);
                 sourceDataLine.start();
 
                 byte[] bufferBytes = new byte[BUFFER_SIZE];
                 int readBytes;
-                while ((readBytes = audioStream.read(bufferBytes)) != -1) {
+                while ((readBytes = targetInputStream.read(bufferBytes)) != -1) {
                     sourceDataLine.write(bufferBytes, 0, readBytes);
                 }
                 sourceDataLine.drain();
             }
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            LOG.error("An error occurred while playing sound", e);
+            LOG.error("An error occurred while playing sound in playSound() method", e);
         }
     }
 
