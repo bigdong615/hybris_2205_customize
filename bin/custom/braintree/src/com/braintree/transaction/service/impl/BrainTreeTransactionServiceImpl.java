@@ -173,9 +173,13 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			if(amountToAuthorize != null && amountToAuthorize.compareTo(BigDecimal.ZERO) == ZERO){
 				result = brainTreeAuthorize(orderModel, customFields,
 						getBrainTreeConfigService().getAuthAMountToVerifyCard(), submitForSettlement, paymentInfo);
+				BlLogger.logMessage(LOG, Level.INFO,
+						"status of creating authorization for the order {} ", orderModel.getCode()+" is "+result);
 			}else {
 				 result = brainTreeAuthorize(orderModel, customFields,
 						amountToAuthorize, submitForSettlement, paymentInfo);
+				 BlLogger.logMessage(LOG, Level.INFO,
+							"status of creating authorization for the order {} ", orderModel.getCode()+" is "+result);
 			}
 			if(submitForSettlement) {
 				createCaptureTransactionEntry(orderModel, result, paymentInfo);
@@ -747,6 +751,10 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		{
 			transactionEntry.setTransactionStatus(TransactionStatus.REJECTED.name());
 			transactionEntry.setTransactionStatusDetails(TransactionStatusDetails.BANK_DECLINE.name());
+			BlLogger.logMessage(LOG, Level.INFO,
+					"Transaction status for the order {} ", order.getCode()+" is "+TransactionStatus.REJECTED.name());
+			BlLogger.logMessage(LOG, Level.INFO,
+					"Transaction status details for the order {} ", order.getCode()+" is "+TransactionStatus.REJECTED.name());
 		}
 
 		savePaymentTransaction(transactionEntry, order, paymentInfo);
