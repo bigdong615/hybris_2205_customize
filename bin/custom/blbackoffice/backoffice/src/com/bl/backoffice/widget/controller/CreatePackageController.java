@@ -296,11 +296,15 @@ public class CreatePackageController extends DefaultWidgetController
 		if (BlInventoryScanLoggingConstants.TRUE_STRING.equals(selctedCheckBoxArray[1]))
 		{
 			this.selectedSerialProducts.add(serialProduct);
+			if(this.allSerialProducts.size() == this.selectedSerialProducts.size()){
+				this.globalSerialEntrySelection.setChecked(Boolean.TRUE);
+			}
 			BlLogger.logMessage(LOG, Level.INFO, "************ Serial Product Added***********" + serialProduct);
 		}
 		else
 		{
 			this.selectedSerialProducts.remove(serialProduct);
+			this.globalSerialEntrySelection.setChecked(Boolean.FALSE);
 			BlLogger.logMessage(LOG, Level.INFO, "************ Serial Product Removed***********" + serialProduct);
 		}
 	}
