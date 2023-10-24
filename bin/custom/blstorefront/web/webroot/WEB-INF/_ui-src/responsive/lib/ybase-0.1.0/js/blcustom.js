@@ -83,6 +83,33 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	var damageWaiverType = $(this).find("a").data('id');
  	var productCode =$(this).find("a").data('product-code');
   ACC.track.trackChangeDamageWaiver(productCode, damageWaiverType);
+  
+  
+  var form = $('#updateCartForm' + entryNumber);
+	var productCode = form.find('input[name=productCode]').val();
+	var initialCartQuantity = form.find('input[name=initialQuantity]').val();
+
+	
+  var removeCartOldWaiver = damageWaiverType == 'gearguardpro' ? 'gearguard' : 'gearguardpro';
+  window.dmpgDl = window.dmpgDl || {};
+	dmpgDl.events = [
+	 {
+       "event": 'product.interact.manual.click.removeFromCart',
+       "product": {
+       	  "id": productCode+"-"+removeCartOldWaiver ,
+       	  "quantity": initialCartQuantity
+     	     }
+  		},
+  		{
+       "event": 'product.interact.manual.click.addToCart',
+       "product": {
+       	  "id": productCode+"-"+damageWaiverType ,
+       	  "quantity": initialCartQuantity
+     	     }
+  		}
+	 ];
+	 
+	 
  	var damageWaiverUpdateForm = $('#updateDamageWaiverForm');
  	damageWaiverUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
  	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);
@@ -590,6 +617,8 @@ $('.btn-number').click(function(e){
 	type = $(this).attr('data-type');
 	var input = $("input[name='"+fieldName+"']");
 	var currentVal = parseInt(input.val());
+	var eventName = type == 'plus' ? 'product.interact.manual.click.addToCart' : 'product.interact.manual.click.removeFromCart';
+	
 	let finalval;
 	if (!isNaN(currentVal)) {
 		if(type == 'minus') {
@@ -620,6 +649,20 @@ $('.btn-number').click(function(e){
 	var initialCartQuantity = form.find('input[name=initialQuantity]').val();
 	var entryNumber = form.find('input[name=entryNumber]').val();
 	form.find('input[name=quantity]').val(finalval);
+	
+	
+	window.dmpgDl = window.dmpgDl || {};
+	dmpgDl.events = [
+	 {
+       "event": eventName,
+       "product": {
+       	  "id": productCode ,
+       	  "quantity": 1
+     	     }
+  		}
+	 ];
+	 
+	 
   if (bouncer)
 		clearTimeout(bouncer)
 		bouncer = setTimeout(() => {
@@ -642,6 +685,22 @@ $('.input-number').focusout(function(){
   var initialCartQuantity = form.find('input[name=initialQuantity]').val();
   var entryNumber = form.find('input[name=entryNumber]').val();
   form.find('input[name=quantity]').val(currentValue);
+  
+  
+  var eventName = currentValue > initialCartQuantity ? 'product.interact.manual.click.addToCart' : 'product.interact.manual.click.removeFromCart';
+  
+  window.dmpgDl = window.dmpgDl || {};
+	dmpgDl.events = [
+	 {
+       "event": eventName,
+       "product": {
+       	  "id": productCode ,
+       	  "quantity": Math.abs(currentValue - initialCartQuantity)
+     	     }
+  		}
+	 ];
+	 
+  
    if (initialCartQuantity != currentValue) {
       	ACC.track.trackUpdateCart(productCode, initialCartQuantity,
       						currentValue);
