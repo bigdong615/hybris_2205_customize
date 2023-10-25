@@ -180,7 +180,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 
 	private static final String ORIGINAL_ORDER_BY_CODE = "SELECT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.VERSIONID  + "} IS NULL AND {" + OrderModel.CODE+ "} = ?code";
 
-	private static final String LATE_ORDERS_FEED_QUERY ="SELECT {" + ItemModel.PK + "} FROM {"
+	private static final String LATE_ORDERS_FEED_QUERY ="SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} IN "
 			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})" ;
