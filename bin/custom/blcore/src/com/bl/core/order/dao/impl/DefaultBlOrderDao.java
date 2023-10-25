@@ -72,8 +72,6 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private static final String IS_NEW_GEAR_ORDER = "isNewGearOrder";
 	private static final String IS_AUTHORIZATION_ATTEMPTED = "isAuthorizationAttempted";
 
-	private static String DATE_PARAM ="} BETWEEN ?startDate AND ?endDate ";
-
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} NOT IN "
@@ -187,8 +185,6 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} IN "
 			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})" ;
 
-	private static final String LATE_ORDERS_FEED_QUERY_1 ="SELECT {pk} FROM {Consignment as con},{Order as o} WHERE {con:STATUS} IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = ?status }})"
-			+ " AND {con:optimizedShippingEndDate" + DATE_PARAM ;
 
 	final List<OrderStatus> statuses = Arrays.asList(OrderStatus.LATE,OrderStatus.SHIPPED, OrderStatus.UNBOXED_PARTIALLY);
 	/**
