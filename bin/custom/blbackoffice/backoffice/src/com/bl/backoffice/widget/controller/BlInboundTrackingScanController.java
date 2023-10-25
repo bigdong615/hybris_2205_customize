@@ -208,8 +208,11 @@ public class BlInboundTrackingScanController extends DefaultWidgetController {
     }
 
     private void playSound(String filePath) {
-         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath);
+         /*try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath);
              AudioInputStream audioStream = AudioSystem.getAudioInputStream(inputStream)) {
+             if(audioStream != null){
+                 LOG.info("Audio format is " + audioStream.getFormat() + " & input stream is "+inputStream);
+             }
              AudioFormat audioFormat = audioStream.getFormat();
              AudioFormat targetFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
                      audioFormat.getSampleRate(), audioFormat.getSampleSizeInBits(),audioFormat.getChannels(), audioFormat.getFrameSize(), audioFormat.getFrameRate(),
@@ -230,9 +233,32 @@ public class BlInboundTrackingScanController extends DefaultWidgetController {
             }
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             LOG.error("An error occurred while playing sound in playSound() method", e);
-        }
+        }*/
+
+        new Thread(new Runnable() {
+            // The wrapper thread is unnecessary, unless it blocks on the
+
+            public void run() {
+                try {
+                    Clip clip = AudioSystem.getClip();
+                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+                            getClass().getClassLoader().getResourceAsStream(filePath));
+                    clip.open(inputStream);
+                    clip.start();
+                    long duration=getDurationInSec(inputStream);
+                    Thread.sleep(duration*1000);
+                } catch (Exception e) {
+                    LOG.error("An error occurred while playing sound in playSound() method", e);
+                }
+            }
+        }).start();
     }
 
+    public static long getDurationInSec(final AudioInputStream audioIn){
+        final AudioFormat format=audioIn.getFormat();
+        double frameRate=format.getFrameRate();
+        return (long)(audioIn.getFrameLength()/frameRate);
+    }
 
     public BlInventoryScanToolDao getBlInventoryScanToolDao()
     {
