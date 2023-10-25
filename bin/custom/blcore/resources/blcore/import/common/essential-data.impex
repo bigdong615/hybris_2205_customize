@@ -139,3 +139,10 @@ INSERT_UPDATE CronJob ; code[unique=true]               ; job(code)             
                       ; optimizeSerialsInLateOrdersJob ; blOptimizeSerialsInLateOrdersJob  ; en     ; true
 
 #BLS-9 End
+
+#BLS-548 Start
+
+INSERT_UPDATE ServicelayerJob;code[unique=true];springId
+                             ;blLateOrderJob;blLateOrderFeedJob
+
+#BLS-548 End
