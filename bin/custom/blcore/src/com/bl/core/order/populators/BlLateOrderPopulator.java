@@ -10,8 +10,6 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +18,7 @@ public class BlLateOrderPopulator implements Populator<List<AbstractOrderModel>,
 {
 	@Override
 	public void populate(final List<AbstractOrderModel> source, final List<LateOrderData> target) throws ConversionException {
-		final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy  HH:mm:ss");
+		final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 		for (final AbstractOrderModel order : source) {
 			final LateOrderData orderData = new LateOrderData();
 			orderData.setSubscriberId(order.getUser().getUid());

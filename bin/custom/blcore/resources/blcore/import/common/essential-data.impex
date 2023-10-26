@@ -143,6 +143,6 @@ INSERT_UPDATE CronJob ; code[unique=true]               ; job(code)             
 #BLS-548 Start
 
 INSERT_UPDATE ServicelayerJob;code[unique=true];springId
-                             ;blLateOrderJob;blLateOrderFeedJob
+                             ;blLateOrderReminderFeedJob;blLateOrderFeedJob
 
 #BLS-548 End

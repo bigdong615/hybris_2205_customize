@@ -45,11 +45,11 @@ INSERT_UPDATE CronJob ; code[unique=true]          ; job(code)                  
                       ; pulledOrdersQueueJob       ; pulledOrdersQueueJob       ;
                       ; blGoogleMerchantJob		   ; blGoogleMerchantJob		;
                       ; blReturnOrderJob		   ; blReturnOrderJob			;
-                      ; blLateOrderCronJob		   ; blLateOrderJob			    ;
+                      ; blLateOrderReminderFeedCronJob		   ; blLateOrderReminderFeedJob			    ;
                                                          
 INSERT_UPDATE Trigger ; cronjob(code)[unique=true] ; active ; cronExpression
                       ; pullOrdersAwaitingQueueJob ; true   ; 0 0/10 * * * ?
                       ; pulledOrdersQueueJob       ; true   ; 0 0/10 * * * ? 
                       ; blGoogleMerchantJob		   ; true   ; 0 * 1 * * ?
                       ; blReturnOrderJob		   ; true   ; 0 0 1 * * ?
-                      ; blLateOrderCronJob         ; true   ; 0 0 6 * * ?
+                      ; blLateOrderReminderFeedCronJob         ; true   ; 0 0 6 * * ?

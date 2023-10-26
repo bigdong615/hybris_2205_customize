@@ -1,7 +1,5 @@
 package com.bl.core.job;
 
-import com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService;
-import com.bl.core.model.BlOrderFeedCronJobModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.order.populators.BlLateOrderPopulator;
 import com.bl.esp.constants.BlespintegrationConstants;
@@ -13,7 +11,6 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.cronjob.model.CronJobModel;
@@ -22,7 +19,6 @@ import de.hybris.platform.order.ReturnOrderData;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
 import de.hybris.platform.util.Config;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -32,7 +28,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * This class created to feed the late order to ESP Feed
