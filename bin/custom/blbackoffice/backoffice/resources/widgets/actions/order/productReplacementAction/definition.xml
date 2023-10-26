@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<action-definition id="com.bl.blbackoffice.actions.order.productReplacementAction"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+
+    <name>replacementproduct.action</name>
+    <description>Product replacement action</description>
+    <author>hybris</author>
+    <version>0.1</version>
+
+    <actionClassName>com.bl.backoffice.actions.order.ReplacementProductAction</actionClassName>
+    <inputType>de.hybris.platform.core.model.order.OrderModel</inputType>
+    <outputType>de.hybris.platform.core.model.order.OrderModel</outputType>
+
+    <iconUri>icons/icon_action_productreplacement_default.png</iconUri>
+    <iconDisabledUri>icons/icon_action_productreplacement_disabled.png</iconDisabledUri>
+    <iconHoverUri>icons/icon_action_productreplacement_hover.png</iconHoverUri>
+
+    <settings>
+        <setting key="viewMode" default-value="iconAndText"/>
+    </settings>
+    <!-- Sockets definition-->
+    <sockets>
+        <output id="blProductReplacementContext"/>
+    </sockets>
+</action-definition>
