@@ -11,6 +11,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.populators.BlCancelOrderPopulator;
 import com.bl.logging.BlLogger;
@@ -82,6 +83,9 @@ public class BlCancelOrderController extends DefaultWidgetController {
     private transient BackofficeLocaleService cockpitLocaleService;
     @Resource(name = "defaultBlUserService")
     private DefaultBlUserService defaultBlUserService;
+
+    @Resource(name = "blStockService")
+    private BlStockService blStockService;
 
     /**
      * This method created to Init cancellation order form.
@@ -239,16 +243,18 @@ public class BlCancelOrderController extends DefaultWidgetController {
                     BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in cancel flow", e);
                 }
 
-                stockLevel.setReservedStatus(false);
-                stockLevel.setHardAssigned(false);
-                stockLevel.setOrder(null);
-
-                stockLevel.setSerialStatus(SerialStatusEnum.ACTIVE);
                 if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalOrder())) {
                     BlSerialProductModel blSerialProductModel = (BlSerialProductModel) serialProduct;
                     blSerialProductModel.setDateOfSale(null);
                     blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
                 }
+
+                stockLevel.setReservedStatus( blStockService.isActiveStatus(((BlSerialProductModel)serialProduct).getSerialStatus()) ? Boolean.FALSE :Boolean.TRUE);
+                stockLevel.setHardAssigned(false);
+                stockLevel.setOrder(null);
+
+                //stockLevel.setSerialStatus(SerialStatusEnum.ACTIVE);
+
                 ((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
                 modelService.save(stockLevel);
                 modelService.save(serialProduct);
