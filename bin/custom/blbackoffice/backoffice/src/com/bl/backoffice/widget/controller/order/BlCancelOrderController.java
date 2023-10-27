@@ -11,6 +11,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.populators.BlCancelOrderPopulator;
 import com.bl.logging.BlLogger;
@@ -82,6 +83,9 @@ public class BlCancelOrderController extends DefaultWidgetController {
     private transient BackofficeLocaleService cockpitLocaleService;
     @Resource(name = "defaultBlUserService")
     private DefaultBlUserService defaultBlUserService;
+
+    @Resource(name = "blStockService")
+    private BlStockService blStockService;
 
     /**
      * This method created to Init cancellation order form.
@@ -220,6 +224,18 @@ public class BlCancelOrderController extends DefaultWidgetController {
     public void updateStockForCancelledProductFromBackoffice(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
                                                              Date optimizedShippingEndDate, final List<String> serialProductCodes, final AbstractOrderModel abstractOrderModel)
     {
+        final Boolean reservedStatus;
+        if (serialProduct instanceof BlSerialProductModel){
+            BlSerialProductModel blSerialProductModel = (BlSerialProductModel) serialProduct;
+            if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalOrder())) {
+                blSerialProductModel.setDateOfSale(null);
+                blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
+            }
+            blSerialProductModel.setHardAssigned(false);
+            modelService.save(blSerialProductModel);
+            reservedStatus=   blStockService.isActiveStatus(blSerialProductModel.getSerialStatus())? Boolean.FALSE:Boolean.TRUE;
+        }else{ reservedStatus=Boolean.TRUE;}
+
         if(null == optimizedShippingEndDate) {
             optimizedShippingEndDate = BlDateTimeUtils.getNextYearsSameDay();
         }
@@ -229,7 +245,6 @@ public class BlCancelOrderController extends DefaultWidgetController {
         if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
         {
             findSerialStockLevelForDate.forEach(stockLevel -> {
-
                 try {
                     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
                             "Release stock for serial product {}, for stock date {} while cancel order before change Hard Assign {} , reserve status {}, associated order {} "
@@ -238,20 +253,12 @@ public class BlCancelOrderController extends DefaultWidgetController {
                 } catch (Exception e) {
                     BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in cancel flow", e);
                 }
-
-                stockLevel.setReservedStatus(false);
+                stockLevel.setReservedStatus( reservedStatus);
                 stockLevel.setHardAssigned(false);
                 stockLevel.setOrder(null);
 
-                stockLevel.setSerialStatus(SerialStatusEnum.ACTIVE);
-                if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalOrder())) {
-                    BlSerialProductModel blSerialProductModel = (BlSerialProductModel) serialProduct;
-                    blSerialProductModel.setDateOfSale(null);
-                    blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
-                }
-                ((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
+                //stockLevel.setSerialStatus(SerialStatusEnum.ACTIVE);
                 modelService.save(stockLevel);
-                modelService.save(serialProduct);
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
                         stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct.getCode());
             });

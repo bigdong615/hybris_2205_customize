@@ -159,4 +159,10 @@ public interface BlOrderDao extends OrderDao
 	 */
 	public List<OrderModel> getGhostOrders();
 
+	/**
+	 * This method created to get the list of late orders to be feed to FTP location
+	 * @return list of orders
+	 */
+	List<AbstractOrderModel> getOrdersForLateOrderFeedToFTP() throws ParseException;;
+
 }
