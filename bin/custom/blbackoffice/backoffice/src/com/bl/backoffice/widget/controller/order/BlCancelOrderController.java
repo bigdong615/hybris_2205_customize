@@ -224,6 +224,18 @@ public class BlCancelOrderController extends DefaultWidgetController {
     public void updateStockForCancelledProductFromBackoffice(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
                                                              Date optimizedShippingEndDate, final List<String> serialProductCodes, final AbstractOrderModel abstractOrderModel)
     {
+        final Boolean reservedStatus;
+        if (serialProduct instanceof BlSerialProductModel){
+            BlSerialProductModel blSerialProductModel = (BlSerialProductModel) serialProduct;
+            if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalOrder())) {
+                blSerialProductModel.setDateOfSale(null);
+                blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
+            }
+            blSerialProductModel.setHardAssigned(false);
+            modelService.save(blSerialProductModel);
+            reservedStatus=   blStockService.isActiveStatus(blSerialProductModel.getSerialStatus())? Boolean.FALSE:Boolean.TRUE;
+        }else{ reservedStatus=Boolean.TRUE;}
+
         if(null == optimizedShippingEndDate) {
             optimizedShippingEndDate = BlDateTimeUtils.getNextYearsSameDay();
         }
@@ -233,7 +245,6 @@ public class BlCancelOrderController extends DefaultWidgetController {
         if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
         {
             findSerialStockLevelForDate.forEach(stockLevel -> {
-
                 try {
                     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
                             "Release stock for serial product {}, for stock date {} while cancel order before change Hard Assign {} , reserve status {}, associated order {} "
@@ -242,22 +253,12 @@ public class BlCancelOrderController extends DefaultWidgetController {
                 } catch (Exception e) {
                     BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while release stock in cancel flow", e);
                 }
-
-                if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalOrder())) {
-                    BlSerialProductModel blSerialProductModel = (BlSerialProductModel) serialProduct;
-                    blSerialProductModel.setDateOfSale(null);
-                    blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
-                }
-
-                stockLevel.setReservedStatus( blStockService.isActiveStatus(((BlSerialProductModel)serialProduct).getSerialStatus()) ? Boolean.FALSE :Boolean.TRUE);
+                stockLevel.setReservedStatus( reservedStatus);
                 stockLevel.setHardAssigned(false);
                 stockLevel.setOrder(null);
 
                 //stockLevel.setSerialStatus(SerialStatusEnum.ACTIVE);
-
-                ((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
                 modelService.save(stockLevel);
-                modelService.save(serialProduct);
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
                         stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct.getCode());
             });
