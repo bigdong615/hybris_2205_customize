@@ -484,9 +484,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * {@inheritDoc}
      */
     @Override
-    public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost,
+    public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final double weight,
                                                                       final ZoneDeliveryModeModel deliveryMethod) {
-        return getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
+        return getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(weight,
                 deliveryMethod.getShippingCostCode().getCode());
     }
 
@@ -572,7 +572,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             order.setTotalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT));
             order.setDimensionalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT));
         }
-        final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(maxValue, zoneDeliveryModeModel);
+        final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(order.getTotalWeight(), zoneDeliveryModeModel);
         if (shippingCostModel != null) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping calculated amount: {} ", shippingCostModel.getAmount());
             if (BooleanUtils.isTrue(order.getIsRentalOrder())) {
