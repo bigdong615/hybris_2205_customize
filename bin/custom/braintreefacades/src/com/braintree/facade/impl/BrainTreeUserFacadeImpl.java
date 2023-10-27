@@ -36,7 +36,9 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.impl.DefaultUserFacade;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
 import de.hybris.platform.commerceservices.strategies.CustomerNameStrategy;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -499,6 +501,28 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 
 		brainTreeCustomerAccountService.unlinkCCPaymentInfo(currentCustomer, brainTreePaymentInfo);
 	}
+	
+	public boolean isAllowedToRemoveCreditCard(final String id)
+	{
+		validateParameterNotNullStandardMessage("id", id);
+		final CustomerModel currentCustomer = (CustomerModel) getUserService().getCurrentUser();
+
+		final BrainTreePaymentInfoModel brainTreePaymentInfo = brainTreeCustomerAccountService.getBrainTreePaymentInfoForCode(
+				currentCustomer, id);
+
+		for(OrderModel order:currentCustomer.getOrders())
+		{
+			if (order.getStatus() != OrderStatus.CANCELLED && order.getStatus() != OrderStatus.COMPLETED)
+			{
+				BrainTreePaymentInfoModel originalBrainTreePaymentInfo = (BrainTreePaymentInfoModel) order.getPaymentInfo().getOriginal();
+			     if (originalBrainTreePaymentInfo != null && originalBrainTreePaymentInfo.equals(brainTreePaymentInfo))
+				 {
+					   return false;
+				 }
+			}
+		}
+           return true;
+		}
 
 	@Override
 	public void removeBTCCPaymentInfo(final String paymentMethodToken)
