@@ -243,6 +243,14 @@ public class BlInboundTrackingScanController extends DefaultWidgetController {
                     Clip clip = AudioSystem.getClip();
                     AudioInputStream inputStream = AudioSystem.getAudioInputStream(
                             getClass().getClassLoader().getResourceAsStream(filePath));
+                    clip.addLineListener(
+                            new LineListener() {
+                                public void update(LineEvent event) {
+                                    if (event.getType() == LineEvent.Type.STOP) {
+                                        clip.close();
+                                    }
+                                }
+                            });
                     clip.open(inputStream);
                     clip.start();
                     long duration=getDurationInSec(inputStream);

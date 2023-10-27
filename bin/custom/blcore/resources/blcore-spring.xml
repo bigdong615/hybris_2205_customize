@@ -2348,4 +2348,10 @@
 		<property name="blStockService" ref="blStockService"/>
 	</bean>
 
+	<bean id="blLateOrderPopulator" class="com.bl.core.order.populators.BlLateOrderPopulator"/>
+
+	<bean id="blLateOrderFeedJob" class="com.bl.core.job.BlLateOrderFeedJob" parent="abstractJobPerformable">
+		<property name="blLateOrderPopulator" ref="blLateOrderPopulator"/>
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
 </beans>
