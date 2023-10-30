@@ -572,7 +572,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             order.setTotalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT));
             order.setDimensionalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT));
         }
-        final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(order.getTotalWeight(), zoneDeliveryModeModel);
+        final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), zoneDeliveryModeModel);
         if (shippingCostModel != null) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping calculated amount: {} ", shippingCostModel.getAmount());
             if (BooleanUtils.isTrue(order.getIsRentalOrder())) {
