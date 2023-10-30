@@ -581,11 +581,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                     && BlCoreConstants.UPS_ROUND_TRIP.contains(zoneDeliveryModeModel.getCode())) {
                     return Double.valueOf(0.00);
                 } else {
-                    return shippingCostModel.getAmount() * Double.valueOf(maxValue);
+                    return shippingCostModel.getAmount();
                 }
             } else {
-                return (shippingCostModel.getAmount() * Double.valueOf(maxValue)
-                    / BlInventoryScanLoggingConstants.TWO);
+                return (shippingCostModel.getAmount());
             }
             
         }
