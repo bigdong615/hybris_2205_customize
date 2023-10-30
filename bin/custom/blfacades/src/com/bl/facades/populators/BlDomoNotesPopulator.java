@@ -3,15 +3,24 @@ package com.bl.facades.populators;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.core.model.NotesModel;
 import com.bl.facades.customerNotes.data.NotesData;
+import com.bl.logging.BlLogger;
 
 
 public class BlDomoNotesPopulator implements Populator<NotesModel, NotesData>
 {
+	private static final Logger LOG = Logger.getLogger(BlDomoNotesPopulator.class);
+
 	@Override
 	public void populate(final NotesModel source, final NotesData target) throws ConversionException
 	{
+		try
+		{
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setUserId(source.getUserID());
@@ -26,5 +35,14 @@ public class BlDomoNotesPopulator implements Populator<NotesModel, NotesData>
 
 		target.setNote(source.getNote());
 		target.setPrimaryKey(source.getPk().toString());
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting Notes for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting Notes", exception);
+		exception.printStackTrace();
+
+	}
+
 	}
 }

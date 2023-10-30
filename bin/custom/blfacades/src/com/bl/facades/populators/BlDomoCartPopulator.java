@@ -16,9 +16,12 @@ import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.model.GiftCardModel;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -38,6 +41,8 @@ public class BlDomoCartPopulator extends BlCartPopulator
 	@Override
 	public void populate(final CartModel source, final CartData target)
 	{
+		try
+		{
 		LOG.info("Cart Code : " + source.getCode());
 		super.populate(source, target);
 		final PriceDataType priceType = PriceDataType.BUY;
@@ -275,5 +280,13 @@ public class BlDomoCartPopulator extends BlCartPopulator
 		target.setTotaltaxvaluesinternal(source.getTotalTaxValuesInternal());
 		target.setShopperIp(source.getShopperIp());
 		target.setPrimaryKey(source.getPk().toString());
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting cart info for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting cart", exception);
+		exception.printStackTrace();
+
+	}
 	}
 }

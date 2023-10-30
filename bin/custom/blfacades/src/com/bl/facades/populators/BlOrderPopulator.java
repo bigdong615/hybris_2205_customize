@@ -15,9 +15,12 @@ import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.model.GiftCardModel;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -40,6 +43,8 @@ public class BlOrderPopulator extends OrderPopulator
 	public void populate(final OrderModel source, final OrderData target)
 	{
 		LOG.info("Order Code : " + source.getCode());
+		try
+		{
 		super.populate(source, target);
 		final PriceDataType priceType = PriceDataType.BUY;
 		if (source.getTotalPrice() != null && source.getGiftCardAmount() != null)
@@ -306,5 +311,14 @@ public class BlOrderPopulator extends OrderPopulator
 		target.setShopperIp(source.getShopperIp());
 		target.setPrimaryKey(source.getPk().toString());
 		target.setTotalitemsqty((double) source.getEntries().stream().mapToLong(AbstractOrderEntryModel::getQuantity).sum());
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting order for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting order", exception);
+		exception.printStackTrace();
+
+	}
+
 	}
 }

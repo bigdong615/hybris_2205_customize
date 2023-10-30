@@ -9,9 +9,14 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartsNeededRepairLogModel;
 import com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -21,9 +26,13 @@ import com.bl.facades.partsNeededRepairLog.data.PartsNeededRepairLogData;
 public class BlDomoPartsNeededRepairLogPopulator implements Populator<PartsNeededRepairLogModel, PartsNeededRepairLogData>
 {
 
+	private static final Logger LOG = Logger.getLogger(BlDomoPartsNeededRepairLogPopulator.class);
+
 	@Override
 	public void populate(final PartsNeededRepairLogModel source, final PartsNeededRepairLogData target) throws ConversionException
 	{
+		try
+		{
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setSerialCode(source.getSerialCode());
@@ -101,6 +110,14 @@ public class BlDomoPartsNeededRepairLogPopulator implements Populator<PartsNeede
 		}
 		target.setPartCost(source.getPartCost());
 		target.setPrimaryKey(source.getPk().toString());
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting PartsNeededRepairLog for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting PartsNeededRepairLog", exception);
+		exception.printStackTrace();
+
+	}
 
 	}
 

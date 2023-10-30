@@ -10,9 +10,14 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -21,10 +26,12 @@ import com.bl.core.model.BlSerialProductModel;
  */
 public class BlDomoCartEntryPopulator implements Populator<CartEntryModel, CartEntryData>
 {
+	private static final Logger LOG = Logger.getLogger(BlDomoCartEntryPopulator.class);
 
 	@Override
 	public void populate(final CartEntryModel source, final CartEntryData target) throws ConversionException
 	{
+		try {
 		target.setAvalaralinetax(source.getAvalaraLineTax());
 		target.setUpdatedTime(source.getUpdatedTime());
 		target.setSplitConsignmentQuantity(source.getSplitConsignmentQuantity());
@@ -113,6 +120,13 @@ public class BlDomoCartEntryPopulator implements Populator<CartEntryModel, CartE
 		target.setEntryNumber(source.getEntryNumber());
 		target.setGearGuardProFullWaiverPrice(source.getGearGuardProFullWaiverPrice());
 		target.setGearGuardWaiverPrice(source.getGearGuardWaiverPrice());
-	}
+		}
+		catch (final Exception exception)
+		{
+			LOG.info("Error while getting cart entry info for PK " + source.getPk().toString());
+			BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting cartentry", exception);
+			exception.printStackTrace();
 
+		}
+	}
 }

@@ -10,15 +10,23 @@ import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.core.model.BlProductModel;
+import com.bl.logging.BlLogger;
 
 
 public class BlPackagingInfoPopulator implements Populator<PackagingInfoModel, PackagingInfoData>
 {
+	private static final Logger LOG = Logger.getLogger(BlPackagingInfoPopulator.class);
 
 	@Override
 	public void populate(final PackagingInfoModel source, final PackagingInfoData target) throws ConversionException
 	{
+		try
+		{
 		target.setDimension(source.getDimensionUnit());
 		target.setDimensionUnit(source.getDimensionUnit());
 		target.setHeight(source.getHeight());
@@ -75,6 +83,14 @@ public class BlPackagingInfoPopulator implements Populator<PackagingInfoModel, P
 			target.setOutBoundShippingMedia(source.getOutBoundShippingMedia().getDownloadURL());
 		}
 		target.setPrimaryKey(source.getPk().toString());
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting PackagingInfo for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting PackagingInfo", exception);
+		exception.printStackTrace();
+
+	}
 	}
 
 }

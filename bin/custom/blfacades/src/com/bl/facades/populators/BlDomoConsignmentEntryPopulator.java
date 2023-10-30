@@ -31,6 +31,8 @@ public class BlDomoConsignmentEntryPopulator implements Populator<ConsignmentEnt
 
 	public void populate(final ConsignmentEntryModel source, final ConsignmentEntryData target) throws ConversionException
 	{
+		try
+		{
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BL Domo ConsignmentEntryModel : {} ", source.getPk());
 		if (source.getOrderEntry() != null)
 		{
@@ -81,6 +83,13 @@ public class BlDomoConsignmentEntryPopulator implements Populator<ConsignmentEnt
 			//target.setMainItemNotScannedCount(source.getMainItemNotScannedCount());
 			//target.setSubpartsNotScannedCount(source.getSubpartsNotScannedCount());
 		}
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting ConsignmentEntry info for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting ConsignmentEntryModel info", exception);
+		exception.printStackTrace();
+	}
 	}
 
 	/**

@@ -10,9 +10,14 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -21,10 +26,13 @@ import com.bl.core.model.BlSerialProductModel;
  */
 public class BlDomoOrderEntryPopulator implements Populator<OrderEntryModel, OrderEntryData>
 {
+	private static final Logger LOG = Logger.getLogger(BlDomoOrderEntryPopulator.class);
 
 	@Override
 	public void populate(final OrderEntryModel source, final OrderEntryData target) throws ConversionException
 	{
+		try
+		{
 		target.setFullyRefunded(source.isFullyRefunded());
 		target.setRefundedQuantity(source.getRefundedQuantity());
 		if (source.getCancelledQuantity() != null)
@@ -111,6 +119,15 @@ public class BlDomoOrderEntryPopulator implements Populator<OrderEntryModel, Ord
 			target.setDeliveryaddress(source.getDeliveryAddress().getAddressID());
 		}
 		target.setPrimaryKey(source.getPk().toString());
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting OrderEntry for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting OrderEntry", exception);
+		exception.printStackTrace();
+
+	}
+
 	}
 
 }

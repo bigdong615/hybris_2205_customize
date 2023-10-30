@@ -7,15 +7,24 @@ import de.hybris.platform.commercefacades.giftcard.movement.data.GiftCardMovemen
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.logging.BlLogger;
 
 
 public class BlGiftCardMovementPopulator implements Populator<GiftCardMovementModel, GiftCardMovementData>
 {
+	private static final Logger LOG = Logger.getLogger(BlGiftCardMovementPopulator.class);
 
 	@Override
 	public void populate(final GiftCardMovementModel source, final GiftCardMovementData target) throws ConversionException
 	{
+
+		try
+		{
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setTransactionId(source.getTransactionId());
@@ -42,6 +51,14 @@ public class BlGiftCardMovementPopulator implements Populator<GiftCardMovementMo
 			target.setGiftCard(source.getGiftCard().getCode());
 		}
 		target.setPrimaryKey(source.getPk().toString());
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting GiftCardMovement for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting GiftCardMovement", exception);
+		exception.printStackTrace();
+
+	}
 	}
 
 }

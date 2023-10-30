@@ -9,9 +9,14 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.core.model.InHouseRepairLogModel;
 import com.bl.core.model.NotesModel;
 import com.bl.facades.inHouseRepairLog.data.InHouseRepairLogData;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -20,10 +25,13 @@ import com.bl.facades.inHouseRepairLog.data.InHouseRepairLogData;
  */
 public class BlDomoInHouseRepairLogPopulator implements Populator<InHouseRepairLogModel, InHouseRepairLogData>
 {
+	private static final Logger LOG = Logger.getLogger(BlDomoInHouseRepairLogPopulator.class);
 
 	@Override
 	public void populate(final InHouseRepairLogModel source, final InHouseRepairLogData target) throws ConversionException
 	{
+		try
+		{
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setSerialCode(source.getSerialCode());
@@ -87,7 +95,15 @@ public class BlDomoInHouseRepairLogPopulator implements Populator<InHouseRepairL
 		target.setDamageWaiverPaid(source.getDamageWaiverPaid());
 		target.setRepairLogId(source.getRepairLogId());
 		target.setPrimaryKey(source.getPk().toString());
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting InHouseRepairLog for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting InHouseRepairLog", exception);
+		exception.printStackTrace();
 
 	}
+
+}
 
 }

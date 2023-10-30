@@ -5,7 +5,11 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.warehousingfacades.product.data.StockLevelData;
 import de.hybris.platform.warehousingfacades.stocklevel.converters.populator.WarehousingStockLevelPopulator;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.logging.BlLogger;
 
 
 public class BlStockLevelPopulator extends WarehousingStockLevelPopulator
@@ -15,6 +19,8 @@ public class BlStockLevelPopulator extends WarehousingStockLevelPopulator
 	@Override
 	public void populate(final StockLevelModel source, final StockLevelData target) throws ConversionException
 	{
+		try
+		{
 		//super.populate(source, target);
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
@@ -59,5 +65,13 @@ public class BlStockLevelPopulator extends WarehousingStockLevelPopulator
 		target.setInStockStatus(source.getInStockStatus());
 		target.setWarehouseCode(source.getWarehouse().getCode());
 		target.setPrimaryKey(source.getPk().toString());
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting stocklevel for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting stocklevel", exception);
+		exception.printStackTrace();
+
+	}
 	}
 }

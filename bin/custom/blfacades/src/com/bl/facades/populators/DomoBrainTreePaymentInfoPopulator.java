@@ -2,8 +2,11 @@ package com.bl.facades.populators;
 
 import de.hybris.platform.converters.Populator;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.logging.BlLogger;
 import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import com.braintree.model.BrainTreePaymentInfoModel;
 
@@ -15,6 +18,8 @@ public class DomoBrainTreePaymentInfoPopulator implements Populator<BrainTreePay
 	@Override
 	public void populate(final BrainTreePaymentInfoModel source, final BrainTreePaymentInfoData target)
 	{
+		try
+		{
 		target.setCreatedTS(source.getCreationtime());
 		target.setModifiedTS(source.getModifiedtime());
 		target.setCode(source.getCode());
@@ -94,4 +99,12 @@ public class DomoBrainTreePaymentInfoPopulator implements Populator<BrainTreePay
 		target.setExtendOrder(source.isExtendOrder());
 		target.setPrimaryKey(source.getPk().toString());
 	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting BrainTreePaymentInfo for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting BrainTreePaymentInfo", exception);
+		exception.printStackTrace();
+
+	}
+}
 }

@@ -16,9 +16,13 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
+
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -37,7 +41,8 @@ public class BlDomoConsignmentPopulator implements Populator<ConsignmentModel, C
 	{
 		Assert.notNull(source, "Parameter source cannot be null.");
 		Assert.notNull(target, "Parameter target cannot be null.");
-
+		try
+		{
 		target.setCode(source.getCode());
 		target.setTrackingID(source.getTrackingID());
 		target.setStatus(source.getStatus());
@@ -90,6 +95,14 @@ public class BlDomoConsignmentPopulator implements Populator<ConsignmentModel, C
 		target.setRentalEndDate(source.getRentalEndDate());
 		target.setPrimaryKey(source.getPk().toString());
 		target.setPicker(source.getPicker());
+	}
+	catch (final Exception exception)
+	{
+		LOG.info("Error while getting Consignment for PK " + source.getPk().toString());
+		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting Consignment", exception);
+		exception.printStackTrace();
+
+	}
 		//		String entriesPk = null;
 		//		if (source.getConsignmentEntries() != null)
 		//		{
