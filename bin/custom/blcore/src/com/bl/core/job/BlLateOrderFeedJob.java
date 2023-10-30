@@ -139,7 +139,7 @@ public class BlLateOrderFeedJob extends AbstractJobPerformable<CronJobModel> {
 
   private File getFile() {
     final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
-    final String fileName = new StringBuilder(BlespintegrationConstants.LATE_ORDER_FILE_NAME_PREFIX + logFileName + BlespintegrationConstants.RETURN_ORDER_FILE_SUFFIX).toString();
+    final String fileName = new StringBuilder(BlespintegrationConstants.LATE_ORDER_FILE_NAME_PREFIX).append(BlespintegrationConstants.RETURN_ORDER_FILE_SUFFIX).toString();
     final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH_LATE_ORDER);
     createDirectoryForFTPFeed(path);
     LOG.info("Late order File name " + fileName);
