@@ -173,8 +173,8 @@
         <enumtype generate="true" code="ShippingCostEnum" autocreate="true" dynamic="true">
             <value code="UPS_STANDARD_ROUND_TRIP"/>
             <value code="UPS_STANDARD_AM_ROUND_TRIP"/>
+            <value code="UPS_OVERNIGHT_AM_ROUND_TRIP"/>
             <value code="UPS_OVERNIGHT_ROUND_TRIP"/>
-            <value code="UPS_OVERNIGHT_SAVER_ROUND_TRIP"/>
             <value code="FEDEX_STANDARD_ROUND_TRIP"/>
             <value code="FEDEX_OVERNIGHT_ROUND_TRIP"/>
             <value code="UPS_USEDGEAR_STANDARD_ROUND_TRIP"/>
@@ -2789,6 +2789,14 @@
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
                     <attribute qualifier="floor" type="java.lang.Double" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="maxWeight" type="java.lang.Double" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="minWeight" type="java.lang.Double" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>

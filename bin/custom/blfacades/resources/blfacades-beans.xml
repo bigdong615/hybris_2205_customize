@@ -2699,6 +2699,19 @@
            <description>Pagination items</description>
        </property>
    </bean>
+
+	<bean class="de.hybris.platform.order.LateOrderData">
+		<property name="subscriberId" type="java.lang.String" equals="true"/>
+		<property name="emailAddress" type="java.lang.String" equals="true"/>
+		<property name="orderNumber" type="java.lang.String"/>
+		<property name="customerName" type="java.lang.String"/>
+		<property name="rentalStartDate" type="java.lang.String"/>
+		<property name="rentalEndDate" type="java.lang.String"/>
+		<property name="optimizedReturnDate" type="java.lang.String"/>
+		<property name="daysLate" type="java.lang.Integer"/>
+		<property name="shippingMethod" type="String"/>
+		<property name="shippingMethodType" type="String"/>
+	</bean>
 </beans>
 
 
