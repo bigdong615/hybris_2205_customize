@@ -1048,8 +1048,8 @@
 	<context type="ShippingCost" component="listview" merge-by="replace">
         <list-view:list-view>
             <list-view:column qualifier="name"/>
-            <list-view:column qualifier="floor"/>
-            <list-view:column qualifier="ceiling"/>
+            <list-view:column qualifier="minWeight"/>
+            <list-view:column qualifier="maxWeight"/>
             <list-view:column qualifier="amount"/>
             <list-view:column qualifier="shippingMethodId"/>
         </list-view:list-view>
