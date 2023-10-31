@@ -7,12 +7,17 @@ import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.product.dao.impl.DefaultBlProductDao;
+import com.bl.core.stock.BlStockService;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.store.BaseStoreModel;
@@ -56,8 +61,15 @@ public class ReplacementProductController extends DefaultWidgetController {
     private transient ModelService modelService;
     @Resource
     private DefaultBlProductDao defaultBlProductDao;
+
+    @Resource(name="blStockService")
+    private BlStockService blStockService;
+    
+    @Resource(name="orderDao")
+    private BlOrderDao orderDao;
     @WireVariable
     private transient BlReallocationService blReallocationService;
+
 
     @SocketEvent(socketId = IN_SOCKET)
     public void initPartialRefundForm(final OrderModel inputOrder) {
@@ -65,8 +77,14 @@ public class ReplacementProductController extends DefaultWidgetController {
         this.getWidgetInstanceManager().setTitle(new StringBuilder(this.getWidgetInstanceManager()
                 .getLabel(TITLE)).append(
                 this.getOrderModel().getCode()).toString());
-        List<ReplacementProductData> replacementProductDataList=new ArrayList<>();
+        List<ReplacementProductData> replacementProductDataList=createProductReplacementDate();
+        this.serialEntries.setModel(new ListModelList<>(replacementProductDataList));
+        this.serialEntries.renderAll();
 
+    }
+
+    private     List<ReplacementProductData> createProductReplacementDate(){
+        List<ReplacementProductData> replacementProductDataList=new ArrayList<>();
         orderModel.getConsignments().forEach(consignmentModel -> {
             consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
                 consignmentEntryModel.getSerialProducts().forEach(blProductModel -> {
@@ -78,56 +96,30 @@ public class ReplacementProductController extends DefaultWidgetController {
                         replacementProductData.setOcLocation(serialProductModel.getOcLocation());
                         replacementProductData.setOldSerial(serialProductModel);
                         replacementProductData.setOrderEntry(consignmentEntryModel.getOrderEntry());
-replacementProductData.setConsignment(consignmentModel);
-replacementProductData.setConsEntry(consignmentEntryModel);
-                        //replacementProductData.setNewSerial(StringUtils.EMPTY);
+                        replacementProductData.setConsignment(consignmentModel);
+                        replacementProductData.setConsEntry(consignmentEntryModel);
                         replacementProductDataList.add(replacementProductData);
-
                     }
                 });
             });
         });
-        /*orderModel.getEntries().forEach(entryModel -> {
-            entryModel.getSerialProducts().forEach(blProductModel -> {
-                if (blProductModel instanceof BlSerialProductModel){
-                    BlSerialProductModel serialProductModel = (BlSerialProductModel)blProductModel;
-                    ReplacementProductData replacementProductData= new ReplacementProductData();
-                    replacementProductData.setProductName(serialProductModel.getBlProduct().getName());
-                    replacementProductData.setAssignedSerial(serialProductModel.getCode());
-                    replacementProductData.setOcLocation(serialProductModel.getOcLocation());
-                    replacementProductData.setOldSerial(serialProductModel);
-                    replacementProductData.setOrderEntry(entryModel);
-                    //replacementProductData.setNewSerial(StringUtils.EMPTY);
-                                  replacementProductDataList.add(replacementProductData);
-
-                }
-            });
-        });*/
-
-        this.serialEntries.setModel(new ListModelList<>(replacementProductDataList));
-        this.serialEntries.renderAll();
-
+        return replacementProductDataList;
     }
-
     /**
      * Refund order amount.
      */
     @ViewEvent(componentID = CONTINUE_BUTTON, eventName = Events.ON_CLICK)
     public void submitSerialData() {
-
-
         Optional<Component> first = this.getSerialEntriesGridRows().stream().filter(row -> Boolean.TRUE.equals(((Checkbox)
                 row.getChildren().iterator().next()).isChecked())).findFirst();
         if (first.isPresent()){
             Component row =((Row) first.get());
             ReplacementProductData replacementProductData = ((Row) first.get()).getValue();
-           // Messagebox.show("Confirm you want to replace "+productData.getAssignedSerial()+" with "+productData.getNewSerial()+" on order [order number]");
-
            String  newserial =((Textbox) row.getChildren().get(4)).getValue();
-          String   selectedValue =( (Combobox)row.getChildren().get(5)).getValue();
-            replacementProductData.setNewSerial(newserial);
-            replacementProductData.setSelectedReason(selectedValue);
-            Messagebox.show("Confirm you want to replace "+replacementProductData.getAssignedSerial()+" with "+newserial+" on order "+orderModel.getCode()+" selectedValue :"+selectedValue, "Replacement Confirmation", new Messagebox.Button[]
+          String   selectedReason=( (Combobox)row.getChildren().get(5)).getValue();
+            replacementProductData.setNewSerial(((Textbox) row.getChildren().get(4)).getValue());
+            replacementProductData.setSelectedReason(( (Combobox)row.getChildren().get(5)).getValue());
+            Messagebox.show("Confirm you want to replace "+replacementProductData.getAssignedSerial()+" with "+newserial+" on order "+orderModel.getCode(), "Replacement Confirmation", new Messagebox.Button[]
                     {Messagebox.Button.YES, Messagebox.Button.NO},null, Messagebox.QUESTION, null, clickEvent -> {
                 if (Messagebox.Button.YES == clickEvent.getButton())
                 {
@@ -136,55 +128,85 @@ replacementProductData.setConsEntry(consignmentEntryModel);
                     cancelAndLeave();
                 }
             }, null);
-
-
         }else {
-            Messagebox.show("Please enter atleast one Order");
+            Messagebox.show("Please Select atleast one serial which you want to replace");
         }
 
 
     }
 
     private   void  validateAndUpdate(final ReplacementProductData productData, Component row){
-        final BlSerialProductModel serial = this.defaultBlProductDao.getSerialByBarcode(productData.getNewSerial());
-        if (Objects.isNull(serial)) {
-            Messagebox.show("No serial present with given barcode :" + productData.getNewSerial());
-            return;
-        }
-        else if (Objects.isNull(serial.getWarehouseLocation())) {
-            Messagebox.show("No warehouse associated with serial");
-        }else{
-            if(productData.getOldSerial().getBlProduct().equals(serial.getBlProduct())) {
-                if (BooleanUtils.isTrue(serial.getWarehouseLocation().getCode().equals(productData.getConsignment().getWarehouse().getCode()))) {
+        AbstractOrderModel actualOrder = orderDao.getOrderByCode(orderModel.getCode());
+if(isOldSerialAvailableOnOrder(actualOrder,productData.getOldSerial())) {
+    final BlSerialProductModel serial = this.defaultBlProductDao.getSerialByBarcode(productData.getNewSerial());
+    if (Objects.isNull(serial)) {
+        Messagebox.show("No serial present with given barcode :" + productData.getNewSerial());
+        return;
+    } else if (Objects.isNull(serial.getWarehouseLocation())) {
+        Messagebox.show("No warehouse associated with serial");
+    } else if (!blStockService.isStockAvailable(new HashSet<>(Arrays.asList(serial.getCode())), productData.getConsignment().getOptimizedShippingStartDate(), productData.getConsignment().getOptimizedShippingEndDate(), serial.getWarehouseLocation())) {
+        Messagebox.show("The replacement serial is not available");
+    } else {
+        if (productData.getOldSerial().getBlProduct().equals(serial.getBlProduct())) {
+            if (BooleanUtils.isTrue(serial.getWarehouseLocation().getCode().equals(productData.getConsignment().getWarehouse().getCode()))) {
 
-                    replaceSerialWithSameProductAndWarehouse(productData, serial, productData.getNewSerial(), productData.getAssignedSerial(), row);
+                replaceSerialWithSameProductAndWarehouse(productData, serial, productData.getNewSerial(), productData.getOldSerial(), row);
 
-                } else {
-                   // replaceSerialWithSameProductAndDifferentWarehouse()
-   // same product from different warehouse
-                }
-
-            }else {
-                //different product
+            } else {
+                // replaceSerialWithSameProductAndDifferentWarehouse()
+                // same product from different warehouse
             }
-           // Messagebox.show("This barcode :"+productData.getNewSerial()+" belonds to different warehouse :"+serial.getCode());
+
+        } else {
+            //different product
         }
+    }
+}else {
+    Messagebox.show("The original serial is not on this order, double check.");
+}
         Messagebox.show("from validate");
     }
 
-    protected void replaceSerialWithSameProductAndWarehouse(final ReplacementProductData productData,final BlSerialProductModel newSerial, final String barCode, final String oldSerialCode,
+    protected void replaceSerialWithSameProductAndWarehouse(final ReplacementProductData productData,final BlSerialProductModel newSerial, final String barCode, final BlSerialProductModel oldSerial,
                               final Component row) {
 
         ConsignmentEntryModel consEntry = productData.getConsEntry();
-       // List<BlProductModel> serialProducts = consEntry.getSerialProducts();
-      //  Map<String, ItemStatusEnum> items = consEntry.getItems();
-        Map<String, ConsignmentEntryStatusEnum> consignmentEntryStatus = consEntry.getConsignmentEntryStatus();
+  updatingBothEntry(consEntry,newSerial,oldSerial);
 
+        modelService.save(consEntry.getOrderEntry());
+        modelService.refresh(consEntry.getOrderEntry());
+        modelService.save(consEntry);
+        modelService.refresh(consEntry);
 
+              //  releasing stock
+        final Collection<StockLevelModel> availableStockForRelease =blStockService.getStockForSingleSerial(productData.getAssignedSerial(),productData.getConsignment().getOptimizedShippingStartDate(), productData.getConsignment().getOptimizedShippingEndDate());
+        Boolean reservedStatus=   blStockService.isActiveStatus(productData.getOldSerial().getSerialStatus())? Boolean.FALSE:Boolean.TRUE;
+        blStockService.updateAndSaveStockRecord(availableStockForRelease,reservedStatus,null);
+
+        //reserving stock
+        final Collection<StockLevelModel> availableStockForReseved = blStockService.getAvailableStockForSingleSerial(newSerial.getCode(),
+                productData.getConsignment().getOptimizedShippingStartDate(), productData.getConsignment().getOptimizedShippingEndDate(),
+                newSerial.getWarehouseLocation());
+        blStockService.updateAndSaveStockRecord(availableStockForReseved,Boolean.TRUE,orderModel.getCode());
+        updateConsignmentEntryQuantity(productData.getConsEntry());
+    }
+private   boolean isOldSerialAvailableOnOrder(AbstractOrderModel order,BlSerialProductModel oldSerial){
+   for (ConsignmentModel consignmentModel :orderModel.getConsignments()){
+        for(ConsignmentEntryModel consignmentEntryModel :consignmentModel.getConsignmentEntries()) {
+            for(BlProductModel blProductModel: consignmentEntryModel.getSerialProducts()){
+                if (blProductModel.getCode().equals(oldSerial.getCode()) ) {
+                    return true;
+                }
+            }
+        }
+    }
+                    return Boolean.FALSE;
+}
+    private void updatingBothEntry(final ConsignmentEntryModel consEntry,final BlSerialProductModel newSerial,final BlSerialProductModel oldSerial){
         List<BlProductModel> serialProducts = consEntry.getSerialProducts();
         serialProducts = CollectionUtils.isNotEmpty(serialProducts)?new ArrayList<BlProductModel>(serialProducts) :new ArrayList<BlProductModel>();
         serialProducts.add(newSerial);
-        serialProducts.remove(productData.getOldSerial());
+        serialProducts.remove(oldSerial);
         consEntry.setSerialProducts(serialProducts);
 
         Map<String, ItemStatusEnum> items = consEntry.getItems();
@@ -192,66 +214,29 @@ replacementProductData.setConsEntry(consignmentEntryModel);
         if(items.isEmpty()){
             items.put(newSerial.getCode(),ItemStatusEnum.NOT_INCLUDED);
         }else {
-            items.put(newSerial.getCode(), items.get(productData.getOldSerial()));
-            items.remove(productData.getOldSerial());
+            items.put(newSerial.getCode(), items.get(oldSerial));
+            items.remove(oldSerial);
         }
         consEntry.setItems(items);
+
+        Map<String, ConsignmentEntryStatusEnum> consignmentEntryStatus = consEntry
+                .getConsignmentEntryStatus();
+        consignmentEntryStatus= (consignmentEntryStatus == null || consignmentEntryStatus.isEmpty()) ? new HashMap<>() : new HashMap<>(consignmentEntryStatus);
+        if (consignmentEntryStatus.isEmpty()){
+            consignmentEntryStatus.put(newSerial.getCode(),ConsignmentEntryStatusEnum.NOT_SHIPPED);
+        }else {
+            consignmentEntryStatus
+                    .put(newSerial.getCode(), consignmentEntryStatus.get(oldSerial.getCode()));
+            consignmentEntryStatus.remove(oldSerial.getCode());
+        }
+        consEntry.setConsignmentEntryStatus(consignmentEntryStatus);
 
         List<BlProductModel> serialProductOnOrderEntry = consEntry.getOrderEntry()
                 .getSerialProducts();
         serialProductOnOrderEntry = CollectionUtils.isNotEmpty(serialProductOnOrderEntry) ? new ArrayList<>(serialProductOnOrderEntry) : new ArrayList<>();
         serialProductOnOrderEntry.add(newSerial);
-        serialProductOnOrderEntry.remove(productData.getOldSerial());
+        serialProductOnOrderEntry.remove(oldSerial);
         consEntry.getOrderEntry().setSerialProducts(serialProductOnOrderEntry);
-
-        modelService.save(consEntry.getOrderEntry());
-        modelService.refresh(consEntry.getOrderEntry());
-        modelService.save(consEntry);
-        modelService.refresh(consEntry);
-
-        blReallocationService.removeReserveStocksForSerialProducts(new HashSet<>(Arrays.asList(productData.getAssignedSerial())),
-               productData.getConsignment().getOptimizedShippingStartDate(), productData.getConsignment().getOptimizedShippingEndDate(), Boolean.TRUE,
-                productData.getConsignment().getWarehouse());
-        // need to reserve stock for new serial.
-
-        final List<String> serialsCodesToRemove = new ArrayList<String>();
-        final List<String> serialsCodesToAdd = new ArrayList<String>();
-        final List<BlProductModel> productEntries = new ArrayList<BlProductModel>();
-        productEntries.addAll(productData.getConsEntry().getSerialProducts());
-        final Map<String, ItemStatusEnum> newItems = new HashMap<String, ItemStatusEnum>();
-        newItems.putAll(productData.getConsEntry().getItems());
-        for (final BlProductModel productEntry : productData.getConsEntry().getSerialProducts()) {
-            if (productEntry instanceof BlSerialProductModel && productEntry.getCode().equals(oldSerialCode)) {
-                final BlSerialProductModel serialProduct = (BlSerialProductModel) productEntry;
-                if (serial != null && serialProduct.getBlProduct().equals(serial.getBlProduct())) {
-                    if (productData.getConsEntry().getItems().containsKey(serialProduct.getCode())) {
-                        newItems.remove(serialProduct.getCode());
-                        newItems.put(serial.getCode(), productData.getConsEntry().getItems().get(serialProduct.getCode()));
-                    }
-                    productEntries.remove(productEntry);
-                    productEntries.add(serial);
-                    serialsCodesToRemove.add(oldSerialCode);
-                    serialsCodesToAdd.add(serial.getCode());
-
-
-                        blReallocationService.removeReserveStocksForSerialProducts(new HashSet<>(serialsCodesToRemove),
-                                orderModel.getConsignments().iterator().next().getOptimizedShippingStartDate(), orderModel.getConsignments().iterator().next().getOptimizedShippingEndDate(), Boolean.TRUE,
-                                orderModel.getConsignments().iterator().next().getWarehouse());
-                }
-                else
-                {
-                    throw new WrongValueException((row.getChildren().get(4)),
-                            this.getLabel("warehousingbackoffice.reassignserial.validation.incorrect.barcode"));
-                }
-            }
-        }
-        productData.getConsEntry().getOrderEntry().setSerialProducts(productEntries.stream()
-                .filter(blSerialProduct -> blSerialProduct instanceof BlSerialProductModel).collect(Collectors.toList()));
-        productData.getConsEntry().setSerialProducts(productEntries);
-        productData.getConsEntry().setItems(newItems);
-        modelService.save(productData.getConsEntry().getOrderEntry());
-        modelService.save(productData.getConsEntry());
-        updateConsignmentEntryQuantity(productData.getConsEntry());
     }
     /**
      * @param entry
