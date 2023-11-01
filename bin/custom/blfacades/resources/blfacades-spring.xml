@@ -373,7 +373,9 @@
 
     <!-- BL-462 : Extended OOTB CartPopulator to populate custom attributes of cart required on cart page -->
     <alias name="defaultBlCartPopulator" alias="cartPopulator"/>
-    <bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BlCartPopulator" parent="defaultCartPopulator"/>
+    <bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BlCartPopulator" parent="defaultCartPopulator">
+		<property name="promotionDao" ref="promotionDao"/>
+	</bean>
 
 	<!-- Added to override OOB populator to populate subtotal without discount on storefront-->
 	<alias name="defaultBlMiniCartPopulator" alias="miniCartPopulator"/>
