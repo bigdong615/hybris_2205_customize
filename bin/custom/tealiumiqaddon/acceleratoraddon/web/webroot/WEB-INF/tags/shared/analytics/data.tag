@@ -435,9 +435,52 @@
 				</c:choose>
 	
 	<script type="text/javascript">
+	
+		<c:set var="msgType" value=""/>
+		<c:set var="message" value=""/>
+		<c:set var="products" value=""/>
+		
+	 <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+	 
+	 <c:choose>
+             	<c:when test="${not empty entryNumber and not empty entryMessage and entryNumber == entry.entryNumber}">
+             		<div class="notification notification-error"><spring:theme code="${entryMessage.messageCode}" arguments="${entryMessage.arguments}" htmlEscape= "false"/></div>
+             	</c:when>
+             	<c:when test="${not empty entry.availabilityMessage }">
+					<c:set var="msgType" value="checkout-availability-errors"/>
+					<c:set var="message" value="${entry.availabilityMessage.messageCode}"/>
+					  <c:choose>
+					 <c:when test="${not empty  products}">
+					   <c:set var="products" value="${products}, ${entry.product.code}"/>
+					</c:when>
+					 <c:otherwise>
+					   <c:set var="products" value="${entry.product.code}"/>
+					</c:otherwise>
+					</c:choose>
+             	</c:when>
+             	<c:when test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
+             		<c:set var="msgType" value="checkout-availability-errors"/>
+             		<c:set var="message" value="This item is no longerrr available for your selected date range."/>
+             	</c:when>
+             </c:choose>
+             
+            </c:forEach> 
 		
           window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+			
+			{
+      		  "event": "platform.interact.auto.error",
+     		  "error": {
+       			 "type": ${msgType},
+       			 "message": "${message}",
+       			 "productIds": [
+       			      ${products}
+       				 ]
+      			}
+  		    }
+			
+			];
 
 			dmpgDl.screen = 
 				{

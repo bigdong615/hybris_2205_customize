@@ -942,6 +942,18 @@ function createHostedFields(clientInstance) {
 				
 				
 				
+				window.dmpgDl = window.dmpgDl || {};
+				dmpgDl.events = [
+				 {
+    			   "event": platform.interact.auto.error,
+      			   "error": {
+       				 "type": "checkout-miscellaneous-errors",
+        			 "message": "Missing Required Fields"
+        			  }
+  				 }
+			   ];
+			   
+				
 				function scrollErrorMessage() {
 					$('html, body').animate({
 						scrollTop: $(".payment-method-container").offset().top

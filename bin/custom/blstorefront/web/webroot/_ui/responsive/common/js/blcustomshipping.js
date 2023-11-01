@@ -204,6 +204,17 @@ function reverseTraverseOnShipping() {
             else {
              	 $('#cart-shipping-cost').text('-');
                  showErrorNotification('Uh oh, this delivery method is not available for this arrival date.', false);
+                 
+                window.dmpgDl = window.dmpgDl || {};
+				dmpgDl.events = [
+				 {
+    			   "event": platform.interact.auto.error,
+      			   "error": {
+       				 "type": "shipping-delivery-errors",
+        			 "message": "Shipping Method is Not Available - SHIP_HOME_HOTEL_BUSINESS"
+        			  }
+  				 }
+			 ];
              }
          },
          complete: function() {
@@ -356,6 +367,18 @@ function reverseTraverseOnShipping() {
             	$('#cart-shipping-cost').text('-');
                 showErrorNotification('Uh oh, this delivery method is not available for this arrival date.', false);
                 $('#checkZipForUPSPickup').hide();
+                
+                
+                 window.dmpgDl = window.dmpgDl || {};
+				dmpgDl.events = [
+				 {
+    			   "event": platform.interact.auto.error,
+      			   "error": {
+       				 "type": "shipping-delivery-errors",
+        			 "message": "Shipping Method is Not Available - SHIP_UPS_OFFICE"
+        			  }
+  				 }
+			 ];
             }
         },
         complete: function() {
@@ -809,6 +832,17 @@ function reverseTraverseOnShipping() {
             	  showErrorNotificationPickUp('Selected shipping option not available for new gear pickup!!');
             	 }else {
                 showErrorNotificationPickUp('Uh oh, this delivery method is not available for this arrival date.');
+                
+                window.dmpgDl = window.dmpgDl || {};
+				dmpgDl.events = [
+				 {
+    			   "event": platform.interact.auto.error,
+      			   "error": {
+       				 "type": "shipping-delivery-errors",
+        			 "message": "Shipping Method is Not Available -"+ partnerZone
+        			  }
+  				 }
+			 ];
                 }
             }
         },

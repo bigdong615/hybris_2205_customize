@@ -382,6 +382,20 @@ ACC.address = {
     			checkedStatus = false;
            	}
            	if (count > 0) {
+				   
+				window.dmpgDl = window.dmpgDl || {};
+				dmpgDl.events = [
+				 {
+    			   "event": platform.interact.auto.error,
+      			   "error": {
+       				 "type": "checkout-miscellaneous-errors",
+        			 "message": "Missing " + count + " required fields."
+        			  }
+  				 }
+			  ];
+			 
+			 
+				   
            		$('#js-add-address-Validation').addClass('notification notification-error');
            		$('#js-add-address-Validation').html("You are missing " + count + " required fields.");
            	} else if (checkedStatus) {

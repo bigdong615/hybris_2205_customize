@@ -327,6 +327,17 @@ ACC.account = {
            			success: function (result) {
                    	if(result == 'success'){
                     	status = true;
+                    	
+                    	window.dmpgDl = window.dmpgDl || {};
+				dmpgDl.events = [
+				 {
+    			   "event": platform.interact.auto.error,
+      			   "error": {
+       				 "type": "checkout-miscellaneous-errors",
+        			 "message": "User is not signed in"
+        			  }
+  				 }
+			 ];
                     	}else {
                     	status = false;
                     	}
