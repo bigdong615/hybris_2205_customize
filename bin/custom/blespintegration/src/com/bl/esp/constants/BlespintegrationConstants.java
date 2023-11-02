@@ -167,7 +167,7 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String BILL_QUANTITY = "1";
 
 
-	public static final String LATE_ORDER_FILE_NAME_PREFIX = "bl_late_orders_feed_";
+	public static final String LATE_ORDER_FILE_NAME_PREFIX = "bl_late_orders_feed";
 	public static final String LOCAL_FTP_PATH_LATE_ORDER = "local.sftp.file.path.late.order";
 
 
