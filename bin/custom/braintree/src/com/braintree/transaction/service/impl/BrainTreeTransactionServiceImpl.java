@@ -535,14 +535,19 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		authorizationRequest.setPurchaseOrderNumber(cart.getCode());
 		BigDecimal authPercentage = BigDecimal.ZERO;
 
-		//Added condition for modifyPayment with zero order total (full Gift Card Order)
-		if(authAmount != null && (cart.getTotalPrice().compareTo(ZERO_PRICE) == ZERO )) {
-			//		calc taxAmount via percentage of AUTH-amount
-			 authPercentage = roundNumberToTwoDecimalPlaces(
-					authAmount.doubleValue() * CONVERT_TO_PERCENTAGE / (cart.getGrandTotal().doubleValue()));
-			LOG.info("authPercentage: " + authPercentage + ", as double: " + authPercentage.doubleValue());
-		}else{
-				if(authAmount != null) {
+		//Added condition when promotion coupon is applied
+		if (Double.compare(cart.getTotalTax(), 0.0) > ZERO) {
+			//Added condition for modifyPayment with zero order total (full Gift Card Order)
+			if (authAmount != null && (cart.getTotalPrice().compareTo(ZERO_PRICE) == ZERO))
+			{
+				if (Double.compare(cart.getGrandTotal(), 0.0) > ZERO) {
+					//		calc taxAmount via percentage of AUTH-amount
+					authPercentage = roundNumberToTwoDecimalPlaces(
+							authAmount.doubleValue() * CONVERT_TO_PERCENTAGE / (cart.getGrandTotal().doubleValue()));
+					LOG.info("authPercentage: " + authPercentage + ", as double: " + authPercentage.doubleValue());
+				}
+		    }else {
+				if (authAmount != null) {
 					//		calc taxAmount via percentage of AUTH-amount
 					authPercentage = roundNumberToTwoDecimalPlaces(
 							authAmount.doubleValue() * CONVERT_TO_PERCENTAGE / (cart.getTotalPrice().doubleValue()));
@@ -554,7 +559,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				cart.getTotalTax().doubleValue() * authPercentage.doubleValue() / CONVERT_TO_PERCENTAGE);
 		LOG.info("taxSupposed: " + taxSupposed);
 		authorizationRequest.setTaxAmountAuthorize(taxSupposed.doubleValue());
-
+	    }
 		//		add Level 3 data
 		LOG.info("cart.getDeliveryCost: " + cart.getDeliveryCost());
 		authorizationRequest.setShippingAmount(cart.getDeliveryCost());
