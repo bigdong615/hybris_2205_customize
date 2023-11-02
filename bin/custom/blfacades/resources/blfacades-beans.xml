@@ -492,6 +492,7 @@
        	<property name="createdTS" type="java.util.Date"/>
 	  	<property name="modifiedTS" type="java.util.Date"/>
 	  	<property name="totalitemsqty" type="java.lang.Double"/>
+	  <property name="freeRentalDates" type="java.util.List&lt;java.lang.String>" />
   </bean>
   
   	<bean class="de.hybris.platform.commercefacades.order.data.OrderData" extends="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
