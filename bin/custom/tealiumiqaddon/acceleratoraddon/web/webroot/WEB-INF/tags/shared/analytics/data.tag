@@ -305,7 +305,7 @@
   				"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
-       				  "displayGross": ${product.price.value}
+       				  "displayGross": ${product.price.value=='' ? 0.0: product.price.value};
      		    	 }
 			  	 },	
 			  	 
@@ -360,7 +360,7 @@
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
-       				   "displayGross": ${product.price.value}
+       				   "displayGross": ${product.price.value=='' ? 0.0: product.price.value};
      				}
 			  	 }	
 			  	 ],
@@ -446,9 +446,19 @@
              	<c:when test="${not empty entryNumber and not empty entryMessage and entryNumber == entry.entryNumber}">
              		<div class="notification notification-error"><spring:theme code="${entryMessage.messageCode}" arguments="${entryMessage.arguments}" htmlEscape= "false"/></div>
              	</c:when>
+             	<c:when test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
+             		<c:set var="msgType" value="checkout-availability-errors"/>
+             		<c:set var="message" value="Out of Stock for Rental Dates"/>
+             	</c:when>
              	<c:when test="${not empty entry.availabilityMessage }">
 					<c:set var="msgType" value="checkout-availability-errors"/>
-					<c:set var="message" value="${entry.availabilityMessage.messageCode}"/>
+					<c:if test="${entry.availabilityMessage.messageCode == 'text.stock.not.available'}">
+					   <c:set var="message" value="Out of Stock for Rental Dates"/>
+					   </c:if>
+					   
+					<c:if test="${entry.availabilityMessage.messageCode == 'cart.entry.item.availability.low.stock.available'}">
+					  <c:set var="message" value="Out of Stock for Rental Quantity ${entry.quantity}"/>
+					</c:if>
 					  <c:choose>
 					 <c:when test="${not empty  products}">
 					   <c:set var="products" value="${products}, ${entry.product.code}"/>
@@ -458,28 +468,26 @@
 					</c:otherwise>
 					</c:choose>
              	</c:when>
-             	<c:when test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
-             		<c:set var="msgType" value="checkout-availability-errors"/>
-             		<c:set var="message" value="This item is no longerrr available for your selected date range."/>
-             	</c:when>
+             	
              </c:choose>
              
             </c:forEach> 
 		
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
+			<c:if test="${not empty  message}">
 			
 			{
       		  "event": "platform.interact.auto.error",
      		  "error": {
-       			 "type": ${msgType},
+       			 "type": "${msgType}",
        			 "message": "${message}",
        			 "productIds": [
-       			      ${products}
+       			      "${products}"
        				 ]
       			}
   		    }
-			
+			</c:if>
 			];
 
 			dmpgDl.screen = 
