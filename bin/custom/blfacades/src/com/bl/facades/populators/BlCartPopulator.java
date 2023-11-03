@@ -1,11 +1,16 @@
 package com.bl.facades.populators;
 
+import atg.taglib.json.util.JSONArray;
+import atg.taglib.json.util.JSONException;
+import atg.taglib.json.util.JSONObject;
+import com.bl.core.dao.promotion.BlPromotionDao;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.logging.BlLogger;
+import com.google.gson.Gson;
 import de.hybris.platform.commercefacades.order.converters.populator.CartPopulator;
 import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CartData;
@@ -17,13 +22,18 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import de.hybris.platform.promotionengineservices.model.PromotionSourceRuleModel;
+import de.hybris.platform.promotions.model.PromotionResultModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -35,6 +45,9 @@ import org.apache.log4j.Logger;
 public class BlCartPopulator extends CartPopulator<CartData>
 {
 	private static final Logger LOG = Logger.getLogger(BlCartPopulator.class);
+
+	@Resource(name = "promotionDao")
+	private BlPromotionDao promotionDao;
 
 	/**
 	 * {@inheritDoc}
@@ -114,6 +127,26 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			target.setGiftCardData(blGiftCardDataList);
 		}
 		target.setIsRetailGearOrder(BooleanUtils.isTrue(source.getIsRetailGearOrder()));
+
+		Set<PromotionResultModel> results = source.getAllPromotionResults();
+		for (PromotionResultModel result : results) {
+			String code = result.getPromotion().getCode();
+			Optional<PromotionSourceRuleModel> promotion = getPromotionDao().getPromotionByCode(code);
+			if (promotion.isPresent()) {
+				String jsonString = promotion.get().getActions();
+				try {
+					JSONArray jsonArray = new JSONArray(jsonString);
+					JSONArray freeRenatalDates = findFreeRentalDates(jsonArray);
+					if (freeRenatalDates != null) {
+						List<String> dates = convertToFormattedDates(freeRenatalDates);
+						target.setFreeRentalDates(dates);
+					}
+				} catch (Exception e) {
+					BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while getting the free rental dates", e);
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -144,5 +177,40 @@ public class BlCartPopulator extends CartPopulator<CartData>
     return null != source && source.getTotalPrice() != null ? source.getTotalPrice() : 0.0d;
   }
 
+	// Helper method to find the free rental dates array in the JSON
+	private JSONArray findFreeRentalDates(JSONArray jsonArray) throws JSONException {
+		JSONArray freeRenatalDates = null;
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject obj = jsonArray.getJSONObject(i);
+			if (obj.getJSONObject("parameters").has("freeRentalDates")) {
+				freeRenatalDates = obj.getJSONObject("parameters").getJSONObject("freeRentalDates").getJSONArray("value");
+				break;  // Exit the loop as we've found the dates
+			}
+		}
+		return freeRenatalDates;
+	}
 
+	// Helper method to convert date strings to the desired format
+	private List<String> convertToFormattedDates(JSONArray freeRentalDates) throws JSONException, ParseException {
+		List<String> dates = new ArrayList<>();
+		SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		SimpleDateFormat targetFormat = new SimpleDateFormat("MM/dd");
+
+		for (int i = 0; i < freeRentalDates.length(); i++) {
+			String dateString = freeRentalDates.getString(i);
+			Date freeDate = sourceFormat.parse(dateString);
+			String formattedDate = targetFormat.format(freeDate);
+			dates.add(formattedDate);
+		}
+		return dates;
+	}
+
+
+	public BlPromotionDao getPromotionDao() {
+		return promotionDao;
+	}
+
+	public void setPromotionDao(BlPromotionDao promotionDao) {
+		this.promotionDao = promotionDao;
+	}
 }
