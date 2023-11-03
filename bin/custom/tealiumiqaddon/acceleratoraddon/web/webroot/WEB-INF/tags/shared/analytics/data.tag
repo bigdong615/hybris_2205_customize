@@ -305,7 +305,7 @@
   				"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
-       				  "displayGross": ${product.price.value=='' ? 0.0: product.price.value};
+       				  "displayGross": ${product.price.value ==null ? 0.0: product.price.value}
      		    	 }
 			  	 },	
 			  	 
@@ -360,7 +360,7 @@
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
 			  	    {
-       				   "displayGross": ${product.price.value=='' ? 0.0: product.price.value};
+       				   "displayGross": ${product.price.value == null ? 0.0: product.price.value}
      				}
 			  	 }	
 			  	 ],
