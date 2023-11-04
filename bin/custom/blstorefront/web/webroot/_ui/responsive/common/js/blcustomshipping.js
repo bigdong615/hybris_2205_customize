@@ -208,7 +208,7 @@ function reverseTraverseOnShipping() {
                 window.dmpgDl = window.dmpgDl || {};
 				dmpgDl.events = [
 				 {
-    			   "event": platform.interact.auto.error,
+    			   "event": "platform.interact.auto.error",
       			   "error": {
        				 "type": "shipping-delivery-errors",
         			 "message": "Shipping Method is Not Available - SHIP_HOME_HOTEL_BUSINESS"
@@ -372,7 +372,7 @@ function reverseTraverseOnShipping() {
                  window.dmpgDl = window.dmpgDl || {};
 				dmpgDl.events = [
 				 {
-    			   "event": platform.interact.auto.error,
+    			   "event": "platform.interact.auto.error",
       			   "error": {
        				 "type": "shipping-delivery-errors",
         			 "message": "Shipping Method is Not Available - SHIP_UPS_OFFICE"
@@ -836,7 +836,7 @@ function reverseTraverseOnShipping() {
                 window.dmpgDl = window.dmpgDl || {};
 				dmpgDl.events = [
 				 {
-    			   "event": platform.interact.auto.error,
+    			   "event": "platform.interact.auto.error",
       			   "error": {
        				 "type": "shipping-delivery-errors",
         			 "message": "Shipping Method is Not Available -"+ partnerZone

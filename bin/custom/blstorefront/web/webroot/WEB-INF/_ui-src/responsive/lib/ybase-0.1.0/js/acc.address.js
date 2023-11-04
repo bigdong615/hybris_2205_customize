@@ -386,7 +386,7 @@ ACC.address = {
 				window.dmpgDl = window.dmpgDl || {};
 				dmpgDl.events = [
 				 {
-    			   "event": platform.interact.auto.error,
+    			  "event": "platform.interact.auto.error",
       			   "error": {
        				 "type": "checkout-miscellaneous-errors",
         			 "message": "Missing " + count + " required fields."
