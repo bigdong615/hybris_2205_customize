@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.bl.core.model.CustomerNotesModel;
 import com.bl.facades.customerNotes.data.CustomerNotesData;
+import com.bl.facades.process.email.impl.DefaultBlDomoFailureNotificationService;
 import com.bl.logging.BlLogger;
 
 
@@ -22,42 +23,63 @@ import com.bl.logging.BlLogger;
 public class BlDomoCustomerNotesPopulator implements Populator<CustomerNotesModel, CustomerNotesData>
 {
 	private static final Logger LOG = Logger.getLogger(BlDomoCustomerNotesPopulator.class);
+	private DefaultBlDomoFailureNotificationService defaultBlDomoFailureNotificationService;
 
 	@Override
 	public void populate(final CustomerNotesModel source, final CustomerNotesData target) throws ConversionException
 	{
 		try
 		{
-		target.setCreatedTS(source.getCreationtime());
-		target.setModifiedTS(source.getModifiedtime());
-		target.setUserId(source.getUserID());
-		if (source.getType() != null)
-		{
-			target.setType(source.getType().getCode());
+			target.setCreatedTS(source.getCreationtime());
+			target.setModifiedTS(source.getModifiedtime());
+			target.setUserId(source.getUserID());
+			if (source.getType() != null)
+			{
+				target.setType(source.getType().getCode());
+			}
+			if (source.getOrder() != null)
+			{
+				target.setOrder(source.getOrder().getCode());
+			}
+			if (source.getCustomerNoteType() != null)
+			{
+				target.setCustomerNoteType(source.getCustomerNoteType().getCode());
+			}
+			target.setFraud(source.isFraud());
+			if (source.getCustomer() != null)
+			{
+				target.setCustomer(source.getCustomer().getUid());
+			}
+			target.setNote(source.getNote());
+			target.setPrimaryKey(source.getPk().toString());
 		}
-		if (source.getOrder() != null)
+		catch (final Exception exception)
 		{
-			target.setOrder(source.getOrder().getCode());
-		}
-		if (source.getCustomerNoteType() != null)
-		{
-			target.setCustomerNoteType(source.getCustomerNoteType().getCode());
-		}
-		target.setFraud(source.isFraud());
-		if (source.getCustomer() != null)
-		{
-			target.setCustomer(source.getCustomer().getUid());
-		}
-		target.setNote(source.getNote());
-		target.setPrimaryKey(source.getPk().toString());
-	}
-	catch (final Exception exception)
-	{
-		LOG.info("Error while getting ConsignmentEntry info for PK " + source.getPk().toString());
-		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting ConsignmentEntryModel info", exception);
-		exception.printStackTrace();
+			getDefaultBlDomoFailureNotificationService().send(exception.toString(), source.getPk().toString(),
+					"DomoCustomerNotes api");
+			LOG.error("Error while getting ConsignmentEntry info for PK " + source.getPk().toString());
+			BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting ConsignmentEntryModel info", exception);
+			exception.printStackTrace();
 
+		}
 	}
+
+	/**
+	 * @return the defaultBlDomoFailureNotificationService
+	 */
+	public DefaultBlDomoFailureNotificationService getDefaultBlDomoFailureNotificationService()
+	{
+		return defaultBlDomoFailureNotificationService;
+	}
+
+	/**
+	 * @param defaultBlDomoFailureNotificationService
+	 *           the defaultBlDomoFailureNotificationService to set
+	 */
+	public void setDefaultBlDomoFailureNotificationService(
+			final DefaultBlDomoFailureNotificationService defaultBlDomoFailureNotificationService)
+	{
+		this.defaultBlDomoFailureNotificationService = defaultBlDomoFailureNotificationService;
 	}
 
 }

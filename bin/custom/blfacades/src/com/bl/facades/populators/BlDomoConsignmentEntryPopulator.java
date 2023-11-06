@@ -22,74 +22,78 @@ import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
+import com.bl.facades.process.email.impl.DefaultBlDomoFailureNotificationService;
 import com.bl.logging.BlLogger;
 
 
 public class BlDomoConsignmentEntryPopulator implements Populator<ConsignmentEntryModel, ConsignmentEntryData>
 {
 	private static final Logger LOG = Logger.getLogger(BlDomoConsignmentEntryPopulator.class);
+	private DefaultBlDomoFailureNotificationService defaultBlDomoFailureNotificationService;
 
 	public void populate(final ConsignmentEntryModel source, final ConsignmentEntryData target) throws ConversionException
 	{
 		try
 		{
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BL Domo ConsignmentEntryModel : {} ", source.getPk());
-		if (source.getOrderEntry() != null)
-		{
-			if (source.getOrderEntry().getOrder() != null)
+			if (source.getOrderEntry() != null)
 			{
-				target.setOrder_entry(source.getOrderEntry().getOrder().getCode() + "." + source.getOrderEntry().getEntryNumber());
+				if (source.getOrderEntry().getOrder() != null)
+				{
+					target.setOrder_entry(source.getOrderEntry().getOrder().getCode() + "." + source.getOrderEntry().getEntryNumber());
+				}
+			}
+
+			target.setQuantity(source.getQuantity());
+			target.setShippedQuantity(source.getShippedQuantity());
+			target.setConsignment(source.getConsignment() != null ? source.getConsignment().getCode() : StringUtils.EMPTY);
+			target.setShippedQuantity(source.getShippedQuantity());
+			target.setCreatedTS(source.getCreationtime());
+			target.setModifiedTS(source.getModifiedtime());
+			target.setGearrated(source.isGearRated());
+			target.setPrimaryKey(source.getPk().toString());
+
+			final List<String> items = new ArrayList<>();
+			if (!source.getItems().isEmpty())
+			{
+				source.getItems().forEach((k, v) -> items.add((k + ":" + getItemsCode(v))));
+			}
+			target.setItems(StringUtils.join(items, ','));
+			final List<String> billingcharges = new ArrayList<>();
+			if (!source.getBillingCharges().isEmpty())
+			{
+				source.getBillingCharges().forEach((k, v) -> billingcharges.add((k + ":" + getCode(v))));
+			}
+			target.setBillingcharges(StringUtils.join(billingcharges, ','));
+			final List<String> consignmententrystatus = new ArrayList<>();
+			if (!source.getConsignmentEntryStatus().isEmpty())
+			{
+				source.getConsignmentEntryStatus()
+						.forEach((k, v) -> consignmententrystatus.add((k + ":" + getConsignmentEntryStatus(v))));
+			}
+			target.setConsignmententrystatus(StringUtils.join(consignmententrystatus, ','));
+
+			target.setSerialproducts(
+					source.getSerialProducts().stream().map(BlProductModel::getCode).collect(Collectors.joining(",")));
+			target.setOptions(source.getOptions().stream().map(BlOptionsModel::getOptionId).collect(Collectors.joining(",")));
+			target.setTestingstatus(source.getTestingStatus() != null ? source.getTestingStatus().getCode() : StringUtils.EMPTY);
+
+			if (source.getConsignment() != null)
+			{
+				target.setQuantityDeclined(source.getQuantityDeclined());
+				target.setQuantityPending(source.getQuantityPending());
+				target.setQuantityShipped(source.getQuantityShipped());
+				//target.setMainItemNotScannedCount(source.getMainItemNotScannedCount());
+				//target.setSubpartsNotScannedCount(source.getSubpartsNotScannedCount());
 			}
 		}
-
-		target.setQuantity(source.getQuantity());
-		target.setShippedQuantity(source.getShippedQuantity());
-		target.setConsignment(source.getConsignment() != null ? source.getConsignment().getCode() : StringUtils.EMPTY);
-		target.setShippedQuantity(source.getShippedQuantity());
-		target.setCreatedTS(source.getCreationtime());
-		target.setModifiedTS(source.getModifiedtime());
-		target.setGearrated(source.isGearRated());
-		target.setPrimaryKey(source.getPk().toString());
-
-		final List<String> items = new ArrayList<>();
-		if (!source.getItems().isEmpty())
+		catch (final Exception exception)
 		{
-			source.getItems().forEach((k, v) -> items.add((k + ":" + getItemsCode(v))));
+			getDefaultBlDomoFailureNotificationService().send(exception.toString(), source.getPk().toString(),
+					"DomoConsignmentEntry api");
+			LOG.error("Error while getting ConsignmentEntry info for PK " + source.getPk().toString());
+			BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting ConsignmentEntryModel info", exception);
+			exception.printStackTrace();
 		}
-		target.setItems(StringUtils.join(items, ','));
-		final List<String> billingcharges = new ArrayList<>();
-		if (!source.getBillingCharges().isEmpty())
-		{
-			source.getBillingCharges().forEach((k, v) -> billingcharges.add((k + ":" + getCode(v))));
-		}
-		target.setBillingcharges(StringUtils.join(billingcharges, ','));
-		final List<String> consignmententrystatus = new ArrayList<>();
-		if (!source.getConsignmentEntryStatus().isEmpty())
-		{
-			source.getConsignmentEntryStatus()
-					.forEach((k, v) -> consignmententrystatus.add((k + ":" + getConsignmentEntryStatus(v))));
-		}
-		target.setConsignmententrystatus(StringUtils.join(consignmententrystatus, ','));
-
-		target.setSerialproducts(source.getSerialProducts().stream().map(BlProductModel::getCode).collect(Collectors.joining(",")));
-		target.setOptions(source.getOptions().stream().map(BlOptionsModel::getOptionId).collect(Collectors.joining(",")));
-		target.setTestingstatus(source.getTestingStatus() != null ? source.getTestingStatus().getCode() : StringUtils.EMPTY);
-
-		if (source.getConsignment() != null)
-		{
-			target.setQuantityDeclined(source.getQuantityDeclined());
-			target.setQuantityPending(source.getQuantityPending());
-			target.setQuantityShipped(source.getQuantityShipped());
-			//target.setMainItemNotScannedCount(source.getMainItemNotScannedCount());
-			//target.setSubpartsNotScannedCount(source.getSubpartsNotScannedCount());
-		}
-	}
-	catch (final Exception exception)
-	{
-		LOG.info("Error while getting ConsignmentEntry info for PK " + source.getPk().toString());
-		BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting ConsignmentEntryModel info", exception);
-		exception.printStackTrace();
-	}
 	}
 
 	/**
@@ -147,6 +151,24 @@ public class BlDomoConsignmentEntryPopulator implements Populator<ConsignmentEnt
 
 		}
 
+	}
+
+	/**
+	 * @return the defaultBlDomoFailureNotificationService
+	 */
+	public DefaultBlDomoFailureNotificationService getDefaultBlDomoFailureNotificationService()
+	{
+		return defaultBlDomoFailureNotificationService;
+	}
+
+	/**
+	 * @param defaultBlDomoFailureNotificationService
+	 *           the defaultBlDomoFailureNotificationService to set
+	 */
+	public void setDefaultBlDomoFailureNotificationService(
+			final DefaultBlDomoFailureNotificationService defaultBlDomoFailureNotificationService)
+	{
+		this.defaultBlDomoFailureNotificationService = defaultBlDomoFailureNotificationService;
 	}
 
 }

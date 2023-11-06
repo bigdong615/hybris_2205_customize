@@ -10,6 +10,7 @@ import java.util.Date;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.facades.process.email.impl.DefaultBlDomoFailureNotificationService;
 import com.bl.logging.BlLogger;
 
 
@@ -17,6 +18,7 @@ public class BlSearchResultDomoProductPopulator implements Populator<SearchResul
 {
 
 	private static final Logger LOG = Logger.getLogger(BlSearchResultDomoProductPopulator.class);
+	private DefaultBlDomoFailureNotificationService defaultBlDomoFailureNotificationService;
 
 	@Override
 	public void populate(final SearchResultValueData source, final ProductData target)
@@ -305,7 +307,10 @@ public class BlSearchResultDomoProductPopulator implements Populator<SearchResul
 		}
 		catch (final Exception e)
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Error while creating Additional Attributes For Domo", e.getMessage());
+			getDefaultBlDomoFailureNotificationService().send(e.toString(), this.<Long> getValue(source, "pk").toString(),
+					"product api");
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error while creating Additional Attributes For Domo product",
+					e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -318,5 +323,24 @@ public class BlSearchResultDomoProductPopulator implements Populator<SearchResul
 		}
 		return (T) source.getValues().get(propertyName);
 	}
+
+	/**
+	 * @return the defaultBlDomoFailureNotificationService
+	 */
+	public DefaultBlDomoFailureNotificationService getDefaultBlDomoFailureNotificationService()
+	{
+		return defaultBlDomoFailureNotificationService;
+	}
+
+	/**
+	 * @param defaultBlDomoFailureNotificationService
+	 *           the defaultBlDomoFailureNotificationService to set
+	 */
+	public void setDefaultBlDomoFailureNotificationService(
+			final DefaultBlDomoFailureNotificationService defaultBlDomoFailureNotificationService)
+	{
+		this.defaultBlDomoFailureNotificationService = defaultBlDomoFailureNotificationService;
+	}
+
 
 }
