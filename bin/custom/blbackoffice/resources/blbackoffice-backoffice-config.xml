@@ -1048,8 +1048,8 @@
 	<context type="ShippingCost" component="listview" merge-by="replace">
         <list-view:list-view>
             <list-view:column qualifier="name"/>
-            <list-view:column qualifier="floor"/>
-            <list-view:column qualifier="ceiling"/>
+            <list-view:column qualifier="minWeight"/>
+            <list-view:column qualifier="maxWeight"/>
             <list-view:column qualifier="amount"/>
             <list-view:column qualifier="shippingMethodId"/>
         </list-view:list-view>
@@ -1316,6 +1316,8 @@
 	<context type="Order" component="cs-listview" merge-by="type">
         <list:list-view xmlns:list="http://www.hybris.com/cockpitng/component/listView">
             <list:column qualifier="actualRentalStartDate" label="blbackoffice.order.listview.actualRentalStartDate "/>
+			<list:column qualifier="rentalStartDate" label="customersupportbackoffice.order.details.rentalStartDate "/>
+			<list:column qualifier="totalPrice" label="customersupportbackoffice.order.details.total "/>
             <list:column qualifier="date" merge-mode="REMOVE"/>
         </list:list-view>
     </context>

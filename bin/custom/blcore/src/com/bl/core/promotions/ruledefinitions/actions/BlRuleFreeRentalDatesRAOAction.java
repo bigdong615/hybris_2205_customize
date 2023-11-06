@@ -10,10 +10,7 @@ import de.hybris.platform.core.model.product.ProductModel;
 
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.ruleengineservices.calculation.NumberedLineItem;
-import de.hybris.platform.ruleengineservices.rao.CartRAO;
-import de.hybris.platform.ruleengineservices.rao.DiscountRAO;
-import de.hybris.platform.ruleengineservices.rao.OrderEntryRAO;
-import de.hybris.platform.ruleengineservices.rao.RuleEngineResultRAO;
+import de.hybris.platform.ruleengineservices.rao.*;
 import de.hybris.platform.ruleengineservices.rule.evaluation.RuleActionContext;
 import de.hybris.platform.ruleengineservices.rule.evaluation.actions.AbstractRuleExecutableSupport;
 
@@ -114,7 +111,7 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
    */
   private BigDecimal getPromotionRentalDurationPrice(final CartRAO cartRao, final RuleActionContext context, final Integer rentalDays) {
     BigDecimal totalRentalPrice = BigDecimal.ZERO;
-    int  entryNumber = 1;
+    int  entryNumber = 0;
     for (OrderEntryRAO entry : cartRao.getEntries()) {
       if (Objects.nonNull(entry.getPrice()) && rentalDays > 0) {
         final BlProductModel blProduct = (BlProductModel) this.findProduct(entry.getProductCode(), context);

@@ -3,6 +3,8 @@ package com.bl.core.dao.promotion;
 import de.hybris.platform.promotionengineservices.dao.PromotionDao;
 import de.hybris.platform.promotionengineservices.model.PromotionSourceRuleModel;
 
+import java.util.Optional;
+
 
 /**
  * @author Ravikumar
@@ -25,4 +27,5 @@ public interface BlPromotionDao extends PromotionDao
 	PromotionSourceRuleModel getPromotionByCodeAndCouponCondition(final String promoGroup, final String ruleStatus,
 			final String code);
 
+	Optional<PromotionSourceRuleModel> getPromotionByCode(String code);
 }

@@ -258,7 +258,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final double weight, final String deliveryMethod) {
         final String barcodeList = "select {sc.pk} from {ShippingCost as sc}, {ShippingCostEnum as costEnum}" +
                 " where {sc.shippingCostCode} = {costEnum.pk} and {costEnum.code} = ?deliveryMethod" +
-                " and ?weight >= {sc.minWeight} and ?weight < {sc.maxWeight}";
+                " and ?weight >= {sc.minWeight} and ?weight <= {sc.maxWeight}";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("deliveryMethod", deliveryMethod);
         query.addQueryParameter("weight", weight);

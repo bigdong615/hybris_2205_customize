@@ -207,7 +207,17 @@
 	</c:if>
 	<c:if test="${pageType =='CART' || pageType == 'shippingPage'}">
 	<small class="gray60"><spring:theme
-			code="text.checkout.multi.order.summary.msg" /></small>
+			code="text.checkout.multi.order.summary.msg" /></small><br/>
+    <div style="margin:8px;"></div>
+    <c:set var="label" value="${cartData.freeRentalDates.size() gt 1 ? 'Free Days Added:' : 'Free Day Added:'}"/>
+ <c:if test="${not empty cartData.freeRentalDates}">
+			<small class="gray60" style="font-size:14px">${label}&nbsp;
+			  <c:forEach items="${cartData.freeRentalDates}" var="date" varStatus="loop">
+			    ${date}<c:if test="${not loop.last}">,&nbsp;</c:if>
+			  </c:forEach>
+			</small>
+			</c:if>
+
 			</c:if>
 	
 	<c:url value="/cart/voucher/remove" var="voucherRemoveUrl" />
