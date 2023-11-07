@@ -157,6 +157,15 @@
                       <spring:theme code= "text.credit.cards" />
                    </a>
                 </p>
+                 <hr>
+                <p>
+                   <a href="${baseUrl}/update-profile"
+                   <c:if test="${cmsPage.uid eq 'update-profile'}">
+                                         <c:out value="class=active"/>
+                   </c:if>>
+                      <spring:theme code= "text.edit.profile" />
+                   </a>
+                </p>
              </div>
           </div>
        </c:if>
