@@ -64,7 +64,7 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
    */
   protected boolean performAction(final RuleActionContext context, final List<Date> freeRentalDates) {
     CartRAO cartRao = context.getCartRao();
-    if (CollectionUtils.isNotEmpty(freeRentalDates) && cartRao.getRentalDurationDays() > 0) {
+    if (CollectionUtils.isNotEmpty(freeRentalDates) && cartRao.getRentalDurationDays() > 0 && getFreeRentalDaysFromRentalDuration(cartRao,freeRentalDates) > 0) {
       final int noDiscountDays = cartRao.getRentalDurationDays() - getFreeRentalDaysFromRentalDuration(cartRao,freeRentalDates);
       final BigDecimal noDiscountTotal = getPromotionRentalDurationPrice(cartRao, context, noDiscountDays);
       BigDecimal finalDiscount = cartRao.getSubTotal().subtract(noDiscountTotal).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
