@@ -912,6 +912,7 @@
 
 	<alias name="blPackagingInfoPopulator" alias="blPackagingInfoPopulator"/>
 	<bean id="blPackagingInfoPopulator" class="com.bl.facades.populators.BlPackagingInfoPopulator">
+				<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>			
 	</bean>
 
 	<alias name="blpackagingInfoConverter" alias="blpackagingInfoConverter"/>
@@ -926,6 +927,7 @@
 	
 	<alias name="blPaymentTransactionPopulator" alias="blPaymentTransactionPopulator"/>
 	<bean id="blPaymentTransactionPopulator" class="com.bl.facades.populators.BlPaymentTransactionPopulator">
+				<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>			
 	</bean>
 
 	<alias name="blpaymentTransactionConverter" alias="blpaymentTransactionConverter"/>
@@ -946,6 +948,7 @@
 	
 	<alias name="blPaymentTransactionEntryPopulator" alias="blPaymentTransactionEntryPopulator"/>
 	<bean id="blPaymentTransactionEntryPopulator" class="com.bl.facades.populators.BlPaymentTransactionEntryPopulator">
+				<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>			
 	</bean>
 
    <alias name="blpaymentTransactionEntryConverter" alias="blpaymentTransactionEntryConverter"/>
@@ -960,6 +963,7 @@
 	
 	<alias name="blGiftCardPopulator" alias="blGiftCardPopulator"/>
 	<bean id="blGiftCardPopulator" class="com.bl.facades.populators.BlGiftCardPopulator">
+				<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>		
 	</bean>
 
 	<alias name="blGiftCardConverter" alias="blGiftCardConverter"/>
@@ -974,6 +978,7 @@
 	
 	<alias name="blGiftCardMovementPopulator" alias="blGiftCardMovementPopulator"/>
 	<bean id="blGiftCardMovementPopulator" class="com.bl.facades.populators.BlGiftCardMovementPopulator">
+			<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>			
 	</bean>
 
 	<alias name="blGiftCardMovementConverter" alias="blGiftCardMovementConverter"/>
@@ -987,7 +992,9 @@
 	</bean>
 	
 	<alias name="blOrderPopulator" alias="blOrderPopulator"/>
-	<bean id="blOrderPopulator" class="com.bl.facades.populators.BlOrderPopulator" parent="defaultOrderPopulator"></bean>
+	<bean id="blOrderPopulator" class="com.bl.facades.populators.BlOrderPopulator" parent="defaultOrderPopulator">
+		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>				
+	</bean>
 	
 	<alias name="blDomoOrderConverter" alias="blDomoOrderConverter"/>
 	<bean id="blDomoOrderConverter" parent="abstractPopulatingConverter">
@@ -1000,7 +1007,9 @@
 	</bean>
 	
 	<alias name="blItemsBillingChargePopulator" alias="blItemsBillingChargePopulator"/>
-	<bean id="blItemsBillingChargePopulator" class="com.bl.facades.populators.BlItemsBillingChargePopulator"/>
+	<bean id="blItemsBillingChargePopulator" class="com.bl.facades.populators.BlItemsBillingChargePopulator">
+		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>		
+	</bean>
 
 	<alias name="blItemsBillingChargeConverter" alias="blItemsBillingChargeConverter"/>
 	<bean id="blItemsBillingChargeConverter" parent="abstractPopulatingConverter">
@@ -1028,7 +1037,9 @@
 	
 
 	<alias name="blSerialLogsPopulator" alias="blSerialLogsPopulator"/>
-	<bean id="blSerialLogsPopulator" class="com.bl.facades.populators.BlSerialLogsPopulator"></bean>
+	<bean id="blSerialLogsPopulator" class="com.bl.facades.populators.BlSerialLogsPopulator">
+			<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>			
+	</bean>
 	
 	<alias name="blSerialLogsConverter" alias="blSerialLogsConverter"/>
 	<bean id="blSerialLogsConverter" parent="abstractPopulatingConverter">
