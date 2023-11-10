@@ -24,4 +24,9 @@ public interface BlPaymentService
 	 * To void 1$ authorization of orders
 	 */
 	void voidAuthTransaction();
+
+	/**
+	 * This is for authorization and capture payment of the orders
+	 */
+	public void authorizeAndCapturePaymentForOrders();
 }

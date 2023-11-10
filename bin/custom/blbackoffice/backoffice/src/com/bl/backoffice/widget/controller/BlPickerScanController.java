@@ -1,6 +1,9 @@
 package com.bl.backoffice.widget.controller;
 
+import com.bl.core.order.dao.BlOrderDao;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -26,7 +29,6 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
-import com.bl.backoffice.wizards.util.WebScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
@@ -53,6 +55,9 @@ public class BlPickerScanController extends DefaultWidgetController
 	private ModelService modelService;
 	@Resource(name="userService")
 	private UserService userService;
+
+	@Resource(name = "orderDao")
+	private BlOrderDao orderDao;
 
 	@Wire
 	private Div pickerDataHeader;
@@ -100,7 +105,8 @@ public class BlPickerScanController extends DefaultWidgetController
 				final String orders = scanningArea.getText();
 				final String[] orderList = orders.split("\n");
 				try {
-					getConsignment(warehouseModel, orderList);
+					checkOrderStatus(warehouseModel,orderList);
+
 				}catch (Exception e){
 					Messagebox.show("Some error occur while processing consignment");
 					BlLogger.logMessage(LOG,Level.ERROR,"Some error occur while processing consignment",e);
@@ -108,6 +114,29 @@ public class BlPickerScanController extends DefaultWidgetController
 				}
 			}
 
+		}
+	}
+	private void checkOrderStatus(final WarehouseModel selectedWarehouse,String[] orders)
+	{
+		boolean showWarning=false;
+		List<String> declinedOrders=new ArrayList<>();
+		for(String order: orders)
+		{
+			AbstractOrderModel orderModel= orderDao.getOrderByCode(order);
+			if(orderModel.getStatus().equals(OrderStatus.RECEIVED_PAYMENT_DECLINED))
+			{
+				showWarning=true;
+				declinedOrders.add(orderModel.getCode());
+			}
+
+		}
+		if(showWarning) {
+			Messagebox.show("Credit Card was Declined for the Orders. Do you wish to continue?" + declinedOrders, "Picker Confirmation", new Messagebox.Button[]
+					{Messagebox.Button.YES, Messagebox.Button.NO}, null, Messagebox.QUESTION, null, clickEvent -> {
+				if (Messagebox.Button.YES == clickEvent.getButton()) {
+					getConsignment(selectedWarehouse,orders);
+				}
+			}, null);
 		}
 	}
 

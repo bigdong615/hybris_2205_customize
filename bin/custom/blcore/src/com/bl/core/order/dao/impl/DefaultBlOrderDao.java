@@ -187,6 +187,12 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 
 
 	final List<OrderStatus> statuses = Arrays.asList(OrderStatus.LATE,OrderStatus.SHIPPED, OrderStatus.UNBOXED_PARTIALLY);
+	private static final String GET_CLAIMED_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
+			+ ConsignmentModel.PICKER + "} IS NOT NULL and {o:status} NOT IN ({{select {se:pk} from {OrderStatus as se} where {se:code} IN (?orderStatuses)}}) AND ({o:" + AbstractOrderModel.ISCAPTURED + "} = ?isCaptured )  AND {o:"+ AbstractOrderModel.ISAUTHORISED+
+			"} = ?isAuthorized AND ({o: "+ AbstractOrderModel.ISAUTHORIZATIONATTEMPTED +" } = ?isAuthorizationAttempted OR {o:"+
+             AbstractOrderModel.ISAUTHORIZATIONATTEMPTED +"} is null)" ;
+
 	/**
  	* {@inheritDoc}
  	*/
@@ -623,6 +629,36 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		}
 		return orders;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<AbstractOrderModel> getClaimedOrdersForAuthorization()
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_CLAIMED_ORDERS_FOR_AUTHORIZATION_QUERY);
+		fQuery.addQueryParameter(IS_CAPTURED, Boolean.FALSE);
+		fQuery.addQueryParameter("orderStatuses", getOrderStatusesForClaimedOrder());
+		fQuery.addQueryParameter(BlCoreConstants.IS_AUTHORISED, Boolean.FALSE);
+		fQuery.addQueryParameter(IS_AUTHORIZATION_ATTEMPTED, Boolean.FALSE);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> claimedOrdersToAuthorizePayment = result.getResult();
+		if (CollectionUtils.isEmpty(claimedOrdersToAuthorizePayment))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No claimed orders found to authorize the payment");
+			return Collections.emptyList();
+		}
+		return claimedOrdersToAuthorizePayment;
+	}
+
+	private List<String> getOrderStatusesForClaimedOrder(){
+		return Lists.newArrayList(OrderStatus.CANCELLED.getCode(),OrderStatus.RECEIVED_PAYMENT_DECLINED.getCode(),
+				OrderStatus.RECEIVED_IN_VERIFICATION.getCode(),OrderStatus.PAYMENT_CAPTURED.getCode(),OrderStatus.VERIFICATION_REQUIRED.getCode());
+
+	}
+
+
+
 	/**
 	 * This method created to convert date into specific format
 	 * @param dateToConvert the date which required to convert

@@ -2354,4 +2354,8 @@
 		<property name="blLateOrderPopulator" ref="blLateOrderPopulator"/>
 		<property name="orderDao" ref="orderDao"/>
 	</bean>
+
+	<bean id="blAuthorizeAndCapturePaymentJob" class="com.bl.core.job.BlAuthorizeAndCapturePaymentJob" parent="abstractJobPerformable">
+		<property name="blPaymentService" ref="blPaymentService"/>
+	</bean>
 </beans>

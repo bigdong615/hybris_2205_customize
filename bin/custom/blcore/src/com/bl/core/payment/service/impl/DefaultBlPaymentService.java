@@ -20,6 +20,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import java.math.BigDecimal;
 import java.util.*;
 
+import de.hybris.platform.util.localization.Localization;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -141,6 +142,59 @@ public class DefaultBlPaymentService implements BlPaymentService
 			order.setIsAuthorised(Boolean.TRUE);
 			getModelService().save(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "The order {} has been paid fully via Gift card", order.getCode());
+		}
+	}
+
+	@Override
+	public void authorizeAndCapturePaymentForOrders()
+	{
+		final List<AbstractOrderModel> ordersToAuthorizePayment = getOrderDao().getOrdersForAuthorization();
+		final List<AbstractOrderModel> claimedOrdersToAuthorizePayment = getOrderDao().getClaimedOrdersForAuthorization();
+
+		final Set<AbstractOrderModel> ordersToAuthPayment = new HashSet<>();
+		ordersToAuthPayment.addAll(ordersToAuthorizePayment);
+		ordersToAuthPayment.addAll(claimedOrdersToAuthorizePayment);
+
+		ordersToAuthPayment.forEach(order -> {
+			if(order.getTotalPrice() > 0) {
+				final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order,
+						BigDecimal.valueOf(order.getTotalPrice()), Boolean.FALSE, null);
+				if (isSuccessAuth) {
+					order.setIsAuthorised(Boolean.TRUE);
+					order.setIsAuthorizationAttempted(true);
+					getModelService().save(order);
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is successful for the order {}", order.getCode());
+					processCapturePaymentForOrder((OrderModel) order);
+				} else {
+					order.setIsAuthorizationAttempted(true);
+					order.setStatus(OrderStatus.PAYMENT_NOT_AUTHORIZED);
+					modelService.save(order);
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is not successful for the order {}", order.getCode());
+				}
+			} else {
+				setIsAuthorizedFlagForGiftCard(order);
+			}
+		});
+	}
+
+
+	public void processCapturePaymentForOrder(final OrderModel order) {
+
+		if (capturePaymentForOrder(order)) {
+			order.setStatus(OrderStatus.PAYMENT_CAPTURED);
+			order.setIsCaptured(Boolean.TRUE);
+			order.setIsAuthorised(Boolean.TRUE);
+			getModelService().save(order);
+			getModelService().refresh(order);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
+
+		} else {
+			order.setStatus(OrderStatus.RECEIVED_PAYMENT_DECLINED);
+			getModelService().save(order);
+			getModelService().refresh(order);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is not successful for the order {}", order.getCode());
+			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while capturing the payment");
+
 		}
 	}
 
