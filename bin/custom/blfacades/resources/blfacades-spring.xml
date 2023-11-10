@@ -207,7 +207,9 @@
 		<property name="searchRestrictionService" ref="searchRestrictionService" />	
 	</bean>
 	
-	<bean id="blSearchResultDomoProductPopulator" class="com.bl.facades.populators.BlSearchResultDomoProductPopulator"/>
+	<bean id="blSearchResultDomoProductPopulator" class="com.bl.facades.populators.BlSearchResultDomoProductPopulator">
+			<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>	
+	</bean>
 
 
 	<alias name="blSearchResultVariantProductPopulator" alias="blSearchResultVariantProductPopulator"/>
@@ -716,6 +718,11 @@
 		<property name="blExtendRentalOrderDetailsPopulator" ref="blExtendRentalOrderDetailsPopulator"/>
 		<property name="blDefaultExtendOrderConverter" ref="blDefaultExtendOrderConverter"/>
 	</bean>
+	
+	
+	<bean id="defaultBlDomoFailureNotificationService" class="com.bl.facades.process.email.impl.DefaultBlDomoFailureNotificationService">
+			<property name="configurationService" ref="configurationService"/>	
+	</bean>
 
 	<!--BL-772 Added for verification document -->
 	<alias name="verificationDocumentReversePopulator" alias="verificationDocumentPopulator"/>
@@ -883,7 +890,9 @@
 	</bean>
 	
 	<alias name="blDomoOrderEntryPopulator" alias="blDomoOrderEntryPopulator"/>
-	<bean id="blDomoOrderEntryPopulator" class="com.bl.facades.populators.BlDomoOrderEntryPopulator"></bean>
+	<bean id="blDomoOrderEntryPopulator" class="com.bl.facades.populators.BlDomoOrderEntryPopulator">
+			<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>		
+	</bean>
 	
 	<alias name="blorderEntryConverter" alias="blorderEntryConverter"/>
 	<bean id="blorderEntryConverter" parent="abstractPopulatingConverter">
@@ -903,6 +912,7 @@
 
 	<alias name="blPackagingInfoPopulator" alias="blPackagingInfoPopulator"/>
 	<bean id="blPackagingInfoPopulator" class="com.bl.facades.populators.BlPackagingInfoPopulator">
+				<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>			
 	</bean>
 
 	<alias name="blpackagingInfoConverter" alias="blpackagingInfoConverter"/>
@@ -917,6 +927,7 @@
 	
 	<alias name="blPaymentTransactionPopulator" alias="blPaymentTransactionPopulator"/>
 	<bean id="blPaymentTransactionPopulator" class="com.bl.facades.populators.BlPaymentTransactionPopulator">
+				<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>			
 	</bean>
 
 	<alias name="blpaymentTransactionConverter" alias="blpaymentTransactionConverter"/>
@@ -937,6 +948,7 @@
 	
 	<alias name="blPaymentTransactionEntryPopulator" alias="blPaymentTransactionEntryPopulator"/>
 	<bean id="blPaymentTransactionEntryPopulator" class="com.bl.facades.populators.BlPaymentTransactionEntryPopulator">
+				<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>			
 	</bean>
 
    <alias name="blpaymentTransactionEntryConverter" alias="blpaymentTransactionEntryConverter"/>
@@ -951,6 +963,7 @@
 	
 	<alias name="blGiftCardPopulator" alias="blGiftCardPopulator"/>
 	<bean id="blGiftCardPopulator" class="com.bl.facades.populators.BlGiftCardPopulator">
+				<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>		
 	</bean>
 
 	<alias name="blGiftCardConverter" alias="blGiftCardConverter"/>
@@ -965,6 +978,7 @@
 	
 	<alias name="blGiftCardMovementPopulator" alias="blGiftCardMovementPopulator"/>
 	<bean id="blGiftCardMovementPopulator" class="com.bl.facades.populators.BlGiftCardMovementPopulator">
+			<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>			
 	</bean>
 
 	<alias name="blGiftCardMovementConverter" alias="blGiftCardMovementConverter"/>
@@ -978,7 +992,9 @@
 	</bean>
 	
 	<alias name="blOrderPopulator" alias="blOrderPopulator"/>
-	<bean id="blOrderPopulator" class="com.bl.facades.populators.BlOrderPopulator" parent="defaultOrderPopulator"></bean>
+	<bean id="blOrderPopulator" class="com.bl.facades.populators.BlOrderPopulator" parent="defaultOrderPopulator">
+		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>				
+	</bean>
 	
 	<alias name="blDomoOrderConverter" alias="blDomoOrderConverter"/>
 	<bean id="blDomoOrderConverter" parent="abstractPopulatingConverter">
@@ -991,7 +1007,9 @@
 	</bean>
 	
 	<alias name="blItemsBillingChargePopulator" alias="blItemsBillingChargePopulator"/>
-	<bean id="blItemsBillingChargePopulator" class="com.bl.facades.populators.BlItemsBillingChargePopulator"/>
+	<bean id="blItemsBillingChargePopulator" class="com.bl.facades.populators.BlItemsBillingChargePopulator">
+		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>		
+	</bean>
 
 	<alias name="blItemsBillingChargeConverter" alias="blItemsBillingChargeConverter"/>
 	<bean id="blItemsBillingChargeConverter" parent="abstractPopulatingConverter">
@@ -1003,7 +1021,9 @@
 		</property>
 	</bean>
 	
-	<bean id="blCustomerPopulator" class="com.bl.facades.populators.BlCustomerPopulator" parent="customerPopulator"></bean>
+	
+	<bean id="blCustomerPopulator" class="com.bl.facades.populators.BlCustomerPopulator" parent="customerPopulator">
+	</bean>
 	
 	<alias name="blCustomerConverter" alias="blCustomerConverter"/>
 	<bean id="blCustomerConverter" parent="abstractPopulatingConverter">
@@ -1017,7 +1037,9 @@
 	
 
 	<alias name="blSerialLogsPopulator" alias="blSerialLogsPopulator"/>
-	<bean id="blSerialLogsPopulator" class="com.bl.facades.populators.BlSerialLogsPopulator"></bean>
+	<bean id="blSerialLogsPopulator" class="com.bl.facades.populators.BlSerialLogsPopulator">
+			<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>			
+	</bean>
 	
 	<alias name="blSerialLogsConverter" alias="blSerialLogsConverter"/>
 	<bean id="blSerialLogsConverter" parent="abstractPopulatingConverter">
@@ -1030,7 +1052,9 @@
 	</bean>
 	
 	<alias name="blDomoCustomerNotesPopulator" alias="blDomoCustomerNotesPopulator"/>
-	<bean id="blDomoCustomerNotesPopulator" class="com.bl.facades.populators.BlDomoCustomerNotesPopulator"></bean>
+	<bean id="blDomoCustomerNotesPopulator" class="com.bl.facades.populators.BlDomoCustomerNotesPopulator">
+			<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>	
+	</bean>
 	
 	<alias name="blCustomerNotesConverter" alias="blCustomerNotesConverter"/>
 	<bean id="blCustomerNotesConverter" parent="abstractPopulatingConverter">
@@ -1043,7 +1067,9 @@
 	</bean>
 	
 	<alias name="blDomoVendorRepairLogPopulator" alias="blDomoVendorRepairLogPopulator"/>
-	<bean id="blDomoVendorRepairLogPopulator" class="com.bl.facades.populators.BlDomoVendorRepairLogPopulator"></bean>
+	<bean id="blDomoVendorRepairLogPopulator" class="com.bl.facades.populators.BlDomoVendorRepairLogPopulator">
+		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>	
+	</bean>
 	
 	<alias name="blVendorRepairLogConverter" alias="blVendorRepairLogConverter"/>
 	<bean id="blVendorRepairLogConverter" parent="abstractPopulatingConverter">
@@ -1056,7 +1082,9 @@
 	</bean>
 	
 	<alias name="blDomoPartsNeededRepairLogPopulator" alias="blDomoPartsNeededRepairLogPopulator"/>
-	<bean id="blDomoPartsNeededRepairLogPopulator" class="com.bl.facades.populators.BlDomoPartsNeededRepairLogPopulator"></bean>
+	<bean id="blDomoPartsNeededRepairLogPopulator" class="com.bl.facades.populators.BlDomoPartsNeededRepairLogPopulator">
+	  		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/> 		      			
+	</bean>
 	
 	<alias name="blPartsNeededRepairLogConverter" alias="blPartsNeededRepairLogConverter"/>
 	<bean id="blPartsNeededRepairLogConverter" parent="abstractPopulatingConverter">
@@ -1069,7 +1097,9 @@
 	</bean>
 	
 	<alias name="blDomoInHouseRepairLogPopulator" alias="blDomoInHouseRepairLogPopulator"/>
-	<bean id="blDomoInHouseRepairLogPopulator" class="com.bl.facades.populators.BlDomoInHouseRepairLogPopulator"></bean>
+	<bean id="blDomoInHouseRepairLogPopulator" class="com.bl.facades.populators.BlDomoInHouseRepairLogPopulator">
+		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/> 		      			
+	</bean>
 	
 	<alias name="blInHouseRepairLogConverter" alias="blInHouseRepairLogConverter"/>
 	<bean id="blInHouseRepairLogConverter" parent="abstractPopulatingConverter">
@@ -1081,7 +1111,9 @@
 		</property>
 	</bean>
 	
-	<bean id="domoAddressPopulator" class="com.bl.facades.populators.DomoAddressPopulator" parent="defaultBlAddressPopulator"/>
+	<bean id="domoAddressPopulator" class="com.bl.facades.populators.DomoAddressPopulator" parent="defaultBlAddressPopulator">
+			  <property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/> 		      		
+	</bean>
 	
 	<alias name="domoAddressConvertor" alias="domoAddressConvertor"/>
 	<bean id="domoAddressConvertor" parent="abstractPopulatingConverter">
@@ -1093,7 +1125,9 @@
 		</property>
 	</bean>
 	
-	<bean id="domoBrainTreePaymentInfoPopulator" class="com.bl.facades.populators.DomoBrainTreePaymentInfoPopulator"/>
+	<bean id="domoBrainTreePaymentInfoPopulator" class="com.bl.facades.populators.DomoBrainTreePaymentInfoPopulator">
+		  <property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/> 		      			
+	</bean>
 	
 	<alias name="domoBrainTreePaymentInfoConvertor" alias="domoBrainTreePaymentInfoConvertor"/>
 	<bean id="domoBrainTreePaymentInfoConvertor" parent="abstractPopulatingConverter">
@@ -1105,7 +1139,9 @@
 		</property>
 	</bean>
 	
-	<bean id="blStockLevelPopulator" class="com.bl.facades.populators.BlStockLevelPopulator" parent="warehousingStockLevelPopulator"></bean>
+	<bean id="blStockLevelPopulator" class="com.bl.facades.populators.BlStockLevelPopulator" parent="warehousingStockLevelPopulator">
+		  <property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/> 		      		
+	</bean>
 	
 	<alias name="blStockLevelConvertor" alias="blStockLevelConvertor"/>
 	<bean id="blStockLevelConvertor" parent="abstractPopulatingConverter">
@@ -1118,7 +1154,9 @@
 	</bean>
 	
 	<alias name="blDomoNotesPopulator" alias="blDomoNotesPopulator"/>
-	<bean id="blDomoNotesPopulator" class="com.bl.facades.populators.BlDomoNotesPopulator"></bean>
+	<bean id="blDomoNotesPopulator" class="com.bl.facades.populators.BlDomoNotesPopulator">
+	  		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/> 		      		
+	</bean>
 	
 	<alias name="blNotesConverter" alias="blNotesConverter"/>
 	<bean id="blNotesConverter" parent="abstractPopulatingConverter">
@@ -1131,7 +1169,9 @@
 	</bean>
 	
 	<alias name="blDomoRegionPopulator" alias="blDomoRegionPopulator"/>
-	<bean id="blDomoRegionPopulator" class="com.bl.facades.populators.BlDomoRegionPopulator"></bean>
+	<bean id="blDomoRegionPopulator" class="com.bl.facades.populators.BlDomoRegionPopulator">
+	     <property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/> 		      			
+	</bean>
 	
 	<alias name="blRegionConverter" alias="blRegionConverter"/>
 	<bean id="blRegionConverter" parent="abstractPopulatingConverter">
@@ -1149,7 +1189,9 @@
 		    <property name="consignmentTrackingService" ref="consignmentTrackingService" />
 	</bean>
 	
-	<bean id="blDomoCartPopulator" class="com.bl.facades.populators.BlDomoCartPopulator" parent="defaultBlCartPopulator"></bean>
+	<bean id="blDomoCartPopulator" class="com.bl.facades.populators.BlDomoCartPopulator" parent="defaultBlCartPopulator">
+			<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>
+	</bean>
 	
 	<alias name="blDomoCartConverter" alias="blDomoCartConverter"/>
 	<bean id="blDomoCartConverter" parent="abstractPopulatingConverter">
@@ -1162,7 +1204,9 @@
 	</bean>
 	
 	<alias name="blDomoCartEntryPopulator" alias="blDomoCartEntryPopulator"/>
-	<bean id="blDomoCartEntryPopulator" class="com.bl.facades.populators.BlDomoCartEntryPopulator"></bean>
+	<bean id="blDomoCartEntryPopulator" class="com.bl.facades.populators.BlDomoCartEntryPopulator">
+				<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>
+	</bean>
 	
 	<alias name="blcartEntryConverter" alias="blcartEntryConverter"/>
 	<bean id="blcartEntryConverter" parent="abstractPopulatingConverter">
@@ -1178,7 +1222,8 @@
 	<bean id="blDomoConsignmentPopulator" class="com.bl.facades.populators.BlDomoConsignmentPopulator">
         <property name="addressConverter" ref="addressConverter"/>
         <property name="pointOfServiceConverter" ref="pointOfServiceConverter"/>	
-  		<property name="deliveryModeConverter" ref="deliveryModeConverter"/>        	
+  		<property name="deliveryModeConverter" ref="deliveryModeConverter"/>  
+  		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/> 		      	
 	</bean>
 	
 	<alias name="blDomoConsignmentConverter" alias="blDomoConsignmentConverter"/>
@@ -1193,7 +1238,8 @@
 	
 		
 	<alias name="blDomoConsignmentEntryPopulator" alias="blDomoConsignmentEntryPopulator"/>
-	<bean id="blDomoConsignmentEntryPopulator" class="com.bl.facades.populators.BlDomoConsignmentEntryPopulator"> 	
+	<bean id="blDomoConsignmentEntryPopulator" class="com.bl.facades.populators.BlDomoConsignmentEntryPopulator"> 
+		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>	
 	</bean>
 	
 	<alias name="blDomoConsignmentEntryConverter" alias="blDomoConsignmentEntryConverter"/>
