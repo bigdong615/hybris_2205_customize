@@ -210,7 +210,7 @@
                                       </c:choose>
                                         <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                           <button type="button"
-                                  			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
+                                  			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart" data-bs-toggle="modal" <c:if test="${not empty disableButton and disableButton == true}">disabled</c:if> data-bs-target="#addToCart" data-product-code="${product.code}">
                                   					<spring:theme code="basket.add.to.rental.cart.button.text" />
                                   				</button>
                                   		  </form>
