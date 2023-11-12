@@ -3,6 +3,49 @@
  */
 package com.bl.storefront.controllers.pages.checkout.steps;
 
+import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
+import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
+import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
+import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.CheckoutStep;
+import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.validation.ValidationResults;
+import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkout.steps.AbstractCheckoutStepController;
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
+import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.cms2.model.pages.ContentPageModel;
+import de.hybris.platform.commercefacades.address.data.AddressVerificationResult;
+import de.hybris.platform.commercefacades.order.data.CartData;
+import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
+import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
+import de.hybris.platform.core.model.c2l.CountryModel;
+import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.store.services.BaseStoreService;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
@@ -27,45 +70,6 @@ import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
 import com.bl.storefront.util.BlAddressDataUtil;
 import com.braintree.facade.BrainTreeUserFacade;
-import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
-import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
-import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
-import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.CheckoutStep;
-import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.validation.ValidationResults;
-import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
-import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkout.steps.AbstractCheckoutStepController;
-import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
-import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
-import de.hybris.platform.cms2.model.pages.ContentPageModel;
-import de.hybris.platform.commercefacades.address.data.AddressVerificationResult;
-import de.hybris.platform.commercefacades.order.data.CartData;
-import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
-import de.hybris.platform.commercefacades.user.data.AddressData;
-import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
-import de.hybris.platform.core.model.c2l.CountryModel;
-import de.hybris.platform.core.model.order.CartModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
-import de.hybris.platform.store.services.BaseStoreService;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import javax.annotation.Resource;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
@@ -95,18 +99,18 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 
     @Resource(name ="cartFacade")
     private BlCartFacade blCartFacade;
-    
+
     @Resource(name = "blDatePickerService")
     private BlDatePickerService blDatePickerService;
-    
+
     @Resource(name = "blBlackoutDateService")
     private BlBlackoutDateService blBlackoutDateService;
 
     @Resource(name = "userFacade")
     private BrainTreeUserFacade brainTreeUserFacade;
-    
+
     @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
- 	 private RentalDateDto getRentalsDuration() 
+ 	 private RentalDateDto getRentalsDuration()
  	 {
  		 return BlRentalDateUtils.getRentalsDuration();
  	 }
@@ -122,9 +126,11 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 			 return REDIRECT_CART_URL;
 		 }
    	 model.addAttribute("pageType",BlControllerConstants.SHIPPING_PAGE);
-        CartModel cartModel = blCartService.getSessionCart();
+
+        final CartModel cartModel = blCartService.getSessionCart();
         if (cartModel != null) {
-            List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
+			  // model.addAttribute("email", cartModel.getUser().getUid());
+            final List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
             if (CollectionUtils.isNotEmpty(giftCardModelList)) {
                 blGiftCardFacade.removeAppliedGiftCardFromCartOrShippingPage(cartModel, giftCardModelList);
                 model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
@@ -145,8 +151,11 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
         model.addAttribute("deliveryAddresses", brainTreeUserFacade.getShippingAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
-        model.addAttribute("addressForm", new BlAddressForm());
-        model.addAttribute("blPickUpByForm", new BlPickUpByForm());
+
+		  final BlAddressForm blAddForm = new BlAddressForm();
+		  blAddForm.setEmail(cartModel.getUser().getUid());
+		  model.addAttribute("addressForm", blAddForm);
+		  model.addAttribute("blPickUpByForm", new BlPickUpByForm());
         final Collection<CountryModel> countries = baseStoreService.getCurrentBaseStore().getDeliveryCountries();
         if(CollectionUtils.isNotEmpty(countries)) {
             model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso(countries.iterator().next().getIsocode()));
@@ -217,7 +226,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                 isPayByCustomer = false;
                 model.addAttribute("isReplacementOrderCart", true);
         }
-        Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade()
+        final Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade()
                 .getSupportedDeliveryModes(
                     shippingGroup, partnerZone, isPayByCustomer);
             model.addAttribute(CART_DATA, cartData);
@@ -397,7 +406,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             if (selectedAddressData != null) {
                 final String addressType = selectedAddressData.getAddressType();
                 final String pinCode = selectedAddressData.getPostalCode();
-                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, businessType, rushZip, addressType, pinCode);
+                final String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, businessType, rushZip, addressType, pinCode);
                 if (pinError != null) {
                     return pinError;
                 }
@@ -453,22 +462,22 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     public String next(final RedirectAttributes redirectAttributes) {
         return getCheckoutStep().nextStep();
     }
-    
+
     @GetMapping(value = "/checkAvailability")
  	 @ResponseBody
  	 public String checkDeliveryModeAvailability(@RequestParam("deliveryMethod") final String selectedDeliveryMethod,
- 			final Model model) 
+ 			final Model model)
  	 {
- 	 	 return StringUtils.isNotBlank(selectedDeliveryMethod) 
+ 	 	 return StringUtils.isNotBlank(selectedDeliveryMethod)
  	 		 && getCheckoutFacade().checkAvailabilityForDeliveryMode(selectedDeliveryMethod) ? BlControllerConstants.SUCCESS : BlControllerConstants.ERROR;
  	 }
-    
+
     @GetMapping(value = "/checkShippingBlackout")
  	 @ResponseBody
  	 public String checkShippingBlackout(@RequestParam("deliveryMethod") final String selectedDeliveryMethod,
- 			final Model model) 
+ 			final Model model)
  	 {
- 	 	 return StringUtils.isNotBlank(selectedDeliveryMethod) 
+ 	 	 return StringUtils.isNotBlank(selectedDeliveryMethod)
  	 		 && getCheckoutFacade().isShippingOnBlackoutDate(selectedDeliveryMethod) ? BlControllerConstants.ERROR : BlControllerConstants.SUCCESS;
  	 }
 
@@ -531,7 +540,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             if (selectedAddressData != null) {
                 final String addressType = selectedAddressData.getAddressType();
                 final String pinCode = selectedAddressData.getPostalCode();
-                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, businessType, rushZip, addressType, pinCode);
+                final String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, businessType, rushZip, addressType, pinCode);
                 if (pinError != null) {
                     return pinError;
                 }
@@ -556,7 +565,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         return checkoutFacade;
     }
 
-    public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+    public void setCheckoutFacade(final BlCheckoutFacade checkoutFacade) {
         this.checkoutFacade = checkoutFacade;
     }
 
