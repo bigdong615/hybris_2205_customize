@@ -1023,6 +1023,7 @@
 	
 	
 	<bean id="blCustomerPopulator" class="com.bl.facades.populators.BlCustomerPopulator" parent="customerPopulator">
+		<property name="defaultBlDomoFailureNotificationService" ref="defaultBlDomoFailureNotificationService"/>	
 	</bean>
 	
 	<alias name="blCustomerConverter" alias="blCustomerConverter"/>
