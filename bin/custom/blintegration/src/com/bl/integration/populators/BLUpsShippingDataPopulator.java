@@ -172,8 +172,11 @@ public class BLUpsShippingDataPopulator
 		}
 		final AddressModel packageAddress = packagingInfo.getConsignment().getOrder().getDeliveryAddress();
 		final AddressData addressData = addressConverter.convert(isRSLabel ? packageAddress : shipperAddress);
-
-
+		if(holdAtUpsStore) {
+			final AddressModel paymentAddress = packagingInfo.getConsignment().getOrder().getPaymentAddress();
+			final AddressData paymentAddressData = addressConverter.convert(paymentAddress);
+			shipperData.setPaymentAddress(paymentAddressData);
+		}
 
 		final ShipmentPhoneData shipperPhone = new ShipmentPhoneData();
 		shipperPhone.setNumber(trimmedPhoneNumber(addressData.getPhone()));

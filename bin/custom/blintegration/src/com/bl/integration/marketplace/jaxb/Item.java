@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlType;
 		"gtin",
 		"mpn",
 		"price",
+		"sale_price",
+		"sale_price_effective_date",
 		"shipping"
 })
 @XmlRootElement(name = "item")
@@ -52,6 +54,10 @@ public class Item
 	protected String mpn;
 	@XmlElement(name = "g:price")
 	protected String price;
+	@XmlElement(name = "g:sale_price")
+	protected String sale_price;
+	@XmlElement(name = "g:sale_price_effective_date")
+	protected String sale_price_effective_date;
 	@XmlElement(name = "g:shipping")
 	protected Shipping shipping;
 	/**
@@ -266,5 +272,36 @@ public class Item
 	public void setShipping(final Shipping shipping)
 	{
 		this.shipping = shipping;
+	}
+	/**
+	 * @return the sale_price
+	 */
+	public String getSale_price()
+	{
+		return sale_price;
+	}
+
+	/**
+	 * @param sale_price the sale_price to set
+	 */
+	public void setSale_price(String sale_price)
+	{
+		this.sale_price = sale_price;
+	}
+
+	/**
+	 * @return the sale_price_effective_date
+	 */
+	public String getSale_price_effective_date()
+	{
+		return sale_price_effective_date;
+	}
+
+	/**
+	 * @param sale_price_effective_date the sale_price_effective_date to set
+	 */
+	public void setSale_price_effective_date(String sale_price_effective_date)
+	{
+		this.sale_price_effective_date = sale_price_effective_date;
 	}
 }

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+ Copyright (c) 2018 SAP SE or an SAP affiliate company.
+ All rights reserved.
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+<widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+    sclass="oms-widget-updateorder-configuration"
+	id="productAvailCheckTool" height="100%" width="100%">
+
+   <div id="productAvailCheckId">
+            <grid  hflex="1">
+                <columns>
+                    <column width="400px" label="${labels.customersupportbackoffice.productAvailCheck.label.enter.productCode}"/>
+                    <column width="400px"  label="${labels.customersupportbackoffice.productAvailCheck.label.enter.rentalStartdate}" />
+                    <column width="400px"  label="${labels.customersupportbackoffice.productAvailCheck.label.enter.rentalEndDate} " />
+                </columns>
+                <rows>
+                   <row>
+                    <textbox id="productCode" multiline="false" width="200px" style="margin-left:0px;border-right: groove;" submitByEnter="true"/>
+                    <datebox  style="display:inline-table; width:200px;" id="rentalStartDate" cols="12" format="MM-dd-yyyy" onCreate="self.value = new Date()" />
+                    <datebox  style="display:inline-table; width:200px;" id="rentalEndDate" cols="12" format="MM-dd-yyyy" onCreate="self.value = new Date()" />
+                    </row>
+                </rows>
+            </grid>
+           </div>
+           <div sclass="oms-widget-billing-thirdlist-container" style="text-align: center;">
+
+              <button id="productAvailCheck" style="width:200px;"
+                 label="${labels.customersupportbackoffice.productAvailCheck.submit.button}"
+                 sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" >Submit</button>
+              <button id="cancel" style="width:200px;"
+                  label="${labels.customersupportbackoffice.productAvailCheck.cancel.button}"
+                   sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" >Cancel</button>
+
+
+           </div>
+        <div style="margin:30px;" id="productAvailCheckToolDataHeader">
+                <hlayout width="100%"  sclass="oms-widget-reassignserial-list">
+                    <div style="height:304px;" sclass="oms-widget-reassignserial-list-container">
+                               <grid id="productAvailCheckToolDataGrid" mold="paging" sclass="table-scroll-cancel-popup-orderEntries" pageSize="4">
+                                <custom-attributes org.zkoss.zul.grid.autoSort="true" />
+                                <columns>
+                                    <column width="280px" sort="auto" sortDirection="ascending">
+                                        <label value="${labels.customersupportbackoffice.productAvailCheck.label.productCode}" width="100%"/>
+                                    </column>
+                                    <column width="150px" style="padding-left:5px">
+                                        <label value="${labels.customersupportbackoffice.productAvailCheck.label.articleNumber}" width="100%"/>
+                                    </column>
+                                    <column width="110px"  style="padding-left:2px">
+                                        <label value="${labels.customersupportbackoffice.productAvailCheck.label.barcode}" width="100%"/>
+                                    </column>
+                                    <column width="200px"  style="padding-left:2px">
+                                        <label value="${labels.customersupportbackoffice.productAvailCheck.label.serialStatus}" width="100%"/>
+                                    </column>
+                                    <column width="150px" >
+                                        <label value="${labels.customersupportbackoffice.productAvailCheck.label.warehouseLocation}" width="100%"/>
+                                    </column>
+                                    <column width="200px" >
+                                        <label value="${labels.customersupportbackoffice.productAvailCheck.label.ocLocation}" width="100%"/>
+                                    </column>
+                                    <column width="200px" >
+                                        <label value="${labels.customersupportbackoffice.productAvailCheck.label.lastLocationScanParent}" width="100%"/>
+                                    </column>
+                                   </columns>
+                                <rows>
+                                    <template name="model">
+                                        <row style="">
+                                             <textbox value="${each.productCode}" width="280px" name="product_${each.productCode}"
+                                                     readonly="true"/>
+                                            <textbox value="${each.articleNumber}" width="200px" name="articleNo_${each.articleNumber}"
+                                                      readonly="true"/>
+                                            <textbox value="${each.barcode}" width="200px" name="barcode_${each.barcode}"
+                                                      readonly="true"/>
+                                            <textbox value="${each.serialStatus}" width="280px" name="status_${each.serialStatus}"
+                                                      readonly="true"/>
+                                            <textbox value="${each.warehouseLocation}" width="200px" name="warehouse_${each.warehouseLocation}"
+                                                     readonly="true"/>
+                                            <textbox value="${each.ocLocation}" width="280px" name="ocLocation_${each.ocLocation}"
+                                                     readonly="true"/>
+                                            <textbox value="${each.lastLocationScanParent}" width="280px" name="lastLocScanParent_${each.lastLocationScanParent}"
+                                                     readonly="true"/>
+                                        </row>
+                                    </template>
+                                </rows>
+                            </grid>
+                            </div>
+                            </hlayout>
+                           </div>
+
+<div id="productLocationKey" >
+<label value="Product Location Key" width="100%" style="font-weight: bold;font-size: 18px;"/>
+ <hlayout width="100%"  sclass="oms-widget-reassignserial-list">
+        <div style="height:304px;" sclass="oms-widget-reassignserial-list-container" >
+
+
+                           <grid id="productLocationKeyGrid"  width="100%" height="150px" hflex="min">
+ <custom-attributes org.zkoss.zul.nativebar="false"/>
+                                     <columns>
+                                      <column width="600px">
+                                           <label value="Ordered by most desirable (easiest to fulfill)" width="100%"/>
+                                      </column>
+                                      <column width="600px">
+                                          <label value="Additional locations (requires further investigation)" width="100%"/>
+                                      </column>
+                                      </columns>
+                                      <rows>
+                                           <row>
+                                             <textbox value="CAR000 S00 = In the cage" width="600px"
+                                                      readonly="true"/>
+                                             <textbox value="CA DECLINED00 S00 = Item on an order that was declined." width="600px"
+                                                      readonly="true"/>
+                                           </row>
+                                           <row>
+                                             <textbox value="CAM CLEAN000 S00 = On a clean cart" width="600px" readonly="true"/>
+
+                                             <textbox value="CAM SHP PREPPED000 S00 = Item is prepped for an order" width="600px"
+                                                                                                   readonly="true"/>
+                                           </row>
+                                           <row>
+                                             <textbox value="CAM GB PHOTO000 S00 = On a clean cart" width="600px" readonly="true"/>
+                                               <textbox value="CAM SHP PULLED000 S00 = Item is pulled to an order" width="600px"
+                                                        readonly="true"/>
+                                             </row>
+                                             <row>
+                                               <textbox value="CAM DIRTY000 S00 = On a dirty cart needing to go through Gear Techs." width="600px"
+                                                        readonly="true"/>
+                                               <textbox value="CAM READYTOSHIP000 S00 = Item is ready to ship on an order" width="600px"
+                                                                                                              readonly="true"/>
+                                             </row>
+
+                                      </rows>
+                           </grid>
+                           </div>
+</hlayout>
+                           </div>
+
+</widget>

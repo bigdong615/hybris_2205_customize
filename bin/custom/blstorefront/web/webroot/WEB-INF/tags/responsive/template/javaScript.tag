@@ -468,7 +468,7 @@
   	</c:if>
 
   	<!-- This js is used for rental search box component-->
-  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalGear') || isRentalPage eq true || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'productDetails'|| cmsPage.uid eq 'contactUsPage' || cmsPage.uid eq 'affiliatePage' || cmsPage.uid eq 'shipOrPickupPage'}">
+  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalGear') || isRentalPage eq true || cmsPage.uid eq 'howItworkPage' || cmsPage.uid eq 'productDetails'|| cmsPage.uid eq 'contactUsPage' || cmsPage.uid eq 'affiliatePage' || cmsPage.uid eq 'shipOrPickupPage' || cmsPage.uid eq 'blWriteReviewPage'}">
   	<script type="text/javascript">
 console.log("First start");
             if ($(window).width() < 400 ) {
@@ -578,13 +578,17 @@ console.log("First start");
                 numberOfColumns: 1,
                 autoApply: false,
                 format: "MMM D",
-                resetButton: () => {
-    				 let btn = document.createElement('button');
-    				 btn.innerText = 'Reset';
-    				 btn.className = 'reset-button';
-    				 btn.addEventListener('click', (evt) => {
-    				 evt.preventDefault();
-    				 $.ajax({
+               
+             tooltipNumber: (totalDays) => {
+              return totalDays - 1;
+            },
+
+                setup: (picker) => {
+                //For mobile view, we dont need cancel button, so we changed cancel label to reset
+          			picker.on('button:cancel',() => {
+          				
+          			//To reset the calendar
+                     $.ajax({
                         url: ACC.config.encodedContextPath + '/resetDatepicker',
                         type: "GET",
                         success: function (data) {
@@ -595,14 +599,7 @@ console.log("First start");
                            
                         }
                     });
-    				});
-    				return btn;
-    				},
-             tooltipNumber: (totalDays) => {
-              return totalDays - 1;
-            },
-
-                setup: (picker) => {
+          			});
           			picker.on('button:apply', (date1, date2) => {
           				var searchText = document.getElementById('js-site-search-input-mob').value;
           				trackDateSelection(date1,date2);
@@ -643,42 +640,81 @@ console.log("First start");
                       //Set Sunday to be the first day in the calendar's header
                          firstDay: 0,
                       //Change the defaul button values
-                         buttonText: {"apply":"Apply", cancel: isMobile == true ? "Cancel" : "", "reset":"Reset Dates"}
+                           buttonText: {"apply":"Apply", cancel: isMobile == true ? "Reset" : ""}
             });
+            
+            
+            
+           
             //BLS-224 Changes
             //By:Sunil Kumar
+             //BLS-225 changes by Ravinder
              const kpicker = new Litepicker({
                             element: document.getElementById('litepicker_search'),
                             singleMode: false,
                             numberOfMonths: 2,
                             numberOfColumns: 2,
-                            autoApply: false,
+                            autoApply: true,
                             format: "MMM D",
-                            resetButton: () => {
-                				 let btn = document.createElement('button');
-                				 btn.innerText = 'Reset';
-                				 btn.className = 'reset-button';
-                				 btn.addEventListener('click', (evt) => {
-                				 evt.preventDefault();
-                				 $.ajax({
-                                    url: ACC.config.encodedContextPath + '/resetDatepicker',
-                                    type: "GET",
-                                    success: function (data) {
-                                    	if(data=='success')
-                                        window.location.reload();
-                                    },
-                                    error: function (xhr, textStatus, error) {
-
-                                    }
-                                });
-                				});
-                				return btn;
-                				},
+                            
                          tooltipNumber: (totalDays) => {
                           return totalDays - 1;
                         },
-
+                        
                             setup: (picker) => {
+                             //to enable the gray background
+                              picker.on('show', () => {
+                             
+                              
+                                         $('#bodySection, #theProduct, #products, #productExtras').addClass('modal-backdrop-calendar');
+                                          $('#bodySection, #theProduct, #products,  #productExtras').addClass('fade');
+                                           $('#bodySection, #theProduct, #products, #productExtras').addClass('show');
+                                           
+                                           $('.navbar, .yCmsContentSlot').addClass('modal-backdrop-calendar');
+                                          $('.navbar, .yCmsContentSlot').addClass('fade');
+                                           $('.navbar, .yCmsContentSlot').addClass('show');
+                                           
+   							});
+   							//to disable gray background
+   								picker.on('hide', () => {
+   								
+                                         $('#bodySection, #theProduct, #products, #theProcess, #productExtras').removeClass('modal-backdrop-calendar');
+                                          $('#bodySection, #theProduct, #products, #theProces, #productExtras').removeClass('fade');
+                                           $('#bodySection, #theProduct, #products, #theProces, #productExtras').removeClass('show');
+                                           
+                                            $('.navbar, .yCmsContentSlot').removeClass('modal-backdrop-calendar');
+                                          $('.navbar, .yCmsContentSlot').removeClass('fade');
+                                           $('.navbar, .yCmsContentSlot').removeClass('show');
+   							});
+
+                            //update the search field, with selected dates
+                             picker.on('preselect', (date1, date2) => {
+   
+   								 if(date1!=null && date2!=null){
+   								    $("#litepicker_search").val('');
+   								 	const startDateArray = date1.toDateString().split(" ");
+   									 const endDateArray = date2.toDateString().split(" ");
+   								 
+   								 
+                    				 $("#litepicker_search").attr('placeholder',startDateArray[1]+' '+ date1.getDate()+' - ' +endDateArray[1] +' '+date2.getDate());
+                     
+    							 	var searchText = document.getElementById('js-site-search-input').value;
+        							trackDateSelection(date1,date2);
+        			
+        							$.ajax({
+                  	                    url: ACC.config.encodedContextPath + '/datepicker',
+                  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                  	                    type: "GET",
+                  	                    success: function (data) {
+                  	                    	//No need to do any action here
+                  	                    },
+                                    error: function (xhr, textStatus, error) {
+
+                                  	  }
+                                });
+   							 }
+  							});
+  
                       			picker.on('button:apply', (date1, date2) => {
                       				var searchText = document.getElementById('js-site-search-input').value;
                       				trackDateSelection(date1,date2);

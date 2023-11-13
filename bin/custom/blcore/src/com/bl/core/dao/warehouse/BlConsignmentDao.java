@@ -4,6 +4,7 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 
 import java.util.Date;
 import java.util.List;
@@ -75,5 +76,8 @@ public interface BlConsignmentDao
 	 * @return
 	 */
 	ConsignmentEntryModel getConsignmentEntryByPk(String pk);
+
+
+	List<ConsignmentModel> getConsignmentByOrderAndWarehouseCode(final WarehouseModel warehouse, final String orderlist[]);
 
 }

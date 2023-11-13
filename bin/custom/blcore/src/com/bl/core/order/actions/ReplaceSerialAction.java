@@ -59,15 +59,15 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
     final Collection<StockLevelModel> stockLevels = getBlStockLevelDao()
         .findSerialStockLevelForDate(serialCode,
             currentDate, futureDate);
-  BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Stock size {} for serial product {} for the rental duration {} to {}",stockLevels.size(),serialCode,currentDate,futureDate);
+  BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Stock size {} for serial product {} for the rental duration {} to {}  while replacement of serial {}",stockLevels.size(),serialCode,currentDate,futureDate,serialCode);
     List<StockLevelModel> associatedOrderStocks = stockLevels.stream()
         .filter(stockLevel -> stockLevel.getOrder() != null).collect(Collectors.toList());
-    BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Stock size {} for associated order stock for serial {}",associatedOrderStocks.size(),serialCode);
+    BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Stock size {} for associated order stock for serial {} while replacement of serial {}",associatedOrderStocks.size(),serialCode,serialCode);
     if(CollectionUtils.isNotEmpty(associatedOrderStocks)) {
       try {
             updateSerialOnOrder(serialProcessModel.getOldSerialProduct(), associatedOrderStocks);
       }catch (Exception ex){
-        BlLogger.logMessage(LOG,Level.ERROR,"Some error occurred while replacement of serial ",ex);
+        BlLogger.logMessage(LOG,Level.ERROR,"Some error occurred while replacement of serial :"+serialCode  ,ex);
         return Transition.NOK;
       }
     }
@@ -94,20 +94,21 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           productCode.add(productCodeEntry.getKey());
           Set<String> oldSerialProductCode = productCodeEntry.getValue().stream()
               .collect(Collectors.groupingBy(StockLevelModel::getSerialProductCode)).keySet();
-          if(orderCode.contains(",")){
-            for(String orderNo : orderCode.split(",")){
-            final AbstractOrderModel order = getOrderDao().getOrderByCode(orderNo);
-            filterOrderEntryAndAssignSerial(order, oldSerialProductCode, isSerialUpdated,
-                    productCode);
-            }
-          }
-          else {
             final AbstractOrderModel order = getOrderDao().getOrderByCode(orderCode);
-            filterOrderEntryAndAssignSerial(order, oldSerialProductCode, isSerialUpdated,
-                    productCode);
+          if(BooleanUtils.isTrue(order.getIsRentalOrder())) {
+            Date todaysDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+            ConsignmentModel consignmentModel = order.getConsignments().iterator().next();
+            if (null != consignmentModel &&  todaysDate.before(consignmentModel.getOptimizedShippingStartDate())) {
+              filterOrderEntryAndAssignSerial(order, oldSerialProductCode, isSerialUpdated,
+                      productCode);
+            }else{
+              BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Order {} under process so skipping replacement of serial while replacement of serial {}",order.getCode(),oldSerialProductCode.iterator().next());
+            }
+          }else{
+            BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Order {} not a rental order. Skipping replace serial for that order while replacement of serial {}",order.getCode(),oldSerialProductCode.iterator().next());
           }
+          List<StockLevelModel> stockLevelModelList = orderCodeEntry.getValue();
           if (isSerialUpdated.get()) {
-            List<StockLevelModel> stockLevelModelList = orderCodeEntry.getValue();
             stockLevelModelList.forEach(stockLevel -> {
               try {
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
@@ -121,13 +122,16 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
               stockLevel.setOrder(null);
               saveStockRecord(stockLevel, true);
             });
+          }else {
+            stockLevelModelList.forEach(stockLevel -> {
+              stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
+              saveStockRecord(stockLevel, true);
+            });
           }
           break;
         }
-
-
       }catch (Exception ex){
-        BlLogger.logMessage(LOG,Level.ERROR,"Some error occurred while replacement of serial for the order:"+orderCode,ex);
+        BlLogger.logMessage(LOG,Level.ERROR,"Some error occurred for the order:"+orderCode+" while replacement of serial "+blSerialProduct.getCode(),ex);
       }
 
     }
@@ -136,18 +140,22 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
 
 
   public void filterOrderEntryAndAssignSerial(AbstractOrderModel order ,Set<String> oldSerialProductCode, AtomicReference<Boolean> isSerialUpdated,Set<String> productCode){
+    AtomicReference<Boolean> isConsignmentEntryFound= new AtomicReference<>(false);
     order.getConsignments().forEach(consignmentModel -> {
       consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
         consignmentEntryModel.getSerialProducts().forEach(blProductModel -> {
           if(blProductModel instanceof  BlSerialProductModel ){
             BlSerialProductModel olderSerialProduct = (BlSerialProductModel)blProductModel;
             if(olderSerialProduct.getCode().equals(oldSerialProductCode.iterator().next())){
+              isConsignmentEntryFound.set(Boolean.TRUE);
               isSerialUpdated.set( findStockAndAssignSerial(productCode,consignmentModel,consignmentEntryModel,olderSerialProduct));
             }
           }
         });
       });
     });
+    String isFound = isConsignmentEntryFound.get() ? "found" : "not found";
+   BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Consignment entry {} for the order {} while replacement of serial {}",isFound,order.getCode(),oldSerialProductCode.iterator().next());
   }
 
 
@@ -155,10 +163,10 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
       ConsignmentEntryModel consignmentEntryModel,BlSerialProductModel oldSerialProduct){
     final Collection<StockLevelModel> stockLevels = getBlCommerceStockService().getStockForProductCodesAndDate(productCode, consignmentModel.getWarehouse(), consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate());
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-        "Stock size {} for product {} on warehouse {} for order {} for duration {} to {}",
+        "Stock size {} for product {} on warehouse {} for order {} for duration {} to {} while replacement of serial {}",
         stockLevels.size(), productCode.toString(), consignmentModel.getWarehouse().getCode(),
         consignmentModel.getOrder().getCode(),consignmentModel.getOptimizedShippingStartDate(),
-        consignmentModel.getOptimizedShippingEndDate());
+        consignmentModel.getOptimizedShippingEndDate(),oldSerialProduct.getCode());
     BlSerialProductModel newSerial=null;
     if (CollectionUtils.isNotEmpty(stockLevels)) {
       final Map<String, List<StockLevelModel>> stockLevelsSerialWise = stockLevels
@@ -177,17 +185,19 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           });
 
 
-   BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the serial product {}",blSerialProducts);
+      BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the serial product {}",blSerialProducts.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
       final List<BlSerialProductModel> nonBufferProducts = blSerialProducts.stream()
           .filter(serial -> BooleanUtils.isFalse(serial.getIsBufferedInventory()))
           .collect(Collectors.toList());
       final List<BlSerialProductModel> bufferProducts = new ArrayList(blSerialProducts);
       bufferProducts.removeAll(nonBufferProducts); // now it was only contain buffer product
-      BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the buffer serial product {}",bufferProducts);
-      BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the non buffer serial product {}",nonBufferProducts);
-
+      BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the non buffer serial product {}",nonBufferProducts.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
+      BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the buffer serial product {}",bufferProducts.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
       if(CollectionUtils.isNotEmpty(nonBufferProducts)) {
         newSerial  = filterAndAssignSerial(nonBufferProducts,consignmentEntryModel,oldSerialProduct);
+        if (newSerial == null){
+          newSerial= filterAndAssignSerial(bufferProducts,consignmentEntryModel,oldSerialProduct);
+        }
       }else{
         newSerial= filterAndAssignSerial(bufferProducts,consignmentEntryModel,oldSerialProduct);
       }
@@ -202,12 +212,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
           } catch (Exception e) {
             BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in replace serial flow", e);
           }
-          if(StringUtils.isNotBlank(stockLevel.getOrder())){
-            stockLevel.setOrder(StringUtils.isNotBlank(stockLevel.getOrder()) ? stockLevel.getOrder() + "," + consignmentModel.getOrder().getCode() : consignmentModel.getOrder().getCode());
-          }
-          else {
-            stockLevel.setOrder(consignmentModel.getOrder().getCode());
-          }
+          stockLevel.setOrder(consignmentModel.getOrder().getCode());
           stockLevel.setReservedStatus(true);
           BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
                   "Stock status is changed to {} for the serial product {} for the order {} ", stockLevel.getReservedStatus(),
@@ -215,10 +220,6 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
 
 
         } );
-        Optional<StockLevelModel> lastStock = stockLevelModels.stream().filter(stock -> stock.getDate().equals(consignmentModel.getOptimizedShippingEndDate())).findAny();
-        if(lastStock.isPresent()){
-          lastStock.get().setReservedStatus(false);
-        }
         modelService.saveAll(stockLevelModels);
         return true;
       }
@@ -231,13 +232,13 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
     final List<BlSerialProductModel> consignerSerial = serialProducts.stream()
         .filter(serial -> "BL".equalsIgnoreCase(serial.getOwnedBy()))
         .collect(Collectors.toList());
-    BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the consigner serial product {}",consignerSerial);
+    BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the consigner serial product {}",consignerSerial.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
     if (CollectionUtils.isNotEmpty(consignerSerial)) {
       return assignSerial(consignerSerial, consignmentEntryModel, oldSerialProduct);
     } else {
       final List<BlSerialProductModel> nonSaleAndNonBLSerials = serialProducts.stream()
           .filter(serial -> !"BL".equalsIgnoreCase(serial.getOwnedBy())).filter(serial -> !serial.getForSale()).collect(Collectors.toList());
-      BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the non sale non BL serial product {}",nonSaleAndNonBLSerials);
+      BlLogger.logFormatMessageInfo(LOG,Level.INFO,"All the non sale non BL serial product {}",nonSaleAndNonBLSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
       if(CollectionUtils.isNotEmpty(nonSaleAndNonBLSerials)){
         return assignSerial(nonSaleAndNonBLSerials, consignmentEntryModel, oldSerialProduct);
       }
@@ -290,6 +291,7 @@ public class ReplaceSerialAction extends AbstractSimpleDecisionAction<Reallocate
     modelService.refresh(consignmentEntryModel.getOrderEntry());
     modelService.save(consignmentEntryModel);
     modelService.refresh(consignmentEntryModel);
+    BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Serial {} was assign to order {} while replacement of serial {}",newSerialProduct.getCode(),consignmentEntryModel.getOrderEntry().getOrder().getCode(),oldSerialProduct.getCode());
     return newSerialProduct;
   }
 

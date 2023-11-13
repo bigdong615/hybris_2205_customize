@@ -131,7 +131,7 @@ public interface BlDeliveryModeDao {
      * @param deliveryMethod name
      * @return SHippingCostModel
      */
-    ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod);
+    ShippingCostModel getShippingCostForCalculatedDeliveryCost(final double weight, final String deliveryMethod);
 
     /**
      * This method will fetch dimensional factor stored on base store

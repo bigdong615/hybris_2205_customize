@@ -76,7 +76,17 @@ public class BLUPSShipmentCreateRequestPopulator
 		/** Creating ShipTo **/
 
 		final ShipToType shipToType = new ShipToType();
-		populateShipToData(shipToType, shipmentData.getShipTo());
+		if(shipmentData.isHoldAtUpsStore()) {
+			AddressData address = shipmentData.getShipTo().getAddress();
+			shipmentData.getShipTo().setAddress(shipmentData.getShipper().getPaymentAddress());
+			populateShipToData(shipToType, shipmentData.getShipTo());
+			shipToType.setName(shipToType.getAttentionName());
+			shipToType.setAttentionName("");
+			shipmentData.getShipTo().setAddress(address);
+		}
+		else {
+			populateShipToData(shipToType, shipmentData.getShipTo());
+		}
 		shipmentType.setShipTo(shipToType);
 
 		/** Creating ShipFrom **/
@@ -125,9 +135,23 @@ public class BLUPSShipmentCreateRequestPopulator
 			pkg1.setPackageServiceOptions(packageServiceOptions);
 		}
 		if(shipmentData.isHoldAtUpsStore()) {
-			ShipmentServiceOptions shipmentServiceOptions = new ShipmentServiceOptions();
-			shipmentServiceOptions.setHoldForPickupIndicator("true");
-			shipmentType.setShipmentServiceOptions(shipmentServiceOptions);
+			IndicationType indication = new IndicationType();
+			indication.setCode("01");
+			List<IndicationType> indications = new ArrayList<IndicationType>();
+			indications.add(indication);
+			shipmentType.getShipmentIndicationType().add(indication);
+			AlternateDeliveryAddressType alternateDeliveryAddress =  new AlternateDeliveryAddressType();
+			alternateDeliveryAddress.setAttentionName(shipmentData.getShipTo().getAttentionName());
+			alternateDeliveryAddress.setName(shipmentData.getShipTo().getName());
+			AddressData alternateAddress = shipmentData.getShipTo().getAddress();
+			ADLAddressType address = new ADLAddressType();
+			address.getAddressLine().add(alternateAddress.getLine1());
+			address.setCity(alternateAddress.getTown());
+			address.setStateProvinceCode(alternateAddress.getRegion().getIsocodeShort());
+			address.setPostalCode(alternateAddress.getPostalCode());
+			address.setCountryCode(alternateAddress.getCountry().getIsocode());
+			alternateDeliveryAddress.setAddress(address);
+			shipmentType.setAlternateDeliveryAddress(alternateDeliveryAddress);
 		}
 
 		final ShipUnitOfMeasurementType shipUnitOfMeasurementType = new ShipUnitOfMeasurementType();
@@ -193,7 +217,7 @@ public class BLUPSShipmentCreateRequestPopulator
 		shipper.setName(shipperData.getName());
 		shipper.setShipperNumber(shipperData.getShipperNumber());
 
-		shipper.setAttentionName(shipperData.getAttentionName());
+		//shipper.setAttentionName(shipperData.getAttentionName());
 		final AddressData shipperAddressData = shipperData.getAddress();
 		final ShipAddressType shipperAddress = new ShipAddressType();
 		final List<String> addressLineList = shipperAddress.getAddressLine();

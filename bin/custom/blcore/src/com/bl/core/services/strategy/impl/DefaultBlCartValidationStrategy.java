@@ -161,10 +161,11 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 				final List<Date> holidayBlackoutDates = getBlDatePickerService()
 						.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 
-				final Date rentalStartDate = BlDateTimeUtils
-						.subtractDaysInRentalDates(preDaysToDeduct, rentalDateDto.getSelectedFromDate(), holidayBlackoutDates);
-				final Date rentalEndDate = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd,
-						rentalDateDto.getSelectedToDate(), holidayBlackoutDates);
+				final Date rentalStartDate = cartEntryModel.getOrder().getActualRentalStartDate();
+						//BlDateTimeUtils
+						//.subtractDaysInRentalDates(preDaysToDeduct, rentalDateDto.getSelectedFromDate(), holidayBlackoutDates);
+				final Date rentalEndDate = cartEntryModel.getOrder().getActualRentalEndDate();//BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd,
+						//rentalDateDto.getSelectedToDate(), holidayBlackoutDates);
 
 				stocksAvailable = getStocksForProductAndDate(cartEntryModel, listOfWarehouses,
 						rentalStartDate, rentalEndDate);

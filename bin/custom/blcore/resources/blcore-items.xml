@@ -43,6 +43,7 @@
         <collectiontype code="IpVelocityList" elementtype="java.lang.String" type="list"/>
 
         <collectiontype code="subpartsList" elementtype="BlSubparts" type="list"/>
+        <collectiontype code="SerialStatusEnumSet" elementtype="SerialStatusEnum" type="set"/>
 
         <collectiontype code="SerialCodeList" elementtype="java.lang.String" type="list"/>
 
@@ -176,8 +177,8 @@
         <enumtype generate="true" code="ShippingCostEnum" autocreate="true" dynamic="true">
             <value code="UPS_STANDARD_ROUND_TRIP"/>
             <value code="UPS_STANDARD_AM_ROUND_TRIP"/>
+            <value code="UPS_OVERNIGHT_AM_ROUND_TRIP"/>
             <value code="UPS_OVERNIGHT_ROUND_TRIP"/>
-            <value code="UPS_OVERNIGHT_SAVER_ROUND_TRIP"/>
             <value code="FEDEX_STANDARD_ROUND_TRIP"/>
             <value code="FEDEX_OVERNIGHT_ROUND_TRIP"/>
             <value code="UPS_USEDGEAR_STANDARD_ROUND_TRIP"/>
@@ -1101,6 +1102,11 @@
                         <modifiers read="true" write="true" search="true" optional="false" />
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                         <description>Defines Category is Rental</description>
+                    </attribute>
+                    <attribute qualifier="rentalPageTitleTag" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Category Title Tag for Rental Page</description>
                     </attribute>
 
                 </attributes>
@@ -2801,6 +2807,14 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+                    <attribute qualifier="maxWeight" type="java.lang.Double" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="minWeight" type="java.lang.Double" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
                     <attribute qualifier="ceiling" type="java.lang.Double" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
@@ -3754,6 +3768,11 @@
                         <description>Gets the overall list of the subparts in consignment entries. </description>
                         <persistence type="dynamic" attributeHandler="blSubpartsRenderedHandler" />
                     </attribute>
+                    <attribute qualifier="picker" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>This will help to identify processing user</description>
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -4023,7 +4042,28 @@
                       <description>Blocked Ip List</description>
                       <modifiers read="true" write="true" search="false" optional="true" />
                        <persistence type="property" />
-                </attribute>
+                	</attribute>
+                	<attribute autocreate="true" qualifier="saleStartDate" type="java.util.Date">
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <persistence type="property" />
+                        <description>Userd gear sale Start Date</description>
+                    </attribute>
+                    <attribute autocreate="true" qualifier="saleEndDate" type="java.util.Date">
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <persistence type="property" />
+                        <description>Userd gear sale End Date</description>
+                    </attribute>
+                    <attribute qualifier="busySeason" type="boolean">
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Flag to enable and disable busy season on checkout</description>
+                        <persistence type="property" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="serialStatus" type="SerialStatusEnumSet">
+                        <modifiers read="true" write="true" search="true" />
+                        <description> This is contain all the serial status for which need to remove serial from future consignment</description>
+                        <persistence type="property"/>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -7996,6 +8036,17 @@
               extends="BusinessProcess" generate="true" autocreate="true">
                 <attributes>
                     <attribute qualifier="oldSerialProduct" type="BlSerialProduct">
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+            <itemtype code="UpdateStockRecordOnCodeUpdateProcess"
+                      extends="BusinessProcess" generate="true" autocreate="true">
+                <attributes>
+                    <attribute qualifier="oldSerialProduct" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="newSerialProduct" type="BlSerialProduct">
                         <persistence type="property"/>
                     </attribute>
                 </attributes>

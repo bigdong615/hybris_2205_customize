@@ -210,6 +210,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String DS = "DS";
 	public static final String OT = "OT";
 
+	public static final String FEDEX_SHIPPER_URL = "blintegration.fedex.shipment.url";
 	public static final String FEDEX_SHIPPER_ACCOUNT_NUMBER = "blintegration.fedex.shipper.account.number";
 	public static final String FEDEX_SHIPPER_METER_NUMBER = "blintegration.fedex.shipper.meter.number";
 	public static final String FEDEX_SHIPPER_API_KEY = "blintegration.fedex.api.key";

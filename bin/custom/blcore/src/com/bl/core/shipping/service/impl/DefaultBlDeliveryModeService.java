@@ -11,6 +11,7 @@ import de.hybris.platform.order.impl.DefaultZoneDeliveryModeService;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 
@@ -483,9 +484,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * {@inheritDoc}
      */
     @Override
-    public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost,
+    public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final double weight,
                                                                       final ZoneDeliveryModeModel deliveryMethod) {
-        return getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
+        return getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(weight,
                 deliveryMethod.getShippingCostCode().getCode());
     }
 
@@ -571,7 +572,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             order.setTotalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT));
             order.setDimensionalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT));
         }
-        final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(maxValue, zoneDeliveryModeModel);
+        final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), zoneDeliveryModeModel);
         if (shippingCostModel != null) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping calculated amount: {} ", shippingCostModel.getAmount());
             if (BooleanUtils.isTrue(order.getIsRentalOrder())) {
@@ -580,11 +581,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                     && BlCoreConstants.UPS_ROUND_TRIP.contains(zoneDeliveryModeModel.getCode())) {
                     return Double.valueOf(0.00);
                 } else {
-                    return shippingCostModel.getAmount() * Double.valueOf(maxValue);
+                    return shippingCostModel.getAmount();
                 }
             } else {
-                return (shippingCostModel.getAmount() * Double.valueOf(maxValue)
-                    / BlInventoryScanLoggingConstants.TWO);
+                return (shippingCostModel.getAmount());
             }
             
         }
@@ -1385,27 +1385,41 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
    	 if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
     		  shippingOptimizationModels = shippingOptimizationModels.stream().collect(minList(Comparator.comparing(ShippingOptimizationModel::getServiceDays)));      		
     	  }
-    	 
+
+        final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(
+                BlCoreConstants.BASE_STORE_ID);
        if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && shippingOptimizationModels.size() > BlInventoryScanLoggingConstants.ONE) {
-      	 for(ShippingOptimizationModel model : shippingOptimizationModels) 
-      	 {
-      		 if(model.getInbound() == BlInventoryScanLoggingConstants.ONE) {
-      			 inboundServiceDays =  model.getServiceDays();     	        		  
-      		 }
-      		 else{
-      			 outboundServiceDays =  model.getServiceDays();     	        		        		  
-      		 }
-      	 }
-         preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
-         postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : inboundServiceDays);
+      	 for(ShippingOptimizationModel model : shippingOptimizationModels) {
+             if (model.getInbound() == BlInventoryScanLoggingConstants.ONE) {
+                 inboundServiceDays = model.getServiceDays();
+             } else {
+                 outboundServiceDays = model.getServiceDays();
+             }
+         }
+           if(baseStore.isBusySeason()){
+
+                preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
+                postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : inboundServiceDays);
+       }
+           else {
+               preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
+               postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : inboundServiceDays);
+           }
        }
        else if(CollectionUtils.isNotEmpty(shippingOptimizationModels) && null != shippingOptimizationModels.get(0))
        {   	 
       	 inboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
       	 outboundServiceDays = shippingOptimizationModels.get(0).getServiceDays();
 
-         preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
-         postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : inboundServiceDays);
+           if(baseStore.isBusySeason()){
+               preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : outboundServiceDays);
+               postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.TWO ? BlInventoryScanLoggingConstants.TWO : inboundServiceDays);
+           }
+           else {
+               preDaysToDeduct.set(outboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : outboundServiceDays);
+               postDaysToAdd.set(inboundServiceDays >= BlInventoryScanLoggingConstants.THREE ? BlInventoryScanLoggingConstants.THREE : inboundServiceDays);
+           }
+
        }
 		return CollectionUtils.isNotEmpty(shippingOptimizationModels) ? shippingOptimizationModels : Collections.EMPTY_LIST;
     }

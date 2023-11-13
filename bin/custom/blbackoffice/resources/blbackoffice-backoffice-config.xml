@@ -77,6 +77,7 @@
 			<n:type-node code="GiftCard" id="GiftCard"/>
 			<n:type-node code="Consignment" id="Shipment"/>
 			<n:type-node code="StockLevel" id="StockLevel"/>
+			<n:navigation-node id="ProductAvailCheckTool" code="ProductAvailCheckTool"/>
 		</n:explorer-tree>
 	</context>
 
@@ -1047,8 +1048,8 @@
 	<context type="ShippingCost" component="listview" merge-by="replace">
         <list-view:list-view>
             <list-view:column qualifier="name"/>
-            <list-view:column qualifier="floor"/>
-            <list-view:column qualifier="ceiling"/>
+            <list-view:column qualifier="minWeight"/>
+            <list-view:column qualifier="maxWeight"/>
             <list-view:column qualifier="amount"/>
             <list-view:column qualifier="shippingMethodId"/>
         </list-view:list-view>
@@ -1315,6 +1316,8 @@
 	<context type="Order" component="cs-listview" merge-by="type">
         <list:list-view xmlns:list="http://www.hybris.com/cockpitng/component/listView">
             <list:column qualifier="actualRentalStartDate" label="blbackoffice.order.listview.actualRentalStartDate "/>
+			<list:column qualifier="rentalStartDate" label="customersupportbackoffice.order.details.rentalStartDate "/>
+			<list:column qualifier="totalPrice" label="customersupportbackoffice.order.details.total "/>
             <list:column qualifier="date" merge-mode="REMOVE"/>
         </list:list-view>
     </context>
@@ -2119,13 +2122,31 @@
 			<advanced-search:field-list>
 				<advanced-search:field name="barcode" selected="true" mandatory="false"/>
 				<advanced-search:field name="testingStatus" selected="true" mandatory="false"/>
+				<advanced-search:field name="blProduct" selected="true" mandatory="false"/>
 				<advanced-search:field name="serialStatus" selected="false" mandatory="false"/>
 				<advanced-search:field name="forSale" selected="false" mandatory="false"/>
 				<advanced-search:field name="productId" selected="false" mandatory="false"/>
+				<advanced-search:field name="ocLocation" selected="false" mandatory="false"/>
+				<advanced-search:field name="productType"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
-	
+
+	<context merge-by="type" parent="GenericItem" type="BlSerialProduct"  extends="BlSerialProduct" component="listview">
+		<list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+			<list-view:column qualifier="code"/>
+			<list-view:column qualifier="name"/>
+			<list-view:column qualifier="productStatus" spring-bean="productStatusRenderer" label="product.status.column.label"/>
+			<list-view:column qualifier="catalogVersion"/>
+				<list-view:column qualifier="serialStatus"/>
+			<list-view:column qualifier="blProduct.code" label="product.code.column.label"/>
+			<list-view:column qualifier="blProduct.name" label="product.name.column.label"/>
+			<list-view:column qualifier="associatedShippedConsignment"/>
+			<list-view:column qualifier="ocLocation"/>
+			<list-view:column qualifier="lastLocationScanParent"/>
+		</list-view:list-view>
+	</context>
+
 	<context type="BlItemsBillingCharge" component="base">
 		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
 			<y:labels>
@@ -2422,9 +2443,11 @@
 			</n:navigation-node>
 			<n:navigation-node id="OrderConsolidationTool" code="OrderConsolidationTool"/>
 			<n:type-node code="CronJob" id="CronJob"/>
+			<n:navigation-node id="PickerScanTool" code="PickerScanTool"/>
+			<n:navigation-node id="ProductAvailCheckTool" code="ProductAvailCheckTool"/>
 		</n:explorer-tree>
 	</context>
-	
+
 	<context parent="GenericItem" type="Order" component="cs-editor-area">
         <editorArea:editorArea name="Order editor area" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
             <editorArea:tab name="customersupportbackoffice.order.tab.consignments">
@@ -2728,8 +2751,9 @@
 			<n:navigation-node id="blinventoryscan_name">
 				<n:navigation-node id="WebScanTool"/>
 			</n:navigation-node>
-			<n:navigation-node id="OrderConsolidationTool" code="OrderConsolidationTool"/>        
-        </n:explorer-tree>
+			<n:navigation-node id="OrderConsolidationTool" code="OrderConsolidationTool"/>
+			<n:navigation-node id="PickerScanTool" code="PickerScanTool"/>
+		</n:explorer-tree>
     </context>
     
    <context component="explorer-tree" principal="repairmemberuserrole">
@@ -2752,6 +2776,7 @@
             <n:navigation-node id="blinventoryscan_name">
 				<n:navigation-node id="WebScanTool"/>
 			</n:navigation-node>
+			<n:navigation-node id="InboundTrackingScanTool" code="InboundTrackingScanTool"/>
         </n:explorer-tree>
     </context>
     
@@ -3600,5 +3625,193 @@
 		</advanced-search:advanced-search>
 	</context>
 
+	<context type="Product" component="listviewactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject"/>
+			</y:group>
+		</y:actions>
+	</context>
 
+	<context type="Product" component="pcmbackoffice-editorareaactions" merge-by="type" module="pcmbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="Product" component="pcmbackoffice-listviewactions" merge-by="type" module="pcmbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="Product" component="pcmbackoffice-assortment-listviewactions">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject"/>
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="Category" component="listviewactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="PriceRow" component="listviewactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="Tax" component="listviewactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="DeliveryMode" component="listviewactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="ContentPage" component="listviewactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="Order" component="listviewactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="Notes" component="listviewactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="ShippingCost" component="listviewactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="Product" component="editorareaactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="Category" component="editorareaactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="PriceRow" component="editorareaactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="Order" component="editorareaactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+
+	<context type="Notes" component="editorareaactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="DeliveryMode" component="editorareaactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="ShippingCost" component="editorareaactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="tax" component="editorareaactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context type="ContentPage" component="editorareaactions" merge-by="type" module="blbackoffice">
+		<y:actions>
+			<y:group qualifier="common" position="10">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObject" />
+			</y:group>
+		</y:actions>
+	</context>
 </config>

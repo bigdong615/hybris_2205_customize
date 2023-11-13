@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ProductBreadcrumbBuilder;
@@ -19,6 +20,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.variants.VariantSortStrat
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.AbstractPageModel;
+import de.hybris.platform.cms2.model.site.CMSSiteModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSPageService;
 import de.hybris.platform.commercefacades.futurestock.FutureStockFacade;
 import de.hybris.platform.commercefacades.order.data.ConfigurationInfoData;
@@ -145,8 +147,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 			return redirection;
 		}
 
-		updatePageTitle(productCode, model);
-
+		updatePageTitleForPDP(productData, model);
 		populateProductDetailForDisplay(productCode, model, request, extraOptions);
 
 		model.addAttribute(new ReviewForm());
@@ -547,6 +548,30 @@ public class AbstractBlProductPageController extends AbstractPageController
 	{
 		final ProductModel productModel = productService.getProductForCode(productCode);
 		return cmsPageService.getPageForProduct(productModel, getCmsPreviewService().getPagePreviewCriteria());
+	}
+	protected void updatePageTitleForPDP(final ProductData productData, final Model model)
+	{
+		storeContentPageTitleInModel(model, resolveProductPageTitleForPDP(productData.getName(),productData.getProductPageType()));
+	}
+
+	/**
+	 * Updating page title for PDP to new format
+	 * @param productName
+	 * @param pageType
+	 * @return
+	 */
+	protected String resolveProductPageTitleForPDP(final String productName,String pageType)
+	{
+		final StringBuilder builder = new StringBuilder();
+		if(pageType.equals(BlControllerConstants.RENTAL_PAGE_IDENTIFIER))
+		{
+			builder.append("Rent a "+productName+" - "+BlCoreConstants.SITE_NAME);
+		}
+		else
+		{
+			builder.append("Buy a "+productName+" - "+BlCoreConstants.SITE_NAME);
+		}
+		return builder.toString();
 	}
 
 	/**

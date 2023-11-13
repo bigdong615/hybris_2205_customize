@@ -10,7 +10,16 @@
 	  "name": "${product.name}",
 	  "image": 
 	    [ <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
-	       "${container.product.url}",
+	    <c:choose>
+	    
+	     <c:when test="${not varStatus.last}">
+	        "${container.product.url}",
+	     </c:when>
+	     <c:otherwise>
+	       "${container.product.url}"
+	       </c:otherwise>
+	      </c:choose>
+
 	       </c:forEach>
 	     ],
 	  "brand": {
@@ -40,7 +49,24 @@
             </c:otherwise>
 	    </c:choose>
 	  },
-    "breadcrumbList": {
+   
+   "mainEntityOfPage":{
+   "@type": "ItemPage",
+       <c:choose>
+            <c:when test="${IsRentalPage eq 'true' && product.forRent eq 'true'}">
+                <c:url var="offerURL" value="${jalosession.tenant.config.getParameter('website.bl.https')}/rent${product.url}"/>
+                 "@id": "${offerURL}",
+            </c:when>
+            <c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true' && not empty product.serialproducts}">
+                <c:url var="offerURL" value="${jalosession.tenant.config.getParameter('website.bl.https')}/buy${product.url}"/>
+                 "@id": "${offerURL}",
+            </c:when>
+            <c:otherwise>
+                <c:url var="offerURL" value=""/>
+                "@id": "${offerURL}",
+            </c:otherwise>
+	    </c:choose>
+    "breadcrumb": {
   	"@type": "BreadcrumbList",
 		  "itemListElement": [{
 		    "@type": "ListItem",
@@ -51,7 +77,7 @@
 		    "@type": "ListItem",
 		    "position": 2,
 		    "name": "<c:choose><c:when test="${IsRentalPage eq 'true' && product.forRent eq 'true'}">Rental Gear</c:when><c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true'}">Used Gear</c:when><c:otherwise></c:otherwise></c:choose>",
-		    "item": "<c:choose><c:when test="${IsRentalPage eq 'true' && product.forRent eq 'true'}">${jalosession.tenant.config.getParameter('website.bl.https')}/rent/category/rentalgear</c:when><c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true'}">${jalosession.tenant.config.getParameter('website.bl.https')}/buy/category/usedgear</c:when><c:otherwise></c:otherwise></c:choose>
+		    "item": "<c:choose><c:when test="${IsRentalPage eq 'true' && product.forRent eq 'true'}">${jalosession.tenant.config.getParameter('website.bl.https')}/rent/category/rentalgear</c:when><c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true'}">${jalosession.tenant.config.getParameter('website.bl.https')}/buy/category/usedgear</c:when><c:otherwise></c:otherwise></c:choose>"
 		  }
 		  <c:if test="${not empty product.categories and not empty breadcrumbs}">,{<c:url var="categoryURL" value="${jalosession.tenant.config.getParameter('website.bl.https')}${breadcrumbs[1].url}"/>
 		    "@type": "ListItem",
@@ -67,6 +93,8 @@
 		    "item": "${subCategoryURL}"
 		  }
 		  </c:if>
+		  ]
+  }
   }
 }
 </script>

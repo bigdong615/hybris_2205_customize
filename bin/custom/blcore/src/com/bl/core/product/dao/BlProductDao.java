@@ -69,4 +69,12 @@ public interface BlProductDao extends ProductDao {
 	 *
 	 */
 	 List<ProductModel> findProductsByPK(String code);
+
+	 /**
+	  *
+	  * @param code
+	  * @return
+	  */
+
+	 public int getOrderCountByProduct(String code);
 }

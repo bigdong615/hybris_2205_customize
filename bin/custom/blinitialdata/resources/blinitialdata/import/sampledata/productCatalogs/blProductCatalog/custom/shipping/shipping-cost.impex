@@ -1226,3 +1226,647 @@ INSERT_UPDATE ShippingCost; shippingRateId[unique = 'true']; shippingCostCode(co
                           ; 4754                           ; UPS_STANDARD_AM_ROUND_TRIP             ; 2               ; UPS Standard AM Round Trip     ; 196  ; 197    ; 6.375
                           ; 4755                           ; UPS_STANDARD_AM_ROUND_TRIP             ; 2               ; UPS Standard AM Round Trip     ; 197  ; 198    ; 6.375
                           ; 4756                           ; UPS_STANDARD_AM_ROUND_TRIP             ; 2               ; UPS Standard AM Round Trip     ; 198  ; 0      ; 6.375
+
+INSERT_UPDATE ShippingCost     ; shippingRateId[unique = 'true'] ; minWeight              ; maxWeight        ; name             ; amount        ; shippingCostCode(code)      
+                               ; 5000                            ; 0                      ; 2                ; UPS Standard     ; 25.00        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5001                            ; 2.01                   ; 3                ; UPS Standard     ; 26.00        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5002                            ; 3.01                   ; 4                ; UPS Standard     ; 27.00        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5003                            ; 4.01                   ; 5                ; UPS Standard     ; 28.00        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5004                            ; 5.01                   ; 6                ; UPS Standard     ; 30.76        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5005                            ; 6.01                   ; 7                ; UPS Standard     ; 33.52        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5006                            ; 7.01                   ; 8                ; UPS Standard     ; 36.28        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5007                            ; 8.01                   ; 9                ; UPS Standard     ; 39.04        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5008                            ; 9.01                   ; 10               ; UPS Standard     ; 41.80        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5009                            ; 10.01                  ; 11               ; UPS Standard     ; 43.99        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5010                            ; 11.01                  ; 12               ; UPS Standard     ; 46.17        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5011                            ; 12.01                  ; 13               ; UPS Standard     ; 48.36        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5012                            ; 13.01                  ; 14               ; UPS Standard     ; 50.55        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5013                            ; 14.01                  ; 15               ; UPS Standard     ; 52.73        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5014                            ; 15.01                  ; 16               ; UPS Standard     ; 54.92        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5015                            ; 16.01                  ; 17               ; UPS Standard     ; 57.11        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5016                            ; 17.01                  ; 18               ; UPS Standard     ; 59.29        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5017                            ; 18.01                  ; 19               ; UPS Standard     ; 61.48        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5018                            ; 19.01                  ; 20               ; UPS Standard     ; 63.67        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5019                            ; 20.01                  ; 21               ; UPS Standard     ; 65.85        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5020                            ; 21.01                  ; 22               ; UPS Standard     ; 68.04        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5021                            ; 22.01                  ; 23               ; UPS Standard     ; 70.23        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5022                            ; 23.01                  ; 24               ; UPS Standard     ; 72.41        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5023                            ; 24.01                  ; 25               ; UPS Standard     ; 74.60        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5024                            ; 25.01                  ; 30               ; UPS Standard     ; 83.87        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5025                            ; 30.01                  ; 35               ; UPS Standard     ; 93.14        ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5026                            ; 35.01                  ; 40               ; UPS Standard     ; 102.42       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5027                            ; 40.01                  ; 45               ; UPS Standard     ; 111.69       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5028                            ; 45.01                  ; 50               ; UPS Standard     ; 120.96       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5029                            ; 50.01                  ; 55               ; UPS Standard     ; 134.62       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5030                            ; 55.01                  ; 60               ; UPS Standard     ; 148.28       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5031                            ; 60.01                  ; 65               ; UPS Standard     ; 161.94       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5032                            ; 65.01                  ; 70               ; UPS Standard     ; 175.60       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5033                            ; 70.01                  ; 75               ; UPS Standard     ; 189.26       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5034                            ; 75.01                  ; 80               ; UPS Standard     ; 202.92       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5035                            ; 80.01                  ; 85               ; UPS Standard     ; 216.58       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5036                            ; 85.01                  ; 90               ; UPS Standard     ; 230.24       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5037                            ; 90.01                  ; 95               ; UPS Standard     ; 243.90       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5038                            ; 95.01                  ; 100              ; UPS Standard     ; 257.56       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5039                            ; 100.01                 ; 105              ; UPS Standard     ; 285.56       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5040                            ; 105.01                 ; 110              ; UPS Standard     ; 299.36       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5041                            ; 110.01                 ; 115              ; UPS Standard     ; 310.29       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5042                            ; 115.01                 ; 120              ; UPS Standard     ; 321.23       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5043                            ; 120.01                 ; 125              ; UPS Standard     ; 332.16       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5044                            ; 125.01                 ; 130              ; UPS Standard     ; 341.43       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5045                            ; 130.01                 ; 135              ; UPS Standard     ; 350.70       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5046                            ; 135.01                 ; 140              ; UPS Standard     ; 359.98       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5047                            ; 140.01                 ; 145              ; UPS Standard     ; 369.25       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5048                            ; 145.01                 ; 150              ; UPS Standard     ; 378.52       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5049                            ; 150.01                 ; 155              ; UPS Standard     ; 392.18       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5050                            ; 155.01                 ; 160              ; UPS Standard     ; 405.84       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5051                            ; 160.01                 ; 165              ; UPS Standard     ; 419.50       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5052                            ; 165.01                 ; 170              ; UPS Standard     ; 433.16       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5053                            ; 170.01                 ; 175              ; UPS Standard     ; 446.82       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5054                            ; 175.01                 ; 180              ; UPS Standard     ; 460.48       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5055                            ; 180.01                 ; 185              ; UPS Standard     ; 474.14       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5056                            ; 185.01                 ; 190              ; UPS Standard     ; 487.80       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5057                            ; 190.01                 ; 195              ; UPS Standard     ; 501.46       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5058                            ; 195.01                 ; 200              ; UPS Standard     ; 515.12       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5059                            ; 200.01                 ; 205              ; UPS Standard     ; 543.12       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5060                            ; 205.01                 ; 210              ; UPS Standard     ; 556.92       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5061                            ; 210.01                 ; 215              ; UPS Standard     ; 567.85       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5062                            ; 215.01                 ; 220              ; UPS Standard     ; 578.79       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5063                            ; 220.01                 ; 225              ; UPS Standard     ; 589.72       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5064                            ; 225.01                 ; 230              ; UPS Standard     ; 598.99       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5065                            ; 230.01                 ; 235              ; UPS Standard     ; 608.26       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5066                            ; 235.01                 ; 240              ; UPS Standard     ; 617.54       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5067                            ; 240.01                 ; 245              ; UPS Standard     ; 626.81       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5068                            ; 245.01                 ; 250              ; UPS Standard     ; 636.08       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5069                            ; 250.01                 ; 255              ; UPS Standard     ; 649.74       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5070                            ; 255.01                 ; 260              ; UPS Standard     ; 663.40       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5071                            ; 260.01                 ; 265              ; UPS Standard     ; 677.06       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5072                            ; 265.01                 ; 270              ; UPS Standard     ; 690.72       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5073                            ; 270.01                 ; 275              ; UPS Standard     ; 704.38       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5074                            ; 275.01                 ; 280              ; UPS Standard     ; 718.04       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5075                            ; 280.01                 ; 285              ; UPS Standard     ; 731.70       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5076                            ; 285.01                 ; 290              ; UPS Standard     ; 745.36       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5077                            ; 290.01                 ; 295              ; UPS Standard     ; 759.02       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5078                            ; 295.01                 ; 300              ; UPS Standard     ; 772.68       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5079                            ; 300.01                 ; 305              ; UPS Standard     ; 800.68       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5080                            ; 305.01                 ; 310              ; UPS Standard     ; 814.48       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5081                            ; 310.01                 ; 315              ; UPS Standard     ; 825.41       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5082                            ; 315.01                 ; 320              ; UPS Standard     ; 836.35       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5083                            ; 320.01                 ; 325              ; UPS Standard     ; 847.28       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5084                            ; 325.01                 ; 330              ; UPS Standard     ; 856.55       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5085                            ; 330.01                 ; 335              ; UPS Standard     ; 865.82       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5086                            ; 335.01                 ; 340              ; UPS Standard     ; 875.10       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5087                            ; 340.01                 ; 345              ; UPS Standard     ; 884.37       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5088                            ; 345.01                 ; 350              ; UPS Standard     ; 893.64       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5089                            ; 350.01                 ; 355              ; UPS Standard     ; 907.30       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5090                            ; 355.01                 ; 360              ; UPS Standard     ; 920.96       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5091                            ; 360.01                 ; 365              ; UPS Standard     ; 934.62       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5092                            ; 365.01                 ; 370              ; UPS Standard     ; 948.28       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5093                            ; 370.01                 ; 375              ; UPS Standard     ; 961.94       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5094                            ; 375.01                 ; 380              ; UPS Standard     ; 975.60       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5095                            ; 380.01                 ; 385              ; UPS Standard     ; 989.26       ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5096                            ; 385.01                 ; 390              ; UPS Standard     ; 1,002.92     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5097                            ; 390.01                 ; 395              ; UPS Standard     ; 1,016.58     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5098                            ; 395.01                 ; 400              ; UPS Standard     ; 1,030.24     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5099                            ; 400.01                 ; 405              ; UPS Standard     ; 1,058.24     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5100                            ; 405.01                 ; 410              ; UPS Standard     ; 1,072.04     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5101                            ; 410.01                 ; 415              ; UPS Standard     ; 1,082.97     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5102                            ; 415.01                 ; 420              ; UPS Standard     ; 1,093.91     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5103                            ; 420.01                 ; 425              ; UPS Standard     ; 1,104.84     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5104                            ; 425.01                 ; 430              ; UPS Standard     ; 1,114.11     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5105                            ; 430.01                 ; 435              ; UPS Standard     ; 1,123.38     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5106                            ; 435.01                 ; 440              ; UPS Standard     ; 1,132.66     ; UPS_STANDARD_ROUND_TRIP     
+                               ; 5107                            ; 0                      ; 2                ; UPS Standard AM  ; 30.70        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5108                            ; 2.01                   ; 3                ; UPS Standard AM  ; 30.70        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5109                            ; 3.01                   ; 4                ; UPS Standard AM  ; 30.70        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5110                            ; 4.01                   ; 5                ; UPS Standard AM  ; 30.70        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5111                            ; 5.01                   ; 6                ; UPS Standard AM  ; 33.39        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5112                            ; 6.01                   ; 7                ; UPS Standard AM  ; 36.08        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5113                            ; 7.01                   ; 8                ; UPS Standard AM  ; 38.77        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5114                            ; 8.01                   ; 9                ; UPS Standard AM  ; 41.46        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5115                            ; 9.01                   ; 10               ; UPS Standard AM  ; 44.15        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5116                            ; 10.01                  ; 11               ; UPS Standard AM  ; 46.94        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5117                            ; 11.01                  ; 12               ; UPS Standard AM  ; 49.74        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5118                            ; 12.01                  ; 13               ; UPS Standard AM  ; 52.53        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5119                            ; 13.01                  ; 14               ; UPS Standard AM  ; 55.33        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5120                            ; 14.01                  ; 15               ; UPS Standard AM  ; 58.12        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5121                            ; 15.01                  ; 16               ; UPS Standard AM  ; 60.91        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5122                            ; 16.01                  ; 17               ; UPS Standard AM  ; 63.71        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5123                            ; 17.01                  ; 18               ; UPS Standard AM  ; 66.50        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5124                            ; 18.01                  ; 19               ; UPS Standard AM  ; 69.30        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5125                            ; 19.01                  ; 20               ; UPS Standard AM  ; 72.09        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5126                            ; 20.01                  ; 21               ; UPS Standard AM  ; 74.88        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5127                            ; 21.01                  ; 22               ; UPS Standard AM  ; 77.68        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5128                            ; 22.01                  ; 23               ; UPS Standard AM  ; 80.47        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5129                            ; 23.01                  ; 24               ; UPS Standard AM  ; 83.27        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5130                            ; 24.01                  ; 25               ; UPS Standard AM  ; 86.06        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5131                            ; 25.01                  ; 30               ; UPS Standard AM  ; 98.34        ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5132                            ; 30.01                  ; 35               ; UPS Standard AM  ; 110.62       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5133                            ; 35.01                  ; 40               ; UPS Standard AM  ; 122.91       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5134                            ; 40.01                  ; 45               ; UPS Standard AM  ; 135.19       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5135                            ; 45.01                  ; 50               ; UPS Standard AM  ; 147.47       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5136                            ; 50.01                  ; 55               ; UPS Standard AM  ; 164.94       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5137                            ; 55.01                  ; 60               ; UPS Standard AM  ; 182.42       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5138                            ; 60.01                  ; 65               ; UPS Standard AM  ; 199.89       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5139                            ; 65.01                  ; 70               ; UPS Standard AM  ; 217.36       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5140                            ; 70.01                  ; 75               ; UPS Standard AM  ; 234.84       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5141                            ; 75.01                  ; 80               ; UPS Standard AM  ; 252.31       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5142                            ; 80.01                  ; 85               ; UPS Standard AM  ; 269.78       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5143                            ; 85.01                  ; 90               ; UPS Standard AM  ; 287.25       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5144                            ; 90.01                  ; 95               ; UPS Standard AM  ; 304.73       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5145                            ; 95.01                  ; 100              ; UPS Standard AM  ; 322.20       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5146                            ; 100.01                 ; 105              ; UPS Standard AM  ; 352.90       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5147                            ; 105.01                 ; 110              ; UPS Standard AM  ; 366.35       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5148                            ; 110.01                 ; 115              ; UPS Standard AM  ; 380.32       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5149                            ; 115.01                 ; 120              ; UPS Standard AM  ; 394.29       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5150                            ; 120.01                 ; 125              ; UPS Standard AM  ; 408.26       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5151                            ; 125.01                 ; 130              ; UPS Standard AM  ; 420.54       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5152                            ; 130.01                 ; 135              ; UPS Standard AM  ; 432.82       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5153                            ; 135.01                 ; 140              ; UPS Standard AM  ; 445.11       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5154                            ; 140.01                 ; 145              ; UPS Standard AM  ; 457.39       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5155                            ; 145.01                 ; 150              ; UPS Standard AM  ; 469.67       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5156                            ; 150.01                 ; 155              ; UPS Standard AM  ; 487.14       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5157                            ; 155.01                 ; 160              ; UPS Standard AM  ; 504.62       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5158                            ; 160.01                 ; 165              ; UPS Standard AM  ; 522.09       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5159                            ; 165.01                 ; 170              ; UPS Standard AM  ; 539.56       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5160                            ; 170.01                 ; 175              ; UPS Standard AM  ; 557.04       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5161                            ; 175.01                 ; 180              ; UPS Standard AM  ; 574.51       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5162                            ; 180.01                 ; 185              ; UPS Standard AM  ; 591.98       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5163                            ; 185.01                 ; 190              ; UPS Standard AM  ; 609.45       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5164                            ; 190.01                 ; 195              ; UPS Standard AM  ; 626.93       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5165                            ; 195.01                 ; 200              ; UPS Standard AM  ; 644.40       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5166                            ; 200.01                 ; 205              ; UPS Standard AM  ; 675.10       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5167                            ; 205.01                 ; 210              ; UPS Standard AM  ; 688.55       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5168                            ; 210.01                 ; 215              ; UPS Standard AM  ; 702.52       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5169                            ; 215.01                 ; 220              ; UPS Standard AM  ; 716.49       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5170                            ; 220.01                 ; 225              ; UPS Standard AM  ; 730.46       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5171                            ; 225.01                 ; 230              ; UPS Standard AM  ; 742.74       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5172                            ; 230.01                 ; 235              ; UPS Standard AM  ; 755.02       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5173                            ; 235.01                 ; 240              ; UPS Standard AM  ; 767.31       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5174                            ; 240.01                 ; 245              ; UPS Standard AM  ; 779.59       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5175                            ; 245.01                 ; 250              ; UPS Standard AM  ; 791.87       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5176                            ; 250.01                 ; 255              ; UPS Standard AM  ; 809.34       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5177                            ; 255.01                 ; 260              ; UPS Standard AM  ; 826.82       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5178                            ; 260.01                 ; 265              ; UPS Standard AM  ; 844.29       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5179                            ; 265.01                 ; 270              ; UPS Standard AM  ; 861.76       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5180                            ; 270.01                 ; 275              ; UPS Standard AM  ; 879.24       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5181                            ; 275.01                 ; 280              ; UPS Standard AM  ; 896.71       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5182                            ; 280.01                 ; 285              ; UPS Standard AM  ; 914.18       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5183                            ; 285.01                 ; 290              ; UPS Standard AM  ; 931.65       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5184                            ; 290.01                 ; 295              ; UPS Standard AM  ; 949.13       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5185                            ; 295.01                 ; 300              ; UPS Standard AM  ; 966.60       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5186                            ; 300.01                 ; 305              ; UPS Standard AM  ; 997.30       ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5187                            ; 305.01                 ; 310              ; UPS Standard AM  ; 1,010.75     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5188                            ; 310.01                 ; 315              ; UPS Standard AM  ; 1,024.72     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5189                            ; 315.01                 ; 320              ; UPS Standard AM  ; 1,038.69     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5190                            ; 320.01                 ; 325              ; UPS Standard AM  ; 1,052.66     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5191                            ; 325.01                 ; 330              ; UPS Standard AM  ; 1,064.94     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5192                            ; 330.01                 ; 335              ; UPS Standard AM  ; 1,077.22     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5193                            ; 335.01                 ; 340              ; UPS Standard AM  ; 1,089.51     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5194                            ; 340.01                 ; 345              ; UPS Standard AM  ; 1,101.79     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5195                            ; 345.01                 ; 350              ; UPS Standard AM  ; 1,114.07     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5196                            ; 350.01                 ; 355              ; UPS Standard AM  ; 1,131.54     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5197                            ; 355.01                 ; 360              ; UPS Standard AM  ; 1,149.02     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5198                            ; 360.01                 ; 365              ; UPS Standard AM  ; 1,166.49     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5199                            ; 365.01                 ; 370              ; UPS Standard AM  ; 1,183.96     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5200                            ; 370.01                 ; 375              ; UPS Standard AM  ; 1,201.44     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5201                            ; 375.01                 ; 380              ; UPS Standard AM  ; 1,218.91     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5202                            ; 380.01                 ; 385              ; UPS Standard AM  ; 1,236.38     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5203                            ; 385.01                 ; 390              ; UPS Standard AM  ; 1,253.85     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5204                            ; 390.01                 ; 395              ; UPS Standard AM  ; 1,271.33     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5205                            ; 395.01                 ; 400              ; UPS Standard AM  ; 1,288.80     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5206                            ; 400.01                 ; 405              ; UPS Standard AM  ; 1,319.50     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5207                            ; 405.01                 ; 410              ; UPS Standard AM  ; 1,332.95     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5208                            ; 410.01                 ; 415              ; UPS Standard AM  ; 1,346.92     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5209                            ; 415.01                 ; 420              ; UPS Standard AM  ; 1,360.89     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5210                            ; 420.01                 ; 425              ; UPS Standard AM  ; 1,374.86     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5211                            ; 425.01                 ; 430              ; UPS Standard AM  ; 1,387.14     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5212                            ; 430.01                 ; 435              ; UPS Standard AM  ; 1,399.42     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5213                            ; 435.01                 ; 440              ; UPS Standard AM  ; 1,411.71     ; UPS_STANDARD_AM_ROUND_TRIP  
+                               ; 5214                            ; 0                      ; 2                ; UPS Overnight    ; 35.38        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5215                            ; 2.01                   ; 3                ; UPS Overnight    ; 35.38        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5216                            ; 3.01                   ; 4                ; UPS Overnight    ; 35.38        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5217                            ; 4.01                   ; 5                ; UPS Overnight    ; 35.38        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5218                            ; 5.01                   ; 6                ; UPS Overnight    ; 35.47        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5219                            ; 6.01                   ; 7                ; UPS Overnight    ; 38.51        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5220                            ; 7.01                   ; 8                ; UPS Overnight    ; 41.56        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5221                            ; 8.01                   ; 9                ; UPS Overnight    ; 44.60        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5222                            ; 9.01                   ; 10               ; UPS Overnight    ; 47.65        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5223                            ; 10.01                  ; 11               ; UPS Overnight    ; 49.82        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5224                            ; 11.01                  ; 12               ; UPS Overnight    ; 52.00        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5225                            ; 12.01                  ; 13               ; UPS Overnight    ; 54.17        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5226                            ; 13.01                  ; 14               ; UPS Overnight    ; 56.34        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5227                            ; 14.01                  ; 15               ; UPS Overnight    ; 58.52        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5228                            ; 15.01                  ; 16               ; UPS Overnight    ; 60.69        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5229                            ; 16.01                  ; 17               ; UPS Overnight    ; 62.86        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5230                            ; 17.01                  ; 18               ; UPS Overnight    ; 65.04        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5231                            ; 18.01                  ; 19               ; UPS Overnight    ; 67.21        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5232                            ; 19.01                  ; 20               ; UPS Overnight    ; 69.38        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5233                            ; 20.01                  ; 21               ; UPS Overnight    ; 71.56        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5234                            ; 21.01                  ; 22               ; UPS Overnight    ; 73.73        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5235                            ; 22.01                  ; 23               ; UPS Overnight    ; 75.90        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5236                            ; 23.01                  ; 24               ; UPS Overnight    ; 78.08        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5237                            ; 24.01                  ; 25               ; UPS Overnight    ; 80.25        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5238                            ; 25.01                  ; 30               ; UPS Overnight    ; 90.28        ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5239                            ; 30.01                  ; 35               ; UPS Overnight    ; 100.31       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5240                            ; 35.01                  ; 40               ; UPS Overnight    ; 110.35       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5241                            ; 40.01                  ; 45               ; UPS Overnight    ; 120.38       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5242                            ; 45.01                  ; 50               ; UPS Overnight    ; 130.41       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5243                            ; 50.01                  ; 55               ; UPS Overnight    ; 147.10       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5244                            ; 55.01                  ; 60               ; UPS Overnight    ; 163.78       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5245                            ; 60.01                  ; 65               ; UPS Overnight    ; 180.47       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5246                            ; 65.01                  ; 70               ; UPS Overnight    ; 197.16       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5247                            ; 70.01                  ; 75               ; UPS Overnight    ; 213.85       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5248                            ; 75.01                  ; 80               ; UPS Overnight    ; 230.53       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5249                            ; 80.01                  ; 85               ; UPS Overnight    ; 247.22       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5250                            ; 85.01                  ; 90               ; UPS Overnight    ; 263.91       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5251                            ; 90.01                  ; 95               ; UPS Overnight    ; 280.59       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5252                            ; 95.01                  ; 100              ; UPS Overnight    ; 297.28       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5253                            ; 100.01                 ; 105              ; UPS Overnight    ; 332.66       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5254                            ; 105.01                 ; 110              ; UPS Overnight    ; 344.93       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5255                            ; 110.01                 ; 115              ; UPS Overnight    ; 355.80       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5256                            ; 115.01                 ; 120              ; UPS Overnight    ; 366.66       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5257                            ; 120.01                 ; 125              ; UPS Overnight    ; 377.53       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5258                            ; 125.01                 ; 130              ; UPS Overnight    ; 387.56       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5259                            ; 130.01                 ; 135              ; UPS Overnight    ; 397.59       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5260                            ; 135.01                 ; 140              ; UPS Overnight    ; 407.63       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5261                            ; 140.01                 ; 145              ; UPS Overnight    ; 417.66       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5262                            ; 145.01                 ; 150              ; UPS Overnight    ; 427.69       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5263                            ; 150.01                 ; 155              ; UPS Overnight    ; 444.38       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5264                            ; 155.01                 ; 160              ; UPS Overnight    ; 461.06       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5265                            ; 160.01                 ; 165              ; UPS Overnight    ; 477.75       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5266                            ; 165.01                 ; 170              ; UPS Overnight    ; 494.44       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5267                            ; 170.01                 ; 175              ; UPS Overnight    ; 511.13       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5268                            ; 175.01                 ; 180              ; UPS Overnight    ; 527.81       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5269                            ; 180.01                 ; 185              ; UPS Overnight    ; 544.50       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5270                            ; 185.01                 ; 190              ; UPS Overnight    ; 561.19       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5271                            ; 190.01                 ; 195              ; UPS Overnight    ; 577.87       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5272                            ; 195.01                 ; 200              ; UPS Overnight    ; 594.56       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5273                            ; 200.01                 ; 205              ; UPS Overnight    ; 629.94       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5274                            ; 205.01                 ; 210              ; UPS Overnight    ; 642.21       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5275                            ; 210.01                 ; 215              ; UPS Overnight    ; 653.08       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5276                            ; 215.01                 ; 220              ; UPS Overnight    ; 663.94       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5277                            ; 220.01                 ; 225              ; UPS Overnight    ; 674.81       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5278                            ; 225.01                 ; 230              ; UPS Overnight    ; 684.84       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5279                            ; 230.01                 ; 235              ; UPS Overnight    ; 694.87       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5280                            ; 235.01                 ; 240              ; UPS Overnight    ; 704.91       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5281                            ; 240.01                 ; 245              ; UPS Overnight    ; 714.94       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5282                            ; 245.01                 ; 250              ; UPS Overnight    ; 724.97       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5283                            ; 250.01                 ; 255              ; UPS Overnight    ; 741.66       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5284                            ; 255.01                 ; 260              ; UPS Overnight    ; 758.34       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5285                            ; 260.01                 ; 265              ; UPS Overnight    ; 775.03       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5286                            ; 265.01                 ; 270              ; UPS Overnight    ; 791.72       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5287                            ; 270.01                 ; 275              ; UPS Overnight    ; 808.41       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5288                            ; 275.01                 ; 280              ; UPS Overnight    ; 825.09       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5289                            ; 280.01                 ; 285              ; UPS Overnight    ; 841.78       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5290                            ; 285.01                 ; 290              ; UPS Overnight    ; 858.47       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5291                            ; 290.01                 ; 295              ; UPS Overnight    ; 875.15       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5292                            ; 295.01                 ; 300              ; UPS Overnight    ; 891.84       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5293                            ; 300.01                 ; 305              ; UPS Overnight    ; 927.22       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5294                            ; 305.01                 ; 310              ; UPS Overnight    ; 939.49       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5295                            ; 310.01                 ; 315              ; UPS Overnight    ; 950.36       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5296                            ; 315.01                 ; 320              ; UPS Overnight    ; 961.22       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5297                            ; 320.01                 ; 325              ; UPS Overnight    ; 972.09       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5298                            ; 325.01                 ; 330              ; UPS Overnight    ; 982.12       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5299                            ; 330.01                 ; 335              ; UPS Overnight    ; 992.15       ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5300                            ; 335.01                 ; 340              ; UPS Overnight    ; 1,002.19     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5301                            ; 340.01                 ; 345              ; UPS Overnight    ; 1,012.22     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5302                            ; 345.01                 ; 350              ; UPS Overnight    ; 1,022.25     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5303                            ; 350.01                 ; 355              ; UPS Overnight    ; 1,038.94     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5304                            ; 355.01                 ; 360              ; UPS Overnight    ; 1,055.62     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5305                            ; 360.01                 ; 365              ; UPS Overnight    ; 1,072.31     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5306                            ; 365.01                 ; 370              ; UPS Overnight    ; 1,089.00     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5307                            ; 370.01                 ; 375              ; UPS Overnight    ; 1,105.69     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5308                            ; 375.01                 ; 380              ; UPS Overnight    ; 1,122.37     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5309                            ; 380.01                 ; 385              ; UPS Overnight    ; 1,139.06     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5310                            ; 385.01                 ; 390              ; UPS Overnight    ; 1,155.75     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5311                            ; 390.01                 ; 395              ; UPS Overnight    ; 1,172.43     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5312                            ; 395.01                 ; 400              ; UPS Overnight    ; 1,189.12     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5313                            ; 400.01                 ; 405              ; UPS Overnight    ; 1,224.50     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5314                            ; 405.01                 ; 410              ; UPS Overnight    ; 1,236.77     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5315                            ; 410.01                 ; 415              ; UPS Overnight    ; 1,247.64     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5316                            ; 415.01                 ; 420              ; UPS Overnight    ; 1,258.50     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5317                            ; 420.01                 ; 425              ; UPS Overnight    ; 1,269.37     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5318                            ; 425.01                 ; 430              ; UPS Overnight    ; 1,279.40     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5319                            ; 430.01                 ; 435              ; UPS Overnight    ; 1,289.43     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5320                            ; 435.01                 ; 440              ; UPS Overnight    ; 1,299.47     ; UPS_OVERNIGHT_ROUND_TRIP    
+                               ; 5321                            ; 0                      ; 2                ; UPS Overnight AM ; 41.59        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5322                            ; 2.01                   ; 3                ; UPS Overnight AM ; 41.59        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5323                            ; 3.01                   ; 4                ; UPS Overnight AM ; 41.59        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5324                            ; 4.01                   ; 5                ; UPS Overnight AM ; 41.59        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5325                            ; 5.01                   ; 6                ; UPS Overnight AM ; 39.87        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5326                            ; 6.01                   ; 7                ; UPS Overnight AM ; 42.78        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5327                            ; 7.01                   ; 8                ; UPS Overnight AM ; 45.69        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5328                            ; 8.01                   ; 9                ; UPS Overnight AM ; 48.60        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5329                            ; 9.01                   ; 10               ; UPS Overnight AM ; 51.51        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5330                            ; 10.01                  ; 11               ; UPS Overnight AM ; 54.04        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5331                            ; 11.01                  ; 12               ; UPS Overnight AM ; 56.57        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5332                            ; 12.01                  ; 13               ; UPS Overnight AM ; 59.10        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5333                            ; 13.01                  ; 14               ; UPS Overnight AM ; 61.62        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5334                            ; 14.01                  ; 15               ; UPS Overnight AM ; 64.15        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5335                            ; 15.01                  ; 16               ; UPS Overnight AM ; 66.68        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5336                            ; 16.01                  ; 17               ; UPS Overnight AM ; 69.21        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5337                            ; 17.01                  ; 18               ; UPS Overnight AM ; 71.74        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5338                            ; 18.01                  ; 19               ; UPS Overnight AM ; 74.27        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5339                            ; 19.01                  ; 20               ; UPS Overnight AM ; 76.80        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5340                            ; 20.01                  ; 21               ; UPS Overnight AM ; 79.33        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5341                            ; 21.01                  ; 22               ; UPS Overnight AM ; 81.85        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5342                            ; 22.01                  ; 23               ; UPS Overnight AM ; 84.38        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5343                            ; 23.01                  ; 24               ; UPS Overnight AM ; 86.91        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5344                            ; 24.01                  ; 25               ; UPS Overnight AM ; 89.44        ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5345                            ; 25.01                  ; 30               ; UPS Overnight AM ; 100.15       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5346                            ; 30.01                  ; 35               ; UPS Overnight AM ; 110.87       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5347                            ; 35.01                  ; 40               ; UPS Overnight AM ; 121.58       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5348                            ; 40.01                  ; 45               ; UPS Overnight AM ; 132.30       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5349                            ; 45.01                  ; 50               ; UPS Overnight AM ; 143.01       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5350                            ; 50.01                  ; 55               ; UPS Overnight AM ; 161.17       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5351                            ; 55.01                  ; 60               ; UPS Overnight AM ; 179.33       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5352                            ; 60.01                  ; 65               ; UPS Overnight AM ; 197.50       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5353                            ; 65.01                  ; 70               ; UPS Overnight AM ; 215.66       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5354                            ; 70.01                  ; 75               ; UPS Overnight AM ; 233.82       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5355                            ; 75.01                  ; 80               ; UPS Overnight AM ; 251.98       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5356                            ; 80.01                  ; 85               ; UPS Overnight AM ; 270.14       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5357                            ; 85.01                  ; 90               ; UPS Overnight AM ; 288.31       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5358                            ; 90.01                  ; 95               ; UPS Overnight AM ; 306.47       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5359                            ; 95.01                  ; 100              ; UPS Overnight AM ; 324.63       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5360                            ; 100.01                 ; 105              ; UPS Overnight AM ; 366.22       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5361                            ; 105.01                 ; 110              ; UPS Overnight AM ; 376.14       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5362                            ; 110.01                 ; 115              ; UPS Overnight AM ; 388.78       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5363                            ; 115.01                 ; 120              ; UPS Overnight AM ; 401.43       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5364                            ; 120.01                 ; 125              ; UPS Overnight AM ; 414.07       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5365                            ; 125.01                 ; 130              ; UPS Overnight AM ; 424.78       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5366                            ; 130.01                 ; 135              ; UPS Overnight AM ; 435.50       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5367                            ; 135.01                 ; 140              ; UPS Overnight AM ; 446.21       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5368                            ; 140.01                 ; 145              ; UPS Overnight AM ; 456.93       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5369                            ; 145.01                 ; 150              ; UPS Overnight AM ; 467.64       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5370                            ; 150.01                 ; 155              ; UPS Overnight AM ; 485.80       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5371                            ; 155.01                 ; 160              ; UPS Overnight AM ; 503.96       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5372                            ; 160.01                 ; 165              ; UPS Overnight AM ; 522.13       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5373                            ; 165.01                 ; 170              ; UPS Overnight AM ; 540.29       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5374                            ; 170.01                 ; 175              ; UPS Overnight AM ; 558.45       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5375                            ; 175.01                 ; 180              ; UPS Overnight AM ; 576.61       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5376                            ; 180.01                 ; 185              ; UPS Overnight AM ; 594.77       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5377                            ; 185.01                 ; 190              ; UPS Overnight AM ; 612.94       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5378                            ; 190.01                 ; 195              ; UPS Overnight AM ; 631.10       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5379                            ; 195.01                 ; 200              ; UPS Overnight AM ; 649.26       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5380                            ; 200.01                 ; 205              ; UPS Overnight AM ; 690.85       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5381                            ; 205.01                 ; 210              ; UPS Overnight AM ; 700.77       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5382                            ; 210.01                 ; 215              ; UPS Overnight AM ; 713.41       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5383                            ; 215.01                 ; 220              ; UPS Overnight AM ; 726.06       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5384                            ; 220.01                 ; 225              ; UPS Overnight AM ; 738.70       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5385                            ; 225.01                 ; 230              ; UPS Overnight AM ; 749.41       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5386                            ; 230.01                 ; 235              ; UPS Overnight AM ; 760.13       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5387                            ; 235.01                 ; 240              ; UPS Overnight AM ; 770.84       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5388                            ; 240.01                 ; 245              ; UPS Overnight AM ; 781.56       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5389                            ; 245.01                 ; 250              ; UPS Overnight AM ; 792.27       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5390                            ; 250.01                 ; 255              ; UPS Overnight AM ; 810.43       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5391                            ; 255.01                 ; 260              ; UPS Overnight AM ; 828.59       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5392                            ; 260.01                 ; 265              ; UPS Overnight AM ; 846.76       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5393                            ; 265.01                 ; 270              ; UPS Overnight AM ; 864.92       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5394                            ; 270.01                 ; 275              ; UPS Overnight AM ; 883.08       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5395                            ; 275.01                 ; 280              ; UPS Overnight AM ; 901.24       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5396                            ; 280.01                 ; 285              ; UPS Overnight AM ; 919.40       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5397                            ; 285.01                 ; 290              ; UPS Overnight AM ; 937.57       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5398                            ; 290.01                 ; 295              ; UPS Overnight AM ; 955.73       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5399                            ; 295.01                 ; 300              ; UPS Overnight AM ; 973.89       ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5400                            ; 300.01                 ; 305              ; UPS Overnight AM ; 1,015.48     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5401                            ; 305.01                 ; 310              ; UPS Overnight AM ; 1,025.40     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5402                            ; 310.01                 ; 315              ; UPS Overnight AM ; 1,038.04     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5403                            ; 315.01                 ; 320              ; UPS Overnight AM ; 1,050.69     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5404                            ; 320.01                 ; 325              ; UPS Overnight AM ; 1,063.33     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5405                            ; 325.01                 ; 330              ; UPS Overnight AM ; 1,074.04     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5406                            ; 330.01                 ; 335              ; UPS Overnight AM ; 1,084.76     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5407                            ; 335.01                 ; 340              ; UPS Overnight AM ; 1,095.47     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5408                            ; 340.01                 ; 345              ; UPS Overnight AM ; 1,106.19     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5409                            ; 345.01                 ; 350              ; UPS Overnight AM ; 1,116.90     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5410                            ; 350.01                 ; 355              ; UPS Overnight AM ; 1,135.06     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5411                            ; 355.01                 ; 360              ; UPS Overnight AM ; 1,153.22     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5412                            ; 360.01                 ; 365              ; UPS Overnight AM ; 1,171.39     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5413                            ; 365.01                 ; 370              ; UPS Overnight AM ; 1,189.55     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5414                            ; 370.01                 ; 375              ; UPS Overnight AM ; 1,207.71     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5415                            ; 375.01                 ; 380              ; UPS Overnight AM ; 1,225.87     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5416                            ; 380.01                 ; 385              ; UPS Overnight AM ; 1,244.03     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5417                            ; 385.01                 ; 390              ; UPS Overnight AM ; 1,262.20     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5418                            ; 390.01                 ; 395              ; UPS Overnight AM ; 1,280.36     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5419                            ; 395.01                 ; 400              ; UPS Overnight AM ; 1,298.52     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5420                            ; 400.01                 ; 405              ; UPS Overnight AM ; 1,340.11     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5421                            ; 405.01                 ; 410              ; UPS Overnight AM ; 1,350.03     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5422                            ; 410.01                 ; 415              ; UPS Overnight AM ; 1,362.67     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5423                            ; 415.01                 ; 420              ; UPS Overnight AM ; 1,375.32     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5424                            ; 420.01                 ; 425              ; UPS Overnight AM ; 1,387.96     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5425                            ; 425.01                 ; 430              ; UPS Overnight AM ; 1,398.67     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5426                            ; 430.01                 ; 435              ; UPS Overnight AM ; 1,409.39     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5427                            ; 435.01                 ; 440              ; UPS Overnight AM ; 1,420.10     ; UPS_OVERNIGHT_AM_ROUND_TRIP 
+                               ; 5428                            ; 0                      ; 2                ; FedEx Standard   ; 30.00        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5429                            ; 2.01                   ; 3                ; FedEx Standard   ; 31.20        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5430                            ; 3.01                   ; 4                ; FedEx Standard   ; 32.40        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5431                            ; 4.01                   ; 5                ; FedEx Standard   ; 33.60        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5432                            ; 5.01                   ; 6                ; FedEx Standard   ; 34.20        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5433                            ; 6.01                   ; 7                ; FedEx Standard   ; 38.07        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5434                            ; 7.01                   ; 8                ; FedEx Standard   ; 41.94        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5435                            ; 8.01                   ; 9                ; FedEx Standard   ; 45.81        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5436                            ; 9.01                   ; 10               ; FedEx Standard   ; 49.68        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5437                            ; 10.01                  ; 11               ; FedEx Standard   ; 52.62        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5438                            ; 11.01                  ; 12               ; FedEx Standard   ; 55.56        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5439                            ; 12.01                  ; 13               ; FedEx Standard   ; 58.50        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5440                            ; 13.01                  ; 14               ; FedEx Standard   ; 61.45        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5441                            ; 14.01                  ; 15               ; FedEx Standard   ; 64.39        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5442                            ; 15.01                  ; 16               ; FedEx Standard   ; 67.33        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5443                            ; 16.01                  ; 17               ; FedEx Standard   ; 70.27        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5444                            ; 17.01                  ; 18               ; FedEx Standard   ; 73.21        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5445                            ; 18.01                  ; 19               ; FedEx Standard   ; 76.15        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5446                            ; 19.01                  ; 20               ; FedEx Standard   ; 79.10        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5447                            ; 20.01                  ; 21               ; FedEx Standard   ; 82.04        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5448                            ; 21.01                  ; 22               ; FedEx Standard   ; 84.98        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5449                            ; 22.01                  ; 23               ; FedEx Standard   ; 87.92        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5450                            ; 23.01                  ; 24               ; FedEx Standard   ; 90.86        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5451                            ; 24.01                  ; 25               ; FedEx Standard   ; 93.80        ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5452                            ; 25.01                  ; 30               ; FedEx Standard   ; 106.34       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5453                            ; 30.01                  ; 35               ; FedEx Standard   ; 118.87       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5454                            ; 35.01                  ; 40               ; FedEx Standard   ; 131.41       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5455                            ; 40.01                  ; 45               ; FedEx Standard   ; 143.94       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5456                            ; 45.01                  ; 50               ; FedEx Standard   ; 156.48       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5457                            ; 50.01                  ; 55               ; FedEx Standard   ; 175.41       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5458                            ; 55.01                  ; 60               ; FedEx Standard   ; 194.34       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5459                            ; 60.01                  ; 65               ; FedEx Standard   ; 213.26       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5460                            ; 65.01                  ; 70               ; FedEx Standard   ; 232.19       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5461                            ; 70.01                  ; 75               ; FedEx Standard   ; 251.12       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5462                            ; 75.01                  ; 80               ; FedEx Standard   ; 270.05       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5463                            ; 80.01                  ; 85               ; FedEx Standard   ; 288.97       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5464                            ; 85.01                  ; 90               ; FedEx Standard   ; 307.90       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5465                            ; 90.01                  ; 95               ; FedEx Standard   ; 326.83       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5466                            ; 95.01                  ; 100              ; FedEx Standard   ; 345.76       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5467                            ; 100.01                 ; 105              ; FedEx Standard   ; 377.96       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5468                            ; 105.01                 ; 110              ; FedEx Standard   ; 395.44       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5469                            ; 110.01                 ; 115              ; FedEx Standard   ; 410.14       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5470                            ; 115.01                 ; 120              ; FedEx Standard   ; 424.85       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5471                            ; 120.01                 ; 125              ; FedEx Standard   ; 439.56       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5472                            ; 125.01                 ; 130              ; FedEx Standard   ; 452.10       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5473                            ; 130.01                 ; 135              ; FedEx Standard   ; 464.63       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5474                            ; 135.01                 ; 140              ; FedEx Standard   ; 477.17       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5475                            ; 140.01                 ; 145              ; FedEx Standard   ; 489.70       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5476                            ; 145.01                 ; 150              ; FedEx Standard   ; 502.24       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5477                            ; 150.01                 ; 155              ; FedEx Standard   ; 521.16       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5478                            ; 155.01                 ; 160              ; FedEx Standard   ; 540.09       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5479                            ; 160.01                 ; 165              ; FedEx Standard   ; 559.02       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5480                            ; 165.01                 ; 170              ; FedEx Standard   ; 577.95       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5481                            ; 170.01                 ; 175              ; FedEx Standard   ; 596.87       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5482                            ; 175.01                 ; 180              ; FedEx Standard   ; 615.80       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5483                            ; 180.01                 ; 185              ; FedEx Standard   ; 634.73       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5484                            ; 185.01                 ; 190              ; FedEx Standard   ; 653.66       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5485                            ; 190.01                 ; 195              ; FedEx Standard   ; 672.58       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5486                            ; 195.01                 ; 200              ; FedEx Standard   ; 691.51       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5487                            ; 200.01                 ; 205              ; FedEx Standard   ; 723.72       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5488                            ; 205.01                 ; 210              ; FedEx Standard   ; 741.19       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5489                            ; 210.01                 ; 215              ; FedEx Standard   ; 755.90       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5490                            ; 215.01                 ; 220              ; FedEx Standard   ; 770.61       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5491                            ; 220.01                 ; 225              ; FedEx Standard   ; 785.32       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5492                            ; 225.01                 ; 230              ; FedEx Standard   ; 797.85       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5493                            ; 230.01                 ; 235              ; FedEx Standard   ; 810.39       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5494                            ; 235.01                 ; 240              ; FedEx Standard   ; 822.92       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5495                            ; 240.01                 ; 245              ; FedEx Standard   ; 835.46       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5496                            ; 245.01                 ; 250              ; FedEx Standard   ; 847.99       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5497                            ; 250.01                 ; 255              ; FedEx Standard   ; 866.92       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5498                            ; 255.01                 ; 260              ; FedEx Standard   ; 885.85       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5499                            ; 260.01                 ; 265              ; FedEx Standard   ; 904.77       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5500                            ; 265.01                 ; 270              ; FedEx Standard   ; 923.70       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5501                            ; 270.01                 ; 275              ; FedEx Standard   ; 942.63       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5502                            ; 275.01                 ; 280              ; FedEx Standard   ; 961.56       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5503                            ; 280.01                 ; 285              ; FedEx Standard   ; 980.49       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5504                            ; 285.01                 ; 290              ; FedEx Standard   ; 999.41       ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5505                            ; 290.01                 ; 295              ; FedEx Standard   ; 1,018.34     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5506                            ; 295.01                 ; 300              ; FedEx Standard   ; 1,037.27     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5507                            ; 300.01                 ; 305              ; FedEx Standard   ; 1,069.48     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5508                            ; 305.01                 ; 310              ; FedEx Standard   ; 1,086.95     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5509                            ; 310.01                 ; 315              ; FedEx Standard   ; 1,101.66     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5510                            ; 315.01                 ; 320              ; FedEx Standard   ; 1,116.36     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5511                            ; 320.01                 ; 325              ; FedEx Standard   ; 1,131.07     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5512                            ; 325.01                 ; 330              ; FedEx Standard   ; 1,143.61     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5513                            ; 330.01                 ; 335              ; FedEx Standard   ; 1,156.14     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5514                            ; 335.01                 ; 340              ; FedEx Standard   ; 1,168.68     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5515                            ; 340.01                 ; 345              ; FedEx Standard   ; 1,181.21     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5516                            ; 345.01                 ; 350              ; FedEx Standard   ; 1,193.75     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5517                            ; 350.01                 ; 355              ; FedEx Standard   ; 1,212.68     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5518                            ; 355.01                 ; 360              ; FedEx Standard   ; 1,231.60     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5519                            ; 360.01                 ; 365              ; FedEx Standard   ; 1,250.53     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5520                            ; 365.01                 ; 370              ; FedEx Standard   ; 1,269.46     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5521                            ; 370.01                 ; 375              ; FedEx Standard   ; 1,288.39     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5522                            ; 375.01                 ; 380              ; FedEx Standard   ; 1,307.31     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5523                            ; 380.01                 ; 385              ; FedEx Standard   ; 1,326.24     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5524                            ; 385.01                 ; 390              ; FedEx Standard   ; 1,345.17     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5525                            ; 390.01                 ; 395              ; FedEx Standard   ; 1,364.10     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5526                            ; 395.01                 ; 400              ; FedEx Standard   ; 1,383.02     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5527                            ; 400.01                 ; 405              ; FedEx Standard   ; 1,415.23     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5528                            ; 405.01                 ; 410              ; FedEx Standard   ; 1,432.70     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5529                            ; 410.01                 ; 415              ; FedEx Standard   ; 1,447.41     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5530                            ; 415.01                 ; 420              ; FedEx Standard   ; 1,462.12     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5531                            ; 420.01                 ; 425              ; FedEx Standard   ; 1,476.83     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5532                            ; 425.01                 ; 430              ; FedEx Standard   ; 1,489.36     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5533                            ; 430.01                 ; 435              ; FedEx Standard   ; 1,501.90     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5534                            ; 435.01                 ; 440              ; FedEx Standard   ; 1,514.43     ; FEDEX_STANDARD_ROUND_TRIP   
+                               ; 5535                            ; 0                      ; 2                ; FedEx Overnight  ; 44.23        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5536                            ; 2.01                   ; 3                ; FedEx Overnight  ; 44.23        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5537                            ; 3.01                   ; 4                ; FedEx Overnight  ; 44.23        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5538                            ; 4.01                   ; 5                ; FedEx Overnight  ; 44.23        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5539                            ; 5.01                   ; 6                ; FedEx Overnight  ; 44.33        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5540                            ; 6.01                   ; 7                ; FedEx Overnight  ; 48.14        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5541                            ; 7.01                   ; 8                ; FedEx Overnight  ; 51.95        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5542                            ; 8.01                   ; 9                ; FedEx Overnight  ; 55.76        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5543                            ; 9.01                   ; 10               ; FedEx Overnight  ; 59.56        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5544                            ; 10.01                  ; 11               ; FedEx Overnight  ; 62.28        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5545                            ; 11.01                  ; 12               ; FedEx Overnight  ; 65.00        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5546                            ; 12.01                  ; 13               ; FedEx Overnight  ; 67.71        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5547                            ; 13.01                  ; 14               ; FedEx Overnight  ; 70.43        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5548                            ; 14.01                  ; 15               ; FedEx Overnight  ; 73.15        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5549                            ; 15.01                  ; 16               ; FedEx Overnight  ; 75.86        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5550                            ; 16.01                  ; 17               ; FedEx Overnight  ; 78.58        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5551                            ; 17.01                  ; 18               ; FedEx Overnight  ; 81.30        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5552                            ; 18.01                  ; 19               ; FedEx Overnight  ; 84.01        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5553                            ; 19.01                  ; 20               ; FedEx Overnight  ; 86.73        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5554                            ; 20.01                  ; 21               ; FedEx Overnight  ; 89.45        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5555                            ; 21.01                  ; 22               ; FedEx Overnight  ; 92.16        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5556                            ; 22.01                  ; 23               ; FedEx Overnight  ; 94.88        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5557                            ; 23.01                  ; 24               ; FedEx Overnight  ; 97.60        ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5558                            ; 24.01                  ; 25               ; FedEx Overnight  ; 100.31       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5559                            ; 25.01                  ; 30               ; FedEx Overnight  ; 112.85       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5560                            ; 30.01                  ; 35               ; FedEx Overnight  ; 125.39       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5561                            ; 35.01                  ; 40               ; FedEx Overnight  ; 137.93       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5562                            ; 40.01                  ; 45               ; FedEx Overnight  ; 150.47       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5563                            ; 45.01                  ; 50               ; FedEx Overnight  ; 163.01       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5564                            ; 50.01                  ; 55               ; FedEx Overnight  ; 183.87       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5565                            ; 55.01                  ; 60               ; FedEx Overnight  ; 204.73       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5566                            ; 60.01                  ; 65               ; FedEx Overnight  ; 225.59       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5567                            ; 65.01                  ; 70               ; FedEx Overnight  ; 246.45       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5568                            ; 70.01                  ; 75               ; FedEx Overnight  ; 267.31       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5569                            ; 75.01                  ; 80               ; FedEx Overnight  ; 288.17       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5570                            ; 80.01                  ; 85               ; FedEx Overnight  ; 309.02       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5571                            ; 85.01                  ; 90               ; FedEx Overnight  ; 329.88       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5572                            ; 90.01                  ; 95               ; FedEx Overnight  ; 350.74       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5573                            ; 95.01                  ; 100              ; FedEx Overnight  ; 371.60       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5574                            ; 100.01                 ; 105              ; FedEx Overnight  ; 415.83       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5575                            ; 105.01                 ; 110              ; FedEx Overnight  ; 431.16       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5576                            ; 110.01                 ; 115              ; FedEx Overnight  ; 444.75       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5577                            ; 115.01                 ; 120              ; FedEx Overnight  ; 458.33       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5578                            ; 120.01                 ; 125              ; FedEx Overnight  ; 471.91       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5579                            ; 125.01                 ; 130              ; FedEx Overnight  ; 484.45       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5580                            ; 130.01                 ; 135              ; FedEx Overnight  ; 496.99       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5581                            ; 135.01                 ; 140              ; FedEx Overnight  ; 509.53       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5582                            ; 140.01                 ; 145              ; FedEx Overnight  ; 522.07       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5583                            ; 145.01                 ; 150              ; FedEx Overnight  ; 534.61       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5584                            ; 150.01                 ; 155              ; FedEx Overnight  ; 555.47       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5585                            ; 155.01                 ; 160              ; FedEx Overnight  ; 576.33       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5586                            ; 160.01                 ; 165              ; FedEx Overnight  ; 597.19       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5587                            ; 165.01                 ; 170              ; FedEx Overnight  ; 618.05       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5588                            ; 170.01                 ; 175              ; FedEx Overnight  ; 638.91       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5589                            ; 175.01                 ; 180              ; FedEx Overnight  ; 659.77       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5590                            ; 180.01                 ; 185              ; FedEx Overnight  ; 680.62       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5591                            ; 185.01                 ; 190              ; FedEx Overnight  ; 701.48       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5592                            ; 190.01                 ; 195              ; FedEx Overnight  ; 722.34       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5593                            ; 195.01                 ; 200              ; FedEx Overnight  ; 743.20       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5594                            ; 200.01                 ; 205              ; FedEx Overnight  ; 787.43       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5595                            ; 205.01                 ; 210              ; FedEx Overnight  ; 802.76       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5596                            ; 210.01                 ; 215              ; FedEx Overnight  ; 816.35       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5597                            ; 215.01                 ; 220              ; FedEx Overnight  ; 829.93       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5598                            ; 220.01                 ; 225              ; FedEx Overnight  ; 843.51       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5599                            ; 225.01                 ; 230              ; FedEx Overnight  ; 856.05       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5600                            ; 230.01                 ; 235              ; FedEx Overnight  ; 868.59       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5601                            ; 235.01                 ; 240              ; FedEx Overnight  ; 881.13       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5602                            ; 240.01                 ; 245              ; FedEx Overnight  ; 893.67       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5603                            ; 245.01                 ; 250              ; FedEx Overnight  ; 906.21       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5604                            ; 250.01                 ; 255              ; FedEx Overnight  ; 927.07       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5605                            ; 255.01                 ; 260              ; FedEx Overnight  ; 947.93       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5606                            ; 260.01                 ; 265              ; FedEx Overnight  ; 968.79       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5607                            ; 265.01                 ; 270              ; FedEx Overnight  ; 989.65       ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5608                            ; 270.01                 ; 275              ; FedEx Overnight  ; 1,010.51     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5609                            ; 275.01                 ; 280              ; FedEx Overnight  ; 1,031.37     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5610                            ; 280.01                 ; 285              ; FedEx Overnight  ; 1,052.22     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5611                            ; 285.01                 ; 290              ; FedEx Overnight  ; 1,073.08     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5612                            ; 290.01                 ; 295              ; FedEx Overnight  ; 1,093.94     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5613                            ; 295.01                 ; 300              ; FedEx Overnight  ; 1,114.80     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5614                            ; 300.01                 ; 305              ; FedEx Overnight  ; 1,159.03     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5615                            ; 305.01                 ; 310              ; FedEx Overnight  ; 1,174.36     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5616                            ; 310.01                 ; 315              ; FedEx Overnight  ; 1,187.95     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5617                            ; 315.01                 ; 320              ; FedEx Overnight  ; 1,201.53     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5618                            ; 320.01                 ; 325              ; FedEx Overnight  ; 1,215.11     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5619                            ; 325.01                 ; 330              ; FedEx Overnight  ; 1,227.65     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5620                            ; 330.01                 ; 335              ; FedEx Overnight  ; 1,240.19     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5621                            ; 335.01                 ; 340              ; FedEx Overnight  ; 1,252.73     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5622                            ; 340.01                 ; 345              ; FedEx Overnight  ; 1,265.27     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5623                            ; 345.01                 ; 350              ; FedEx Overnight  ; 1,277.81     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5624                            ; 350.01                 ; 355              ; FedEx Overnight  ; 1,298.67     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5625                            ; 355.01                 ; 360              ; FedEx Overnight  ; 1,319.53     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5626                            ; 360.01                 ; 365              ; FedEx Overnight  ; 1,340.39     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5627                            ; 365.01                 ; 370              ; FedEx Overnight  ; 1,361.25     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5628                            ; 370.01                 ; 375              ; FedEx Overnight  ; 1,382.11     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5629                            ; 375.01                 ; 380              ; FedEx Overnight  ; 1,402.97     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5630                            ; 380.01                 ; 385              ; FedEx Overnight  ; 1,423.82     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5631                            ; 385.01                 ; 390              ; FedEx Overnight  ; 1,444.68     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5632                            ; 390.01                 ; 395              ; FedEx Overnight  ; 1,465.54     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5633                            ; 395.01                 ; 400              ; FedEx Overnight  ; 1,486.40     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5634                            ; 400.01                 ; 405              ; FedEx Overnight  ; 1,530.63     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5635                            ; 405.01                 ; 410              ; FedEx Overnight  ; 1,545.96     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5636                            ; 410.01                 ; 415              ; FedEx Overnight  ; 1,559.55     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5637                            ; 415.01                 ; 420              ; FedEx Overnight  ; 1,573.13     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5638                            ; 420.01                 ; 425              ; FedEx Overnight  ; 1,586.71     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5639                            ; 425.01                 ; 430              ; FedEx Overnight  ; 1,599.25     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5640                            ; 430.01                 ; 435              ; FedEx Overnight  ; 1,611.79     ; FEDEX_OVERNIGHT_ROUND_TRIP  
+                               ; 5641                            ; 435.01                 ; 440              ; FedEx Overnight  ; 1,624.33     ; FEDEX_OVERNIGHT_ROUND_TRIP 

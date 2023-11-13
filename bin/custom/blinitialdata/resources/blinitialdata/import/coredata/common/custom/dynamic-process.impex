@@ -4,6 +4,10 @@ INSERT_UPDATE DynamicProcessDefinition; code[unique=true]            ; active ; 
   name=""reallocateSerialProcess""
   processClass=""com.bl.core.model.ReallocateSerialProcessModel"">
 <action id=""replaceSerialAction"" bean=""replaceSerialAction"">
+<transition name=""OK"" to=""removeSerialAction""/>
+<transition name=""NOK"" to = ""error""/>
+</action>
+<action id=""removeSerialAction"" bean=""removeSerialAction"">
 <transition name=""OK"" to=""end""/>
 <transition name=""NOK"" to = ""error""/>
 </action>

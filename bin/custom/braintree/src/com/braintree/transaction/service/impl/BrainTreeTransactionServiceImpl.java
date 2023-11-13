@@ -137,11 +137,20 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	@Override
 	public boolean createAuthorizationTransaction(Map<String, String> customFields)
 	{
+		final BrainTreeAuthorizationResult result;
 		final CartModel cart = cartService.getSessionCart();
 		try {
 			Map<String, String> customFields2 = getCustomFields(cart);
-			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, customFields2, 
-				getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE, null);
+			if(BooleanUtils.isFalse(cart.getIsRentalOrder()) && BooleanUtils.isFalse(cart.isGiftCardOrder())
+					&& BooleanUtils.isFalse(cart.getIsRetailGearOrder()))
+			{
+				result = brainTreeAuthorize(cart, customFields2,
+						BigDecimal.valueOf(cart.getTotalPrice()), Boolean.FALSE, null);
+			}
+			else{
+				result = brainTreeAuthorize(cart, customFields2,
+						getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE, null);
+			}
 			return handleAuthorizationResult(result, cart);
 		} catch(final Exception ex) {
 			BlLogger.logMessage(LOG, Level.ERROR,
@@ -164,9 +173,13 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			if(amountToAuthorize != null && amountToAuthorize.compareTo(BigDecimal.ZERO) == ZERO){
 				result = brainTreeAuthorize(orderModel, customFields,
 						getBrainTreeConfigService().getAuthAMountToVerifyCard(), submitForSettlement, paymentInfo);
+				BlLogger.logMessage(LOG, Level.INFO,
+						"status of creating authorization for the order {} ", orderModel.getCode()+" is "+result);
 			}else {
 				 result = brainTreeAuthorize(orderModel, customFields,
 						amountToAuthorize, submitForSettlement, paymentInfo);
+				 BlLogger.logMessage(LOG, Level.INFO,
+							"status of creating authorization for the order {} ", orderModel.getCode()+" is "+result);
 			}
 			if(submitForSettlement) {
 				createCaptureTransactionEntry(orderModel, result, paymentInfo);
@@ -343,14 +356,32 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			{
 				brainTreePaymentService.updatePaymentInfo(cart.getPaymentInfo(), result.getCreditCard());
 			}
+			setAuthorizedFlag(cart,Boolean.TRUE);
 			LOG.info("[BT AUTHORIZE] Transaction with code : " + paymentTransactionEntry.getCode() + " was created with status "
 					+ TransactionStatusDetails.SUCCESFULL.name());
 			return true;
 		}
 		else
 		{
+			setAuthorizedFlag(cart,Boolean.FALSE);
 			LOG.error("[BT AUTHORIZE] Failed!");
 			return false;
+		}
+	}
+
+	/**
+	 * This method is to set the authorized flag for used gear order
+	 * @param cart
+	 * @param flag
+	 */
+	private void setAuthorizedFlag(AbstractOrderModel cart,Boolean flag)
+	{
+		if(BooleanUtils.isFalse(cart.getIsRentalOrder()) && BooleanUtils.isFalse(cart.isGiftCardOrder())
+				&& BooleanUtils.isFalse(cart.getIsRetailGearOrder()))
+		{
+			cart.setIsAuthorised(flag);
+			cart.setIsAuthorizationAttempted(true);
+			getModelService().save(cart);
 		}
 	}
 
@@ -504,14 +535,19 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		authorizationRequest.setPurchaseOrderNumber(cart.getCode());
 		BigDecimal authPercentage = BigDecimal.ZERO;
 
-		//Added condition for modifyPayment with zero order total (full Gift Card Order)
-		if(authAmount != null && (cart.getTotalPrice().compareTo(ZERO_PRICE) == ZERO )) {
-			//		calc taxAmount via percentage of AUTH-amount
-			 authPercentage = roundNumberToTwoDecimalPlaces(
-					authAmount.doubleValue() * CONVERT_TO_PERCENTAGE / (cart.getGrandTotal().doubleValue()));
-			LOG.info("authPercentage: " + authPercentage + ", as double: " + authPercentage.doubleValue());
-		}else{
-				if(authAmount != null) {
+		//Added condition when promotion coupon is applied
+		if (Double.compare(cart.getTotalTax(), 0.0) > ZERO) {
+			//Added condition for modifyPayment with zero order total (full Gift Card Order)
+			if (authAmount != null && (cart.getTotalPrice().compareTo(ZERO_PRICE) == ZERO))
+			{
+				if (Double.compare(cart.getGrandTotal(), 0.0) > ZERO) {
+					//		calc taxAmount via percentage of AUTH-amount
+					authPercentage = roundNumberToTwoDecimalPlaces(
+							authAmount.doubleValue() * CONVERT_TO_PERCENTAGE / (cart.getGrandTotal().doubleValue()));
+					LOG.info("authPercentage: " + authPercentage + ", as double: " + authPercentage.doubleValue());
+				}
+		    }else {
+				if (authAmount != null) {
 					//		calc taxAmount via percentage of AUTH-amount
 					authPercentage = roundNumberToTwoDecimalPlaces(
 							authAmount.doubleValue() * CONVERT_TO_PERCENTAGE / (cart.getTotalPrice().doubleValue()));
@@ -523,7 +559,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				cart.getTotalTax().doubleValue() * authPercentage.doubleValue() / CONVERT_TO_PERCENTAGE);
 		LOG.info("taxSupposed: " + taxSupposed);
 		authorizationRequest.setTaxAmountAuthorize(taxSupposed.doubleValue());
-
+	    }
 		//		add Level 3 data
 		LOG.info("cart.getDeliveryCost: " + cart.getDeliveryCost());
 		authorizationRequest.setShippingAmount(cart.getDeliveryCost());
@@ -720,6 +756,10 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		{
 			transactionEntry.setTransactionStatus(TransactionStatus.REJECTED.name());
 			transactionEntry.setTransactionStatusDetails(TransactionStatusDetails.BANK_DECLINE.name());
+			BlLogger.logMessage(LOG, Level.INFO,
+					"Transaction status for the order {} ", order.getCode()+" is "+TransactionStatus.REJECTED.name());
+			BlLogger.logMessage(LOG, Level.INFO,
+					"Transaction status details for the order {} ", order.getCode()+" is "+TransactionStatus.REJECTED.name());
 		}
 
 		savePaymentTransaction(transactionEntry, order, paymentInfo);

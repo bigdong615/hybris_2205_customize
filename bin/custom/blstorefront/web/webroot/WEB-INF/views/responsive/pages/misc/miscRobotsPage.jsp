@@ -12,9 +12,9 @@ Disallow: <c:url value="/resetDatepicker" />
 Disallow: <c:url value="/datepicker" />
 
 
-Request-rate: 1/10              # maximum rate is one page every 10 seconds
-Crawl-delay: 10                 # 10 seconds between page requests
-Visit-time: 0400-0845           # only visit between 04:00 and 08:45 UTC
+#Request-rate: 1/10              # maximum rate is one page every 10 seconds
+#Crawl-delay: 10                 # 10 seconds between page requests
+#Visit-time: 0400-0845           # only visit between 04:00 and 08:45 UTC
 
 # Allow search crawlers to discover the sitemap
 Sitemap: <c:url value="/sitemap.xml" />

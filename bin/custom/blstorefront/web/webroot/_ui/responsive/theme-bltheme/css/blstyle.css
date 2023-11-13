@@ -143,7 +143,7 @@ nav, .alert-promo { z-index: 1030; } /* was 1999 - interfered with modal */
 /* mobile navigation */
 #my-menu:not( .mm-menu ) { display: none; }
 .mobileNavToggle { display: inline-block; background: url(../assets/icon-m-nav.svg) center no-repeat; height: 16px; width: 24px; }
-.mobile-right .nav-cart { position: relative; right: 7px; }
+.mobile-right .nav-cart { position: absolute; right: 7px; }
 .mobile-right .nav-cart .cart-count { right: -3px; top: -5px; }
 .mobile-right { width: 80px; }
 .mobile-right .nav-cart, .mobile-right .nav-account { display: inline-block; }
@@ -874,4 +874,30 @@ max-width: 40% !important;
 }
 .view-links .dropdown-menu>li>a {
     padding: 0px 2px 0 0;
+}
+
+.close {
+  font-size: 25px;
+  font-weight: 300;
+  margin-right: 10px;
+}
+
+
+
+.modal-backdrop-calendar {
+    position: initial !important;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 100vw;
+    height: auto;
+    background-color: rgb(237, 237, 237);
+}
+
+.modal-backdrop-calendar.show {
+    opacity: .5;
+}
+
+.fade {
+    transition: opacity .15s linear;
 }

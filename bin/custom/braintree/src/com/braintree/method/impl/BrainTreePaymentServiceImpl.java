@@ -70,6 +70,9 @@ import com.braintreegateway.Customer;
 import com.braintreegateway.PayPalAccount;
 import com.braintreegateway.WebhookNotification;
 import com.braintreegateway.exceptions.NotFoundException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.hybris.platform.braintree.data.BrainTreeWebhookNotificationRequest;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -165,9 +168,11 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 	{
 		try
 		{
+			ObjectMapper mapper = new ObjectMapper();
 			final BrainTreeVoidCommand command = getCommandFactory().createCommand(BrainTreeVoidCommand.class);
+			LOG.debug("Void Transaction Request "+mapper.writeValueAsString(voidRequest));
 			final BrainTreeVoidResult result = command.perform(voidRequest);
-			BlLogger.logMessage(LOG, Level.DEBUG, "voidTransaction result " + result);
+			LOG.debug("Void Transaction Result "+mapper.writeValueAsString(result));
 			return result;
 		}
 		catch (final Exception exception)
@@ -183,7 +188,9 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 	{
 		try
 		{
+			ObjectMapper mapper = new ObjectMapper();
 			final BrainTreeCloneCommand command = getCommandFactory().createCommand(BrainTreeCloneCommand.class);
+			LOG.debug("Clone Transaction Request "+mapper.writeValueAsString(request));
 			return command.perform(request);
 		}
 		catch (final Exception exception)
@@ -273,8 +280,14 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 	{
 		try
 		{
+			ObjectMapper mapper = new ObjectMapper();
 			final BrainTreeUpdatePaymentMethodCommand command = getCommandFactory().createCommand(
 					BrainTreeUpdatePaymentMethodCommand.class);
+			try {
+				LOG.debug("BrainTree Update Payment Method Request "+mapper.writeValueAsString(request));
+			} catch (JsonProcessingException exception) {
+				throw new AdapterException(exception.getMessage(), exception);
+			}
 			return command.perform(request);
 		}
 		catch (final CommandNotSupportedException exception)
@@ -338,18 +351,22 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		LOG.info("submitForSettlementTransaction");
 		try
 		{
+			ObjectMapper mapper = new ObjectMapper();
 			final BrainTreeSubmitForSettlementCommand command = getCommandFactory()
 					.createCommand(BrainTreeSubmitForSettlementCommand.class);
+			LOG.debug("Submit For Settlement Transaction Request "+mapper.writeValueAsString(request));
 			final BrainTreeSubmitForSettlementTransactionResult result = command.perform(request);
-
+			LOG.debug("Submit For Settlement Transaction Response "+mapper.writeValueAsString(result));
 			updateCaptureTransaction(request);
-
 			return result;
 		}
 		catch (final CommandNotSupportedException exception)
 		{
 			LOG.error("[BT Payment Service] Errors during trying to submit for settlement transaction: " + exception.getMessage(),
 					exception);
+			throw new AdapterException(exception.getMessage(), exception);
+		} catch (JsonProcessingException exception) {
+			
 			throw new AdapterException(exception.getMessage(), exception);
 		}
 	}
@@ -503,9 +520,12 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		LOG.info("createPaymentMethod");
 		try
 		{
+			ObjectMapper mapper = new ObjectMapper();
 			final BrainTreeCreatePaymentMethodCommand command = getCommandFactory()
 					.createCommand(BrainTreeCreatePaymentMethodCommand.class);
+			LOG.debug("BrainTree Create Payment Method Request "+mapper.writeValueAsString(request));
 			final BrainTreeCreatePaymentMethodResult result = command.perform(request);
+			LOG.debug("BrainTree Create Payment Method Response "+mapper.writeValueAsString(result));
 			LOG.info("Created PaymentMethod, result: " + result);
 			return result;
 		}
@@ -521,8 +541,10 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 	{
 		try
 		{
+			ObjectMapper mapper = new ObjectMapper();
 			final BrainTreeCreateCreditCardPaymentMethodCommand command = getCommandFactory().createCommand(
 					BrainTreeCreateCreditCardPaymentMethodCommand.class);
+			LOG.debug("BrainTree Create CreditCard Payment Method Request "+mapper.writeValueAsString(request));
 			return command.perform(request);
 		}
 		catch (final Exception exception)
@@ -539,8 +561,10 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		LOG.info("createPaymentMethodNonce");
 		try
 		{
+			ObjectMapper mapper = new ObjectMapper();
 			BrainTreeCreatePaymentMethodNonceCommand command = getCommandFactory()
 					.createCommand(BrainTreeCreatePaymentMethodNonceCommand.class);
+			LOG.debug("create Payment Method Nonce Request "+mapper.writeValueAsString(request));
 			result = command.perform(request);
 		}
 		catch (Exception exception)
@@ -555,8 +579,10 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 	{
 		try
 		{
+			ObjectMapper mapper = new ObjectMapper();
 			final BrainTreeDeletePaymentMethodCommand command = getCommandFactory().createCommand(
 					BrainTreeDeletePaymentMethodCommand.class);
+			LOG.debug("delete Payment Method Request "+mapper.writeValueAsString(request));
 			return command.perform(request);
 		}
 		catch (final Exception exception)

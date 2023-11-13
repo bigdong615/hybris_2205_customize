@@ -1,0 +1,464 @@
+
+    .page-blWriteReviewPage .main__inner-wrapper {
+    	 display: block;
+    	 /*padding-top: 35px;*/
+    }
+    .page-blWriteReviewPage .wrapup-search {
+       height:72px;
+    }
+     @media screen and (min-width: 591px) {
+    	 .page-blWriteReviewPage .main__inner-wrapper {
+    		 padding-bottom: 40px;
+    	}
+    }
+     @media screen and (min-width: 769px) {
+    	 .page-blWriteReviewPage .main__inner-wrapper {
+    		 padding-top: 0px;
+    	}
+    }
+    .wrapper {
+    	 max-width: 1200px;
+    	 margin: 0 auto;
+    	 padding: 0 15px;
+    }
+     @media screen and (min-width: 591px) {
+    	 .wrapper {
+    		 padding: 0 30px;
+    	}
+    }
+     .clearfix:after {
+     	 content: "";
+     	 display: table;
+     	 clear: both;
+     }
+    grid, .grid--rev, .grid--full, .grid-uniform {
+    	 list-style: none;
+    	 margin: 0;
+    	 padding: 0;
+    	 margin-left: -15px;
+    }
+    @media screen and (min-width: 591px) {
+    	/*! margin-left: -30px;
+    	 */
+    }
+    @media screen and (min-width: 591px) {
+        	 .grid__item {
+        		 padding-left: 30px;
+        	}
+        }
+
+      .page-blWriteReviewPage .grid__item {
+    	 -webkit-box-sizing: border-box;
+    	 -moz-box-sizing: border-box;
+    	 box-sizing: border-box;
+    	 min-height: 1px;
+    	 padding-left: 0px;
+    	 vertical-align: top;
+       }
+
+     .grid--small {
+    	 margin-left: -10px;
+    }
+     .grid--small .grid__item {
+    	 padding-left: 10px;
+    }
+    /*============================================================================ Reversed grids allow you to structure your source in the opposite order to how your rendered layout will appear. ==============================================================================*/
+     .grid--rev {
+    	 direction: rtl;
+    	 text-align: left;
+    }
+     .grid--rev > .grid__item {
+    	 direction: ltr;
+    	 text-align: left;
+    	 float: right;
+    }
+    /* Gutterless grids have all the properties of regular grids, minus any spacing. */
+     .grid--full {
+    	 margin-left: 0;
+    }
+     .lt-ie9 .grid--full {
+    	 margin-left: 0;
+    }
+     .grid--full > .grid__item {
+    	 padding-left: 0;
+    }
+    [class*="push--"] {
+    	 position: relative;
+    }
+
+    @media only screen and (min-width: 769px) {
+    	/* Whole */
+    	/* Halves */
+    	/* Thirds */
+    	/* Quarters */
+    	/* Fifths */
+    	/* Sixths */
+    	/* Eighths */
+    	/* Tenths */
+    	/* Twelfths */
+    	 .push--large--one-whole {
+    		 left: 100%;
+    	}
+    	 .push--large--one-half {
+    		 left: 50%;
+    	}
+    	 .push--large--one-third {
+    		 left: 33.333%;
+    	}
+    	 .push--large--two-thirds {
+    		 left: 66.666%;
+    	}
+    	 .push--large--one-quarter {
+    		 left: 25%;
+    	}
+    	 .push--large--two-quarters {
+    		 left: 50%;
+    	}
+    	 .push--large--three-quarters {
+    		 left: 75%;
+    	}
+    	 .push--large--one-fifth {
+    		 left: 20%;
+    	}
+    	 .push--large--two-fifths {
+    		 left: 40%;
+    	}
+    	 .push--large--three-fifths {
+    		 left: 60%;
+    	}
+    	 .push--large--four-fifths {
+    		 left: 80%;
+    	}
+    	 .push--large--one-sixth {
+    		 left: 16.666%;
+    	}
+    	 .push--large--two-sixths {
+    		 left: 33.333%;
+    	}
+    	 .push--large--three-sixths {
+    		 left: 50%;
+    	}
+    	 .push--large--four-sixths {
+    		 left: 66.666%;
+    	}
+    	 .push--large--five-sixths {
+    		 left: 83.333%;
+    	}
+    	 .push--large--one-eighth {
+    		 left: 12.5%;
+    	}
+    	 .push--large--two-eighths {
+    		 left: 25%;
+    	}
+    	 .push--large--three-eighths {
+    		 left: 37.5%;
+    	}
+    	 .push--large--four-eighths {
+    		 left: 50%;
+    	}
+    	 .push--large--five-eighths {
+    		 left: 62.5%;
+    	}
+    	 .push--large--six-eighths {
+    		 left: 75%;
+    	}
+    	 .push--large--seven-eighths {
+    		 left: 87.5%;
+    	}
+    	 .push--large--one-tenth {
+    		 left: 10%;
+    	}
+    	 .push--large--two-tenths {
+    		 left: 20%;
+    	}
+    	 .push--large--three-tenths {
+    		 left: 30%;
+    	}
+    	 .push--large--four-tenths {
+    		 left: 40%;
+    	}
+    	 .push--large--five-tenths {
+    		 left: 50%;
+    	}
+    	 .push--large--six-tenths {
+    		 left: 60%;
+    	}
+    	 .push--large--seven-tenths {
+    		 left: 70%;
+    	}
+    	 .push--large--eight-tenths {
+    		 left: 80%;
+    	}
+    	 .push--large--nine-tenths {
+    		 left: 90%;
+    	}
+    	 .push--large--one-twelfth {
+    		 left: 8.333%;
+    	}
+    	 .push--large--two-twelfths {
+    		 left: 16.666%;
+    	}
+    	 .push--large--three-twelfths {
+    		 left: 25%;
+    	}
+    	 .push--large--four-twelfths {
+    		 left: 33.333%;
+    	}
+    	 .push--large--five-twelfths {
+    		 left: 41.666%;
+    	}
+    	 .push--large--six-twelfths {
+    		 left: 50%;
+    	}
+    	 .push--large--seven-twelfths {
+    		 left: 58.333%;
+    	}
+    	 .push--large--eight-twelfths {
+    		 left: 66.666%;
+    	}
+    	 .push--large--nine-twelfths {
+    		 left: 75%;
+    	}
+    	 .push--large--ten-twelfths {
+    		 left: 83.333%;
+    	}
+    	 .push--large--eleven-twelfths {
+    		 left: 91.666%;
+    	}
+    }
+     @media only screen and (min-width: 769px) {
+    	/** Whole */
+    	/* Halves */
+    	/* Thirds */
+    	/* Quarters */
+    	/* Fifths */
+    	/* Sixths */
+    	/* Eighths */
+    	/* Tenths */
+    	/* Twelfths */
+    	 .large--one-whole {
+    		 width: 100%;
+    	}
+    	 .large--one-half {
+    		 width: 50%;
+    	}
+    	 .large--one-third {
+    		 width: 33.333%;
+    	}
+    	 .large--two-thirds {
+    		 width: 66.666%;
+    	}
+    	 .large--one-quarter {
+    		 width: 25%;
+    	}
+    	 .large--two-quarters {
+    		 width: 50%;
+    	}
+    	 .large--three-quarters {
+    		 width: 75%;
+    	}
+    	 .large--one-fifth {
+    		 width: 20%;
+    	}
+    	 .large--two-fifths {
+    		 width: 40%;
+    	}
+    	 .large--three-fifths {
+    		 width: 60%;
+    	}
+    	 .large--four-fifths {
+    		 width: 80%;
+    	}
+    	 .large--one-sixth {
+    		 width: 16.666%;
+    	}
+    	 .large--two-sixths {
+    		 width: 33.333%;
+    	}
+    	 .large--three-sixths {
+    		 width: 50%;
+    	}
+    	 .large--four-sixths {
+    		 width: 66.666%;
+    	}
+    	 .large--five-sixths {
+    		 width: 83.333%;
+    	}
+    	 .large--one-eighth {
+    		 width: 12.5%;
+    	}
+    	 .large--two-eighths {
+    		 width: 25%;
+    	}
+    	 .large--three-eighths {
+    		 width: 37.5%;
+    	}
+    	 .large--four-eighths {
+    		 width: 50%;
+    	}
+    	 .large--five-eighths {
+    		 width: 62.5%;
+    	}
+    	 .large--six-eighths {
+    		 width: 75%;
+    	}
+    	 .large--seven-eighths {
+    		 width: 87.5%;
+    	}
+    	 .large--one-tenth {
+    		 width: 10%;
+    	}
+    	 .large--two-tenths {
+    		 width: 20%;
+    	}
+    	 .large--three-tenths {
+    		 width: 30%;
+    	}
+    	 .large--four-tenths {
+    		 width: 40%;
+    	}
+    	 .large--five-tenths {
+    		 width: 50%;
+    	}
+    	 .large--six-tenths {
+    		 width: 60%;
+    	}
+    	 .large--seven-tenths {
+    		 width: 70%;
+    	}
+    	 .large--eight-tenths {
+    		 width: 80%;
+    	}
+    	 .large--nine-tenths {
+    		 width: 90%;
+    	}
+    	 .large--one-twelfth {
+    		 width: 8.333%;
+    	}
+    	 .large--two-twelfths {
+    		 width: 16.666%;
+    	}
+    	 .large--three-twelfths {
+    		 width: 25%;
+    	}
+    	 .large--four-twelfths {
+    		 width: 33.333%;
+    	}
+    	 .large--five-twelfths {
+    		 width: 41.666%;
+    	}
+    	 .large--six-twelfths {
+    		 width: 50%;
+    	}
+    	 .large--seven-twelfths {
+    		 width: 58.333%;
+    	}
+    	 .large--eight-twelfths {
+    		 width: 66.666%;
+    	}
+    	 .large--nine-twelfths {
+    		 width: 75%;
+    	}
+    	 .large--ten-twelfths {
+    		 width: 83.333%;
+    	}
+    	 .large--eleven-twelfths {
+    		 width: 91.666%;
+    	}
+    	 .large--show {
+    		 display: block !important;
+    	}
+    	 .large--hide {
+    		 display: none !important;
+    	}
+    	 .large--text-left {
+    		 text-align: left !important;
+    	}
+    	 .large--text-right {
+    		 text-align: right !important;
+    	}
+    	 .large--text-center {
+    		 text-align: center !important;
+    	}
+    	 .large--left {
+    		 float: left !important;
+    	}
+    	 .large--right {
+    		 float: right !important;
+    	}
+    	 .grid-uniform .large--one-half:nth-child(2n+1), .grid-uniform .large--one-third:nth-child(3n+1), .grid-uniform .large--one-quarter:nth-child(4n+1), .grid-uniform .large--one-fifth:nth-child(5n+1), .grid-uniform .large--one-sixth:nth-child(6n+1), .grid-uniform .large--two-sixths:nth-child(3n+1), .grid-uniform .large--three-sixths:nth-child(2n+1), .grid-uniform .large--two-eighths:nth-child(4n+1), .grid-uniform .large--four-eighths:nth-child(2n+1), .grid-uniform .large--five-tenths:nth-child(2n+1), .grid-uniform .large--one-twelfth:nth-child(12n+1), .grid-uniform .large--two-twelfths:nth-child(6n+1), .grid-uniform .large--three-twelfths:nth-child(4n+1), .grid-uniform .large--four-twelfths:nth-child(3n+1), .grid-uniform .large--six-twelfths:nth-child(2n+1) {
+    		 clear: both;
+    	}
+    }
+
+    .section-header {
+    	 margin-bottom: 30px;
+    }
+     .section-header .section-header__title {
+    	 letter-spacing: 0;
+    	 text-transform: capitalize;
+    }
+     @media screen and (min-width: 591px) {
+    	 .section-header {
+    		 margin-bottom: 50px;
+    	}
+    }
+     .section-header--404 {
+    	 margin-bottom: 0;
+    	 padding: 80px 0;
+    }
+     @media screen and (min-width: 769px) {
+    	 .section-header {
+    		 display: table;
+    		 table-layout: fixed;
+    		 width: 100%;
+    	}
+    	 .section-header__title {
+    		 margin-bottom: 12px;
+    	}
+    	 .section-header__left {
+    		 display: table-cell;
+    		 vertical-align: middle;
+    		 margin-bottom: 0;
+    	}
+    	 .section-header__left h1, .section-header__left .h1, .section-header__left h2, .section-header__left .h2, .section-header__left h3, .section-header__left .h3, .section-header__left h4, .section-header__left .h4, .section-header__left .h1, .section-header__left .h2, .section-header__left .h3, .section-header__left .h4 {
+    		 margin-bottom: 0;
+    	}
+    }
+
+    h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+    	 display: block;
+    	 font-weight: 400 !important;
+    	 margin: 0 0 0.5em !important;
+    	 line-height: 1.4 !important;
+    	 text-rendering: optimizeLegibility;
+    }
+     h1 a, .h1 a, h2 a, .h2 a, h3 a, .h3 a, h4 a, .h4 a, h5 a, .h5 a, h6 a, .h6 a {
+    	 text-decoration: none;
+    	 font-weight: inherit !important;
+    }
+    /*================ Use em() Sass function to declare font-size ================*/
+     h1, .h1 {
+    	 font-size: 2.11765em !important;
+    }
+    .hr--small {
+      margin: 20px auto;
+    }
+    hr, .hr--small, .hr--medium, .hr--large {
+      border-width: 2px 0 0 0;
+    }
+    .rte--nomargin {
+    	 margin-bottom: 0;
+    }
+
+   .page-blWriteReviewPage input[type=radio] + label:before,
+   input[type=checkbox] + label:before
+   {
+       content: none !important;
+
+      }
+
+      .p-w-r fieldset div {
+        clear: both !important;
+
+        }

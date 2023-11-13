@@ -1,5 +1,7 @@
 package com.bl.core.order.dao.impl;
 
+import com.bl.core.constants.GeneratedBlCoreConstants;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -21,7 +23,10 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -174,6 +179,12 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ "} BETWEEN ?returnOrderBefore AND ?returnOrderAfter and {o:status} NOT IN ({{select {se:pk} from {OrderStatus as se} where {se:code} IN (?orderStatuses)}})";
 
 	private static final String ORIGINAL_ORDER_BY_CODE = "SELECT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.VERSIONID  + "} IS NULL AND {" + OrderModel.CODE+ "} = ?code";
+
+	private static final String LATE_ORDERS_FEED_QUERY ="SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
+			+ ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} IN "
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})" ;
+
 
 	final List<OrderStatus> statuses = Arrays.asList(OrderStatus.LATE,OrderStatus.SHIPPED, OrderStatus.UNBOXED_PARTIALLY);
 	/**
@@ -734,4 +745,28 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		}
 		return orders.size() == 1 ? orders.get(0) : null;
 	}
+	/**
+	 * This method created to get Late Order to Feed FTP
+	 * @return list of orders
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersForLateOrderFeedToFTP() throws ParseException {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime currentDate= LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+
+		LocalDateTime OneMonthBeforeDate= currentDate.minusDays(31);
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(LATE_ORDERS_FEED_QUERY);
+		fQuery.addQueryParameter("startDate", formatter.format(OneMonthBeforeDate));
+		fQuery.addQueryParameter("endDate", formatter.format(currentDate));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders))
+		{
+			BlLogger.logMessage(LOG, Level.INFO, "No orders found for Late Order feed with date {}");
+			return Collections.emptyList();
+		}
+		return orders;
+
+	}
+
 }

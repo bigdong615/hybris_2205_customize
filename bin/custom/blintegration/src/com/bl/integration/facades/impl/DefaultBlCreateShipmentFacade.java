@@ -123,7 +123,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			return createFedExShipment(packagingInfo, packageCount, sequenceMap, null);
+			return createFedExShipment(packagingInfo, packageCount, sequenceMap, null, optimizedShippingMethod);
 		}
 	}
 
@@ -162,7 +162,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			return createFedExShipment(packagingInfo, packageCount, sequenceMap, warehouseModel);
+			return createFedExShipment(packagingInfo, packageCount, sequenceMap, warehouseModel,
+					selectedOptimizedShippingMethodModel);
 		}
 	}
 
@@ -173,10 +174,11 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @param sequenceMap
 	 */
 	private boolean createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
-			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel)
+			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel,
+			final OptimizedShippingMethodModel optimizedShippingMethod)
 	{
 		final ProcessShipmentReply masterReply = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount,
-				sequenceMap, warehouseModel);
+				sequenceMap, warehouseModel, optimizedShippingMethod);
 		try
 		{
 			final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();

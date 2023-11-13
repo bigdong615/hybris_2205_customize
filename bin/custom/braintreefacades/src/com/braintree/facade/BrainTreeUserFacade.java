@@ -53,4 +53,9 @@ public interface BrainTreeUserFacade extends UserFacade
 	 * This method is responsible for getting all shipping address.
 	 */
 	 List<AddressData> getShippingAddressBook();
+
+	 /**
+	 * This method is responsible for checking whether the credit card is allowed to remove
+	 */
+	public boolean isAllowedToRemoveCreditCard(String paymentInfoId);
 }

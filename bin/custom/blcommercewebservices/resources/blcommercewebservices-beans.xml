@@ -342,6 +342,7 @@
 		<property name="rentalStartDate" type="java.util.Date"/>
 		<property name="orderNotes" type="String" />
 		<property name="primaryKey" type="java.lang.String"/>
+		<property name="picker" type="java.lang.String"/>
 	</bean>
 	
 	<bean class="com.bl.facades.consignment.dto.ConsignmentListWsDTO">
@@ -579,7 +580,8 @@
 	  	<property name="longitude" type="java.lang.Double"/>
 	  	<property name="phone2" type="String"/>
         <property name="primaryKey" type="java.lang.String"/> 
-        <property name="billingAddress" type="boolean"/>                                                         
+        <property name="billingAddress" type="boolean"/>
+        <property name="ownerPk" type="java.lang.String"/>                                                         
     </bean>
     
     <bean class="de.hybris.platform.commercewebservicescommons.dto.user.address.AddressListWsDTO">

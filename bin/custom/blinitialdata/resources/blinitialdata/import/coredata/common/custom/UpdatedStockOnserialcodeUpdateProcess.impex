@@ -1,0 +1,13 @@
+INSERT_UPDATE DynamicProcessDefinition; code[unique=true]                    ; active ; content
+                                      ; updateStockRecordOnCodeUpdateProcess ; true   ; "<process  xmlns=""http://www.hybris.de/xsd/processdefinition""
+  start=""updateStockRecordsOnSerialCodeUpdateAction""
+  name=""updateStockRecordOnCodeUpdateProcess""
+  processClass=""com.bl.core.model.UpdateStockRecordOnCodeUpdateProcessModel"">
+<action id=""updateStockRecordsOnSerialCodeUpdateAction"" bean=""updateStockRecordsOnSerialCodeUpdateAction"">
+<transition name=""OK"" to=""end""/>
+<transition name=""NOK"" to = ""error""/>
+</action>
+<end id=""error"" state=""ERROR"">Got error while creating the stocks.</end>
+<end id=""failed"" state=""FAILED"">Stocks update got failed.</end>
+<end id=""end"" state=""SUCCEEDED"">Successfully created the stocks.</end>
+</process>"

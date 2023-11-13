@@ -1,11 +1,15 @@
 package com.bl.backoffice.widget.controller;
 
+import com.bl.constants.BlloggingConstants;
+import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
+import com.hybris.cockpitng.util.notifications.NotificationService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,6 +72,8 @@ public class BlShippingScanController extends DefaultWidgetController
 
 	@Resource(name = "modelService")
 	ModelService modelService;
+	@Resource
+	private transient NotificationService notificationService;
 
 	ConsignmentModel selectedConsignment = new ConsignmentModel();
 
@@ -278,7 +284,9 @@ public class BlShippingScanController extends DefaultWidgetController
 			if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.SUCCESS_SCAN))
 			{
 				BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
-				Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+				notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+						NotificationEvent.Level.SUCCESS, this.getLabel(BlInventoryScanLoggingConstants.SHIPPING_AND_PACKAGE_SCANNING_SUCCESS_MSG));
+
 				this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 			}
 			else
@@ -316,7 +324,9 @@ public class BlShippingScanController extends DefaultWidgetController
 				&& !scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.INCLUDED_SERIAL)
 				&& !scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.OUTSIDER_BARCODE)) {
 			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
-			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+			notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+					NotificationEvent.Level.SUCCESS, this.getLabel(BlInventoryScanLoggingConstants.SHIPPING_AND_PACKAGE_SCANNING_SUCCESS_MSG));
+
 			if (!isDoNotAutoClose())
 			{
 				this.sendOutput(OUT_CONFIRM, COMPLETE);
@@ -476,7 +486,9 @@ public class BlShippingScanController extends DefaultWidgetController
 		{
 			getBlInventoryScanToolService().updateSerialLastScanLocation(selectedConsignment, lastScannedItem);
 			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
-			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+			notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+					NotificationEvent.Level.SUCCESS, this.getLabel(BlInventoryScanLoggingConstants.SHIPPING_AND_PACKAGE_SCANNING_SUCCESS_MSG));
+
 			if (!isDoNotAutoClose())
 			{
 				this.sendOutput(OUT_CONFIRM, COMPLETE);

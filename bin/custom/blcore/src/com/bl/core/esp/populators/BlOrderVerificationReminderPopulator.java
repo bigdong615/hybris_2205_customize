@@ -47,6 +47,10 @@ public class BlOrderVerificationReminderPopulator extends ESPEventCommonPopulato
     populateCommonData(orderModel , data);
     data.setStatus(getRequestValue(getOrderStatus(orderModel)));
     data.setDateplaced(formatter.format(orderModel.getDate()));
+	 if (Objects.nonNull(userModel))
+	 {
+		 data.setCustomername(getRequestValue(userModel.getName()));
+	 }
     if(Objects.nonNull(orderModel.getDeliveryMode())) {
       final ZoneDeliveryModeModel delivery = ((ZoneDeliveryModeModel) orderModel
               .getDeliveryMode());

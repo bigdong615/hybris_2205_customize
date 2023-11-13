@@ -66,7 +66,10 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
         .isBlank(blProductModel.getProductId()) && !blProductModel.getCatalogVersion().equals(getCatalogVersionService().getCatalogVersion(BlCoreConstants.BL_PRODUCTCATALOG,BlCoreConstants.CATALOG_VERSION_NAME)))  {
       blProductModel.setProductId(getKeyGenerator().generate().toString());
     }
-    createOrUpdateRentalBlProductPrice(blProductModel, interceptorContext);
+	 if (!interceptorContext.isModified(blProductModel, BlProductModel.PRODUCTTYPE))
+	 {
+		 createOrUpdateRentalBlProductPrice(blProductModel, interceptorContext);
+	 }
 
     if (CollectionUtils.isNotEmpty(serialProducts)) {
       if (interceptorContext.isModified(blProductModel, BlProductModel.FORSALEBASEPRICE)) {

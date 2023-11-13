@@ -1,5 +1,8 @@
 package com.bl.backoffice.widget.controller;
 
+import com.bl.constants.BlloggingConstants;
+import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
+import com.hybris.cockpitng.util.notifications.NotificationService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
@@ -9,11 +12,7 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -85,6 +84,8 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 
 	@Resource(name = "blOrderService")
 	private BlOrderService blOrderService;
+	@Resource
+	private transient NotificationService notificationService;
 
 	private ListModelList<String> shippingTypeList = new ListModelList<>();
 	private ListModelList<String> optimizedShippingMethodList = new ListModelList<>();
@@ -208,7 +209,8 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		final List<String> errorPackages = Lists.newArrayList();
 		if (carrier.getCode().equals(CarrierEnum.FEDEX) && isSignatureRequired)
 		{
-			Messagebox.show("Signature cannot be selected for FEDEX : ", BlCoreConstants.ERROR_TITLE, Messagebox.OK, Messagebox.ERROR);
+			showErrorMessage("Signature cannot be selected for FEDEX : ");
+
 		}
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
@@ -217,12 +219,12 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		}
 		if (CollectionUtils.isNotEmpty(errorPackages))
 		{
-			Messagebox.show("Error while generating outbound label for packages with ID : " + String.join(", ", errorPackages),
-					BlCoreConstants.ERROR_TITLE, Messagebox.OK, Messagebox.ERROR);
+			showErrorMessage("Error while generating outbound label for packages with ID :" + String.join(", ", errorPackages));
 		}
 		else
 		{
-			Messagebox.show("Outbound Label Generated Successfully", BlintegrationConstants.POPUP_TEXT, Messagebox.OK, "icon");
+			notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+					NotificationEvent.Level.SUCCESS, this.getLabel("blbackoffice.outbound.label.tool.notification.successful.message"));
 		}
 		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
@@ -256,6 +258,16 @@ public class BlCreateOutboundShipmentLabelController extends DefaultWidgetContro
 		{
 			BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while generating shipment label", exception);
 		}
+	}
+
+	private void showErrorMessage(String errorMsg)
+	{
+		Map params = new HashMap();
+		params.put("sclass", "myMessagebox");
+		Messagebox.show(errorMsg,
+				"Error Occurred", new Messagebox.Button[]
+						{Messagebox.Button.OK},null , Messagebox.ERROR, null,
+				null, params);
 	}
 
 	private String getSelectedOptimizedShippingMethod()

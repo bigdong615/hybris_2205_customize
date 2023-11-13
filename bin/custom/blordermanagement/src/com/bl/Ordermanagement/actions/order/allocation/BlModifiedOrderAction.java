@@ -79,7 +79,7 @@ public class BlModifiedOrderAction extends AbstractProceduralAction<OrderProcess
                     consignmentEntryModel.setItems(new HashMap<>());
                     consignmentEntryModel.setSerialProducts(Collections.emptyList());
                 });
-                getBlStockService().releaseStockForGivenSerial(olderProductCode, consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate(), order.getCode());
+                getBlStockService().releaseStockForGivenSerial(olderProductCode, consignmentModel.getOptimizedShippingStartDate(), consignmentModel.getOptimizedShippingEndDate());
                 consignmentModel.setOptimizedShippingStartDate(order.getActualRentalStartDate());
                 consignmentModel.setOptimizedShippingEndDate(order.getActualRentalEndDate());
             });

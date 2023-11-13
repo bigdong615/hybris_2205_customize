@@ -172,7 +172,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * @param target
    */
   private void populateBookMarks(final ProductData target) {
-	 LOG.info(target.getPrimaryKey());
+	  LOG.debug(target.getPrimaryKey());
 	 final BlProductModel blProductModel = getProductForPK(target.getPrimaryKey());
 
     if (blProductModel != null)
@@ -186,7 +186,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * @param target
    */
   private void populateProductType(final ProductData target) {
-	 LOG.info(target.getPrimaryKey());
+	  LOG.debug(target.getPrimaryKey());
 	 final BlProductModel blProductModel = getProductForPK(target.getPrimaryKey());
     if (blProductModel != null)
     {

@@ -10,6 +10,7 @@ import de.hybris.platform.cms2.servicelayer.services.CMSSiteService;
 import de.hybris.platform.core.model.media.MediaModel;
 import com.bl.storefront.controllers.ControllerConstants;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import de.hybris.platform.servicelayer.media.MediaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +33,11 @@ public class SiteMapController extends AbstractController
 
 	@Resource(name = "siteBaseUrlResolutionService")
 	private SiteBaseUrlResolutionService siteBaseUrlResolutionService;
+	@Resource(name = "mediaService")
+	private MediaService mediaService;
 
-	@RequestMapping(value = "/sitemap.xml", method = RequestMethod.GET, produces = "application/xml")
-	public String getSitemapXml(final Model model, final HttpServletResponse response)
+	@RequestMapping(value = "/assets/sitemap.xml", method = RequestMethod.GET, produces = "application/xml")
+	public void getSitemapXml(final Model model, final HttpServletResponse response)
 	{
 		final CMSSiteModel currentSite = cmsSiteService.getCurrentSite();
 
@@ -42,12 +46,27 @@ public class SiteMapController extends AbstractController
 		final List<String> siteMapUrls = new ArrayList<>();
 
 		final Collection<MediaModel> siteMaps = currentSite.getSiteMaps();
+		MediaModel mediaModel = null;
 		for (final MediaModel siteMap : siteMaps)
 		{
 			siteMapUrls.add(mediaUrlForSite + siteMap.getURL());
+			mediaModel = siteMap;
 		}
 		model.addAttribute("siteMapUrls", siteMapUrls);
 
-		return ControllerConstants.Views.Pages.Misc.MiscSiteMapPage;
+		try (PrintWriter out = response.getWriter();
+			 InputStream inputStream = mediaService.getStreamFromMedia(mediaModel);
+			 BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+
+			String line;
+			while ((line = br.readLine()) != null) {
+				out.println(line);
+				out.flush();
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//return ControllerConstants.Views.Pages.Misc.MiscSiteMapPage;
 	}
 }

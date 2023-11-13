@@ -32,6 +32,7 @@
                   	 name="text" value="${searchedWord}" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
                   <span id="litepicker" class="rental-dates d-none d-md-inline"><i class="icon-calendar"></i><spring:theme code="text.rental.dates.placeholder"/> :</span>
                   <input type="text" id="litepicker_search" class="form-control d-none d-md-inline-block" placeholder="<spring:theme code="text.rental.select.dates.placeholder"/>" autocomplete="off">
+                <span id="resetCalendar" class="close resetCalendar">&times;</span>
                   <input type="text" id="mobile-litepicker" class="form-control d-inline-block d-md-none" placeholder="<spring:theme code="text.rental.date.placeholder"/>" autocomplete="off">
                   </ycommerce:testId>
                   <div class="input-group-append d-md-block input-button-search">

@@ -1,5 +1,6 @@
 package com.bl.core.services.consignment.entry.impl;
 
+import com.bl.core.stock.BlStockLevelDao;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
@@ -9,6 +10,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
@@ -66,6 +68,8 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	private SessionService sessionService;
 	private SearchRestrictionService searchRestrictionService;
 
+	private BlStockLevelDao blStockLevelDao;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -78,7 +82,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 		if (CollectionUtils.isNotEmpty(consignmentEntriesForSerialCodeAndDate))
 		{
 			consignmentEntriesForSerialCodeAndDate.forEach(consignmentEntry -> {
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 						"Performing removal of serial : {} from consignment entry with PK : {}", blSerialProductModel.getCode(),
 						consignmentEntry.getPk().toString());
 				final Set<BlSerialProductModel> updatedSerialList = getUpdatedSerialList(consignmentEntry, blSerialProductModel);
@@ -93,12 +97,26 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				changeStatusOnConsignment(consignment);
 				final AbstractOrderModel order = consignment.getOrder();
 				changeStatusOnOrder(order);
+				if(BooleanUtils.isTrue(order.getIsRentalOrder())) {
+					final Collection<StockLevelModel> stockLevels = getBlStockLevelDao()
+							.findSerialStockLevelForDate(blSerialProductModel.getCode(),
+									consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate());
+					stockLevels.forEach(stockLevel ->{
+						stockLevel.setSerialStatus(blSerialProductModel.getSerialStatus());
+						stockLevel.setOrder(null);
+						stockLevel.setReservedStatus(Boolean.TRUE);
+					});
+					modelService.saveAll(stockLevels);
+				}
+
 				if (CollectionUtils.isEmpty(updatedSerialList))
 				{
 					getModelService().remove(consignmentEntry);
 					getModelService().refresh(consignment);
 				}
 			});
+		}else {
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No any future consignment are associated for replacement of serial {}", blSerialProductModel.getCode());
 		}
 	}
 
@@ -160,7 +178,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 			consignment.setStatus(ConsignmentStatus.MANUAL_REVIEW);
 			getModelService().save(consignment);
 			getModelService().refresh(consignment);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Consignment : {} status to MANUAL_REVIEW",
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Changing Consignment : {} status to MANUAL_REVIEW after remove serial",
 					consignment.getCode());
 		}
 
@@ -179,7 +197,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 			order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
 			getModelService().save(order);
 			getModelService().refresh(order);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Order : {} status to MANUAL_REVIEW", order.getCode());
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Order : {} status to MANUAL_REVIEW after remove serial", order.getCode());
 		}
 	}
 
@@ -731,6 +749,14 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	{
 		return getBlConsignmentDao().getConsignments(pageableData, date);
 
+	}
+
+	public BlStockLevelDao getBlStockLevelDao() {
+		return blStockLevelDao;
+	}
+
+	public void setBlStockLevelDao(BlStockLevelDao blStockLevelDao) {
+		this.blStockLevelDao = blStockLevelDao;
 	}
 
 }

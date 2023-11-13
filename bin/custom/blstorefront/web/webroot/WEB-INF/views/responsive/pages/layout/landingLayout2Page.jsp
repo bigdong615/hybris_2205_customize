@@ -25,6 +25,8 @@
     		</cms:pageSlot>
     	</section>
     	</div>
+    	
+    	<div id="bodySection">
 	<section id="hero">
 
 		<div class="container">
@@ -109,7 +111,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section id="categoriesSection">
 		<div class="container">
 			<div id="categories" class="row justify-content-center">
 				<div class="col-lg-11 col-xl-9">
@@ -209,5 +211,5 @@
 			</div> -->
 		</div>
 	</section>
-
+</div>
 </template:page>

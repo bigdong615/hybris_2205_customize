@@ -15,6 +15,7 @@ import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
+import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.media.MediaService;
 
 import java.io.File;
@@ -141,6 +142,12 @@ public class BlSiteMapMediaJob extends AbstractJobPerformable<SiteMapMediaCronJo
 	{
 		final CatalogUnawareMediaModel media = modelService.create(CatalogUnawareMediaModel.class);
 		media.setCode(siteMapFile.getName());
+		try{
+			media.setFolder(getMediaService().getFolder("assets"));
+		}
+		catch (UnknownIdentifierException ex){
+			LOG.error(ex);
+		}
 		modelService.save(media);
 
 		try (InputStream siteMapInputStream = new FileInputStream(siteMapFile))

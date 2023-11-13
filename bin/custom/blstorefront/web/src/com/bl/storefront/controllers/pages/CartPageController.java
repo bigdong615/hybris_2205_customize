@@ -284,6 +284,14 @@ public class CartPageController extends AbstractCartPageController
 		if(null != sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION) && BooleanUtils.isTrue(sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION))) {
 			sessionService.removeAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION);
 		}
+		if(model.getAttribute("validationData") != null){
+			List<CartModificationData> modifications = (List<CartModificationData>) model.getAttribute("validationData");
+			List<String> productNames = new ArrayList<>();
+			modifications.forEach(mod -> productNames.add(mod.getEntry().getProduct().getName()));
+			GlobalMessages
+					.addFlashMessage((Map<String, Object>) model, GlobalMessages.ERROR_MESSAGES_HOLDER,
+							"basket.validation.noStock.message", new Object[]{String.join(",",productNames)});
+		}
 
 		return prepareCartUrl(model);
 	}

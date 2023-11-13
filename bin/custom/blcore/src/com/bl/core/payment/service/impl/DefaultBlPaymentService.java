@@ -18,10 +18,8 @@ import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -80,10 +78,12 @@ public class DefaultBlPaymentService implements BlPaymentService
 				return Boolean.TRUE;
 			}
 			else if(authEntry != null && authEntry.getAmount().intValue() > BlInventoryScanLoggingConstants.ONE) {
-				return  getBrainTreeTransactionService().captureAuthorizationTransaction(
+				return getBrainTreeTransactionService().captureAuthorizationTransaction(
 						order, authEntry.getAmount(), authEntry.getRequestId());
+
 			}
-			else {
+			else
+			{
 				if(order.getTotalPrice() > BlInventoryScanLoggingConstants.ZERO) {
 					return getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
 							order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null);
@@ -185,5 +185,6 @@ public class DefaultBlPaymentService implements BlPaymentService
 	public void setModelService(final ModelService modelService) {
 		this.modelService = modelService;
 	}
+
 
 }

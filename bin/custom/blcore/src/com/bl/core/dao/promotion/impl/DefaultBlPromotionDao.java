@@ -8,11 +8,10 @@ import de.hybris.platform.promotions.model.PromotionGroupModel;
 import de.hybris.platform.ruleengineservices.enums.RuleStatus;
 import de.hybris.platform.ruleengineservices.model.AbstractRuleModel;
 import de.hybris.platform.ruleengineservices.model.SourceRuleModel;
+import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -86,4 +85,14 @@ public class DefaultBlPromotionDao extends DefaultPromotionDao implements BlProm
 		return null;
 	}
 
+	@Override
+	public Optional<PromotionSourceRuleModel> getPromotionByCode(String code) {
+		String SEARCH_PROMOTION_RULE_QUERY = "select {pr.pk} from {PromotionSourceRule as pr}, {RuleStatus as rs} where {pr.status} = {rs.pk} and {rs.code} = '" + RuleStatus.PUBLISHED.getCode() + "' and {pr.code} = ?code";
+		FlexibleSearchQuery query = new FlexibleSearchQuery(SEARCH_PROMOTION_RULE_QUERY);
+		query.addQueryParameter("code", code);
+		List<Object> result = this.getFlexibleSearchService().search(query).getResult();
+		return org.apache.commons.collections.CollectionUtils.isNotEmpty(result) ? Optional.of((PromotionSourceRuleModel)result.get(0)) : Optional.empty();
+	}
+
 }
+

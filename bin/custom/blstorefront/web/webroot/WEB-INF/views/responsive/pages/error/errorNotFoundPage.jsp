@@ -21,11 +21,26 @@
 	<cms:pageSlot position="SideContent" var="feature" element="div" class="errorNotFoundPageSide">
 		<cms:component component="${feature}" element="div" class="errorNotFoundPageSide-component"/>
 	</cms:pageSlot>
+	<div class="container">
+       <div class="row justify-content-center">
+          <div class="col-xl-12 text-center">
+             <div class="row justify-content-center">
+                <div class="page404">
+                   <h1>OOPS...</h1>
+                   <h6 class="mb-4">Sorry, this page is missing. Good thing the gear we rent isn't.</h6>
+                   <div>
+                      <a href="/search/?text=&amp;blPageType=rentalGear" class="btn btn-rent-gear">RENT GEAR</a>
+                   </div>
+                   <img src="/_ui/responsive/theme-bltheme/assets/page404-img.png" alt="this page is missing" />
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+
+
+
 	
-	<div class="error-page">
-		<a class="btn btn-default js-shopping-button" href="${fn:escapeXml(homePageUrl)}">
-			<spring:theme text="Continue Shopping" code="general.continue.shopping"/>
-		</a>
-	</div>
+
 
 </template:page>

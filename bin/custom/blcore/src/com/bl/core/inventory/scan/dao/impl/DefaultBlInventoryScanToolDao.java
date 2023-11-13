@@ -13,6 +13,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.model.CatalogModel;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.ItemModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -140,6 +141,28 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
 		}
 
 
+	}
+
+	/**
+	 * @param trackingNo
+	 * @return
+	 */
+	private static final String GET_ORDERS_FOR_TRACKING_NO  = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk} JOIN " + PackagingInfoModel._TYPECODE
+			+ " As pkg ON {pkg.consignment} = {con.pk }} WHERE {pkg:" + PackagingInfoModel.INBOUNDTRACKINGNUMBER + "} =?trackingNo";
+	@Override
+	public List<OrderModel> getOrdersWithTrackingNo(String trackingNo) {
+
+		final FlexibleSearchQuery flexibleSearchQuery = new FlexibleSearchQuery(GET_ORDERS_FOR_TRACKING_NO);
+		flexibleSearchQuery.addQueryParameter("trackingNo", trackingNo);
+		final SearchResult result = getFlexibleSearchService().search(flexibleSearchQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (org.apache.commons.collections4.CollectionUtils.isEmpty(orders)) {
+			BlLogger.logMessage(LOG , Level.DEBUG , "No orders found with the given tracking no {}" ,trackingNo);
+			return Collections.emptyList();
+		}
+
+		return orders;
 	}
 
 	/**

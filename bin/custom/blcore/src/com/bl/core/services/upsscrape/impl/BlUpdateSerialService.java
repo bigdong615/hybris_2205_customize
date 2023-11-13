@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -246,13 +245,8 @@ public class BlUpdateSerialService implements UpdateSerialService {
           BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while reserve stock in UPS scrub response flow", e);
         }
         stockLevel.setHardAssigned(true);
-        if(StringUtils.isNotBlank(stockLevel.getOrder())){
-          stockLevel.setOrder(StringUtils.isNotBlank(stockLevel.getOrder()) ? stockLevel.getOrder() + "," + abstractOrderModel.getCode() : abstractOrderModel.getCode());
-        }
-        else {
-          stockLevel.setOrder(abstractOrderModel.getCode());
-        }
         stockLevel.setReservedStatus(true);
+        stockLevel.setOrder(abstractOrderModel.getCode());
 
 
         ((BlSerialProductModel) serialProduct).setHardAssigned(true); // NOSONAR
@@ -261,12 +255,6 @@ public class BlUpdateSerialService implements UpdateSerialService {
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
                 stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct.getCode());
       });
-      Optional<StockLevelModel> lastStock = findSerialStockLevelForDate.stream().filter(stock -> stock.getDate().equals(optimizedShippingEndDate)&&
-              StringUtils.isNotBlank(stock.getOrder()) && stock.getOrder().split(",").length == 1).findAny();
-      if(lastStock.isPresent()){
-        lastStock.get().setReservedStatus(false);
-        getModelService().save(lastStock.get());
-      }
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct.getCode());
     }
   }

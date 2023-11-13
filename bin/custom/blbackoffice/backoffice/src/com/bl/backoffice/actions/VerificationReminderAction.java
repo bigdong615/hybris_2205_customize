@@ -2,7 +2,6 @@ package com.bl.backoffice.actions;
 
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
-import de.hybris.platform.util.localization.Localization;
 
 import javax.annotation.Resource;
 
@@ -56,7 +55,7 @@ public class VerificationReminderAction extends AbstractComponentWidgetAdapterAw
     {
         order = actionContext.getData();
         try {
-            getDefaultBlESPEventService().sendOrderPendingVerificationsEvent(order);
+			  getDefaultBlESPEventService().sendOrderVerificationReminderEvent(order);
             this.showMessageBox(false);
         } catch (final Exception e) {
             BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger pending verification event.", e);

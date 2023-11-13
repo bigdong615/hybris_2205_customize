@@ -179,10 +179,16 @@ public class BrainTreeAccountPageController extends AbstractPageController
                                       @RequestParam(value = "paymentMethodTokenRomove") final String paymentMethodNonce, final RedirectAttributes redirectAttributes)
 			throws CMSItemNotFoundException
 	{
-		userFacade.unlinkCCPaymentInfo(paymentInfoId);
-		userFacade.removeBTCCPaymentInfo(paymentMethodNonce);
-		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-				getLocalizedString("text.account.profile.paymentCart.remove"));
+		if(userFacade.isAllowedToRemoveCreditCard(paymentInfoId)) {
+			userFacade.unlinkCCPaymentInfo(paymentInfoId);
+			userFacade.removeBTCCPaymentInfo(paymentMethodNonce);
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+					getLocalizedString("text.account.profile.paymentCart.remove"));
+		}
+		else {
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+					getLocalizedString("text.account.profile.paymentCart.not.removable"));
+		}
 
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
 	}
