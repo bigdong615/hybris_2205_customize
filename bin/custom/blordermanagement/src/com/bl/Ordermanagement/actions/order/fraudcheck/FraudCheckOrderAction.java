@@ -73,7 +73,7 @@ public class FraudCheckOrderAction extends AbstractFraudCheckAction<OrderProcess
 			modelService.save(order);
 			return Transition.OK;
 		}
-		else if (score < scoreLimit + scoreTolerance)
+		else
 		{
 			LOG.info("Order: {} has a fraud score of {}", order.getCode(), score);
 			final FraudReportModel fraudReport = createFraudReport(providerName, response, order, FraudStatus.CHECK);
@@ -87,7 +87,7 @@ public class FraudCheckOrderAction extends AbstractFraudCheckAction<OrderProcess
 			modelService.save(order);
 			return Transition.POTENTIAL;
 		}
-		else
+	/*	else
 		{
 			final FraudReportModel fraudReport = createFraudReport(providerName, response, order, FraudStatus.FRAUD);
 			final OrderHistoryEntryModel historyEntry = createHistoryLog(providerName, order, FraudStatus.FRAUD,
@@ -99,7 +99,7 @@ public class FraudCheckOrderAction extends AbstractFraudCheckAction<OrderProcess
 			modelService.save(historyEntry);
 			modelService.save(order);
 			return Transition.FRAUD;
-		}
+		} */
 	}
 
 	public Double getConfig(final String property)
