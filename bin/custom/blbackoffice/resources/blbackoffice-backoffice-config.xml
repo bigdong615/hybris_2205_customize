@@ -1316,6 +1316,8 @@
 	<context type="Order" component="cs-listview" merge-by="type">
         <list:list-view xmlns:list="http://www.hybris.com/cockpitng/component/listView">
             <list:column qualifier="actualRentalStartDate" label="blbackoffice.order.listview.actualRentalStartDate "/>
+			<list:column qualifier="rentalStartDate" label="customersupportbackoffice.order.details.rentalStartDate "/>
+			<list:column qualifier="totalPrice" label="customersupportbackoffice.order.details.total "/>
             <list:column qualifier="date" merge-mode="REMOVE"/>
         </list:list-view>
     </context>
