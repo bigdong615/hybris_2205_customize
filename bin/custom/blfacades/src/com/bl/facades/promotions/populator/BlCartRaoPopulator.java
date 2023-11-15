@@ -13,6 +13,12 @@ import de.hybris.platform.ruleengineservices.rao.CartRAO;
 import de.hybris.platform.servicelayer.user.UserService;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.*;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -94,6 +100,16 @@ public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO
 			}
 		}
 		target.setRentalArrivalDate(source.getRentalStartDate());
+		target.setRentalToDate(source.getRentalEndDate());
+		if(target.getRentalArrivalDate() != null && target.getRentalToDate() != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			long daysBetween = ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(dateFormat.format(target.getRentalArrivalDate()), BlCoreConstants.DATE_FORMAT),
+					BlDateTimeUtils.convertStringDateToLocalDate(dateFormat.format(target.getRentalToDate()), BlCoreConstants.DATE_FORMAT));
+			target.setRentalDurationDays((int) daysBetween);
+		}
+		else {
+			target.setRentalDurationDays(7);
+		}
 	}
 	/**
 	 * @return the userService
