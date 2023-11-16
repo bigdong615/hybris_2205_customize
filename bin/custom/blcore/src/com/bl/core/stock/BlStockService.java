@@ -1,8 +1,10 @@
 package com.bl.core.stock;
 
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -112,12 +114,17 @@ public interface BlStockService
 	 *
 	 * @param blSerialProduct
 	 *           the serial product
-	 * @param reservedStatus
-	 *           the status of of the serial product
+	 * @param intialCode
+	 *           the initial code of the serial product
 	 */
 	public void findAndUpdateStockRecordsForSerialCode(final BlSerialProductModel blSerialProduct, String intialCode);
 
 	boolean isVisibleInPdp(final SerialStatusEnum currentStatus);
 	void findAndUpdateAllStock(final BlSerialProductModel blSerialProduct,Boolean reservedStatus);
+	boolean isStockAvailable(Set<String> serialProductCodes, Date startDay, Date endDay,WarehouseModel warehouse);
+	Collection<StockLevelModel> getAvailableStockForSingleSerial(String serialProductCode, Date startDay, Date endDay, WarehouseModel warehouse);
+	void updateAndSaveStockRecord(final Collection<StockLevelModel> serialStocks, final Boolean reservedStatus, final String orderNumber) ;
 
-}
+	Collection<StockLevelModel> getStockForSingleSerial(final String serialCode,Date startDay, Date endDay);
+
+	}
