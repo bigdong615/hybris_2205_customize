@@ -13,7 +13,6 @@
         <columns>
           <column width="30px" sclass="oms-widget-cancelorder-listbox-header">
             <checkbox id="globalSerialEntriesSelection" class="oms-widget-cancelorder-list-container__checkbox"/>
-            <!-- onCheck='Clients.evalJavaScript("onOrderSelect()")' -->
           </column>
           <column width="250px" sclass="oms-widget-cancelorder-listbox-header" >
             <label value="${labels.customersupportbackoffice.replacement.product.product.name}" width="100%"/>

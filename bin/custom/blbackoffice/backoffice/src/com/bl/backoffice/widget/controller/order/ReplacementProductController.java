@@ -3,6 +3,7 @@ package com.bl.backoffice.widget.controller.order;
 import com.bl.Ordermanagement.reallocation.BlReallocationService;
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.Ordermanagement.services.impl.DefaultBlAllocationService;
+import com.bl.backoffice.wizards.util.ReplacementProductData;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ConsignmentEntryStatusEnum;
 import com.bl.core.enums.ItemStatusEnum;
@@ -26,39 +27,30 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
-import de.hybris.platform.core.model.product.UnitModel;
 import de.hybris.platform.jalo.order.price.PriceInformation;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
-import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.PriceService;
 import de.hybris.platform.product.UnitService;
 import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
-import de.hybris.platform.warehousing.util.builder.OrderEntryModelBuilder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.*;
-import com.bl.backoffice.wizards.util.ReplacementProductData;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.zkoss.zk.ui.Component;
-
-import javax.annotation.Resource;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
@@ -96,7 +88,6 @@ public class ReplacementProductController extends DefaultWidgetController {
     private PriceService priceService;
     @Resource(name = "blProductDynamicPriceStrategy")
     private BlProductDynamicPriceStrategy blProductDynamicPriceStrategy;
-   // private BlAllocationService blAllocationService;
     @Resource(name = "defaultBlAllocationService")
     private DefaultBlAllocationService defaultBlAllocationService;
     @Resource(name = "unitService")
