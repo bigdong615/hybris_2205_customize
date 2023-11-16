@@ -234,11 +234,16 @@ private  void validateAndReplaceSerilForDifferentProduct(final ReplacementProduc
      entryModel.setEntryNumber(orderModel.getEntries().size());
      entryModel.setQuantity(1L);
      entryModel.setSerialProducts(Arrays.asList(newSerial));
-     entryModel.setOrder(orderModel);//
+     entryModel.setOrder(orderModel);
      entryModel.setProduct(newSerial.getBlProduct());
      entryModel.setUnAllocatedQuantity(0L);
      entryModel.setBasePrice(oldOrderEntry.getBasePrice());
+     entryModel.setTotalPrice(oldOrderEntry.getBasePrice());
      entryModel.setUnit(unitService.getUnitForCode("pieces"));
+     entryModel.setGearGuardWaiverSelected(oldOrderEntry.getGearGuardWaiverSelected());
+     entryModel.setGearGuardWaiverPrice(oldOrderEntry.getGearGuardWaiverPrice());
+     entryModel.setGearGuardProFullWaiverSelected(oldOrderEntry.getGearGuardProFullWaiverSelected());
+     entryModel.setGearGuardProFullWaiverPrice(oldOrderEntry.getGearGuardProFullWaiverPrice());
      return entryModel;
  }
  private ConsignmentEntryModel createAndUpdateConsignmentEntry(final BlSerialProductModel newSerial,final ConsignmentModel consignment,final AbstractOrderEntryModel entryModel){
