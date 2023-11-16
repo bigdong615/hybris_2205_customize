@@ -583,12 +583,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		modelService.save(blSerialProduct);
 		modelService.refresh(blSerialProduct);
 		//BLS-533
-		final List<String> serialList = new ArrayList<>();
-		serialList.add(blSerialProduct.getBarcode());
-		Set<String> pCodes = new HashSet<>();
-		pCodes.add(blSerialProduct.getCode());
-		final Collection<ConsignmentEntryModel> consignmentEntryModels = this.getConignmentEntriesForSerials(serialList);
-		getBlStockService().releaseStockForGivenSerial(pCodes, new Date(), consignmentEntryModels.iterator().next().getConsignment().getOptimizedShippingEndDate());
+		Set<String> productCode = new HashSet<>();
+		productCode.add(blSerialProduct.getCode());
+		final ConsignmentModel consignmentModel = blSerialProduct.getAssociatedConsignment();
+		getBlStockService().releaseStockForGivenSerial(productCode, new Date(), consignmentModel.getOptimizedShippingEndDate());
 
 	}
 
