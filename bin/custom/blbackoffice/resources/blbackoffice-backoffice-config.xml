@@ -1272,7 +1272,7 @@
 						  property="currentObject"/>
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.pendingverifications"
 						  property="currentObject"/>
-
+				<y:action action-id="com.bl.blbackoffice.actions.order.productReplacementAction" property="currentObject"/>
 			</y:group>
 		</y:actions>
 	</context>

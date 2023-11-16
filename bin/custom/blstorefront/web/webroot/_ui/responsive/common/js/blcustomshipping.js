@@ -1503,7 +1503,8 @@ function reverseTraverseOnShipping() {
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('select[id="address.countryIso"]').removeClass('error');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('select[id="address.addressType"]').val('');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('select[id="address.addressType"]').removeClass('error');
-     $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]').val('');
+     // We need to load loggedin user email id here, for that reason we no need to set empty here
+     //$('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]').val('');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]').removeClass('error');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]').val('');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]').removeClass('error');

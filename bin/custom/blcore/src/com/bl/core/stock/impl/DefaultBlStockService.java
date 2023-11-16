@@ -11,6 +11,7 @@ import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -516,6 +517,45 @@ public class DefaultBlStockService implements BlStockService
 					warehouseLocation.getCode(), stockLevel.getPk(), stockLevel.getSerialProductCode());
 		}*/
 	}
+
+
+
+// make it for single serial
+	public boolean isStockAvailable(Set<String> serialProductCodes, Date startDay, Date endDay,WarehouseModel warehouse){
+		final Collection<StockLevelModel> serialStocks = blStockLevelDao
+				.findSerialStockLevelsForDateAndCodesForWarehouse(serialProductCodes, startDay,
+						endDay, false, warehouse);
+		final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(startDay);
+		final LocalDateTime rentalEndDate = BlDateTimeUtils.getFormattedDateTime(endDay);
+		final long stayDuration = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1));
+		if(serialStocks.size() == stayDuration) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+	public Collection<StockLevelModel> getAvailableStockForSingleSerial(String serialProductCode, Date startDay, Date endDay,WarehouseModel warehouse){
+		return blStockLevelDao
+				.findSerialStockLevelsForDateAndCodesForWarehouse(new HashSet<>(Arrays.asList(serialProductCode)), startDay,
+						endDay, Boolean.FALSE, warehouse);
+	}
+	public Collection<StockLevelModel> getStockForSingleSerial(final String serialCode,Date startDay, Date endDay){
+		return blStockLevelDao
+				.findSerialStockLevelForDate(serialCode, startDay, endDay);
+	}
+		public void updateAndSaveStockRecord(final Collection<StockLevelModel> serialStocks, final Boolean reservedStatus, final String orderNumber) {
+			serialStocks.forEach(stockLevel -> {
+				stockLevel.setReservedStatus(reservedStatus);
+				stockLevel.setOrder(orderNumber);
+				saveStockRecord(stockLevel);
+			});
+		}
+
+
+
+
+
+
 
 	/**
 	 * It gets the active serials associated to the sku and creates stock for the serials

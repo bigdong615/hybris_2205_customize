@@ -152,6 +152,37 @@
 			<virtual-sockets/>
 		</widget>
 
+		<widget id="replacementProductPopup"
+				widgetDefinitionId="com.bl.backoffice.widgets.order.productReplacement"
+				slotId="cockpitWidgetChildrenInvisible"
+				title="Product replacement" template="true">
+
+			<instance-settings socketEventRoutingMode="LAST_USED">
+				<create onInit="false" reuseExisting="true">
+					<all-incoming-events/>
+				</create>
+				<close>
+					<all-outgoing-events/>
+				</close>
+				<select onInit="false">
+					<all-incoming-events/>
+				</select>
+			</instance-settings>
+
+			<setting key="widgetStyleClass" type="String"></setting>
+			<setting key="__externalLocationPath" type="String">
+				extension://warehousingbackoffice
+			</setting>
+			<setting key="widgetStyleAttribute" type="String"></setting>
+			<setting key="_width" type="String">1020px</setting>
+
+			<setting key="__externalLocationPath" type="String">extension://blbackoffice</setting>
+			<setting key="widgetStyleAttribute" type="String"></setting>
+			<setting key="_width" type="String">1000px</setting>
+			<setting key="_height" type="String">650px</setting>
+			<virtual-sockets/>
+		</widget>
+
 		<widget id="blFrontBarCodeScanContextPopup"
 				widgetDefinitionId="custom.bl.widgets.blFrontBarCodeScan"
 				slotId="cockpitWidgetChildrenInvisible"
@@ -465,6 +496,9 @@
 	<widget-connection sourceWidgetId="STUB_com.bl.backoffice.actions.blFrontScan.frontdeskscanaction" outputId="frontDeskScanOutContext" targetWidgetId="frontDeskScanPopUp" inputId="inputObject"/>
 	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.customCancelOrderAction" outputId="customCancelOrderContext" targetWidgetId="customCancelOrderPopup" inputId="inputObject"/>
 	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.customOrderRefundAction" outputId="orderRefundContext" targetWidgetId="customRefundOrderPopup" inputId="inputObject"/>
+
+	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.productReplacementAction" outputId="blProductReplacementContext" targetWidgetId="replacementProductPopup" inputId="inputObject"/>
+
 	<!-- Unboxing Tool Section -->
 	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="UnboxingScanTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="UnboxingScanTool_conditionevaluator" outputId="true" targetWidgetId="UnboxingScanTool_propertyextractor" inputId="genericInput"/>
