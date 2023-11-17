@@ -725,6 +725,24 @@ $('.input-number').change(function() {
 	}
 });
 
+//Submit request, when we press Enter key.
+$('.input-number').keypress(function(e){
+    if(e.which == 13){
+  var currentValue = $(this).val();
+  var entryNumber = parseInt($(this).attr('entryNumber'));
+  var form = $('#updateCartForm' + entryNumber);
+  var productCode = form.find('input[name=productCode]').val();
+  var initialCartQuantity = form.find('input[name=initialQuantity]').val();
+  var entryNumber = form.find('input[name=entryNumber]').val();
+  form.find('input[name=quantity]').val(currentValue);
+   if (initialCartQuantity != currentValue) {
+      	ACC.track.trackUpdateCart(productCode, initialCartQuantity,
+      						currentValue);
+      	form.submit();
+   }
+   }
+});
+
 $(".input-number").keydown(function (e) {
 	// Allow: backspace, delete, tab, escape, enter and .
 	if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||
