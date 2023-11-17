@@ -12,6 +12,7 @@ public class BlDeliveryModeLoggingConstants
 	public static final String DATE_TIME = "HH:mm";
 	public static final String ZONE_PST = "PST";
 	public static final String ZONE_EST = "EST";
+	public static final String COMPLETE_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ssXXX";
 
 	public static final String AM_ERROR = "AM-ERROR";
 	public static final String PIN_ERROR = "PIN-ERROR";
