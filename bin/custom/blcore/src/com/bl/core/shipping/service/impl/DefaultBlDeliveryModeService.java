@@ -568,9 +568,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
    	 final String maxValue = String.valueOf(Math.max(
              calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
                      BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT)));
-        if (!(order instanceof CartModel)) {
+        if (order instanceof CartModel) {
             order.setTotalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT));
             order.setDimensionalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT));
+            getModelService().save(order);
         }
         final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), zoneDeliveryModeModel);
         if (shippingCostModel != null) {
