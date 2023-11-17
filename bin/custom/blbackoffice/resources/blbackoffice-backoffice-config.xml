@@ -398,6 +398,38 @@
 			</wz:step>
 		</wz:flow>
 	</context>
+	
+	<context component="create-wizard" type="PaymentTransactionEntry" merge-by="replace">
+	 <wz:flow id="PaymentTransactionEntry" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+	   <wz:prepare id="blPaymentTransactionEntryPrepare">
+	   	<wz:initialize property="newPaymentTransactionEntry" type="ctx.TYPE_CODE"/>
+	   </wz:prepare>
+	   <wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
+	     <wz:content id="step1.content">
+	       <wz:property-list root="newPaymentTransactionEntry">
+	         <wz:property qualifier="code"/>
+	         <wz:property qualifier="amount"/>
+	         <wz:property qualifier="requestid"/>
+	         <wz:property qualifier="currency"/>
+	         <wz:property qualifier="refundedAmount"/>
+	         <wz:property qualifier="requestToken"/>
+	         <wz:property qualifier="submittedForSettlementAmount"/>
+	         <wz:property qualifier="subscriptionID"/>
+	         <wz:property qualifier="time"/>
+	         <wz:property qualifier="transactionStatus"/>
+	         <wz:property qualifier="transactionStatusDetails"/>     
+	         <wz:property qualifier="type"/>         
+	        </wz:property-list>
+	     </wz:content>
+	     <wz:navigation id="step1.navigation">
+	       <wz:cancel/>
+	       <wz:done>
+	         <wz:save property="newPaymentTransactionEntry"/>
+	       </wz:done>
+	     </wz:navigation>
+	   </wz:step>
+	 </wz:flow>
+	</context>
 
 	<!--BlSerialProduct Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
 	<context component="create-wizard" type="BlSerialProduct" extends="BlSerialProduct" merge-by="replace">
