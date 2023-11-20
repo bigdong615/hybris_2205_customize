@@ -1,5 +1,6 @@
 package com.bl.core.inventory.scan.service.impl;
 
+import com.bl.core.stock.BlStockService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -98,6 +99,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	@Resource(name = "blEspEventService")
 	private BlESPEventService  blESPEventService;
+
+	@Resource(name = "blStockService")
+	private BlStockService blStockService;
 
 	/**
 	 * {@inheritDoc}
@@ -578,6 +582,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blSerialProduct.setLastUnboxedOcLocationDate(blInventoryLocationScanHistory.getCreationtime());
 		modelService.save(blSerialProduct);
 		modelService.refresh(blSerialProduct);
+		//BLS-533
+		Set<String> productCode = new HashSet<>();
+		productCode.add(blSerialProduct.getCode());
+		final ConsignmentModel consignmentModel = blSerialProduct.getAssociatedConsignment();
+		getBlStockService().releaseStockForGivenSerial(productCode, new Date(), consignmentModel.getOptimizedShippingEndDate());
+
 	}
 
 	/**
@@ -3032,5 +3042,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		serialProductModel.setAssociatedConsignment(consignmentModel);
 		modelService.save(serialProductModel);
 		modelService.refresh(serialProductModel);
+	}
+
+	public BlStockService getBlStockService() {
+		return blStockService;
+	}
+
+	public void setBlStockService(BlStockService blStockService) {
+		this.blStockService = blStockService;
 	}
 }

@@ -63,7 +63,10 @@ public class BlCustomerPopulator extends CustomerPopulator
 			target.setCoiCoverageAmount(source.getCoiCoverageAmount());
 			target.setKycScore(source.getKycScore());
 
+			if (source.getVipType() != null)
+			{
 			target.setVipType(source.getVipType().getCode());
+			}
 
 			if (source.getVerificationLinkSource() != null)
 			{

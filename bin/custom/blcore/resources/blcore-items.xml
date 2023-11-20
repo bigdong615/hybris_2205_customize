@@ -2613,6 +2613,12 @@
                         <modifiers read="true" write="true" optional="true" />
                         <description>To identify whether the order/Order Bill is modified or not</description>
                     </attribute>
+                    <attribute qualifier="replacementEntry" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                        <description>To identify whether the order entry for replacement product</description>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
