@@ -307,11 +307,23 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         final String pstCutOffTime = BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST);
         final int result = checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
                 rentalStart);
+        final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST,
+				  new Date().toString());
+        final ZoneDeliveryModeModel zoneDeliveryMode = blDeliveryModeService
+				  .getZoneDeliveryMode(ShippingCostEnum.UPS_OVERNIGHT_ROUND_TRIP.getCode());
         if (result >= BlInventoryScanLoggingConstants.TWO) {
-            return getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
+      	  if (result == BlInventoryScanLoggingConstants.TWO && (zoneDeliveryMode != null
+					  ? !BlDateTimeUtils.compareTimeWithCutOff(zoneDeliveryMode.getCutOffTime())
+					  : Boolean.FALSE) && !(currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)))
+      	  {
+            return getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
                     null, payByCustomer);
+      	  }
+      	  else {
+      		  return getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
+                    null, payByCustomer);
+      	  }
         } else if (result == BlInventoryScanLoggingConstants.ONE) {
-            final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST, new Date().toString());
             if (currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)) {
                 return getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
                         null, payByCustomer);
