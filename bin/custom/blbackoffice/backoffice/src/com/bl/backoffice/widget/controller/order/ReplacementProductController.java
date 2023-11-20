@@ -175,16 +175,18 @@ if(isSerialAvailableOnOrder(actualOrder,productData.getOldSerial())) {
     } else {
         if (productData.getOldSerial().getBlProduct().equals(serial.getBlProduct())) {
             if (BooleanUtils.isTrue(serial.getWarehouseLocation().getCode().equals(productData.getConsignment().getWarehouse().getCode()))) {
-
                 replaceSerialWithSameProductAndWarehouse(productData, serial, productData.getNewSerial(), productData.getOldSerial(), row);
-
             } else {
                 // replaceSerialWithSameProductAndDifferentWarehouse()
                 // same product from different warehouse
             }
 
         } else {
-            validateAndReplaceSerilForDifferentProduct(productData, serial, productData.getNewSerial(), productData.getOldSerial(), row);
+            if (BooleanUtils.isTrue(serial.getWarehouseLocation().getCode().equals(productData.getConsignment().getWarehouse().getCode()))) {
+                validateAndReplaceSerilForDifferentProduct(productData, serial, productData.getNewSerial(), productData.getOldSerial(), row);
+            }else {
+                // replaceSerialWithDifferentProductAndDifferentWarehouse()
+            }
         }
     }
 }else {
