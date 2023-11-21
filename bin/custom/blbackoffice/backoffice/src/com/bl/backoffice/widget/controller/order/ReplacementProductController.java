@@ -218,6 +218,13 @@ private  void validateAndReplaceSerilForDifferentProduct(final ReplacementProduc
          HashMap<String, ConsignmentEntryStatusEnum> statusMaps = (consignmentEntry.getConsignmentEntryStatus() == null || consignmentEntry.getConsignmentEntryStatus().isEmpty()) ?Maps.newHashMap():Maps.newHashMap(consignmentEntry.getConsignmentEntryStatus());
          statusMaps.put(newSerial.getCode(),ConsignmentEntryStatusEnum.NOT_SHIPPED);
 consignmentEntry.setConsignmentEntryStatus(statusMaps);
+         final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
+         if (entryModel.getConsignmentEntries() != null) {
+             entryModel.getConsignmentEntries().forEach(consignmentEntries::add);
+         }
+
+         consignmentEntries.add(consignmentEntry);
+         entryModel.setConsignmentEntries(consignmentEntries);
      }else {
       consignmentEntry=createAndUpdateConsignmentEntry(newSerial,consignment,entryModel);
      }
