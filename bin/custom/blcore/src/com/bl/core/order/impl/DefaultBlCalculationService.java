@@ -723,7 +723,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		for (final AbstractOrderEntryModel entryModel : order.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(
 				Collectors.toList()))
 		{
-			resetAllValuesForTax(entryModel);
+			if (!entryModel.isReplacementEntry()) {
+				resetAllValuesForTax(entryModel);
+			}
 			super.calculateTotals(entryModel , true);
 			subtotal += entryModel.getTotalPrice().doubleValue();
 			totalDamageWaiverCost += getDamageWaiverPriceFromEntry(entryModel);
