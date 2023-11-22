@@ -184,6 +184,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 			order.setStatus(OrderStatus.PAYMENT_CAPTURED);
 			order.setIsCaptured(Boolean.TRUE);
 			order.setIsAuthorised(Boolean.TRUE);
+			order.setIsAuthorizeAndCaptureJobExecuted(Boolean.TRUE);
 			getModelService().save(order);
 			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());

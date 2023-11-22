@@ -72,6 +72,8 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private static final String IS_NEW_GEAR_ORDER = "isNewGearOrder";
 	private static final String IS_AUTHORIZATION_ATTEMPTED = "isAuthorizationAttempted";
 
+	private static final String IS_CAPTURED = "isCaptured";
+
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} NOT IN "
