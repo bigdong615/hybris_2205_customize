@@ -131,7 +131,10 @@ public class ReplacementProductController extends DefaultWidgetController {
           String   selectedReason=( (Combobox)row.getChildren().get(5)).getValue();
             replacementProductData.setNewSerial(((Textbox) row.getChildren().get(4)).getValue());
             replacementProductData.setSelectedReason(( (Combobox)row.getChildren().get(5)).getValue());
-            Messagebox.show("Confirm you want to replace "+replacementProductData.getAssignedSerial()+" with "+newserial+" on order "+orderModel.getCode(), "Replacement Confirmation", new Messagebox.Button[]
+
+            final BlSerialProductModel serial = this.defaultBlProductDao.getSerialByBarcode(replacementProductData.getNewSerial());
+
+            Messagebox.show("Confirm you want to replace "+replacementProductData.getAssignedSerial()+" "+replacementProductData.getOldSerial().getBlProduct().getName()+" with "+newserial+" "+serial.getBlProduct().getName()+" on order "+orderModel.getCode(), "Replacement Confirmation", new Messagebox.Button[]
                     {Messagebox.Button.YES, Messagebox.Button.NO},null, Messagebox.QUESTION, null, clickEvent -> {
                 if (Messagebox.Button.YES == clickEvent.getButton())
                 {
