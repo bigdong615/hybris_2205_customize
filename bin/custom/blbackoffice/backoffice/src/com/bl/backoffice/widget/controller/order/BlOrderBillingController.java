@@ -44,6 +44,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.*;
@@ -726,6 +727,13 @@ public class BlOrderBillingController extends DefaultWidgetController {
         }
     }
 
+    public static void textBoxChange(InputEvent ie)
+    {
+        String v = ie.getValue(); // this is the new value that you just typed
+
+        // now you can do whatever you want with the string
+        System.out.println("my value=" + v);
+    }
 
     public OrderModel getOrderModel() {
         return orderModel;
