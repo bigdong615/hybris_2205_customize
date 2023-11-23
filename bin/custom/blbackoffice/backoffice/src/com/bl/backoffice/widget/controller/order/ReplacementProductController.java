@@ -14,6 +14,7 @@ import com.bl.core.price.strategies.BlProductDynamicPriceStrategy;
 import com.bl.core.product.dao.impl.DefaultBlProductDao;
 import com.bl.core.service.BlBackOfficePriceService;
 import com.bl.core.stock.BlStockService;
+import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hybris.cockpitng.annotations.SocketEvent;
@@ -32,6 +33,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Events;
@@ -133,12 +135,15 @@ public class ReplacementProductController extends DefaultWidgetController {
             replacementProductData.setSelectedReason(( (Combobox)row.getChildren().get(5)).getValue());
 
             final BlSerialProductModel serial = this.defaultBlProductDao.getSerialByBarcode(replacementProductData.getNewSerial());
-
+            if (Objects.isNull(serial)) {
+                Messagebox.show("No serial present with given barcode :" + replacementProductData.getNewSerial());
+                return;
+            }
             Messagebox.show("Confirm you want to replace "+replacementProductData.getAssignedSerial()+" "+replacementProductData.getOldSerial().getBlProduct().getName()+" with "+newserial+" "+serial.getBlProduct().getName()+" on order "+orderModel.getCode(), "Replacement Confirmation", new Messagebox.Button[]
                     {Messagebox.Button.YES, Messagebox.Button.NO},null, Messagebox.QUESTION, null, clickEvent -> {
                 if (Messagebox.Button.YES == clickEvent.getButton())
                 {
-                    validateAndUpdate(replacementProductData,row);
+                    validateAndUpdate(replacementProductData,row,serial);
                 }else{
                     close();
                 }
@@ -150,21 +155,19 @@ public class ReplacementProductController extends DefaultWidgetController {
 
     }
 
-    private   void  validateAndUpdate(final ReplacementProductData productData, Component row){
+    private   void  validateAndUpdate(final ReplacementProductData productData, Component row,final BlSerialProductModel serial){
         AbstractOrderModel actualOrder = orderDao.getOrderByCode(orderModel.getCode());
 if(isSerialAvailableOnOrder(actualOrder,productData.getOldSerial())) {
-    final BlSerialProductModel serial = this.defaultBlProductDao.getSerialByBarcode(productData.getNewSerial());
-    if (Objects.isNull(serial)) {
-        Messagebox.show("No serial present with given barcode :" + productData.getNewSerial());
-        return;
-    } else if (Objects.isNull(serial.getWarehouseLocation())) {
+     if (Objects.isNull(serial.getWarehouseLocation())) {
         Messagebox.show("No warehouse associated with serial");
     } else if (!blStockService.isStockAvailable(new HashSet<>(Arrays.asList(serial.getCode())), productData.getConsignment().getOptimizedShippingStartDate(), productData.getConsignment().getOptimizedShippingEndDate(), serial.getWarehouseLocation())) {
         Messagebox.show("The replacement serial is not available");
     } else {
-        if (productData.getOldSerial().getBlProduct().equals(serial.getBlProduct())) {
+         BlLogger.logFormatMessageInfo(LOG, Level.INFO,"Going to replace serial: {} - product: {} with serial: {} - product {} for the order {}",
+                 productData.getOldSerial().  getCode(),productData.getOldSerial().getBlProduct().getName(),serial.getCode(),serial.getBlProduct().getName(),orderModel.getCode());
+        if (productData.getOldSerial().getBlProduct().getCode().equals(serial.getBlProduct().getCode())) {
             if (BooleanUtils.isTrue(serial.getWarehouseLocation().getCode().equals(productData.getConsignment().getWarehouse().getCode()))) {
-                replaceSerialWithSameProductAndWarehouse(productData, serial, productData.getNewSerial(), productData.getOldSerial(), row);
+                replaceSerialWithSameProductAndWarehouse(productData, serial,productData.getOldSerial(), row);
             } else {
                 // replaceSerialWithSameProductAndDifferentWarehouse()
                 // same product from different warehouse
@@ -186,7 +189,12 @@ if(isSerialAvailableOnOrder(actualOrder,productData.getOldSerial())) {
 private  void validateAndReplaceSerilForDifferentProduct(final ReplacementProductData productData,final BlSerialProductModel newSerial, final String barCode, final BlSerialProductModel oldSerial,
                                                          final Component row){
    if(isReplacementPossible(productData,newSerial.getBlProduct())){
-                 createAndUpdateEntry(productData,newSerial,barCode,oldSerial,row);
+       try {
+           createAndUpdateEntry(productData, newSerial, barCode, oldSerial, row);
+       }catch (Exception e){
+  BlLogger.logFormattedMessage(LOG,Level.INFO,"300",e,"Some error occure while replacement of serial {} for different product {} for the order {}",
+          newSerial.getCode(),newSerial.getBlProduct().getCode(),orderModel.getCode());
+       }
    }else{
        Messagebox.show("Replacement not possible due to price of new serial is lower than old one");
        return;
@@ -261,6 +269,8 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
      entryModel.setGearGuardProFullWaiverPrice(oldOrderEntry.getGearGuardProFullWaiverPrice());
      entryModel.setReplacementEntry(Boolean.TRUE);
      entryModel.setTaxValues(oldOrderEntry.getTaxValues());
+     BlLogger.logFormatMessageInfo(LOG,Level.INFO,"New order entry created for product {} while replacement of serial {} for the order {}",
+             newSerial.getBlProduct().getCode(),newSerial.getCode(),orderModel.getCode());
      return entryModel;
  }
  private ConsignmentEntryModel createAndUpdateConsignmentEntry(final BlSerialProductModel newSerial,final ConsignmentModel consignment,final AbstractOrderEntryModel entryModel){
@@ -274,13 +284,17 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
      Set<ConsignmentEntryModel> consignmentEntryModels = CollectionUtils.isNotEmpty(consignment.getConsignmentEntries()) ?new HashSet<>( consignment.getConsignmentEntries()) : new HashSet<ConsignmentEntryModel>();
      consignmentEntryModels.add(consignmentEntry);
      consignment.setConsignmentEntries(consignmentEntryModels);
+     BlLogger.logFormatMessageInfo(LOG,Level.INFO,"New consignment entry created for serial {} for product {} while replacement of serial for the order {}",
+             newSerial.getCode(),newSerial.getBlProduct().getCode(),orderModel.getCode());
      return consignmentEntry;
  }
  private void removeSerialAndUpdateOrderEntry(final ReplacementProductData productData,final BlSerialProductModel oldSerial){
-     AbstractOrderEntryModel orderEntry = productData.getOrderEntry();
+
+        AbstractOrderEntryModel orderEntry = productData.getOrderEntry();
      ConsignmentEntryModel consEntry = productData.getConsEntry();
      List<BlProductModel> serialProductOnOrderEntry= orderEntry.getSerialProducts();
-
+     BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Updating older order entry {} and consignment entry {} for older serial {} after replacement of serial for the order {}",
+             orderEntry.getPk(),consEntry.getPk(),oldSerial.getCode(),orderModel.getCode());
             if (CollectionUtils.isNotEmpty(serialProductOnOrderEntry) && serialProductOnOrderEntry.size()>1) {
 
                 serialProductOnOrderEntry = CollectionUtils.isNotEmpty(serialProductOnOrderEntry) ? new ArrayList<>(serialProductOnOrderEntry) : new ArrayList<>();
@@ -320,26 +334,32 @@ private boolean isReplacementPossible(final ReplacementProductData productData,f
     try {
         BigDecimal productPrice = blBackOfficePriceService.getProductPrice(newProduct, orderModel.getRentalStartDate(), orderModel.getRentalEndDate(), false);
         double basePrice = productData.getOrderEntry().getBasePrice();
+        BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Price of replacement product {} and old product {} for the order {}",
+                productPrice.doubleValue(),basePrice,orderModel.getCode());
         replacementPossible = productPrice.doubleValue() > basePrice ? true : false;
     } catch (Exception parse) {
-        LOG.error("Some error occure while fetching price of serial while serial replacement for the order :" + orderModel.getCode(), parse);
-    }
+        BlLogger.logFormattedMessage(LOG,Level.INFO,"300",parse,"Some error occure in replacement flow while fetching price of product {} for duration {} - {} for the order {}",
+                newProduct.getCode(),orderModel.getRentalStartDate(),orderModel.getRentalEndDate(),orderModel.getCode());
+            }
     return replacementPossible;
 }
 
-    protected void replaceSerialWithSameProductAndWarehouse(final ReplacementProductData productData,final BlSerialProductModel newSerial, final String barCode, final BlSerialProductModel oldSerial,
+    protected void replaceSerialWithSameProductAndWarehouse(final ReplacementProductData productData,final BlSerialProductModel newSerial, final BlSerialProductModel oldSerial,
                               final Component row) {
 
         ConsignmentEntryModel consEntry = productData.getConsEntry();
-  updatingBothEntry(consEntry,newSerial,oldSerial);
-
-        modelService.save(consEntry.getOrderEntry());
-        modelService.refresh(consEntry.getOrderEntry());
-        modelService.save(consEntry);
-        modelService.refresh(consEntry);
-     //updating stock records
-        updateStockRecords(productData,newSerial);
-        createAndUpdateOrderNotes(productData,newSerial);
+        try {
+            updatingBothEntry(consEntry, newSerial, oldSerial);
+            modelService.save(consEntry.getOrderEntry());
+            modelService.refresh(consEntry.getOrderEntry());
+            modelService.save(consEntry);
+            modelService.refresh(consEntry);
+            //updating stock records
+            updateStockRecords(productData, newSerial);
+            createAndUpdateOrderNotes(productData, newSerial);
+        }catch (Exception e){
+            BlLogger.logFormattedMessage(LOG,Level.INFO,"300",e,"Some error occure while replacement of serial from ca agent for the order {}",orderModel.getCode());
+        }
         close();
     }
 private   boolean isSerialAvailableOnOrder(AbstractOrderModel order,BlSerialProductModel serialProduct){
@@ -415,12 +435,16 @@ private  ConsignmentEntryModel isConsignmentEntryAlreadyPresent(AbstractOrderMod
         //  releasing stock
         final Collection<StockLevelModel> availableStockForRelease =blStockService.getStockForSingleSerial(productData.getAssignedSerial(),consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate());
         Boolean reservedStatus=   blStockService.isActiveStatus(productData.getOldSerial().getSerialStatus())? Boolean.FALSE:Boolean.TRUE;
+       BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Stock updating while release stock for the serial {}, duration {} - {}, reserve status {} for the order {}",
+               productData.getAssignedSerial(),consignment.getOptimizedShippingStartDate(),consignment.getOptimizedShippingEndDate(),reservedStatus,orderModel.getCode());
         blStockService.updateAndSaveStockRecord(availableStockForRelease,reservedStatus,null);
 
         //reserving stock
         final Collection<StockLevelModel> availableStockForReseved = blStockService.getAvailableStockForSingleSerial(newSerial.getCode(),
                 consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(),
                 newSerial.getWarehouseLocation());
+        BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Reserve stock while replacement serial for the serial {} duration {} - {} for the order {}",
+                newSerial.getCode(),consignment.getOptimizedShippingStartDate(),consignment.getOptimizedShippingEndDate(),orderModel.getCode());
         blStockService.updateAndSaveStockRecord(availableStockForReseved,Boolean.TRUE,orderModel.getCode());
 
     }
@@ -428,9 +452,11 @@ private  ConsignmentEntryModel isConsignmentEntryAlreadyPresent(AbstractOrderMod
     private void createAndUpdateOrderNotes(final ReplacementProductData productData,BlSerialProductModel newSerial){
         final NotesModel notesModel = modelService.create(NotesModel.class);
         notesModel.setType(NotesEnum.ORDER_NOTES);
-        notesModel.setNote("Replacement for "+productData.getOldSerial().getCode()+" "+productData.getOldSerial().getBlProduct().getName()+" to "+newSerial.getCode()+" "+newSerial.getBlProduct().getName()+" - "+productData.getSelectedReason());
+        String replacementNotes ="Replacement for "+productData.getOldSerial().getCode()+" "+productData.getOldSerial().getBlProduct().getName()+" to "+newSerial.getCode()+" "+newSerial.getBlProduct().getName()+" - "+productData.getSelectedReason() ;
+        notesModel.setNote(replacementNotes);
         notesModel.setUserID(orderModel.getUser().getUid());
        modelService.save(notesModel);
+       BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Created order notes {}: {} :for the order {}",notesModel.getPk(),replacementNotes,orderModel.getCode());
         if (CollectionUtils.isNotEmpty(orderModel.getOrderNotes()))
         {
             final List<NotesModel> allOrderNotes = Lists.newArrayList(orderModel.getOrderNotes());
