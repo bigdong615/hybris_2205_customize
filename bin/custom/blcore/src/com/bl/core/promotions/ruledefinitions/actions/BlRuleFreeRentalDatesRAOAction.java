@@ -5,7 +5,10 @@ import com.bl.core.model.BlProductModel;
 
 
 import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.product.service.BlProductService;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.catalog.CatalogVersionService;
+import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.product.ProductModel;
 
 import de.hybris.platform.product.ProductService;
@@ -23,6 +26,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Resource;
+
 /**
  * This action is created to provide discount for
  * free rental dates applicable on promotion
@@ -34,8 +39,12 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
   private static final Logger LOG = Logger.getLogger(BlRuleFreeRentalDatesRAOAction.class);
 
   private BlCommercePriceService blCommercePriceService;
-  private ProductService productService;
   private Converter<OrderEntryRAO, NumberedLineItem> orderEntryRaoToNumberedLineItemConverter;
+  @Resource(name = "productService")
+  private BlProductService productService;
+
+  @Resource
+  private CatalogVersionService catalogVersionService;
 
   public BlRuleFreeRentalDatesRAOAction() {
     //Do Nothing
@@ -142,23 +151,31 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
    */
   protected ProductModel findProduct(final String productCode,final RuleActionContext context) {
     try {
-      return  this.getProductService().getProductForCode(productCode);
+      final CatalogVersionModel catalogVersionModel = catalogVersionService.getCatalogVersion("blProductCatalog", "Online");
+      ProductModel productModel = null;
+      return productService.getProductsOfOnlineVersion(productCode, catalogVersionModel);
     } catch (final Exception exception) {
       BlLogger.logMessage(LOG, Level.ERROR,
           "no product found for code" + productCode + "in rule" + this.getRuleCode(context)
               + "cannot apply rule action.");
-
     }
     return null;
   }
 
-
-  public ProductService getProductService() {
+  public BlProductService getProductService() {
     return productService;
   }
 
-  public void setProductService(ProductService productService) {
+  public void setProductService(BlProductService productService) {
     this.productService = productService;
+  }
+
+  public CatalogVersionService getCatalogVersionService() {
+    return catalogVersionService;
+  }
+
+  public void setCatalogVersionService(CatalogVersionService catalogVersionService) {
+    this.catalogVersionService = catalogVersionService;
   }
 
   public Converter<OrderEntryRAO, NumberedLineItem> getOrderEntryRaoToNumberedLineItemConverter() {
