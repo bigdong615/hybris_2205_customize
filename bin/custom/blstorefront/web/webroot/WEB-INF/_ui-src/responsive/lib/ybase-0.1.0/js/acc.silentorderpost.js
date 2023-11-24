@@ -33,6 +33,8 @@ ACC.silentorderpost = {
         		{
                 inputZipElement.addEventListener('keydown', enforceBillingFormFormat);
         		}
+        		//To display loggedin user email by default - BLS-492
+        		$('input[id^="address\\.email"]').val(window._talkableq[1]!=null ? window._talkableq[1][1].email : '');
 			}
 		});
 
@@ -211,7 +213,8 @@ const isModifierKey = (event) => {
 					$("#billingAddressForm").html(data);
 					if (typeof callback == 'function')
 					{
-						callback.call();
+						//commented to display loggedin user email id bydefault, when loading address form - BLS-492
+						//callback.call();
 					}
 				});
 	}
