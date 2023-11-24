@@ -519,6 +519,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
 		modelService.save(blInventoryLocationScanHistory);
 		modelService.refresh(blInventoryLocationScanHistory);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location Scan History creation is completed with pk {} for unboxing flow with unbox status {}: ",
+				blInventoryLocationScanHistory.getPk(), unboxStatus);
 		if(unboxStatus)
 		{
 			setLastOcLocationHistoryOnSerial(blSerialProduct, blInventoryLocationScanHistory);
@@ -543,6 +545,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
 		modelService.save(blInventoryLocationScanHistory);
 		modelService.refresh(blInventoryLocationScanHistory);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location Scan History creation is completed with pk {} for package scan flow with unbox status {}: ",
+				blInventoryLocationScanHistory.getPk(), unboxStatus);
 		if (unboxStatus)
 		{
 			setLastOcLocationHistoryOnSerial(blSerialProduct, blInventoryLocationScanHistory);
