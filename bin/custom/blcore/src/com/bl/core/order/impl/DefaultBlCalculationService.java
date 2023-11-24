@@ -123,7 +123,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			final List<AbstractOrderEntryModel> entries =order.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(
 					Collectors.toList());
 			for (final AbstractOrderEntryModel e : entries) {
-				recalculateOrderEntryIfNeeded(e, forceRecalculate);
+              if(!e.isReplacementEntry()) {
+				  recalculateOrderEntryIfNeeded(e, forceRecalculate);
+			  }
 				subtotal += e.getTotalPrice().doubleValue();
 				if(!BlCoreConstants.AQUATECH_BRAND_ID.equals(e.getProduct().getManufacturerAID())) {
 					totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
@@ -721,7 +723,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		for (final AbstractOrderEntryModel entryModel : order.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(
 				Collectors.toList()))
 		{
-			resetAllValuesForTax(entryModel);
+			if (!entryModel.isReplacementEntry()) {
+				resetAllValuesForTax(entryModel);
+			}
 			super.calculateTotals(entryModel , true);
 			subtotal += entryModel.getTotalPrice().doubleValue();
 			totalDamageWaiverCost += getDamageWaiverPriceFromEntry(entryModel);

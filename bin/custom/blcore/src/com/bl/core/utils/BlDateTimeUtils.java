@@ -557,7 +557,7 @@ public final class BlDateTimeUtils
 			final SimpleDateFormat sdf = new SimpleDateFormat(BlDeliveryModeLoggingConstants.DATE_TIME);
 			return StringUtils.isNotEmpty(time) ? sdf.parse(BlDateTimeUtils.getCurrentTimeUsingCalendar(
 					BlDeliveryModeLoggingConstants.ZONE_PST)).before(sdf.parse(time)) : Boolean.FALSE;
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, time);
 			return true;
 		}
