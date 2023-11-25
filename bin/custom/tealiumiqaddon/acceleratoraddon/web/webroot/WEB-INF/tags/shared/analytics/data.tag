@@ -106,7 +106,7 @@
       <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
         <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
       </c:forEach>
-        }
+       <%--                  }                           --%>
   	</c:when>
   	</c:choose>
   	
