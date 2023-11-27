@@ -60,6 +60,7 @@ import java.util.stream.Collectors;
 public class BlOrderBillingController extends DefaultWidgetController {
 
     private static final Logger LOG = Logger.getLogger(BlOrderBillingController.class);
+    static BlOrderBillingController cl = new BlOrderBillingController();
     private static final String IN_SOCKET = "inputObject";
     private OrderModel orderModel;
     @Wire
@@ -106,7 +107,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
     @WireVariable
     private transient BackofficeLocaleService cockpitLocaleService;
     @Wire
-    private Grid orderEntries;
+    private static Grid orderEntries;
 
     @WireVariable
     private transient ModelService modelService;
@@ -731,8 +732,18 @@ public class BlOrderBillingController extends DefaultWidgetController {
     {
         String v = ie.getValue(); // this is the new value that you just typed
 
+        for (final Component row : cl.getOrderEntriesGridRows()) {
+             if(Double.parseDouble(((Textbox) row.getChildren().get(3)).getValue()) == Double.parseDouble((String) ie.getPreviousValue())) {
+                 ((Textbox) row.getChildren().get(5)).setValue(v);
+             }
+        }
+        //cl.setTax();
+       // cl.calculateLineItemTotalAmountDue();
         // now you can do whatever you want with the string
         System.out.println("my value=" + v);
+    }
+
+    private static void setValues(String v) {
     }
 
     public OrderModel getOrderModel() {
