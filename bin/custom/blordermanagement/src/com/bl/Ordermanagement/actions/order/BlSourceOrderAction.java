@@ -248,8 +248,11 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 			startConsignmentSubProcess(consignments, process, false);
 		}
     }
-    else
+    else if(order.getStatus().equals(OrderStatus.WAIT_FRAUD_MANUAL_CHECK))
     {
+      startConsignmentSubProcess(consignments, process, true);
+    }
+    else {
       startConsignmentSubProcess(consignments, process, false);
     }
   }
