@@ -749,8 +749,9 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 	private PaymentTransactionEntryModel createCaptureTransactionEntry(final AbstractOrderModel order,
 			final BrainTreeAuthorizationResult result, final BrainTreePaymentInfoModel paymentInfo) {
-		final PaymentTransactionEntryModel transactionEntry = createTransactionEntry(
-				PaymentTransactionType.CAPTURE, order, result, paymentInfo);
+		final PaymentTransactionEntryModel transactionEntry;
+		        transactionEntry = createTransactionEntry(
+					PaymentTransactionType.CAPTURE, order, result, paymentInfo);
 
 		if (!result.isSuccess())
 		{
@@ -982,7 +983,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
       braintreePaymentTransaction.setPlannedAmount(formatAmount(paymentTransactionEntry.getAmount()));
 
       if(Objects.nonNull(brainTreePaymentInfoModel)) {
-      	setTransactionTypeForAdditionalPayment(brainTreePaymentInfoModel, braintreePaymentTransaction);
+      	setTransactionTypeForAdditionalPayment(brainTreePaymentInfoModel, braintreePaymentTransaction,cart);
 			}
       if(isPaymentForDeposit(brainTreePaymentInfoModel) || (Objects.nonNull(brainTreePaymentInfoModel)
 					&& brainTreePaymentInfoModel.isCreateNewTransaction()))
@@ -1030,10 +1031,12 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	 * @param braintreePaymentTransaction braintree payment transaction
 	 */
 	private void setTransactionTypeForAdditionalPayment(final BrainTreePaymentInfoModel brainTreePaymentInfoModel,
-			final PaymentTransactionModel braintreePaymentTransaction) {
-  	if(brainTreePaymentInfoModel.isBillPayment()) {
-  		braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.BILL_PAYMENT);
-		} else if(brainTreePaymentInfoModel.isModifyPayment()) {
+			final PaymentTransactionModel braintreePaymentTransaction,AbstractOrderModel orderModel) {
+		if (brainTreePaymentInfoModel.isBillPayment()) {
+			braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.BILL_PAYMENT);
+		} else if (BooleanUtils.isTrue(orderModel.getIsAuthorizeAndCaptureJobExecuted())) {
+			braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.ORDER_EDIT_ADJUSTMENT);
+	    } else if(brainTreePaymentInfoModel.isModifyPayment()) {
   		braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.MODIFY_PAYMENT);
 		} else if(brainTreePaymentInfoModel.isExtendOrder()) {
   		braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.EXTEND_ORDER);
