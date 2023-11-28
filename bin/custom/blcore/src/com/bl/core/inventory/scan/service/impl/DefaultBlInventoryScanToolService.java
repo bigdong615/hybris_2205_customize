@@ -411,6 +411,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		this.updateLocationOnItemForStaged(blSerialProduct, unboxStatus, blInventoryLocationLocal);
 
 		/* Scan History Entry */
+		BlLogger.logMessage(LOG, Level.DEBUG, "in updateLocationOnItem() method");
 		setBlLocationScanHistory(blSerialProduct, unboxStatus, blInventoryLocationLocal);
 	}
 
@@ -519,6 +520,18 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
 		modelService.save(blInventoryLocationScanHistory);
 		modelService.refresh(blInventoryLocationScanHistory);
+		try{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location Scan History creation is completed with pk {} for unboxing flow with unbox status {} for serial Product {} ",
+					blInventoryLocationScanHistory.getPk(), unboxStatus, blSerialProduct.getCode());
+			StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+			for (StackTraceElement st : stackTrace) {
+				BlLogger.logMessage(LOG, Level.DEBUG, st.toString());
+			}
+		}
+		catch (Throwable e){
+			LOG.error("Getting error while printing stack trace " +e);
+		}
+
 		if(unboxStatus)
 		{
 			setLastOcLocationHistoryOnSerial(blSerialProduct, blInventoryLocationScanHistory);
@@ -543,6 +556,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
 		modelService.save(blInventoryLocationScanHistory);
 		modelService.refresh(blInventoryLocationScanHistory);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Location Scan History creation is completed with pk {} for package scan flow with unbox status {}: ",
+				blInventoryLocationScanHistory.getPk(), unboxStatus);
 		if (unboxStatus)
 		{
 			setLastOcLocationHistoryOnSerial(blSerialProduct, blInventoryLocationScanHistory);
@@ -1483,6 +1498,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 							availablePackageBarcodes, consignmentEntryModels);
    					return result;
    				}else {
+					BlLogger.logMessage(LOG, Level.DEBUG, "in doUnboxing() method");
    				performSerialToDPCOrDCLocationScan(result, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
 							availablePackageBarcodes, packagingInfoModels);
 				}}
@@ -1772,6 +1788,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			BlLogger.logMessage(LOG, Level.DEBUG, "Marking package and consignment as PARTIALLY_UNBOXED");
 			changePackagingInfoStatus(packagingInfoModel, PackagingInfoStatus.PARTIALLY_UNBOXED);
 			changeConsignmentStatus(consignmentModel, ConsignmentStatus.PARTIALLY_UNBOXED);
+			BlLogger.logMessage(LOG, Level.DEBUG, "in getBlSerialProductModelBooleanMap() method");
 			final Map<Integer,List<String>> failedSerials = checkSerialsForDPAndSubParts(availableBarcodeList, consignmentModel,
 					blInventoryLocationModel);
 			if (canChangeToUnBoxStatus(packagingInfoModel))
@@ -1932,6 +1949,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 		else
 		{
+			BlLogger.logMessage(LOG, Level.DEBUG, "in performLocationUpdateOnSerial() method");
 			checkInventoryLocationForDCOrDPC(serialProductModel, isLocationDP(), blInventoryLocationModel, dirtyPrioritySerialList,dirtySerialList);
 		}
 	}
@@ -1953,11 +1971,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			if (isLocationDPC)
 			{
+				BlLogger.logMessage(LOG, Level.DEBUG, "in checkInventoryLocationForDCOrDPC 1");
 				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 			else
 			{
 				//dirtyPrioritySerialList.add(blSerialProductModel.getBarcode());
+				BlLogger.logMessage(LOG, Level.DEBUG, "in checkInventoryLocationForDCOrDPC 2");
 				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 		}
@@ -1966,10 +1986,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			if (isLocationDPC || !getStatusOfLocationDC())
 			{
 				//dirtySerialList.add(blSerialProductModel.getBarcode());
+				BlLogger.logMessage(LOG, Level.DEBUG, "in checkInventoryLocationForDCOrDPC 3");
 				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 			else
 			{
+				BlLogger.logMessage(LOG, Level.DEBUG, "in checkInventoryLocationForDCOrDPC 4");
 				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 		}
@@ -2210,6 +2232,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 */
 	public void checkInventoryLocationForDCOrDPC(final BlSerialProductModel blSerialProductModel, final boolean isLocationDPC,
 												 final BlInventoryLocationModel blInventoryLocationLocal, final Collection<String> serialList) {
+		BlLogger.logMessage(LOG, Level.DEBUG, "in checkInventoryLocationForDCOrDPC() method");
 		if (blSerialProductModel.isDirtyPriorityStatus() || doCheckDirtyPriorityStatus(blSerialProductModel)) {
 			if (isLocationDPC) {
 				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
