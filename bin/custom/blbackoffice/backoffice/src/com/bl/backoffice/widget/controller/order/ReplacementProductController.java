@@ -167,9 +167,9 @@ if(isSerialAvailableOnOrder(actualOrder,productData.getOldSerial())) {
                  productData.getOldSerial().  getCode(),productData.getOldSerial().getBlProduct().getName(),serial.getCode(),serial.getBlProduct().getName(),orderModel.getCode());
         if (productData.getOldSerial().getBlProduct().getCode().equals(serial.getBlProduct().getCode())) {
             if (BooleanUtils.isTrue(serial.getWarehouseLocation().getCode().equals(productData.getConsignment().getWarehouse().getCode()))) {
-                replaceSerialWithSameProductAndWarehouse(productData, serial,productData.getOldSerial(), row);
+                replaceSerialWithSameProductAndWarehouse(productData, serial);
             } else {
-                // replaceSerialWithSameProductAndDifferentWarehouse()
+                 //replaceSerialWithSameProductAndDifferentWarehouse(productData,serial);
                 // same product from different warehouse
             }
 
@@ -344,16 +344,23 @@ private boolean isReplacementPossible(final ReplacementProductData productData,f
     return replacementPossible;
 }
 
-    protected void replaceSerialWithSameProductAndWarehouse(final ReplacementProductData productData,final BlSerialProductModel newSerial, final BlSerialProductModel oldSerial,
-                              final Component row) {
+    protected void replaceSerialWithSameProductAndWarehouse(final ReplacementProductData productData,final BlSerialProductModel newSerial) {
 
         ConsignmentEntryModel consEntry = productData.getConsEntry();
         try {
-            updatingBothEntry(consEntry, newSerial, oldSerial);
-            modelService.save(consEntry.getOrderEntry());
-            modelService.refresh(consEntry.getOrderEntry());
+            updatingBothEntry(consEntry, newSerial, productData.getOldSerial());
             modelService.save(consEntry);
             modelService.refresh(consEntry);
+
+            List<BlProductModel> serialProductOnOrderEntry = consEntry.getOrderEntry()
+                    .getSerialProducts();
+            serialProductOnOrderEntry = CollectionUtils.isNotEmpty(serialProductOnOrderEntry) ? Lists.newArrayList(serialProductOnOrderEntry) :Lists.newArrayList();
+            serialProductOnOrderEntry.add(newSerial);
+            serialProductOnOrderEntry.remove(productData.getOldSerial());
+            consEntry.getOrderEntry().setSerialProducts(serialProductOnOrderEntry);
+            modelService.save(consEntry.getOrderEntry());
+            modelService.refresh(consEntry.getOrderEntry());
+
             //updating stock records
             updateStockRecords(productData, newSerial);
             createAndUpdateOrderNotes(productData, newSerial);
@@ -422,13 +429,6 @@ private  ConsignmentEntryModel isConsignmentEntryAlreadyPresent(AbstractOrderMod
             consignmentEntryStatus.remove(oldSerial.getCode());
         }
         consEntry.setConsignmentEntryStatus(consignmentEntryStatus);
-
-        List<BlProductModel> serialProductOnOrderEntry = consEntry.getOrderEntry()
-                .getSerialProducts();
-        serialProductOnOrderEntry = CollectionUtils.isNotEmpty(serialProductOnOrderEntry) ? Lists.newArrayList(serialProductOnOrderEntry) :Lists.newArrayList();
-        serialProductOnOrderEntry.add(newSerial);
-        serialProductOnOrderEntry.remove(oldSerial);
-        consEntry.getOrderEntry().setSerialProducts(serialProductOnOrderEntry);
     }
     private void updateStockRecords(final ReplacementProductData productData,BlSerialProductModel newSerial){
         ConsignmentModel consignment = productData.getConsignment();
