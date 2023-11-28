@@ -182,8 +182,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 
 	private static final String LATE_ORDERS_FEED_QUERY ="SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
-			+ ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} IN "
-			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})" ;
+			+ ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?startDate AND ?endDate AND ({con:"+  ConsignmentModel.INHIBITLATENOTICES + "} is null OR {con:"+  ConsignmentModel.INHIBITLATENOTICES + "}= ?isInhibitLateNotices) AND {o:status} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})" ;
 
 
 	final List<OrderStatus> statuses = Arrays.asList(OrderStatus.LATE,OrderStatus.SHIPPED, OrderStatus.UNBOXED_PARTIALLY);
@@ -756,6 +755,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 
 		LocalDateTime OneMonthBeforeDate= currentDate.minusDays(31);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(LATE_ORDERS_FEED_QUERY);
+		fQuery.addQueryParameter("isInhibitLateNotices",false);
 		fQuery.addQueryParameter("startDate", formatter.format(OneMonthBeforeDate));
 		fQuery.addQueryParameter("endDate", formatter.format(currentDate));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
