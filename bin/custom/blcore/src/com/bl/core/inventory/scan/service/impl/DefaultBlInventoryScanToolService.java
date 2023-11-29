@@ -519,8 +519,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
 		modelService.save(blInventoryLocationScanHistory);
 		modelService.refresh(blInventoryLocationScanHistory);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location Scan History creation is completed with pk {} for unboxing flow with unbox status {}: ",
-				blInventoryLocationScanHistory.getPk(), unboxStatus);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location Scan History creation is completed with pk {} for unboxing flow with unbox status {} for serial Product {} ",
+					blInventoryLocationScanHistory.getPk(), unboxStatus, blSerialProduct.getCode());
+
 		if(unboxStatus)
 		{
 			setLastOcLocationHistoryOnSerial(blSerialProduct, blInventoryLocationScanHistory);
@@ -545,7 +546,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
 		modelService.save(blInventoryLocationScanHistory);
 		modelService.refresh(blInventoryLocationScanHistory);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location Scan History creation is completed with pk {} for package scan flow with unbox status {}: ",
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Location Scan History creation is completed with pk {} for package scan flow with unbox status {}: ",
 				blInventoryLocationScanHistory.getPk(), unboxStatus);
 		if (unboxStatus)
 		{
@@ -1487,7 +1488,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 							availablePackageBarcodes, consignmentEntryModels);
    					return result;
    				}else {
-   				performSerialToDPCOrDCLocationScan(result, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
+				performSerialToDPCOrDCLocationScan(result, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
 							availablePackageBarcodes, packagingInfoModels);
 				}}
 			}
@@ -1832,18 +1833,19 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			for (final BlProductModel model : blSerialProductModels)
 			{
-				if(model instanceof BlSerialProductModel)
-				{
-					final BlSerialProductModel serialProductModel = ((BlSerialProductModel) model);
-					setAssociatedConsignment(consignmentModel,serialProductModel);
-					serialProductModel.setAssociatedOrder(
-							consignmentModel.getOrder() instanceof OrderModel ? ((OrderModel) consignmentModel.getOrder()) : null);
-					serialProductModel
-							.setConsignmentEntry(getConsignmentEntryFromConsignment(consignmentModel, serialProductModel.getCode()));
+				if(model instanceof BlSerialProductModel) {
+					if (!((BlSerialProductModel) model).getSerialStatus().equals(SerialStatusEnum.UNBOXED)) {
+						final BlSerialProductModel serialProductModel = ((BlSerialProductModel) model);
+						setAssociatedConsignment(consignmentModel, serialProductModel);
+						serialProductModel.setAssociatedOrder(
+								consignmentModel.getOrder() instanceof OrderModel ? ((OrderModel) consignmentModel.getOrder()) : null);
+						serialProductModel
+								.setConsignmentEntry(getConsignmentEntryFromConsignment(consignmentModel, serialProductModel.getCode()));
 
-					updateNumberOfRentedDaysForReturnedSerials(consignmentModel, serialProductModel);
+						updateNumberOfRentedDaysForReturnedSerials(consignmentModel, serialProductModel);
 
-					performLocationUpdateOnSerial(blInventoryLocationModel, dirtyPrioritySerialList, dirtySerialList, serialProductModel);
+						performLocationUpdateOnSerial(blInventoryLocationModel, dirtyPrioritySerialList, dirtySerialList, serialProductModel);
+					}
 				}
 			}
 		}

@@ -1611,7 +1611,7 @@
                     <editorArea:panel name="customersupport_backoffice_transactions_panel">
                         <editorArea:attribute
                                 editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
-                                qualifier="paymentTransactions" readonly="true" label="customersupportbackoffice.section.entries">
+                                qualifier="paymentTransactions" readonly="false" label="customersupportbackoffice.section.entries">
                             <editorArea:editor-parameter>
                                 <editorArea:name>referenceSelected/editorArea/editorAreaConfigCtx</editorArea:name>
                                 <editorArea:value>cs-editor-area</editorArea:value>
@@ -1627,8 +1627,12 @@
                             </editorArea:editor-parameter>
                             <editorArea:editor-parameter>
                                 <editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
-                                <editorArea:value>true</editorArea:value>
+                                <editorArea:value>false</editorArea:value>
                             </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+								<editorArea:name>inlineEditing</editorArea:name>
+								<editorArea:value>true</editorArea:value>
+							</editorArea:editor-parameter>
                         </editorArea:attribute>
                     </editorArea:panel>
                 </editorArea:section>
