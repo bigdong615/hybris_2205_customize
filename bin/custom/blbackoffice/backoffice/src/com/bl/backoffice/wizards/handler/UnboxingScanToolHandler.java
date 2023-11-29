@@ -406,7 +406,6 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 					{
 						getBlInventoryScanToolService().setBlInventoryLocation(blLocalInventoryLocation);
 
-						BlLogger.logMessage(LOG, Level.DEBUG, "In evaluateErrors() method");
 						getBlInventoryScanToolService().setBlLocationScanHistory(scannedProduct, true, blLocalInventoryLocation);
 
 					}
