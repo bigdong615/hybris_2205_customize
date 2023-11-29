@@ -1,7 +1,9 @@
 package com.bl.core.esp.service;
 
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+
 import java.util.List;
+
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
@@ -15,4 +17,6 @@ public interface BlOrderFeedFTPService {
    */
   void convertOrderIntoXML(final List<AbstractOrderModel> abstractOrderModels ,  final List<AbstractOrderModel> unExportedOrderList)
       throws ParserConfigurationException;
+
+  public void convertOrderTOFeed(final List<AbstractOrderModel> abstractOrderModels) throws ParserConfigurationException;
 }
