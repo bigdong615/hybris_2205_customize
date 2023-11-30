@@ -15,7 +15,7 @@
 		<%-- Theme CSS files --%>
 		<!-- Bootstrap core CSS -->
 		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/bootstrap.min.css"/>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
+		<link rel="stylesheet" href="https://d2ieyhi8galmxj.cloudfront.net/litepicker/litepicker.css"/>
 		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/splide-core.min.css"/>
 		<!-- Mobile Nav -->
 		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/mmenu.css"/>
