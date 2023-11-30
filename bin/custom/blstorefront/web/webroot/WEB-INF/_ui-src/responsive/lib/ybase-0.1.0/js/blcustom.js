@@ -366,6 +366,48 @@ $('.shopping-cart__item-remove').on("click", function (e){
     				e.preventDefault();
     			}
     });
+    
+    
+    //To handle enter key action in cart popup, when we change quantity BLS-499
+      $(".input-number").keypress(function(e) {
+		 if(e.which == 13){
+    		var currentValue = $(this).val();
+ 		var totalQuantityToUpdate;
+ 		var entryNumber = parseInt($(this).attr('entryNumber'));
+ 		var form = $('#updateCartForm' + entryNumber);
+ 		var productCode = form.find('input[name=productCode]').val();
+ 		var initialCartQuantity = form.find('input[name=initialQuantity]').val();
+ 		var entryNumber = form.find('input[name=entryNumber]').val();
+ 		totalQuantityToUpdate = parseInt(currentValue) + parseInt(initialCartQuantity);
+ 		form.find('input[name=quantity]').val(totalQuantityToUpdate-1);
+    $.ajax({
+ 			url : ACC.config.encodedContextPath
+ 			+ "/cart/updateQuantity",
+ 			type : 'POST',
+ 			data : form.serialize(),
+ 			beforeSend : function() {
+ 				$('.page-loader-new-layout').show();
+ 			},
+ 			success : function(response) {
+ 				if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+ 					ACC.minicart.updateMiniCartDisplay();
+ 					location.reload();
+ 				}
+ 			},
+ 			complete : function() {
+ 				$('.page-loader-new-layout').hide();
+ 				location.reload();
+ 			},
+ 			error : function(jqXHR, textStatus, errorThrown) {
+ 				$('.page-loader-new-layout').hide();
+ 				console.log(
+ 						"The following error occurred: "
+ 						+ jqXHR, textStatus,
+ 						errorThrown);
+ 			}
+ 		});
+    			}
+    });
  }
 
 function updateDivElements(amountToGetFreeShipping){
