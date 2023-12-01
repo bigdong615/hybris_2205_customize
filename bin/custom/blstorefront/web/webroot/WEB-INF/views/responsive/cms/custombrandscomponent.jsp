@@ -40,7 +40,5 @@
 </c:if> -->
 
 
-<li class="splide__slide my-auto ${fn:toLowerCase(feature.brandImageTitle)}">
 		<c:url value="${feature.urlLink}" var="brandUrl" />
-		<a href="${brandUrl}"><img src="${feature.media.url}"></a>
-	</li>
+		<a href="${brandUrl}"><img src="${feature.media.url}" class="${fn:toLowerCase(feature.brandImageTitle)}"></a>

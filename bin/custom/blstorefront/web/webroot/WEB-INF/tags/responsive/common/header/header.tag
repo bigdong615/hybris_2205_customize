@@ -116,11 +116,9 @@
   	</ul>
   </nav>
   <div class="collapse navbar-collapse" id="blnav">
-  	<ul class="navbar-nav me-auto mb-2 mb-md-0" role="menu">
 	  	<cms:pageSlot position="NavigationBarSlot" var="component" class="">
 			<cms:component component="${component}" />
 		</cms:pageSlot>
-	</ul>
 	<ul class="navbar-nav navbar-right ms-auto mb-2 mb-md-0">
 		<li class="nav-item dropdown menu-large">
        <cms:pageSlot position="HeaderLinkForShipOrPickupSlot" var="component" class="">
