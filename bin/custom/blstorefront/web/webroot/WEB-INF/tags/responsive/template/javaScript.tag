@@ -108,8 +108,8 @@
 		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
         <script src="${commonResourcePathHtml}/js/select-script.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>
+		<script src="https://d2ieyhi8galmxj.cloudfront.net/litepicker/litepicker.js"></script>
+		<script src="https://d2ieyhi8galmxj.cloudfront.net/litepicker/mobilefriendly.js"></script>
 		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
     	<script src="${commonResourcePathHtml}/js/mburger.js"></script>
