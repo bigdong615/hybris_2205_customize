@@ -1,21 +1,10 @@
 package com.bl.core.esp.service.impl;
 
-import com.bl.core.esp.populators.BlOrderBillFeedPopulator;
-import com.bl.core.esp.populators.BlOrderFeedPopulator;
-import com.bl.esp.constants.BlespintegrationConstants;
-import com.bl.esp.dto.OrderFeedData;
-import com.bl.core.esp.service.BlOrderFeedFTPService;
-import com.bl.logging.BlLogger;
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
 import de.hybris.platform.core.enums.ExportStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,11 +27,25 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.bl.core.esp.populators.BlOrderBillFeedPopulator;
+import com.bl.core.esp.populators.BlOrderFeedPopulator;
+import com.bl.core.esp.service.BlOrderFeedFTPService;
+import com.bl.esp.constants.BlespintegrationConstants;
+import com.bl.esp.dto.OrderFeedData;
+import com.bl.logging.BlLogger;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 
 /**
  * This class created to send file to FTP
@@ -241,7 +245,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
     return blOrderFeedPopulator;
   }
 
-  public void setBlOrderFeedPopulator(BlOrderFeedPopulator blOrderFeedPopulator) {
+  public void setBlOrderFeedPopulator(final BlOrderFeedPopulator blOrderFeedPopulator) {
     this.blOrderFeedPopulator = blOrderFeedPopulator;
   }
 
@@ -303,15 +307,25 @@ private File getFile(){
   }
 
   public void setBlOrderBillFeedPopulator(
-      BlOrderBillFeedPopulator blOrderBillFeedPopulator) {
+      final BlOrderBillFeedPopulator blOrderBillFeedPopulator) {
     this.blOrderBillFeedPopulator = blOrderBillFeedPopulator;
   }
   public ModelService getModelService() {
     return modelService;
   }
 
-  public void setModelService(ModelService modelService) {
+  public void setModelService(final ModelService modelService) {
     this.modelService = modelService;
+  }
+
+
+
+
+  @Override
+  public void convertOrderTOFeed(final List<AbstractOrderModel> abstractOrderModels) throws ParserConfigurationException
+  {
+	  // XXX Auto-generated method stub
+
   }
 
 }
