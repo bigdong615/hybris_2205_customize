@@ -495,7 +495,6 @@
             <value code="EXTEND_ORDER"/>
             <value code="MODIFY_PAYMENT"/>
             <value code="BILL_PAYMENT"/>
-            <value code="ORDER_EDIT_ADJUSTMENT"/>
         </enumtype>
 
         <enumtype code="PackageTypeEnum" autocreate="true" generate="true" dynamic="true">
@@ -3415,11 +3414,11 @@
                         <description>Capture the IP address of the buyer</description>
                     </attribute>
 
-                    <attribute qualifier="isAuthorizeAndCaptureJobExecuted" type="java.lang.Boolean">
+                    <attribute qualifier="isDifferencePresentToCapture" type="java.lang.Boolean">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" optional="true" />
                         <defaultvalue>Boolean.FALSE</defaultvalue>
-                        <description>This flag will help to identify if authorize and capture job ran for the order</description>
+                        <description>This flag will help to identify if order has a difference to capture</description>
                     </attribute>
 
                 </attributes>

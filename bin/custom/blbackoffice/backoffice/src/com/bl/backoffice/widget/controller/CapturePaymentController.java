@@ -13,6 +13,7 @@ import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.payment.service.BlPaymentService;
+import com.bl.core.services.cancelandrefund.service.BlCustomCancelRefundService;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
@@ -29,10 +30,12 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.localization.Localization;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import javax.annotation.Resource;
@@ -70,6 +73,7 @@ public class CapturePaymentController extends DefaultWidgetController {
     private static final String ERR_MESG_FOR_ALREADY_CAPTURED_ORDER = "error.message.already.captured.order";
     private static final String ERR_MESG_FOR_ORDER_TRANSFER = "error.message.payment.capture.order.transfer";
     private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED = "blbackoffice.capture,payment.order.success.message";
+	private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED_ORDER_DIFFERENCE = "blbackoffice.capture.payment.order.difference.success.message";
     private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED_GIFT_CARD = "blbackoffice.capture,payment.gift.card.order.success.message";
     private static final String ERR_MSG_FOR_PAYMENT_CAPTURED = "error.message.payment.captured";
     private static final String MESSAGE_BOX_TITLE = "payment.capture.message.box.title";
@@ -91,6 +95,9 @@ public class CapturePaymentController extends DefaultWidgetController {
     
     @Resource(name = "defaultBlConsignmentService")
     private BlConsignmentService defaultBlConsignmentService;
+
+	@Resource
+	private BlCustomCancelRefundService blCustomCancelRefundService;
 	@Resource
 	private transient NotificationService notificationService;
 
@@ -176,7 +183,11 @@ public class CapturePaymentController extends DefaultWidgetController {
              showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ORDER_TRANSFER), true);
              return;
          }
-         if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode()) || getOrderModel().getIsCaptured()
+		if(checkDifferenceOfOrderTotal(getOrderModel()))
+		{
+			showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED_ORDER_DIFFERENCE));
+		}
+		else if(getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode()) || getOrderModel().getIsCaptured()
              || OrderStatus.CANCELLING.equals(getOrderModel().getStatus())) {
              showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER), true);
              return;
@@ -262,6 +273,22 @@ public class CapturePaymentController extends DefaultWidgetController {
 
 		}
 	}
+
+	public boolean checkDifferenceOfOrderTotal(final OrderModel order) {
+		final Optional<PaymentTransactionEntryModel> captureEntry = blCustomCancelRefundService
+				.getCapturedPaymentTransaction(order);
+		if (captureEntry.isPresent() && BooleanUtils.isTrue(order.getIsCaptured()))
+		{
+            BigDecimal differenceToCapture = captureEntry.get().getAmount();
+			if(differenceToCapture.compareTo(BigDecimal.valueOf(order.getTotalPrice())) > 0)
+			{
+				order.setIsDifferencePresentToCapture(Boolean.TRUE);
+				return blPaymentService.capturePaymentForDifferenceOfOrder(order,differenceToCapture);
+			}
+		}
+		return false;
+	}
+
 
 	/**
 	 * Method to check whether it is used order or not

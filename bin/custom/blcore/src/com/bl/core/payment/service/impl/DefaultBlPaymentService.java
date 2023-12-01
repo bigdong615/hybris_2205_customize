@@ -22,6 +22,7 @@ import java.util.*;
 
 import de.hybris.platform.util.localization.Localization;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -102,6 +103,21 @@ public class DefaultBlPaymentService implements BlPaymentService
 		return false;
 	}
 
+	public boolean capturePaymentForDifferenceOfOrder(OrderModel order, BigDecimal differenceAmount) {
+		try {
+				return getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
+						order, differenceAmount, Boolean.TRUE, null);
+
+		} catch(final Exception ex) {
+			order.setStatus(OrderStatus.RECEIVED_PAYMENT_DECLINED);
+			modelService.save(order);
+			BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while capturing "
+					+ "the payment for order {} ", order.getCode(), ex);
+		}
+		return false;
+	}
+
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -164,7 +180,10 @@ public class DefaultBlPaymentService implements BlPaymentService
 					order.setIsAuthorizationAttempted(true);
 					getModelService().save(order);
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is successful for the order {}", order.getCode());
-					processCapturePaymentForOrder((OrderModel) order);
+					if(BooleanUtils.isFalse(order.getIsCaptured()))
+					{
+						processCapturePaymentForOrder((OrderModel) order);
+					}
 				} else {
 					order.setIsAuthorizationAttempted(true);
 					order.setStatus(OrderStatus.PAYMENT_NOT_AUTHORIZED);
@@ -184,7 +203,6 @@ public class DefaultBlPaymentService implements BlPaymentService
 			order.setStatus(OrderStatus.PAYMENT_CAPTURED);
 			order.setIsCaptured(Boolean.TRUE);
 			order.setIsAuthorised(Boolean.TRUE);
-			order.setIsAuthorizeAndCaptureJobExecuted(Boolean.TRUE);
 			getModelService().save(order);
 			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
