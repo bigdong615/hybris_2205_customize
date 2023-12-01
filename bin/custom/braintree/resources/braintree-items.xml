@@ -51,7 +51,8 @@
                   generate="true">
             <value code="REFUND_PARTIAL"/>
 			<value code="ORDER"/>
-        </enumtype>
+			<value code="ORDER_EDIT_ADJUSTMENT_CAPTURE"/>
+		</enumtype>
         
         <enumtype code="BraintreeTransactionRiskDecision"  generate="true" dynamic="true">
         	<value code="NOTEVALUATED"/>

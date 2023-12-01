@@ -749,10 +749,16 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 	private PaymentTransactionEntryModel createCaptureTransactionEntry(final AbstractOrderModel order,
 			final BrainTreeAuthorizationResult result, final BrainTreePaymentInfoModel paymentInfo) {
-		final PaymentTransactionEntryModel transactionEntry;
-		        transactionEntry = createTransactionEntry(
-					PaymentTransactionType.CAPTURE, order, result, paymentInfo);
 
+		final PaymentTransactionEntryModel transactionEntry;
+		if(BooleanUtils.isTrue(order.getIsDifferencePresentToCapture()))
+		{
+			transactionEntry = createTransactionEntry(
+					PaymentTransactionType.ORDER_EDIT_ADJUSTMENT_CAPTURE, order, result, paymentInfo);
+		}else {
+			transactionEntry = createTransactionEntry(
+					PaymentTransactionType.CAPTURE, order, result, paymentInfo);
+		}
 		if (!result.isSuccess())
 		{
 			transactionEntry.setTransactionStatus(TransactionStatus.REJECTED.name());
@@ -1034,9 +1040,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			final PaymentTransactionModel braintreePaymentTransaction,AbstractOrderModel orderModel) {
 		if (brainTreePaymentInfoModel.isBillPayment()) {
 			braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.BILL_PAYMENT);
-		} else if (BooleanUtils.isTrue(orderModel.getIsAuthorizeAndCaptureJobExecuted())) {
-			braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.ORDER_EDIT_ADJUSTMENT);
-	    } else if(brainTreePaymentInfoModel.isModifyPayment()) {
+		} else if(brainTreePaymentInfoModel.isModifyPayment()) {
   		braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.MODIFY_PAYMENT);
 		} else if(brainTreePaymentInfoModel.isExtendOrder()) {
   		braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.EXTEND_ORDER);
