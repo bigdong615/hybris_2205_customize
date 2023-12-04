@@ -192,7 +192,7 @@ public class CapturePaymentController extends DefaultWidgetController {
              showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER), true);
              return;
          }
-         if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
+         else if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
             if(Double.compare(getOrderModel().getTotalPrice(), 0.0) == 0 && CollectionUtils.isNotEmpty(getOrderModel().getGiftCard())) {
           	  getOrderModel().setStatus(OrderStatus.PAYMENT_CAPTURED);
           	  getModelService().save(getOrderModel());
@@ -280,7 +280,7 @@ public class CapturePaymentController extends DefaultWidgetController {
 		if (captureEntry.isPresent() && BooleanUtils.isTrue(order.getIsCaptured()))
 		{
             BigDecimal differenceToCapture = captureEntry.get().getAmount();
-			if(differenceToCapture.compareTo(BigDecimal.valueOf(order.getTotalPrice())) > 0)
+			if(differenceToCapture.compareTo(BigDecimal.valueOf(0.0d)) > 0 )
 			{
 				order.setIsDifferencePresentToCapture(Boolean.TRUE);
 				return blPaymentService.capturePaymentForDifferenceOfOrder(order,differenceToCapture);
