@@ -1611,7 +1611,7 @@
                     <editorArea:panel name="customersupport_backoffice_transactions_panel">
                         <editorArea:attribute
                                 editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
-                                qualifier="paymentTransactions" readonly="true" label="customersupportbackoffice.section.entries">
+                                qualifier="paymentTransactions" readonly="false" label="customersupportbackoffice.section.entries">
                             <editorArea:editor-parameter>
                                 <editorArea:name>referenceSelected/editorArea/editorAreaConfigCtx</editorArea:name>
                                 <editorArea:value>cs-editor-area</editorArea:value>
@@ -1627,8 +1627,12 @@
                             </editorArea:editor-parameter>
                             <editorArea:editor-parameter>
                                 <editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
-                                <editorArea:value>true</editorArea:value>
+                                <editorArea:value>false</editorArea:value>
                             </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+								<editorArea:name>inlineEditing</editorArea:name>
+								<editorArea:value>true</editorArea:value>
+							</editorArea:editor-parameter>
                         </editorArea:attribute>
                     </editorArea:panel>
                 </editorArea:section>
@@ -1741,7 +1745,7 @@
                 </editorArea:section>
                 <editorArea:section	name="customersupportbackoffice.section.paymenttransactions.entries">
                     <editorArea:panel name="customersupport_backoffice_paymentTransactionsEntries_panel">
-                        <editorArea:attribute	editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor" qualifier="entries" readonly="true">
+                        <editorArea:attribute	editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor" qualifier="entries" readonly="false">
                             <editorArea:editor-parameter>
                                 <editorArea:name>listConfigContext</editorArea:name>
                                 <editorArea:value>referenceListViewPaymentTransactionEntries
@@ -1749,7 +1753,7 @@
                             </editorArea:editor-parameter>
                             <editorArea:editor-parameter>
                                 <editorArea:name>disableDisplayingDetails</editorArea:name>
-                                <editorArea:value>true</editorArea:value>
+                                <editorArea:value>false</editorArea:value>
                             </editorArea:editor-parameter>
                             <editorArea:editor-parameter>
                                 <editorArea:name>disableRemoveReference</editorArea:name>
@@ -1757,8 +1761,12 @@
                             </editorArea:editor-parameter>
                             <editorArea:editor-parameter>
                                 <editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
-                                <editorArea:value>true</editorArea:value>
+                                <editorArea:value>false</editorArea:value>
                             </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+								<editorArea:name>inlineEditing</editorArea:name>
+								<editorArea:value>true</editorArea:value>
+							</editorArea:editor-parameter>
                         </editorArea:attribute>
                     </editorArea:panel>
                 </editorArea:section>
@@ -1908,6 +1916,7 @@
 
     <context merge-by="module" parent="GenericItem" type="PaymentTransactionEntry" component="referenceListViewPaymentTransactionEntries">
         <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+            <list-view:column qualifier="code"/>
             <list-view:column qualifier="time"/>
             <list-view:column qualifier="type"/>
 			<list-view:column qualifier="requestId"/>

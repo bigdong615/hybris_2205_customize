@@ -2613,6 +2613,12 @@
                         <modifiers read="true" write="true" optional="true" />
                         <description>To identify whether the order/Order Bill is modified or not</description>
                     </attribute>
+                    <attribute qualifier="replacementEntry" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                        <description>To identify whether the order entry for replacement product</description>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -3732,6 +3738,11 @@
                         <persistence type="property"/>
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                         <description>It tells whether the consignments optimized rental end date is changes due to cronjob.</description>
+                    </attribute>
+                    <attribute qualifier="inhibitLateNotices" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>Flag to identify whether include the order to Late order feed or not.</description>
                     </attribute>
                     <attribute qualifier="shipmentBlShippedStatusDate" type="java.util.Date">
                         <persistence type="property" />

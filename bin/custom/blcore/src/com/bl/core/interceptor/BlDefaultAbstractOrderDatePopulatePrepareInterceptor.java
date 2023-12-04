@@ -78,13 +78,14 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
 				// calculating base price after updating effective dates
 				try
 				{
-					final BigDecimal calculatedBasePrice = getBlBackOfficePriceService().getProductPrice(orderEntry.getProduct(),
-							rentalStartDate, rentalReturnDate, BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()));
-					LOG.debug("BlDefaultAbstractOrderDatePopulatePrepareInterceptor calculatedBasePrice : " + calculatedBasePrice);
-					if (calculatedBasePrice != null)
-					{
-						orderEntry.setBasePrice(calculatedBasePrice.doubleValue());
-					}
+                    if (!orderEntry.isReplacementEntry()) {
+                        final BigDecimal calculatedBasePrice = getBlBackOfficePriceService().getProductPrice(orderEntry.getProduct(),
+                                rentalStartDate, rentalReturnDate, BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()));
+                        LOG.debug("BlDefaultAbstractOrderDatePopulatePrepareInterceptor calculatedBasePrice : " + calculatedBasePrice);
+                        if (calculatedBasePrice != null) {
+                            orderEntry.setBasePrice(calculatedBasePrice.doubleValue());
+                        }
+                    }
 				}
 				catch (final ParseException e)
 				{

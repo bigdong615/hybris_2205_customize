@@ -135,4 +135,6 @@
 	<bean id="pendingVerificationsAction" class="com.bl.backoffice.actions.PendingVerificationsAction" >
 		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
+	<bean id="replacementProductAction" class="com.bl.backoffice.actions.order.ReplacementProductAction" >
+	</bean>
 </beans>
