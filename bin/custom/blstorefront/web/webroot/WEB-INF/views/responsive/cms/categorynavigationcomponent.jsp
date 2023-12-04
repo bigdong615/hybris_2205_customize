@@ -3,6 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
 
+<ul class="navbar-nav me-auto mb-2 mb-md-0" role="menu">
 <!-- Mobile Category Navigation Menu -->
 <c:if test="${positionAttribute == 'NavigationBarMobileSlot'}">
    <c:if test="${component.visible}">
@@ -230,3 +231,4 @@
 	</c:forEach>	
 </c:if>
 </c:if>
+</ul>
