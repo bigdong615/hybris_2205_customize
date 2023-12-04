@@ -44,9 +44,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Composer;
 import org.zkoss.zul.*;
 import org.zkoss.zul.impl.InputElement;
 import com.hybris.cockpitng.util.notifications.NotificationService;
@@ -107,7 +109,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
     @WireVariable
     private transient BackofficeLocaleService cockpitLocaleService;
     @Wire
-    private static Grid orderEntries;
+    private Grid orderEntries;
 
     @WireVariable
     private transient ModelService modelService;
@@ -713,7 +715,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
     @ViewEvent(componentID = "sendInvoice", eventName = "onClick")
     public void sendBillingInvoice() {
         try {
-            if (calculateTotalBillPay().compareTo(BigDecimal.ZERO) <= 0 && !CollectionUtils.isEmpty(this.getOrderModel().getOrderBills())) {
+            if (!CollectionUtils.isEmpty(this.getOrderModel().getOrderBills())) {
                 blEspEventService.sendBillPaidESPEvent(orderModel);
                 notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
                         NotificationEvent.Level.INFO, this.getLabel(BILL_INVOICE_SUCCESS));
@@ -728,22 +730,25 @@ public class BlOrderBillingController extends DefaultWidgetController {
         }
     }
 
-    public static void textBoxChange(InputEvent ie)
+    public void onChangeSomeInput$orderEntries(ForwardEvent forwardEvent)
     {
-        String v = ie.getValue(); // this is the new value that you just typed
+        ForwardEvent fEvent = (ForwardEvent) forwardEvent.getOrigin();
+        InputEvent inputEvent = (InputEvent) fEvent.getOrigin();
+        Double amount = Double.valueOf(inputEvent.getValue());
 
-        for (final Component row : cl.getOrderEntriesGridRows()) {
-             if(Double.parseDouble(((Textbox) row.getChildren().get(3)).getValue()) == Double.parseDouble((String) ie.getPreviousValue())) {
-                 ((Textbox) row.getChildren().get(5)).setValue(v);
-             }
+        for (final Component row : this.getOrderEntriesGridRows()) {
+            if(((Textbox)inputEvent.getTarget().getParent().getChildren().get(2)).getValue().equals(((Textbox) row.getChildren().get(2)).getValue())){
+                if((((Radiogroup) row.getChildren().get(4)).getSelectedItem().getLabel().equals("False"))){
+                    ((Textbox) row.getChildren().get(5)).setValue(String.valueOf(amount));
+                }
+                  else {
+                    amount=amount * 12/100;
+                    ((Textbox) row.getChildren().get(5)).setValue(String.valueOf(amount));
+                }
+            }
         }
-        //cl.setTax();
-       // cl.calculateLineItemTotalAmountDue();
-        // now you can do whatever you want with the string
-        System.out.println("my value=" + v);
-    }
-
-    private static void setValues(String v) {
+        setTax();
+        calculateLineItemTotalAmountDue();
     }
 
     public OrderModel getOrderModel() {
@@ -795,4 +800,6 @@ public class BlOrderBillingController extends DefaultWidgetController {
     public void setDefaultBlAvalaraTaxService(DefaultBlAvalaraTaxService defaultBlAvalaraTaxService) {
         this.defaultBlAvalaraTaxService = defaultBlAvalaraTaxService;
     }
+
+
 }

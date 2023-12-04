@@ -114,7 +114,7 @@
                                             <textbox value="${each.serialNo}" width="200px" name="serial_${each.serialNo}"
                                                       readonly="true"/>
                                             <textbox value="${each.amount}" width="200px" name="name_${each.amount}"
-                                                      readonly="false" onChanging="com.bl.backoffice.widget.controller.order.BlOrderBillingController.textBoxChange(event)"/>
+                                                      readonly="false" forward="onChange=orderEntries.onChangeSomeInput(${each.amount})"/>
                                             <radiogroup sclass="" style="text-align-last: right;">
                                             <radio label="True" checked="${each.damageWaiver}" disabled="${!each.damageWaiver}" id="${each.serialNo}_damageWaiverTrue" onCheck="doIndicate()"/>
                                             <radio label="False" checked="${!each.damageWaiver}" id="${each.serialNo}_damageWaiverFalse" onCheck="doIndicate()"/>
