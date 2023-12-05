@@ -133,7 +133,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 							AbstractOrderEntryModel.SERIALPRODUCTS);
 					updateConsignmentEntry(serialProducts, orderEntryModel, order);
 				}
-				else if (CollectionUtils.isEmpty(orderEntryModel.getSerialProducts()) && warehouse == null && CollectionUtils.isEmpty(orderEntryModel.getConsignmentEntries()) && orderEntryModel.getUnAllocatedQuantity() == 0) {
+				else if (CollectionUtils.isEmpty(orderEntryModel.getSerialProducts()) && warehouse == null && CollectionUtils.isEmpty(orderEntryModel.getConsignmentEntries()) && orderEntryModel.getUnAllocatedQuantity() == 0 && orderEntryModel.getQuantity()>0) {
 					blCSAgentOrderModificationService.addNewOrderEntry(orderEntryModel, interceptorContext, getInitialValue(orderEntryModel, AbstractOrderEntryModel.SERIALPRODUCTS), false);
 				} else if (blCSAgentOrderModificationService.allowedOrderStatusforModification(orderEntryModel.getOrder().getStatus())&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.QUANTITY) && orderEntryModel.getQuantity() > getLongValueForQty(getAttributeInitialValue(orderEntryModel, OrderEntryModel.QUANTITY)) && orderEntryModel.getUnAllocatedQuantity() == 0) {
 					blCSAgentOrderModificationService.modifyExistingEntryForQuantity(orderEntryModel, interceptorContext, getInitialValue(orderEntryModel, AbstractOrderEntryModel.SERIALPRODUCTS), true);
