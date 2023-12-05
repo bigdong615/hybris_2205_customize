@@ -471,8 +471,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				? blInventoryLocationLocal.getParentInventoryLocation().getCode() : null);
 		blSerialProduct.setOcLocationDetails(blInventoryLocationLocal);
 		blSerialProduct.setInventoryLocationID(blInventoryLocationLocal.getInventoryLocationID());
-		modelService.save(blSerialProduct);
-		modelService.refresh(blSerialProduct);
+		//modelService.save(blSerialProduct);
+		//modelService.refresh(blSerialProduct);
 	}
 	/**
 	 * Update location on item
@@ -1364,6 +1364,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blSerialProducts.forEach(serial -> {
 			if (BooleanUtils.isFalse(serial.isDirtyPriorityStatus())) { // check for dirtycart flag on serial
 				updateLocationOnItem(serial, blCleanCartLocation, Boolean.FALSE);
+				modelService.save(serial);
 			} else {
 				failedBarcodeList.add(serial.getBarcode());
 			}
@@ -1390,6 +1391,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			{ // check for dirtycart flag on serial
 				serial.setDirtyPriorityStatus(Boolean.FALSE); // As per BL-822 AC.1 setting dirty to FALSE.
 				updateLocationOnItem(serial, blCleanCartLocation, Boolean.FALSE);
+				modelService.save(serial);
 			}
 			else
 			{
@@ -2000,6 +2002,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		if (blSerialProduct != null) {
 			final BlInventoryLocationModel blInventoryLocationLocal = getBlInventoryLocation();
 			updateLocationOnItem(blSerialProduct, blInventoryLocationLocal, Boolean.FALSE);
+			modelService.save(blSerialProduct);
 		} else {
 			failedBarcodeList.add(iteratorBarcode);
 		}
@@ -2617,7 +2620,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 					updateLocationOnItem(blSerialProductModel, binLocation, Boolean.FALSE);
 
 				});
-
+				modelService.saveAll(allSerialsByBinLocationAndVersion);
 			}
 			else
 			{
@@ -2739,6 +2742,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 			updateLocationOnItem(serial, binLocation, false);
 		});
+		modelService.saveAll(serialsToScan);
 	}
 
 	/**
@@ -3029,6 +3033,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				errors.put(BlCoreConstants.INT_TEN, missingBarcodesInDB); // Serial Not found in system
 			}
 			serialsByBarcodesAndVersion.forEach(serial -> updateLocationOnItem(serial, getBlInventoryLocation(), Boolean.FALSE));
+			modelService.saveAll(serialsByBarcodesAndVersion);
 		}
 		return errors;
 	}
