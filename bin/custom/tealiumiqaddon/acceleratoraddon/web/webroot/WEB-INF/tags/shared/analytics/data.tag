@@ -224,17 +224,15 @@
 			  	"id": "${product.code}",
 			  	"name": "${product.displayName}",
           		"brand": "${product.manufacturer}",
-          		<c:choose>
-				  <c:when test="${not empty product.categoriesList[0]}">
+				  <c:if test="${not empty product.categoriesList[0]}">
 					"category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
-				  </c:when>
-				  <c:when test="${not empty product.categoriesList[1]}">
+				  </c:if>
+				  <c:if test="${not empty product.categoriesList[1]}">
 					"subCategory2": "${ycommerce:encodeJavaScript(product.categoriesList[1].code)}",
-				  </c:when>
-				  <c:when test="${not empty product.categoriesList[2]}">
+					</c:if>
+				  <c:if test="${not empty product.categoriesList[2]}">
 				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
-				  </c:when>
-			    </c:choose>
+				    </c:if>
          		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType).toLowerCase()}",
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
   				"index": "${status.index + 1}",
@@ -288,17 +286,15 @@
 			  	"id": "${product.code}",
 			  	"name": "${product.displayName}",
           		"brand": "${product.manufacturer}",
-          		<c:choose>
-				  <c:when test="${not empty product.categoriesList[0]}">
+				  <c:if test="${not empty product.categoriesList[0]}">
 					"category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
-				  </c:when>
-				  <c:when test="${not empty product.categoriesList[1]}">
+				  </c:if>
+				  <c:if test="${not empty product.categoriesList[1]}">
 					"subCategory2": "${ycommerce:encodeJavaScript(product.categoriesList[1].code)}",
-				  </c:when>
-				  <c:when test="${not empty product.categoriesList[2]}">
+				  </c:if>
+				  <c:if test="${not empty product.categoriesList[2]}">
 				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
-				  </c:when>
-			    </c:choose>
+				  </c:if>
          		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType).toLowerCase()}",
          		"listName": "${searchKeyword}",
   				"index": "${status.index+1}",
@@ -345,17 +341,15 @@
 			  	"id": "${product.code}",
 			  	"name": "${product.displayName}",
           		"brand": "${product.manufacturer}",
-          		<c:choose>
-				 <c:when test="${not empty product.categoriesList[0]}">
+				 <c:if test="${not empty product.categoriesList[0]}">
 				 "category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
-				  </c:when>
-				  <c:when test="${not empty product.categoriesList[1]}">
+				  </c:if>
+				  <c:if test="${not empty product.categoriesList[1]}">
 					"subCategory2": "${ycommerce:encodeJavaScript(product.categoriesList[1].code)}",
-				  </c:when>
-				  <c:when test="${not empty product.categoriesList[2]}">
+				  </c:if>
+				  <c:if test="${not empty product.categoriesList[2]}">
 				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
-				  </c:when>
-			    </c:choose>
+				  </c:if>
          		"variant" : "${ycommerce:encodeJavaScript(blPageType.toLowerCase())}",
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 			  	"value": 
@@ -391,17 +385,15 @@
          							"id": "${productReference.target.code}",
        								 "name": "${productReference.target.name}",
        								 "brand": "${productReference.target.manufacturer}",
-        							<c:choose>
-				 						 <c:when test="${not empty productReference.target.categoriesList[0]}">
+				 						 <c:if test="${not empty productReference.target.categoriesList[0]}">
 											"category": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[0].code)}",
-				  						 </c:when>
-				 					     <c:when test="${not empty productReference.target.categoriesList[1]}">
+				  						 </c:if>
+				 					     <c:if test="${not empty productReference.target.categoriesList[1]}">
 											"subCategory2": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[1].code)}",
-				 						 </c:when>
-				  						 <c:when test="${not empty productReference.target.categoriesList[2]}">
+				 						 </c:if>
+				  						 <c:if test="${not empty productReference.target.categoriesList[2]}">
 				   						    "subCategory3": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[2].code)}",
-				 						 </c:when>
-			    					 </c:choose>
+				 						 </c:if>
 			    					 "variant" : "${ycommerce:encodeJavaScript(blPageType).toLowerCase()}",
        								 "value": 
        								    {
@@ -517,17 +509,15 @@
 			  					"id": "${entry.product.code}",
 			  					"name": "${entry.product.name}",
           						"brand": "${entry.product.manufacturer}",
-          						<c:choose>
-				 		   		 <c:when test="${not empty entry.product.categoriesList[0]}">
-								"category": "${ycommerce:encodeJavaScript(entry.product.categoriesList[0].code)}",
-				 		    	</c:when>
-				 				 <c:when test="${not empty entry.product.categoriesList[1]}">
-								"subCategory2": "${ycommerce:encodeJavaScript(entry.product.categoriesList[1].code)}",
-				 				 </c:when>
-				  				<c:when test="${not empty entry.product.categoriesList[2]}">
-				   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.categoriesList[2].code)}",
-				  				</c:when>
-			    				</c:choose>
+				 		   		 <c:if test="${not empty entry.product.categories[0]}">
+								"category": "${ycommerce:encodeJavaScript(entry.product.categories[0].code)}",
+				 		    	</c:if>
+				 				 <c:if test="${not empty entry.product.categories[1]}">
+								"subCategory2": "${ycommerce:encodeJavaScript(entry.product.categories[1].code)}",
+				 				 </c:if>
+				  				<c:if test="${not empty entry.product.categories[2]}">
+				   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.categories[2].code)}",
+				  				</c:if>
 			   					 "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"variant" : "${ycommerce:encodeJavaScript(orderType)}",
          						"stockAvailability" : "${datesSettedInSession ? (entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
