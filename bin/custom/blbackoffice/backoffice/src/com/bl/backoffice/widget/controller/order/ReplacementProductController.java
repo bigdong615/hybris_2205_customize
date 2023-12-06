@@ -241,6 +241,7 @@ createOrUpdateConsignment(orderEntry,newSerial);
                 modelService.refresh(olderOrderEntry);
                 modelService.save(orderEntry);
                 modelService.refresh(orderEntry);
+                createAndUpdateOrderNotes(productData,newSerial);
             }catch (Exception e){
                 BlLogger.logFormattedMessage(LOG,Level.INFO,"300",e,"Some error occure while replacement of serial {} for different product {} for the order {}",
                         newSerial.getCode(),newSerial.getBlProduct().getCode(),orderModel.getCode());
@@ -657,6 +658,7 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
       removeOldSerialFromConsEntry(productData);
 modelService.save(orderEntry);
 modelService.refresh(orderEntry);
+      createAndUpdateOrderNotes(productData,newSerial);
 close();
   }
 
