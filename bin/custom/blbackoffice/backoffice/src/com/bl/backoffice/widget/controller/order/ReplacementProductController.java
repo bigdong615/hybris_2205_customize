@@ -181,13 +181,13 @@ if(isSerialAvailableOnOrder(actualOrder,productData.getOldSerial())) {
                 validateAndReplaceSerilForDifferentProduct(productData, serial);
             }else {
                  replaceSerialWithDifferentProductAndDifferentWarehouse(productData,serial);
+                 close();
             }
         }
     }
 }else {
     Messagebox.show("The original serial is not on this order, double check.");
 }
-
     }
 
     /**
@@ -241,7 +241,6 @@ createOrUpdateConsignment(orderEntry,newSerial);
                 modelService.refresh(olderOrderEntry);
                 modelService.save(orderEntry);
                 modelService.refresh(orderEntry);
-                // Need to reserve stock for new serial if not update via interceptor.
             }catch (Exception e){
                 BlLogger.logFormattedMessage(LOG,Level.INFO,"300",e,"Some error occure while replacement of serial {} for different product {} for the order {}",
                         newSerial.getCode(),newSerial.getBlProduct().getCode(),orderModel.getCode());
@@ -592,13 +591,20 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
     private void updateStockRecords(final ReplacementProductData productData,BlSerialProductModel newSerial){
         ConsignmentModel consignment = productData.getConsignment();
         //  releasing stock
+        releaseStock(productData);
+        //reserving stock
+       reservedStock(consignment,newSerial);
+    }
+
+    private void releaseStock(final ReplacementProductData productData){
+        ConsignmentModel consignment = productData.getConsignment();
         final Collection<StockLevelModel> availableStockForRelease =blStockService.getStockForSingleSerial(productData.getAssignedSerial(),consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate());
         Boolean reservedStatus=   blStockService.isActiveStatus(productData.getOldSerial().getSerialStatus())? Boolean.FALSE:Boolean.TRUE;
-       BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Stock updating while release stock for the serial {}, duration {} - {}, reserve status {} for the order {}",
-               productData.getAssignedSerial(),consignment.getOptimizedShippingStartDate(),consignment.getOptimizedShippingEndDate(),reservedStatus,orderModel.getCode());
+        BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Stock updating while release stock for the serial {}, duration {} - {}, reserve status {} for the order {}",
+                productData.getAssignedSerial(),consignment.getOptimizedShippingStartDate(),consignment.getOptimizedShippingEndDate(),reservedStatus,orderModel.getCode());
         blStockService.updateAndSaveStockRecord(availableStockForRelease,reservedStatus,null);
-
-        //reserving stock
+    }
+    private void reservedStock(final ConsignmentModel consignment,BlSerialProductModel newSerial){
         final Collection<StockLevelModel> availableStockForReseved = blStockService.getAvailableStockForSingleSerial(newSerial.getCode(),
                 consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(),
                 newSerial.getWarehouseLocation());
@@ -651,7 +657,7 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
       removeOldSerialFromConsEntry(productData);
 modelService.save(orderEntry);
 modelService.refresh(orderEntry);
-
+close();
   }
 
     /**
@@ -688,11 +694,12 @@ consignmentEntryStatus.remove(oldSerial.getCode());
 oldConsEntry.setSerialProducts(serials);
 oldConsEntry.setItems(items);
 oldConsEntry.setConsignmentEntryStatus(consignmentEntryStatus);
+oldConsEntry.setQuantity(oldConsEntry.getQuantity()-1L);
 modelService.save(oldConsEntry);
 modelService.refresh(oldConsEntry);
       }
-      //need to release stock for old serial if not release via interceptor.
-
+      // Release stock for old serial.
+      releaseStock(productData);
   }
 
     /**
@@ -720,6 +727,7 @@ modelService.refresh(oldConsEntry);
               consignmentEntryModels.add(consignmentEntryModel);
               consignmentModel.setConsignmentEntries(consignmentEntryModels);
           }
+          reservedStock(consignmentModel,newSerial);
           //need to reserve stock of new serial if not updated.
           modelService.save(consignmentEntryModel);
           modelService.refresh(consignmentEntryModel);
