@@ -668,7 +668,7 @@ close();
       ConsignmentEntryModel oldConsEntry = productData.getConsEntry();
       List<BlProductModel> serials = oldConsEntry.getSerialProducts();
       BlSerialProductModel oldSerial = productData.getOldSerial();
-      List<BlProductModel> remainingSerial = serials.stream().filter(product -> !product.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS)).collect(Collectors.toList());
+      List<BlProductModel> remainingSerial = serials.stream().filter(product -> (product instanceof BlSerialProductModel) && !product.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS)).collect(Collectors.toList());
       remainingSerial.remove(oldSerial);
       if(CollectionUtils.isEmpty(remainingSerial)){
           ConsignmentModel consignment = oldConsEntry.getConsignment();
