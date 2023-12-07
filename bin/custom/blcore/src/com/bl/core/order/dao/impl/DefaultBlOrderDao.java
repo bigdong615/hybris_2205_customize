@@ -1,7 +1,7 @@
 package com.bl.core.order.dao.impl;
 
-import com.bl.core.constants.GeneratedBlCoreConstants;
-import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -47,8 +47,6 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
-
-import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
 /**
  * Default implementation of {@link SimpleSuggestionDao}.
@@ -184,6 +182,8 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?startDate AND ?endDate AND ({con:"+  ConsignmentModel.INHIBITLATENOTICES + "} is null OR {con:"+  ConsignmentModel.INHIBITLATENOTICES + "}= ?isInhibitLateNotices) AND {o:status} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})" ;
 
+	private static final String GET_OUTSTANDING_ORDERS = "select {pk} from {order as o join orderstatus as os on {o.status}={os.pk}} where {os.code} IN ('SHIPPED','LATE','UNBOXED_COMPLETELY','UNBOXED_PARTIALLY')";
+
 
 	final List<OrderStatus> statuses = Arrays.asList(OrderStatus.LATE,OrderStatus.SHIPPED, OrderStatus.UNBOXED_PARTIALLY);
 	/**
@@ -310,7 +310,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 				OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS.getCode(),OrderStatus.INCOMPLETE_MISSING_ITEMS.getCode());
 
 	}
-	
+
 	private List<String> getOrderStatusesForReturnOrderFeed(){
 		return Lists.newArrayList(OrderStatus.CANCELLED.getCode(),OrderStatus.UNBOXED_COMPLETELY.getCode(),
 				OrderStatus.UNBOXED_PARTIALLY.getCode(),OrderStatus.COMPLETED.getCode());
@@ -369,7 +369,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_BE_UPS_SCRAPE);
 		Date finalRentalEndDate = null;
-		Date pastDayDate = new Date((new Date()).getTime() - (1000 * 60 * 60 * 24)); //orderModel.getRentalEndDate();
+		final Date pastDayDate = new Date((new Date()).getTime() - (1000 * 60 * 60 * 24)); //orderModel.getRentalEndDate();
 	    if(isWeekend(pastDayDate)) {
 			finalRentalEndDate = new Date(pastDayDate.getTime() - (1000 * 60 * 60 * 24) - (1000 * 60 * 60 * 24) );
 		}
@@ -391,13 +391,13 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 	 * @param tomorrowDate
 	 * @return
 	 */
-	private boolean isWeekend(Date tomorrowDate)
+	private boolean isWeekend(final Date tomorrowDate)
 	{
 
-		Calendar cal = Calendar.getInstance();
+		final Calendar cal = Calendar.getInstance();
       cal.setTime(tomorrowDate);
 
-      int day = cal.get(Calendar.DAY_OF_WEEK);
+      final int day = cal.get(Calendar.DAY_OF_WEEK);
       return day == Calendar.SATURDAY || day == Calendar.SUNDAY;
 	}
 
@@ -420,15 +420,15 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
-		
+
       final List<PackagingInfoModel> updatedPackgeInfoList = new ArrayList<>();
-		
+
 		packagingInfoModels.forEach(pkgInfo -> {
-			if(statuses.contains(pkgInfo.getConsignment().getOrder().getStatus())) {	
+			if(statuses.contains(pkgInfo.getConsignment().getOrder().getStatus())) {
 				updatedPackgeInfoList.add(pkgInfo);
 			}
 		});
-		
+
 		return updatedPackgeInfoList.size() > 0 ? updatedPackgeInfoList : Collections.emptyList();
 	}
 
@@ -451,15 +451,15 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
-		
+
       final List<PackagingInfoModel> updatedPackgeInfoList = new ArrayList<>();
-		
+
 		packagingInfoModels.forEach(pkgInfo -> {
-			if(statuses.contains(pkgInfo.getConsignment().getOrder().getStatus())) {	
+			if(statuses.contains(pkgInfo.getConsignment().getOrder().getStatus())) {
 				updatedPackgeInfoList.add(pkgInfo);
 			}
 		});
-		
+
 		return updatedPackgeInfoList.size() > 0 ? updatedPackgeInfoList : Collections.emptyList();
 	}
 
@@ -568,7 +568,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		// Added 8 seconds buffer, so that cron job will never clear the carts before it gets cleared from front end
 		fQuery.addQueryParameter(TIMER, Integer.valueOf(baseStore.getUsedGearCartTimer())
 				+ BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS);
-		Date currentDate = new Date();
+		final Date currentDate = new Date();
 		fQuery.addQueryParameter("currentTime",currentDate);
 		BlLogger.logMessage(LOG, Level.DEBUG, "Getting all abandoned cart entry from current time:"+currentDate);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
@@ -592,7 +592,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		fQuery.addQueryParameter(IS_REPLACEMENT_ORDER, Boolean.FALSE);
 		fQuery.addQueryParameter(IS_GIFT_CARD_ORDER, Boolean.FALSE);
 		fQuery.addQueryParameter(IS_NEW_GEAR_ORDER, Boolean.FALSE);
-		Date currentDate = new Date();
+		final Date currentDate = new Date();
 		fQuery.addQueryParameter("currentTime",currentDate);
 		BlLogger.logMessage(LOG, Level.DEBUG, "Getting all void transaction order from current time:"+currentDate);
 		fQuery.addQueryParameter(TIMER, getConfigurationService().getConfiguration().getInt(DELAY_VOID_TRANSACTION_BY_TIME));
@@ -708,9 +708,9 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 	@Override
 	public List<OrderModel> getOrdersReadyForReturn() throws ParseException
 	{
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
-		String date = simpleDateFormat.format(new Date());
-		Date currentDate = simpleDateFormat.parse(date);
+		final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+		final String date = simpleDateFormat.format(new Date());
+		final Date currentDate = simpleDateFormat.parse(date);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(RETURN_ORDERS_FEED_QUERY);
 		fQuery.addQueryParameter("returnOrderBefore", BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
 		fQuery.addQueryParameter("returnOrderAfter", BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
@@ -732,7 +732,7 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 	 * @return
 	 */
 	@Override
-	public OrderModel getOriginalOrderFromExtendedOrderCode(String code) {
+	public OrderModel getOriginalOrderFromExtendedOrderCode(final String code) {
 		validateParameterNotNull(code, "code must not be null");
 
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORIGINAL_ORDER_BY_CODE);
@@ -751,9 +751,9 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 	@Override
 	public List<AbstractOrderModel> getOrdersForLateOrderFeedToFTP() throws ParseException {
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		LocalDateTime currentDate= LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+		final LocalDateTime currentDate= LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
 
-		LocalDateTime OneMonthBeforeDate= currentDate.minusDays(31);
+		final LocalDateTime OneMonthBeforeDate= currentDate.minusDays(31);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(LATE_ORDERS_FEED_QUERY);
 		fQuery.addQueryParameter("isInhibitLateNotices",false);
 		fQuery.addQueryParameter("startDate", formatter.format(OneMonthBeforeDate));
@@ -767,6 +767,26 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		}
 		return orders;
 
+	}
+
+	@Override
+	public List<OrderModel> getOutStandCompletedOrders()
+	{
+		final List orderstatus = new ArrayList<>();
+		orderstatus.add("SHIPPED");
+		orderstatus.add("LATE");
+		orderstatus.add("UNBOXED_COMPLETELY");
+		orderstatus.add("UNBOXED_PARTIALLY");
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(GET_OUTSTANDING_ORDERS);
+		query.addQueryParameter("orderstatus", orderstatus);
+		final SearchResult<OrderModel> result = getFlexibleSearchService().search(query);
+		final List<OrderModel> orderModelList = result.getResult();
+		if (CollectionUtils.isEmpty(orderModelList))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.SHARE_A_SALE_ORDERS_NOT_EXIST);
+			return Collections.emptyList();
+		}
+		return orderModelList;
 	}
 
 }
