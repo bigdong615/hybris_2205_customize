@@ -391,14 +391,16 @@ $('.shopping-cart__item-remove').on("click", function (e){
  				$('.page-loader-new-layout').show();
  			},
  			success : function(response) {
+				 location.reload();
  				if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
  					ACC.minicart.updateMiniCartDisplay();
- 					window.location.reload(true);
+ 					location.reload();
  				}
  			},
  			complete : function() {
+				 location.reload();
  				$('.page-loader-new-layout').hide();
- 				window.location.reload(true);
+ 				   location.reload();
  			},
  			error : function(jqXHR, textStatus, errorThrown) {
  				$('.page-loader-new-layout').hide();
