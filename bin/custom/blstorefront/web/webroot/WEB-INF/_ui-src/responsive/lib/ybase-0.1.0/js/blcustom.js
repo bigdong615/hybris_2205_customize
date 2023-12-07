@@ -370,6 +370,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
     
     //To handle enter key action in cart popup, when we change quantity BLS-499
       $(".input-number").keypress(function(e) {
+		  		  alert(e.keyCode +"---"+ e.which);
+
 		 if(e.keyCode == 13){
     		var currentValue = $(this).val();
  		var totalQuantityToUpdate;
