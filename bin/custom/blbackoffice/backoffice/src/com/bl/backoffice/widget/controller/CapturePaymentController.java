@@ -5,7 +5,9 @@ package com.bl.backoffice.widget.controller;
 
 import com.bl.backoffice.actions.ChangeShipmentStatusAction;
 import com.bl.backoffice.consignment.service.BlConsignmentService;
+import com.bl.backoffice.widget.controller.order.BlCustomCancelOrderController;
 import com.bl.backoffice.widget.controller.order.BlCustomCancelRefundConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.NumberingSystemEnum;
@@ -16,6 +18,11 @@ import com.bl.core.payment.service.BlPaymentService;
 import com.bl.core.services.cancelandrefund.service.BlCustomCancelRefundService;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
+import com.braintree.command.request.BrainTreeRefundTransactionRequest;
+import com.braintree.command.result.BrainTreeRefundTransactionResult;
+import com.braintreegateway.Result;
+import com.braintreegateway.Transaction;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
@@ -30,12 +37,14 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.localization.Localization;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import javax.annotation.Resource;
@@ -80,6 +89,10 @@ public class CapturePaymentController extends DefaultWidgetController {
     private static final String CANCEL_BUTTON = "cancelChanges";
     private static final String CAPTURE_BUTTON = "captureOrderPayment";
     private static final String INPUT_OBJECT = "inputObject";
+
+	private static final String NO_CAPTURED_TRANSACTION_ENTRY_FOUND = " no Captured Transaction Entry Found";
+
+	private static final Logger LOGGER = Logger.getLogger(CapturePaymentController.class);
 
     @Resource
     private BlPaymentService blPaymentService;
@@ -279,16 +292,16 @@ public class CapturePaymentController extends DefaultWidgetController {
 				.getCapturedPaymentTransaction(order);
 		if (captureEntry.isPresent() && BooleanUtils.isTrue(order.getIsCaptured()))
 		{
-            BigDecimal differenceToCapture = captureEntry.get().getAmount();
-			if(differenceToCapture.compareTo(BigDecimal.valueOf(0.0d)) > 0 )
+            BigDecimal capturedAmount = captureEntry.get().getAmount();
+			if(order.getTotalPrice().compareTo(capturedAmount.doubleValue()) > 0 )
 			{
 				order.setIsDifferencePresentToCapture(Boolean.TRUE);
-				return blPaymentService.capturePaymentForDifferenceOfOrder(order,differenceToCapture);
+				BigDecimal amountToCapture= (BigDecimal.valueOf(order.getTotalPrice())).subtract(capturedAmount);
+				return blPaymentService.capturePaymentForDifferenceOfOrder(order,amountToCapture);
 			}
 		}
 		return false;
 	}
-
 
 	/**
 	 * Method to check whether it is used order or not
