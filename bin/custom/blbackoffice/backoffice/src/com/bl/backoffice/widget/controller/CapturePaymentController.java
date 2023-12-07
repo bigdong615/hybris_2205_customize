@@ -37,6 +37,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.payment.dto.TransactionStatus;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
@@ -199,6 +200,9 @@ public class CapturePaymentController extends DefaultWidgetController {
 		if(checkDifferenceOfOrderTotal(getOrderModel()))
 		{
 			showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED_ORDER_DIFFERENCE));
+			orderModel.setStatus(OrderStatus.PAYMENT_CAPTURED);
+			getModelService().save(orderModel);
+			getModelService().refresh(orderModel);
 		}
 		else if(getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode()) || getOrderModel().getIsCaptured()
              || OrderStatus.CANCELLING.equals(getOrderModel().getStatus())) {
@@ -288,18 +292,24 @@ public class CapturePaymentController extends DefaultWidgetController {
 	}
 
 	public boolean checkDifferenceOfOrderTotal(final OrderModel order) {
-		final Optional<PaymentTransactionEntryModel> captureEntry = blCustomCancelRefundService
-				.getCapturedPaymentTransaction(order);
-		if (captureEntry.isPresent() && BooleanUtils.isTrue(order.getIsCaptured()))
-		{
-            BigDecimal capturedAmount = captureEntry.get().getAmount();
-			if(order.getTotalPrice().compareTo(capturedAmount.doubleValue()) > 0 )
+		BigDecimal amountCaptured= BigDecimal.valueOf(0.0);
+			for (final PaymentTransactionModel paymentTransactionModel : orderModel.getPaymentTransactions()) {
+				for (final PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel.getEntries()) {
+					if ((paymentTransactionEntryModel.getType() == PaymentTransactionType.CAPTURE ||
+							paymentTransactionEntryModel.getType() == PaymentTransactionType.PARTIAL_CAPTURE ||
+							paymentTransactionEntryModel.getType() == PaymentTransactionType.ORDER_EDIT_ADJUSTMENT_CAPTURE)
+							&& TransactionStatus.ACCEPTED.name().equals(paymentTransactionEntryModel.getTransactionStatus())) {
+						amountCaptured = amountCaptured.add(paymentTransactionEntryModel.getAmount());
+					}
+				}
+			}
+		    if(order.getTotalPrice().compareTo(amountCaptured.doubleValue()) > 0 )
 			{
 				order.setIsDifferencePresentToCapture(Boolean.TRUE);
-				BigDecimal amountToCapture= (BigDecimal.valueOf(order.getTotalPrice())).subtract(capturedAmount);
-				return blPaymentService.capturePaymentForDifferenceOfOrder(order,amountToCapture);
+				BigDecimal remainingAmountToCapture= (BigDecimal.valueOf(order.getTotalPrice())).subtract(amountCaptured);
+				return blPaymentService.capturePaymentForDifferenceOfOrder(order, remainingAmountToCapture);
 			}
-		}
+
 		return false;
 	}
 
