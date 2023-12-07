@@ -2,7 +2,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <c:url value="${feature.urlLink}" var="urlLink" />
-<li class="splide__slide">
 	<div class="embed-responsive embed-responsive-16by9">
 	<a href="${urlLink}">	<c:choose>
 			<c:when test="${fn:containsIgnoreCase(feature.media.mime,'image/jpeg')}">
@@ -27,4 +26,3 @@
 		</div>
 	</a>
 	</div>
-</li>

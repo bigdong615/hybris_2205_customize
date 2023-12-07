@@ -18,7 +18,7 @@ public class BlLateOrderPopulator implements Populator<List<AbstractOrderModel>,
 {
 	@Override
 	public void populate(final List<AbstractOrderModel> source, final List<LateOrderData> target) throws ConversionException {
-		final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+		final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		for (final AbstractOrderModel order : source) {
 			final LateOrderData orderData = new LateOrderData();
 			orderData.setSubscriberId(order.getUser().getUid());

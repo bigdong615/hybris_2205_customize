@@ -2092,6 +2092,11 @@
 		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
+	<bean id="blCompleteOutstandingOrdersJob" class="com.bl.core.job.BlCompleteOutstandingOrdersJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
 	<bean id="blProductModifiedTimeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductModifiedTimeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>

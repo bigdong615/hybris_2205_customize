@@ -87,6 +87,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 		if(Objects.nonNull(blSerialProduct))
 		{
+			long startTime = System.nanoTime();
 			blSerialProduct.setIsSyncRequired(false);
 			addDateFirstActiveOnSerial(blSerialProduct, ctx);
 			//Intercepting the change in serialStatus and changing the consignment status accordingly if available
@@ -105,6 +106,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			setFlagForBufferedInventoryOnSerial(blSerialProduct);
 			updateStockRecordsOnSerialCodeUpdate(blSerialProduct, ctx);
 			updateStockRecordOnSerialApprovalStatusChange(blSerialProduct,ctx);
+			long stopTime = System.nanoTime();
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Prepare interceptor main method took {} time to execute", stopTime - startTime);
+
 		}
 	}
 
@@ -182,6 +186,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void updateStockRecordsForBufferInventoryFlag(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 			throws InterceptorException {
+		long startTime = System.nanoTime();
 		final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.ISBUFFEREDINVENTORY);
 		if (null != initialValue && ctx.isModified(blSerialProduct,
 				BlSerialProductModel.ISBUFFEREDINVENTORY)) {
@@ -201,6 +206,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				getBlStockService().findAndUpdateBufferInvInStockRecords(blSerialProduct);
 			}
 		}
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsForBufferInventoryFlag took {} time to execute", stopTime - startTime);
 	}
 
 	/**
@@ -236,6 +243,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private void updateWarehouseInStockRecordsOnWHLocUpdate(final BlSerialProductModel blSerialProduct,
 			final InterceptorContext ctx)
 	{
+		long startTime = System.nanoTime();
 		try {
 			final boolean isSyncActive = BooleanUtils
 					.toBoolean((Boolean) getSessionService().getCurrentSession().getAttribute(BlCoreConstants.SYNC_ACTIVE_PROPERTY));
@@ -249,6 +257,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					"Exception occurred while updating the warehouse {} in the stock record for serial product {} ",
 					blSerialProduct.getWarehouseLocation(), blSerialProduct.getCode());
 		}
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateWarehouseInStockRecordsOnWHLocUpdate took {} time to execute", stopTime - startTime);
 	}
 
 	/**
@@ -261,6 +271,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 *           the ctx
 	 */
 	private void updateStockRecordsOnForRentFlagUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) {
+
+		long startTime = System.nanoTime();
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.FORRENT);
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlProductModel.FORRENT)
@@ -272,6 +284,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					"Exception occurred while updating the stock records on 'For Rent' flag change event of serial product {} ",
 					blSerialProduct.getCode());
 		}
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsOnForRentFlagUpdate took {} time to execute", stopTime - startTime);
 	}
 
 	/**
@@ -296,6 +310,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 		private void updateStockRecordsOnSerialStatusUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
+		long startTime = System.nanoTime();
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.SERIALSTATUS);
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)) {
@@ -320,10 +335,14 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					"Exception occurred while updating the stock records on serial status change event of serial product {} ",
 					blSerialProduct.getCode());
 		}
+
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsOnSerialStatusUpdate took {} time to execute", stopTime - startTime);
 	}
 
 	private void updateStockRecordOnSerialApprovalStatusChange(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
+		long startTime = System.nanoTime();
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProductModel.APPROVALSTATUS);
 			if (null != initialValue && (initialValue instanceof ArticleApprovalStatus)){
@@ -342,6 +361,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					"Exception occurred while updating the stock records on serial approaval status change to inactive of serial product {} ",
 					blSerialProduct.getCode());
 		}
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordOnSerialApprovalStatusChange took {} time to execute", stopTime - startTime);
 	}
 		/**
 		 * It updates the stock records when serial status of a serial product is changed
@@ -353,6 +374,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		 */
 			private void updateStockRecordsOnSerialCodeUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 		{
+			long startTime = System.nanoTime();
 			try {
 				final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.CODE);
 				if(null != initialValue && (initialValue instanceof String )){
@@ -366,6 +388,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 						"Exception occurred while updating the stock records on serial code change event of serial product {} ",
 						blSerialProduct.getCode());
 			}
+			long stopTime = System.nanoTime();
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsOnSerialCodeUpdate took {} time to execute", stopTime - startTime);
 		}
 
 	private void createAndExecuteBusinessProcess(BlSerialProductModel blSerialProduct, String initialCode) {
@@ -421,12 +445,15 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void calculateFinalSalePriceForSerial(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
+		long startTime = System.nanoTime();
 		if (BooleanUtils.isTrue(blSerialProduct.getForSale()) && hasForSaleBaseAndConditionalRating(blSerialProduct)
 				&& isForSalePriceCalculationRequired(blSerialProduct, ctx))
 		{
 			blSerialProduct.setFinalSalePrice(getBlPricingService().calculateFinalSalePriceForSerial(
 					blSerialProduct.getBlProduct().getForSaleBasePrice(), blSerialProduct.getConditionRatingOverallScore()));
 		}
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method calculateFinalSalePriceForSerial took {} time to execute", stopTime - startTime);
 	}
 
 	/**
@@ -474,6 +501,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void calculateIncentivizedPriceForSerial(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
+		long startTime = System.nanoTime();
 		final BlProductModel skuProduct = blSerialProduct.getBlProduct();
 		if (Objects.nonNull(blSerialProduct.getFinalSalePrice()) && Objects.nonNull(skuProduct) && Objects.nonNull(skuProduct.getForSaleDiscount()))
 		{
@@ -492,6 +520,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				blSerialProduct.setIncentivizedPrice(calculatedIncentivizedPrice);
 			}
 		}
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method calculateIncentivizedPriceForSerial took {} time to execute", stopTime - startTime);
 	}
 
 	/**
@@ -520,6 +550,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void doStatusChangeOnConsignment(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
+		long startTime = System.nanoTime();
 		if (Objects.nonNull(blSerialProduct.getAssociatedConsignment())
 				&& Objects.nonNull(blSerialProduct.getSerialStatus())
 				&& ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS))
@@ -550,6 +581,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				getBlOrderService().checkAndUpdateOrderStatus(associatedConsignment.getOrder());
 			}
 		}
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method doStatusChangeOnConsignment took {} time to execute", stopTime - startTime);
 	}
 
 	/**
@@ -641,6 +674,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void createRepairLogIfRepairNeeded(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
+		long startTime = System.nanoTime();
 		if (isEligibleForRepairLogCreation(blSerialProduct, ctx)
 				&& isRepairLogTypeAvailable(blSerialProduct))
 		{
@@ -668,6 +702,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					break;
 			}
 		}
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method createRepairLogIfRepairNeeded took {} time to execute", stopTime - startTime);
 	}
 
 	/**

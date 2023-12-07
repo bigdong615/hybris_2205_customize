@@ -171,4 +171,12 @@ public interface BlOrderDao extends OrderDao
 	 */
 	public List<AbstractOrderModel> getClaimedOrdersForAuthorization();
 
+	/**
+	 * Fetches the outstanding orders
+	 *
+	 * @return
+	 */
+
+	public List<OrderModel> getOutStandCompletedOrders();
+
 }

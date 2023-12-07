@@ -87,3 +87,5 @@ beans.xsd
 items.xsd
 classes/
 eclipsebin/
+project.properties
+.classpath

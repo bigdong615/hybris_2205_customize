@@ -1,6 +1,5 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<div class="row">
 	<div class="col-12 order-2 order-md-1 scroll-hide">
 		<div class="input-group">
 			<input type="text" id="emailSubscr_txt" class="form-control"
@@ -14,4 +13,3 @@
 	<div class="col-12 order-1 order-md-2">
 		${feature.footerAddress}
 	</div>
-</div>
