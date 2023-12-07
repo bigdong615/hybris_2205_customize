@@ -165,4 +165,12 @@ public interface BlOrderDao extends OrderDao
 	 */
 	List<AbstractOrderModel> getOrdersForLateOrderFeedToFTP() throws ParseException;;
 
+	/**
+	 * Fetches the outstanding orders
+	 *
+	 * @return
+	 */
+
+	public List<OrderModel> getOutStandCompletedOrders();
+
 }

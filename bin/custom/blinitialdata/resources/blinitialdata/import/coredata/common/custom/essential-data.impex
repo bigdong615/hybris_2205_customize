@@ -588,3 +588,10 @@ INSERT_UPDATE ServicelayerJob ; code[unique=true]          ; springId[unique=tru
 
 INSERT_UPDATE CronJob ; code[unique=true]                    ; job(code)                  ; sessionLanguage(isoCode)[default = en] ; active ;  
                       ; blFutureOrderAllocationJob 			 ; blFutureOrderAllocationJob ;                                        ; true   ;  
+
+INSERT_UPDATE ServicelayerJob ; code[unique=true]              ; springId                 
+                              ; blCompleteOutstandingOrdersJob ; blCompleteOutstandingOrdersJob
+                              
+INSERT_UPDATE CronJob ; code[unique=true]              ; job(code)                      ; singleExecutable ; sessionLanguage(isocode)
+                      ; blCompleteOutstandingOrdersJob ; blCompleteOutstandingOrdersJob ; false            ; de                      
+                      
