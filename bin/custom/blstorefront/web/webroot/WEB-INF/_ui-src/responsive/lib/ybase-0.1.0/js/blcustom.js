@@ -370,7 +370,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
     
     //To handle enter key action in cart popup, when we change quantity BLS-499
       $(".input-number").keypress(function(e) {
-		  		  alert(e.keyCode +"---"+ e.which);
+		  		//  alert(e.keyCode +"---"+ e.which);
 
 		 if(e.keyCode == 13){
     		var currentValue = $(this).val();
@@ -393,12 +393,12 @@ $('.shopping-cart__item-remove').on("click", function (e){
  			success : function(response) {
  				if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
  					ACC.minicart.updateMiniCartDisplay();
- 					location.reload();
+ 					window.location.reload(true);
  				}
  			},
  			complete : function() {
  				$('.page-loader-new-layout').hide();
- 				location.reload();
+ 				window.location.reload(true);
  			},
  			error : function(jqXHR, textStatus, errorThrown) {
  				$('.page-loader-new-layout').hide();
