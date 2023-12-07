@@ -11,7 +11,7 @@
 		var="childLevel1">
 		<c:forEach items="${childLevel1.children}"
 			step="${component.wrapAfter}" varStatus="i">
-			<div class="col-6 col-md-3 col-lg-2">
+			<div class="col-6">
 				<c:if test="${component.wrapAfter > i.index}">
 					<p>
 						<b>${fn:escapeXml(childLevel1.title)}</b>

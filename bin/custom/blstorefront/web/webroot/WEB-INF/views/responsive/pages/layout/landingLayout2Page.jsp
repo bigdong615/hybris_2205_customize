@@ -32,11 +32,9 @@
 		<div class="container">
 			<div id="hero-slider" class="splide">
 				<div class="splide__track">
-					<ul class="splide__list">
-						<cms:pageSlot position="HomePageHeroBannerSlot" var="feature">
-							<cms:component component="${feature}" />
+						<cms:pageSlot position="HomePageHeroBannerSlot" var="feature" element="ul" class="splide__list">
+							<cms:component component="${feature}" element="li" class="splide__slide"/>
 						</cms:pageSlot>
-					</ul>
 				</div>
 			</div>
 		</div>
@@ -59,12 +57,11 @@
 					</h5>
 					<div id="blog-slider" class="splide mt-4">
 						<div class="splide__track">
-							<ul class="splide__list">
-								<cms:pageSlot position="HomePageFeaturedStoriesSectionSlot"
-											  var="feature">
+							<cms:pageSlot position="HomePageFeaturedStoriesSectionSlot" var="feature" element="ul" class="splide__list">
+								<li class="splide__slide">
 									<cms:component component="${feature}" />
-								</cms:pageSlot>
-							</ul>
+								</li>
+							</cms:pageSlot>
 						</div>
 					</div>
 
@@ -97,12 +94,9 @@
 							<cms:component component="${feature}" />
 						</cms:pageSlot>
 					</h5>
-					<div class="row mt-5">
-						<cms:pageSlot position="HomePageRentingGearSectionSlot"
-							var="feature">
-							<cms:component component="${feature}" />
-						</cms:pageSlot>
-					</div>
+					<cms:pageSlot position="HomePageRentingGearSectionSlot" var="feature" element="div" class="row mt-5">
+						<cms:component component="${feature}" element="div" class="col-6 col-md-3"/>
+				 	</cms:pageSlot>
 				</div>
 			</div>
 			<div class="row justify-content-center my-4">
@@ -122,12 +116,10 @@
 					</h5>
 					<div id="cat-slider" class="splide mt-5">
 						<div class="splide__track">
-							<ul class="splide__list">
 								<cms:pageSlot position="HomePageCategorySectionSlot"
-									var="feature">
-									<cms:component component="${feature}" />
+									var="feature" element="ul" class="splide__list">
+									<cms:component component="${feature}" element="li" class="splide__slide"/>
 								</cms:pageSlot>
-							</ul>
 						</div>
 					</div>
 				</div>
@@ -151,12 +143,10 @@
 					<!-- <div class="logo-slider splide mt-4 d-none d-md-none"> -->
 					<div id="logo-slider" class="splide mt-4 brand-logos">
 						<div class="splide__track">
-							<ul class="splide__list">
 								<cms:pageSlot position="HomePageBrandSectionSlot"
-									var="feature">
-									<cms:component component="${feature}" />
+									var="feature" element="ul" class="splide__list">
+									<cms:component component="${feature}" element="li" class="splide__slide my-auto"/>
 								</cms:pageSlot>
-							</ul>
 						</div>
 					</div>
 

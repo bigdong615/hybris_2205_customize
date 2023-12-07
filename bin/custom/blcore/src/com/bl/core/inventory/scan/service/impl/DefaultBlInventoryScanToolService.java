@@ -1364,6 +1364,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blSerialProducts.forEach(serial -> {
 			if (BooleanUtils.isFalse(serial.isDirtyPriorityStatus())) { // check for dirtycart flag on serial
 				updateLocationOnItem(serial, blCleanCartLocation, Boolean.FALSE);
+				modelService.save(serial);
 			} else {
 				failedBarcodeList.add(serial.getBarcode());
 			}
@@ -1390,6 +1391,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			{ // check for dirtycart flag on serial
 				serial.setDirtyPriorityStatus(Boolean.FALSE); // As per BL-822 AC.1 setting dirty to FALSE.
 				updateLocationOnItem(serial, blCleanCartLocation, Boolean.FALSE);
+				modelService.save(serial);
 			}
 			else
 			{
@@ -1447,6 +1449,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Override
 	public Map<Integer, Collection<String>> doUnboxing(final List<String> barcodes)
 	{
+		long startTime = System.nanoTime();
 		final Map<Integer, Collection<String>> result = new HashMap<>();
 		final BlInventoryLocationModel blInventoryLocationModel = getBlInventoryLocation();
 		final List<String> subList = barcodes.subList(BlInventoryScanLoggingConstants.INT_ZERO, barcodes.size() - BlInventoryScanLoggingConstants.ONE);
@@ -1495,6 +1498,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 		}
 
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "doUnboxing method took {} time to execute", stopTime - startTime);
 		return result;
 	}
 
@@ -1741,6 +1746,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 															   final BlInventoryLocationModel blInventoryLocationModel, final Collection<PackagingInfoModel> packagingInfoModels,
 															   Map<Integer,List<String>> errorSerialList)
 	{
+
 		for (final PackagingInfoModel packagingInfo : packagingInfoModels)
 		{
 			final List<BlProductModel> blSerialProductModels = packagingInfo.getSerialProducts();
@@ -1826,6 +1832,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public Map<Integer,List<String>> checkSerialsForDPAndSubParts(final Collection<BlProductModel> blSerialProductModels,
 																  final ConsignmentModel consignmentModel, final BlInventoryLocationModel blInventoryLocationModel)
 	{
+		long startTime = System.nanoTime();
 		final List<String> dirtyPrioritySerialList = new ArrayList<>();
 		final List<String> dirtySerialList = new ArrayList<>();
 		final Map<Integer,List<String>> errorList = new HashMap<>();
@@ -1851,6 +1858,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 		errorList.put(BlInventoryScanLoggingConstants.FOUR, dirtySerialList);
 		errorList.put(BlInventoryScanLoggingConstants.FIVE, dirtyPrioritySerialList);
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "checkSerialsForDPAndSubParts method took {} time to execute", stopTime - startTime);
 		return errorList;
 	}
 
@@ -1993,6 +2002,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		if (blSerialProduct != null) {
 			final BlInventoryLocationModel blInventoryLocationLocal = getBlInventoryLocation();
 			updateLocationOnItem(blSerialProduct, blInventoryLocationLocal, Boolean.FALSE);
+			modelService.save(blSerialProduct);
 		} else {
 			failedBarcodeList.add(iteratorBarcode);
 		}
@@ -2488,6 +2498,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Override
 	public Map<Integer, Collection<String>> performBinToCartScanning(final List<String> barcodes, final boolean isUnboxingFlow)
 	{
+		long startTime = System.nanoTime();
 		final Map<Integer, Collection<String>> errors = Maps.newHashMap();
 		final BlInventoryLocationModel binLocation = getBlInventoryScanToolDao()
 				.getInventoryLocationById(barcodes.get(BlCoreConstants.INT_ZERO));
@@ -2529,6 +2540,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BIN with code : {} scanned with Parent location with code : {}",
 				binLocation.getCode(), blLocalInventoryLocation.getCode());
 		performBinScannedSerials(barcodes, errors, binLocation, blLocalInventoryLocation, isUnboxingFlow);
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "performBinToCartScanning method took {} time to execute", stopTime - startTime);
 		return errors;
 	}
 
@@ -2607,7 +2620,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 					updateLocationOnItem(blSerialProductModel, binLocation, Boolean.FALSE);
 
 				});
-
+				modelService.saveAll(allSerialsByBinLocationAndVersion);
 			}
 			else
 			{
@@ -2729,6 +2742,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 			updateLocationOnItem(serial, binLocation, false);
 		});
+		modelService.saveAll(serialsToScan);
 	}
 
 	/**
@@ -2914,6 +2928,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 
 	private Map<Integer, Collection<String>> processSerialsForUnboxing(Map<Integer, Collection<String>> errors, Collection<BlSerialProductModel> serialsByBarcodesAndVersion, List<String> serialBarcodeList) {
+		long startTime = System.nanoTime();
 		final Set<String> missingPackageBarcodeList = new HashSet<>();
 		final List<String> missingBarcodeList = new ArrayList<>();
 		final List<String> removedUnboxedSerialBarcodeList = new ArrayList<>();
@@ -2957,6 +2972,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 
 		}
+		long stopTime = System.nanoTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "processSerialsForUnboxing method took {} time to execute", stopTime - startTime);
 		return errors;
 	}
 	/**
@@ -3016,6 +3033,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				errors.put(BlCoreConstants.INT_TEN, missingBarcodesInDB); // Serial Not found in system
 			}
 			serialsByBarcodesAndVersion.forEach(serial -> updateLocationOnItem(serial, getBlInventoryLocation(), Boolean.FALSE));
+			modelService.saveAll(serialsByBarcodesAndVersion);
 		}
 		return errors;
 	}
