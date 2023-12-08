@@ -114,6 +114,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String EDIT_PAYMENT_METHOD_CMS_PAGE = "edit-payment-method";
 	
 	private static final String PAY_BILL_CMS_PAGE = "pay-bill";
+	private static final String PAY_ORDER_BILL_CMS_PAGE = "pay-order-bill";
 	private static final int DECIMAL_PRECISION = 2;
 	private static final String MODIFY_PAYMENT_CMS_PAGE = "modify-payment";
 	
@@ -471,6 +472,21 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		setupAdditionalFields(model);
 		return getViewForPage(model);
 	}
+
+	@GetMapping(value = "/{orderCode}/payOrderBill")
+	@RequireHardLogIn
+	public String getPayBillDetailsPageForOrder(@PathVariable(value = ORDER_CODE ,required = false) final String orderCode, final Model model) throws CMSItemNotFoundException{
+		final ContentPageModel payOrderBillPage = getContentPageForLabelOrId(PAY_ORDER_BILL_CMS_PAGE);
+		storeCmsPageInModel(model, payOrderBillPage);
+		setUpMetaDataForContentPage(model, payOrderBillPage);
+		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		blOrderFacade.setPayOrderBillAttributes(orderDetails);
+		model.addAttribute(ORDER_DATA, orderDetails);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		setupAdditionalFields(model);
+		return getViewForPage(model);
+	}
+
 	
 	/**
 	 * This method is created for the Modify Payment page. 

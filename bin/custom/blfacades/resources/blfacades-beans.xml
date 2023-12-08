@@ -1172,6 +1172,7 @@
 		<property name="isChargeDeposit" type="java.lang.Boolean"/>
 		<property name="isModifyOrderPayment" type="java.lang.Boolean"/>
 		<property name="inboundTrackingURLs" type="java.util.List&lt;String>"/>
+		<property name="orderBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->

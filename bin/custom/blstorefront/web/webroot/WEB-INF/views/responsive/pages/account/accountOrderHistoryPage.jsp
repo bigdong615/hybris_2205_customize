@@ -298,8 +298,10 @@
                                    </c:if>
                 									</p>
                 							</div>
+
+                							${order.payBillingCost.value}----costing
                 							<c:url value="/my-account/${order.code}/payBill" var="payBillAction" />
-                						  
+
                 							<c:choose>
                 							<c:when test="${(order.payBillingCost.value gt 0) and (not empty (order.code))}">
                 									<div class="mt-2 notification notification-error"><spring:theme code="text.myaccount.order.unpaidbill"/> (#${fn:escapeXml(order.code)}). <a href="${payBillAction}">Pay Invoice</a></div>
@@ -311,6 +313,19 @@
                 							      
                 							</c:otherwise>	
                 							</c:choose>
+                							<c:url value="/my-account/${order.code}/payOrderBill" var="payOrderBillAction" />
+
+                                            <c:choose>
+                                            <c:when test="${(order.orderBillingCost.value gt 0) and (not empty (order.code))}">
+                                            		<div class="mt-2 notification notification-error"><spring:theme code="text.myaccount.order.unpaidbill"/> (#${fn:escapeXml(order.code)}). <a href="${payOrderBillAction}">Pay Order Invoice</a></div>
+                                            </c:when>
+                                            <c:when test="${(order.orderBillingCost.value gt 0) and (empty order.code)}">
+                                                     <div class="mt-2 notification notification-error"><spring:theme code="text.myaccount.order.unpaidbill"/>. <a href="${payOrderBillAction}">Pay Order Invoice</a></div>
+                                            </c:when>
+                                            <c:otherwise>
+
+                                            </c:otherwise>
+                                            </c:choose>
                 						</div>
                 					</div>
                 					</c:otherwise>

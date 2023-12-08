@@ -625,7 +625,8 @@ public class BlOrderBillingController extends DefaultWidgetController {
         try {
             blOrderFacade.setResolvedStatusOnRepairLog(orderCode);
             Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setOrderPayBillFlagTrue(getOrderModel());
-            blEspEventService.triggerBillPaidEspEvent(totalBillPay.toString(), billingChargeTypeMap, (OrderModel) getOrderModel());
+            //blEspEventService.triggerBillPaidEspEvent(totalBillPay.toString(), billingChargeTypeMap, (OrderModel) getOrderModel());
+            blEspEventService.sendBillPaidESPEvent(orderModel);
             getModelService().refresh(this.getOrderModel());
             checkIfBillIsPaid();
             updateSerialStatusForPaidBills(getOrderModel());
