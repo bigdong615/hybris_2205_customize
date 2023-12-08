@@ -593,5 +593,7 @@ INSERT_UPDATE ServicelayerJob ; code[unique=true]              ; springId
                               ; blCompleteOutstandingOrdersJob ; blCompleteOutstandingOrdersJob
                               
 INSERT_UPDATE CronJob ; code[unique=true]              ; job(code)                      ; singleExecutable ; sessionLanguage(isocode)
-                      ; blCompleteOutstandingOrdersJob ; blCompleteOutstandingOrdersJob ; false            ; de                      
-                      
+                      ; blCompleteOutstandingOrdersJob ; blCompleteOutstandingOrdersJob ; false            ; en                      
+
+INSERT_UPDATE Trigger ; cronjob(code)[unique=true] 			; cronExpression 
+                      ; blCompleteOutstandingOrdersJob      ; 0 0 0 ? * * *                      
