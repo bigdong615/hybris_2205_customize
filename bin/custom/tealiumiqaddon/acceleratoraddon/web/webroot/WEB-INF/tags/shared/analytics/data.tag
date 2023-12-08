@@ -278,6 +278,18 @@
 			   {
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};
+			 
+			 <c:if test="${not empty breadcrumbs[0]}">
+			 "category": "${ycommerce:encodeJavaScript(breadcrumbs[0].name)}",
+			  </c:if>
+			  <c:if test="${not empty breadcrumbs[1]}">
+				"subCategory2": "${ycommerce:encodeJavaScript(breadcrumbs[1].name)}",
+			  </c:if>
+			  <c:if test="${not empty breadcrumbs[2]}">
+			    "subCategory3": "${ycommerce:encodeJavaScript(breadcrumbs[2].name)}",
+			  </c:if>
+			  	
+			  	
 
 			dmpgDl.products = [
 			  	
@@ -335,20 +347,20 @@
 			   {
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};
-			  
+			  	
 			  dmpgDl.products = [
 			  	{
 			  	"id": "${product.code}",
 			  	"name": "${product.displayName}",
           		"brand": "${product.manufacturer}",
-				 <c:if test="${not empty product.categoriesList[0]}">
-				 "category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
+				 <c:if test="${not empty breadcrumbs[0]}">
+				 "category": "${ycommerce:encodeJavaScript(breadcrumbs[0].categoryCode)}",
 				  </c:if>
-				  <c:if test="${not empty product.categoriesList[1]}">
-					"subCategory2": "${ycommerce:encodeJavaScript(product.categoriesList[1].code)}",
+				  <c:if test="${not empty breadcrumbs[1]}">
+					"subCategory2": "${ycommerce:encodeJavaScript(breadcrumbs[1].categoryCode)}",
 				  </c:if>
-				  <c:if test="${not empty product.categoriesList[2]}">
-				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
+				  <c:if test="${not empty breadcrumbs[2]}">
+				    "subCategory3": "${ycommerce:encodeJavaScript(breadcrumbs[2].categoryCode)}",
 				  </c:if>
          		"variant" : "${ycommerce:encodeJavaScript(blPageType.toLowerCase())}",
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
