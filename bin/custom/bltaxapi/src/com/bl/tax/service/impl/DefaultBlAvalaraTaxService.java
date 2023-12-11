@@ -3,6 +3,7 @@ package com.bl.tax.service.impl;
 import com.bl.tax.ResponseData;
 import com.bl.tax.TaxRequestData;
 import com.bl.tax.TaxResponse;
+import com.bl.tax.billing.BillingPojo;
 import com.bl.tax.constants.BltaxapiConstants;
 import com.bl.tax.service.BlTaxService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -42,7 +43,20 @@ public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrde
       }
       return lExternalTaxDoc;
   }
+    @Override
+    public Double processBillingTax(BillingPojo billing)
+            throws RestClientException, URISyntaxException {
+        final TaxRequestData request = new TaxRequestData();
+        getBillingRequestPopulator().populate(billing, request);
+        final ResponseData responseData;
+        responseData = super.process(createHttpEntity(request), TaxResponse.class);
+        if(responseData != null && responseData.getResults() != null && CollectionUtils.isNotEmpty(responseData.getResults().getTaxLines()))
+        {
+            return responseData.getResults().getTaxLines().get(0).getTaxCalculated();
+        }
 
+        return Double.valueOf(0.0d);
+    }
   @Override
   public Double processShippingTax(AbstractOrderModel orderModel, Double amount) throws RestClientException, URISyntaxException {
     final TaxRequestData request = new TaxRequestData();
