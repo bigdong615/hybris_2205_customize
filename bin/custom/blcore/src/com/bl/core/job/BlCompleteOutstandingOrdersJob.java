@@ -60,7 +60,7 @@ public class BlCompleteOutstandingOrdersJob extends AbstractJobPerformable<CronJ
 					{
 						for (final Map.Entry<String, ItemStatusEnum> item : ce.getItems().entrySet())
 						{
-							if (item.getValue() != null)
+							if (item.getKey() != null && item.getKey().matches("[0-9]+") && item.getValue() != null)
 							{
 								if (item.getValue().equals(ItemStatusEnum.RECEIVED_OR_RETURNED)
 										|| item.getValue().equals(ItemStatusEnum.NOT_INCLUDED))
