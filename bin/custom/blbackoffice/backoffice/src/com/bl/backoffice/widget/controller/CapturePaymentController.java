@@ -5,7 +5,9 @@ package com.bl.backoffice.widget.controller;
 
 import com.bl.backoffice.actions.ChangeShipmentStatusAction;
 import com.bl.backoffice.consignment.service.BlConsignmentService;
+import com.bl.backoffice.widget.controller.order.BlCustomCancelOrderController;
 import com.bl.backoffice.widget.controller.order.BlCustomCancelRefundConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.NumberingSystemEnum;
@@ -13,8 +15,14 @@ import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.payment.service.BlPaymentService;
+import com.bl.core.services.cancelandrefund.service.BlCustomCancelRefundService;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
+import com.braintree.command.request.BrainTreeRefundTransactionRequest;
+import com.braintree.command.result.BrainTreeRefundTransactionResult;
+import com.braintreegateway.Result;
+import com.braintreegateway.Transaction;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
@@ -29,10 +37,15 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.payment.dto.TransactionStatus;
+import de.hybris.platform.payment.enums.PaymentTransactionType;
+import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.localization.Localization;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import javax.annotation.Resource;
@@ -70,12 +83,17 @@ public class CapturePaymentController extends DefaultWidgetController {
     private static final String ERR_MESG_FOR_ALREADY_CAPTURED_ORDER = "error.message.already.captured.order";
     private static final String ERR_MESG_FOR_ORDER_TRANSFER = "error.message.payment.capture.order.transfer";
     private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED = "blbackoffice.capture,payment.order.success.message";
+	private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED_ORDER_DIFFERENCE = "blbackoffice.capture.payment.order.difference.success.message";
     private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED_GIFT_CARD = "blbackoffice.capture,payment.gift.card.order.success.message";
     private static final String ERR_MSG_FOR_PAYMENT_CAPTURED = "error.message.payment.captured";
     private static final String MESSAGE_BOX_TITLE = "payment.capture.message.box.title";
     private static final String CANCEL_BUTTON = "cancelChanges";
     private static final String CAPTURE_BUTTON = "captureOrderPayment";
     private static final String INPUT_OBJECT = "inputObject";
+
+	private static final String NO_CAPTURED_TRANSACTION_ENTRY_FOUND = " no Captured Transaction Entry Found";
+
+	private static final Logger LOGGER = Logger.getLogger(CapturePaymentController.class);
 
     @Resource
     private BlPaymentService blPaymentService;
@@ -91,6 +109,9 @@ public class CapturePaymentController extends DefaultWidgetController {
     
     @Resource(name = "defaultBlConsignmentService")
     private BlConsignmentService defaultBlConsignmentService;
+
+	@Resource
+	private BlCustomCancelRefundService blCustomCancelRefundService;
 	@Resource
 	private transient NotificationService notificationService;
 
@@ -176,12 +197,19 @@ public class CapturePaymentController extends DefaultWidgetController {
              showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ORDER_TRANSFER), true);
              return;
          }
-         if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode()) || getOrderModel().getIsCaptured()
+		if(checkDifferenceOfOrderTotal(getOrderModel()))
+		{
+			showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED_ORDER_DIFFERENCE));
+			orderModel.setStatus(OrderStatus.PAYMENT_CAPTURED);
+			getModelService().save(orderModel);
+			getModelService().refresh(orderModel);
+		}
+		else if(getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode()) || getOrderModel().getIsCaptured()
              || OrderStatus.CANCELLING.equals(getOrderModel().getStatus())) {
              showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER), true);
              return;
          }
-         if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
+         else if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
             if(Double.compare(getOrderModel().getTotalPrice(), 0.0) == 0 && CollectionUtils.isNotEmpty(getOrderModel().getGiftCard())) {
           	  getOrderModel().setStatus(OrderStatus.PAYMENT_CAPTURED);
           	  getModelService().save(getOrderModel());
@@ -261,6 +289,28 @@ public class CapturePaymentController extends DefaultWidgetController {
 					NotificationEvent.Level.SUCCESS, "Shipment changed to BL_SHIPPED status");
 
 		}
+	}
+
+	public boolean checkDifferenceOfOrderTotal(final OrderModel order) {
+		BigDecimal amountCaptured= BigDecimal.valueOf(0.0);
+			for (final PaymentTransactionModel paymentTransactionModel : orderModel.getPaymentTransactions()) {
+				for (final PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel.getEntries()) {
+					if ((paymentTransactionEntryModel.getType() == PaymentTransactionType.CAPTURE ||
+							paymentTransactionEntryModel.getType() == PaymentTransactionType.PARTIAL_CAPTURE ||
+							paymentTransactionEntryModel.getType() == PaymentTransactionType.ORDER_EDIT_ADJUSTMENT_CAPTURE)
+							&& TransactionStatus.ACCEPTED.name().equals(paymentTransactionEntryModel.getTransactionStatus())) {
+						amountCaptured = amountCaptured.add(paymentTransactionEntryModel.getAmount());
+					}
+				}
+			}
+		    if(order.getTotalPrice().compareTo(amountCaptured.doubleValue()) > 0 )
+			{
+				order.setIsDifferencePresentToCapture(Boolean.TRUE);
+				BigDecimal remainingAmountToCapture= (BigDecimal.valueOf(order.getTotalPrice())).subtract(amountCaptured);
+				return blPaymentService.capturePaymentForDifferenceOfOrder(order, remainingAmountToCapture);
+			}
+
+		return false;
 	}
 
 	/**

@@ -2093,6 +2093,11 @@
 		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
+	<bean id="blCompleteOutstandingOrdersJob" class="com.bl.core.job.BlCompleteOutstandingOrdersJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
 	<bean id="blProductModifiedTimeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductModifiedTimeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
@@ -2355,6 +2360,10 @@
 	<bean id="blLateOrderFeedJob" class="com.bl.core.job.BlLateOrderFeedJob" parent="abstractJobPerformable">
 		<property name="blLateOrderPopulator" ref="blLateOrderPopulator"/>
 		<property name="orderDao" ref="orderDao"/>
+	</bean>
+
+	<bean id="blAuthorizeAndCapturePaymentJob" class="com.bl.core.job.BlAuthorizeAndCapturePaymentJob" parent="abstractJobPerformable">
+		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
 	
 	<bean id="blUpsScrapeNightJob" class="com.bl.core.job.UpsScrapeNightJob" parent="abstractJobPerformable">

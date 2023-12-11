@@ -144,5 +144,6 @@ INSERT_UPDATE CronJob ; code[unique=true]               ; job(code)             
 
 INSERT_UPDATE ServicelayerJob;code[unique=true];springId
                              ;blLateOrderReminderFeedJob;blLateOrderFeedJob
+                             ;blAuthorizeAndCapturePaymentJob;blAuthorizeAndCapturePaymentJob
 
 #BLS-548 End

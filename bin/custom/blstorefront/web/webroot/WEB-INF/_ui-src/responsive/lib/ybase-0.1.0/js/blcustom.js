@@ -329,9 +329,10 @@ $('.shopping-cart__item-remove').on("click", function (e){
     });
     
     
-    //To handle enter key action in cart popup, when we change quantity BLS-499
+     //To handle enter key action in cart popup, when we change quantity BLS-499
       $(".input-number").keypress(function(e) {
-		 if(e.which == 13){
+		 // alert(e.keyCode +"---"+ e.which);
+		 if(e.keyCode == 13){
     		var currentValue = $(this).val();
  		var totalQuantityToUpdate;
  		var entryNumber = parseInt($(this).attr('entryNumber'));
@@ -350,14 +351,16 @@ $('.shopping-cart__item-remove').on("click", function (e){
  				$('.page-loader-new-layout').show();
  			},
  			success : function(response) {
+				// location.reload();
  				if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
  					ACC.minicart.updateMiniCartDisplay();
- 					location.reload();
+ 					//location.reload();
  				}
  			},
  			complete : function() {
+				// location.reload();
  				$('.page-loader-new-layout').hide();
- 				location.reload();
+ 				//location.reload();
  			},
  			error : function(jqXHR, textStatus, errorThrown) {
  				$('.page-loader-new-layout').hide();
@@ -365,9 +368,13 @@ $('.shopping-cart__item-remove').on("click", function (e){
  						"The following error occurred: "
  						+ jqXHR, textStatus,
  						errorThrown);
+ 						
  			}
+ 			
  		});
+ 		return false;
     			}
+    			
     });
  }
 
