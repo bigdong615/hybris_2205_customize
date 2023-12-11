@@ -573,9 +573,34 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         final AtomicDouble totalAmt = new AtomicDouble(0.0);
         applyTaxOnPayOrderBillCharges(source);
         final AtomicDouble currentTax = new AtomicDouble(0.0);
+        source.setUnPaidBillPresent(false);
+        getModelService().save(source);
 
-        updateOrderModel(source, totalAmt, currentTax);
-        updateTargetAttributes(source,target, totalAmt, currentTax);
+        final List<AvailabilityMessage> messagesList = Lists.newArrayList();
+        source.getOrderBills().forEach(billing -> {
+            if (BooleanUtils.isFalse(billing.isBillPaid()))
+            {
+                billing.getUnPaidBillingNotes().forEach(msg -> messagesList.add(getMessage(msg)));
+                totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+                currentTax.addAndGet(billing.getTaxAmount().doubleValue());
+            }
+            target.getEntries().forEach(entry -> {
+                messagesList.forEach(msg -> {
+                    if (msg.getMessageCode().contains(entry.getProduct().getName()))
+                    {
+                        final List<AvailabilityMessage> entryMessages = Lists
+                                .newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
+                        AvailabilityMessage ms = getMessage(msg.getMessageCode());
+                        entryMessages.add(ms);
+                        entry.setMessages(entryMessages);
+                    }
+                });
+            });
+        });
+
+        target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
+        target.setTotalPayBillTax(convertDoubleToPriceData(currentTax.get(), source ));
+        target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get(), source));
   }
 
     private void applyTaxOnPayOrderBillCharges(OrderModel source) {
@@ -600,55 +625,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     private OrderModel getOrderModel(String orderCode, BaseStoreModel baseStoreModel) {
         return getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(),
                 orderCode, baseStoreModel);
-    }
-
-    private void updateOrderModel(OrderModel source, AtomicDouble totalAmt, AtomicDouble currentTax) {
-        source.setUnPaidBillPresent(false);
-        getModelService().save(source);
-
-        final List<AvailabilityMessage> messagesList = new ArrayList<>();
-        source.getOrderBills().forEach(billing -> {
-            if (BooleanUtils.isFalse(billing.isBillPaid())) {
-                processUnpaidBilling(billing, messagesList, totalAmt, currentTax);
-            }
-        });
-    }
-
-    private void updateTargetAttributes(OrderModel source, OrderData target, AtomicDouble totalAmt, AtomicDouble currentTax) {
-        final List<AvailabilityMessage> messagesList = new ArrayList<>();
-        source.getOrderBills().forEach(billing -> {
-            if (BooleanUtils.isFalse(billing.isBillPaid())) {
-                processUnpaidBilling(billing, messagesList, totalAmt, currentTax);
-                updateEntryMessages(target, billing, messagesList);
-            }
-        });
-
-        target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
-        target.setTotalPayBillTax(convertDoubleToPriceData(currentTax.get(), source));
-        target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get(), source));
-    }
-
-    private void processUnpaidBilling(BlItemsBillingChargeModel billing, List<AvailabilityMessage> messagesList,
-                                      AtomicDouble totalAmt, AtomicDouble currentTax) {
-        billing.getUnPaidBillingNotes().forEach(msg -> messagesList.add(getMessage(msg)));
-        totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
-        currentTax.addAndGet(billing.getTaxAmount().doubleValue());
-    }
-    private void updateEntryMessages(OrderData target, BlItemsBillingChargeModel billing, List<AvailabilityMessage> messagesList) {
-        target.getEntries().forEach(entry -> {
-            messagesList.forEach(msg -> {
-                if (msg.getMessageCode().contains(entry.getProduct().getName())) {
-                    updateEntryWithMessage(entry, msg);
-                }
-            });
-        });
-    }
-
-    private void updateEntryWithMessage(OrderEntryData entry, AvailabilityMessage msg) {
-        final List<AvailabilityMessage> entryMessages = new ArrayList<>(CollectionUtils.emptyIfNull(entry.getMessages()));
-        AvailabilityMessage ms = getMessage(msg.getMessageCode());
-        entryMessages.add(ms);
-        entry.setMessages(entryMessages);
     }
 
   /**

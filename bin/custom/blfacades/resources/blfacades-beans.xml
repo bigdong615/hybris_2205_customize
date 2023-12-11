@@ -1688,6 +1688,7 @@
 	  <property name="updatedBillTime" type="java.util.Date" />
 	  <property name="billStatus" type="java.lang.String"/>
 	  <property name="primaryKey" type="java.lang.String"/>
+	  <property name="unPaidBillingNotes" type="java.util.List&lt;String>"/>
 	</bean>
 	
 	<bean class="com.bl.facades.commercefacades.BlItemsBillingChargeListData">

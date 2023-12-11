@@ -299,7 +299,6 @@
                 									</p>
                 							</div>
 
-                							${order.payBillingCost.value}----costing
                 							<c:url value="/my-account/${order.code}/payBill" var="payBillAction" />
 
                 							<c:choose>
