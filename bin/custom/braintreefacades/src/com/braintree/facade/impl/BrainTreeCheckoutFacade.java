@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
 
@@ -608,6 +609,46 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		return productCodeWiseItemCharge;
 	}
 
+	public Map<String,List<String>> setOrderPayBillFlagTrue(final AbstractOrderModel order) {
+		AtomicBoolean isOrderComplete = new AtomicBoolean(true);
+		final Map<String,List<String>> productCodeWiseItemCharge = new HashMap<>();
+		order.setOrderBillModifiedDate(new Date());
+		getModelService().save(order);
+		getModelService().refresh(order);
+		BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+				"Updating order {} for payment of pending bill at updated time {}",
+				order.getCode(), order.getOrderBillModifiedDate());
+		order.getOrderBills()
+				.forEach(billing -> {
+							if(BooleanUtils.isFalse(billing.isBillPaid())) {
+								billing.setBillPaid(true);
+								billing.setUpdatedBillTime(new Date());
+								getModelService().save(billing);
+								setTotalAmountPastDue(order.getUser(), billing);
+								setOutstandingBill(order.getUser(), billing);
+								storeOrderBillingChargesTypeToMap(productCodeWiseItemCharge, order, billing);
+							}
+						});
+
+		for(BlItemsBillingChargeModel bill : order.getOrderBills()){
+			if(!bill.isBillPaid()){
+				isOrderComplete.set(false);
+				break;
+			}
+		}
+		if(isOrderComplete.get()) {
+			order.setStatus(OrderStatus.COMPLETED);
+			order.setOrderCompletedDate(new Date());
+			getModelService().save(order);
+			getBlOrderService().commitOrderToAvalara(order);
+			order.getConsignments().forEach(consignmentModel -> {
+				consignmentModel.setStatus(ConsignmentStatus.COMPLETED);
+				getModelService().save(consignmentModel);
+			});
+		}
+		return productCodeWiseItemCharge;
+	}
+
 	/**
 	 * It removes the billing charges instance which has been paid by the customer
 	 * @param user the customer model
@@ -644,6 +685,30 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
     }
   }
 
+	private void storeOrderBillingChargesTypeToMap(
+			final Map<String, List<String>> productCodeWiseItemCharge,
+			final AbstractOrderModel orderModel, final BlItemsBillingChargeModel billing) {
+
+		final String[] productCode = {""};
+	    List<String> serialProducts = billing.getSerialCodes();
+		orderModel.getEntries().forEach(abstractOrderEntryModel -> {
+			abstractOrderEntryModel.getSerialProducts().forEach(blProductModel -> {
+				if(serialProducts.contains(blProductModel.getCode())){
+					productCode[0] = abstractOrderEntryModel.getProduct().getCode();
+				}
+			});
+		});
+
+		if (productCodeWiseItemCharge.containsKey(productCode[0])) {
+			final List<String> billChargeType = productCodeWiseItemCharge.get(productCode[0]);
+			billChargeType.add(billing.getBillChargeType().getCode());
+			productCodeWiseItemCharge.put(productCode[0], billChargeType);
+		} else {
+			productCodeWiseItemCharge.put(productCode[0], Lists
+					.newArrayList(billing.getBillChargeType().getCode()));
+		}
+	}
+
   /**
 	 * It updates the total amount past due on successful bill payment
 	 * @param user the user
@@ -674,7 +739,12 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	          totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
 	        }
 	      })))));
-	    
+
+		  unPaidBillOrders.forEach(order -> order.getOrderBills().forEach(bill-> {
+			if(BooleanUtils.isFalse((bill.isBillPaid()))){
+				totalAmt.addAndGet(bill.getChargedAmount().doubleValue());
+			}
+		  }));
 		 return Double.compare(totalAmt.get(), 0.0) > 0 ;
 	}
 	private boolean isCreditCard()

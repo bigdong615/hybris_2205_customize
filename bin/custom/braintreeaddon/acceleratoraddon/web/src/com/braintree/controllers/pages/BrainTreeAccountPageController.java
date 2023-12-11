@@ -3,7 +3,10 @@ package com.braintree.controllers.pages;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT_TOKEN;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.core.model.BlItemsBillingChargeModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
@@ -80,6 +83,8 @@ import org.apache.commons.collections.CollectionUtils;
 import com.bl.logging.BlLogger;
 import org.apache.log4j.Level;
 import java.util.Date;
+import java.util.stream.Collectors;
+
 import com.bl.core.model.GiftCardMovementModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -114,6 +119,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String EDIT_PAYMENT_METHOD_CMS_PAGE = "edit-payment-method";
 	
 	private static final String PAY_BILL_CMS_PAGE = "pay-bill";
+	private static final String PAY_ORDER_BILL_CMS_PAGE = "pay-order-bill";
 	private static final int DECIMAL_PRECISION = 2;
 	private static final String MODIFY_PAYMENT_CMS_PAGE = "modify-payment";
 	
@@ -471,6 +477,21 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		setupAdditionalFields(model);
 		return getViewForPage(model);
 	}
+
+	@GetMapping(value = "/{orderCode}/payOrderBill")
+	@RequireHardLogIn
+	public String getPayBillDetailsPageForOrder(@PathVariable(value = ORDER_CODE ,required = false) final String orderCode, final Model model) throws CMSItemNotFoundException{
+		final ContentPageModel payOrderBillPage = getContentPageForLabelOrId(PAY_ORDER_BILL_CMS_PAGE);
+		storeCmsPageInModel(model, payOrderBillPage);
+		setUpMetaDataForContentPage(model, payOrderBillPage);
+		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		blOrderFacade.setPayOrderBillAttributes(orderDetails);
+		model.addAttribute(ORDER_DATA, orderDetails);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		setupAdditionalFields(model);
+		return getViewForPage(model);
+	}
+
 	
 	/**
 	 * This method is created for the Modify Payment page. 
@@ -527,8 +548,11 @@ public class BrainTreeAccountPageController extends AbstractPageController
 				PriceData payBillTotal = convertDoubleToPriceData(payBillAmount, order);
 				orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
 				model.addAttribute(ORDER_DATA, orderDetails);
-        final Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
-        blEspEventService.triggerBillPaidEspEvent(billPayTotal, billingChargeTypeMap, (OrderModel) order);
+				final Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+				Map<String, List<String>> billingOrderChargeTypeMap = brainTreeCheckoutFacade.setOrderPayBillFlagTrue(order);
+        		//blEspEventService.triggerBillPaidEspEvent(billPayTotal, billingChargeTypeMap, (OrderModel) order);
+				blEspEventService.sendBillPaidESPEvent((OrderModel) order);
+				updateSerialStatusForPaidBills(order);
 				final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 						BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
 				storeCmsPageInModel(model, payBillSuccessPage);
@@ -545,6 +569,27 @@ public class BrainTreeAccountPageController extends AbstractPageController
 			return REDIRECT_PREFIX + MY_ACCOUNT + orderCode + PAY_BILL;
 		}
 		return REDIRECT_PREFIX + MY_ACCOUNT + orderCode + PAY_BILL;
+	}
+
+	private void updateSerialStatusForPaidBills(AbstractOrderModel order) {
+		List <BlItemsBillingChargeModel> paidBillsWithMissingCharge = order.getOrderBills().stream().filter(bill ->
+				bill.isBillPaid() && bill.getBillChargeType().getCode().equals("MISSING_CHARGE")).collect(Collectors.toList());
+		List < String > serialsWithMissingStatus = new ArrayList < > ();
+		paidBillsWithMissingCharge.forEach(pBill ->pBill.getSerialCodes().forEach(code -> {
+			serialsWithMissingStatus.add(code.split(",")[0]);
+		}));
+		order.getEntries().forEach(abstractOrderEntryModel -> {
+			abstractOrderEntryModel.getSerialProducts().forEach(blProductModel -> {
+				if(serialsWithMissingStatus.contains(blProductModel.getCode()) && abstractOrderEntryModel.getGearGuardProFullWaiverSelected() == Boolean.FALSE){
+					((BlSerialProductModel) blProductModel).setSerialStatus(SerialStatusEnum.STOLEN_PAID_IN_FULL);
+				}
+				else if(serialsWithMissingStatus.contains(blProductModel.getCode()) && abstractOrderEntryModel.getGearGuardProFullWaiverSelected() == Boolean.TRUE){
+					((BlSerialProductModel) blProductModel).setSerialStatus(SerialStatusEnum.STOLEN_PAID_12_PERCENT);
+				}
+				modelService.save(blProductModel);
+				BlLogger.logMessage(LOG , Level.DEBUG , "Serial Status updated of serial {} from order" , blProductModel.getCode());
+			});
+		});
 	}
 
 	@PostMapping(value = "/modify-payment-success")

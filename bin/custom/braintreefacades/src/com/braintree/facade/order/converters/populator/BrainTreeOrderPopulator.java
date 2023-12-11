@@ -65,6 +65,7 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 		final double promoDiscount = Objects.isNull(source.getTotalDiscounts()) ? 0.0 : source.getTotalDiscounts();
 		final double gifCardDiscount = Objects.isNull(source.getGiftCardAmount()) ? 0.0 : source.getGiftCardAmount();
 		target.setTotalDiscounts(createPrice(source, promoDiscount + gifCardDiscount));
+		target.setIsRetailGearOrder(source.getIsRetailGearOrder());
 		populateModifiedOrderPaymentInfos(source, target);
 	}
 

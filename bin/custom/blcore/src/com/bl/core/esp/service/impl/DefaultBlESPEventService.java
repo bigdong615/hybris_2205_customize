@@ -2,6 +2,8 @@ package com.bl.core.esp.service.impl;
 
 
 import com.bl.core.esp.populators.*;
+import com.bl.esp.dto.billpaid.OrderBillReceiptEventRequest;
+import com.bl.esp.dto.pendingverification.PendingVerificationEventRequest;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -95,6 +97,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderNewShippingRequestPopulator blOrderNewShippingRequestPopulator;
     private BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator;
     private BlOrderExceptionsRequestPopulator blOrderExceptionsRequestPopulator;
+    private BlOrderBillPaidReceiptRequestPopulator blOrderBillPaidReceiptRequestPopulator;
     private BlOrderUnboxedRequestPopulator blOrderUnboxedRequestPopulator;
     private BlOrderPaymentDeclinedRequestPopulator blOrderPaymentDeclinedRequestPopulator;
     private BlOrderVerificationRequiredRequestPopulator blOrderVerificationRequiredRequestPopulator;
@@ -1046,6 +1049,25 @@ public class DefaultBlESPEventService implements BlESPEventService {
     return decimalFormat.format(amount);
   }
 
+    @Override
+    public void sendBillPaidESPEvent(final OrderModel orderModel) {
+        if (Objects.nonNull(orderModel)) {
+            final OrderBillReceiptEventRequest orderBillReceiptEventRequest = new OrderBillReceiptEventRequest();
+            getBlOrderBillPaidReceiptRequestPopulator().populate(orderModel,
+                    orderBillReceiptEventRequest);
+            ESPEventResponseWrapper espEventResponseWrapper = null;
+            try
+            {
+                // Call send bill paid ESP Event API
+                espEventResponseWrapper = getBlESPEventRestService().sendBillPaidESP(
+                        orderBillReceiptEventRequest);
+            }catch (final BlESPIntegrationException exception){
+                persistESPEventDetail(null, EspEventTypeEnum.ORDER_BILL_PAID,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+            }
+            // Save send bill paid ESP Event Detail
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_BILL_PAID,orderModel.getCode(),null, null);
+        }
+    }
 
   public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
         return blOrderConfirmationRequestPopulator;
@@ -1297,6 +1319,12 @@ public class DefaultBlESPEventService implements BlESPEventService {
     this.blESPEmailCommonRequestPopulator = blESPEmailCommonRequestPopulator;
   }
 
+    public BlOrderBillPaidReceiptRequestPopulator getBlOrderBillPaidReceiptRequestPopulator() {
+        return blOrderBillPaidReceiptRequestPopulator;
+    }
+    public void setBlOrderBillPaidReceiptRequestPopulator(BlOrderBillPaidReceiptRequestPopulator blOrderBillPaidReceiptRequestPopulator) {
+        this.blOrderBillPaidReceiptRequestPopulator = blOrderBillPaidReceiptRequestPopulator;
+    }
     public BlOrderPendingVerificationsPopulator getBlOrderPendingVerificationsPopulator() {
         return blOrderPendingVerificationsPopulator;
     }

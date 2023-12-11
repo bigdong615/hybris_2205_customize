@@ -41,6 +41,7 @@
 				<value code="NOTIFY_ME_EMAIL"/>
 				<value code="FREE_GIFT_CARD_PURCHASE" />
         <value code="BACK_IN_STOCK_EMAIL"/>
+				<value code="ORDER_BILL_PAID" />
 				<value code="VERIFICATION_PENDING"/>
 				<value code="VERIFICATION_REMINDER"/>
 			</enumtype>

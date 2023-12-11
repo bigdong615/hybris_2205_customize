@@ -1,0 +1,34 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs core_data_accountpage.impex =========================");
+
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+# Language
+$lang=en
+
+# Import config properties into impex macros
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true]
+$jarResourceCms=$config-jarResourceCmsValue
+
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]              ; name                                  ; masterTemplate(uid,$contentCV) ; label                        ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='false'] ;
+                          ;                         ; pay-order-bill                ; Order Bill Payment Page               ; AccountPageTemplate            ; pay-order-bill
+
+
+
+#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs sample_data_accountpage.impex =========================");
+
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+# Language
+$lang=en
+
+
+INSERT_UPDATE JspIncludeComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                                     ; page                                                                                        ; actions(uid,$contentCV) ; &componentRef
+                                  ;                         ; PayOrderBillComponent        ; Order Bill Pay Component                 ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayOrderBillPage.jsp        ;                         ; PayOrderBillComponent
+
+# ContentSlot
+INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                          ; name                                            ; active ; cmsComponents(&componentRef)                    ;  ;  ;
+                          ;                         ; BodyContentSlot-order-bill-pay            ; Body Content Slot for order Bill Payment        ; true   ; PayOrderBillComponent                           ;  ;  ;
+
+
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                 ; position[unique=true] ; page(uid,$contentCV)[unique=true] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;
+                                 ;                         ; BodyContentSlot-order-bill-pay   ; BodyContent           ; pay-order-bill                          ; BodyContentSlot-order-bill-pay                 ;  ;  ;
