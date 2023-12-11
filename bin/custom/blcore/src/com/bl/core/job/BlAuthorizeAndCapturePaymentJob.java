@@ -35,7 +35,7 @@ public class BlAuthorizeAndCapturePaymentJob extends AbstractJobPerformable<Cron
 		catch(final Exception ex)
 		{
 			BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(),
-					"Error occurred while performing BlAuthorizePaymentJob", ex);
+					"Error occurred while performing BlAuthorizeAndCapturePaymentJob", ex);
 			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);

@@ -138,6 +138,9 @@ public class BlPickerScanController extends DefaultWidgetController
 				}
 			}, null);
 		}
+		else {
+			getConsignment(selectedWarehouse,orders);
+		}
 	}
 
 	private void getConsignment(final WarehouseModel selectedWarehouse, final String[] orderList)

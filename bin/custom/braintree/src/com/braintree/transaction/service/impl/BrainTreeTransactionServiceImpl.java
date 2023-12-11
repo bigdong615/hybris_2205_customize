@@ -989,7 +989,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
       braintreePaymentTransaction.setPlannedAmount(formatAmount(paymentTransactionEntry.getAmount()));
 
       if(Objects.nonNull(brainTreePaymentInfoModel)) {
-      	setTransactionTypeForAdditionalPayment(brainTreePaymentInfoModel, braintreePaymentTransaction,cart);
+      	setTransactionTypeForAdditionalPayment(brainTreePaymentInfoModel, braintreePaymentTransaction);
 			}
       if(isPaymentForDeposit(brainTreePaymentInfoModel) || (Objects.nonNull(brainTreePaymentInfoModel)
 					&& brainTreePaymentInfoModel.isCreateNewTransaction()))
@@ -1037,8 +1037,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	 * @param braintreePaymentTransaction braintree payment transaction
 	 */
 	private void setTransactionTypeForAdditionalPayment(final BrainTreePaymentInfoModel brainTreePaymentInfoModel,
-			final PaymentTransactionModel braintreePaymentTransaction,AbstractOrderModel orderModel) {
-		if (brainTreePaymentInfoModel.isBillPayment()) {
+			final PaymentTransactionModel braintreePaymentTransaction) {
+		if(brainTreePaymentInfoModel.isBillPayment()) {
 			braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.BILL_PAYMENT);
 		} else if(brainTreePaymentInfoModel.isModifyPayment()) {
   		braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.MODIFY_PAYMENT);
