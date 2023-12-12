@@ -1,4 +1,3 @@
-<li class="splide__slide">
 	<a href="${feature.urlLink}" class="card blog-card"> 
 		<img class="blog-img" src="${feature.media.url}" />
 		<div class="blog-content">
@@ -7,5 +6,4 @@
 			<p class="post-date">${feature.storyDate}</p>
 		</div>
 	</a>
-</li>
 

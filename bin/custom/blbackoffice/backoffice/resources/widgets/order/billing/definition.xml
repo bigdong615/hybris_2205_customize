@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<widget-definition id="com.bl.backoffice.widgets.order.billingtransaction"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd">
+
+    <name>Billing Transaction</name>
+    <description>Billing Transaction widget.</description>
+    <defaultTitle>Billing Transaction</defaultTitle>
+    <author>braintree</author>
+    <version>0.1</version>
+    <view src="customorderbilling.zul"/>
+
+    <sockets>
+        <input type="de.hybris.platform.core.model.order.OrderModel" id="inputObject"/>
+        <output type="java.lang.String" id="confirmBilling"/>
+    </sockets>
+
+    <keywords>
+        <keyword>OMS</keyword>
+    </keywords>
+
+    <controller class="com.bl.backoffice.widget.controller.order.BlOrderBillingController"/>
+
+</widget-definition>
+

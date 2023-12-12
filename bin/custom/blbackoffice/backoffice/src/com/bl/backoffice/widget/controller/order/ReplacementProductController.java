@@ -1,7 +1,9 @@
 package com.bl.backoffice.widget.controller.order;
 
+import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.Ordermanagement.services.impl.DefaultBlAllocationService;
 import com.bl.backoffice.wizards.util.ReplacementProductData;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ConsignmentEntryStatusEnum;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.NotesEnum;
@@ -32,9 +34,11 @@ import de.hybris.platform.product.UnitService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.assertj.core.util.Sets;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -169,28 +173,32 @@ if(isSerialAvailableOnOrder(actualOrder,productData.getOldSerial())) {
             if (BooleanUtils.isTrue(serial.getWarehouseLocation().getCode().equals(productData.getConsignment().getWarehouse().getCode()))) {
                 replaceSerialWithSameProductAndWarehouse(productData, serial);
             } else {
-                 //replaceSerialWithSameProductAndDifferentWarehouse(productData,serial);
-                // same product from different warehouse
+                 replaceSerialWithSameProductAndDifferentWarehouse(productData,serial);
             }
 
         } else {
             if (BooleanUtils.isTrue(serial.getWarehouseLocation().getCode().equals(productData.getConsignment().getWarehouse().getCode()))) {
-                validateAndReplaceSerilForDifferentProduct(productData, serial, productData.getNewSerial(), productData.getOldSerial(), row);
+                validateAndReplaceSerilForDifferentProduct(productData, serial);
             }else {
-                // replaceSerialWithDifferentProductAndDifferentWarehouse()
+                 replaceSerialWithDifferentProductAndDifferentWarehouse(productData,serial);
+                 close();
             }
         }
     }
 }else {
     Messagebox.show("The original serial is not on this order, double check.");
 }
-
     }
-private  void validateAndReplaceSerilForDifferentProduct(final ReplacementProductData productData,final BlSerialProductModel newSerial, final String barCode, final BlSerialProductModel oldSerial,
-                                                         final Component row){
+
+    /**
+     * This Method used to replace serial for different product and same warehouse.
+     * @param productData
+     * @param newSerial
+     */
+    private  void validateAndReplaceSerilForDifferentProduct(final ReplacementProductData productData,final BlSerialProductModel newSerial){
    if(isReplacementPossible(productData,newSerial.getBlProduct())){
        try {
-           createAndUpdateEntry(productData, newSerial, barCode, oldSerial, row);
+           createAndUpdateEntry(productData, newSerial);
        }catch (Exception e){
   BlLogger.logFormattedMessage(LOG,Level.INFO,"300",e,"Some error occure while replacement of serial {} for different product {} for the order {}",
           newSerial.getCode(),newSerial.getBlProduct().getCode(),orderModel.getCode());
@@ -200,19 +208,58 @@ private  void validateAndReplaceSerilForDifferentProduct(final ReplacementProduc
        return;
    }
 }
- private void createAndUpdateEntry(final ReplacementProductData productData,final BlSerialProductModel newSerial, final String barCode, final BlSerialProductModel oldSerial,
-                                   final Component row){
-     AbstractOrderEntryModel entryModel = isOrderEntryAlreadyPresent(orderModel, newSerial);
-     if (entryModel!=null){
-         //updating older entry
-         entryModel.setQuantity(entryModel.getQuantity()+1);
-         final ArrayList<BlProductModel> serialList =CollectionUtils.isNotEmpty(entryModel.getSerialProducts())? Lists.newArrayList(entryModel.getSerialProducts()):Lists.newArrayList();
-         serialList.add(newSerial);
-         entryModel.setSerialProducts(serialList);
-     }else {
-         //creating and updating new order entry
-          entryModel = createAndUpdateOrderEntry(newSerial, productData.getOrderEntry());
-     }
+
+    /**
+     * This method used to replace serial in case of different product and different warehouse.
+     * @param productData
+     * @param newSerial
+     */
+    private void replaceSerialWithDifferentProductAndDifferentWarehouse(final ReplacementProductData productData,final BlSerialProductModel newSerial){
+        if(isReplacementPossible(productData,newSerial.getBlProduct())){
+            try {
+                // Update
+                AbstractOrderEntryModel orderEntry = createAndUpdateOrderEntry(productData,newSerial);
+createOrUpdateConsignment(orderEntry,newSerial);
+
+                // Remove old serial from consignment entry.
+                removeOldSerialFromConsEntry(productData);
+
+    // Remove old Serial from old order entry.
+                AbstractOrderEntryModel olderOrderEntry = productData.getOrderEntry();
+                List<BlProductModel> serialProductOnOrderEntry= olderOrderEntry.getSerialProducts();
+                if (CollectionUtils.isNotEmpty(serialProductOnOrderEntry) && serialProductOnOrderEntry.size()>1) {
+                    serialProductOnOrderEntry = Lists.newArrayList(serialProductOnOrderEntry);
+                    serialProductOnOrderEntry.remove(productData.getOldSerial());
+                    olderOrderEntry.setSerialProducts(serialProductOnOrderEntry);
+                    olderOrderEntry.setQuantity(olderOrderEntry.getQuantity() - 1L);
+                }else {
+                    olderOrderEntry.setSerialProducts(new ArrayList<>());
+                    olderOrderEntry.setQuantity(0L);
+                    olderOrderEntry.setConsignmentEntries(new HashSet<>());
+                } // end of remove old Serial from old order entry.
+                modelService.save(olderOrderEntry);
+                modelService.refresh(olderOrderEntry);
+                modelService.save(orderEntry);
+                modelService.refresh(orderEntry);
+                createAndUpdateOrderNotes(productData,newSerial);
+            }catch (Exception e){
+                BlLogger.logFormattedMessage(LOG,Level.INFO,"300",e,"Some error occure while replacement of serial {} for different product {} for the order {}",
+                        newSerial.getCode(),newSerial.getBlProduct().getCode(),orderModel.getCode());
+            }
+        }else{
+            Messagebox.show("Replacement not possible due to price of new serial is lower than old one");
+            return;
+        }
+    }
+
+    /**
+     * This method used for update both entry in case of different product and same warehouse.
+     * @param productData
+     * @param newSerial
+     */
+ private void createAndUpdateEntry(final ReplacementProductData productData,final BlSerialProductModel newSerial){
+     AbstractOrderEntryModel entryModel = createAndUpdateOrderEntry(productData,newSerial);
+
      final ConsignmentModel consignment = productData.getConsignment();
      ConsignmentEntryModel consignmentEntry = isConsignmentEntryAlreadyPresent(orderModel, newSerial);
      if (null!=consignmentEntry){
@@ -247,12 +294,44 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
      modelService.refresh(consignment);
         //updating stock records
      updateStockRecords(productData,newSerial);
-     removeSerialAndUpdateOrderEntry(productData,oldSerial);
+     removeSerialAndUpdateOrderEntry(productData,productData.getOldSerial());
   createAndUpdateOrderNotes(productData,newSerial);
      close();
  }
- private OrderEntryModel createAndUpdateOrderEntry(final BlSerialProductModel newSerial,final AbstractOrderEntryModel oldOrderEntry){
-     OrderEntryModel entryModel = modelService.create(OrderEntryModel.class);
+
+    /**
+     * Updating order entry in case of different product.
+     * @param productData
+     * @param newSerial
+     * @return
+     */
+ private AbstractOrderEntryModel createAndUpdateOrderEntry(final ReplacementProductData productData,final BlSerialProductModel newSerial){
+     AbstractOrderEntryModel entryModel = isOrderEntryAlreadyPresent(orderModel, newSerial);
+     if (entryModel!=null){
+         BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Updating order entry for replacement of serial {} for already present order entry {} for the order {}",
+                 newSerial.getCode(),entryModel.getProduct().getCode(),orderModel.getCode());
+         //updating older entry
+         entryModel.setQuantity(entryModel.getQuantity()+1);
+         final ArrayList<BlProductModel> serialList =CollectionUtils.isNotEmpty(entryModel.getSerialProducts())? Lists.newArrayList(entryModel.getSerialProducts()):Lists.newArrayList();
+         serialList.add(newSerial);
+         entryModel.setSerialProducts(serialList);
+     }else {
+         BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Creating new order entry for serial {} while serial replacement for the order {}",
+                 newSerial.getCode(),orderModel.getCode());
+         //creating and updating new order entry
+         entryModel = createOrderEntry(newSerial, productData.getOrderEntry());
+     }
+     return entryModel;
+ }
+
+    /**
+     * This method used to create new order entry.
+     * @param newSerial
+     * @param oldOrderEntry
+     * @return
+     */
+ private OrderEntryModel createOrderEntry(final BlSerialProductModel newSerial,final AbstractOrderEntryModel oldOrderEntry){
+        OrderEntryModel entryModel = modelService.create(OrderEntryModel.class);
      entryModel.setEntryNumber(orderModel.getEntries().size());
      entryModel.setQuantity(1L);
      entryModel.setSerialProducts(Arrays.asList(newSerial));
@@ -273,6 +352,14 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
              newSerial.getBlProduct().getCode(),newSerial.getCode(),orderModel.getCode());
      return entryModel;
  }
+
+    /**
+     * This method used to create new consignment entry.
+     * @param newSerial
+     * @param consignment
+     * @param entryModel
+     * @return
+     */
  private ConsignmentEntryModel createAndUpdateConsignmentEntry(final BlSerialProductModel newSerial,final ConsignmentModel consignment,final AbstractOrderEntryModel entryModel){
      SourcingResult sourcingResult = new SourcingResult();
      Map<Integer , Set<BlSerialProductModel>> serialProductMap = new HashMap<>();
@@ -288,6 +375,12 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
              newSerial.getCode(),newSerial.getBlProduct().getCode(),orderModel.getCode());
      return consignmentEntry;
  }
+
+    /**
+     * This method used to remove old serial related data from both entry.
+     * @param productData
+     * @param oldSerial
+     */
  private void removeSerialAndUpdateOrderEntry(final ReplacementProductData productData,final BlSerialProductModel oldSerial){
 
         AbstractOrderEntryModel orderEntry = productData.getOrderEntry();
@@ -329,7 +422,14 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
      modelService.save(orderEntry);
      modelService.refresh(orderEntry);
  }
-private boolean isReplacementPossible(final ReplacementProductData productData,final BlProductModel newProduct) {
+
+    /**
+     * This method used to compare price to get possibility of replacement in case of different product.
+     * @param productData
+     * @param newProduct
+     * @return
+     */
+    private boolean isReplacementPossible(final ReplacementProductData productData,final BlProductModel newProduct) {
     boolean replacementPossible = false;
     try {
         BigDecimal productPrice = blBackOfficePriceService.getProductPrice(newProduct, orderModel.getRentalStartDate(), orderModel.getRentalEndDate(), false);
@@ -344,11 +444,16 @@ private boolean isReplacementPossible(final ReplacementProductData productData,f
     return replacementPossible;
 }
 
+    /**
+     * This method used to replace serial in case of same product and same warehouse.
+     * @param productData
+     * @param newSerial
+     */
     protected void replaceSerialWithSameProductAndWarehouse(final ReplacementProductData productData,final BlSerialProductModel newSerial) {
 
         ConsignmentEntryModel consEntry = productData.getConsEntry();
         try {
-            updatingBothEntry(consEntry, newSerial, productData.getOldSerial());
+            updatingConsignmentEntry(consEntry, newSerial, productData.getOldSerial());
             modelService.save(consEntry);
             modelService.refresh(consEntry);
 
@@ -369,7 +474,14 @@ private boolean isReplacementPossible(final ReplacementProductData productData,f
         }
         close();
     }
-private   boolean isSerialAvailableOnOrder(AbstractOrderModel order,BlSerialProductModel serialProduct){
+
+    /**
+     * This method used to check is given serial present on order or not?
+     * @param order
+     * @param serialProduct
+     * @return
+     */
+    private   boolean isSerialAvailableOnOrder(AbstractOrderModel order,BlSerialProductModel serialProduct){
    for (ConsignmentModel consignmentModel :orderModel.getConsignments()){
         for(ConsignmentEntryModel consignmentEntryModel :consignmentModel.getConsignmentEntries()) {
             for(BlProductModel blProductModel: consignmentEntryModel.getSerialProducts()){
@@ -381,7 +493,14 @@ private   boolean isSerialAvailableOnOrder(AbstractOrderModel order,BlSerialProd
     }
                     return Boolean.FALSE;
 }
-private  ConsignmentEntryModel isConsignmentEntryAlreadyPresent(AbstractOrderModel order,BlSerialProductModel serialProduct){
+
+    /**
+     * This method used to check any consignment entry present on give order or not for given serial.
+     * @param order
+     * @param serialProduct
+     * @return
+     */
+    private  ConsignmentEntryModel isConsignmentEntryAlreadyPresent(AbstractOrderModel order,BlSerialProductModel serialProduct){
     for (ConsignmentModel consignmentModel :orderModel.getConsignments()){
         for(ConsignmentEntryModel consignmentEntryModel :consignmentModel.getConsignmentEntries()) {
             for(BlProductModel blProductModel: consignmentEntryModel.getSerialProducts()){
@@ -393,6 +512,13 @@ private  ConsignmentEntryModel isConsignmentEntryAlreadyPresent(AbstractOrderMod
     }
     return null;
 }
+
+    /**
+     * This method used to check any order entry present on give order or not for given serial.
+     * @param order
+     * @param serialProduct
+     * @return
+     */
     private  AbstractOrderEntryModel isOrderEntryAlreadyPresent(AbstractOrderModel order,BlSerialProductModel serialProduct){
         for (AbstractOrderEntryModel entryModel :orderModel.getEntries()){
             if (entryModel.getProduct().getCode().equals(serialProduct.getBlProduct().getCode())){
@@ -401,9 +527,16 @@ private  ConsignmentEntryModel isConsignmentEntryAlreadyPresent(AbstractOrderMod
         }
         return null;
     }
-    private void updatingBothEntry(final ConsignmentEntryModel consEntry,final BlSerialProductModel newSerial,final BlSerialProductModel oldSerial){
+
+    /**
+     * Updating consignment entry if replacement of serial for same product and same warehouse.
+     * @param consEntry
+     * @param newSerial
+     * @param oldSerial
+     */
+    private void updatingConsignmentEntry(final ConsignmentEntryModel consEntry,final BlSerialProductModel newSerial,final BlSerialProductModel oldSerial){
         List<BlProductModel> serialProducts = consEntry.getSerialProducts();
-        serialProducts = CollectionUtils.isNotEmpty(serialProducts)?new ArrayList<BlProductModel>(serialProducts) :new ArrayList<BlProductModel>();
+        serialProducts = CollectionUtils.isNotEmpty(serialProducts)?Lists.newArrayList(serialProducts) :Lists.newArrayList();
         serialProducts.add(newSerial);
         serialProducts.remove(oldSerial);
         consEntry.setSerialProducts(serialProducts);
@@ -430,16 +563,49 @@ private  ConsignmentEntryModel isConsignmentEntryAlreadyPresent(AbstractOrderMod
         }
         consEntry.setConsignmentEntryStatus(consignmentEntryStatus);
     }
+
+    /**
+     * This method used to add new serial on given consignment entry.
+     * @param consEntry
+     * @param newSerial
+     */
+    private void addNewSerialToConsignmentEntryIfAlreadyExist(final ConsignmentEntryModel consEntry,final BlSerialProductModel newSerial){
+        List<BlProductModel> serialProducts =Lists.newArrayList( consEntry.getSerialProducts());
+        serialProducts.add(newSerial);
+        consEntry.setSerialProducts(serialProducts);
+
+        Map<String, ItemStatusEnum> items = Maps.newHashMap( consEntry.getItems());
+            items.put(newSerial.getCode(),ItemStatusEnum.NOT_INCLUDED);
+        consEntry.setItems(items);
+
+        Map<String, ConsignmentEntryStatusEnum> consignmentEntryStatus = Maps.newHashMap(consEntry
+                .getConsignmentEntryStatus());
+            consignmentEntryStatus.put(newSerial.getCode(),ConsignmentEntryStatusEnum.NOT_SHIPPED);
+        consEntry.setConsignmentEntryStatus(consignmentEntryStatus);
+    }
+
+    /**
+     * This method used to update stock records.
+     * @param productData
+     * @param newSerial
+     */
     private void updateStockRecords(final ReplacementProductData productData,BlSerialProductModel newSerial){
         ConsignmentModel consignment = productData.getConsignment();
         //  releasing stock
+        releaseStock(productData);
+        //reserving stock
+       reservedStock(consignment,newSerial);
+    }
+
+    private void releaseStock(final ReplacementProductData productData){
+        ConsignmentModel consignment = productData.getConsignment();
         final Collection<StockLevelModel> availableStockForRelease =blStockService.getStockForSingleSerial(productData.getAssignedSerial(),consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate());
         Boolean reservedStatus=   blStockService.isActiveStatus(productData.getOldSerial().getSerialStatus())? Boolean.FALSE:Boolean.TRUE;
-       BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Stock updating while release stock for the serial {}, duration {} - {}, reserve status {} for the order {}",
-               productData.getAssignedSerial(),consignment.getOptimizedShippingStartDate(),consignment.getOptimizedShippingEndDate(),reservedStatus,orderModel.getCode());
+        BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Stock updating while release stock for the serial {}, duration {} - {}, reserve status {} for the order {}",
+                productData.getAssignedSerial(),consignment.getOptimizedShippingStartDate(),consignment.getOptimizedShippingEndDate(),reservedStatus,orderModel.getCode());
         blStockService.updateAndSaveStockRecord(availableStockForRelease,reservedStatus,null);
-
-        //reserving stock
+    }
+    private void reservedStock(final ConsignmentModel consignment,BlSerialProductModel newSerial){
         final Collection<StockLevelModel> availableStockForReseved = blStockService.getAvailableStockForSingleSerial(newSerial.getCode(),
                 consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate(),
                 newSerial.getWarehouseLocation());
@@ -449,6 +615,11 @@ private  ConsignmentEntryModel isConsignmentEntryAlreadyPresent(AbstractOrderMod
 
     }
 
+    /**
+     * This method used to create order notes  and update on order.
+     * @param productData
+     * @param newSerial
+     */
     private void createAndUpdateOrderNotes(final ReplacementProductData productData,BlSerialProductModel newSerial){
         final NotesModel notesModel = modelService.create(NotesModel.class);
         notesModel.setType(NotesEnum.ORDER_NOTES);
@@ -470,6 +641,127 @@ private  ConsignmentEntryModel isConsignmentEntryAlreadyPresent(AbstractOrderMod
  modelService.save(orderModel);
         modelService.refresh(orderModel);
     }
+
+    /**
+     * This method used to replace serial for  same product and different warehouse.
+     * @param productData
+     * @param newSerial
+     */
+  private void   replaceSerialWithSameProductAndDifferentWarehouse(final ReplacementProductData productData,final BlSerialProductModel newSerial){
+     AbstractOrderEntryModel orderEntry = productData.getOrderEntry();
+      BlSerialProductModel oldSerial = productData.getOldSerial();
+      List<BlProductModel> serialProducts = Lists.newArrayList(orderEntry.getSerialProducts());
+      serialProducts.add(newSerial);
+      serialProducts.remove(oldSerial);
+      orderEntry.setSerialProducts(serialProducts);
+      createOrUpdateConsignment(orderEntry,newSerial);
+      removeOldSerialFromConsEntry(productData);
+modelService.save(orderEntry);
+modelService.refresh(orderEntry);
+      createAndUpdateOrderNotes(productData,newSerial);
+close();
+  }
+
+    /**
+     * This method used to remove old serial from consignment entry.
+     * @param productData
+     */
+  private void removeOldSerialFromConsEntry(final ReplacementProductData productData){
+      ConsignmentEntryModel oldConsEntry = productData.getConsEntry();
+      List<BlProductModel> serials = oldConsEntry.getSerialProducts();
+      BlSerialProductModel oldSerial = productData.getOldSerial();
+      List<BlProductModel> remainingSerial = serials.stream().filter(product -> (product instanceof BlSerialProductModel) && !product.getProductType().getCode().equals(ProductTypeEnum.SUBPARTS)).collect(Collectors.toList());
+      remainingSerial.remove(oldSerial);
+      if(CollectionUtils.isEmpty(remainingSerial)){
+          ConsignmentModel consignment = oldConsEntry.getConsignment();
+          Set<ConsignmentEntryModel> consignmentEntries = consignment.getConsignmentEntries();
+          if (consignmentEntries.isEmpty() || consignmentEntries.contains(oldConsEntry) && consignmentEntries.size()==1){
+              modelService.remove(oldConsEntry);
+              modelService.remove(consignment);
+          }else {
+              consignmentEntries = Sets.newHashSet(consignmentEntries);
+              consignmentEntries.remove(oldConsEntry);
+              consignment.setConsignmentEntries(consignmentEntries);
+              modelService.remove(oldConsEntry);
+              modelService.save(consignment);
+              modelService.refresh(consignment);
+          }
+      }else {
+          serials = Lists.newArrayList(serials) ;
+          serials.remove(oldSerial);
+          Map<String, ItemStatusEnum> items = Maps.newHashMap(oldConsEntry.getItems());
+          items.remove(oldSerial.getCode());
+          Map<String, ConsignmentEntryStatusEnum> consignmentEntryStatus = Maps.newHashMap(oldConsEntry.getConsignmentEntryStatus());
+consignmentEntryStatus.remove(oldSerial.getCode());
+oldConsEntry.setSerialProducts(serials);
+oldConsEntry.setItems(items);
+oldConsEntry.setConsignmentEntryStatus(consignmentEntryStatus);
+oldConsEntry.setQuantity(oldConsEntry.getQuantity()-1L);
+modelService.save(oldConsEntry);
+modelService.refresh(oldConsEntry);
+      }
+      // Release stock for old serial.
+      releaseStock(productData);
+  }
+
+    /**
+     * This method used to create or updae consignment and consignment entry.
+     * @param orderEntry
+     * @param newSerial
+     */
+  private void createOrUpdateConsignment(final AbstractOrderEntryModel orderEntry,final BlSerialProductModel newSerial){
+      ConsignmentModel consignmentModel;
+      BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Going to create or update consignment data for serial replacement for the order {}",orderModel.getCode());
+      Optional<ConsignmentModel> consignment = orderModel.getConsignments().stream().filter(cons -> cons.getWarehouse().getCode().equals(newSerial.getWarehouseLocation().getCode())).findFirst();
+      if (consignment.isPresent()){
+          consignmentModel=consignment.get();
+          ConsignmentEntryModel consignmentEntryModel;
+          Optional<ConsignmentEntryModel> entryModelOption=consignmentModel.getConsignmentEntries().stream().filter(consEntry -> consEntry.getOrderEntry().getProduct().getCode().equals(newSerial.getBlProduct().getCode())).findFirst();
+          if (entryModelOption.isPresent()){
+              consignmentEntryModel=entryModelOption.get();
+              //updating consignment entry if it already exist.
+              addNewSerialToConsignmentEntryIfAlreadyExist(consignmentEntryModel,newSerial);
+          }else {
+              // creating and updating cons entry
+              final SourcingResult sourcingResult=createSourceResult(orderEntry,newSerial);
+              consignmentEntryModel = defaultBlAllocationService.createConsignmentEntry(orderEntry, 1L, consignmentModel, sourcingResult);
+              Set<ConsignmentEntryModel> consignmentEntryModels = CollectionUtils.isNotEmpty(consignmentModel.getConsignmentEntries()) ?new HashSet<>( consignmentModel.getConsignmentEntries()) : new HashSet<ConsignmentEntryModel>();
+              consignmentEntryModels.add(consignmentEntryModel);
+              consignmentModel.setConsignmentEntries(consignmentEntryModels);
+          }
+          reservedStock(consignmentModel,newSerial);
+          //need to reserve stock of new serial if not updated.
+          modelService.save(consignmentEntryModel);
+          modelService.refresh(consignmentEntryModel);
+          modelService.save(consignmentModel);
+          modelService.refresh(consignmentModel);
+      }else {
+          final SourcingResult sourcingResult=createSourceResult(orderEntry,newSerial);
+          final Map<AbstractOrderEntryModel, Long> allocationMap = new HashedMap();
+          allocationMap.put(orderEntry,1L);
+          sourcingResult.setAllocation(allocationMap);
+          consignmentModel=defaultBlAllocationService.createConsignment(orderModel, BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + orderModel.getCode()
+                  + BlOrdermanagementConstants.UNDER_SCORE + orderModel.getConsignments().size(), sourcingResult);
+      }
+  }
+
+    /**
+     * Creating sourcing result which is used for creating consingment and cons entry.
+     * @param orderEntry
+     * @param newSerial
+     * @return
+     */
+  private SourcingResult createSourceResult(AbstractOrderEntryModel orderEntry,final BlSerialProductModel newSerial){
+      final SourcingResult sourcingResult = new SourcingResult();
+      sourcingResult.setWarehouse(newSerial.getWarehouseLocation());
+
+      Map<Integer , Set<BlSerialProductModel>> serialProductMap = new HashMap<>();
+      Set<BlSerialProductModel> serialProductset = new HashSet<>();
+      serialProductset.add(newSerial);
+      serialProductMap.put(orderEntry.getEntryNumber(),serialProductset);
+      sourcingResult.setSerialProductMap(serialProductMap);
+      return sourcingResult;
+  }
 
     private List<Component> getSerialEntriesGridRows()
     {

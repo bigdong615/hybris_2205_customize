@@ -1172,6 +1172,7 @@
 		<property name="isChargeDeposit" type="java.lang.Boolean"/>
 		<property name="isModifyOrderPayment" type="java.lang.Boolean"/>
 		<property name="inboundTrackingURLs" type="java.util.List&lt;String>"/>
+		<property name="orderBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->
@@ -1687,6 +1688,7 @@
 	  <property name="updatedBillTime" type="java.util.Date" />
 	  <property name="billStatus" type="java.lang.String"/>
 	  <property name="primaryKey" type="java.lang.String"/>
+	  <property name="unPaidBillingNotes" type="java.util.List&lt;String>"/>
 	</bean>
 	
 	<bean class="com.bl.facades.commercefacades.BlItemsBillingChargeListData">

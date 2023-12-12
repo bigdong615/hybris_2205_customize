@@ -70,6 +70,8 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private static final String IS_NEW_GEAR_ORDER = "isNewGearOrder";
 	private static final String IS_AUTHORIZATION_ATTEMPTED = "isAuthorizationAttempted";
 
+	private static final String IS_CAPTURED = "isCaptured";
+
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} NOT IN "
@@ -182,8 +184,14 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?startDate AND ?endDate AND ({con:"+  ConsignmentModel.INHIBITLATENOTICES + "} is null OR {con:"+  ConsignmentModel.INHIBITLATENOTICES + "}= ?isInhibitLateNotices) AND {o:status} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})" ;
 
+	private static final String GET_OUTSTANDING_ORDERS = "select {pk} from {order as o join orderstatus as os on {o.status}={os.pk}} where {os.code} IN ('SHIPPED','LATE','UNBOXED_COMPLETELY','UNBOXED_PARTIALLY','INCOMPLETE_MISSING_ITEMS')";
+
 
 	final List<OrderStatus> statuses = Arrays.asList(OrderStatus.LATE,OrderStatus.SHIPPED, OrderStatus.UNBOXED_PARTIALLY);
+	private static final String GET_CLAIMED_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
+			+ ConsignmentModel.PICKER + "} IS NOT NULL AND ({o:" + AbstractOrderModel.ISCAPTURED + "} = ?isCaptured )" ;
+
 	/**
  	* {@inheritDoc}
  	*/
@@ -620,6 +628,36 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		}
 		return orders;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<AbstractOrderModel> getClaimedOrdersForAuthorization()
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_CLAIMED_ORDERS_FOR_AUTHORIZATION_QUERY);
+		fQuery.addQueryParameter(IS_CAPTURED, Boolean.FALSE);
+		//fQuery.addQueryParameter("orderStatuses", getOrderStatusesForClaimedOrder());
+		//fQuery.addQueryParameter(BlCoreConstants.IS_AUTHORISED, Boolean.FALSE);
+		//fQuery.addQueryParameter(IS_AUTHORIZATION_ATTEMPTED, Boolean.FALSE);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> claimedOrdersToAuthorizePayment = result.getResult();
+		if (CollectionUtils.isEmpty(claimedOrdersToAuthorizePayment))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No claimed orders found to authorize the payment");
+			return Collections.emptyList();
+		}
+		return claimedOrdersToAuthorizePayment;
+	}
+
+	private List<String> getOrderStatusesForClaimedOrder(){
+		return Lists.newArrayList(OrderStatus.CANCELLED.getCode(),OrderStatus.RECEIVED_PAYMENT_DECLINED.getCode(),
+				OrderStatus.RECEIVED_IN_VERIFICATION.getCode(),OrderStatus.PAYMENT_CAPTURED.getCode(),OrderStatus.VERIFICATION_REQUIRED.getCode());
+
+	}
+
+
+
 	/**
 	 * This method created to convert date into specific format
 	 * @param dateToConvert the date which required to convert
@@ -793,6 +831,25 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 			return Collections.emptyList();
 		}
 		return orders;
+	}
+	public List<OrderModel> getOutStandCompletedOrders()
+	{
+		final List orderstatus = new ArrayList<>();
+		orderstatus.add("SHIPPED");
+		orderstatus.add("LATE");
+		orderstatus.add("UNBOXED_COMPLETELY");
+		orderstatus.add("UNBOXED_PARTIALLY");
+		orderstatus.add("INCOMPLETE_MISSING_ITEMS");
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(GET_OUTSTANDING_ORDERS);
+		query.addQueryParameter("orderstatus", orderstatus);
+		final SearchResult<OrderModel> result = getFlexibleSearchService().search(query);
+		final List<OrderModel> orderModelList = result.getResult();
+		if (CollectionUtils.isEmpty(orderModelList))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.SHARE_A_SALE_ORDERS_NOT_EXIST);
+			return Collections.emptyList();
+		}
+		return orderModelList;
 	}
 
 }

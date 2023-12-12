@@ -1638,6 +1638,7 @@
 		<property name="blOrderGiftCardPurchaseEventPopulator" ref="blOrderGiftCardPurchaseEventPopulator"/>
 		<property name="blFreeGiftCardPurchaseEventPopulator" ref="blFreeGiftCardPurchaseEventPopulator"/>
 		<property name="blESPEmailCommonRequestPopulator" ref="blESPEmailCommonRequestPopulator"/>
+		<property name="blOrderBillPaidReceiptRequestPopulator" ref="blOrderBillPaidReceiptRequestPopulator"/>
 		<property name="blOrderPendingVerificationsPopulator" ref="blOrderPendingVerificationsPopulator"/>
 		<property name="blOrderVerificationReminderPopulator" ref="blOrderVerificationReminderPopulator"/>
 	</bean>
@@ -2094,6 +2095,11 @@
 		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
+	<bean id="blCompleteOutstandingOrdersJob" class="com.bl.core.job.BlCompleteOutstandingOrdersJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
 	<bean id="blProductModifiedTimeValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlProductModifiedTimeValueProvider" parent="abstractPropertyFieldValueProvider">
   		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
@@ -2342,6 +2348,7 @@
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
 
+	<bean id="blOrderBillPaidReceiptRequestPopulator" class="com.bl.core.esp.populators.BlOrderBillPaidReceiptRequestPopulator" parent="espEventCommonPopulator"/>
 	<bean id="blOrderPendingVerificationsPopulator" class="com.bl.core.esp.populators.BlOrderPendingVerificationsPopulator" parent="espEventCommonPopulator"/>
 	
 	<bean id="blOrderVerificationReminderPopulator" class="com.bl.core.esp.populators.BlOrderVerificationReminderPopulator" parent="espEventCommonPopulator"/>
@@ -2355,6 +2362,10 @@
 	<bean id="blLateOrderFeedJob" class="com.bl.core.job.BlLateOrderFeedJob" parent="abstractJobPerformable">
 		<property name="blLateOrderPopulator" ref="blLateOrderPopulator"/>
 		<property name="orderDao" ref="orderDao"/>
+	</bean>
+
+	<bean id="blAuthorizeAndCapturePaymentJob" class="com.bl.core.job.BlAuthorizeAndCapturePaymentJob" parent="abstractJobPerformable">
+		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
 	
 	<bean id="blUpsScrapeOrderPopulator" class="com.bl.core.order.populators.BlUpsScrapeOrderPopulator"/>

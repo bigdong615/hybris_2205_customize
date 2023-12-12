@@ -409,6 +409,8 @@ ul.checklist li:before { opacity: .5; content: ''; display: block; position: abs
 .brand-logos li img { transition: .2s; }
 .brand-logos li.nikon img, .brand-logos li.sony img, .logo-slider li.nikon img, .logo-slider li.sony img { filter: invert(74%) sepia(0%) saturate(21%) hue-rotate(189deg) brightness(96%) contrast(78%); }
 .brand-logos li.canon img, .brand-logos li.panasonic img, .brand-logos li.dji img, .logo-slider li.canon img, .logo-slider li.panasonic img, .logo-slider li.dji img { filter: invert(59%) sepia(0%) saturate(0%) hue-rotate(177deg) brightness(127%) contrast(90%); }
+.brand-logos li img.nikon, .brand-logos li img.sony { filter: invert(74%) sepia(0%) saturate(21%) hue-rotate(189deg) brightness(96%) contrast(78%); }
+.brand-logos li img.canon, .brand-logos li img.panasonic, .brand-logos li img.dji { filter: invert(59%) sepia(0%) saturate(0%) hue-rotate(177deg) brightness(127%) contrast(90%); }
 .brand-logos li:hover img { filter: none; }
 .splide__slide .card h6, .splide__slide .card p, #productList .card h6, #productList .card p  { text-align: left;line-height:inherit; }
 .sale { color: #C06B15;  margin-bottom: .5rem; }
