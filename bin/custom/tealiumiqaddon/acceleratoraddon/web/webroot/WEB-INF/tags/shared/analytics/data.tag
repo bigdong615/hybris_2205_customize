@@ -279,17 +279,7 @@
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};
 			 
-			 <c:if test="${not empty breadcrumbs[0]}">
-			 "category": "${ycommerce:encodeJavaScript(breadcrumbs[0].name)}",
-			  </c:if>
-			  <c:if test="${not empty breadcrumbs[1]}">
-				"subCategory2": "${ycommerce:encodeJavaScript(breadcrumbs[1].name)}",
-			  </c:if>
-			  <c:if test="${not empty breadcrumbs[2]}">
-			    "subCategory3": "${ycommerce:encodeJavaScript(breadcrumbs[2].name)}",
-			  </c:if>
-			  	
-			  	
+			 
 
 			dmpgDl.products = [
 			  	
