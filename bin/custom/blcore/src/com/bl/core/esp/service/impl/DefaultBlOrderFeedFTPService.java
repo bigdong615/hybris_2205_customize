@@ -2,6 +2,10 @@ package com.bl.core.esp.service.impl;
 
 import de.hybris.platform.core.enums.ExportStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.order.LateOrderData;
+import de.hybris.platform.order.ReturnOrderData;
+import de.hybris.platform.order.UpsScrapeOrderData;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
 
@@ -15,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.xml.bind.JAXBException;
@@ -29,6 +34,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -37,6 +43,9 @@ import org.w3c.dom.Element;
 import com.bl.core.esp.populators.BlOrderBillFeedPopulator;
 import com.bl.core.esp.populators.BlOrderFeedPopulator;
 import com.bl.core.esp.service.BlOrderFeedFTPService;
+import com.bl.core.order.dao.BlOrderDao;
+import com.bl.core.order.populators.BlLateOrderPopulator;
+import com.bl.core.order.populators.BlUpsScrapeOrderPopulator;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.OrderFeedData;
 import com.bl.logging.BlLogger;
@@ -46,6 +55,11 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 /**
  * This class created to send file to FTP
@@ -58,11 +72,17 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
   private BlOrderFeedPopulator blOrderFeedPopulator;
   private BlOrderBillFeedPopulator blOrderBillFeedPopulator;
   private ModelService modelService;
+  private BlLateOrderPopulator blLateOrderPopulator;
+  private BlUpsScrapeOrderPopulator blUpsScrapeOrderPopulator;
+  private BlOrderDao orderDao;
 
   /**
    * This method created to convert order into XML
-   * @param abstractOrderModels list of orders
-   * @throws ParserConfigurationException ParserConfigurationException
+   *
+   * @param abstractOrderModels
+   *           list of orders
+   * @throws ParserConfigurationException
+   *            ParserConfigurationException
    */
   @Override
   public void convertOrderIntoXML(final List<AbstractOrderModel> abstractOrderModels , final List<AbstractOrderModel> unExportedOrderList)
@@ -93,6 +113,76 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
     writeFeedRequestToFile(file , xmlString);
     sendFileToFTPLocation(file);
     updatedExportedOrderStatusForOrders(exportedOrderList);
+  }
+
+  @Override
+  public void convertOrderTOFeed(final List<AbstractOrderModel> abstractOrderModels) throws ParserConfigurationException
+  {
+	  final ArrayList<AbstractOrderModel> filteredOrdersList = new ArrayList<AbstractOrderModel>();
+	  final List<UpsScrapeOrderData> orderDataList = new ArrayList<>();
+	  abstractOrderModels.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel -> {
+		  if (CollectionUtils.isEmpty(consignmentModel.getPackaginginfos())
+				  && BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()))
+		  {
+			  final OrderModel originalOrder = getOrderDao().getOriginalOrderFromExtendedOrderCode(abstractOrderModel.getCode());
+			  if (Objects.nonNull(originalOrder) && CollectionUtils.isNotEmpty(originalOrder.getConsignments()))
+			  {
+				  originalOrder.getConsignments().forEach(origConsignment -> {
+					  if (CollectionUtils.isNotEmpty(origConsignment.getPackaginginfos()))
+					  {
+						  origConsignment.getPackaginginfos().forEach(packagingInfoModel -> {
+							  if (BooleanUtils.isFalse(packagingInfoModel.isIsScrapeScanCompleted()))
+							  {
+								  filteredOrdersList.add(abstractOrderModel);
+							  }
+						  });
+					  }
+				  });
+			  }
+		  }
+		  else
+		  {
+			  consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
+				  if (BooleanUtils.isFalse(packagingInfoModel.isIsScrapeScanCompleted()))
+				  {
+					  filteredOrdersList.add(abstractOrderModel);
+				  }
+			  });
+		  }
+	  }));
+	  getBlUpsScrapeOrderPopulator().populate(filteredOrdersList, orderDataList);
+	  final File lateOrderFeed = getUpsScrapeFile();
+	  FileWriter writer = null;
+	  try
+	  {
+		  writer = new FileWriter(lateOrderFeed.getAbsoluteFile());
+	  }
+	  catch (final IOException e1)
+	  {
+		  LOG.info("Exception occurred during creation of Writer");
+		  e1.printStackTrace();
+	  }
+	  final ColumnPositionMappingStrategy mappingStrategy = new ColumnPositionMappingStrategy();
+	  mappingStrategy.setType(LateOrderData.class);
+	  final String[] columns = new String[]
+	  { "subscriberId", "emailAddress", "orderNumber", "customerName", "shippingMethod", "rentalStartDate", "rentalEndDate" };
+	  mappingStrategy.setColumnMapping(columns);
+	  final StatefulBeanToCsvBuilder<ReturnOrderData> builder = new StatefulBeanToCsvBuilder(writer);
+	  final StatefulBeanToCsv beanWriter = builder.withMappingStrategy(mappingStrategy).build();
+	  try
+	  {
+		  writer.append(
+				  "Subscriber_ID, Email_Address, Order_Number, Customer_Name, Shipping_Method, Rental_Start_Date, Rental_End_Date");
+		  writer.append("\n");
+		  beanWriter.write(orderDataList);
+		  writer.close();
+	  }
+	  catch (final CsvDataTypeMismatchException | CsvRequiredFieldEmptyException | IOException e)
+	  {
+		  e.printStackTrace();
+		  LOG.info("Exception occurred during converting to CSV");
+	  }
+	  sendFileToFTPLocation(lateOrderFeed);
   }
 
 
@@ -302,6 +392,15 @@ private File getFile(){
   return new File(new StringBuilder(path).append(BlespintegrationConstants.SLASH).append(fileName).toString());
 }
 
+private File getUpsScrapeFile()
+{
+	final String fileName = new StringBuilder(BlespintegrationConstants.UPS_SCRAPE_FILE_NAME_PREFIX)
+			.append(BlespintegrationConstants.UPS_SCRAPE_FILE_SUFFIX).toString();
+	final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
+	createDirectoryForFTPFeed(path);
+	return new File(new StringBuilder(path).append(BlespintegrationConstants.SLASH).append(fileName).toString());
+}
+
   public BlOrderBillFeedPopulator getBlOrderBillFeedPopulator() {
     return blOrderBillFeedPopulator;
   }
@@ -318,14 +417,34 @@ private File getFile(){
     this.modelService = modelService;
   }
 
-
-
-
-  @Override
-  public void convertOrderTOFeed(final List<AbstractOrderModel> abstractOrderModels) throws ParserConfigurationException
+  public BlLateOrderPopulator getBlLateOrderPopulator()
   {
-	  // XXX Auto-generated method stub
+	  return blLateOrderPopulator;
+  }
 
+  public void setBlLateOrderPopulator(final BlLateOrderPopulator blLateOrderPopulator)
+  {
+	  this.blLateOrderPopulator = blLateOrderPopulator;
+  }
+
+  public BlUpsScrapeOrderPopulator getBlUpsScrapeOrderPopulator()
+  {
+	  return blUpsScrapeOrderPopulator;
+  }
+
+  public void setBlUpsScrapeOrderPopulator(final BlUpsScrapeOrderPopulator blUpsScrapeOrderPopulator)
+  {
+	  this.blUpsScrapeOrderPopulator = blUpsScrapeOrderPopulator;
+  }
+
+  public BlOrderDao getOrderDao()
+  {
+	  return orderDao;
+  }
+
+  public void setOrderDao(final BlOrderDao orderDao)
+  {
+	  this.orderDao = orderDao;
   }
 
 }
