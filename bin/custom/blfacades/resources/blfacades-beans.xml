@@ -2708,6 +2708,16 @@
 		<property name="shippingMethod" type="String"/>
 		<property name="shippingMethodType" type="String"/>
 	</bean>
+	
+	<bean class="de.hybris.platform.order.UpsScrapeOrderData">
+		<property name="subscriberId" type="java.lang.String"/>
+		<property name="emailAddress" type="java.lang.String"/>
+		<property name="orderNumber" type="java.lang.String"/>
+		<property name="customerName" type="java.lang.String"/>
+		<property name="shippingMethod" type="java.lang.String"/>
+		<property name="rentalStartDate" type="java.lang.String"/>
+		<property name="rentalEndDate" type="java.lang.String"/>
+	</bean>
 </beans>
 
 

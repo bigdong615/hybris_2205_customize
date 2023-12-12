@@ -806,6 +806,32 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 	}
 
 	@Override
+	public List<AbstractOrderModel> getOrdersForUpsScrapeRemainder()
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_BE_UPS_SCRAPE);
+		Date finalRentalEndDate = null;
+		final Date pastDayDate = new Date((new Date()).getTime() - (1000 * 60 * 60 * 24)); //orderModel.getRentalEndDate();
+		if (isWeekend(pastDayDate))
+		{
+			finalRentalEndDate = new Date(pastDayDate.getTime() - (1000 * 60 * 60 * 24) - (1000 * 60 * 60 * 24));
+		}
+		else
+		{
+			finalRentalEndDate = pastDayDate;
+		}
+		fQuery.addQueryParameter(BlintegrationConstants.END_DATE,
+				convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(finalRentalEndDate).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders))
+		{
+			BlLogger.logMessage(LOG, Level.INFO,
+					"No Results found for UPS Scrape service which is same or before rental end date has ",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(finalRentalEndDate).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
+	}
 	public List<OrderModel> getOutStandCompletedOrders()
 	{
 		final List orderstatus = new ArrayList<>();

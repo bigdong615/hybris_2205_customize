@@ -1854,7 +1854,9 @@
 	<bean id="defaultBlOrderFeedFTPService" class="com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService">
 		<property name="blOrderFeedPopulator" ref="blOrderFeedPopulator"/>
 		<property name="blOrderBillFeedPopulator" ref="blOrderBillFeedPopulator"/>
+		<property name="blUpsScrapeOrderPopulator" ref="blUpsScrapeOrderPopulator"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="orderDao" ref="orderDao"/>
 	</bean>
 
 	<bean id="defaultBlOrderFeedJob" class="com.bl.core.job.BlOrderFeedJob" parent="abstractJobPerformable">
@@ -2365,6 +2367,8 @@
 	<bean id="blAuthorizeAndCapturePaymentJob" class="com.bl.core.job.BlAuthorizeAndCapturePaymentJob" parent="abstractJobPerformable">
 		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
+	
+	<bean id="blUpsScrapeOrderPopulator" class="com.bl.core.order.populators.BlUpsScrapeOrderPopulator"/>
 	
 	<bean id="blUpsScrapeNightJob" class="com.bl.core.job.UpsScrapeNightJob" parent="abstractJobPerformable">
 		<property name="defaultBlOrderFeedFTPService" ref="defaultBlOrderFeedFTPService"/>
