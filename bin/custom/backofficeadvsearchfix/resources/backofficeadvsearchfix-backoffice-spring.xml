@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:cng="http://www.hybris.com/cockpitng/spring"
+	   xmlns:bo="http://www.hybris.com/cockpitng/backoffice/spring"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.hybris.com/cockpitng/spring http://www.hybris.com/cockpitng/spring/cng-spring.xsd
+            http://www.hybris.com/cockpitng/backoffice/spring http://www.hybris.com/cockpitng/backoffice/spring/backoffice-spring.xsd">
+
+
+
+<bean id="backofficeadvsearchfixService" class="com.sap.backoffice.advance.search.fix.services.BackofficeadvsearchfixService" />
+
+	<bean id="backofficeadvsearchfixLabelLocator" class="com.hybris.cockpitng.util.labels.ResourcesLabelLocator" scope="singleton" init-method="init" lazy-init="false">
+  		<property name="location" value="/backofficeadvsearchfix-backoffice-labels/"/>
+  		<property name="name" value="labels"/>
+  	</bean>
+
+	<alias alias="advancedSearchOperators" name="fixAdvancedSearchOperators"/>
+	<util:map id="fixAdvancedSearchOperators">
+
+		<entry key="#{T(com.hybris.backoffice.cockpitng.search.AdvancedSearchOperatorType).LITERAL}">
+			<list>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.EQUALS"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.UNEQUAL"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.STARTS_WITH"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.ENDS_WITH"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.LIKE"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.CONTAINS"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_EMPTY"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_NOT_EMPTY"/>
+			</list>
+		</entry>
+		<entry key="#{T(com.hybris.backoffice.cockpitng.search.AdvancedSearchOperatorType).LOGICAL}">
+			<list>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.EQUALS"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.UNEQUAL"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.UNEQUAL"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_EMPTY"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_NOT_EMPTY"/>
+			</list>
+		</entry>
+		<entry key="#{T(com.hybris.backoffice.cockpitng.search.AdvancedSearchOperatorType).NUMERIC}">
+			<list>
+
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.EQUALS"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.UNEQUAL"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.GREATER"/>
+				<util:constant
+						static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.GREATER_OR_EQUAL"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.LESS"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.LESS_OR_EQUAL"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_EMPTY"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_NOT_EMPTY"/>
+			</list>
+		</entry>
+		<entry key="#{T(com.hybris.backoffice.cockpitng.search.AdvancedSearchOperatorType).REFERENCE}">
+			<list>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.EQUALS"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.UNEQUAL"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_EMPTY"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_NOT_EMPTY"/>
+			</list>
+		</entry>
+		<entry key="#{T(com.hybris.backoffice.cockpitng.search.AdvancedSearchOperatorType).MULTIREFERENCE}">
+			<list>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.CONTAINS"/>
+				<util:constant
+						static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.DOES_NOT_CONTAIN"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_EMPTY"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_NOT_EMPTY"/>
+			</list>
+		</entry>
+		<entry key="#{T(com.hybris.backoffice.cockpitng.search.AdvancedSearchOperatorType).DATE}">
+			<list>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.EQUALS"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.UNEQUAL"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.GREATER"/>
+				<util:constant
+						static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.GREATER_OR_EQUAL"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.LESS"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.LESS_OR_EQUAL"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_EMPTY"/>
+				<util:constant static-field="com.hybris.cockpitng.search.data.ValueComparisonOperator.IS_NOT_EMPTY"/>
+			</list>
+		</entry>
+	</util:map>
+
+
+</beans>

@@ -176,7 +176,7 @@
 	<extension name='blcommercewebservices' />
 	
 	<extension name="smartedittools"></extension>
-	
+	<extension name='backofficeadvsearchfix' />
 	
   </extensions>
 </hybrisconfig>
