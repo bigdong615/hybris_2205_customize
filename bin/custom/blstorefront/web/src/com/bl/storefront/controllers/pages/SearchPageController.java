@@ -6,6 +6,8 @@ package com.bl.storefront.controllers.pages;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.customer.CustomerLocationService;
+import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
+import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ProductBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.SearchBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
@@ -26,6 +28,7 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SortData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +37,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,7 +51,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
-import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.solrfacetsearch.BlProductSearchFacade;
 
@@ -65,7 +66,7 @@ public class SearchPageController extends AbstractSearchPageController
 	private static final Logger LOG = Logger.getLogger(SearchPageController.class);
 
 	private static final String COMPONENT_UID_PATH_VARIABLE_PATTERN = "{componentUid:.*}";
-	private static final String FACET_SEPARATOR = ":";  //NOSONAR
+	private static final String FACET_SEPARATOR = ":"; //NOSONAR
 
 	private static final String SEARCH_CMS_PAGE_ID = "search";
 	private static final String NO_RESULTS_CMS_PAGE_ID = "searchEmpty";
@@ -85,87 +86,116 @@ public class SearchPageController extends AbstractSearchPageController
 	@Resource(name = "cartFacade")
 	private BlCartFacade blCartFacade;
 
+	@Resource(name = "productBreadcrumbBuilder")
+	private ProductBreadcrumbBuilder productBreadcrumbBuilder;
+
 	/**
 	 * This common method created to get rental duration for rental products from BlRentalDateUtils class
 	 */
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
-	private RentalDateDto getRentalDuration() {
+	private RentalDateDto getRentalDuration()
+	{
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
 	@GetMapping(params = "!q")
-	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
-			@RequestParam(value="blPageType") final String blPageType,
-			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
+	public String textSearch(@RequestParam(value = "text", defaultValue = "")
+	final String searchText, @RequestParam(value = "blPageType")
+	final String blPageType, final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
 
-			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page); //NOSONAR
+		final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page); //NOSONAR
 
-			final SearchStateData searchState = new SearchStateData();
-			final SearchQueryData searchQueryData = new SearchQueryData();
-			final String searchedText = searchText.contains(BlControllerConstants.COMMA) ? searchText.replace(BlControllerConstants.COMMA, BlCoreConstants.EMPTY_STRING)
-					: searchText;
-			model.addAttribute(BlControllerConstants.SEARCHED_WORD, searchedText);
-			searchQueryData.setValue(searchedText);
-			searchQueryData.setBlPage(blPageType);
-			searchState.setQuery(searchQueryData);
+		final SearchStateData searchState = new SearchStateData();
+		final SearchQueryData searchQueryData = new SearchQueryData();
+		final String searchedText = searchText.contains(BlControllerConstants.COMMA)
+				? searchText.replace(BlControllerConstants.COMMA, BlCoreConstants.EMPTY_STRING)
+				: searchText;
+		model.addAttribute(BlControllerConstants.SEARCHED_WORD, searchedText);
+		searchQueryData.setValue(searchedText);
+		searchQueryData.setBlPage(blPageType);
+		searchState.setQuery(searchQueryData);
 
-			ProductSearchPageData<SearchStateData, ProductData> searchPageData = null;
+		ProductSearchPageData<SearchStateData, ProductData> searchPageData = null;
 
-			try
+		try
+		{
+			searchPageData = encodeSearchPageData(productSearchFacade.textSearch(searchState, pageableData));
+			// removing newest sorting for used gear SLP
+			if (searchPageData != null && blPageType.toLowerCase().equals(BlControllerConstants.USED_CATEGORY_CODE))
 			{
-				searchPageData = encodeSearchPageData(productSearchFacade.textSearch(searchState, pageableData));
-				// removing newest sorting for used gear SLP
-				if(searchPageData !=null && blPageType.toLowerCase().equals(BlControllerConstants.USED_CATEGORY_CODE)) {
-					final List<SortData> newest = searchPageData.getSorts().stream()
-							.filter(sortData -> {
-								return sortData.getCode().equals(BlControllerConstants.NEWEST_STRING);
-							})
-							.collect(Collectors.toList());
-					if (CollectionUtils.isNotEmpty(newest)) {
-						searchPageData.getSorts().remove(newest.get(0));
-					}
+				final List<SortData> newest = searchPageData.getSorts().stream().filter(sortData -> {
+					return sortData.getCode().equals(BlControllerConstants.NEWEST_STRING);
+				}).collect(Collectors.toList());
+				if (CollectionUtils.isNotEmpty(newest))
+				{
+					searchPageData.getSorts().remove(newest.get(0));
 				}
 			}
-			catch (final ConversionException e)
-			{
-				// nothing to do - the exception is logged in SearchSolrQueryPopulator
-			}
+		}
+		catch (final ConversionException e)
+		{
+			// nothing to do - the exception is logged in SearchSolrQueryPopulator
+		}
 
-			if (searchPageData == null)
-			{
-				storeCmsPageInModel(model, noResultPage);
-			}
-			else if (searchPageData.getKeywordRedirectUrl() != null)
-			{
-				// if the search engine returns a redirect, just
-				return "redirect:" + searchPageData.getKeywordRedirectUrl();
-			}
-			else if (searchPageData.getPagination().getTotalNumberOfResults() == 0)
-			{
-				model.addAttribute("searchPageData", searchPageData);
-				storeCmsPageInModel(model, noResultPage);
-				updatePageTitle(searchText, model);
-			}
-			else
-			{
-				storeContinueUrl(request);
-				populateModel(model, searchPageData, ShowMode.Page);
-				storeCmsPageInModel(model, getContentPageForLabelOrId(SEARCH_CMS_PAGE_ID));
-				updatePageTitle(searchText, model);
-			}
-			model.addAttribute("userLocation", customerLocationService.getUserLocation());
-			getRequestContextData(request).setSearch(searchPageData);
-			if (searchPageData != null)
-			{
-				model.addAttribute(WebConstants.BREADCRUMBS_KEY, searchBreadcrumbBuilder.getBreadcrumbs(null, searchText,
-						CollectionUtils.isEmpty(searchPageData.getBreadcrumbs())));
-			}
+		if (searchPageData == null)
+		{
+			storeCmsPageInModel(model, noResultPage);
+		}
+		else if (searchPageData.getKeywordRedirectUrl() != null)
+		{
+			// if the search engine returns a redirect, just
+			return "redirect:" + searchPageData.getKeywordRedirectUrl();
+		}
+		else if (searchPageData.getPagination().getTotalNumberOfResults() == 0)
+		{
+			model.addAttribute("searchPageData", searchPageData);
+			storeCmsPageInModel(model, noResultPage);
+			updatePageTitle(searchText, model);
+		}
+		else
+		{
+			storeContinueUrl(request);
+			populateModel(model, searchPageData, ShowMode.Page);
+			storeCmsPageInModel(model, getContentPageForLabelOrId(SEARCH_CMS_PAGE_ID));
+			updatePageTitle(searchText, model);
+		}
+
+		//To get the breadcrumbs for all products in SLP
+		try
+		{
+			searchPageData.getResults().forEach(product -> {
+				final List<String> productBreadcrumbData = new ArrayList<String>();
+				final List<Breadcrumb> productBreadcrumb = new ArrayList<Breadcrumb>(
+						productBreadcrumbBuilder.getBreadcrumbs(product.getCode()));
+				productBreadcrumb.forEach(breadcrumb -> {
+					if (null != breadcrumb.getCategoryCode())
+					{
+						productBreadcrumbData.add(breadcrumb.getCategoryCode());
+					}
+				});
+				product.setProductBreadcrumbData(productBreadcrumbData);
+			});
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+		}
+
+
+
+		model.addAttribute("userLocation", customerLocationService.getUserLocation());
+		getRequestContextData(request).setSearch(searchPageData);
+		if (searchPageData != null)
+		{
+			model.addAttribute(WebConstants.BREADCRUMBS_KEY, searchBreadcrumbBuilder.getBreadcrumbs(null, searchText,
+					CollectionUtils.isEmpty(searchPageData.getBreadcrumbs())));
+		}
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
-		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,blPageType);
-		model.addAttribute(blCartFacade.identifyCartType(),true);
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, blPageType);
+		model.addAttribute(blCartFacade.identifyCartType(), true);
 
 		final String metaDescription = MetaSanitizerUtil
 				.sanitizeDescription(getMessageSource().getMessage(SEARCH_META_DESCRIPTION_RESULTS, null,
@@ -179,16 +209,19 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "q") // NOSONAR
-	public String refineSearch(@RequestParam("q") final String searchQuery, //NOSONAR
-			@RequestParam(value = "page", defaultValue = "0") final int page,
-			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
-			@RequestParam(value = "sort", required = false) final String sortCode,
-			@RequestParam(value="blPageType",required = false) final String blPageType, //NOSONAR
-			@RequestParam(value = "text", required = false) final String searchText, final HttpServletRequest request, //NOSONAR
+	public String refineSearch(@RequestParam("q")
+	final String searchQuery, //NOSONAR
+			@RequestParam(value = "page", defaultValue = "0")
+			final int page, @RequestParam(value = "show", defaultValue = "Page")
+			final ShowMode showMode, @RequestParam(value = "sort", required = false)
+			final String sortCode, @RequestParam(value = "blPageType", required = false)
+			final String blPageType, //NOSONAR
+			@RequestParam(value = "text", required = false)
+			final String searchText, final HttpServletRequest request, //NOSONAR
 			final Model model) throws CMSItemNotFoundException
 	{
 		final ProductSearchPageData<SearchStateData, ProductData> searchPageData = performSearch(searchQuery, page, showMode,
-				sortCode, getSearchPageSize(),blPageType);
+				sortCode, getSearchPageSize(), blPageType);
 
 		populateModel(model, searchPageData, showMode);
 		model.addAttribute("userLocation", customerLocationService.getUserLocation());
@@ -206,7 +239,7 @@ public class SearchPageController extends AbstractSearchPageController
 		}
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, searchBreadcrumbBuilder.getBreadcrumbs(null, searchPageData));
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
-		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,blPageType);
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, blPageType);
 
 		final String metaDescription = MetaSanitizerUtil
 				.sanitizeDescription(getMessageSource().getMessage(SEARCH_META_DESCRIPTION_RESULTS, null,
@@ -217,13 +250,13 @@ public class SearchPageController extends AbstractSearchPageController
 
 		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(searchText);
 		setUpMetaData(model, metaKeywords, metaDescription);
-		model.addAttribute(blCartFacade.identifyCartType(),true);
+		model.addAttribute(blCartFacade.identifyCartType(), true);
 
 		return getViewForPage(model);
 	}
 
 	protected ProductSearchPageData<SearchStateData, ProductData> performSearch(final String searchQuery, final int page,
-			final ShowMode showMode, final String sortCode, final int pageSize ,final String blPageType)
+			final ShowMode showMode, final String sortCode, final int pageSize, final String blPageType)
 	{
 		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode); // NOSONAR
 
@@ -239,13 +272,14 @@ public class SearchPageController extends AbstractSearchPageController
 
 	@ResponseBody
 	@GetMapping(value = "/results")
-	public SearchResultsData<ProductData> jsonSearchResults(@RequestParam("q") final String searchQuery,
-			@RequestParam(value = "page", defaultValue = "0") final int page,
-			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
-			@RequestParam(value = "sort", required = false) final String sortCode) throws CMSItemNotFoundException
+	public SearchResultsData<ProductData> jsonSearchResults(@RequestParam("q")
+	final String searchQuery, @RequestParam(value = "page", defaultValue = "0")
+	final int page, @RequestParam(value = "show", defaultValue = "Page")
+	final ShowMode showMode, @RequestParam(value = "sort", required = false)
+	final String sortCode) throws CMSItemNotFoundException
 	{
 		final ProductSearchPageData<SearchStateData, ProductData> searchPageData = performSearch(searchQuery, page, showMode,
-				sortCode, getSearchPageSize(),null);
+				sortCode, getSearchPageSize(), null);
 		final SearchResultsData<ProductData> searchResultsData = new SearchResultsData<>();
 		searchResultsData.setResults(searchPageData.getResults());
 		searchResultsData.setPagination(searchPageData.getPagination());
@@ -254,10 +288,11 @@ public class SearchPageController extends AbstractSearchPageController
 
 	@ResponseBody
 	@GetMapping(value = "/facets")
-	public FacetRefinement<SearchStateData> getFacets(@RequestParam("q") final String searchQuery,
-			@RequestParam(value = "page", defaultValue = "0") final int page,
-			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
-			@RequestParam(value = "sort", required = false) final String sortCode) throws CMSItemNotFoundException
+	public FacetRefinement<SearchStateData> getFacets(@RequestParam("q")
+	final String searchQuery, @RequestParam(value = "page", defaultValue = "0")
+	final int page, @RequestParam(value = "show", defaultValue = "Page")
+	final ShowMode showMode, @RequestParam(value = "sort", required = false)
+	final String sortCode) throws CMSItemNotFoundException
 	{
 		final SearchStateData searchState = new SearchStateData();
 		final SearchQueryData searchQueryData = new SearchQueryData();
@@ -277,8 +312,10 @@ public class SearchPageController extends AbstractSearchPageController
 
 	@ResponseBody
 	@GetMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN)
-	public AutocompleteResultData getAutocompleteSuggestions(@PathVariable final String componentUid,
-			@RequestParam("term") final String term ,	@RequestParam(value="blPageType" ,required = false) final String blPageType) throws CMSItemNotFoundException
+	public AutocompleteResultData getAutocompleteSuggestions(@PathVariable
+	final String componentUid, @RequestParam("term")
+	final String term, @RequestParam(value = "blPageType", required = false)
+	final String blPageType) throws CMSItemNotFoundException
 	{
 		final AutocompleteResultData resultData = new AutocompleteResultData();
 
@@ -291,8 +328,9 @@ public class SearchPageController extends AbstractSearchPageController
 
 		if (component.isDisplayProducts())
 		{
-			resultData.setProducts(subList(productSearchFacade.textSearch(term, SearchQueryContext.SUGGESTIONS , blPageType).getResults(),
-					component.getMaxProducts()));
+			resultData
+					.setProducts(subList(productSearchFacade.textSearch(term, SearchQueryContext.SUGGESTIONS, blPageType).getResults(),
+							component.getMaxProducts()));
 		}
 		return resultData;
 	}
@@ -314,8 +352,12 @@ public class SearchPageController extends AbstractSearchPageController
 
 	protected void updatePageTitle(final String searchText, final Model model)
 	{
-		storeContentPageTitleInModel(model, getPageTitleResolver().resolveContentPageTitle(
-				getMessageSource().getMessage("search.meta.title", null, "search.meta.title", getI18nService().getCurrentLocale())
-						+ " " + (searchText.contains(BlControllerConstants.COMMA) ? searchText.replace(BlControllerConstants.COMMA, BlCoreConstants.EMPTY_STRING) : searchText)));
+		storeContentPageTitleInModel(model,
+				getPageTitleResolver().resolveContentPageTitle(getMessageSource().getMessage("search.meta.title", null,
+						"search.meta.title", getI18nService().getCurrentLocale())
+						+ " "
+						+ (searchText.contains(BlControllerConstants.COMMA)
+								? searchText.replace(BlControllerConstants.COMMA, BlCoreConstants.EMPTY_STRING)
+								: searchText)));
 	}
 }

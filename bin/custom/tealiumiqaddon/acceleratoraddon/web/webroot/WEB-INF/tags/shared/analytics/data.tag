@@ -224,14 +224,14 @@
 			  	"id": "${product.code}",
 			  	"name": "${product.displayName}",
           		"brand": "${product.manufacturer}",
-				  <c:if test="${not empty product.categoriesList[0]}">
-					"category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
+				  <c:if test="${not empty product.productBreadcrumbData[0]}">
+					"category": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[0])}",
 				  </c:if>
-				  <c:if test="${not empty product.categoriesList[1]}">
-					"subCategory2": "${ycommerce:encodeJavaScript(product.categoriesList[1].code)}",
+				  <c:if test="${not empty product.productBreadcrumbData[1]}">
+					"subCategory2": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[1])}",
 					</c:if>
-				  <c:if test="${not empty product.categoriesList[2]}">
-				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
+				  <c:if test="${not empty product.productBreadcrumbData[2]}">
+				    "subCategory3": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[2])}",
 				    </c:if>
          		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType).toLowerCase()}",
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
@@ -288,14 +288,14 @@
 			  	"id": "${product.code}",
 			  	"name": "${product.displayName}",
           		"brand": "${product.manufacturer}",
-				  <c:if test="${not empty product.categoriesList[0]}">
-					"category": "${ycommerce:encodeJavaScript(product.categoriesList[0].code)}",
+				  <c:if test="${not empty product.productBreadcrumbData[0]}">
+					"category": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[0])}",
 				  </c:if>
-				  <c:if test="${not empty product.categoriesList[1]}">
-					"subCategory2": "${ycommerce:encodeJavaScript(product.categoriesList[1].code)}",
+				  <c:if test="${not empty product.productBreadcrumbData[1]}">
+					"subCategory2": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[1])}",
 				  </c:if>
-				  <c:if test="${not empty product.categoriesList[2]}">
-				    "subCategory3": "${ycommerce:encodeJavaScript(product.categoriesList[2].code)}",
+				  <c:if test="${not empty product.productBreadcrumbData[2]}">
+				    "subCategory3": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[2])}",
 				  </c:if>
          		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType).toLowerCase()}",
          		"listName": "${searchKeyword}",

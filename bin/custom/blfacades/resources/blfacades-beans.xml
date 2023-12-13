@@ -183,7 +183,8 @@
 		<property name="visibleOnStoreFront" type="boolean"/>
 		<property name="primaryKey" type="java.lang.String"/>	
 		<property name="categoriesList"
-		          type="java.util.Collection&lt;de.hybris.platform.commercefacades.product.data.CategoryData>"/>		
+		          type="java.util.Collection&lt;de.hybris.platform.commercefacades.product.data.CategoryData>"/>	
+	    <property name="productBreadcrumbData" type="java.util.List&lt;String>"/>	
   </bean>
     
 	<bean class="com.bl.facades.product.data.GenderData">
