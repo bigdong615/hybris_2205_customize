@@ -1,5 +1,13 @@
 package com.bl.facades.populators;
 
+
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.product.service.BlProductService;
+import com.bl.core.stock.BlStockService;
+import com.bl.facades.product.data.BlBundleReferenceData;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.catalog.model.classification.ClassificationClassModel;
@@ -45,6 +53,8 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
     private PriceDataFactory priceDataFactory;
     private CommonI18NService commonI18NService;
     private BlProductService productService;
+
+    private BlStockService blStockService;
     @Resource(name = "stockNotificationFacade")
     private StockNotificationFacade stockNotificationFacade;
 
@@ -105,8 +115,11 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
 
         if (productService.isAquatechProduct(source)) {
           target.setIsUpcoming(false);
-        } else {
-          target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
+        } else if(CollectionUtils.isNotEmpty(source.getSerialProducts()) && source.getSerialProducts().stream().allMatch(serial -> getBlStockService().isInactiveStatus(serial.getSerialStatus()))){
+          target.setIsUpcoming(true);
+        }
+        else {
+            target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
         }
 
         target.setAlternativeProduct(source.getAlternativeProduct());
@@ -197,5 +210,13 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
   public void setProductService(final BlProductService productService) {
     this.productService = productService;
   }
+
+    public BlStockService getBlStockService() {
+        return blStockService;
+    }
+
+    public void setBlStockService(BlStockService blStockService) {
+        this.blStockService = blStockService;
+    }
 }
 
