@@ -1841,6 +1841,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			for (final BlProductModel model : blSerialProductModels)
 			{
 				if(model instanceof BlSerialProductModel) {
+					if (!((BlSerialProductModel) model).getSerialStatus().equals(SerialStatusEnum.UNBOXED)) {
 						final BlSerialProductModel serialProductModel = ((BlSerialProductModel) model);
 						setAssociatedConsignment(consignmentModel, serialProductModel);
 						serialProductModel.setAssociatedOrder(
@@ -1851,6 +1852,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						updateNumberOfRentedDaysForReturnedSerials(consignmentModel, serialProductModel);
 
 						performLocationUpdateOnSerial(blInventoryLocationModel, dirtyPrioritySerialList, dirtySerialList, serialProductModel);
+					}
 				}
 			}
 		}

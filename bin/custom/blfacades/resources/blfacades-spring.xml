@@ -281,6 +281,7 @@
 	    <property name="priceDataFactory" ref="priceDataFactory"/>
 	    <property name="commonI18NService" ref="commonI18NService"/>
 			<property name="productService" ref="productService"/>
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 
 	<alias name="defaultBlSerialProductDataPopulator" alias="blSerialProductDataPopulator"/>
