@@ -104,7 +104,6 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     extendOrderModel.setAllPromotionResults(Collections.emptySet());
     extendOrderModel.setTotalTax(0.0);
     extendOrderModel.setTotalTaxValues(Collections.emptyList());
-    extendOrderModel.setDeliveryCost(0.0);
     extendOrderModel.setAvalaraTaxCalculated(false);
     extendOrderModel.setCalculated(false);
     extendOrderModel.setVersionID(String.valueOf(getOrderIDGenerator().generate()));
