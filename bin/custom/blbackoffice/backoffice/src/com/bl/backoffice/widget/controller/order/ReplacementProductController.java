@@ -348,6 +348,7 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
      entryModel.setGearGuardProFullWaiverPrice(oldOrderEntry.getGearGuardProFullWaiverPrice());
      entryModel.setReplacementEntry(Boolean.TRUE);
      entryModel.setTaxValues(oldOrderEntry.getTaxValues());
+     entryModel.setOldProduct((BlProductModel) oldOrderEntry.getProduct());
      BlLogger.logFormatMessageInfo(LOG,Level.INFO,"New order entry created for product {} while replacement of serial {} for the order {}",
              newSerial.getBlProduct().getCode(),newSerial.getCode(),orderModel.getCode());
      return entryModel;
