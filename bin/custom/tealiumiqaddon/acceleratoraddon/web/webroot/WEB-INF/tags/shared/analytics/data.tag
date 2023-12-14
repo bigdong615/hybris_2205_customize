@@ -511,14 +511,14 @@
 			  					"id": "${entry.product.code}",
 			  					"name": "${entry.product.name}",
           						"brand": "${entry.product.manufacturer}",
-				 		   		 <c:if test="${not empty entry.product.categories[0]}">
-								"category": "${ycommerce:encodeJavaScript(entry.product.categories[0].code)}",
+				 		   		 <c:if test="${not empty entry.product.productBreadcrumbData[0]}">
+								"category": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[0])}",
 				 		    	</c:if>
-				 				 <c:if test="${not empty entry.product.categories[1]}">
-								"subCategory2": "${ycommerce:encodeJavaScript(entry.product.categories[1].code)}",
+				 				 <c:if test="${not empty entry.product.productBreadcrumbData[1]}">
+								"subCategory2": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[1])}",
 				 				 </c:if>
-				  				<c:if test="${not empty entry.product.categories[2]}">
-				   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.categories[2].code)}",
+				  				<c:if test="${not empty entry.product.productBreadcrumbData[2]}">
+				   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[2])}",
 				  				</c:if>
 			   					 "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
          						"variant" : "${ycommerce:encodeJavaScript(orderType)}",

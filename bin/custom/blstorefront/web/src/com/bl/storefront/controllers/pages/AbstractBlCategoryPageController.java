@@ -327,7 +327,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
 			//Encode SearchPageData
 			searchPageData = (ProductCategorySearchPageData) encodeSearchPageData(searchPageData);
 
-			//To get the bread crumbs for all products in PLP
+			//To get the bread crumbs for all products in PLP - Tealium
 			try
 			{
 				searchPageData.getResults().forEach(product -> {

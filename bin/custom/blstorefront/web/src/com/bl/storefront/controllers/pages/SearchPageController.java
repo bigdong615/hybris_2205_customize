@@ -162,7 +162,7 @@ public class SearchPageController extends AbstractSearchPageController
 			updatePageTitle(searchText, model);
 		}
 
-		//To get the breadcrumbs for all products in SLP
+		//To get the breadcrumbs for all products in SLP - Tealium
 		try
 		{
 			searchPageData.getResults().forEach(product -> {
