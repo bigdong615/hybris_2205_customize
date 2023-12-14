@@ -337,6 +337,7 @@ public class DefaultBlStockService implements BlStockService
 			case "SOLD":
 			case "ADDED_TO_CART":
 			case "LATE":
+			case "INACTIVE":
 				return Boolean.TRUE;
 			default:
 		}

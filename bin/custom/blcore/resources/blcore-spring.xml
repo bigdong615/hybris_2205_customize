@@ -774,7 +774,9 @@
     <property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
   </bean>
 
-	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver"/>
+	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
 
 	<!-- BL-462 : Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage Waiver prices -->
 	<alias name="defaultBlCalculationService" alias="calculationService"/>
