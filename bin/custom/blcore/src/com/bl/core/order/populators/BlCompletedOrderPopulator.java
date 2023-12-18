@@ -14,7 +14,7 @@ import java.util.List;
 
 
 /**
- * @author ravi
+ * @author kumar
  *
  */
 public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, List<OrderData>>
@@ -29,18 +29,18 @@ public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, Li
 		{
 			for (final AbstractOrderEntryModel orderentry : order.getEntries())
 			{
-			final OrderData orderData = new OrderData();
+				final OrderData orderData = new OrderData();
 
-			orderData.setCode(order.getCode());
-			orderData.setPage_id(orderentry.getProduct().getCode());
-			orderData.setOrder_id(order.getCode());
-			orderData.setFirst_name(order.getUser().getName());
-			orderData.setLast_name(order.getUser().getName());
-			orderData.setEmail(order.getUser().getUid());
-			orderData.setOrder_date(formatter.format(order.getCreationtime()));
-			target.add(orderData);
+				orderData.setCode(order.getCode());
+				orderData.setPage_id(orderentry.getProduct().getCode());
+				orderData.setOrder_id(order.getCode());
+				orderData.setFirst_name(order.getUser().getName());
+				orderData.setLast_name(order.getUser().getName());
+				orderData.setEmail(order.getUser().getUid());
+				orderData.setOrder_date(formatter.format(order.getCreationtime()));
+				target.add(orderData);
 
-		}
+			}
 		}
 
 
