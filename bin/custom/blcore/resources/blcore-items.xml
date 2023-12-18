@@ -3474,6 +3474,17 @@
                     </attribute>
                 </attributes>
             </itemtype>
+            
+            <itemtype code="BlCompletedOrderFeedCronJob" extends="CronJob">
+                <description>Completed orders for Powerreviews, SFTP Export</description>
+                <attributes>
+                     <attribute qualifier="fullLoad" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
+                </attributes>
+            </itemtype>
         </typegroup>
 
         <typegroup>

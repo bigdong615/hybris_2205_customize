@@ -180,4 +180,21 @@ public interface BlOrderDao extends OrderDao
 
 	public List<OrderModel> getOutStandCompletedOrders();
 
+	/**
+	 * To export the completed orders for the power reviews
+	 *
+	 * @return
+	 */
+
+	public List<OrderModel> getCompletedOrders();
+
+	/**
+	 * Completed order for the last day
+	 *
+	 * @return
+	 */
+
+	public List<OrderModel> getCompletedOrdersForLastDay();
+
+
 }

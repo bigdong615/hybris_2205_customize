@@ -506,6 +506,12 @@
       <property name="orderShippedStatusDate" type="java.util.Date"/>
       <property name="nonRefundableDeposit" type="boolean"/>
       <property name="orderReturnType" type="java.lang.String"/>
+      <property name="page_id" type="java.lang.String"/>
+      <property name="order_id" type="java.lang.String"/>
+      <property name="first_name" type="java.lang.String"/>
+      <property name="last_name" type="java.lang.String"/>
+      <property name="email" type="java.lang.String"/>
+      <property name="order_date" type="java.lang.String"/>
     </bean>
   
 	<bean class="de.hybris.platform.commercewebservicescommons.dto.order.OrderWsDTO">

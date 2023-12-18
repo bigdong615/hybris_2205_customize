@@ -2262,6 +2262,14 @@
 		<property name="orderDao" ref="orderDao"/>
 	</bean>
 	
+	<bean id="blCompletedOrderPopulator" class="com.bl.core.order.populators.BlCompletedOrderPopulator"/>
+	
+	<bean id="blCompletedOrderExportJob" class="com.bl.core.job.BlCompletedOrderExportJob" parent="abstractJobPerformable">
+		<property name="blCompletedOrderPopulator" ref="blCompletedOrderPopulator"/>
+		<property name="orderDao" ref="orderDao"/>
+		<property name="mediaService" ref="mediaService"/>		
+	</bean>
+	
 	<bean id="blConsignmentRentalStartDateHandler" class="com.bl.core.model.handler.BLConsignmentRentalStartDateHandler">
         <property name="blOrderService" ref="blOrderService"/>
     </bean>
