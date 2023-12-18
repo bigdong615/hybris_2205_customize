@@ -85,7 +85,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	@Override
 	protected void resetAllValues(final AbstractOrderEntryModel entry) throws CalculationException
 	{
-		final ProductModel product = entry.getProduct();
+		final ProductModel product =entry.isReplacementEntry()?entry.getOldProduct():entry.getProduct();
 		final Collection<TaxValue> entryTaxes = findTaxValues(entry);
 		entry.setTaxValues(entryTaxes);
 		final AbstractOrderModel order = entry.getOrder();
@@ -123,9 +123,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			final List<AbstractOrderEntryModel> entries =order.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(
 					Collectors.toList());
 			for (final AbstractOrderEntryModel e : entries) {
-              if(!e.isReplacementEntry()) {
 				  recalculateOrderEntryIfNeeded(e, forceRecalculate);
-			  }
 				subtotal += e.getTotalPrice().doubleValue();
 				if(!BlCoreConstants.AQUATECH_BRAND_ID.equals(e.getProduct().getManufacturerAID())) {
 					totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
@@ -723,9 +721,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		for (final AbstractOrderEntryModel entryModel : order.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(
 				Collectors.toList()))
 		{
-			if (!entryModel.isReplacementEntry()) {
-				resetAllValuesForTax(entryModel);
-			}
+			resetAllValuesForTax(entryModel);
 			super.calculateTotals(entryModel , true);
 			subtotal += entryModel.getTotalPrice().doubleValue();
 			totalDamageWaiverCost += getDamageWaiverPriceFromEntry(entryModel);
@@ -747,7 +743,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	@Override
 	public void resetAllValuesForTax(final AbstractOrderEntryModel entry) throws CalculationException
 	{
-		final ProductModel product = entry.getProduct();
+		final ProductModel product =entry.isReplacementEntry()?entry.getOldProduct(): entry.getProduct();
 		final Collection<TaxValue> entryTaxes = findTaxValues(entry);
 		entry.setTaxValues(entryTaxes);
 		final AbstractOrderModel order = entry.getOrder();
