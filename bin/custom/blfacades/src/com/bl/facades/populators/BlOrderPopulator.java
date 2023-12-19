@@ -313,6 +313,7 @@ public class BlOrderPopulator extends OrderPopulator
 			target.setShopperIp(source.getShopperIp());
 			target.setPrimaryKey(source.getPk().toString());
 			target.setTotalitemsqty((double) source.getEntries().stream().mapToLong(AbstractOrderEntryModel::getQuantity).sum());
+			target.setCode(source.getCode());
 		}
 		catch (final Exception exception)
 		{

@@ -88,6 +88,9 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       saveAndRefreshModel(extendOrderModel);
       getModelService().saveAll(clonedList);
       clonedOrderNotesForExtendOrder(originalOrder , extendOrderModel);
+      if(CollectionUtils.isNotEmpty(extendOrderModel.getPaymentTransactions())){
+        modelService.removeAll(extendOrderModel.getPaymentTransactions());
+      }
       saveAndRefreshModel(extendOrderModel);
       originalOrder.setExtendedOrderCopy(extendOrderModel);
       saveAndRefreshModel(originalOrder);
