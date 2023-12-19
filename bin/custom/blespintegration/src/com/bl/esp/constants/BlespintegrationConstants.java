@@ -42,6 +42,8 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String SFTP_RETURN_ORDER_HOST = "ftp.host.return.order.name";
 	public static final String SFTP_RETURN_ORDER_PASS = "ftp.user.return.order.password";
 	public static final String RETUNR_ORDER_FILE_NAME_PREFIX = "bl_return_order_master_feed";
+	public static final String COMPLETED_ORDER_FILE_NAME_PREFIX = "bl_completed_order_feed_";
+	public static final String COMPLETED_FILE_FORMAT = "yyyyMMddHHmmss";
 	public static final String RETURN_ORDER_FILE_SUFFIX = ".csv";
 
 
@@ -172,7 +174,11 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String LATE_ORDER_FILE_NAME_PREFIX = "bl_late_orders_feed";
 	public static final String LOCAL_FTP_PATH_LATE_ORDER = "local.sftp.file.path.late.order";
 
-
+	public static final String ORDERSFTPHOST = "order.ftp.host.name";
+	public static final String ORDERSFTPPORT = "order.ftp.port.number";
+	public static final String ORDERSFTPUSER = "order.ftp.user.name";
+	public static final String ORDERSFTPPASS = "order.ftp.user.password";
+	public static final String ORDER_CLIENT_FTP_PATH = "order.client.ftp.file.path";
 
 
 

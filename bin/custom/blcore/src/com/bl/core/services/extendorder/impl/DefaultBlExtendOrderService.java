@@ -88,6 +88,9 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       saveAndRefreshModel(extendOrderModel);
       getModelService().saveAll(clonedList);
       clonedOrderNotesForExtendOrder(originalOrder , extendOrderModel);
+      if(CollectionUtils.isNotEmpty(extendOrderModel.getPaymentTransactions())){
+        modelService.removeAll(extendOrderModel.getPaymentTransactions());
+      }
       saveAndRefreshModel(extendOrderModel);
       originalOrder.setExtendedOrderCopy(extendOrderModel);
       saveAndRefreshModel(originalOrder);
@@ -104,7 +107,6 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     extendOrderModel.setAllPromotionResults(Collections.emptySet());
     extendOrderModel.setTotalTax(0.0);
     extendOrderModel.setTotalTaxValues(Collections.emptyList());
-    extendOrderModel.setDeliveryCost(0.0);
     extendOrderModel.setAvalaraTaxCalculated(false);
     extendOrderModel.setCalculated(false);
     extendOrderModel.setVersionID(String.valueOf(getOrderIDGenerator().generate()));

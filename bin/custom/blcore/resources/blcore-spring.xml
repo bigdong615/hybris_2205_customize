@@ -774,7 +774,9 @@
     <property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
   </bean>
 
-	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver"/>
+	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
 
 	<!-- BL-462 : Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage Waiver prices -->
 	<alias name="defaultBlCalculationService" alias="calculationService"/>
@@ -2259,6 +2261,14 @@
 	<bean id="blReturnOrderJob" class="com.bl.core.job.BlReturnOrderFeedJob" parent="abstractJobPerformable">
 		<property name="blReturnOrderPopulator" ref="blReturnOrderPopulator"/>
 		<property name="orderDao" ref="orderDao"/>
+	</bean>
+	
+	<bean id="blCompletedOrderPopulator" class="com.bl.core.order.populators.BlCompletedOrderPopulator"/>
+	
+	<bean id="blCompletedOrderExportJob" class="com.bl.core.job.BlCompletedOrderExportJob" parent="abstractJobPerformable">
+		<property name="blCompletedOrderPopulator" ref="blCompletedOrderPopulator"/>
+		<property name="orderDao" ref="orderDao"/>
+		<property name="mediaService" ref="mediaService"/>		
 	</bean>
 	
 	<bean id="blConsignmentRentalStartDateHandler" class="com.bl.core.model.handler.BLConsignmentRentalStartDateHandler">

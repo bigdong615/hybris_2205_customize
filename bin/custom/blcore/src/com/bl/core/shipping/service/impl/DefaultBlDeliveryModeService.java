@@ -627,7 +627,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             for (final Iterator<AbstractOrderEntryModel> iterator = abstractOrderEntryModels.iterator(); iterator.hasNext();)
 				{
 					final AbstractOrderEntryModel entry = iterator.next();
-					final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
+                    final BlProductModel blSerialProduct=entry.isReplacementEntry() ? entry.getOldProduct():(BlProductModel)entry.getProduct();
 
                     totalWeight = getBigDecimal(totalWeight, entry);
                     if(blSerialProduct instanceof BlSerialProductModel) {

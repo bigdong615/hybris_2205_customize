@@ -108,6 +108,14 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALORDER + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:"+OrderModel.RENTALENDDATE + "} >= ?previousYearEndDate  and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
 			+ " as type} where {type:code} = ?code}})";
 
+	private static final String GET_COMPLETED_ORDERS = "SELECT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE
+			+ " AS o} WHERE  {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
+			+ " as type} where {type:code} = ?code}})";
+
+	private static final String GET_COMPLETED_ORDERS_FOR_LASTDAY = "SELECT {" + ItemModel.PK + "} FROM {" + OrderModel._TYPECODE
+			+ " AS o} WHERE {o:\" + OrderModel.MODIFIEDTIME + \"} >= ?date AND {o:" + OrderModel.STATUS + "} = ({{select {type:"
+			+ ItemModel.PK + "} from {" + OrderStatus._TYPECODE + " as type} where {type:code} = ?code}})";
+
 	private static final String GET_ONE_YEAR_OLD_COMPLETED_ORDERS = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ORDERCOMPLETEDDATE + "} > ?orderCompletedDate AND {o:"
 			+ OrderModel.USER + "} IN ({{SELECT {" + ItemModel.PK + "} FROM {" + CustomerModel._TYPECODE + "} WHERE {"
@@ -117,7 +125,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ OrderModel._TYPECODE + " AS o } WHERE {o:" + OrderModel.RENTALENDDATE + "} <= ?endDate AND {o:"
 			+ OrderModel.ISLATESTORDER	+ "} = 1  AND {o:" + OrderModel.ISSAPORDER+ "} = 1  AND {" + OrderModel.STATUS + "} IN "
 			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'SHIPPED'}})";
-private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.PK + BlintegrationConstants.FROM
+	private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.PK + BlintegrationConstants.FROM
 			+ PackagingInfoModel._TYPECODE + "}" + "WHERE {" + PackagingInfoModel.PACKAGERETURNEDTOWAREHOUSE + "} = ?packageReturnedToWarehouse AND {"
 			+ PackagingInfoModel.ISSCRAPESCANCOMPLETED + "} = ?isScrapeScanCompleted AND {"
 			+ PackagingInfoModel.LATEPACKAGEDATE + "} BETWEEN ?startDate AND ?endDate ";
@@ -852,4 +860,41 @@ private static final String PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.P
 		return orderModelList;
 	}
 
+
+	@Override
+	public List<OrderModel> getCompletedOrders()
+	{
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(GET_COMPLETED_ORDERS);
+		query.addQueryParameter(BlCoreConstants.ORDER_STATUS, OrderStatus.COMPLETED.getCode());
+		final SearchResult<OrderModel> result = getFlexibleSearchService().search(query);
+		final List<OrderModel> abstractOrderModelList = result.getResult();
+		if (CollectionUtils.isEmpty(abstractOrderModelList))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.SHARE_A_SALE_ORDERS_NOT_EXIST);
+			return Collections.emptyList();
+		}
+		return abstractOrderModelList;
+	}
+
+	@Override
+	public List<OrderModel> getCompletedOrdersForLastDay()
+	{
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		final LocalDateTime currentDate = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+
+		final LocalDateTime OneDayBeforeDate = currentDate.minusDays(1);
+
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(GET_COMPLETED_ORDERS_FOR_LASTDAY);
+		query.addQueryParameter(BlCoreConstants.ORDER_STATUS, OrderStatus.COMPLETED.getCode());
+		query.addQueryParameter("date", formatter.format(OneDayBeforeDate));
+
+		final SearchResult<OrderModel> result = getFlexibleSearchService().search(query);
+		final List<OrderModel> abstractOrderModelList = result.getResult();
+		if (CollectionUtils.isEmpty(abstractOrderModelList))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.SHARE_A_SALE_ORDERS_NOT_EXIST);
+			return Collections.emptyList();
+		}
+		return abstractOrderModelList;
+	}
 }
