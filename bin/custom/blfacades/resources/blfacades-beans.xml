@@ -695,6 +695,7 @@
         <property name="shopperIp" type="java.lang.String"/>
         <property name="primaryKey" type="java.lang.String"/>
         <property name="totalitemsqty" type="java.lang.Double"/>
+        <property name="code" type="java.lang.String"/>
 	</bean>
   
 
