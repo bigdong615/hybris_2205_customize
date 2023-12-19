@@ -38,6 +38,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -198,14 +199,16 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
 /**
  * @param packagingInfoModel
  */
-private void setReservedStatusForSerials(PackagingInfoModel packagingInfoModel)
+private void setReservedStatusForSerials(final PackagingInfoModel packagingInfoModel)
 {
-	Date startDay = new Date();
-	  Set<String>serialCodes = new HashSet<String>();
-	  for(BlProductModel serial : packagingInfoModel.getSerialProducts()) {
+	final Date startDay = new Date();
+	final Date endDay = DateUtils.addDays(startDay, 1);
+	  final Set<String>serialCodes = new HashSet<String>();
+	  for(final BlProductModel serial : packagingInfoModel.getSerialProducts()) {
 		  serialCodes.add(serial.getCode());
 	  }
-	  Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findALLSerialStockLevelsForDateAndCodes(serialCodes, startDay, startDay);
+	  final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findALLSerialStockLevelsForDateAndCodes(serialCodes,
+			  startDay, endDay);
 	  if (CollectionUtils.isNotEmpty(stockLevels)) {
 		  stockLevels.forEach(stockLevel -> {
 			  stockLevel.setReservedStatus(true);
