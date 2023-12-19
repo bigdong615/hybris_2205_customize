@@ -3,11 +3,11 @@ package com.bl.core.esp.service.impl;
 import de.hybris.platform.core.enums.ExportStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.order.LateOrderData;
-import de.hybris.platform.order.ReturnOrderData;
 import de.hybris.platform.order.UpsScrapeOrderData;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,10 +17,13 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
@@ -43,9 +46,13 @@ import org.w3c.dom.Element;
 import com.bl.core.esp.populators.BlOrderBillFeedPopulator;
 import com.bl.core.esp.populators.BlOrderFeedPopulator;
 import com.bl.core.esp.service.BlOrderFeedFTPService;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.order.populators.BlLateOrderPopulator;
 import com.bl.core.order.populators.BlUpsScrapeOrderPopulator;
+import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.impl.DefaultBlStockLevelDao;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.OrderFeedData;
 import com.bl.logging.BlLogger;
@@ -75,8 +82,9 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
   private BlLateOrderPopulator blLateOrderPopulator;
   private BlUpsScrapeOrderPopulator blUpsScrapeOrderPopulator;
   private BlOrderDao orderDao;
+  private BlStockLevelDao blStockLevelDao;
 
-  /**
+/**
    * This method created to convert order into XML
    *
    * @param abstractOrderModels
@@ -134,6 +142,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
 							  if (BooleanUtils.isFalse(packagingInfoModel.isIsScrapeScanCompleted()))
 							  {
 								  filteredOrdersList.add(abstractOrderModel);
+								  setReservedStatusForSerials(packagingInfoModel);
 							  }
 						  });
 					  }
@@ -146,6 +155,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
 				  if (BooleanUtils.isFalse(packagingInfoModel.isIsScrapeScanCompleted()))
 				  {
 					  filteredOrdersList.add(abstractOrderModel);
+					  setReservedStatusForSerials(packagingInfoModel);
 				  }
 			  });
 		  }
@@ -163,11 +173,11 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
 		  e1.printStackTrace();
 	  }
 	  final ColumnPositionMappingStrategy mappingStrategy = new ColumnPositionMappingStrategy();
-	  mappingStrategy.setType(LateOrderData.class);
+	  mappingStrategy.setType(UpsScrapeOrderData.class);
 	  final String[] columns = new String[]
 	  { "subscriberId", "emailAddress", "orderNumber", "customerName", "shippingMethod", "rentalStartDate", "rentalEndDate" };
 	  mappingStrategy.setColumnMapping(columns);
-	  final StatefulBeanToCsvBuilder<ReturnOrderData> builder = new StatefulBeanToCsvBuilder(writer);
+	  final StatefulBeanToCsvBuilder<UpsScrapeOrderData> builder = new StatefulBeanToCsvBuilder(writer);
 	  final StatefulBeanToCsv beanWriter = builder.withMappingStrategy(mappingStrategy).build();
 	  try
 	  {
@@ -184,6 +194,24 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
 	  }
 	  sendFileToFTPLocation(lateOrderFeed);
   }
+
+/**
+ * @param packagingInfoModel
+ */
+private void setReservedStatusForSerials(PackagingInfoModel packagingInfoModel)
+{
+	Date startDay = new Date();
+	  Set<String>serialCodes = new HashSet<String>();
+	  for(BlProductModel serial : packagingInfoModel.getSerialProducts()) {
+		  serialCodes.add(serial.getCode());
+	  }
+	  Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findALLSerialStockLevelsForDateAndCodes(serialCodes, startDay, startDay);
+	  if (CollectionUtils.isNotEmpty(stockLevels)) {
+		  stockLevels.forEach(stockLevel -> {
+			  stockLevel.setReservedStatus(true);
+		  });
+	  }
+}
 
 
 
@@ -394,8 +422,8 @@ private File getFile(){
 
 private File getUpsScrapeFile()
 {
-	final String fileName = new StringBuilder(BlespintegrationConstants.UPS_SCRAPE_FILE_NAME_PREFIX)
-			.append(BlespintegrationConstants.UPS_SCRAPE_FILE_SUFFIX).toString();
+	final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
+	final String fileName = new StringBuilder(BlespintegrationConstants.UPS_SCRAPE_FILE_NAME_PREFIX).append(logFileName).append(BlespintegrationConstants.UPS_SCRAPE_FILE_SUFFIX).toString();
 	final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
 	createDirectoryForFTPFeed(path);
 	return new File(new StringBuilder(path).append(BlespintegrationConstants.SLASH).append(fileName).toString());
@@ -445,6 +473,16 @@ private File getUpsScrapeFile()
   public void setOrderDao(final BlOrderDao orderDao)
   {
 	  this.orderDao = orderDao;
+  }
+  
+  public BlStockLevelDao getBlStockLevelDao()
+  {
+	  return blStockLevelDao;
+  }
+
+  public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao)
+  {
+	  this.blStockLevelDao = blStockLevelDao;
   }
 
 }
