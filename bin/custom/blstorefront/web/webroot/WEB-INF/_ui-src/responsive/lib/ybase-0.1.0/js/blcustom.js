@@ -1175,6 +1175,7 @@ function onUsedCloseModal()
 
 //BL-625 place order with order notes.
 $('#placeOrderSummary').on("click", function(e) {
+ $('#placeOrderSummary').attr("disabled",true);
 	$('#placeOrder').click();
 });
 
