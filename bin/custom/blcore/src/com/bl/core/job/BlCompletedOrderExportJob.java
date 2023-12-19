@@ -38,8 +38,6 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.Channel;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -135,7 +133,8 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 	private MediaModel createMediaModel(final File productFeedFile, final SimpleDateFormat formatter)
 	{
 		final MediaModel media = modelService.create(MediaModel.class);
-		media.setCode(COMPLETED_ORDER_MEDIA_FILE_NAME + "_" + formatter.format(new Date()));
+		final String logFileName = new SimpleDateFormat(BlespintegrationConstants.COMPLETED_FILE_FORMAT).format(new Date());
+		media.setCode(COMPLETED_ORDER_MEDIA_FILE_NAME + "_" + logFileName);
 		modelService.save(media);
 
 		try (InputStream productFeedInputStream = new FileInputStream(productFeedFile))
@@ -202,8 +201,8 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 
 	private File getFile()
 	{
-		final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
-		final String fileName = new StringBuilder(BlespintegrationConstants.COMPLETED_ORDER_FILE_NAME_PREFIX)
+		final String logFileName = new SimpleDateFormat(BlespintegrationConstants.COMPLETED_FILE_FORMAT).format(new Date());
+		final String fileName = new StringBuilder(BlespintegrationConstants.COMPLETED_ORDER_FILE_NAME_PREFIX).append(logFileName)
 				.append(BlespintegrationConstants.RETURN_ORDER_FILE_SUFFIX).toString();
 		final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
 		createDirectoryForFTPFeed(path);

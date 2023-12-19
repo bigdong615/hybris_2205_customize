@@ -34,8 +34,11 @@ public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, Li
 				orderData.setCode(order.getCode());
 				orderData.setPage_id(orderentry.getProduct().getCode());
 				orderData.setOrder_id(order.getCode());
-				orderData.setFirst_name(order.getUser().getName());
-				orderData.setLast_name(order.getUser().getName());
+				if (order.getPaymentAddress() != null)
+				{
+					orderData.setFirst_name(order.getPaymentAddress().getFirstname());
+					orderData.setLast_name(order.getPaymentAddress().getLastname());
+				}
 				orderData.setEmail(order.getUser().getUid());
 				orderData.setOrder_date(formatter.format(order.getCreationtime()));
 				target.add(orderData);
