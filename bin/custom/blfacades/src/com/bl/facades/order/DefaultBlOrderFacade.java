@@ -584,6 +584,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
                 totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
                 currentTax.addAndGet(billing.getTaxAmount().doubleValue());
             }
+        });
             target.getEntries().forEach(entry -> {
                 messagesList.forEach(msg -> {
                     if (msg.getMessageCode().contains(entry.getProduct().getName()))
@@ -596,11 +597,11 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
                     }
                 });
             });
-        });
+
 
         target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
         target.setTotalPayBillTax(convertDoubleToPriceData(currentTax.get(), source ));
-        target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get(), source));
+        target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get() + currentTax.get(), source));
   }
 
     private void applyTaxOnPayOrderBillCharges(OrderModel source) {

@@ -216,10 +216,10 @@ public class BlOrderBillingController extends DefaultWidgetController {
         final AtomicDouble lineItemTotals = new AtomicDouble(0.0d);
         for (final Component row : this.getOrderEntriesGridRows()) {
             if (((Checkbox) row.getChildren().iterator().next()).isChecked()) {
-                final String amountDue =  ((Textbox)row.getChildren().get(5)).getValue();
-                final String processingFee = ((Textbox)row.getChildren().get(7)).getValue();
-                final String tax = ((Textbox)row.getChildren().get(8)).getValue();
-                if (((Checkbox) row.getChildren().get(6)).isChecked()) {
+                final String amountDue =  ((Textbox)row.getChildren().get(6)).getValue();
+                final String processingFee = ((Textbox)row.getChildren().get(8)).getValue();
+                final String tax = ((Textbox)row.getChildren().get(9)).getValue();
+                if (((Checkbox) row.getChildren().get(7)).isChecked()) {
                     lineItemTotals.addAndGet(Double.parseDouble(amountDue) + Double.parseDouble(processingFee) + Double.parseDouble(tax));
                 }
                 else {
@@ -240,7 +240,8 @@ public class BlOrderBillingController extends DefaultWidgetController {
             abstractOrderEntryModel.getSerialProducts().forEach(serialProduct -> {
                 BlOrderBillingItemDTO itemDTO = new BlOrderBillingItemDTO();
                 itemDTO.setProductName(abstractOrderEntryModel.getProduct().getName());
-                itemDTO.setSerialNo(serialProduct.getCode());
+                itemDTO.setSerialCode(serialProduct.getCode());
+                itemDTO.setSerialNo(((BlSerialProductModel) serialProduct).getSerialNumber());
                 itemDTO.setAmount(((BlProductModel) abstractOrderEntryModel.getProduct()).getRetailPrice() !=null ? ((BlProductModel) abstractOrderEntryModel.getProduct()).getRetailPrice() : 0.0);
                 setDamageWaiver(itemDTO,abstractOrderEntryModel);
                 setSubTotal(itemDTO);
@@ -262,15 +263,20 @@ public class BlOrderBillingController extends DefaultWidgetController {
         {
             for (final Component row : this.getOrderEntriesGridRows()) {
                 if (((Textbox) row.getChildren().get(2)).getValue().equals(selctedCheckBoxArray[0])) {
-                    Double amount=Double.parseDouble(((Textbox) row.getChildren().get(3)).getValue());
+                    Double amount=Double.parseDouble(((Textbox) row.getChildren().get(4)).getValue());
+                    final String serialNo = ((Textbox) row.getChildren().get(3)).getValue();
+                    final String productName = ((Textbox) row.getChildren().get(1)).getValue();
                     if(selctedCheckBoxArray[1].contains("False")) {
-                        ((Textbox) row.getChildren().get(5)).setValue(amount.toString());
+                        ((Textbox) row.getChildren().get(6)).setValue(amount.toString());
                     }
                     else {
                         amount=amount * 12/100;
-                        ((Textbox) row.getChildren().get(5)).setValue(amount.toString());
+                        ((Textbox) row.getChildren().get(6)).setValue(amount.toString());
                     }
+                    ((Textbox) row.getChildren().get(10)).setValue(missingItemToolCombobox.getValue() + " "+ productName + " - " + "Serial#" + " " + serialNo + " - "  + amount);
+
                 }
+
             }
 
         }
@@ -339,7 +345,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 BillingPojo billing = new BillingPojo();
                 for (final Component row : this.getOrderEntriesGridRows()) {
                     if (((Checkbox) row.getChildren().iterator().next()).isChecked()) {
-                        final String amountDue = ((Textbox) row.getChildren().get(5)).getValue();
+                        final String amountDue = ((Textbox) row.getChildren().get(6)).getValue();
                         final String serialNo = ((Textbox) row.getChildren().get(2)).getValue();
                         final String productName = ((Textbox) row.getChildren().get(1)).getValue();
                         billing.setOrder(this.getOrderModel());
@@ -349,7 +355,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
                         billing.setSerialNo(serialNo);
                         billing.setProductName(productName);
                         Double billingTax = getDefaultBlAvalaraTaxService().processBillingTax(billing);
-                        ((Textbox) row.getChildren().get(8)).setValue(billingTax.toString());
+                        ((Textbox) row.getChildren().get(9)).setValue(billingTax.toString());
                     }
                 }
             } catch (Exception e) {
@@ -408,7 +414,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     private void setUnpaidBillNotes(BlOrderBillingItemDTO itemDTO,BlProductModel serialProduct)
     {
-        itemDTO.setUnpaidBillNotes(missingItemToolCombobox.getValue() + " "+ itemDTO.getProductName() + " - " + "Serial# " + serialProduct.getCode());
+        itemDTO.setUnpaidBillNotes(missingItemToolCombobox.getValue() + " "+ itemDTO.getProductName() + " - " + "Serial#" + " " + (itemDTO.getSerialNo() != null ? itemDTO.getSerialNo() :"") + " - "+ itemDTO.getSubtotal());
     }
 
     private void disableOrEnableFields(Boolean b)
@@ -452,17 +458,17 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 billingChargeModel.setBillChargeType(getBillingChargesReason());
                 billingChargeModel.setOrderCode(this.getOrderModel().getCode());
 
-                BigDecimal taxAmount =  sumValues(checkedEntries, 8);
+                BigDecimal taxAmount =  sumValues(checkedEntries, 9);
                 billingChargeModel.setTaxAmount(taxAmount);
 
                 List<String> serialCodes = createStringList(checkedEntries, 2);
                 billingChargeModel.setSerialCodes(serialCodes);
                 updateSerialCodes(serialCodes,checkedEntries);
 
-                BigDecimal chargedAmount = sumValues(checkedEntries, 5);
-                BigDecimal processingFee = sumValues(checkedEntries, 7);
+                BigDecimal chargedAmount = sumValues(checkedEntries, 6);
+                BigDecimal processingFee = sumValues(checkedEntries, 8);
 
-                List<String> unPaidBillNotes = createStringList(checkedEntries, 9);new ArrayList<>();
+                List<String> unPaidBillNotes = createStringList(checkedEntries, 10);new ArrayList<>();
                 billingChargeModel.setUnPaidBillingNotes(unPaidBillNotes);
 
                 totalAmount = totalAmount.add(chargedAmount).add(taxAmount).add(processingFee);
@@ -510,7 +516,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
                 if (code.equals(codeElement.getText())) {
                     mainProduct = ((InputElement) comp.getChildren().get(1)).getText();
-                    subTotal = ((InputElement) comp.getChildren().get(5)).getText();
+                    subTotal = ((InputElement) comp.getChildren().get(6)).getText();
                     break; // No need to continue searching once found
                 }
             }
@@ -740,14 +746,16 @@ public class BlOrderBillingController extends DefaultWidgetController {
         for (final Component row : this.getOrderEntriesGridRows()) {
             if(((Textbox)inputEvent.getTarget().getParent().getChildren().get(2)).getValue().equals(((Textbox) row.getChildren().get(2)).getValue())){
                 if((((Radiogroup) row.getChildren().get(4)).getSelectedItem().getLabel().equals("False"))){
-                    ((Textbox) row.getChildren().get(5)).setValue(String.valueOf(amount));
+                    ((Textbox) row.getChildren().get(6)).setValue(String.valueOf(amount));
                 }
                   else {
                     amount=amount * 12/100;
-                    ((Textbox) row.getChildren().get(5)).setValue(String.valueOf(amount));
+                    ((Textbox) row.getChildren().get(6)).setValue(String.valueOf(amount));
                 }
             }
+
         }
+
         setTax();
         calculateLineItemTotalAmountDue();
     }
