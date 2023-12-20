@@ -79,6 +79,9 @@
                                     <column width="280px" sort="auto" sortDirection="ascending">
                                         <label value="${labels.customersupportbackoffice.billing.label.productName}" width="100%"/>
                                     </column>
+                                     <column width="5px" style="padding-left:5px">
+                                         <label value="${labels.customersupportbackoffice.billing.label.serialCode}" width="100%" Visible="false"/>
+                                     </column>
                                     <column width="150px" style="padding-left:5px">
                                         <label value="${labels.customersupportbackoffice.billing.label.serialNumber}" width="100%"/>
                                     </column>
@@ -108,21 +111,23 @@
                                     <template name="model">
                                         <row style="">
                                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
-                                                      id="${each.serialNo}_SerialProduct" visible="true" onCheck="doIndicate()"/>
+                                                      id="${each.serialCode}_SerialProduct" visible="true" onCheck="doIndicate()"/>
                                             <textbox value="${each.productName}" width="280px" name="name_${each.productName}"
                                                      readonly="true"/>
+                                            <textbox value="${each.serialCode}" width="5px" name="serial_${each.serialCode}"
+                                                     readonly="true"  visible="false"/>
                                             <textbox value="${each.serialNo}" width="200px" name="serial_${each.serialNo}"
                                                       readonly="true"/>
                                             <textbox value="${each.amount}" width="200px" name="name_${each.amount}"
                                                       readonly="false" forward="onChange=orderEntries.onChangeSomeInput(${each.amount})"/>
                                             <radiogroup sclass="" style="text-align-last: right;">
-                                            <radio label="True" checked="${each.damageWaiver}" disabled="${!each.damageWaiver}" id="${each.serialNo}_damageWaiverTrue" onCheck="doIndicate()"/>
-                                            <radio label="False" checked="${!each.damageWaiver}" id="${each.serialNo}_damageWaiverFalse" onCheck="doIndicate()"/>
+                                            <radio label="True" checked="${each.damageWaiver}" disabled="${!each.damageWaiver}" id="${each.serialCode}_damageWaiverTrue" onCheck="doIndicate()"/>
+                                            <radio label="False" checked="${!each.damageWaiver}" id="${each.serialCode}_damageWaiverFalse" onCheck="doIndicate()"/>
                                             </radiogroup>
                                             <textbox value="${each.subtotal}" width="200px" name="nasub_${each.subtotal}"
                                                       readonly="true"/>
                                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
-                                                      name="processingfeeSelectionChk" id="${each.serialNo}_ProcessingFee" visible="true" checked="${each.processingFee}" onCheck="doIndicate()"/>
+                                                      name="processingfeeSelectionChk" id="${each.serialCode}_ProcessingFee" visible="true" checked="${each.processingFee}" onCheck="doIndicate()"/>
                                             <textbox value="5.00" width="200px" name="nasub_${each.amount}"
                                                      readonly="true"/>
                                             <textbox value="${each.tax}" width="200px" name="tx_${each.tax}"
