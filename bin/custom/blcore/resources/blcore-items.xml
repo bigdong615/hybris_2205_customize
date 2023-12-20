@@ -2634,6 +2634,11 @@
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                         <description>To identify whether the order entry for replacement product</description>
                     </attribute>
+                    <attribute qualifier="oldProduct" type="BlProduct">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>It contain old main product and used for price related calculation for replacement product</description>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -3471,6 +3476,17 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
                         <description>To perform the Order FTP feed for specified date.</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+            
+            <itemtype code="BlCompletedOrderFeedCronJob" extends="CronJob">
+                <description>Completed orders for Powerreviews, SFTP Export</description>
+                <attributes>
+                     <attribute qualifier="fullLoad" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>

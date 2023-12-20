@@ -14,6 +14,8 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.springframework.util.CollectionUtils;
+
 import com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService;
 import com.bl.core.order.dao.BlOrderDao;
 
@@ -31,14 +33,17 @@ public class UpsScrapeNightJob extends AbstractJobPerformable<CronJobModel>
 	public PerformResult perform(final CronJobModel job)
 	{
 		List<AbstractOrderModel> orderModelList = null;
-		orderModelList = getOrderDao().getOrdersForOrderFeedToFTP();
-		try
+		orderModelList = getOrderDao().getOrdersForUpsScrapeRemainder();
+		if (orderModelList != null && !CollectionUtils.isEmpty(orderModelList))
 		{
-			getDefaultBlOrderFeedFTPService().convertOrderTOFeed(orderModelList);
-		}
-		catch (final ParserConfigurationException e)
-		{
-			e.printStackTrace();
+			try
+			{
+				getDefaultBlOrderFeedFTPService().convertOrderTOFeed(orderModelList);
+			}
+			catch (final ParserConfigurationException e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);

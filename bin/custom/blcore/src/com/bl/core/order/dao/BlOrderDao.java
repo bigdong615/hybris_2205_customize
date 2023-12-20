@@ -165,6 +165,7 @@ public interface BlOrderDao extends OrderDao
 	 */
 	List<AbstractOrderModel> getOrdersForLateOrderFeedToFTP() throws ParseException;
 
+	List<AbstractOrderModel> getOrdersForUpsScrapeRemainder();
 	/**
 	 * It gets all the claimed orders for which authorization needs to be created
 	 * @return list of orders
@@ -178,5 +179,22 @@ public interface BlOrderDao extends OrderDao
 	 */
 
 	public List<OrderModel> getOutStandCompletedOrders();
+
+	/**
+	 * To export the completed orders for the power reviews
+	 *
+	 * @return
+	 */
+
+	public List<OrderModel> getCompletedOrders();
+
+	/**
+	 * Completed order for the last day
+	 *
+	 * @return
+	 */
+
+	public List<OrderModel> getCompletedOrdersForLastDay();
+
 
 }

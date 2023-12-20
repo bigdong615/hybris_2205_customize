@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved
+--><extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+        	
+    
+    <extension abstractclassprefix="Generated" classprefix="Backofficeadvsearchfix" name="backofficeadvsearchfix" usemaven="false">
+                		
+        
+        <requires-extension name="backoffice"/>
+                		
+        
+        
+                		
+        
+        <coremodule generated="true" manager="com.sap.backoffice.advance.search.fix.jalo.BackofficeadvsearchfixManager" packageroot="com.sap.backoffice.advance.search.fix"/>
+                		
+        
+        <meta key="backoffice-module" value="true"/>
+                		
+        
+        	
+    
+    </extension>
+        
+
+</extensioninfo>

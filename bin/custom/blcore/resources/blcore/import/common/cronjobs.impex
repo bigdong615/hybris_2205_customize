@@ -38,21 +38,41 @@ INSERT_UPDATE Trigger ; cronJob(code)[unique=true]             ; second[default=
                       ; ticketsRetentionCronJob                ;                   
 # Run the CloseStagnantServiceTicketsJob at 12:05 AM every day
                       ; ticketsStagnationJob                   ;                   ;                   ; 12              ; 0               ;                   ;                  ;                         ; true                  ;                                
-
-#Cronjob to pull queue 
-INSERT_UPDATE CronJob ; code[unique=true]          ; job(code)                  ; sessionLanguage(isoCode)[default=en]
-                      ; pullOrdersAwaitingQueueJob ; pullOrdersAwaitingQueueJob ;                                     
-                      ; pulledOrdersQueueJob       ; pulledOrdersQueueJob       ;
-                      ; blGoogleMerchantJob		   ; blGoogleMerchantJob		;
-                      ; blReturnOrderJob		   ; blReturnOrderJob			;
-                      ; blLateOrderReminderFeedCronJob		   ; blLateOrderReminderFeedJob			    ;
-                      ; blAuthorizeAndCapturePaymentCronJob		   ; blAuthorizeAndCapturePaymentJob			    ;
-
-                                                         
-INSERT_UPDATE Trigger ; cronjob(code)[unique=true] ; active ; cronExpression
-                      ; pullOrdersAwaitingQueueJob ; true   ; 0 0/10 * * * ?
-                      ; pulledOrdersQueueJob       ; true   ; 0 0/10 * * * ? 
-                      ; blGoogleMerchantJob		   ; true   ; 0 * 1 * * ?
-                      ; blReturnOrderJob		   ; true   ; 0 0 1 * * ?
-                      ; blLateOrderReminderFeedCronJob         ; true   ; 0 0 6 * * ?
-                      ; blAuthorizeAndCapturePaymentCronJob         ; true   ; 0 0 5 * * ?
+                      
+INSERT_UPDATE ServicelayerJob ; code[unique=true]   ; springId            
+                              ; blUpsScrapeNightJob ; blUpsScrapeNightJob 
+                              
+#Cronjob to pull queue        
+INSERT_UPDATE CronJob ; code[unique=true]                ; job(code)                  ; sessionLanguage(isoCode)[default=en] 
+                      ; pullOrdersAwaitingQueueJob       ; pullOrdersAwaitingQueueJob ;                                      
+                      ; pulledOrdersQueueJob             ; pulledOrdersQueueJob       ;                                      
+                      ; blGoogleMerchantJob              ; blGoogleMerchantJob        ;                                      
+                      ; blReturnOrderJob                 ; blReturnOrderJob           ;                                      
+                      ; blLateOrderReminderFeedCronJob   ; blLateOrderReminderFeedJob ;                                      
+                      ; blUpsScrapeRemainderNightCronJob ; blUpsScrapeNightJob        ;                                      
+                      
+INSERT_UPDATE Trigger ; cronjob(code)[unique=true]       ; active ; cronExpression 
+                      ; pullOrdersAwaitingQueueJob       ; true   ; 0 0/10 * * * ? 
+                      ; pulledOrdersQueueJob             ; true   ; 0 0/10 * * * ? 
+                      ; blGoogleMerchantJob              ; true   ; 0 * 1 * * ?    
+                      ; blReturnOrderJob                 ; true   ; 0 0 1 * * ?    
+                      ; blLateOrderReminderFeedCronJob   ; true   ; 0 0 6 * * ?    
+                      ; blUpsScrapeRemainderNightCronJob ; true   ; 0 0 6 * * ?    
+#Cronjob to pull queue
+INSERT_UPDATE CronJob ; code[unique=true]                   ; job(code)                       ; sessionLanguage(isoCode)[default=en] 
+                      ; pullOrdersAwaitingQueueJob          ; pullOrdersAwaitingQueueJob      ;                                      
+                      ; pulledOrdersQueueJob                ; pulledOrdersQueueJob            ;                                      
+                      ; blGoogleMerchantJob                 ; blGoogleMerchantJob             ;                                      
+                      ; blReturnOrderJob                    ; blReturnOrderJob                ;                                      
+                      ; blLateOrderReminderFeedCronJob      ; blLateOrderReminderFeedJob      ;                                      
+                      ; blAuthorizeAndCapturePaymentCronJob ; blAuthorizeAndCapturePaymentJob ;                                      
+                      
+                      
+INSERT_UPDATE Trigger ; cronjob(code)[unique=true]          ; active ; cronExpression 
+                      ; pullOrdersAwaitingQueueJob          ; true   ; 0 0/10 * * * ? 
+                      ; pulledOrdersQueueJob                ; true   ; 0 0/10 * * * ? 
+                      ; blGoogleMerchantJob                 ; true   ; 0 * 1 * * ?    
+                      ; blReturnOrderJob                    ; true   ; 0 0 1 * * ?    
+                      ; blLateOrderReminderFeedCronJob      ; true   ; 0 0 6 * * ?    
+                      ; blAuthorizeAndCapturePaymentCronJob ; true   ; 0 0 5 * * ?    
+                      

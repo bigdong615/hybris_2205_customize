@@ -3,6 +3,7 @@ package com.bl.core.interceptor;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
@@ -78,14 +79,13 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
 				// calculating base price after updating effective dates
 				try
 				{
-                    if (!orderEntry.isReplacementEntry()) {
-                        final BigDecimal calculatedBasePrice = getBlBackOfficePriceService().getProductPrice(orderEntry.getProduct(),
+                    final ProductModel productModel = orderEntry.isReplacementEntry()?orderEntry.getOldProduct():orderEntry.getProduct();
+                        final BigDecimal calculatedBasePrice = getBlBackOfficePriceService().getProductPrice(productModel,
                                 rentalStartDate, rentalReturnDate, BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()));
                         LOG.debug("BlDefaultAbstractOrderDatePopulatePrepareInterceptor calculatedBasePrice : " + calculatedBasePrice);
                         if (calculatedBasePrice != null) {
                             orderEntry.setBasePrice(calculatedBasePrice.doubleValue());
                         }
-                    }
 				}
 				catch (final ParseException e)
 				{

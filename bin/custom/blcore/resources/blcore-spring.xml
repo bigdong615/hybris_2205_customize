@@ -774,7 +774,9 @@
     <property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
   </bean>
 
-	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver"/>
+	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
 
 	<!-- BL-462 : Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage Waiver prices -->
 	<alias name="defaultBlCalculationService" alias="calculationService"/>
@@ -1854,7 +1856,10 @@
 	<bean id="defaultBlOrderFeedFTPService" class="com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService">
 		<property name="blOrderFeedPopulator" ref="blOrderFeedPopulator"/>
 		<property name="blOrderBillFeedPopulator" ref="blOrderBillFeedPopulator"/>
+		<property name="blUpsScrapeOrderPopulator" ref="blUpsScrapeOrderPopulator"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="orderDao" ref="orderDao"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 	</bean>
 
 	<bean id="defaultBlOrderFeedJob" class="com.bl.core.job.BlOrderFeedJob" parent="abstractJobPerformable">
@@ -2258,6 +2263,14 @@
 		<property name="orderDao" ref="orderDao"/>
 	</bean>
 	
+	<bean id="blCompletedOrderPopulator" class="com.bl.core.order.populators.BlCompletedOrderPopulator"/>
+	
+	<bean id="blCompletedOrderExportJob" class="com.bl.core.job.BlCompletedOrderExportJob" parent="abstractJobPerformable">
+		<property name="blCompletedOrderPopulator" ref="blCompletedOrderPopulator"/>
+		<property name="orderDao" ref="orderDao"/>
+		<property name="mediaService" ref="mediaService"/>		
+	</bean>
+	
 	<bean id="blConsignmentRentalStartDateHandler" class="com.bl.core.model.handler.BLConsignmentRentalStartDateHandler">
         <property name="blOrderService" ref="blOrderService"/>
     </bean>
@@ -2365,6 +2378,8 @@
 	<bean id="blAuthorizeAndCapturePaymentJob" class="com.bl.core.job.BlAuthorizeAndCapturePaymentJob" parent="abstractJobPerformable">
 		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
+	
+	<bean id="blUpsScrapeOrderPopulator" class="com.bl.core.order.populators.BlUpsScrapeOrderPopulator"/>
 	
 	<bean id="blUpsScrapeNightJob" class="com.bl.core.job.UpsScrapeNightJob" parent="abstractJobPerformable">
 		<property name="defaultBlOrderFeedFTPService" ref="defaultBlOrderFeedFTPService"/>

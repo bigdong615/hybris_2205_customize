@@ -11,8 +11,19 @@
 <spring:eval expression="T(de.hybris.platform.util.Config).getParameter('shareasale.version.value')"	var="version" scope="page" />
 <spring:eval expression="T(de.hybris.platform.util.Config).getParameter('shareasale.lead.pixel.value')"	var="pixel" scope="page" />
 
+<c:choose>
+<c:when test="${orderData.isRentalCart}">
+          <c:set var="blOrderType" value="&xtype=rental"/>
+</c:when>
+<c:when test="${orderData.isRetailGearOrder}">
+     <c:set var="blOrderType" value="&xtype=retailGear"/>
+</c:when>
+<c:otherwise>
+    <c:set var="blOrderType" value="&xtype=usedgear"/>
+</c:otherwise>
+</c:choose>
+
 <c:if test = "${pageType == 'ORDERCONFIRMATION'}">
-<img id='_SHRSL_img_1' src='https://www.shareasale.com/sale.cfm?tracking=${orderData.code}&amount=0.00&merchantID=${merchantID}&transtype=${pixel}' width='1' height='1'>
-<script src='https://www.dwin1.com/19038.js' type='text/javascript' defer='defer'></script>
+<img id='_SHRSL_img_1' src='https://www.shareasale.com/sale.cfm?tracking=${orderData.code}&amount=0.00&merchantID=${merchantID}&transtype=${pixel}${blOrderType}' width='1' height='1'>
 </c:if>
 <!-- End sharasale integration code -->
