@@ -4,6 +4,7 @@ public class BlOrderBillingItemDTO implements Comparable<BlOrderBillingItemDTO>{
 
     private String productName;
     private String serialNo;
+    private String serialCode;
     private Double amount;
     private Double subtotal;
     private boolean damageWaiver;
@@ -93,5 +94,13 @@ public class BlOrderBillingItemDTO implements Comparable<BlOrderBillingItemDTO>{
     @Override
     public int compareTo(BlOrderBillingItemDTO o) {
         return 0;
+    }
+
+    public String getSerialCode() {
+        return serialCode;
+    }
+
+    public void setSerialCode(String serialCode) {
+        this.serialCode = serialCode;
     }
 }
