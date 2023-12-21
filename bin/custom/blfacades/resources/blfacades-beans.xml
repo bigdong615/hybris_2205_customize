@@ -512,6 +512,8 @@
       <property name="last_name" type="java.lang.String"/>
       <property name="email" type="java.lang.String"/>
       <property name="order_date" type="java.lang.String"/>
+      <property name="locale" type="java.lang.String"/>           
+      
     </bean>
   
 	<bean class="de.hybris.platform.commercewebservicescommons.dto.order.OrderWsDTO">
