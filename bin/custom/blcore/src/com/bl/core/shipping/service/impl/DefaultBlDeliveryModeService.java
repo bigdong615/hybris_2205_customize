@@ -21,18 +21,7 @@ import java.net.URISyntaxException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
@@ -624,24 +613,14 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             } else {
                 abstractOrderEntryModels = order.getEntries();
             }
-            for (final Iterator<AbstractOrderEntryModel> iterator = abstractOrderEntryModels.iterator(); iterator.hasNext();)
-				{
-					final AbstractOrderEntryModel entry = iterator.next();
-                    final BlProductModel blSerialProduct=entry.isReplacementEntry() ? entry.getOldProduct():(BlProductModel)entry.getProduct();
+            Optional<AbstractOrderEntryModel> entryModelOption = abstractOrderEntryModels.stream().filter(entryModel -> entryModel.isReplacementEntry()).findFirst();
+            if (entryModelOption.isPresent()){
+            calculateWeightForReplacement(entryModelOption.get(),abstractOrderEntryModels,totalWeight,maxLength,maxHeight,sumWidth);
+            }else {
+                calculateStandardWeight(abstractOrderEntryModels,totalWeight,maxLength,maxHeight,sumWidth);
+            }
 
-                    totalWeight = getBigDecimal(totalWeight, entry);
-                    if(blSerialProduct instanceof BlSerialProductModel) {
-                        final BlProductModel blProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
-                        sumWidth = getSumWidth(sumWidth, blProduct.getWidth(), entry.getQuantity().intValue());
-                        maxHeight = getMaxHeight(maxHeight, blProduct.getHeight());
-                        maxLength = getMaxLength(maxLength, blProduct.getLength());
-                    }else if(null != blSerialProduct) {
-                        sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth(), entry.getQuantity().intValue());
-                        maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
-                        maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
-                    }
 
-				}
             final double dimensionalWeight = ((double) (maxHeight * sumWidth * maxLength) /
                     getBlZoneDeliveryModeDao().getDimensionalFactorForDeliveryFromStore(BlDeliveryModeLoggingConstants.STORE));
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total weight: {} ", totalWeight.doubleValue());
@@ -653,6 +632,55 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             BlLogger.logMessage(LOG, Level.ERROR, "Exception while calculating delivery cost");
         }
         return valueMap;
+    }
+
+   private void calculateStandardWeight( final Collection<AbstractOrderEntryModel> abstractOrderEntryModels,BigDecimal totalWeight,int maxLength,int maxHeight, int sumWidth){
+       for (final Iterator<AbstractOrderEntryModel> iterator = abstractOrderEntryModels.iterator(); iterator.hasNext();)
+       {
+           final AbstractOrderEntryModel entry = iterator.next();
+           final BlProductModel blSerialProduct=(BlProductModel)entry.getProduct();
+
+           totalWeight = getBigDecimal(totalWeight, entry);
+           if(blSerialProduct instanceof BlSerialProductModel) {
+               final BlProductModel blProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
+               sumWidth = getSumWidth(sumWidth, blProduct.getWidth(), entry.getQuantity().intValue());
+               maxHeight = getMaxHeight(maxHeight, blProduct.getHeight());
+               maxLength = getMaxLength(maxLength, blProduct.getLength());
+           }else if(null != blSerialProduct) {
+               sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth(), entry.getQuantity().intValue());
+               maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
+               maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
+           }
+
+       }
+    }
+    private void calculateWeightForReplacement(final AbstractOrderEntryModel replacementEntry,final Collection<AbstractOrderEntryModel> abstractOrderEntryModels,BigDecimal totalWeight,int maxLength,int maxHeight, int sumWidth){
+        for (final Iterator<AbstractOrderEntryModel> iterator = abstractOrderEntryModels.iterator(); iterator.hasNext();)
+        {
+            final AbstractOrderEntryModel entry = iterator.next();
+            if (entry.isReplacementEntry()){
+                continue;
+            }
+            final BlProductModel blSerialProduct=(BlProductModel)entry.getProduct();
+            int quantity;
+             if (replacementEntry.getOldProduct().getCode().equals(blSerialProduct.getCode())){
+                 quantity=replacementEntry.getQuantity().intValue()+entry.getQuantity().intValue();
+             }else {
+                 quantity=entry.getQuantity().intValue();
+             }
+            totalWeight = getBigDecimal(totalWeight, entry);
+            if(blSerialProduct instanceof BlSerialProductModel) {
+                final BlProductModel blProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
+                sumWidth = getSumWidth(sumWidth, blProduct.getWidth(), entry.getQuantity().intValue());
+                maxHeight = getMaxHeight(maxHeight, blProduct.getHeight());
+                maxLength = getMaxLength(maxLength, blProduct.getLength());
+            }else if(null != blSerialProduct) {
+                sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth(), entry.getQuantity().intValue());
+                maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
+                maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
+            }
+
+        }
     }
 
     /**
