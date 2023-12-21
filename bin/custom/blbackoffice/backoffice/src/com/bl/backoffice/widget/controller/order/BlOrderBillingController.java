@@ -9,6 +9,7 @@ import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.price.strategies.BlProductDynamicPriceStrategy;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.logging.BlLogger;
 import com.bl.tax.billing.BillingPojo;
@@ -33,9 +34,12 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.enumeration.EnumerationService;
+import de.hybris.platform.jalo.order.price.PriceInformation;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
+import de.hybris.platform.product.PriceService;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -56,6 +60,11 @@ import com.hybris.cockpitng.util.notifications.NotificationService;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -110,12 +119,19 @@ public class BlOrderBillingController extends DefaultWidgetController {
     private transient BackofficeLocaleService cockpitLocaleService;
     @Wire
     private Grid orderEntries;
+    @Wire
+    private Grid lateOrderEntries;
 
     @WireVariable
     private transient ModelService modelService;
+    @Wire
+    private Div missingItemToolHeader;
+    @Wire
+    private Div lateFeeToolHeader;
 
     private static final String MISSING_ITEM_TOOL = "customersupportbackoffice.billing.widget.title";
     private transient List<BlOrderBillingItemDTO> orderEntriesForBilling;
+    private transient List<BlOrderBillingLateFeeDTO> orderEntriesForLateFee;
 
     private final Set<BlProductModel> allSerialProducts = new HashSet<>();
 
@@ -123,6 +139,8 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     private transient BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private transient DefaultBlESPEventService blEspEventService;
+    private transient BlProductDynamicPriceStrategy blProductDynamicPriceStrategy;
+    private transient PriceService priceService;
 
     private transient DefaultBlAvalaraTaxService defaultBlAvalaraTaxService;
     private static final int DECIMAL_PRECISION = 2;
@@ -139,6 +157,8 @@ public class BlOrderBillingController extends DefaultWidgetController {
     private static final String BILL_INVOICE_SUCCESS = "blbackoffice.order.billing.tool.wizard.notification.bill.invoice.success";
     private static final String BILL_INVOICE_FAILURE = "blbackoffice.order.billing.tool.wizard.notification.bill.invoice.failure";
     private static final String BILL_INVOICE_EXCEPTION = "blbackoffice.order.billing.tool.wizard.notification.bill.invoice.exception";
+    private static final String HIDE_DIV = "resize:none;display:none";
+    private static final String SHOW_DIV = "resize:none;display:block";
 
 
     @SocketEvent(socketId = IN_SOCKET)
@@ -149,6 +169,8 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 this.getOrderModel().getCode()).toString());
         getMissingItemReasons();
         disableOrEnableFields(Boolean.TRUE);
+        this.lateFeeToolHeader.setStyle(HIDE_DIV);
+        this.missingItemToolHeader.setStyle(HIDE_DIV);
 
     }
 
@@ -187,17 +209,78 @@ public class BlOrderBillingController extends DefaultWidgetController {
     {
         getModelService().refresh(orderModel);
         this.orderEntriesForBilling = new ArrayList<>();
+        this.orderEntriesForLateFee = new ArrayList<>();
+        if( this.missingItemToolCombobox.getValue().equals("LATE CHARGE")){
+            initializePopupRequiredFieldsForLateFee(getOrderModel());
+            this.getLateOrderEntries().setModel(new ListModelList<>(this.orderEntriesForLateFee));
+            this.getLateOrderEntries().renderAll();
+            this.missingItemToolHeader.setStyle(HIDE_DIV);
+            this.lateFeeToolHeader.setStyle(SHOW_DIV);
+        }
+        else{
+            initializePopupRequiredFields(getOrderModel());
+            this.globalProcessingFeeChkbox.setChecked(Boolean.FALSE);
+            this.globalBillEntriesSelection.setChecked(Boolean.FALSE);
+            this.getOrderEntries().setModel(new ListModelList<>(this.orderEntriesForBilling));
+            this.getOrderEntries().renderAll();
+            this.lateFeeToolHeader.setStyle(HIDE_DIV);
+            this.missingItemToolHeader.setStyle(SHOW_DIV);
+        }
         this.billingChargesReason.addToSelection(this.missingItemToolCombobox.getValue());
-        initializePopupRequiredFields(getOrderModel());
+
         disableOrEnableFields(Boolean.FALSE);
         this.totalAmountDueDouble.setValue(0.0d);
-        this.globalProcessingFeeChkbox.setChecked(Boolean.FALSE);
-        this.globalBillEntriesSelection.setChecked(Boolean.FALSE);
-        this.getOrderEntries().setModel(new ListModelList<>(this.orderEntriesForBilling));
-        this.getOrderEntries().renderAll();
+
         checkIfBillIsPaid();
         applyToGridBillEntriesSelection();
 
+    }
+
+    private void initializePopupRequiredFieldsForLateFee(OrderModel inputOrder) {
+        this.orderEntriesForLateFee = new ArrayList<>();
+
+        inputOrder.getEntries().forEach(abstractOrderEntryModel -> {
+            abstractOrderEntryModel.getSerialProducts().forEach(serialProduct -> {
+                BlOrderBillingLateFeeDTO itemDTO = new BlOrderBillingLateFeeDTO();
+                itemDTO.setProductName(abstractOrderEntryModel.getProduct().getName());
+                itemDTO.setDuration((int) getRentalDuration(abstractOrderEntryModel));
+                itemDTO.setRentalEndDate(getFormattedDate(abstractOrderEntryModel.getOrder().getActualRentalEndDate()));
+                itemDTO.setActualReturnDate("");
+                itemDTO.setDaysLate(0);
+                calculateDailyRate(itemDTO, abstractOrderEntryModel.getProduct());
+                //itemDTO.setDailyRate("211.90");
+                itemDTO.setTaxableSubtotal("250.80");
+                itemDTO.setTax("0.0");
+                itemDTO.setSubtotalAmountDue("290.90");
+                itemDTO.setUnpaidBillNotes("Sony FX3 - Days Late(1) - Late Fee Daily Rate (263.85) - Late Fee 290.90");
+                this.orderEntriesForLateFee.add(itemDTO);
+
+            });
+        });
+
+    }
+
+    private void calculateDailyRate(BlOrderBillingLateFeeDTO itemDTO, ProductModel product) {
+        final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(product);
+        final PriceInformation defaultPriceInformation = prices.get(0);
+        PriceInformation pf = getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
+                defaultPriceInformation, (long)1);
+        itemDTO.setDailyRate(String.valueOf(pf.getPriceValue().getValue()));
+    }
+
+    protected String getFormattedDate(Date date){
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        return dateFormat.format(date);
+    }
+
+    protected long getRentalDuration(final AbstractOrderEntryModel abstractOrdeEntryModel) {
+        return getDaysBetweenDates(abstractOrdeEntryModel.getOrder().getRentalStartDate(), abstractOrdeEntryModel.getOrder().getRentalEndDate());
+    }
+
+    private long getDaysBetweenDates(Date rentalStartDate, Date rentalEndDate) {
+        final LocalDate localStartDate = rentalStartDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        final LocalDate localEndDate = rentalEndDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return ChronoUnit.DAYS.between(localStartDate, localEndDate);
     }
 
     private void checkIfBillIsPaid() {
@@ -780,8 +863,16 @@ public class BlOrderBillingController extends DefaultWidgetController {
         return orderEntries;
     }
 
+    public Grid getLateOrderEntries() {
+        return lateOrderEntries;
+    }
+
     public void setOrderEntries(Grid orderEntries) {
         this.orderEntries = orderEntries;
+    }
+
+    public void setLatOrderEntries(Grid latOrderEntries) {
+        this.lateOrderEntries = latOrderEntries;
     }
 
     private Locale getLocale() {
@@ -801,7 +892,6 @@ public class BlOrderBillingController extends DefaultWidgetController {
         this.modelService = modelService;
     }
 
-
     public DefaultBlAvalaraTaxService getDefaultBlAvalaraTaxService() {
         return defaultBlAvalaraTaxService;
     }
@@ -810,5 +900,19 @@ public class BlOrderBillingController extends DefaultWidgetController {
         this.defaultBlAvalaraTaxService = defaultBlAvalaraTaxService;
     }
 
+    public BlProductDynamicPriceStrategy getBlProductDynamicPriceStrategy() {
+        return blProductDynamicPriceStrategy;
+    }
 
+    public void setBlProductDynamicPriceStrategy(BlProductDynamicPriceStrategy blProductDynamicPriceStrategy) {
+        this.blProductDynamicPriceStrategy = blProductDynamicPriceStrategy;
+    }
+
+    public PriceService getPriceService() {
+        return priceService;
+    }
+
+    public void setPriceService(PriceService priceService) {
+        this.priceService = priceService;
+    }
 }

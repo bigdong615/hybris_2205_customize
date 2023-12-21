@@ -66,10 +66,9 @@
 
             </grid>
         </div>
-
+    <div id="missingItemToolHeader" style="margin-bottom:20px;">
         <hlayout width="100%" >
-                 <div >
-                            <grid id="orderEntries" mold="paging" sclass="table-scroll-cancel-popup-orderEntries" pageSize="4">
+                 <grid id="orderEntries" mold="paging" sclass="table-scroll-cancel-popup-orderEntries" pageSize="4">
                                 <custom-attributes org.zkoss.zul.grid.autoSort="true" />
                                 <columns>
                                     <column width="40px">
@@ -147,8 +146,78 @@
                                         }
 
                                     ]]></zscript>
-                        </div>
+
                     </hlayout>
+    </div>
+
+    <div id="lateFeeToolHeader">
+        <label sclass="oms-widget-billing-label-box" width="100%" style="margin-left:20px;font-weight:bold;">Late Fee Tool</label>
+        <checkbox id="lateFeeSelection" class="oms-widget-billing-thirdlist-container__checkbox"/> Late Fee
+        <checkbox id="extensionFeeSelection" class="oms-widget-billing-thirdlist-container__checkbox"/> Extension Fee
+        <hlayout width="100%" >
+
+            <grid id="lateOrderEntries" mold="paging" sclass="table-scroll-cancel-popup-orderEntries" pageSize="4">
+                <custom-attributes org.zkoss.zul.grid.autoSort="true" />
+                <columns>
+                    <column width="40px">
+                        <checkbox id="globalBillEntriesSelectionlate" class="oms-widget-billing-thirdlist-container__checkbox"/>
+                        <!-- onCheck='Clients.evalJavaScript("onOrderSelect()")' -->
+                    </column>
+                    <column width="150px" sort="auto" sortDirection="ascending">
+                        <label value="${labels.customersupportbackoffice.billing.label.productName}" width="100%"/>
+                    </column>
+                    <column width="70px" style="padding-left:5px">
+                        <label width="60%"> Duration </label>
+                    </column>
+                    <column width="100px" style="padding-left:0px">
+                        <label width="70%"> Rental End </label>
+                    </column>
+                    <column width="140px" style="padding-left:0px">
+                        <label width="100%"> Actual Return Date </label>
+                    </column>
+                    <column width="75px" style="padding-left:0px">
+                        <label width="70%"> Days Late </label>
+                    </column>
+                    <column width="80px" style="padding-left:0px">
+                        <label width="80%"> Daily Rate </label>
+                    </column>
+                    <column width="120px" >
+                        <label width="100%"> Taxable Subtotal </label>
+                    </column>
+                    <column width="50px" >
+                        <label width="50%"> Tax </label>
+                    </column>
+                    <column width="160px" style="padding-left:5px">
+                        <label width="100%"> Subtotal Amount Due </label>
+                    </column>
+                    <column width="450px">
+                        <label value="${labels.customersupportbackoffice.billing.label.unpaidBillNote}" width="150%"/>
+                    </column>
+                </columns>
+
+                <rows>
+                    <template name="model">
+                        <row style="">
+                            <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
+                                      id="SerialProduct" visible="true" />
+                            <textbox  width="280px" name="productName" readonly="true" value="${each.productName}"/>
+                            <textbox  width="250px" name="duration" readonly="true" value="${each.duration}"/>
+                            <textbox  width="200px" name="rentalEndDate" readonly="false" value="${each.rentalEndDate}"/>
+                            <textbox  width="280px" name="actualRentalEndDate" readonly="false" value="${each.actualReturnDate}"/>
+                            <textbox  width="280px" name="daysLate" readonly="false" value="${each.daysLate}"/>
+                            <textbox  width="280px" name="dailyRate" readonly="false" value="${each.dailyRate}"/>
+                            <textbox  width="280px" name="taxableSubtotal" readonly="false" value="${each.taxableSubtotal}"/>
+                            <textbox  width="280px" name="tax" readonly="true" value="${each.tax}"/>
+                            <textbox  width="280px" name="subtotalAmountDue" readonly="true" value="${each.subtotalAmountDue}"/>
+                            <textbox  width="280px" name="unpaidBillNotes" readonly="true" value="${each.unpaidBillNotes}"/>
+
+                        </row>
+                    </template>
+                </rows>
+
+            </grid>
+        </hlayout>
+    </div>
 
 </widget>
 
