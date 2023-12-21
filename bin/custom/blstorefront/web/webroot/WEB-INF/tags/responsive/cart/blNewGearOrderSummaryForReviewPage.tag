@@ -92,7 +92,7 @@
 			modelAttribute="placeOrderForm">
 
 			<button id="placeOrderSummary" type="button"
-				class="btn btn-block btn-primary mt-4">
+				class="btn btn-block btn-primary mt-4 js-place-order">
 				<spring:theme code="checkout.summary.placeOrder"
 					text="Place Your Order" />
 			</button>

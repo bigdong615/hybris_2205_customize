@@ -1174,10 +1174,10 @@ function onUsedCloseModal()
 }
 
 //BL-625 place order with order notes.
-$('#placeOrderSummary').on("click", function(e) {
+/*$('#placeOrderSummary').on("click", function(e) {
  $('#placeOrderSummary').attr("disabled",true);
 	$('#placeOrder').click();
-});
+});*/
 
  var reviewPageError = $('.js-reviewPage-error').val();
    if( reviewPageError!= undefined &&  reviewPageError!=null){
@@ -1190,11 +1190,11 @@ $('#placeOrderSummary').on("click", function(e) {
     	reviewPageError: reviewPageError
     	});
     }
- $('#placeOrder').on(
+ $('.js-place-order').on(
 			"click",
 			function(e) {
-			$('#placeOrder').attr("disabled",true);
-			$('#placeOrderSummary').attr("disabled",true);
+			$('.js-place-order').attr("disabled",true);
+			//$('#placeOrderSummary').attr("disabled",true);
 				var submitForm = $("#placeOrderForm1");
 				
 				var csrfTokan = createHiddenParameter("CSRFToken",
@@ -1211,8 +1211,8 @@ $('#placeOrderSummary').on("click", function(e) {
                         $("body").removeAttr("style");
                         $('tn-gift-card-pdp').show();
                         $(".modal-backdrop").remove();
-                        $('#placeOrder').attr("disabled",false);
-                        $('#placeOrderSummary').attr("disabled",false);
+                        $('.js-place-order').attr("disabled",false);
+                       // $('#placeOrderSummary').attr("disabled",false);
                         return false;
               }
               if( !validateGiftEmail(email)){
@@ -1222,8 +1222,8 @@ $('#placeOrderSummary').on("click", function(e) {
                 $("body").removeAttr("style");
                 $('tn-gift-card-pdp').show();
                 $(".modal-backdrop").remove();
-                $('#placeOrder').attr("disabled",false);
-                $('#placeOrderSummary').attr("disabled",false);
+                $('.js-place-order').attr("disabled",false);
+               // $('#placeOrderSummary').attr("disabled",false);
                 return false;
               }
 					var name = createHiddenParameter("name",giftCardForm.find('input[name="name"]').val());
