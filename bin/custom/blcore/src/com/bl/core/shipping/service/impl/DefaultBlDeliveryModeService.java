@@ -620,7 +620,6 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 calculateStandardWeight(abstractOrderEntryModels,totalWeight,maxLength,maxHeight,sumWidth);
             }
 
-
             final double dimensionalWeight = ((double) (maxHeight * sumWidth * maxLength) /
                     getBlZoneDeliveryModeDao().getDimensionalFactorForDeliveryFromStore(BlDeliveryModeLoggingConstants.STORE));
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total weight: {} ", totalWeight.doubleValue());
