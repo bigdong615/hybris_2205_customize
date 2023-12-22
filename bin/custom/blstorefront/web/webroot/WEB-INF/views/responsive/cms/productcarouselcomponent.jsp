@@ -64,7 +64,7 @@
 													<c:url value="${productImage.url}" var="primaryImageUrl" />
 	                       							<c:set value="this is alternate" var="altTextHtml"/>
 	                       							<c:url var="rentUrl" value="/rent/product/${product.code}"/>
-													<li class="splide__slide"><a href="${rentUrl}" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
+													<li class="splide__slide"><a href="${rentUrl}" onclick="return productClickTealiumEvent('${product.code}');" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
                                data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="rental">
 													<img src="${primaryImageUrl}"></a></li>
 												</c:if>
@@ -99,4 +99,7 @@
 		<component:emptyComponent/>
 	</c:otherwise>
 </c:choose>
+
+
+
 

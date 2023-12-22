@@ -33,6 +33,16 @@
                                                         }
                                                  });
 
+ 										window.dmpgDl = window.dmpgDl || {};
+			                       		dmpgDl.events = [
+									  	 {
+      									 "event": "product.interact.manual.click.removeFromWishlist",
+      									 "product": {
+       											 "id": productCode
+      											}
+  									  	 }
+									   ];
+
                                         }
                                         else{
                                        $.ajax({

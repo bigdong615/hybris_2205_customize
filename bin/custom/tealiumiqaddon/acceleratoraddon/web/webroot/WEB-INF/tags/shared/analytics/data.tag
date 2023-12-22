@@ -119,7 +119,59 @@
 		<script type="text/javascript">
 		
           window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+				{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				},
+				{
+					"event":"moduleItem.interact.auto.view",
+					"modules":{
+	   					 "id": "modules-home",
+	   					 "name": "new-rentals",
+	     				 "placement": "home-new-products",
+	     				 "items": [
+				           <c:forEach items='${newRentalProductsCarousel}' var='product' varStatus='status'>
+	       					 {
+	         				 "id": "${product.code}",
+	          				 "type": "product",
+	        				 "position": "${status.index + 1}"
+	       					 }<c:if test='${not status.last}'>,</c:if>
+	               		</c:forEach>
+	               			]
+	               			},
+	               			
+	               	"assests": {
+	               		"products": [
+	 			           <c:forEach items='${newRentalProductsCarousel}' var='product' varStatus='status'>
+	        							  {
+	          							"id": "${product.code}",
+	        								 "name": "${product.name}",
+	        								 "brand": "${product.manufacturer}",
+	 				 					 <c:if test="${not empty product.categories[0]}">
+	 									 "category": "${ycommerce:encodeJavaScript(product.categories[0].code)}",</c:if>
+	 				 					  <c:if test="${not empty product.categories[1]}">
+	 									  "subCategory2": "${ycommerce:encodeJavaScript(product.categories[1].code)}",</c:if>
+	 				  					  <c:if test="${not empty product.categories[2]}">
+	 				   					  "subCategory3": "${ycommerce:encodeJavaScript(product.categories[2].code)}",</c:if>
+	 			    					 "variant" : "rental",
+	        								 "value": 
+	        								    {
+	          								 "displayGross": ${product.price.value}
+	         								}
+	        							    }<c:if test='${not status.last}'>,</c:if>
+	                			</c:forEach>
+	                			   ]
+	               	}		
+				}
+			];
 
 			dmpgDl.screen = 
 				{
@@ -195,7 +247,18 @@
      			  "keyword": "${searchKeyword}",
       			  "type": "${datesSettedInSession ? 'date' : 'product'}",
       			  "location": "hero"
-     		 }
+     		 },
+     		{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				}
    		 }
 			];
 
@@ -250,7 +313,19 @@
 	<script type="text/javascript">
 		
            window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+				{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				}
+			];
 
 			dmpgDl.screen = 
 				{
@@ -318,7 +393,62 @@
 	<script type="text/javascript">
 		
           window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+				{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				},
+				
+				{
+					"event":"module.load.auto.dataLayer.load",
+					"modules":{
+	   					 "id": "${categories}-modules-pdp",
+	   					 "name": "dont-forget",
+	     				 "placement": "pdp-add-products",
+	     				 "items": [
+				           <c:forEach items='${productReferences}' var='productReference' varStatus='status'>
+	       					 {
+	         				 "id": "${productReference.target.code}",
+	          				 "type": "product",
+	        				 "position": "${status.index + 1}"
+	       					 }<c:if test='${not status.last}'>,</c:if>
+	               		</c:forEach>
+	               			]
+	               			},
+	               	"assests": {
+						   "products": [
+					           <c:forEach items='${productReferences}' var='productReference' varStatus='status'>
+		       							  {
+		         							"id": "${productReference.target.code}",
+		       								 "name": "${productReference.target.name}",
+		       								 "brand": "${productReference.target.manufacturer}",
+						 						 <c:if test="${not empty productReference.target.categoriesList[0]}">
+													"category": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[0].code)}",
+						  						 </c:if>
+						 					     <c:if test="${not empty productReference.target.categoriesList[1]}">
+													"subCategory2": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[1].code)}",
+						 						 </c:if>
+						  						 <c:if test="${not empty productReference.target.categoriesList[2]}">
+						   						    "subCategory3": "${ycommerce:encodeJavaScript(productReference.target.categoriesList[2].code)}",
+						 						 </c:if>
+					    					 "variant" : "${ycommerce:encodeJavaScript(blPageType).toLowerCase()}",
+		       								 "value": 
+		       								    {
+		         								 "displayGross": ${productReference.target.price.value}
+		        								}
+		       							    }<c:if test='${not status.last}'>,</c:if>
+		               			</c:forEach>
+		               			   ]
+		               			  }		
+				},
+			];
 
 			dmpgDl.screen = 
 				{
@@ -338,7 +468,7 @@
  				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
 				};
 			  	
-			  dmpgDl.products = [
+			  dmpgDl.product = [
 			  	{
 			  	"id": "${product.code}",
 			  	"name": "${product.displayName}",
@@ -469,6 +599,91 @@
 		
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
+				{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				},
+				{
+					"event":"cart.load.auto.dataLayer.load",
+					"cart":{
+						
+						    "lines": [  
+						         <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+		        					{
+		        					"product": {
+					  					"id": "${entry.product.code}",
+					  					"name": "${entry.product.name}",
+		          						"brand": "${entry.product.manufacturer}",
+						 		   		 <c:if test="${not empty entry.product.productBreadcrumbData[0]}">
+										"category": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[0])}",
+						 		    	</c:if>
+						 				 <c:if test="${not empty entry.product.productBreadcrumbData[1]}">
+										"subCategory2": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[1])}",
+						 				 </c:if>
+						  				<c:if test="${not empty entry.product.productBreadcrumbData[2]}">
+						   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[2])}",
+						  				</c:if>
+					   					 "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"variant" : "${ycommerce:encodeJavaScript(orderType)}",
+		         						"stockAvailability" : "${datesSettedInSession ? (entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
+					  					"value": 
+					  	  			 	 {
+		       				  		   	   "displayGross": ${entry.basePrice.value}
+		     							  }
+					  				 }	
+		        					}<c:if test='${not status.last}'>,</c:if>
+		        					
+		        					
+		        					 <c:if test="${entry.product.manufacturerAID ne '9'}">
+		        					<c:choose>
+		             	<c:when test="${entry.gearGuardProFullWaiverSelected}">
+		             	<c:if test='${status.last}'>,</c:if>
+		        					{
+		          					 "product": {
+		          						"id": "${entry.product.code}-gearguard",
+		         					    "name": "Gear Guard Plus",
+		          						"parentProductId": "${entry.product.code}",
+		          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"value": {
+		           							       "displayGross": ${entry.gearGuardProFullWaiverPrice.value}
+		          								  }
+		       								   }
+		      						}<c:if test='${not status.last}'>,</c:if>
+		             	</c:when>
+		             	<c:when test="${entry.gearGuardWaiverSelected}">
+		             	<c:if test='${status.last}'>,</c:if>
+		        					{
+		          					 "product": {
+		          						"id": "${entry.product.code}-gearguard",
+		         					    "name": "Gear Guard",
+		          						"parentProductId": "${entry.product.code}",
+		          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"value": {
+		           							       "displayGross": ${entry.gearGuardWaiverPrice.value}
+		          								  }
+		       								   }
+		      						}<c:if test='${not status.last}'>,</c:if>
+		             	</c:when>
+		             	</c:choose>
+		        					 </c:if>
+		        			  </c:forEach>
+		        			],
+		        			"value" :
+					  				{
+		    							"displayGross": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+		    							"displayTax": ${ycommerce:encodeJavaScript(cartData.totalTax.value)}
+		  							}
+					  	}
+				},
+				
+				
 			<c:if test="${not empty  message}">
 			
 			{
@@ -490,8 +705,8 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${currentUserId}",
-  					status: "${currentUserStatus}",
+    				"id": "${currentUserId}",
+  					"status": "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
   					"rentalDuration": "${rentalDate.selectedDays}",
@@ -580,7 +795,19 @@
 	<script type="text/javascript">
 		
           window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+				{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				}
+			];
 
 			dmpgDl.screen = 
 				{
@@ -631,7 +858,121 @@
 				</c:choose>
 		
           window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+				{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				},
+				
+				{
+					"event":"transaction.load.auto.success.transactionSuccess",
+					"transaction":{
+	    				"id": "${orderCode}",
+	  					"cart" : 
+				  			{
+				  				"lines" : [
+				  					   <c:forEach items='${orderData.entries}' var='entry' varStatus='status'>
+				  					      {
+				  					          "product":  {
+						  						"id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+						 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+												 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
+						 						 <c:choose>
+												 <c:when test="${not empty entry.product.categories}">
+												 "category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
+												</c:when>
+												<c:otherwise>
+												"category": "",
+												</c:otherwise>
+						  						</c:choose>
+						  						"subCategory2": "",
+	            								"subCategory3": "",
+						  						"variant": "${orderType}",
+						  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+						  						"value": {
+	             									 "displayGross": ${ycommerce:encodeJavaScript(entry.basePrice.value)},
+	              						 			 "displayTax": ${ycommerce:encodeJavaScript(entry.avalaralinetax)}
+	         							 		 }
+	         							 		}
+						  					 }<c:if test='${not status.last}'>,</c:if>
+												
+												
+												
+												<c:if test="${entry.product.manufacturerAID ne '9'}">
+	        					<c:choose>
+	             	<c:when test="${entry.gearGuardProFullWaiverSelected}">
+	             	<c:if test='${status.last}'>,</c:if>
+	        					{
+	          					 "product": {
+	          						"id": "${entry.product.code}-gearguard",
+	         					    "name": "Gear Guard Plus",
+	          						"parentProductId": "${entry.product.code}",
+	          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+	         						"value": {
+	           							       "displayGross": ${entry.gearGuardProFullWaiverPrice.value}
+	          								  }
+	       								   }
+	      						}<c:if test='${not status.last}'>,</c:if>
+	             	</c:when>
+	             	<c:when test="${entry.gearGuardWaiverSelected}">
+	             	<c:if test='${status.last}'>,</c:if>
+	        					{
+	          					 "product": {
+	          						"id": "${entry.product.code}-gearguard",
+	         					    "name": "Gear Guard",
+	          						"parentProductId": "${entry.product.code}",
+	          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+	         						"value": {
+	           							       "displayGross": ${entry.gearGuardWaiverPrice.value}
+	          								  }
+	       								   }
+	      						}<c:if test='${not status.last}'>,</c:if>
+	             	</c:when>
+	             	</c:choose>
+	        					 </c:if>
+												
+												
+												
+				 						 </c:forEach>
+	  						     ],
+	  						     
+				  				"shipping" : {
+				  					"lines" : [
+				  						{
+	    									"tier": "${shipmentType}",
+	  										"method": "${ycommerce:encodeJavaScript(orderData.deliveryMode.code)}",
+	  										"value": {
+	             									 "displayGross": ${ycommerce:encodeJavaScript(orderData.deliveryCost.value)}
+	         							 		 }
+	  									}
+	  								]},
+	  								
+				  			"payment" : [
+				  			{
+	         				 "type": "${paymentType}",
+	         				 "value": {
+	          					  "displayGross": ${ycommerce:encodeJavaScript(orderData.totalPrice.value)}
+	          					}
+	          				}	
+	  					],
+	  					
+				  			"value" :
+				  				{
+	    							"displayGross": ${ycommerce:encodeJavaScript(orderData.totalPrice.value)},
+	    							"displayTax": ${ycommerce:encodeJavaScript(orderData.totalTax.value)}
+	  							}
+	  					 }
+				  		}
+				},
+				
+			];
 
 			dmpgDl.screen = 
 				{
@@ -759,7 +1100,19 @@
 	<c:set var="paymentType" value="${cartData.paymentInfo != null ? 'card': 'gift-card'}"/>
 		
           window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+				{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				}
+			];
 
 			dmpgDl.screen = 
 				{
@@ -860,7 +1213,19 @@
 	
 	
           window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+				{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				}
+			];
 
 			dmpgDl.screen = 
 				{
@@ -974,7 +1339,19 @@
 	<c:set var="shipmentType" value="${cartData.deliveryMode.code.startsWith('UPS_STORE') ? 'Ship to UPS Store' : 'Ship to Home'}"/>
 	
           window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+				{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				}
+			];
 
 			dmpgDl.screen = 
 				{
@@ -1094,7 +1471,19 @@
 		${currentPageType}
 		
           window.dmpgDl = window.dmpgDl || {};
-			dmpgDl.events = [];
+			dmpgDl.events = [
+				{
+					"event":"user.load.auto.dataLayer.load",
+					"user":{
+	    				"id": "${currentUserId}",
+	  					"status": "${currentUserStatus}",
+	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
+	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
+	  					"rentalDuration": "${rentalDate.selectedDays}",
+	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+				  	}
+				}
+			];
 
 			dmpgDl.screen = 
 				{
@@ -1102,8 +1491,8 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${currentUserId}",
-  					status: "${currentUserStatus}",
+    				"id": "${currentUserId}",
+  					"status": "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
   					"rentalDuration": "${rentalDate.selectedDays}",

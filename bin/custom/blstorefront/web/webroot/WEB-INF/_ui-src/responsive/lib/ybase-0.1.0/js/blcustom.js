@@ -25,6 +25,23 @@ jQuery(document).ready(function () {
 
 });
 
+ function productClickTealiumEvent(productCode) {
+    	console.log("Tealium pdp action trigger");
+        // return true or false, depending on whether you want to allow the `href` property to follow through or not
+    	window.dmpgDl = window.dmpgDl || {};
+		dmpgDl.events = [
+			{
+      			"event": "product.interact.manual.click",
+     			 "product": {       
+     			  "id": productCode,
+      			  "stockAvailability": "yes",
+     		 }
+     		 }
+		];
+    }
+    
+
+
 //BL-467 clear cart functionality from cart page.
  $('.clear-cart-continue').on("click", function(event) {
      clearInterval(z);
