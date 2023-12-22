@@ -61,6 +61,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -247,12 +248,12 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 itemDTO.setRentalEndDate(getFormattedDate(abstractOrderEntryModel.getOrder().getActualRentalEndDate()));
                 itemDTO.setActualReturnDate("");
                 itemDTO.setDaysLate(0);
-                calculateDailyRate(itemDTO, abstractOrderEntryModel.getProduct());
+                calculateDailyRate(itemDTO, abstractOrderEntryModel);
                 //itemDTO.setDailyRate("211.90");
-                itemDTO.setTaxableSubtotal("250.80");
+                itemDTO.setTaxableSubtotal("");
                 itemDTO.setTax("0.0");
-                itemDTO.setSubtotalAmountDue("290.90");
-                itemDTO.setUnpaidBillNotes("Sony FX3 - Days Late(1) - Late Fee Daily Rate (263.85) - Late Fee 290.90");
+                itemDTO.setSubtotalAmountDue("");
+                itemDTO.setUnpaidBillNotes("");
                 this.orderEntriesForLateFee.add(itemDTO);
 
             });
@@ -260,12 +261,19 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     }
 
-    private void calculateDailyRate(BlOrderBillingLateFeeDTO itemDTO, ProductModel product) {
-        final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(product);
+    private void calculateDailyRate(BlOrderBillingLateFeeDTO itemDTO, AbstractOrderEntryModel abstractOrderEntryModel) {
+        final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(abstractOrderEntryModel.getProduct());
         final PriceInformation defaultPriceInformation = prices.get(0);
-        PriceInformation pf = getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
+        PriceInformation oneDayPrice = getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) abstractOrderEntryModel.getProduct(),
                 defaultPriceInformation, (long)1);
-        itemDTO.setDailyRate(String.valueOf(pf.getPriceValue().getValue()));
+        Double damageWaiverSelected = 0.0d;
+        if(org.apache.commons.lang3.BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardProFullWaiverSelected())){
+         damageWaiverSelected = abstractOrderEntryModel.getGearGuardProFullWaiverPrice();
+        }
+        else if(org.apache.commons.lang3.BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardWaiverSelected())) {
+            damageWaiverSelected = abstractOrderEntryModel.getGearGuardWaiverPrice();
+        }
+        itemDTO.setDailyRate(String.valueOf(oneDayPrice.getPriceValue().getValue() + damageWaiverSelected));
     }
 
     protected String getFormattedDate(Date date){
@@ -493,6 +501,11 @@ public class BlOrderBillingController extends DefaultWidgetController {
     private List<Component> getOrderEntriesGridRows()
     {
         return this.getOrderEntries().getRows().getChildren();
+    }
+
+    private List<Component> getLateFreeEntriesGridRows()
+    {
+        return this.getLateOrderEntries().getRows().getChildren();
     }
 
     private void setUnpaidBillNotes(BlOrderBillingItemDTO itemDTO,BlProductModel serialProduct)
@@ -841,6 +854,36 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
         setTax();
         calculateLineItemTotalAmountDue();
+    }
+
+    public void onChangeReturnDate$lateOrderEntries(ForwardEvent forwardEvent)
+    {
+        ForwardEvent fEvent = (ForwardEvent) forwardEvent.getOrigin();
+        InputEvent inputEvent = (InputEvent) fEvent.getOrigin();
+        String date = inputEvent.getValue();
+
+        for (final Component row : this.getLateFreeEntriesGridRows()) {
+            try{
+            long daysLate = getDaysBetweenDates(convertStringToDate(((Textbox) row.getChildren().get(3)).getValue()),
+                    convertStringToDate(date));
+                ((Textbox) row.getChildren().get(6)).setValue(String.valueOf(daysLate));
+                Double taxableSubtotal = Double.valueOf(((Textbox) row.getChildren().get(7)).getValue()) * daysLate;//DailyRate * DaysLate + 25%
+                Double twentyFivePer = taxableSubtotal * 25/100;
+                Double totalSubtotal = taxableSubtotal + twentyFivePer;
+                ((Textbox) row.getChildren().get(8)).setValue(String.valueOf(totalSubtotal));
+                ((Textbox) row.getChildren().get(10)).setValue(String.valueOf(totalSubtotal));
+                ((Textbox) row.getChildren().get(11)).setValue(((Textbox) row.getChildren().get(1)).getValue() + " - " + "Days Late "
+                + "("+daysLate+") " + "- " + "Late Fee Daily Rate "+ "("+totalSubtotal+")"+ " - "+" Late Fee "+totalSubtotal);
+                //Sony FX3 - Days Late(1) - Late Fee Daily Rate (263.85) - Late Fee 290.90");
+            }
+            catch(ParseException e){
+                System.out.println(e);
+            }
+        }
+    }
+
+    private Date convertStringToDate(String date) throws ParseException {
+        return new SimpleDateFormat("MM/dd/yyyy").parse(date);
     }
 
     public OrderModel getOrderModel() {

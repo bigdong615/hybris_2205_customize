@@ -152,14 +152,16 @@
 
     <div id="lateFeeToolHeader">
         <label sclass="oms-widget-billing-label-box" width="100%" style="margin-left:20px;font-weight:bold;">Late Fee Tool</label>
-        <checkbox id="lateFeeSelection" class="oms-widget-billing-thirdlist-container__checkbox"/> Late Fee
-        <checkbox id="extensionFeeSelection" class="oms-widget-billing-thirdlist-container__checkbox"/> Extension Fee
+        <div sclass="oms-widget-billing-firstlist-container" style="display:flex;margin-top:15px;margin-left:8px;column-gap: 10px;">
+             <checkbox id="lateFeeSelection" class="oms-widget-billing-thirdlist-container__checkbox"/> Late Fee
+              <checkbox id="extensionFeeSelection" class="oms-widget-billing-thirdlist-container__checkbox"/> Extension Fee
+        </div>
         <hlayout width="100%" >
 
             <grid id="lateOrderEntries" mold="paging" sclass="table-scroll-cancel-popup-orderEntries" pageSize="4">
                 <custom-attributes org.zkoss.zul.grid.autoSort="true" />
                 <columns>
-                    <column width="40px">
+                    <column width="30px">
                         <checkbox id="globalBillEntriesSelectionlate" class="oms-widget-billing-thirdlist-container__checkbox"/>
                         <!-- onCheck='Clients.evalJavaScript("onOrderSelect()")' -->
                     </column>
@@ -171,6 +173,9 @@
                     </column>
                     <column width="100px" style="padding-left:0px">
                         <label width="70%"> Rental End </label>
+                    </column>
+                    <column width="30px" style="padding-left:0px">
+                          <checkbox id="globalRentalEndDateSelect" class="oms-widget-billing-thirdlist-container__checkbox"/>
                     </column>
                     <column width="140px" style="padding-left:0px">
                         <label width="100%"> Actual Return Date </label>
@@ -197,16 +202,19 @@
 
                 <rows>
                     <template name="model">
-                        <row style="">
+                        <row style="padding-left:3px;">
                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
-                                      id="SerialProduct" visible="true" />
+                                      id="" visible="true" />
                             <textbox  width="280px" name="productName" readonly="true" value="${each.productName}"/>
                             <textbox  width="250px" name="duration" readonly="true" value="${each.duration}"/>
-                            <textbox  width="200px" name="rentalEndDate" readonly="false" value="${each.rentalEndDate}"/>
-                            <textbox  width="280px" name="actualRentalEndDate" readonly="false" value="${each.actualReturnDate}"/>
-                            <textbox  width="280px" name="daysLate" readonly="false" value="${each.daysLate}"/>
-                            <textbox  width="280px" name="dailyRate" readonly="false" value="${each.dailyRate}"/>
-                            <textbox  width="280px" name="taxableSubtotal" readonly="false" value="${each.taxableSubtotal}"/>
+                            <textbox  width="200px" name="rentalEndDate" readonly="true" value="${each.rentalEndDate}"/>
+                            <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
+                                      id="" visible="true" />
+                            <textbox  width="280px" name="actualRentalEndDate" readonly="false"
+                                      forward="onChange=lateOrderEntries.onChangeReturnDate(${each.actualReturnDate})" value="${each.actualReturnDate}"/>
+                            <textbox  width="280px" name="daysLate" readonly="true" value="${each.daysLate}"/>
+                            <textbox  width="280px" name="dailyRate" readonly="true" value="${each.dailyRate}"/>
+                            <textbox  width="280px" name="taxableSubtotal" readonly="true" value="${each.taxableSubtotal}"/>
                             <textbox  width="280px" name="tax" readonly="true" value="${each.tax}"/>
                             <textbox  width="280px" name="subtotalAmountDue" readonly="true" value="${each.subtotalAmountDue}"/>
                             <textbox  width="280px" name="unpaidBillNotes" readonly="true" value="${each.unpaidBillNotes}"/>
