@@ -60,6 +60,7 @@ import com.hybris.cockpitng.util.notifications.NotificationService;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -80,6 +81,9 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     @Wire
     private Checkbox globalBillEntriesSelection;
+
+    @Wire
+    private Checkbox globalBillEntriesSelectionlate;
 
     @Wire
     private Doublebox totalAmountDueDouble;
@@ -104,6 +108,8 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     @Wire
     private Checkbox globalProcessingFeeChkbox;
+    @Wire
+    private Checkbox globalRentalEndDateSelect;
 
     @Wire
     private Textbox selectedProduct;
@@ -193,6 +199,30 @@ public class BlOrderBillingController extends DefaultWidgetController {
         calculateLineItemTotalAmountDue();
     }
 
+    @ViewEvent(componentID = "globalBillEntriesSelectionlate", eventName = BlInventoryScanLoggingConstants.ON_CHECK)
+    public void checkGlobalBillEntriesSelectionLate() {
+        applyToGridBillEntriesSelectionLate();
+        calculateLineItemTotalAmountDue();
+    }
+
+    private void applyToGridBillEntriesSelectionLate() {
+        {
+            if (this.getOrderModel().getStatus().equals(OrderStatus.COMPLETED)) {
+                this.globalBillEntriesSelectionlate.setDisabled(Boolean.TRUE);
+                //this.globalProcessingFeeChkbox.setDisabled(Boolean.TRUE);
+                this.getLateFreeEntriesGridRows().stream().forEach(gridRow -> ((Checkbox) gridRow.getChildren().iterator().next()).setDisabled(Boolean.TRUE));
+            } else {
+                for (final Component row : this.getLateFreeEntriesGridRows()) {
+                    if (this.globalBillEntriesSelectionlate.isChecked() == Boolean.TRUE) {
+                        ((Checkbox) row.getChildren().iterator().next()).setChecked(Boolean.TRUE);
+                    } else {
+                        ((Checkbox) row.getChildren().iterator().next()).setChecked(Boolean.FALSE);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * This method is called when we will change the value of missingItemToolCombobox
      */
@@ -200,6 +230,22 @@ public class BlOrderBillingController extends DefaultWidgetController {
     public void checkGlobalProcessingFeeSelection() {
         applyToGridProcessingFeeSelection();
         calculateLineItemTotalAmountDue();
+    }
+
+    @ViewEvent(componentID = "globalRentalEndDateSelect", eventName = BlInventoryScanLoggingConstants.ON_CHECK)
+    public void checkGlobalRentalEndDateSelection() {
+        applyToGridLatFeeSelection();
+
+    }
+
+    private void applyToGridLatFeeSelection() {
+        for (final Component row : this.getLateFreeEntriesGridRows()) {
+            if (this.globalRentalEndDateSelect.isChecked() == Boolean.TRUE) {
+                ((Checkbox) row.getChildren().get(5)).setChecked(Boolean.TRUE);
+            } else {
+                ((Checkbox) row.getChildren().get(5)).setChecked(Boolean.FALSE);
+            }
+        }
     }
 
     /**
@@ -244,15 +290,16 @@ public class BlOrderBillingController extends DefaultWidgetController {
             abstractOrderEntryModel.getSerialProducts().forEach(serialProduct -> {
                 BlOrderBillingLateFeeDTO itemDTO = new BlOrderBillingLateFeeDTO();
                 itemDTO.setProductName(abstractOrderEntryModel.getProduct().getName());
+                itemDTO.setSerialCode(serialProduct.getCode());
                 itemDTO.setDuration((int) getRentalDuration(abstractOrderEntryModel));
                 itemDTO.setRentalEndDate(getFormattedDate(abstractOrderEntryModel.getOrder().getActualRentalEndDate()));
                 itemDTO.setActualReturnDate("");
                 itemDTO.setDaysLate(0);
                 calculateDailyRate(itemDTO, abstractOrderEntryModel);
                 //itemDTO.setDailyRate("211.90");
-                itemDTO.setTaxableSubtotal("");
+                itemDTO.setTaxableSubtotal("0.0");
                 itemDTO.setTax("0.0");
-                itemDTO.setSubtotalAmountDue("");
+                itemDTO.setSubtotalAmountDue("0.0");
                 itemDTO.setUnpaidBillNotes("");
                 this.orderEntriesForLateFee.add(itemDTO);
 
@@ -262,18 +309,26 @@ public class BlOrderBillingController extends DefaultWidgetController {
     }
 
     private void calculateDailyRate(BlOrderBillingLateFeeDTO itemDTO, AbstractOrderEntryModel abstractOrderEntryModel) {
-        final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(abstractOrderEntryModel.getProduct());
-        final PriceInformation defaultPriceInformation = prices.get(0);
-        PriceInformation oneDayPrice = getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) abstractOrderEntryModel.getProduct(),
-                defaultPriceInformation, (long)1);
+        Double priceForOneDayforSingleItem =  abstractOrderEntryModel.getTotalPrice()/abstractOrderEntryModel.getQuantity();
+        Double finalOneDayPrice = BigDecimal.valueOf(priceForOneDayforSingleItem/itemDTO.getDuration())
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        //final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(abstractOrderEntryModel.getProduct());
+        //final PriceInformation defaultPriceInformation = prices.get(0);
+        //PriceInformation oneDayPrice = getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) abstractOrderEntryModel.getProduct(),
+          //      defaultPriceInformation, (long)1);
         Double damageWaiverSelected = 0.0d;
         if(org.apache.commons.lang3.BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardProFullWaiverSelected())){
          damageWaiverSelected = abstractOrderEntryModel.getGearGuardProFullWaiverPrice();
         }
         else if(org.apache.commons.lang3.BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardWaiverSelected())) {
-            damageWaiverSelected = abstractOrderEntryModel.getGearGuardWaiverPrice();
+            damageWaiverSelected = BigDecimal.valueOf(abstractOrderEntryModel.getGearGuardWaiverPrice())
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .doubleValue();
         }
-        itemDTO.setDailyRate(String.valueOf(oneDayPrice.getPriceValue().getValue() + damageWaiverSelected));
+        damageWaiverSelected = damageWaiverSelected/abstractOrderEntryModel.getQuantity();
+        Double damageWaiverPriceForOneDay = damageWaiverSelected/itemDTO.getDuration();
+        itemDTO.setDailyRate(String.valueOf(finalOneDayPrice + damageWaiverPriceForOneDay));
     }
 
     protected String getFormattedDate(Date date){
@@ -305,16 +360,27 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     private void calculateLineItemTotalAmountDue() {
         final AtomicDouble lineItemTotals = new AtomicDouble(0.0d);
-        for (final Component row : this.getOrderEntriesGridRows()) {
-            if (((Checkbox) row.getChildren().iterator().next()).isChecked()) {
-                final String amountDue =  ((Textbox)row.getChildren().get(6)).getValue();
-                final String processingFee = ((Textbox)row.getChildren().get(8)).getValue();
-                final String tax = ((Textbox)row.getChildren().get(9)).getValue();
-                if (((Checkbox) row.getChildren().get(7)).isChecked()) {
-                    lineItemTotals.addAndGet(Double.parseDouble(amountDue) + Double.parseDouble(processingFee) + Double.parseDouble(tax));
+        if( this.missingItemToolCombobox.getValue().equals("LATE CHARGE")) {
+            for (final Component row : this.getLateFreeEntriesGridRows()) {
+                if (((Checkbox) row.getChildren().iterator().next()).isChecked()) {
+                    final String amountDue = ((Textbox) row.getChildren().get(9)).getValue();
+                    //final String processingFee = ((Textbox) row.getChildren().get(8)).getValue();
+                    final String tax = ((Textbox) row.getChildren().get(10)).getValue();
+                        lineItemTotals.addAndGet(Double.parseDouble(amountDue) + Double.parseDouble(tax));
                 }
-                else {
-                    lineItemTotals.addAndGet(Double.parseDouble(amountDue) + Double.parseDouble(tax));
+            }
+        }
+        else {
+            for (final Component row : this.getOrderEntriesGridRows()) {
+                if (((Checkbox) row.getChildren().iterator().next()).isChecked()) {
+                    final String amountDue = ((Textbox) row.getChildren().get(6)).getValue();
+                    final String processingFee = ((Textbox) row.getChildren().get(8)).getValue();
+                    final String tax = ((Textbox) row.getChildren().get(9)).getValue();
+                    if (((Checkbox) row.getChildren().get(7)).isChecked()) {
+                        lineItemTotals.addAndGet(Double.parseDouble(amountDue) + Double.parseDouble(processingFee) + Double.parseDouble(tax));
+                    } else {
+                        lineItemTotals.addAndGet(Double.parseDouble(amountDue) + Double.parseDouble(tax));
+                    }
                 }
             }
         }
@@ -370,6 +436,15 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
             }
 
+        }
+        if( this.missingItemToolCombobox.getValue().equals("LATE CHARGE")) {
+            if (this.getLateFreeEntriesGridRows().stream().filter(entryRow ->
+                    ((Checkbox) entryRow.getFirstChild()).isChecked()).collect(Collectors.toList()).size()
+                    == this.getLateFreeEntriesGridRows().size()) {
+                this.globalBillEntriesSelectionlate.setChecked(Boolean.TRUE);
+            } else {
+                this.globalBillEntriesSelectionlate.setChecked(Boolean.FALSE);
+            }
         }
         setTax();
         calculateLineItemTotalAmountDue();
@@ -542,9 +617,73 @@ public class BlOrderBillingController extends DefaultWidgetController {
     {
         BlItemsBillingChargeModel billingChargeModel = getModelService().create(BlItemsBillingChargeModel.class);
         try {
-            List<Component> checkedEntries = this.getOrderEntriesGridRows().stream().filter(entryRow -> ((Checkbox) entryRow.getFirstChild()).isChecked()).collect(Collectors.toList());
+            if( this.missingItemToolCombobox.getValue().equals("LATE CHARGE")){
+                createBillForLateFee(billingChargeModel);
+
+            }
+            else {
+                List<Component> checkedEntries = this.getOrderEntriesGridRows().stream().filter(entryRow -> ((Checkbox) entryRow.getFirstChild()).isChecked()).collect(Collectors.toList());
+                BigDecimal totalAmount = BigDecimal.valueOf(0.0);
+                if (!CollectionUtils.isEmpty(checkedEntries)) {
+                    final String randomId = UUID.randomUUID().toString();
+                    billingChargeModel.setCode(randomId);
+                    billingChargeModel.setUpdatedBillTime(new Date());
+                    billingChargeModel.setBillStatus(BillInfoStatus.NEW_BILL);
+                    billingChargeModel.setOrder(this.getOrderModel());
+                    billingChargeModel.setBillPaid(Boolean.FALSE);
+                    billingChargeModel.setBillChargeType(getBillingChargesReason());
+                    billingChargeModel.setOrderCode(this.getOrderModel().getCode());
+
+                    BigDecimal taxAmount = sumValues(checkedEntries, 9);
+                    billingChargeModel.setTaxAmount(taxAmount);
+
+                    List<String> serialCodes = createStringList(checkedEntries, 2);
+                    billingChargeModel.setSerialCodes(serialCodes);
+                    updateSerialCodes(serialCodes, checkedEntries);
+
+                    BigDecimal chargedAmount = sumValues(checkedEntries, 6);
+                    BigDecimal processingFee = sumValues(checkedEntries, 8);
+
+                    List<String> unPaidBillNotes = createStringList(checkedEntries, 10);
+                    new ArrayList<>();
+                    billingChargeModel.setUnPaidBillingNotes(unPaidBillNotes);
+
+                    totalAmount = totalAmount.add(chargedAmount).add(taxAmount).add(processingFee);
+
+
+                    billingChargeModel.setChargedAmount(totalAmount);
+                    getModelService().save(billingChargeModel);
+                    getModelService().refresh(this.getOrderModel());
+                    final CustomerModel customerModel = (CustomerModel) this.getOrderModel().getUser();
+                    List<BlItemsBillingChargeModel> billModels = new ArrayList<>();
+                    if (!CollectionUtils.isEmpty(customerModel.getOutstandingBills())) {
+                        billModels.addAll(customerModel.getOutstandingBills());
+                        billModels.add(billingChargeModel);
+                    } else {
+                        billModels = Arrays.asList(billingChargeModel);
+                    }
+                    customerModel.setOutstandingBills(billModels);
+                    getModelService().save(customerModel);
+                    notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+                            NotificationEvent.Level.INFO, this.getLabel(BILL_CREATED));
+
+                } else {
+                    notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
+                            NotificationEvent.Level.FAILURE, this.getLabel(BILL_CREATION_ERROR));
+                }
+            }
+        }
+        catch (ModelSavingException exception) {
+            BlLogger.logMessage(LOG , Level.ERROR , "Error while saving the Billing model for order {} due to {} " , this.getOrderModel().getCode(),exception);
+        }
+
+    }
+
+    private void createBillForLateFee(BlItemsBillingChargeModel billingChargeModel) {
+        {
+            List<Component> checkedEntries = this.getLateFreeEntriesGridRows().stream().filter(entryRow -> ((Checkbox) entryRow.getFirstChild()).isChecked()).collect(Collectors.toList());
             BigDecimal totalAmount = BigDecimal.valueOf(0.0);
-            if(!CollectionUtils.isEmpty(checkedEntries)){
+            if (!CollectionUtils.isEmpty(checkedEntries)) {
                 final String randomId = UUID.randomUUID().toString();
                 billingChargeModel.setCode(randomId);
                 billingChargeModel.setUpdatedBillTime(new Date());
@@ -554,20 +693,21 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 billingChargeModel.setBillChargeType(getBillingChargesReason());
                 billingChargeModel.setOrderCode(this.getOrderModel().getCode());
 
-                BigDecimal taxAmount =  sumValues(checkedEntries, 9);
+                BigDecimal taxAmount = sumValues(checkedEntries, 10);
                 billingChargeModel.setTaxAmount(taxAmount);
 
                 List<String> serialCodes = createStringList(checkedEntries, 2);
                 billingChargeModel.setSerialCodes(serialCodes);
-                updateSerialCodes(serialCodes,checkedEntries);
+                updateSerialCodes(serialCodes, checkedEntries);
 
-                BigDecimal chargedAmount = sumValues(checkedEntries, 6);
-                BigDecimal processingFee = sumValues(checkedEntries, 8);
+                BigDecimal chargedAmount = sumValues(checkedEntries, 9);
+                //BigDecimal processingFee = sumValues(checkedEntries, 8);
 
-                List<String> unPaidBillNotes = createStringList(checkedEntries, 10);new ArrayList<>();
+                List<String> unPaidBillNotes = createStringList(checkedEntries, 12);
+                new ArrayList<>();
                 billingChargeModel.setUnPaidBillingNotes(unPaidBillNotes);
 
-                totalAmount = totalAmount.add(chargedAmount).add(taxAmount).add(processingFee);
+                totalAmount = totalAmount.add(chargedAmount).add(taxAmount);
 
 
                 billingChargeModel.setChargedAmount(totalAmount);
@@ -575,11 +715,10 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 getModelService().refresh(this.getOrderModel());
                 final CustomerModel customerModel = (CustomerModel) this.getOrderModel().getUser();
                 List<BlItemsBillingChargeModel> billModels = new ArrayList<>();
-                if(!CollectionUtils.isEmpty(customerModel.getOutstandingBills())){
+                if (!CollectionUtils.isEmpty(customerModel.getOutstandingBills())) {
                     billModels.addAll(customerModel.getOutstandingBills());
                     billModels.add(billingChargeModel);
-                }
-                else {
+                } else {
                     billModels = Arrays.asList(billingChargeModel);
                 }
                 customerModel.setOutstandingBills(billModels);
@@ -587,15 +726,10 @@ public class BlOrderBillingController extends DefaultWidgetController {
                 notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
                         NotificationEvent.Level.INFO, this.getLabel(BILL_CREATED));
 
-            }
-            else{
+            } else {
                 notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
                         NotificationEvent.Level.FAILURE, this.getLabel(BILL_CREATION_ERROR));
             }
-
-        }
-        catch (ModelSavingException exception) {
-            BlLogger.logMessage(LOG , Level.ERROR , "Error while saving the Billing model for order {} due to {} " , this.getOrderModel().getCode(),exception);
         }
 
     }
@@ -612,7 +746,12 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
                 if (code.equals(codeElement.getText())) {
                     mainProduct = ((InputElement) comp.getChildren().get(1)).getText();
-                    subTotal = ((InputElement) comp.getChildren().get(6)).getText();
+                    if( this.missingItemToolCombobox.getValue().equals("LATE CHARGE")) {
+                        subTotal = ((InputElement) comp.getChildren().get(9)).getText();
+                    }
+                    else{
+                        subTotal = ((InputElement) comp.getChildren().get(6)).getText();
+                    }
                     break; // No need to continue searching once found
                 }
             }
@@ -864,22 +1003,70 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
         for (final Component row : this.getLateFreeEntriesGridRows()) {
             try{
-            long daysLate = getDaysBetweenDates(convertStringToDate(((Textbox) row.getChildren().get(3)).getValue()),
-                    convertStringToDate(date));
-                ((Textbox) row.getChildren().get(6)).setValue(String.valueOf(daysLate));
-                Double taxableSubtotal = Double.valueOf(((Textbox) row.getChildren().get(7)).getValue()) * daysLate;//DailyRate * DaysLate + 25%
-                Double twentyFivePer = taxableSubtotal * 25/100;
-                Double totalSubtotal = taxableSubtotal + twentyFivePer;
-                ((Textbox) row.getChildren().get(8)).setValue(String.valueOf(totalSubtotal));
-                ((Textbox) row.getChildren().get(10)).setValue(String.valueOf(totalSubtotal));
-                ((Textbox) row.getChildren().get(11)).setValue(((Textbox) row.getChildren().get(1)).getValue() + " - " + "Days Late "
-                + "("+daysLate+") " + "- " + "Late Fee Daily Rate "+ "("+totalSubtotal+")"+ " - "+" Late Fee "+totalSubtotal);
-                //Sony FX3 - Days Late(1) - Late Fee Daily Rate (263.85) - Late Fee 290.90");
+                if(this.globalRentalEndDateSelect.isChecked() == Boolean.TRUE) {
+                    long daysLate = getDaysBetweenDates(convertStringToDate(((Textbox) row.getChildren().get(4)).getValue()),
+                            convertStringToDate(date));
+                    ((Textbox) row.getChildren().get(7)).setValue(String.valueOf(daysLate));
+                    ((Textbox) row.getChildren().get(6)).setValue(date);
+                    Double taxableSubtotal = Double.valueOf(((Textbox) row.getChildren().get(8)).getValue()) * daysLate;//DailyRate * DaysLate + 25%
+                    Double twentyFivePer = taxableSubtotal * 25 / 100;
+                    Double totalSubtotal = BigDecimal.valueOf(taxableSubtotal + twentyFivePer)
+                            .setScale(2, RoundingMode.HALF_UP).doubleValue();
+                    ((Textbox) row.getChildren().get(9)).setValue(String.valueOf(totalSubtotal));
+                    Double finalTotal = BigDecimal.valueOf(calculateTotalWithTax(row, totalSubtotal))
+                            .setScale(2, RoundingMode.HALF_UP).doubleValue();
+                    ((Textbox) row.getChildren().get(11)).setValue(String.valueOf(finalTotal));
+                    ((Textbox) row.getChildren().get(12)).setValue(((Textbox) row.getChildren().get(1)).getValue() + " - " + "Days Late "
+                            + "(" + daysLate + ") " + "- " + "Late Fee Daily Rate " + "(" + ((Textbox) row.getChildren().get(8)).getValue() + ")" + " - " + " Late Fee " + finalTotal);
+                    //Sony FX3 - Days Late(1) - Late Fee Daily Rate (263.85) - Late Fee 290.90");
+                }
+                else{
+                    if(((Textbox)inputEvent.getTarget().getParent().getChildren().get(2)).getValue().equals(((Textbox) row.getChildren().get(2)).getValue())) {
+                        long daysLate = getDaysBetweenDates(convertStringToDate(((Textbox) row.getChildren().get(4)).getValue()),
+                                convertStringToDate(date));
+                        ((Textbox) row.getChildren().get(7)).setValue(String.valueOf(daysLate));
+                        Double taxableSubtotal = Double.valueOf(((Textbox) row.getChildren().get(8)).getValue()) * daysLate;//DailyRate * DaysLate + 25%
+                        Double twentyFivePer = taxableSubtotal * 25 / 100;
+                        Double totalSubtotal = BigDecimal.valueOf(taxableSubtotal + twentyFivePer)
+                                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+                        ((Textbox) row.getChildren().get(9)).setValue(String.valueOf(totalSubtotal));
+                        Double finalTotal = BigDecimal.valueOf(calculateTotalWithTax(row, totalSubtotal))
+                                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+                        ((Textbox) row.getChildren().get(11)).setValue(String.valueOf(finalTotal));
+                        ((Textbox) row.getChildren().get(12)).setValue(((Textbox) row.getChildren().get(1)).getValue() + " - " + "Days Late "
+                                + "(" + daysLate + ") " + "- " + "Late Fee Daily Rate " + "(" + ((Textbox) row.getChildren().get(8)).getValue() + ")" + " - " + " Late Fee " + finalTotal);
+
+                    }
+                }
             }
             catch(ParseException e){
                 System.out.println(e);
             }
         }
+        calculateLineItemTotalAmountDue();
+    }
+
+    private Double calculateTotalWithTax(Component row, Double totalSubtotal) {
+        BillingPojo billing = new BillingPojo();
+        Double billingTax = 0.0d;
+        try {
+            final String amountDue = ((Textbox) row.getChildren().get(9)).getValue();
+            final String serialNo = ((Textbox) row.getChildren().get(2)).getValue();
+            final String productName = ((Textbox) row.getChildren().get(1)).getValue();
+            billing.setOrder(this.getOrderModel());
+            billing.setBillPaid(billPaidTrue.isSelected() ? Boolean.TRUE : Boolean.FALSE);
+            billing.setAmount(Double.parseDouble(amountDue));
+            billing.setBillingChargesReason(getBillingChargesReason());
+            billing.setSerialNo(serialNo);
+            billing.setProductName(productName);
+            billingTax = getDefaultBlAvalaraTaxService().processBillingTax(billing);
+            ((Textbox) row.getChildren().get(10)).setValue(billingTax.toString());
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        return totalSubtotal + billingTax;
     }
 
     private Date convertStringToDate(String date) throws ParseException {

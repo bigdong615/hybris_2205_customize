@@ -1371,6 +1371,14 @@
 				  equals="true">
 			<annotations>@JsonProperty("Items_Info")</annotations>
 		</property>
+		<property name="billType" type="java.lang.String"
+				  equals="true">
+			<annotations>@JsonProperty("Bill_Type")</annotations>
+		</property>
+		<property name="lateFeesWaived" type="int"
+				  equals="true">
+			<annotations>@JsonProperty("Late_Fees_Waived")</annotations>
+		</property>
 	</bean>
 
 	<!-- Order Bill Paid Event Request Object-->

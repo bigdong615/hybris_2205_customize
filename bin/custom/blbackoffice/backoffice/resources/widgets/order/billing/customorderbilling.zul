@@ -168,6 +168,9 @@
                     <column width="150px" sort="auto" sortDirection="ascending">
                         <label value="${labels.customersupportbackoffice.billing.label.productName}" width="100%"/>
                     </column>
+                    <column width="3px" sort="auto" sortDirection="ascending">
+
+                    </column>
                     <column width="70px" style="padding-left:5px">
                         <label width="60%"> Duration </label>
                     </column>
@@ -189,7 +192,7 @@
                     <column width="120px" >
                         <label width="100%"> Taxable Subtotal </label>
                     </column>
-                    <column width="50px" >
+                    <column width="80px" >
                         <label width="50%"> Tax </label>
                     </column>
                     <column width="160px" style="padding-left:5px">
@@ -204,8 +207,9 @@
                     <template name="model">
                         <row style="padding-left:3px;">
                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
-                                      id="" visible="true" />
+                                      id="${each.serialCode}_SerialProductLate" visible="true" onCheck="doIndicate()"/>
                             <textbox  width="280px" name="productName" readonly="true" value="${each.productName}"/>
+                            <textbox  width="2px" name="productCode" readonly="true" value="${each.serialCode}" visible="false"/>
                             <textbox  width="250px" name="duration" readonly="true" value="${each.duration}"/>
                             <textbox  width="200px" name="rentalEndDate" readonly="true" value="${each.rentalEndDate}"/>
                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"

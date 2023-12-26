@@ -95,6 +95,8 @@ public class BlOrderBillPaidReceiptRequestPopulator extends
         data.setBillFees(String.format("%.2f",totalFee.multiply(BigDecimal.valueOf(serialQuantity))));
 
         data.setBillItemsAmount(String.format("%.2f",subTotalWithoutTax));
+        data.setBillType("Late");
+        data.setLateFeesWaived(0);
     }
     private void populateCustomerInfoData(final OrderModel orderModel, OrderBillReceiptData data) {
         try {
