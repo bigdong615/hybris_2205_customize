@@ -90,7 +90,7 @@
 		</c:if>
 		<h6 class="product">
           <c:url var="rentUrl" value="/rent/product/${product.code}"/>
-           <a href="${rentUrl}" role="button" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
+           <a href="${rentUrl}" role="button" class="js-pdplinkUrl" onclick="return productClickTealiumEvent('${product.code}');" data-productCode="${product.code}" data-brand="${product.manufacturer}"
             data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="rental">
             <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
        </h6>
@@ -167,3 +167,20 @@
 		</ycommerce:testId>
 </div>
 </div>
+
+<script>
+function productClickTealiumEvent(productCode) {
+	console.log("Tealium pdp action trigger");
+    // return true or false, depending on whether you want to allow the `href` property to follow through or not
+	window.dmpgDl = window.dmpgDl || {};
+	dmpgDl.events = [
+		{
+  			"event": "product.interact.manual.click",
+ 			 "product": {       
+ 			  "id": productCode,
+  			  "stockAvailability": "yes",
+ 		 }
+ 		 }
+	];
+}
+</script>

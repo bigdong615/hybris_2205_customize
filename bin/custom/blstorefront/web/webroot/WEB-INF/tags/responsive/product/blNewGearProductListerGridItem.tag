@@ -30,7 +30,7 @@
     <product:productListImagePanel productType="UsedGearProduct" product="${product}"/>
     <h6 class="product">
      <c:url var="newGearUrl" value="/buy/product/${product.code}"/>
-     <a href="${newGearUrl}" role="button"  class="js-pdplinkUrl" data-productCode="${product.code}">
+     <a href="${newGearUrl}" role="button"  class="js-pdplinkUrl" onclick="return productClickTealiumEvent('${product.code}');" data-productCode="${product.code}">
        <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}"/> </a>
     </h6>
 		<ycommerce:testId code="product_wholeProduct">
