@@ -311,7 +311,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 */
 	private double getDamageWaiverPriceFromEntry(final AbstractOrderEntryModel cartEntry)
 	{
-		final ProductModel product = cartEntry.getProduct();
+		final ProductModel product = cartEntry.isReplacementEntry()?cartEntry.getOldProduct():cartEntry.getProduct();
 		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
 		{
 			if (BooleanUtils.isTrue(cartEntry.getGearGuardWaiverSelected()))
@@ -658,7 +658,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	@Override
 	public void resetAllValuesForExtendOrder(final AbstractOrderEntryModel entry , final int defaultAddedTimeForExtendRental) throws CalculationException
 	{
-		final ProductModel product = entry.getProduct();
+		final ProductModel product = entry.isReplacementEntry()?entry.getOldProduct():entry.getProduct();
 		final Collection<TaxValue> entryTaxes = findTaxValues(entry);
 		entry.setTaxValues(entryTaxes);
 		final AbstractOrderModel order = entry.getOrder();
