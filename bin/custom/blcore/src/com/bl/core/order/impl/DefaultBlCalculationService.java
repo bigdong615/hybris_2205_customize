@@ -9,6 +9,7 @@ import de.hybris.platform.jalo.order.price.PriceInformation;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.order.impl.DefaultCalculationService;
 import de.hybris.platform.order.strategies.calculation.OrderRequiresCalculationStrategy;
+import de.hybris.platform.product.PriceService;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.util.DiscountValue;
@@ -74,6 +75,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 
 	@Resource(name="commonI18NService")
 	private CommonI18NService commonI18NService;
+
+    @Resource(name = "priceService")
+	private PriceService priceService;
 	/**
 	 * Reset all values of entry before calculation.
 	 *
@@ -89,7 +93,10 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final Collection<TaxValue> entryTaxes = findTaxValues(entry);
 		entry.setTaxValues(entryTaxes);
 		final AbstractOrderModel order = entry.getOrder();
-		final PriceValue pv = getPriceForSkuOrSerial(order, entry, product);
+
+		final List<PriceInformation> prices = priceService.getPriceInformationsForProduct(product);
+		final PriceValue pv=CollectionUtils.isNotEmpty(prices) ? prices.get(0).getPriceValue() : getPriceForSkuOrSerial(order, entry, product);
+
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
 		LOG.debug("BasePrice before dynamic : " + basePrice.getValue());
 		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct()? basePrice : getDynamicBasePriceForRentalSKU(basePrice, product, order);
@@ -659,7 +666,8 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		if(entry.isBundleMainEntry()){
 			pv = commercePriceService.getDynamicBasePriceForBundle(product,defaultAddedTimeForExtendRental);
 		}else {
-			pv = getPriceForSkuOrSerial(order, entry, product);
+			final List<PriceInformation> prices = priceService.getPriceInformationsForProduct(product);
+			pv=CollectionUtils.isNotEmpty(prices) ? prices.get(0).getPriceValue() : getPriceForSkuOrSerial(order, entry, product);
 		}
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
 		final PriceValue dynamicBasePrice = entry.isBundleMainEntry()? basePrice:getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
@@ -747,7 +755,10 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final Collection<TaxValue> entryTaxes = findTaxValues(entry);
 		entry.setTaxValues(entryTaxes);
 		final AbstractOrderModel order = entry.getOrder();
-		final PriceValue pv = getPriceForSkuOrSerial(order, entry, product);
+
+		final List<PriceInformation> prices = priceService.getPriceInformationsForProduct(product);
+		final PriceValue pv=CollectionUtils.isNotEmpty(prices) ? prices.get(0).getPriceValue() : getPriceForSkuOrSerial(order, entry, product);
+
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
 		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct() ? basePrice : getDynamicBasePriceForTax(basePrice, product , entry.getOrder());
 		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
