@@ -103,13 +103,13 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 			final ColumnPositionMappingStrategy mappingStrategy = new ColumnPositionMappingStrategy();
 			mappingStrategy.setType(OrderData.class);
 			final String[] columns = new String[]
-			{ "page_id", "order_id", "first_name", "last_name", "email", "order_date" };
+			{ "page_id", "order_id", "first_name", "last_name", "email", "order_date", "locale" };
 			mappingStrategy.setColumnMapping(columns);
 			final StatefulBeanToCsvBuilder<OrderData> builder = new StatefulBeanToCsvBuilder(writer);
 			final StatefulBeanToCsv beanWriter = builder.withMappingStrategy(mappingStrategy).build();
 			try
 			{
-				writer.append("Page id, order id, first name,laste name, email, Order Date");
+				writer.append("Page id, order id, first name,laste name, email, Order Date, locale");
 				writer.append("\n");
 				beanWriter.write(orderList);
 				writer.close();

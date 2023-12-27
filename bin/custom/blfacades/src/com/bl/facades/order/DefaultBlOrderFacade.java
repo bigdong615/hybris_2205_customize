@@ -587,7 +587,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         });
             target.getEntries().forEach(entry -> {
                 messagesList.forEach(msg -> {
-                    if (msg.getMessageCode().contains(entry.getProduct().getName()))
+                    String productName= msg.getMessageCode().split("-")[1];
+
+                    if (productName.trim().equals(entry.getProduct().getName()))
                     {
                         final List<AvailabilityMessage> entryMessages = Lists
                                 .newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
