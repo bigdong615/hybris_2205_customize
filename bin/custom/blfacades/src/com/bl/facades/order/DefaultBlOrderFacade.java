@@ -1,5 +1,6 @@
 package com.bl.facades.order;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
@@ -587,13 +588,14 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         });
             target.getEntries().forEach(entry -> {
                 messagesList.forEach(msg -> {
-                    String productName= msg.getMessageCode().split("-")[1];
+                    String productName= msg.getMessageCode().split(BlCoreConstants.SEPARATOR)[1];
 
                     if (productName.trim().equals(entry.getProduct().getName()))
                     {
                         final List<AvailabilityMessage> entryMessages = Lists
                                 .newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
-                        AvailabilityMessage ms = getMessage(msg.getMessageCode());
+                        String billingNotes = msg.getMessageCode().replace(" | "," - ");
+                        AvailabilityMessage ms = getMessage(billingNotes);
                         entryMessages.add(ms);
                         entry.setMessages(entryMessages);
                     }

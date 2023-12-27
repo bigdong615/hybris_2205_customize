@@ -273,7 +273,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
                         amount=amount * 12/100;
                         ((Textbox) row.getChildren().get(6)).setValue(amount.toString());
                     }
-                    ((Textbox) row.getChildren().get(10)).setValue(missingItemToolCombobox.getValue() + " - "+ productName + " - " + "Serial#" + " " + serialNo + " - "  + amount);
+                    ((Textbox) row.getChildren().get(10)).setValue(missingItemToolCombobox.getValue() + " | "+ productName + " | " + "Serial#" + " " + serialNo + " - "  + amount);
 
                 }
 
@@ -414,7 +414,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     private void setUnpaidBillNotes(BlOrderBillingItemDTO itemDTO,BlProductModel serialProduct)
     {
-        itemDTO.setUnpaidBillNotes(missingItemToolCombobox.getValue() + " - "+ itemDTO.getProductName() + " - " + "Serial#" + " " + (itemDTO.getSerialNo() != null ? itemDTO.getSerialNo() :"") + " - "+ itemDTO.getSubtotal());
+        itemDTO.setUnpaidBillNotes(missingItemToolCombobox.getValue() + " | "+ itemDTO.getProductName() + " | " + "Serial#" + " " + (itemDTO.getSerialNo() != null ? itemDTO.getSerialNo() :"") + " - "+ itemDTO.getSubtotal());
     }
 
     private void disableOrEnableFields(Boolean b)
