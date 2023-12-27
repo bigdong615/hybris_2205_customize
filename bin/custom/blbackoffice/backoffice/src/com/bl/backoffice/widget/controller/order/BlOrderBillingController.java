@@ -30,6 +30,7 @@ import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -109,7 +110,16 @@ public class BlOrderBillingController extends DefaultWidgetController {
     private Textbox selectedProduct;
 
     @Wire
+    private Textbox selectedFee;
+
+    @Wire
     private Textbox selectedProcessingFee;
+
+    @Wire
+    private Checkbox lateFeeSelectionChkbox;
+
+    @Wire
+    private Checkbox extensionFeeSelectionChkbox;
 
 
     private ListModelList billingChargesReason = new ListModelList();
@@ -244,6 +254,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
             abstractOrderEntryModel.getSerialProducts().forEach(serialProduct -> {
                 BlOrderBillingLateFeeDTO itemDTO = new BlOrderBillingLateFeeDTO();
                 itemDTO.setProductName(abstractOrderEntryModel.getProduct().getName());
+                itemDTO.setSerialCode(serialProduct.getCode());
                 itemDTO.setDuration((int) getRentalDuration(abstractOrderEntryModel));
                 itemDTO.setRentalEndDate(getFormattedDate(abstractOrderEntryModel.getOrder().getActualRentalEndDate()));
                 itemDTO.setActualReturnDate("");
@@ -364,7 +375,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
                         amount=amount * 12/100;
                         ((Textbox) row.getChildren().get(6)).setValue(amount.toString());
                     }
-                    ((Textbox) row.getChildren().get(10)).setValue(missingItemToolCombobox.getValue() + " - "+ productName + " - " + "Serial#" + " " + serialNo + " - "  + amount);
+                    ((Textbox) row.getChildren().get(10)).setValue(missingItemToolCombobox.getValue() + " | "+ productName + " | " + "Serial#" + " " + serialNo + " - "  + amount);
 
                 }
 
@@ -494,6 +505,24 @@ public class BlOrderBillingController extends DefaultWidgetController {
     }
 
     /**
+     * This method is called when we will check the lateFeeSelection checkbox
+     */
+    @ViewEvent(componentID = "selectedFee", eventName = "onChange")
+    public void checkLateFeeSelection() {
+
+        final String[] selectedFeeCheckBox = this.selectedFee.getValue().split("##");
+        if(selectedFeeCheckBox[0].equals("lateFeeSelectionChkbox") && selectedFeeCheckBox[1].equals("true")) {
+            this.extensionFeeSelectionChkbox.setChecked(true);
+        }else if(selectedFeeCheckBox[0].equals("extensionFeeSelectionChkbox") && selectedFeeCheckBox[1].equals("true")){
+            this.lateFeeSelectionChkbox.setChecked(false);
+
+        }else {
+            this.extensionFeeSelectionChkbox.setChecked(false);
+            this.lateFeeSelectionChkbox.setChecked(false);
+        }
+    }
+
+    /**
      * Gets order entries grid rows.
      *
      * @return the order entries grid rows
@@ -510,7 +539,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
     private void setUnpaidBillNotes(BlOrderBillingItemDTO itemDTO,BlProductModel serialProduct)
     {
-        itemDTO.setUnpaidBillNotes(missingItemToolCombobox.getValue() + " - "+ itemDTO.getProductName() + " - " + "Serial#" + " " + (itemDTO.getSerialNo() != null ? itemDTO.getSerialNo() :"") + " - "+ itemDTO.getSubtotal());
+        itemDTO.setUnpaidBillNotes(missingItemToolCombobox.getValue() + " | "+ itemDTO.getProductName() + " | " + "Serial#" + " " + (itemDTO.getSerialNo() != null ? itemDTO.getSerialNo() :"") + " - "+ itemDTO.getSubtotal());
     }
 
     private void disableOrEnableFields(Boolean b)
@@ -868,8 +897,14 @@ public class BlOrderBillingController extends DefaultWidgetController {
                     convertStringToDate(date));
                 ((Textbox) row.getChildren().get(6)).setValue(String.valueOf(daysLate));
                 Double taxableSubtotal = Double.valueOf(((Textbox) row.getChildren().get(7)).getValue()) * daysLate;//DailyRate * DaysLate + 25%
-                Double twentyFivePer = taxableSubtotal * 25/100;
-                Double totalSubtotal = taxableSubtotal + twentyFivePer;
+                final String[] selectedFeeCheckBox = this.selectedFee.getValue().split("##");
+                Double totalSubtotal=0.0;
+                if(selectedFeeCheckBox[0].equals("lateFeeSelection") && selectedFeeCheckBox[1].equals("true")) {
+                    Double twentyFivePer = taxableSubtotal * 25 / 100;
+                    totalSubtotal = taxableSubtotal + twentyFivePer;
+                }else {
+                    totalSubtotal = taxableSubtotal;
+                }
                 ((Textbox) row.getChildren().get(8)).setValue(String.valueOf(totalSubtotal));
                 ((Textbox) row.getChildren().get(10)).setValue(String.valueOf(totalSubtotal));
                 ((Textbox) row.getChildren().get(11)).setValue(((Textbox) row.getChildren().get(1)).getValue() + " - " + "Days Late "

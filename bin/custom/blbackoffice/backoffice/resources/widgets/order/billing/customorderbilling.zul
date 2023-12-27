@@ -24,6 +24,8 @@
                      id="totalAmountDueDouble" width="190px" height="12px"/>
            <textbox sclass="oms-widget-billing-inputtext-box" id="selectedProduct" visible="false"
                                                          width="140px"/>
+           <textbox sclass="oms-widget-billing-inputtext-box" id="selectedFee" visible="true"
+                                                         width="140px"/>
            </div>
             <div width="" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
                 <button id="createBill" label="${labels.customersupportbackoffice.billing.button.createbill}"
@@ -145,6 +147,11 @@
                             				Events.postEvent("onChange", selectedProduct, null);
                                         }
 
+                                         void feeSelection() {
+                                            selectedFee.setValue(self.getId()+"##"+self.isChecked());
+                                            Events.postEvent("onChange", selectedFee, null);
+                                         }
+
                                     ]]></zscript>
 
                     </hlayout>
@@ -153,8 +160,8 @@
     <div id="lateFeeToolHeader">
         <label sclass="oms-widget-billing-label-box" width="100%" style="margin-left:20px;font-weight:bold;">Late Fee Tool</label>
         <div sclass="oms-widget-billing-firstlist-container" style="display:flex;margin-top:15px;margin-left:8px;column-gap: 10px;">
-             <checkbox id="lateFeeSelection" class="oms-widget-billing-thirdlist-container__checkbox"/> Late Fee
-              <checkbox id="extensionFeeSelection" class="oms-widget-billing-thirdlist-container__checkbox"/> Extension Fee
+             <checkbox id="lateFeeSelectionChkbox" class="oms-widget-billing-thirdlist-container__checkbox" onCheck="feeSelection()"/> Late Fee
+              <checkbox id="extensionFeeSelectionChkbox" class="oms-widget-billing-thirdlist-container__checkbox" onCheck="feeSelection()"/> Extension Fee
         </div>
         <hlayout width="100%" >
 
@@ -204,7 +211,8 @@
                     <template name="model">
                         <row style="padding-left:3px;">
                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
-                                      id="" visible="true" />
+                             id="${each.serialCode}_LateSerialProduct" visible="true" />
+
                             <textbox  width="280px" name="productName" readonly="true" value="${each.productName}"/>
                             <textbox  width="250px" name="duration" readonly="true" value="${each.duration}"/>
                             <textbox  width="200px" name="rentalEndDate" readonly="true" value="${each.rentalEndDate}"/>

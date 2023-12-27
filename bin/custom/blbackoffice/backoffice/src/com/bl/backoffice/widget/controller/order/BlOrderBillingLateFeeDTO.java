@@ -11,6 +11,7 @@ public class BlOrderBillingLateFeeDTO implements Comparable<BlOrderBillingLateFe
     private String tax;
     private String subtotalAmountDue;
     private String unpaidBillNotes;
+    private String serialCode;
 
 
     public BlOrderBillingLateFeeDTO(String productName, int duration, String rentalEndDate, String actualReturnDate, int daysLate, String dailyRate, String taxableSubtotal, String tax, String subtotalAmountDue, String unpaidBillNotes) {
@@ -113,4 +114,13 @@ public class BlOrderBillingLateFeeDTO implements Comparable<BlOrderBillingLateFe
     public int compareTo(BlOrderBillingLateFeeDTO o) {
         return 0;
     }
+
+    public String getSerialCode() {
+        return serialCode;
+    }
+
+    public void setSerialCode(String serialCode) {
+        this.serialCode = serialCode;
+    }
+
 }
