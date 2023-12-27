@@ -2,6 +2,7 @@ package com.bl.backoffice.widget.controller.order;
 
 public class BlOrderBillingLateFeeDTO implements Comparable<BlOrderBillingLateFeeDTO>{
     private String productName;
+    private String serialCode;
     private int duration;
     private String rentalEndDate;
     private String actualReturnDate;
@@ -13,9 +14,9 @@ public class BlOrderBillingLateFeeDTO implements Comparable<BlOrderBillingLateFe
     private String unpaidBillNotes;
     private String serialCode;
 
-
-    public BlOrderBillingLateFeeDTO(String productName, int duration, String rentalEndDate, String actualReturnDate, int daysLate, String dailyRate, String taxableSubtotal, String tax, String subtotalAmountDue, String unpaidBillNotes) {
+    public BlOrderBillingLateFeeDTO(String productName, String serialCode, int duration, String rentalEndDate, String actualReturnDate, int daysLate, String dailyRate, String taxableSubtotal, String tax, String subtotalAmountDue, String unpaidBillNotes) {
         this.productName = productName;
+        this.serialCode = serialCode;
         this.duration = duration;
         this.rentalEndDate = rentalEndDate;
         this.actualReturnDate = actualReturnDate;
@@ -32,6 +33,14 @@ public class BlOrderBillingLateFeeDTO implements Comparable<BlOrderBillingLateFe
     }
     public String getProductName() {
         return productName;
+    }
+
+    public String getSerialCode() {
+        return serialCode;
+    }
+
+    public void setSerialCode(String serialCode) {
+        this.serialCode = serialCode;
     }
 
     public void setProductName(String productName) {

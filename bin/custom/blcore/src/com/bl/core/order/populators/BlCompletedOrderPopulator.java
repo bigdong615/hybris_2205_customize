@@ -19,7 +19,8 @@ import java.util.List;
  */
 public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, List<OrderData>>
 {
-	final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+	final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/mm/dd");
+	public static final String LOCALE_CONSTANT = "en_US";
 
 
 	@Override
@@ -32,7 +33,10 @@ public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, Li
 				final OrderData orderData = new OrderData();
 
 				orderData.setCode(order.getCode());
-				orderData.setPage_id(orderentry.getProduct().getCode());
+				if (orderentry.getProduct() != null)
+				{
+					orderData.setPage_id(orderentry.getProduct().getCode());
+				}
 				orderData.setOrder_id(order.getCode());
 				if (order.getPaymentAddress() != null)
 				{
@@ -41,6 +45,7 @@ public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, Li
 				}
 				orderData.setEmail(order.getUser().getUid());
 				orderData.setOrder_date(formatter.format(order.getCreationtime()));
+				orderData.setLocale(LOCALE_CONSTANT);
 				target.add(orderData);
 
 			}
