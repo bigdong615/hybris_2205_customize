@@ -55,8 +55,17 @@ public class BlRecalculateOrderTotalsAction implements CockpitAction<OrderModel,
 		try
 		{
 			getCalculationService().recalculate(orderModel);
+			orderModel.getEntries().forEach(entryModel -> {
+				BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"For product {} after recalculation unit price {} entry total {} for the order {}",
+						entryModel.getProduct().getCode(),entryModel.getBasePrice(),entryModel.getTotalPrice(),orderModel.getCode());
+			});
 			getPromotionsService().updatePromotions(getPromotionGroupFromBaseSite(orderModel), orderModel, true, PromotionsManager.AutoApplyMode.APPLY_ALL,
 							PromotionsManager.AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
+
+			orderModel.getEntries().forEach(entryModel -> {
+				BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"After promotion For product {} after recalculation unit price {} entry total {} for the order {}",
+						entryModel.getProduct().getCode(),entryModel.getBasePrice(),entryModel.getTotalPrice(),orderModel.getCode());
+			});
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Recalculation done for order {}", orderModel.getCode());
 
 		}
