@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
  */
 public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, List<OrderData>>
 {
-	final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/mm/dd");
+	final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
 	public static final String LOCALE_CONSTANT = "en_US";
 	private static final Logger LOG = Logger.getLogger(BlCompletedOrderPopulator.class);
 
