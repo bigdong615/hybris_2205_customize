@@ -212,6 +212,8 @@ private void setReservedStatusForSerials(final PackagingInfoModel packagingInfoM
 	  if (CollectionUtils.isNotEmpty(stockLevels)) {
 		  stockLevels.forEach(stockLevel -> {
 			  stockLevel.setReservedStatus(true);
+			  getModelService().save(stockLevel);
+	        getModelService().refresh(stockLevel);
 		  });
 	  }
 }
