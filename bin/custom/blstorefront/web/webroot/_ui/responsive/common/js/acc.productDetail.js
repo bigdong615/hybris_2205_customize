@@ -2,7 +2,8 @@ ACC.productDetail = {
 
     _autoload: [
         "initPageEvents",
-        "bindVariantOptions"
+        "bindVariantOptions",
+        "bindRatingDataBinding"
     ],
 
 
@@ -154,5 +155,14 @@ ACC.productDetail = {
         if (currentSize != null) {
             sizeSpan.text(": " + currentSize);
         }
+    },
+    /*BL-179: Providing dynamic data on rating popup*/
+    bindRatingDataBinding: function () {
+    $(document).on("click", ".js-conditional-rating-popup", function (e) {
+       $('#cosmetic').html($(this).data("cosmetic"));
+       $('#functional').html( $(this).data("functional"));
+       $('#conditionRating').html($(this).data("condition-rating"));
+       $('#serialId').html("<b>Serial</b> #"+$(this).data("serial-id"));
+       });
     }
 };
