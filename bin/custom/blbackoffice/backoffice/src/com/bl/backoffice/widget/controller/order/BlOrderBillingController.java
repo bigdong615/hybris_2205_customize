@@ -586,7 +586,7 @@ public class BlOrderBillingController extends DefaultWidgetController {
 
         final String[] selectedFeeCheckBox = this.selectedFee.getValue().split("##");
         if(selectedFeeCheckBox[0].equals("lateFeeSelectionChkbox") && selectedFeeCheckBox[1].equals("true")) {
-            this.extensionFeeSelectionChkbox.setChecked(true);
+            this.extensionFeeSelectionChkbox.setChecked(false);
         }else if(selectedFeeCheckBox[0].equals("extensionFeeSelectionChkbox") && selectedFeeCheckBox[1].equals("true")){
             this.lateFeeSelectionChkbox.setChecked(false);
 

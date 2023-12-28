@@ -215,8 +215,6 @@
                         <row style="padding-left:3px;">
                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
                              id="${each.serialCode}_LateSerialProduct" visible="true" />
-
-                                      id="${each.serialCode}_SerialProductLate" visible="true" onCheck="doIndicate()"/>
                             <textbox  width="280px" name="productName" readonly="true" value="${each.productName}"/>
                             <textbox  width="2px" name="productCode" readonly="true" value="${each.serialCode}" visible="false"/>
                             <textbox  width="250px" name="duration" readonly="true" value="${each.duration}"/>
