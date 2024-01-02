@@ -334,7 +334,7 @@
             <form:form action="${placeOrderUrl}" id="placeOrderForm1"
                modelAttribute="placeOrderForm">
                <button id="placeOrder" type="submit"
-                  class="btn btn-block btn-primary mt-4">
+                  class="btn btn-block btn-primary mt-4 js-place-order">
                   <spring:theme code="checkout.summary.placeOrder"
                      text="Place Your Order" />
                </button>

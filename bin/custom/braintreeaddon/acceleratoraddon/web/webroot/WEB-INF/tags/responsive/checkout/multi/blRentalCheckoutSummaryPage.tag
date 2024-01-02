@@ -302,7 +302,7 @@
 				</c:when>
 				<c:otherwise>
 					<button id="placeOrder" type="button"
-            			class="btn btn-sm btn-primary float-end">
+            			class="btn btn-sm btn-primary float-end js-place-order">
             			<spring:theme code="checkout.summary.placeOrder"
             				text="Place Your Order" />
             		</button>
