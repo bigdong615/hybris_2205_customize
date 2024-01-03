@@ -24,7 +24,7 @@
                      id="totalAmountDueDouble" width="190px" height="12px"/>
            <textbox sclass="oms-widget-billing-inputtext-box" id="selectedProduct" visible="false"
                                                          width="140px"/>
-           <textbox sclass="oms-widget-billing-inputtext-box" id="selectedFee" visible="true"
+           <textbox sclass="oms-widget-billing-inputtext-box" id="selectedFee" visible="false"
                                                          width="140px"/>
            </div>
             <div width="" sclass="oms-widget-billing-buttons" style="margin-bottom:12px;">
@@ -161,7 +161,8 @@
         <label sclass="oms-widget-billing-label-box" width="100%" style="margin-left:20px;font-weight:bold;">Late Fee Tool</label>
         <div sclass="oms-widget-billing-firstlist-container" style="display:flex;margin-top:15px;margin-left:8px;column-gap: 10px;">
              <checkbox id="lateFeeSelectionChkbox" class="oms-widget-billing-thirdlist-container__checkbox" onCheck="feeSelection()"/> Late Fee
-              <checkbox id="extensionFeeSelectionChkbox" class="oms-widget-billing-thirdlist-container__checkbox" onCheck="feeSelection()"/> Extension Fee
+              <checkbox id="extensionFeeSelectionChkbox" class="oms-widget-billing-thirdlist-container__checkbox" onCheck="feeSelection()" checked="true"/> Extension Fee
+              <checkbox id="waiveFeesChkbox" class="oms-widget-billing-thirdlist-container__checkbox"/> Waive Fees
         </div>
         <hlayout width="100%" >
 
@@ -214,7 +215,7 @@
                     <template name="model">
                         <row style="padding-left:3px;">
                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
-                             id="${each.serialCode}_LateSerialProduct" visible="true" />
+                             id="${each.serialCode}_LateSerialProduct" visible="true" onCheck="doIndicate()"/>
                             <textbox  width="280px" name="productName" readonly="true" value="${each.productName}"/>
                             <textbox  width="2px" name="productCode" readonly="true" value="${each.serialCode}" visible="false"/>
                             <textbox  width="250px" name="duration" readonly="true" value="${each.duration}"/>

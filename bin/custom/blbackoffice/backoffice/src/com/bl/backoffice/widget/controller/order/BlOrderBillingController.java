@@ -127,6 +127,9 @@ public class BlOrderBillingController extends DefaultWidgetController {
     @Wire
     private Checkbox extensionFeeSelectionChkbox;
 
+    @Wire
+    private Checkbox waiveFeesChkbox;
+
 
     private ListModelList billingChargesReason = new ListModelList();
 
@@ -376,9 +379,10 @@ public class BlOrderBillingController extends DefaultWidgetController {
                     final String amountDue = ((Textbox) row.getChildren().get(9)).getValue();
                     //final String processingFee = ((Textbox) row.getChildren().get(8)).getValue();
                     final String tax = ((Textbox) row.getChildren().get(10)).getValue();
-                        lineItemTotals.addAndGet(Double.parseDouble(amountDue) + Double.parseDouble(tax));
+                    lineItemTotals.addAndGet(Double.parseDouble(amountDue) + Double.parseDouble(tax));
                 }
             }
+
         }
         else {
             for (final Component row : this.getOrderEntriesGridRows()) {
@@ -584,17 +588,36 @@ public class BlOrderBillingController extends DefaultWidgetController {
     @ViewEvent(componentID = "selectedFee", eventName = "onChange")
     public void checkLateFeeSelection() {
 
+        Double twentyFivePer=0.0;
         final String[] selectedFeeCheckBox = this.selectedFee.getValue().split("##");
         if(selectedFeeCheckBox[0].equals("lateFeeSelectionChkbox") && selectedFeeCheckBox[1].equals("true")) {
             this.extensionFeeSelectionChkbox.setChecked(false);
         }else if(selectedFeeCheckBox[0].equals("extensionFeeSelectionChkbox") && selectedFeeCheckBox[1].equals("true")){
             this.lateFeeSelectionChkbox.setChecked(false);
-
         }else {
             this.extensionFeeSelectionChkbox.setChecked(false);
             this.lateFeeSelectionChkbox.setChecked(false);
         }
-    }
+        for (final Component row : this.getLateFreeEntriesGridRows()) {
+
+            int daysLate= Integer.parseInt(((Textbox) row.getChildren().get(7)).getValue());
+            if(daysLate>0) {
+                Double taxableSubtotal = Double.valueOf(((Textbox) row.getChildren().get(8)).getValue()) * daysLate;//DailyRate * DaysLate + 25%
+                if (this.lateFeeSelectionChkbox.isChecked() && this.waiveFeesChkbox.isChecked() == Boolean.FALSE) {
+                    twentyFivePer = taxableSubtotal * 25 / 100;
+                }
+                Double totalSubtotal = BigDecimal.valueOf(taxableSubtotal + twentyFivePer)
+                        .setScale(2, RoundingMode.HALF_UP).doubleValue();
+                ((Textbox) row.getChildren().get(9)).setValue(String.valueOf(totalSubtotal));
+                Double finalTotal = BigDecimal.valueOf(calculateTotalWithTax(row, totalSubtotal))
+                        .setScale(2, RoundingMode.HALF_UP).doubleValue();
+                ((Textbox) row.getChildren().get(11)).setValue(String.valueOf(finalTotal));
+                ((Textbox) row.getChildren().get(12)).setValue(((Textbox) row.getChildren().get(1)).getValue() + " - " + "Days Late "
+                        + "(" + daysLate + ") " + "- " + "Late Fee Daily Rate " + "(" + ((Textbox) row.getChildren().get(8)).getValue() + ")" + " - " + " Late Fee " + finalTotal);
+
+            }
+        }
+        }
 
     /**
      * Gets order entries grid rows.
@@ -1028,33 +1051,26 @@ public class BlOrderBillingController extends DefaultWidgetController {
         ForwardEvent fEvent = (ForwardEvent) forwardEvent.getOrigin();
         InputEvent inputEvent = (InputEvent) fEvent.getOrigin();
         String date = inputEvent.getValue();
+        Double twentyFivePer=0.0;
 
         for (final Component row : this.getLateFreeEntriesGridRows()) {
             try{
-            long daysLate = getDaysBetweenDates(convertStringToDate(((Textbox) row.getChildren().get(3)).getValue()),
-                    convertStringToDate(date));
-                ((Textbox) row.getChildren().get(6)).setValue(String.valueOf(daysLate));
-                Double taxableSubtotal = Double.valueOf(((Textbox) row.getChildren().get(7)).getValue()) * daysLate;//DailyRate * DaysLate + 25%
-                final String[] selectedFeeCheckBox = this.selectedFee.getValue().split("##");
-                Double totalSubtotal=0.0;
-                if(selectedFeeCheckBox[0].equals("lateFeeSelection") && selectedFeeCheckBox[1].equals("true")) {
-                    Double twentyFivePer = taxableSubtotal * 25 / 100;
-                    totalSubtotal = taxableSubtotal + twentyFivePer;
-                }else {
-                    totalSubtotal = taxableSubtotal;
-                }
-                ((Textbox) row.getChildren().get(8)).setValue(String.valueOf(totalSubtotal));
-                ((Textbox) row.getChildren().get(10)).setValue(String.valueOf(totalSubtotal));
-                ((Textbox) row.getChildren().get(11)).setValue(((Textbox) row.getChildren().get(1)).getValue() + " - " + "Days Late "
-                + "("+daysLate+") " + "- " + "Late Fee Daily Rate "+ "("+totalSubtotal+")"+ " - "+" Late Fee "+totalSubtotal);
-                //Sony FX3 - Days Late(1) - Late Fee Daily Rate (263.85) - Late Fee 290.90");
                 if(this.globalRentalEndDateSelect.isChecked() == Boolean.TRUE) {
+
                     long daysLate = getDaysBetweenDates(convertStringToDate(((Textbox) row.getChildren().get(4)).getValue()),
                             convertStringToDate(date));
+                    if (daysLate < 2) {
+                        this.waiveFeesChkbox.setChecked(true);
+                    } else {
+                        this.waiveFeesChkbox.setChecked(false);
+                    }
                     ((Textbox) row.getChildren().get(7)).setValue(String.valueOf(daysLate));
                     ((Textbox) row.getChildren().get(6)).setValue(date);
                     Double taxableSubtotal = Double.valueOf(((Textbox) row.getChildren().get(8)).getValue()) * daysLate;//DailyRate * DaysLate + 25%
-                    Double twentyFivePer = taxableSubtotal * 25 / 100;
+                    if(this.lateFeeSelectionChkbox.isChecked() && this.waiveFeesChkbox.isChecked() == Boolean.FALSE)
+                    {
+                        twentyFivePer = taxableSubtotal * 25 / 100;
+                    }
                     Double totalSubtotal = BigDecimal.valueOf(taxableSubtotal + twentyFivePer)
                             .setScale(2, RoundingMode.HALF_UP).doubleValue();
                     ((Textbox) row.getChildren().get(9)).setValue(String.valueOf(totalSubtotal));
@@ -1064,14 +1080,23 @@ public class BlOrderBillingController extends DefaultWidgetController {
                     ((Textbox) row.getChildren().get(12)).setValue(((Textbox) row.getChildren().get(1)).getValue() + " - " + "Days Late "
                             + "(" + daysLate + ") " + "- " + "Late Fee Daily Rate " + "(" + ((Textbox) row.getChildren().get(8)).getValue() + ")" + " - " + " Late Fee " + finalTotal);
                     //Sony FX3 - Days Late(1) - Late Fee Daily Rate (263.85) - Late Fee 290.90");
+
                 }
                 else{
                     if(((Textbox)inputEvent.getTarget().getParent().getChildren().get(2)).getValue().equals(((Textbox) row.getChildren().get(2)).getValue())) {
                         long daysLate = getDaysBetweenDates(convertStringToDate(((Textbox) row.getChildren().get(4)).getValue()),
                                 convertStringToDate(date));
+                        if (daysLate < 2) {
+                            this.waiveFeesChkbox.setChecked(true);
+                        } else {
+                            this.waiveFeesChkbox.setChecked(false);
+                        }
                         ((Textbox) row.getChildren().get(7)).setValue(String.valueOf(daysLate));
                         Double taxableSubtotal = Double.valueOf(((Textbox) row.getChildren().get(8)).getValue()) * daysLate;//DailyRate * DaysLate + 25%
-                        Double twentyFivePer = taxableSubtotal * 25 / 100;
+                        if(this.lateFeeSelectionChkbox.isChecked() && this.waiveFeesChkbox.isChecked() == Boolean.FALSE)
+                        {
+                            twentyFivePer = taxableSubtotal * 25 / 100;
+                        }
                         Double totalSubtotal = BigDecimal.valueOf(taxableSubtotal + twentyFivePer)
                                 .setScale(2, RoundingMode.HALF_UP).doubleValue();
                         ((Textbox) row.getChildren().get(9)).setValue(String.valueOf(totalSubtotal));
