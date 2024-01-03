@@ -83,7 +83,7 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 			LOG.info("Exception occurred during fetching return order models");
 			e.printStackTrace();
 		}
-		if (!orderModelList.isEmpty())
+		if (orderModelList != null && !orderModelList.isEmpty())
 		{
 			final List<OrderData> orderList = new ArrayList<OrderData>();
 			getBlCompletedOrderPopulator().populate(orderModelList, orderList);

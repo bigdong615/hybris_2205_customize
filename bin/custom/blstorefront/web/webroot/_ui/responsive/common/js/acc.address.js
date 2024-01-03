@@ -9,7 +9,8 @@ ACC.address = {
 		"bindViewAddressBook",
 		"bindToColorboxClose",
 		"showRemoveAddressFromBookConfirmation",
-		"backToListAddresses"
+		"backToListAddresses",
+		"bindSettingDefaultAddress"
 	],
 
 	spinner: $("<img src='" + ACC.config.commonResourcePath + "/images/spinner.gif' />"),
@@ -306,19 +307,7 @@ ACC.address = {
 		$(document).on("click", ".removeAddressFromBookButton", function ()
 		{
 			var addressId = $(this).data("addressId");
-			var popupTitle = $(this).data("popupTitle");
-
-			ACC.colorbox.open(popupTitle,{
-				inline: true,
-				height: false,
-				href: "#popup_confirm_address_removal_" + addressId,
-				onComplete: function ()
-				{
-
-					$(this).colorbox.resize();
-				}
-			});
-
+			document.getElementById("removeAddressLink").href = "remove-address/"+addressId;
 		})
 	},
 
@@ -327,5 +316,136 @@ ACC.address = {
 			var sUrl = $(this).data("backToAddresses");
 			window.location = sUrl;
 		});
-	}
+	},
+	bindSettingDefaultAddress :function(){
+    	$(document).on("click", ".js-set-default-address", function (e)
+                {
+                $("#js-add-address-length-Validation").empty();
+                $("#js-add-address-Validation").empty();
+                $("#js-default-address-Validation").empty();
+                  var url = $(this).val();
+                     $.ajax({
+                    	url: url,
+                    	success: function (result) {
+                    	location.reload();
+                    	}
+                    	});
+                });
+
+           /* This method is written for address form validation*/
+           var count = 0;
+           $(document).on("click", ".js-validate-address-form-data", function (e) {
+           	e.preventDefault();
+           	count = 0;
+           	$('#js-add-address-Validation').html("");
+           	$('#js-add-address-Validation').removeClass('notification notification-error');
+           	$("#js-add-address-length-Validation").empty();
+           	$("#js-add-address-length-Validation").removeClass('notification notification-error');
+                $("#js-add-address-Validation").empty();
+                $("#js-default-address-Validation").empty();
+
+           	// Fetching input form object.
+           	var firstName = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.firstName"]');
+           	var lastName = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.surname"]');
+           	var line1 = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.line1"]');
+           	var townCity = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.townCity"]');
+           	var postcode = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="zip"]');
+           	var regionIso = $('.accountAddressAdd #editAddress').find('.form-group').find('select[id="state"]');
+           	var email = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.email"]');
+           	var phone = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.phone"]');
+             //Validating form data
+           	validateField(firstName.val(), firstName);
+           	validateField(lastName.val(), lastName);
+           	validateField(line1.val(), line1);
+           	validateField(townCity.val(), townCity);
+           	validateField(postcode.val(), postcode);
+           	validateField(regionIso.val(), regionIso);
+           	validateEmail(email.val(), email);
+           	validatePhone(phone.val(), phone);
+           	let checkedStatus = false;
+           	var billing = $('#default-billing-address').is(':checked');
+           	var shipping = $('#default-shipping-address').is(':checked');
+           	if (billing || shipping) {
+           		$('#js-default-address-Validation').removeClass('notification notification-error');
+           		$('#js-default-address-Validation').html("");
+           		checkedStatus = true;
+           	} else {
+           		$('#js-default-address-Validation').addClass('notification notification-error');
+           		$('#js-default-address-Validation').html("Whoops, be sure to select if this is a billing or shipping address.");
+           	}
+           	if(validateFirstNameAndLastName(firstName, lastName))
+           	{
+           		var errorMsg = 'Combined length of First Name and Last Name should not be more than 48 characters';
+           		$('#js-add-address-length-Validation').addClass('notification notification-error');
+              	$('#js-add-address-length-Validation').html(errorMsg);
+    			$('#js-add-address-length-Validation').show();
+    			checkedStatus = false;
+           	}
+           	if (count > 0) {
+           		$('#js-add-address-Validation').addClass('notification notification-error');
+           		$('#js-add-address-Validation').html("You are missing " + count + " required fields.");
+           	} else if (checkedStatus) {
+           		$('#editAddress').submit();
+           	}
+           });
+           
+           function validateFirstNameAndLastName(firstName, lastName)
+		  {
+		  	var isValid = false;
+		  	var flen = firstName.val().length;
+		  	var llen = lastName.val().length;
+		  	
+		  	var totalLength = flen + llen;
+		  	
+		  	if(totalLength > 48)
+		  	{
+		  		firstName.addClass('error');
+		  		lastName.addClass('error');
+		  		firstName.addClass('lengthError');
+		  		lastName.addClass('lengthError');
+		  		isValid = true;
+		  	}
+		  	else
+		  	{
+		  		firstName.removeClass('lengthError');
+		  		lastName.removeClass('lengthError');
+		  		isValid = false;
+		  	}
+		  	return isValid;
+		  }
+
+        /*Validating address field */
+    	function validateField(attribute, fieldName) {
+        	if (attribute && attribute.trim() != '' && attribute.length < 255) {
+        		fieldName.removeClass('error');
+        		return true;
+        	}
+        	fieldName.addClass('error');
+        	count = count + 1;
+        	return false;
+        }
+        /* Validate email data*/
+        function validateEmail(email, fieldName) {
+        	if (email && email.trim() != '' && null != email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+        		fieldName.removeClass('error');
+        		return true;
+        	}
+        	fieldName.addClass('error');
+        	count = count + 1;
+        	return false;
+        }
+        /*Validating phone number*/
+         function validatePhone(phone, fieldName) {
+        	//if (phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
+     	if(phone && phone.trim() != '' && phone.length>=16){
+        		fieldName.removeClass('error');
+        		return true;
+        	}
+        	fieldName.addClass('error');
+        	count = count + 1;
+        	return false;
+        }
+
+    	}
+
 };
