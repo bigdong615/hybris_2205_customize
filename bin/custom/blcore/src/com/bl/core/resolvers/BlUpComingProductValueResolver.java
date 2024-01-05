@@ -1,7 +1,6 @@
 package com.bl.core.resolvers;
 
 import com.bl.core.model.BlProductModel;
-import com.bl.core.stock.BlStockService;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
 import de.hybris.platform.solrfacetsearch.config.exceptions.FieldValueProviderException;
 import de.hybris.platform.solrfacetsearch.indexer.IndexerBatchContext;
@@ -19,7 +18,6 @@ public class BlUpComingProductValueResolver extends
     AbstractValueResolver<BlProductModel, Object, Object> {
 
 
-  private BlStockService blStockService;
   /**
    *
    * @param inputDocument  inputDocument adds field values to solr
@@ -35,14 +33,8 @@ public class BlUpComingProductValueResolver extends
       final ValueResolverContext<Object, Object> valueResolverContext) throws FieldValueProviderException
   {
     inputDocument.addField(indexedProperty, BooleanUtils.isTrue(blProductModel.getForRent())
-        && (CollectionUtils.isEmpty(blProductModel.getSerialProducts())));
+        && CollectionUtils.isEmpty(blProductModel.getSerialProducts()));
   }
 
-  public BlStockService getBlStockService() {
-    return blStockService;
-  }
 
-  public void setBlStockService(BlStockService blStockService) {
-    this.blStockService = blStockService;
-  }
 }
