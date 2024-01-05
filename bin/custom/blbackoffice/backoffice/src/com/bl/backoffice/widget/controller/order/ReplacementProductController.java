@@ -102,6 +102,7 @@ public class ReplacementProductController extends DefaultWidgetController {
 
     @SocketEvent(socketId = IN_SOCKET)
     public void initPartialRefundForm(final OrderModel inputOrder) {
+        sendEmail.setChecked(Boolean.TRUE);
         this.setOrderModel(inputOrder);
         this.getWidgetInstanceManager().setTitle(new StringBuilder(this.getWidgetInstanceManager()
                 .getLabel(TITLE)).append(
