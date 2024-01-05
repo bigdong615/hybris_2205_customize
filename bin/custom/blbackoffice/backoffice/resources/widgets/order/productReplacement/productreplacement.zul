@@ -56,17 +56,14 @@
           </template>
         </rows>
       </grid>
-      <hbox sclass="">
-      <vbox width="150px">
-        <label value="${labels.customersupportbackoffice.replacement.product.send.replacement.email}" width="100%" />
+    <div sclass="oms-widget-billing-firstlist-container"
+         style="display:flex;margin-top:15px;margin-left:8px;column-gap: 10px;">
         <checkbox id="sendEmail" class="oms-widget-cancelorder-list-container__checkbox"/>
-      </vbox>
-      <vbox width="150px">
-        <label value="${labels.customersupportbackoffice.replacement.product.customer.email.notes}" width="100%" />
+      <label value="${labels.customersupportbackoffice.replacement.product.send.replacement.email}" width="15%" />
+        <label value="${labels.customersupportbackoffice.replacement.product.customer.email.notes}" width="15%" style="margin-left:20px;" />
         <textbox sclass="oms-widget-cancelorder-input-text-box"  id="customerEmailNotes" width="190px" />
-      </vbox>
-      </hbox>
     </div>
+   </div>
 
   </hlayout>
 
