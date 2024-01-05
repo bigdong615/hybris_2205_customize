@@ -26,6 +26,7 @@ import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 import com.bl.esp.dto.pendingverification.PendingVerificationEventRequest;
 import com.bl.esp.dto.pendingverification.VerificationReminderEventRequest;
 import com.bl.esp.dto.pickedup.OrderPickedUpEventRequest;
+import com.bl.esp.dto.product.replacement.ProductReplacementEventRequest;
 import com.bl.esp.dto.readyforpickup.OrderReadyForPickupEventRequest;
 import com.bl.esp.dto.refund.OrderRefundEventRequest;
 import com.bl.esp.dto.shipped.OrderShippedEventRequest;
@@ -255,4 +256,6 @@ public interface BlESPEventRestService {
 	 * 
 	 */
 	ESPEventResponseWrapper sendOrderVerificationReminder(VerificationReminderEventRequest verificationReminderEventRequest);
-}
+    ESPEventResponseWrapper sendProductReplacementEsp(ProductReplacementEventRequest productReplacementEventRequest);
+
+    }

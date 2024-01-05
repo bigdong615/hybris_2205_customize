@@ -214,5 +214,7 @@ public interface BlESPEventService {
      void sendOrderPendingVerificationsEvent(final OrderModel orderModel);
      
      void sendOrderVerificationReminderEvent(final OrderModel orderModel);
+    void sendReplacementProductEvent(final OrderModel orderModel,final String oldProductName,final String newProductName,final String customerNotes);
 
-}
+
+    }

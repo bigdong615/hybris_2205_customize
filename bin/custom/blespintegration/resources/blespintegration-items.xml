@@ -44,6 +44,7 @@
 				<value code="ORDER_BILL_PAID" />
 				<value code="VERIFICATION_PENDING"/>
 				<value code="VERIFICATION_REMINDER"/>
+				<value code="PRODUCT_REPLACEMENT"/>
 			</enumtype>
 			<enumtype generate="true" code="ESPEventStatus" autocreate="true" dynamic="true">
 					<value code="SUCCESS"/>
