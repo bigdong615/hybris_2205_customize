@@ -102,6 +102,11 @@
                                      </c:choose>
                                  </div>
                                  </c:when>
+                                 <c:when test="${product.isUnrentable eq 'true' && !product.isBundle}">
+                                 <div id="pickupDelivery">
+                                 <p><span class="arrival"><spring:theme code="pdp.unrentalable.out.of.stock.product.text"/></span></p>
+                                 </div>
+                                 </c:when>
                                 <c:when test="${product.isUpcoming eq 'true' && !product.isBundle}">
                                 <div id="pickupDelivery">
                                   <p><span class="arrival"><spring:theme code="pdp.rental.comming.soon.text"/></span></p>
@@ -181,7 +186,7 @@
                                 </c:when>
                                 <c:otherwise>
                                    <c:choose>
-                                  		<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
+                                  		<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' || product.isUnrentable eq 'true'}">
                                   				<button id="addToCartButton" type="submit"
                                   					  class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn "
                                   					  aria-disabled="true" disabled="disabled">

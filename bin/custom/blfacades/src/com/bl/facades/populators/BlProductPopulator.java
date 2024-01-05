@@ -116,7 +116,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         if (productService.isAquatechProduct(source)) {
           target.setIsUpcoming(false);
         } else if(CollectionUtils.isNotEmpty(source.getSerialProducts()) && source.getSerialProducts().stream().allMatch(serial -> getBlStockService().isInactiveStatus(serial.getSerialStatus()))){
-          target.setIsUpcoming(true);
+            target.setIsUnrentable(true);
         }
         else {
             target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
