@@ -35,9 +35,7 @@ public class BlUpComingProductValueResolver extends
       final ValueResolverContext<Object, Object> valueResolverContext) throws FieldValueProviderException
   {
     inputDocument.addField(indexedProperty, BooleanUtils.isTrue(blProductModel.getForRent())
-        && (CollectionUtils.isEmpty(blProductModel.getSerialProducts()) ||
-            (CollectionUtils.isNotEmpty(blProductModel.getSerialProducts()) &&
-                    blProductModel.getSerialProducts().stream().allMatch(serial -> getBlStockService().isInactiveStatus(serial.getSerialStatus())))));
+        && (CollectionUtils.isEmpty(blProductModel.getSerialProducts())));
   }
 
   public BlStockService getBlStockService() {
