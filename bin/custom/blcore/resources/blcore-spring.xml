@@ -1643,6 +1643,7 @@
 		<property name="blOrderBillPaidReceiptRequestPopulator" ref="blOrderBillPaidReceiptRequestPopulator"/>
 		<property name="blOrderPendingVerificationsPopulator" ref="blOrderPendingVerificationsPopulator"/>
 		<property name="blOrderVerificationReminderPopulator" ref="blOrderVerificationReminderPopulator"/>
+		<property name="blReplacementProductRequestPopulator" ref="blReplacementProductRequestPopulator"/>
 	</bean>
 
 
@@ -2385,5 +2386,6 @@
 		<property name="defaultBlOrderFeedFTPService" ref="defaultBlOrderFeedFTPService"/>
 		<property name="orderDao" ref="orderDao"/>
 	</bean>
-	
+	<bean id="blReplacementProductRequestPopulator"  parent="espEventCommonPopulator" class="com.bl.core.esp.populators.BlReplacementProductRequestPopulator">
+	</bean>
 </beans>

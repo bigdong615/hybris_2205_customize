@@ -8,6 +8,8 @@ import com.bl.core.enums.ConsignmentEntryStatusEnum;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.NotesEnum;
 import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.esp.service.BlESPEventService;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
@@ -68,6 +70,10 @@ public class ReplacementProductController extends DefaultWidgetController {
     private Grid serialEntries;
     @Wire
     private Combobox reason;
+    @Wire
+    private  Checkbox sendEmail;
+    @Wire
+    private Textbox customerEmailNotes;
 
     @WireVariable
     private transient ModelService modelService;
@@ -90,6 +96,9 @@ public class ReplacementProductController extends DefaultWidgetController {
     private UnitService unitService;
     @Resource(name = "blBackOfficePriceService")
     private BlBackOfficePriceService blBackOfficePriceService;
+
+    @Resource
+    private DefaultBlESPEventService blEspEventService;
 
     @SocketEvent(socketId = IN_SOCKET)
     public void initPartialRefundForm(final OrderModel inputOrder) {
@@ -354,7 +363,7 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
      return entryModel;
  }
 
-    /**
+  /**
      * This method used to create new consignment entry.
      * @param newSerial
      * @param consignment
@@ -629,7 +638,7 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
         notesModel.setUserID(orderModel.getUser().getUid());
        modelService.save(notesModel);
        BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Created order notes {}: {} :for the order {}",notesModel.getPk(),replacementNotes,orderModel.getCode());
-        if (CollectionUtils.isNotEmpty(orderModel.getOrderNotes()))
+       if (CollectionUtils.isNotEmpty(orderModel.getOrderNotes()))
         {
             final List<NotesModel> allOrderNotes = Lists.newArrayList(orderModel.getOrderNotes());
             allOrderNotes.add(notesModel);
@@ -641,6 +650,9 @@ consignmentEntry.setConsignmentEntryStatus(statusMaps);
         }
  modelService.save(orderModel);
         modelService.refresh(orderModel);
+        if( sendEmail.isChecked()){
+            getBlEspEventService().sendReplacementProductEvent(orderModel,productData.getOldSerial().getBlProduct().getName(),newSerial.getBlProduct().getName(),customerEmailNotes.getValue());
+        }
     }
 
     /**
@@ -780,5 +792,12 @@ modelService.refresh(oldConsEntry);
 
     public void setOrderModel(OrderModel orderModel) {
         this.orderModel = orderModel;
+    }
+    public DefaultBlESPEventService getBlEspEventService() {
+        return blEspEventService;
+    }
+
+    public void setBlEspEventService(DefaultBlESPEventService blEspEventService) {
+        this.blEspEventService = blEspEventService;
     }
 }

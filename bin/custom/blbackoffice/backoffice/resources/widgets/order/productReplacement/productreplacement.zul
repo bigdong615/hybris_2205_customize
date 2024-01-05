@@ -56,6 +56,16 @@
           </template>
         </rows>
       </grid>
+      <hbox sclass="">
+      <vbox width="150px">
+        <label value="${labels.customersupportbackoffice.replacement.product.send.replacement.email}" width="100%" />
+        <checkbox id="sendEmail" class="oms-widget-cancelorder-list-container__checkbox"/>
+      </vbox>
+      <vbox width="150px">
+        <label value="${labels.customersupportbackoffice.replacement.product.customer.email.notes}" width="100%" />
+        <textbox sclass="oms-widget-cancelorder-input-text-box"  id="customerEmailNotes" width="190px" />
+      </vbox>
+      </hbox>
     </div>
 
   </hlayout>
