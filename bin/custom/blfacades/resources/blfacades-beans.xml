@@ -185,7 +185,6 @@
 		<property name="categoriesList"
 		          type="java.util.Collection&lt;de.hybris.platform.commercefacades.product.data.CategoryData>"/>	
 	    <property name="productBreadcrumbData" type="java.util.List&lt;String>"/>	
-		<property name="primaryKey" type="java.lang.String"/>		
 	    <property name="isUnrentable" type="Boolean"/>
   </bean>
     
