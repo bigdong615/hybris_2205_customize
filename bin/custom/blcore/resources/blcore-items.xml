@@ -1475,6 +1475,12 @@
                         <modifiers read="true" write="true" optional="true"/>
                         <description>Primary Category Linked to the product</description>
                     </attribute>
+                    <attribute qualifier="signatureAlwaysRequired" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Signature Always Required for product</description>
+                    </attribute>
                 </attributes>
             </itemtype>
             <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
@@ -3440,7 +3446,18 @@
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                         <description>This flag will help to identify if order has a difference to capture</description>
                     </attribute>
-
+                    <attribute qualifier="signatureRequired" type="boolean">
+                        <persistence type="property" />
+                        <description>Signature Required</description>
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="signatureRequiredFee" type="java.lang.Double">
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Signature Required Fee</description>
+                        <persistence type="property" />
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
                 </attributes>
 
             </itemtype>
@@ -4098,6 +4115,18 @@
                         <modifiers read="true" write="true" search="true" />
                         <description> This is contain all the serial status for which need to remove serial from future consignment</description>
                         <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="signatureRequiredEquipMinimum" type="java.lang.Double">
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Signature Required Equip Minimum</description>
+                        <persistence type="property" />
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="signatureRequiredFee" type="java.lang.Double">
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Signature Required Fee</description>
+                        <persistence type="property" />
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>
