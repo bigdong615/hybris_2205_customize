@@ -182,6 +182,7 @@
 		<property name="europe1PriceFactory_PTG" type="java.lang.String"/>
 		<property name="visibleOnStoreFront" type="boolean"/>
 		<property name="primaryKey" type="java.lang.String"/>		
+	    <property name="isUnrentable" type="Boolean"/>
   </bean>
     
 	<bean class="com.bl.facades.product.data.GenderData">
@@ -492,7 +493,8 @@
        	<property name="createdTS" type="java.util.Date"/>
 	  	<property name="modifiedTS" type="java.util.Date"/>
 	  	<property name="totalitemsqty" type="java.lang.Double"/>
-	  <property name="freeRentalDates" type="java.util.List&lt;java.lang.String>" />
+	  	<property name="freeRentalDates" type="java.util.List&lt;java.lang.String>" />
+	  	<property name="signatureRequiredFee" type="java.lang.Double"/>
   </bean>
   
   	<bean class="de.hybris.platform.commercefacades.order.data.OrderData" extends="de.hybris.platform.commercefacades.order.data.AbstractOrderData">

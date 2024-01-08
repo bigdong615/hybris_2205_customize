@@ -127,7 +127,7 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			target.setGiftCardData(blGiftCardDataList);
 		}
 		target.setIsRetailGearOrder(BooleanUtils.isTrue(source.getIsRetailGearOrder()));
-
+		target.setSignatureRequiredFee(source.getSignatureRequiredFee());
 		Set<PromotionResultModel> results = source.getAllPromotionResults();
 		for (PromotionResultModel result : results) {
 			String code = result.getPromotion().getCode();

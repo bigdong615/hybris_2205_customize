@@ -51,6 +51,7 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.AddressTypeEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.blackout.BlBlackoutDateService;
 import com.bl.core.services.cart.BlCartService;
@@ -171,6 +172,21 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             Objects.nonNull(cartModel.getReturnRequestForOrder())){
             model.addAttribute("isReplacementOrderCart" , true);
         }
+		  baseStoreService.getCurrentBaseStore().getSignatureRequiredEquipMinimum();
+		  if(cartData.getTotalPrice().getValue().doubleValue() >= baseStoreService.getCurrentBaseStore().getSignatureRequiredEquipMinimum() || isSignatureAlwaysRequired(cartModel)) {
+			  model.addAttribute("signatureRequiredMandatory", true);
+		  }
+		  else {
+			  model.addAttribute("signatureRequiredMandatory", false);
+		  }
+		  final Double signatureRequiredFee = baseStoreService.getCurrentBaseStore().getSignatureRequiredFee();
+		  if (signatureRequiredFee != null)
+		  {
+			  model.addAttribute("signatureRequiredFee", signatureRequiredFee);
+		  }
+		  else {
+			  model.addAttribute("signatureRequiredFee", 0);
+		  }
 
         model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 
@@ -180,6 +196,10 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             getSessionService().removeAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION);
         }
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
+    }
+
+    private boolean isSignatureAlwaysRequired(final CartModel cartModel) {
+   	return cartModel.getEntries().stream().anyMatch(entry -> (((BlProductModel)entry.getProduct()).getSignatureAlwaysRequired() != null && ((BlProductModel)entry.getProduct()).getSignatureAlwaysRequired()));
     }
 
     /**
@@ -395,6 +415,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                                           @RequestParam("deliveryMode") final String deliveryMode,
                                           @RequestParam("rushZip") final String rushZip,
                                           @RequestParam("businessType") final boolean businessType,
+                                          @RequestParam("signatureRequired") final boolean signatureRequired,
                                           final RedirectAttributes redirectAttributes) {
         final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
         if (getCheckoutStep().checkIfValidationErrors(validationResults)) {
@@ -411,6 +432,10 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                     return pinError;
                 }
                 setDeliveryAddress(selectedAddressData);
+                if(signatureRequired) {
+               	 checkoutFacade.setSignatureRequired(baseStoreService.getCurrentBaseStore().getSignatureRequiredFee());
+                }
+
             }
         }
         return SUCCESS;

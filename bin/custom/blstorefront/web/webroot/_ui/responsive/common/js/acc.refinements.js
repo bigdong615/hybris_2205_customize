@@ -13,6 +13,7 @@ ACC.refinements = {
 
 
 	init:function(){
+		/* BL-1329: Remove site for asking to enable location popup.
 		navigator.geolocation.getCurrentPosition(
 			function (position){
 				ACC.refinements.coords = position.coords;
@@ -21,7 +22,7 @@ ACC.refinements = {
 			{
 				console.log("An error occurred... The error code and message are: " + error.code + "/" + error.message);    // NOSONAR
 			}
-		);
+		);*/
 
 	},
 

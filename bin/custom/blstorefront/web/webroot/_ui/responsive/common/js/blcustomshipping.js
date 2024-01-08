@@ -223,6 +223,7 @@ function reverseTraverseOnShipping() {
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
       var businessType = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').find(':selected').attr('businesstype');
+      var signatureRequired = $('#signatureRequired').is(':checked') 
       if(typeof businessType == "string") {
         businessType = JSON.parse(businessType);
       }
@@ -240,7 +241,7 @@ function reverseTraverseOnShipping() {
 			}
 			else
 			{
-              saveSelectedAddress($('select[id="ship-it-savedAddresses"]').val(), 'SHIP_HOME_HOTEL_BUSINESS', deliveryMode, null, businessType);
+              saveSelectedAddress($('select[id="ship-it-savedAddresses"]').val(), 'SHIP_HOME_HOTEL_BUSINESS', deliveryMode, null, businessType,signatureRequired);
 	         } 
 	} else {
               var firstName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
@@ -1815,7 +1816,7 @@ function reverseTraverseOnShipping() {
     document.getElementById('ship-it-am-notification').scrollIntoView();
  }
 
- function saveSelectedAddress(selectedAddress, shippingGroup, deliveryMode, rushZip, businessType) {
+ function saveSelectedAddress(selectedAddress, shippingGroup, deliveryMode, rushZip, businessType, signatureRequired) {
      $.ajax({
          url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/selectAddress',
          data: {
@@ -1823,7 +1824,8 @@ function reverseTraverseOnShipping() {
              shippingGroup: shippingGroup,
              deliveryMode: deliveryMode,
              rushZip: rushZip,
-             businessType: businessType
+             businessType: businessType,
+             signatureRequired: signatureRequired
          },
          type: "GET",
          beforeSend: function(){
@@ -2189,6 +2191,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
       var businessType = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').find(':selected').attr('businesstype');
+      var signatureRequired = $('#signatureRequired:checked').val();
       if(typeof businessType == "string") {
         businessType = JSON.parse(businessType);
       }
@@ -2200,7 +2203,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
       if(checkAvailability(deliveryMode))
       {
           if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
-              saveSelectedAddressForReplacementOrder($('select[id="ship-it-savedAddresses"]').val(), 'SHIP_HOME_HOTEL_BUSINESS', deliveryMode, null, businessType);
+              saveSelectedAddressForReplacementOrder($('select[id="ship-it-savedAddresses"]').val(), 'SHIP_HOME_HOTEL_BUSINESS', deliveryMode, null, businessType, signatureRequired);
           } else {
               var firstName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
               var lastName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]');
@@ -2218,7 +2221,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
                         $('#showErrorForInvalidPhoneInputValidation').css('display') == "none") {
                   addressValidationServiceForOrderReplacement(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
                                                                      'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
-                                                                     phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP', businessType);
+                                                                     phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP', businessType,signatureRequired);
                   }
               } else {
                   showErrorForInputValidation('Ship');
@@ -2273,7 +2276,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
   }
 
 
-   function saveSelectedAddressForReplacementOrder(selectedAddress, shippingGroup, deliveryMode, rushZip, businessType) {
+   function saveSelectedAddressForReplacementOrder(selectedAddress, shippingGroup, deliveryMode, rushZip, businessType, signatureRequired) {
        $.ajax({
            url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/selectReplacementAddress',
            data: {
@@ -2281,7 +2284,8 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
                shippingGroup: shippingGroup,
                deliveryMode: deliveryMode,
                rushZip: rushZip,
-               businessType: businessType
+               businessType: businessType,
+               signatureRequired:signatureRequired
            },
            type: "GET",
            beforeSend: function(){
@@ -2408,7 +2412,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
                  },
                  success: function (data) {
                       if(data == 'SUCCESS') {
-                          saveSelectedAddressForReplacementOrder(savedAddress, $('#same-day-select-box').val(), deliveryMode, $('#sameDayZipCheckText').val(), false);
+                          saveSelectedAddressForReplacementOrder(savedAddress, $('#same-day-select-box').val(), deliveryMode, $('#sameDayZipCheckText').val(), false, false);
                       }
                  },
                  error: function (data) {

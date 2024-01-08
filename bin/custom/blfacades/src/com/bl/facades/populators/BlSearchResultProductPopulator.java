@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.stock.BlStockService;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -85,6 +86,8 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private BlSearchResultDomoProductPopulator blSearchResultDomoProductPopulator;
   private SessionService sessionService;
   private SearchRestrictionService searchRestrictionService;
+
+  private BlStockService blStockService;
   /**
    * this method is created for populating values from source to target
    *
@@ -322,6 +325,12 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
                 target.setDisableButton(Boolean.TRUE);
               }
             }
+              if(CollectionUtils.isNotEmpty(blProductModel.getSerialProducts()) &&
+                      blProductModel.getSerialProducts().stream().allMatch(serial -> getBlStockService().isInactiveStatus(serial.getSerialStatus())))
+              {
+                target.setDisableButton(Boolean.TRUE);
+              }
+
 
           } else {
             target.setNextAvailableDate(StringUtils.EMPTY);
@@ -715,6 +724,12 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
   public void setSearchRestrictionService(final SearchRestrictionService searchRestrictionService)
   {
 	  this.searchRestrictionService = searchRestrictionService;
+  }
+  public BlStockService getBlStockService() {
+    return blStockService;
+  }
+  public void setBlStockService(BlStockService blStockService) {
+    this.blStockService = blStockService;
   }
 
 }
