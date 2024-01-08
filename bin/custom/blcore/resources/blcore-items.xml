@@ -3459,7 +3459,6 @@
                         <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                 </attributes>
-
             </itemtype>
 
             <!--Added New attribute to identify the order for replacement in Return Request . -->
