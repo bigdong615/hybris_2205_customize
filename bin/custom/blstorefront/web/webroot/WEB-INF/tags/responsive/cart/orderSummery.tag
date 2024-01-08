@@ -140,6 +140,21 @@
 				<input type="hidden" class="cart-cost" id="${cartData.deliveryCost.formattedValue}">
 			</tr>
 			<tr>
+			 <td class="gray80">
+			 	<spring:theme code="basket.page.delivery.signature.required"/>
+			 </td>
+			 <td class="text-end" id="signatureRequired">
+			     <c:choose>
+	                 <c:when test="${pageType =='paymentPage'}">
+	                     <format:price priceData="${cartData.signatureRequiredFee}" />
+	                 </c:when>
+	                 <c:otherwise>
+	                     <format:blPrice priceData="${cartData.signatureRequiredFee}" />
+	                 </c:otherwise>
+	             </c:choose>
+			  </td>
+			</tr>
+			<tr>
 				<td class="gray80">
 				    <c:choose>
                         <c:when test="${pageType =='paymentPage'}">
