@@ -1,5 +1,44 @@
 package com.bl.facades.shipping.impl;
 
+import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
+import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
+import de.hybris.platform.commercefacades.order.data.CartData;
+import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
+import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
+import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
+import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
+import de.hybris.platform.core.model.c2l.CurrencyModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
+import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.servicelayer.dto.converter.Converter;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.PredicateUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
@@ -35,41 +74,6 @@ import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.transaction.service.impl.BrainTreeTransactionServiceImpl;
 import com.google.common.collect.Lists;
-import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
-import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
-import de.hybris.platform.commercefacades.order.data.CartData;
-import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
-import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
-import de.hybris.platform.commercefacades.product.data.PriceData;
-import de.hybris.platform.commercefacades.product.data.PriceDataType;
-import de.hybris.platform.commercefacades.user.data.AddressData;
-import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
-import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
-import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
-import de.hybris.platform.core.model.c2l.CurrencyModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.CartModel;
-import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
-import de.hybris.platform.core.model.user.AddressModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
-import de.hybris.platform.servicelayer.dto.converter.Converter;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections4.PredicateUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  * {javadoc}
@@ -88,7 +92,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
     @Resource(name = "upsAddressValidatorService")
     BlUPSAddressValidatorService blUPSAddressValidatorService;
-    
+
  	 @Resource(name = "brainTreeTransactionService")
  	 private BrainTreeTransactionServiceImpl brainTreeTransactionService;
 
@@ -114,7 +118,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
 
     private Collection<ShippingGroupModel> sortModelsOnShippingGroupType(final Collection<ShippingGroupModel> shippingGroupModels) {
-        Collection<ShippingGroupModel> allGroupModels = new ArrayList<>();
+        final Collection<ShippingGroupModel> allGroupModels = new ArrayList<>();
 
         final Collection<ShippingGroupModel> fastGroupModels = shippingGroupModels.stream().filter(model ->
                 ShippingTypeEnum.FAST.getCode().equals(model.getShippingType().getCode())).collect(Collectors.toList());
@@ -284,7 +288,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      * @param payByCustomer flag
      * @return collection of RushDeliveryData
      */
-    private Collection<BlRushDeliveryModeData> getBlRushDeliveryModeData(String rentalStart, boolean payByCustomer) {
+    private Collection<BlRushDeliveryModeData> getBlRushDeliveryModeData(final String rentalStart, final boolean payByCustomer) {
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG);
         final int result = getBlZoneDeliveryModeService().checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(
                 BlDeliveryModeLoggingConstants.ZONE_EST, new Date()), rentalStart);
@@ -300,14 +304,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             return Collections.emptyList();
         }
     }
-    
-    
+
+
     /**
     *
     * @param payByCustomer flag
     * @return collection of RushDeliveryData
     */
-   private Collection<BlRushDeliveryModeData> getBlRushDeliveryModeDataForUsedGear(boolean payByCustomer) {
+   private Collection<BlRushDeliveryModeData> getBlRushDeliveryModeDataForUsedGear(final boolean payByCustomer) {
        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG_FOR_USEDGEAR);
        final Collection<BlRushDeliveryModeData> blRushDeliveryModeData = getBlRushDeliveryModesForUsedGear(BlDeliveryModeLoggingConstants.NYC,payByCustomer);
        return CollectionUtils.isNotEmpty(blRushDeliveryModeData) ? blRushDeliveryModeData : Collections.emptyList();
@@ -323,11 +327,11 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 .getAllShipToHomeDeliveryModesWithRentalDates(rentalStart, rentalEnd, payByCustomer);
         if (CollectionUtils.isNotEmpty(deliveryModeModels)) {
             final Collection<ZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
-            for (ZoneDeliveryModeModel zoneDeliveryModeModel : deliveryModeModels) {
+            for (final ZoneDeliveryModeModel zoneDeliveryModeModel : deliveryModeModels) {
                 final ZoneDeliveryModeData zoneDeliveryModeData = getZoneDeliveryModeConverter().convert(zoneDeliveryModeModel);
                 if (null != zoneDeliveryModeData) {
                     zoneDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(
-                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel((AbstractOrderModel) getCart(), zoneDeliveryModeModel)),
+                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel(getCart(), zoneDeliveryModeModel)),
                             getCart().getCurrency().getIsocode()));
                     resultDeliveryData.add(zoneDeliveryModeData);
                 }
@@ -346,11 +350,11 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 .getAllShipToHomeDeliveryModesWithoutRentalDates(payByCustomer);
         if (CollectionUtils.isNotEmpty(deliveryModeModels)) {
             final Collection<ZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
-            for (ZoneDeliveryModeModel zoneDeliveryModeModel : deliveryModeModels) {
+            for (final ZoneDeliveryModeModel zoneDeliveryModeModel : deliveryModeModels) {
                 final ZoneDeliveryModeData zoneDeliveryModeData = getZoneDeliveryModeConverter().convert(zoneDeliveryModeModel);
                 if (null != zoneDeliveryModeData) {
                     zoneDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(
-                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel((AbstractOrderModel) getCart(), zoneDeliveryModeModel)),
+                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel(getCart(), zoneDeliveryModeModel)),
                             getCart().getCurrency().getIsocode()));
                     resultDeliveryData.add(zoneDeliveryModeData);
                 }
@@ -360,7 +364,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return Collections.emptyList();
     }
 
-    
+
     /**
      * {@inheritDoc}
      *
@@ -376,31 +380,31 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public Collection<BlPickUpZoneDeliveryModeData> getAllUSPStoreDeliveryModes(final String rentalStart, final String rentalEnd,final boolean payByCustomer) {
-                                                                                
+
         final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeService()
                 .getAllPartnerPickUpDeliveryModesWithRentalDatesForUPSStore(rentalStart, rentalEnd, payByCustomer);
         if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
             final Collection<BlPickUpZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
-            for (BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
+            for (final BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
                 getResultantPartnerDeliveryMethods(resultDeliveryData, blPickUpZoneDeliveryModeModel);
             }
             return resultDeliveryData;
         }
         return Collections.emptyList();
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Collection<BlPickUpZoneDeliveryModeData> getAllUSPStoreDeliveryModesForUsedGear(final boolean payByCustomer) {
-                                                                                
+
         final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeService()
                 .getAllPartnerPickUpDeliveryModesWithoutRentalDatesForUPSStore(payByCustomer);
         if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
             final Collection<BlPickUpZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
-            for (BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
+            for (final BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
                 getResultantPartnerDeliveryMethods(resultDeliveryData, blPickUpZoneDeliveryModeModel);
             }
             return resultDeliveryData;
@@ -420,18 +424,18 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                     partnerZone, rentalStart, rentalEnd, payByCustomer);
             if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
                 final Collection<BlPickUpZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
-                for (BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
+                for (final BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
                     getResultantPartnerDeliveryMethods(resultDeliveryData, blPickUpZoneDeliveryModeModel);
                 }
                 return resultDeliveryData;
             }
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while parsing dates ", e);
         }
         return Collections.emptyList();
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -443,12 +447,12 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                     partnerZone,payByCustomer);
             if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
                 final Collection<BlPickUpZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
-                for (BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
+                for (final BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
                     getResultantPartnerDeliveryMethods(resultDeliveryData, blPickUpZoneDeliveryModeModel);
                 }
                 return resultDeliveryData;
             }
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while parsing dates ", e);
         }
         return Collections.emptyList();
@@ -466,12 +470,12 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 partnerZone,payByCustomer);
             if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
                 final Collection<BlPickUpZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
-                for (BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
+                for (final BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
                     getResultantPartnerDeliveryMethods(resultDeliveryData, blPickUpZoneDeliveryModeModel);
                 }
                 return resultDeliveryData;
             }
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while parsing dates ", e);
         }
         return Collections.emptyList();
@@ -487,7 +491,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         final BlPickUpZoneDeliveryModeData zoneDeliveryModeData = getBlPickUpZoneDeliveryModeConverter().convert(blPickUpZoneDeliveryModeModel);
         if (null != zoneDeliveryModeData) {
             zoneDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(
-                    getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel((AbstractOrderModel) getCart(), blPickUpZoneDeliveryModeModel)),
+                    getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel(getCart(), blPickUpZoneDeliveryModeModel)),
                     getCart().getCurrency().getIsocode()));
             resultDeliveryData.add(zoneDeliveryModeData);
         }
@@ -504,11 +508,11 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 deliveryMode, pstCutOffTime, getRentalStartDate(), getRentalEndDate(), payByCustomer);
         if (CollectionUtils.isNotEmpty(blRushDeliveryModeModels)) {
             final Collection<BlRushDeliveryModeData> resultDeliveryData = new ArrayList<>();
-            for (BlRushDeliveryModeModel blRushDeliveryModeModel : blRushDeliveryModeModels) {
+            for (final BlRushDeliveryModeModel blRushDeliveryModeModel : blRushDeliveryModeModels) {
                 final BlRushDeliveryModeData blRushDeliveryModeData = getBlRushDeliveryModeConverter().convert(blRushDeliveryModeModel);
                 if (null != blRushDeliveryModeData) {
                     blRushDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(
-                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel((AbstractOrderModel) getCart(), blRushDeliveryModeModel)),
+                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel(getCart(), blRushDeliveryModeModel)),
                             getCart().getCurrency().getIsocode()));
                     resultDeliveryData.add(blRushDeliveryModeData);
                 }
@@ -523,16 +527,16 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public Collection<BlRushDeliveryModeData> getBlRushDeliveryModesForUsedGear(final String deliveryMode,final boolean payByCustomer) {
-   
+
    	 final Collection<BlRushDeliveryModeModel> blRushDeliveryModeModels = getBlZoneDeliveryModeService().getBlRushDeliveryModesForUsedGear(
                 deliveryMode, payByCustomer);
         if (CollectionUtils.isNotEmpty(blRushDeliveryModeModels)) {
             final Collection<BlRushDeliveryModeData> resultDeliveryData = new ArrayList<>();
-            for (BlRushDeliveryModeModel blRushDeliveryModeModel : blRushDeliveryModeModels) {
+            for (final BlRushDeliveryModeModel blRushDeliveryModeModel : blRushDeliveryModeModels) {
                 final BlRushDeliveryModeData blRushDeliveryModeData = getBlRushDeliveryModeConverter().convert(blRushDeliveryModeModel);
                 if (null != blRushDeliveryModeData) {
                     blRushDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(
-                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel((AbstractOrderModel) getCart(), blRushDeliveryModeModel)),
+                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel(getCart(), blRushDeliveryModeModel)),
                             getCart().getCurrency().getIsocode()));
                     resultDeliveryData.add(blRushDeliveryModeData);
                 }
@@ -658,7 +662,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 getModelService().refresh(cartModel);
             }
             return BlFacadesConstants.RESULT_SUCCESS;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
             return "FAILURE";
         }
@@ -783,7 +787,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 .getSelectedToDate() : null;
     }
 
-    
+
  	/**
  	 * {@inheritDoc}
  	 */
@@ -793,7 +797,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
  	{
  		return getBlZoneDeliveryModeService().getAllBlDeliveryModes();
  	}
- 	
+
  	/**
 	 * {@inheritDoc}
 	 */
@@ -802,7 +806,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 	{
 		final CartModel cartModel = getCart();
 		if(BooleanUtils.isTrue(cartModel.getIsRentalOrder()))
-		{	
+		{
 		final DeliveryModeModel deliveryModeModel = getDeliveryService().getDeliveryModeForCode(deliveryModeCode);
 		return Objects.nonNull(deliveryModeModel) && deliveryModeModel instanceof ZoneDeliveryModeModel
 				? getBlZoneDeliveryModeService().checkCartEntriesAvailability(getRentalStartDate(), getRentalEndDate(),
@@ -814,7 +818,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 			return Boolean.TRUE;
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -837,7 +841,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 					lDeliveryModeAndGroupCode.add(shippingGroupCode);
 				}
 				return getBlZoneDeliveryModeService().isShippingOnBlackoutDate(lDeliveryModeAndGroupCode);
-			}	
+			}
 			return Boolean.FALSE;
 		}
 		return Boolean.FALSE;
@@ -851,7 +855,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         if (getBrainTreeCheckoutFacade().getCartService() != null) {
             final CartModel cartModel = getBrainTreeCheckoutFacade().getCartService()
                 .getSessionCart();
-            List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
+            final List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
             if (CollectionUtils.isNotEmpty(giftCardModelList)) {
                 final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
                 commerceCartParameter.setCart(cartModel);
@@ -875,11 +879,11 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     private List<String> getRemovedGiftCardCodes(final CartModel cartModel,
         final List<GiftCardModel> giftCardModelList) {
         List<GiftCardMovementModel> giftCardMovementModelList;
-        List<String> giftCardCodeList = new ArrayList<>();
-        for (GiftCardModel giftCardModel : giftCardModelList) {
+        final List<String> giftCardCodeList = new ArrayList<>();
+        for (final GiftCardModel giftCardModel : giftCardModelList) {
             giftCardMovementModelList = giftCardModel.getMovements();
             if (Double.compare(giftCardModel.getBalance(), 0) == 0 && getCheckoutFacade().isCommittedMovement(giftCardMovementModelList)) {
-                String removedGiftCardCode = getCheckoutFacade()
+                final String removedGiftCardCode = getCheckoutFacade()
                     .removeGiftCardFromCart(giftCardModel.getCode(), cartModel);
                 if (StringUtils.isNotEmpty(removedGiftCardCode)) {
                     giftCardCodeList.add(removedGiftCardCode);
@@ -897,7 +901,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         final List<GiftCardMovementModel> giftCardMovementModelList) {
         boolean committedMovement = true;
         if (CollectionUtils.isNotEmpty(giftCardMovementModelList)) {
-            for (GiftCardMovementModel giftCardMovementModel : giftCardMovementModelList) {
+            for (final GiftCardMovementModel giftCardMovementModel : giftCardMovementModelList) {
                 if (Boolean.FALSE.equals(giftCardMovementModel.getCommitted())) {
                     committedMovement = false;
                     break;
@@ -933,7 +937,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
    public boolean createAuthorizationTransactionOfOrderForGiftCardPurchase(final AbstractOrderModel cartModel, final BigDecimal amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo){
-   	 
+
    	 return getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(cartModel,amountToAuthorize, submitForSettlement, paymentInfo);
     }
     /**
@@ -990,7 +994,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     public void updateOrderTypes() {
         blCartService.updateOrderTypes();
 }
-  
+
   /**
    * It saves Gift Card Purchase Form
    * @param GiftCardPurchaseForm the giftCardPurchaseForm
@@ -1018,6 +1022,15 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
       }
    }
 
+	@Override
+	public void setSignatureRequired(final double value)
+	{
+		final CartModel cartModel = getCartService().getSessionCart();
+		cartModel.setSignatureRequiredFee(value);
+		getModelService().save(cartModel);
+		getModelService().refresh(cartModel);
+	}
+
     /**
      * Gets the price value.
      *
@@ -1030,7 +1043,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
   	  }
   	  return BigDecimal.valueOf(0.0d);
   	}
-    
+
     /**
      * Gets the price data object for provided price.
      *
@@ -1048,14 +1061,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
    	 catch(final Exception exception) {
    		 BlLogger.logMessage(LOG, Level.ERROR, "Error while converting price to PriceData object", exception);
    		 throw exception;
-   	 }   	 
+   	 }
     }
 
     public BlDeliveryModeService getBlZoneDeliveryModeService() {
         return blDeliveryModeService;
     }
 
-    public void setBlZoneDeliveryModeService(BlDeliveryModeService blDeliveryModeService) {
+    public void setBlZoneDeliveryModeService(final BlDeliveryModeService blDeliveryModeService) {
         this.blDeliveryModeService = blDeliveryModeService;
     }
 
@@ -1063,7 +1076,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return blZoneDeliveryModeConverter;
     }
 
-    public void setBlZoneDeliveryModeConverter(Converter<ZoneDeliveryModeModel, ZoneDeliveryModeData> blZoneDeliveryModeConverter) {
+    public void setBlZoneDeliveryModeConverter(final Converter<ZoneDeliveryModeModel, ZoneDeliveryModeData> blZoneDeliveryModeConverter) {
         this.blZoneDeliveryModeConverter = blZoneDeliveryModeConverter;
     }
 
@@ -1071,7 +1084,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return blPickUpZoneDeliveryModeConverter;
     }
 
-    public void setBlPickUpZoneDeliveryModeConverter(Converter<BlPickUpZoneDeliveryModeModel, BlPickUpZoneDeliveryModeData> blPickUpZoneDeliveryModeConverter) {
+    public void setBlPickUpZoneDeliveryModeConverter(final Converter<BlPickUpZoneDeliveryModeModel, BlPickUpZoneDeliveryModeData> blPickUpZoneDeliveryModeConverter) {
         this.blPickUpZoneDeliveryModeConverter = blPickUpZoneDeliveryModeConverter;
     }
 
@@ -1079,7 +1092,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return blRushDeliveryModeConverter;
     }
 
-    public void setBlRushDeliveryModeConverter(Converter<BlRushDeliveryModeModel, BlRushDeliveryModeData> blRushDeliveryModeConverter) {
+    public void setBlRushDeliveryModeConverter(final Converter<BlRushDeliveryModeModel, BlRushDeliveryModeData> blRushDeliveryModeConverter) {
         this.blRushDeliveryModeConverter = blRushDeliveryModeConverter;
     }
 
@@ -1087,7 +1100,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return blShippingGroupConverter;
     }
 
-    public void setBlShippingGroupConverter(Converter<ShippingGroupModel, BlShippingGroupData> blShippingGroupConverter) {
+    public void setBlShippingGroupConverter(final Converter<ShippingGroupModel, BlShippingGroupData> blShippingGroupConverter) {
         this.blShippingGroupConverter = blShippingGroupConverter;
     }
 
@@ -1095,7 +1108,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return blPartnerPickUpStoreConverter;
     }
 
-    public void setBlPartnerPickUpStoreConverter(Converter<PartnerPickUpStoreModel, BlPartnerPickUpStoreData> blPartnerPickUpStoreConverter) {
+    public void setBlPartnerPickUpStoreConverter(final Converter<PartnerPickUpStoreModel, BlPartnerPickUpStoreData> blPartnerPickUpStoreConverter) {
         this.blPartnerPickUpStoreConverter = blPartnerPickUpStoreConverter;
     }
 
@@ -1103,7 +1116,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return blDatePickerService;
     }
 
-    public void setBlDatePickerService(BlDatePickerService blDatePickerService) {
+    public void setBlDatePickerService(final BlDatePickerService blDatePickerService) {
         this.blDatePickerService = blDatePickerService;
     }
 
@@ -1111,7 +1124,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return blUPSLocatorService;
     }
 
-    public void setBlUPSLocatorService(BlUPSLocatorService blUPSLocatorService) {
+    public void setBlUPSLocatorService(final BlUPSLocatorService blUPSLocatorService) {
         this.blUPSLocatorService = blUPSLocatorService;
     }
 
@@ -1119,7 +1132,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return blUPSAddressValidatorService;
     }
 
-    public void setBlUPSAddressValidatorService(BlUPSAddressValidatorService blUPSAddressValidatorService) {
+    public void setBlUPSAddressValidatorService(final BlUPSAddressValidatorService blUPSAddressValidatorService) {
         this.blUPSAddressValidatorService = blUPSAddressValidatorService;
     }
 
@@ -1127,7 +1140,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return blGiftCardFacade;
     }
 
-    public void setBlGiftCardFacade(BlGiftCardFacade blGiftCardFacade) {
+    public void setBlGiftCardFacade(final BlGiftCardFacade blGiftCardFacade) {
         this.blGiftCardFacade = blGiftCardFacade;
     }
 
@@ -1136,7 +1149,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
 
     public void setBrainTreeCheckoutFacade(
-        BrainTreeCheckoutFacade brainTreeCheckoutFacade) {
+        final BrainTreeCheckoutFacade brainTreeCheckoutFacade) {
         this.brainTreeCheckoutFacade = brainTreeCheckoutFacade;
     }
 
@@ -1144,7 +1157,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return checkoutFacade;
     }
 
-    public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+    public void setCheckoutFacade(final BlCheckoutFacade checkoutFacade) {
         this.checkoutFacade = checkoutFacade;
     }
 
@@ -1153,10 +1166,10 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
 
     public void setBlCheckoutCartCalculationStrategy(
-        CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
+        final CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
         this.blCheckoutCartCalculationStrategy = blCheckoutCartCalculationStrategy;
     }
- 	 
+
     /**
 	 * @return the brainTreeTransactionService
 	 */
@@ -1168,7 +1181,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 	/**
 	 * @param brainTreeTransactionService the brainTreeTransactionService to set
 	 */
-	public void setBrainTreeTransactionService(BrainTreeTransactionServiceImpl brainTreeTransactionService)
+	public void setBrainTreeTransactionService(final BrainTreeTransactionServiceImpl brainTreeTransactionService)
 	{
 		this.brainTreeTransactionService = brainTreeTransactionService;
 	}
@@ -1183,4 +1196,5 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     public void setBlCartService(final BlCartService blCartService) {
         this.blCartService = blCartService;
     }
+
 }

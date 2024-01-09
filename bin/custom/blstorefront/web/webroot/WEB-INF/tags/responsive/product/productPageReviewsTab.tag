@@ -26,6 +26,7 @@
 </c:if>
 <c:set var="requestUrl" value="${pageContext.request.requestURL}" />
 <c:set var="baseUrl" value="${fn:substringBefore(requestUrl,'/WEB-INF')}" />
+<c:set var="rent" value="/rent" />
 
 <script src="//ui.powerreviews.com/stable/4.1/ui.js"></script>
 
@@ -48,7 +49,7 @@
 
 				product : {
 					name : '${product.name}',
-					url : '${baseUrl}${product.url}',
+					url : '${baseUrl}${rent}${product.url}',
 					image_url : '${primaryImageUrl}',
 					description : '${product.name}',
 					category_name : '${(product.categories[0].name)}',

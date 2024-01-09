@@ -185,6 +185,7 @@
 		<property name="categoriesList"
 		          type="java.util.Collection&lt;de.hybris.platform.commercefacades.product.data.CategoryData>"/>	
 	    <property name="productBreadcrumbData" type="java.util.List&lt;String>"/>	
+	    <property name="isUnrentable" type="Boolean"/>
   </bean>
     
 	<bean class="com.bl.facades.product.data.GenderData">
@@ -499,7 +500,8 @@
        	<property name="createdTS" type="java.util.Date"/>
 	  	<property name="modifiedTS" type="java.util.Date"/>
 	  	<property name="totalitemsqty" type="java.lang.Double"/>
-	  <property name="freeRentalDates" type="java.util.List&lt;java.lang.String>" />
+	  	<property name="freeRentalDates" type="java.util.List&lt;java.lang.String>" />
+	  	<property name="signatureRequiredFee" type="java.lang.Double"/>
   </bean>
   
   	<bean class="de.hybris.platform.commercefacades.order.data.OrderData" extends="de.hybris.platform.commercefacades.order.data.AbstractOrderData">

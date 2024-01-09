@@ -774,10 +774,8 @@
     <property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
   </bean>
 
-	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver">
-		<property name="blStockService" ref="blStockService"/>
-	</bean>
-
+	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver"/>
+	
 	<!-- BL-462 : Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage Waiver prices -->
 	<alias name="defaultBlCalculationService" alias="calculationService"/>
 	<bean id="defaultBlCalculationService" class="com.bl.core.order.impl.DefaultBlCalculationService" parent="defaultCalculationService">
@@ -1643,6 +1641,7 @@
 		<property name="blOrderBillPaidReceiptRequestPopulator" ref="blOrderBillPaidReceiptRequestPopulator"/>
 		<property name="blOrderPendingVerificationsPopulator" ref="blOrderPendingVerificationsPopulator"/>
 		<property name="blOrderVerificationReminderPopulator" ref="blOrderVerificationReminderPopulator"/>
+		<property name="blReplacementProductRequestPopulator" ref="blReplacementProductRequestPopulator"/>
 	</bean>
 
 
@@ -2385,5 +2384,6 @@
 		<property name="defaultBlOrderFeedFTPService" ref="defaultBlOrderFeedFTPService"/>
 		<property name="orderDao" ref="orderDao"/>
 	</bean>
-	
+	<bean id="blReplacementProductRequestPopulator"  parent="espEventCommonPopulator" class="com.bl.core.esp.populators.BlReplacementProductRequestPopulator">
+	</bean>
 </beans>

@@ -4,46 +4,42 @@ ACC.forgottenpassword = {
 		"bindLink"
 	],
 
-	bindLink: function(){
-		$(document).on("click",".js-password-forgotten",function(e){
-			e.preventDefault();
+	bindLink: function () {
+	/*This method responsible for providing form object.*/
+    	$(document).on("click", ".js-forgot-password", function (e) {
+    		e.preventDefault();
+    		$('#forgotPass').html("");
+    		var username = $('#j_username').val();
+    		$.ajax({
+    			url: $(this).data("link"),
+    			success: function (result) {
+    				$('#forgotPass').html(result);
+    				setTimeout(function () {
+    					$("#forgotPass").modal('show');
+    					$("input[name='email']").val(username);
+    				}, 500)
+    			}
+    		})
 
-			var titleHtml = ACC.common.encodeHtml($(this).data("cboxTitle"));
-			ACC.colorbox.open(
-				titleHtml,
-				{
-					href: $(this).data("link"),
-					width:"350px",
-					fixed: true,
-					top: 150,
-					onOpen: function()
-					{
-						$('#validEmail').remove();
-					},
-					onComplete: function(){
-						$('form#forgottenPwdForm').ajaxForm({
-							success: function(data)
-							{
-								if ($(data).closest('#validEmail').length)
-								{
+    	});
 
-									if ($('#validEmail').length === 0)
-									{
-										$(".forgotten-password").replaceWith(data);
-										ACC.colorbox.resize();
-									}
-								}
-								else
-								{
-									$("#forgottenPwdForm .control-group").replaceWith($(data).find('.control-group'));
-									ACC.colorbox.resize();
-								}
-							}
-						});
-					}
-				}
-			);
-		});
-	}
+        /*This method responsible for sending reset passoword email link. */
+    	$(document).on("click", ".js-password-reset", function (e) {
+    		e.preventDefault();
+    		var formObject = $('#forgottenPwdForm').serialize();
+    		var url = $(this).val();
+    		$.ajax({
+    			type: "POST",
+    			url: url,
+    			data: formObject,
+    			success: function (result) {
+    				$('#forgotPass').html(result);
+    				setTimeout(function () {
+    					$("#forgotPass").modal('show');
+    				}, 500)
+    			}
+    		});
 
-};
+    	});
+
+    }};

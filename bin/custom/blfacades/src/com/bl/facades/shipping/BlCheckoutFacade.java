@@ -1,15 +1,5 @@
 package com.bl.facades.shipping;
 
-import com.bl.core.model.GiftCardMovementModel;
-import com.bl.facades.locator.data.UpsLocatorResposeData;
-import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
-import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
-import com.bl.facades.shipping.data.BlRushDeliveryModeData;
-import com.bl.facades.shipping.data.BlShippingGroupData;
-import com.bl.storefront.forms.GiftCardPurchaseForm;
-import com.bl.facades.ups.address.data.AVSResposeData;
-import com.bl.storefront.forms.BlPickUpByForm;
-import com.braintree.model.BrainTreePaymentInfoModel;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
@@ -19,9 +9,21 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+
+import com.bl.core.model.GiftCardMovementModel;
+import com.bl.facades.locator.data.UpsLocatorResposeData;
+import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
+import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
+import com.bl.facades.shipping.data.BlRushDeliveryModeData;
+import com.bl.facades.shipping.data.BlShippingGroupData;
+import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.storefront.forms.BlPickUpByForm;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
+import com.braintree.model.BrainTreePaymentInfoModel;
 
 /**
  * {javadoc}
@@ -289,7 +291,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @param GiftCardPurchaseForm the giftCardPurchaseForm
      */
     boolean updateGiftCardPurchaseForm(final GiftCardPurchaseForm giftCardPurchaseForm);
-    
+
     /**
      * Check shipping blackout.
      *
@@ -297,5 +299,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return true, if successful
      */
     boolean isShippingOnBlackoutDate(final String deliveryModeCode);
+
+	 void setSignatureRequired(double value);
 
 }

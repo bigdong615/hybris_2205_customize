@@ -204,7 +204,8 @@
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="blSearchResultDomoProductPopulator" ref="blSearchResultDomoProductPopulator"/>
 		<property name="sessionService" ref="sessionService" />
-		<property name="searchRestrictionService" ref="searchRestrictionService" />	
+		<property name="searchRestrictionService" ref="searchRestrictionService" />
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
 	<bean id="blSearchResultDomoProductPopulator" class="com.bl.facades.populators.BlSearchResultDomoProductPopulator">
