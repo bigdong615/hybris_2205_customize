@@ -19,11 +19,11 @@ public class GhostOrderRemovalJobServiceImpl implements GhostOrderRemovalJobServ
 
         final List<OrderModel> orders = orderDao.getGhostOrders();
 
-        for (OrderModel orderModel : orders) {
-            if (CollectionUtils.isNotEmpty(orders) && orderModel.getPaymentTransactions().size() >= 2) {
-                getModelService().save(orderModel);
-            } else {
-                getModelService().remove(orderModel);
+        if(CollectionUtils.isNotEmpty(orders)){
+            for (OrderModel orderModel : orders) {
+                if (orderModel.getPaymentTransactions().size() == 0) {
+                    getModelService().remove(orderModel);
+                }
             }
         }
 
