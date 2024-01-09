@@ -144,14 +144,7 @@
 			 	<spring:theme code="basket.page.delivery.signature.required"/>
 			 </td>
 			 <td class="text-end" id="signatureRequired">
-			     <c:choose>
-	                 <c:when test="${pageType =='paymentPage'}">
-	                     <format:price priceData="${cartData.signatureRequiredFee}" />
-	                 </c:when>
-	                 <c:otherwise>
-	                     <format:blPrice priceData="${cartData.signatureRequiredFee}" />
-	                 </c:otherwise>
-	             </c:choose>
+			     <span>$${cartData.signatureRequiredFee}</span>
 			  </td>
 			</tr>
 			<tr>
