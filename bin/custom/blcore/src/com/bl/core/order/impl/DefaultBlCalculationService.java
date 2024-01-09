@@ -151,9 +151,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				order.setTotalOptionsCost(finaltotalOptionCost);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Option Cost : {}", finaltotalOptionCost);
 
+				order.setSubtotal(subtotal);
 				final Double totalPriceWithDamageWaiverCostAndOption = Double
 						.valueOf(subtotal + totalDamageWaiverCost+ totalOptionCost);
-
 				order.setTotalPrice(totalPriceWithDamageWaiverCostAndOption);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {} for the order {}",
 						totalPriceWithDamageWaiverCostAndOption,order.getCode());
