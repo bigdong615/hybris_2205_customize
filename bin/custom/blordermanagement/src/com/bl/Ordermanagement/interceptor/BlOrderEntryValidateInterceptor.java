@@ -129,6 +129,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 					checkForOrderModification(orderEntryModel, interceptorContext, serialProduct, warehouse);
 				} else if(interceptorContext.isModified(orderEntryModel, AbstractOrderEntryModel.SERIALPRODUCTS)) {
 					final OrderModel order = orderEntryModel.getOrder();
+					modelService.refresh(order);
 					final List serialProducts = getInitialValue(orderEntryModel,
 							AbstractOrderEntryModel.SERIALPRODUCTS);
 					updateConsignmentEntry(serialProducts, orderEntryModel, order);
