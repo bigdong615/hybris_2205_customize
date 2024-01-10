@@ -675,7 +675,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			pv=CollectionUtils.isNotEmpty(prices) ? prices.get(0).getPriceValue() : getPriceForSkuOrSerial(order, entry, product);
 		}
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
-		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Price info size {} BasePrice before dynamic : {} product : {} for the order {}",
+		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Price info size BasePrice before dynamic : {} product : {} for the order {}",
 				basePrice.getValue(),product.getCode(),order.getCode());
 		final PriceValue dynamicBasePrice = entry.isBundleMainEntry()? basePrice:getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
 		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"BasePrice after dynamic : {} product : {} for the order {}",
