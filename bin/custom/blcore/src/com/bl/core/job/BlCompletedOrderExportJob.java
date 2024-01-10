@@ -23,8 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.Channel;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -35,9 +34,11 @@ import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.order.populators.BlCompletedOrderPopulator;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.logging.BlLogger;
+import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.StatefulBeanToCsv;
@@ -109,7 +110,7 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 			final StatefulBeanToCsv beanWriter = builder.withMappingStrategy(mappingStrategy).build();
 			try
 			{
-				writer.append("Page id, order id, first name,laste name, email, Order Date, locale");
+				writer.append("page_id, order_id, first_name, last_name, email, order_date, locale");
 				writer.append("\n");
 				beanWriter.write(orderList);
 				writer.close();
