@@ -1468,7 +1468,6 @@
 	<c:otherwise>
 		
 		<script type="text/javascript">
-		${currentPageType}
 		
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
