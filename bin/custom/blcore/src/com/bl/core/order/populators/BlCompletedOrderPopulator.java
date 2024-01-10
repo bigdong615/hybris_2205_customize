@@ -42,8 +42,22 @@ public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, Li
 					orderData.setOrder_id(order.getCode());
 					if (order.getPaymentAddress() != null)
 					{
-						orderData.setFirst_name(order.getPaymentAddress().getFirstname());
-						orderData.setLast_name(order.getPaymentAddress().getLastname());
+						if (order.getPaymentAddress().getFirstname() != null)
+						{
+							orderData.setFirst_name(order.getPaymentAddress().getFirstname());
+						}
+						else
+						{
+							orderData.setFirst_name(order.getUser().getName());
+						}
+						if (order.getPaymentAddress().getLastname() != null)
+						{
+							orderData.setLast_name(order.getPaymentAddress().getLastname());
+						}
+						else
+						{
+							orderData.setLast_name(order.getUser().getName());
+						}
 					}
 					orderData.setEmail(order.getUser().getUid());
 					orderData.setOrder_date(formatter.format(order.getCreationtime()));
@@ -57,17 +71,5 @@ public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, Li
 				exception.printStackTrace();
 			}
 		}
-
-
-	}
-
-	/**
-	 * @param string
-	 * @return
-	 */
-	private Object SimpleDateFormat(final String string)
-	{
-		// XXX Auto-generated method stub
-		return null;
 	}
 }
