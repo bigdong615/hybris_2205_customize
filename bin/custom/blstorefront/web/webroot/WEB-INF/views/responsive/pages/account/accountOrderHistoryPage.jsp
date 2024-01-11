@@ -116,6 +116,14 @@
 													<spring:theme code="order.myaccount.print.return.label" />
 											</a></li>
 										</c:if>
+										<c:if test="${order.isCancellable eq true }">
+										<li>
+											<c:url value="/my-account/order/${order.code}/cancel" var="orderCode" />
+											<a href="${orderCode}">
+												<spring:theme code="order.myaccount.cancel.order" />
+											</a>
+										<li>
+										</c:if>
 									</ul>
                 						</div>
                 					</div>
@@ -275,6 +283,12 @@
 													<spring:theme code="order.myaccount.print.return.label" />
 											</a></li>
 										</c:if>
+										<c:if test="${order.isCancellable eq true }">
+										<li>
+										<a href="#" onclick="orderCancel()"><spring:theme code="order.myaccount.cancel.order" /></a>
+											
+										<li>
+										</c:if>
 									</ul>
                 						</div>
                 					</div>
@@ -339,6 +353,32 @@
             <div class="mt-2 notification notification-warning"><spring:theme code="text.myaccount.notification.message.order.history" arguments="${fn:escapeXml(notificationDate)}" htmlEscape="false"/> <a href="${link}"> <spring:theme code="text.myaccount.contactus.message.order.history"/></a></div>
                               	</div>
                 	</c:if>
+                	
+
+ <div class="modal-content" id="myForm">
+            <div class="modal-header">
+              <h5 class="modal-title">Cancel Order</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeForm()"></button>
+            </div>
+            <div class="modal-body">
+  <b>Hold On!</b>
+  <p>Before you proceeding with cancelling your order, which cannot be undone, let's go over a few details.</p>
+  <br>
+  <b>Uncertain!</b>
+  <p>You have the option to cancel your order up to 24 hours before it ships. Plus you won't be charged until the day it ships!</p>
+  <br>
+  <b>Considering a Date Change!</b>
+  <p>Please call us at <a href="#" class="phnumber">844.853.6737</a>. This will help us to confirm the availability of your equipment, as cancelling may effect it.</p>
+      <button type="button" class="btn btn-outlinecancel" data-bs-dismiss="modal">Continue</button>
+      <br>
+      <a href="#" class="cancel-odr" onclick="closeForm()">Do not cancel</a>
+  </div>
+
+  </div>
+  
+  
+  
+
 
 <script>
     function openModalAndPrintList(list) {
@@ -437,5 +477,97 @@
             document.body.removeChild(modal);
         }
     }
+    function orderCancel() {
+    	  document.getElementById("myForm").style.display = "block";
+    	}
+
+    	function closeForm() {
+    	  document.getElementById("myForm").style.display = "none";
+    	}
 
 </script>
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+/* Button used to open the contact form - fixed at the bottom of the page */
+
+
+/* The popup form - hidden by default */
+.modal-content {
+  display: none;
+  position: fixed;
+  padding: 10px;
+  width: 20%;
+  left: 50%;
+  margin-left: -150px;
+  height: 58%;
+  top: 35%;
+  margin-top: -100px;
+  background-color:#fff;
+  background-clip: padding-box;
+  
+
+}
+.modal-header {
+    padding: 1rem 30px;
+    background-color: #f3f3f3;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+}
+
+.modal-footer {
+    justify-content: flex-start;
+    padding: 1rem 30px;
+}
+modal-header .btn-close {
+    background: url(../assets/icon-close.svg) center no-repeat;
+    position: absolute;
+    right: 30px;
+    height: 16px;
+    width: 16px;
+    background-size: 14px;
+}
+.modal-header .btn-close {
+    padding: 0.5rem 0.5rem;
+    margin: -0.5rem -0.5rem -0.5rem auto;
+}
+
+.modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+    border-top: 1px solid #dee2e6;
+    border-bottom-right-radius: calc(0.3rem - 1px);
+    border-bottom-left-radius: calc(0.3rem - 1px);
+}
+
+.btn-outlinecancel, .litepicker .container__footer .button-cancel {
+    background-color: #e64b4f;
+    color: white;
+    border: 1px solid #e64b4f;
+    width: 100%;
+}
+
+.cancel-odr{
+    text-align:center;
+    display:block;
+    color: #52BFC0;
+}
+/* Add styles to the form container */
+
+</style>
+</head>
+</html>
