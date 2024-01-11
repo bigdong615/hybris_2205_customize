@@ -1171,6 +1171,7 @@
 		<property name="isRentalStartDateActive" type="java.lang.Boolean"/>
 		<property name="isRentalEndDateActive" type="java.lang.Boolean"/>
 		<property name="isUsedGearCompleted" type="java.lang.Boolean"/>
+		<property name="isCancellable" type="java.lang.Boolean"/>
 		<property name="isRentalActive" type="java.lang.Boolean"/>
 		<property name="orderReturnedToWarehouse" type="java.lang.Boolean" />
 		<property name="productCode" type="String"/>
