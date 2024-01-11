@@ -121,6 +121,17 @@
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
 				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+	  					"type": "HomePage"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
+				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
 	    				"id": "${currentUserId}",
@@ -175,12 +186,12 @@
 
 			dmpgDl.screen = 
 				{
-  					type: "HomePage"
+  					"type": "HomePage"
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${currentUserId}",
-  					status: "${currentUserStatus}",
+    				"id": "${currentUserId}",
+  					"status": "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
   					"rentalDuration": "${rentalDate.selectedDays}",
@@ -241,14 +252,18 @@
 		
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
-			{
-      			"event": "search.interact.manual.search",
-     			 "search": {       
-     			  "keyword": "${searchKeyword}",
-      			  "type": "${datesSettedInSession ? 'date' : 'product'}",
-      			  "location": "hero"
-     		 },
-     		{
+				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+	  					"type": "Search_Result_Page"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
+				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
 	    				"id": "${currentUserId}",
@@ -258,18 +273,26 @@
 	  					"rentalDuration": "${rentalDate.selectedDays}",
 	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 				  	}
-				}
+				},
+			{
+      			"event": "search.interact.manual.search",
+     			 "search": {       
+     			  "keyword": "${searchKeyword}",
+      			  "type": "${datesSettedInSession ? 'date' : 'product'}",
+      			  "location": "hero"
+     		 }
+     		
    		 }
 			];
 
 			dmpgDl.screen = 
 				{
-  					type: "Search_Result_Page"
+  					"type": "Search_Result_Page"
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${currentUserId}",
-  					status: "${currentUserStatus}",
+    				"id": "${currentUserId}",
+  					"status": "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
   					"rentalDuration": "${rentalDate.selectedDays}",
@@ -315,6 +338,26 @@
            window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
 				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+						<c:choose>
+						<c:when test="${ blCategoryPageType == 'Rental' }">
+							<c:set var="categoryScreenName" value="${blCategoryPageType}_${categoryName}" />
+						</c:when>
+						<c:otherwise>
+							<c:set var="categoryScreenName" value="${blCategoryPageType}" />
+						</c:otherwise>
+					</c:choose>
+						
+		  					"type": "${categoryScreenName}"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
+				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
 	    				"id": "${currentUserId}",
@@ -342,8 +385,8 @@
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${currentUserId}",
-  					status: "${currentUserStatus}",
+    				"id": "${currentUserId}",
+  					"status": "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
   					"rentalDuration": "${rentalDate.selectedDays}",
@@ -394,6 +437,17 @@
 		
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
+				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+						"type": "${blPageType}_${product.code}"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
 				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
@@ -452,12 +506,12 @@
 
 			dmpgDl.screen = 
 				{
-  					type: "${blPageType}_${product.code}"
+  					"type": "${blPageType}_${product.code}"
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${currentUserId}",
-  					status: "${currentUserStatus}",
+    				"id": "${currentUserId}",
+  					"status": "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalStartDate}",
   					"rentalDuration": "${rentalDate.selectedDays}",
@@ -600,6 +654,17 @@
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
 				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+						"type": "Cart"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
+				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
 	    				"id": "${currentUserId}",
@@ -701,7 +766,7 @@
 
 			dmpgDl.screen = 
 				{
-  					type: "Cart"
+  					"type": "Cart"
 				};
 			dmpgDl.user = 
 			  	{
@@ -797,6 +862,17 @@
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
 				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+	  					"type": "HomePage"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
+				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
 	    				"id": "${currentUserId}",
@@ -859,6 +935,17 @@
 		
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
+				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+	  					"type": "Order_Confirmation"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
 				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
@@ -976,12 +1063,12 @@
 
 			dmpgDl.screen = 
 				{
-  					type: "Order_Confirmation"
+  					"type": "Order_Confirmation"
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${ currentUserId }",
-  					status: "${currentUserStatus}",
+    				"id": "${ currentUserId }",
+  					"status": "${currentUserStatus}",
   					"daysUntilRental": "${daysUntilRental}",
   					"rentalStartDate": "${rentalStartDateForTealium}",
   					"rentalDuration": "${orderData.rentalDates.numberOfDays}",
@@ -1102,6 +1189,17 @@
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
 				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+	  					"type": "Cart_Delivery_Details"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
+				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
 	    				"id": "${currentUserId}",
@@ -1111,17 +1209,95 @@
 	  					"rentalDuration": "${rentalDate.selectedDays}",
 	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 				  	}
+				},
+				
+				
+				{
+					"event":"cart.load.auto.dataLayer.load",
+					"cart":{
+						
+						    "lines": [  
+						         <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+		        					{
+		        					"product": {
+					  					"id": "${entry.product.code}",
+					  					"name": "${entry.product.name}",
+		          						"brand": "${entry.product.manufacturer}",
+						 		   		 <c:if test="${not empty entry.product.productBreadcrumbData[0]}">
+										"category": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[0])}",
+						 		    	</c:if>
+						 				 <c:if test="${not empty entry.product.productBreadcrumbData[1]}">
+										"subCategory2": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[1])}",
+						 				 </c:if>
+						  				<c:if test="${not empty entry.product.productBreadcrumbData[2]}">
+						   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[2])}",
+						  				</c:if>
+					   					 "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"variant" : "${ycommerce:encodeJavaScript(orderType)}",
+		         						"stockAvailability" : "${datesSettedInSession ? (entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
+					  					"value": 
+					  	  			 	 {
+		       				  		   	   "displayGross": ${entry.basePrice.value}
+		     							  }
+					  				 }	
+		        					}<c:if test='${not status.last}'>,</c:if>
+		        					
+		        					
+		        					 <c:if test="${entry.product.manufacturerAID ne '9'}">
+		        					<c:choose>
+		             	<c:when test="${entry.gearGuardProFullWaiverSelected}">
+		             	<c:if test='${status.last}'>,</c:if>
+		        					{
+		          					 "product": {
+		          						"id": "${entry.product.code}-gearguard",
+		         					    "name": "Gear Guard Plus",
+		          						"parentProductId": "${entry.product.code}",
+		          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"value": {
+		           							       "displayGross": ${entry.gearGuardProFullWaiverPrice.value}
+		          								  }
+		       								   }
+		      						}<c:if test='${not status.last}'>,</c:if>
+		             	</c:when>
+		             	<c:when test="${entry.gearGuardWaiverSelected}">
+		             	<c:if test='${status.last}'>,</c:if>
+		        					{
+		          					 "product": {
+		          						"id": "${entry.product.code}-gearguard",
+		         					    "name": "Gear Guard",
+		          						"parentProductId": "${entry.product.code}",
+		          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"value": {
+		           							       "displayGross": ${entry.gearGuardWaiverPrice.value}
+		          								  }
+		       								   }
+		      						}<c:if test='${not status.last}'>,</c:if>
+		             	</c:when>
+		             	</c:choose>
+		        					 </c:if>
+		        			  </c:forEach>
+		        			],
+		        			"value" :
+					  				{
+		    							"displayGross": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+		    							"displayTax": ${ycommerce:encodeJavaScript(cartData.totalTax.value)}
+		  							}
+					  	}
 				}
+				
+				
+				
+				
 			];
 
 			dmpgDl.screen = 
 				{
-  					type: "Cart_Delivery_Details"
+  					"type": "Cart_Delivery_Details"
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${currentUserId}",
-  					status: "${currentUserStatus}",
+    				"id": "${currentUserId}",
+  					"status": "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
   					"rentalDuration": "${rentalDate.selectedDays}",
@@ -1215,6 +1391,17 @@
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
 				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+	  					"type": "Cart_Payment_Details"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
+				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
 	    				"id": "${currentUserId}",
@@ -1224,17 +1411,90 @@
 	  					"rentalDuration": "${rentalDate.selectedDays}",
 	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 				  	}
+				},
+				
+				{
+					"event":"cart.load.auto.dataLayer.load",
+					"cart":{
+						
+						    "lines": [  
+						         <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+		        					{
+		        					"product": {
+					  					"id": "${entry.product.code}",
+					  					"name": "${entry.product.name}",
+		          						"brand": "${entry.product.manufacturer}",
+						 		   		 <c:if test="${not empty entry.product.productBreadcrumbData[0]}">
+										"category": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[0])}",
+						 		    	</c:if>
+						 				 <c:if test="${not empty entry.product.productBreadcrumbData[1]}">
+										"subCategory2": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[1])}",
+						 				 </c:if>
+						  				<c:if test="${not empty entry.product.productBreadcrumbData[2]}">
+						   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[2])}",
+						  				</c:if>
+					   					 "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"variant" : "${ycommerce:encodeJavaScript(orderType)}",
+		         						"stockAvailability" : "${datesSettedInSession ? (entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
+					  					"value": 
+					  	  			 	 {
+		       				  		   	   "displayGross": ${entry.basePrice.value}
+		     							  }
+					  				 }	
+		        					}<c:if test='${not status.last}'>,</c:if>
+		        					
+		        					
+		        					 <c:if test="${entry.product.manufacturerAID ne '9'}">
+		        					<c:choose>
+		             	<c:when test="${entry.gearGuardProFullWaiverSelected}">
+		             	<c:if test='${status.last}'>,</c:if>
+		        					{
+		          					 "product": {
+		          						"id": "${entry.product.code}-gearguard",
+		         					    "name": "Gear Guard Plus",
+		          						"parentProductId": "${entry.product.code}",
+		          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"value": {
+		           							       "displayGross": ${entry.gearGuardProFullWaiverPrice.value}
+		          								  }
+		       								   }
+		      						}<c:if test='${not status.last}'>,</c:if>
+		             	</c:when>
+		             	<c:when test="${entry.gearGuardWaiverSelected}">
+		             	<c:if test='${status.last}'>,</c:if>
+		        					{
+		          					 "product": {
+		          						"id": "${entry.product.code}-gearguard",
+		         					    "name": "Gear Guard",
+		          						"parentProductId": "${entry.product.code}",
+		          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"value": {
+		           							       "displayGross": ${entry.gearGuardWaiverPrice.value}
+		          								  }
+		       								   }
+		      						}<c:if test='${not status.last}'>,</c:if>
+		             	</c:when>
+		             	</c:choose>
+		        					 </c:if>
+		        			  </c:forEach>
+		        			],
+		        			"value" :
+					  				{
+		    							"displayGross": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+		    							"displayTax": ${ycommerce:encodeJavaScript(cartData.totalTax.value)}
+		  							}
+					  	}
 				}
 			];
 
 			dmpgDl.screen = 
 				{
-  					type: "Cart_Payment_Details"
+  					"type": "Cart_Payment_Details"
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${currentUserId}",
-  					status: "${currentUserStatus}",
+    				"id": "${currentUserId}",
+  					"status": "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
   					"rentalDuration": "${rentalDate.selectedDays}",
@@ -1341,6 +1601,17 @@
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
 				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+	  					"type": "Cart_Order_Review"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
+				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
 	    				"id": "${currentUserId}",
@@ -1350,17 +1621,90 @@
 	  					"rentalDuration": "${rentalDate.selectedDays}",
 	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 				  	}
+				},
+				
+				{
+					"event":"cart.load.auto.dataLayer.load",
+					"cart":{
+						
+						    "lines": [  
+						         <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+		        					{
+		        					"product": {
+					  					"id": "${entry.product.code}",
+					  					"name": "${entry.product.name}",
+		          						"brand": "${entry.product.manufacturer}",
+						 		   		 <c:if test="${not empty entry.product.productBreadcrumbData[0]}">
+										"category": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[0])}",
+						 		    	</c:if>
+						 				 <c:if test="${not empty entry.product.productBreadcrumbData[1]}">
+										"subCategory2": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[1])}",
+						 				 </c:if>
+						  				<c:if test="${not empty entry.product.productBreadcrumbData[2]}">
+						   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[2])}",
+						  				</c:if>
+					   					 "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"variant" : "${ycommerce:encodeJavaScript(orderType)}",
+		         						"stockAvailability" : "${datesSettedInSession ? (entry.product.stock.stockLevelStatus.code== 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
+					  					"value": 
+					  	  			 	 {
+		       				  		   	   "displayGross": ${entry.basePrice.value}
+		     							  }
+					  				 }	
+		        					}<c:if test='${not status.last}'>,</c:if>
+		        					
+		        					
+		        					 <c:if test="${entry.product.manufacturerAID ne '9'}">
+		        					<c:choose>
+		             	<c:when test="${entry.gearGuardProFullWaiverSelected}">
+		             	<c:if test='${status.last}'>,</c:if>
+		        					{
+		          					 "product": {
+		          						"id": "${entry.product.code}-gearguard",
+		         					    "name": "Gear Guard Plus",
+		          						"parentProductId": "${entry.product.code}",
+		          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"value": {
+		           							       "displayGross": ${entry.gearGuardProFullWaiverPrice.value}
+		          								  }
+		       								   }
+		      						}<c:if test='${not status.last}'>,</c:if>
+		             	</c:when>
+		             	<c:when test="${entry.gearGuardWaiverSelected}">
+		             	<c:if test='${status.last}'>,</c:if>
+		        					{
+		          					 "product": {
+		          						"id": "${entry.product.code}-gearguard",
+		         					    "name": "Gear Guard",
+		          						"parentProductId": "${entry.product.code}",
+		          						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+		         						"value": {
+		           							       "displayGross": ${entry.gearGuardWaiverPrice.value}
+		          								  }
+		       								   }
+		      						}<c:if test='${not status.last}'>,</c:if>
+		             	</c:when>
+		             	</c:choose>
+		        					 </c:if>
+		        			  </c:forEach>
+		        			],
+		        			"value" :
+					  				{
+		    							"displayGross": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+		    							"displayTax": ${ycommerce:encodeJavaScript(cartData.totalTax.value)}
+		  							}
+					  	}
 				}
 			];
 
 			dmpgDl.screen = 
 				{
-  					type: "Cart_Order_Review"
+  					"type": "Cart_Order_Review"
 				};
 			dmpgDl.user = 
 			  	{
-    				id: "${currentUserId}",
-  					status: "${currentUserStatus}",
+    				"id": "${currentUserId}",
+  					"status": "${currentUserStatus}",
   					"daysUntilRental": "${rentalDate.daysUntilRental}",
   					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
   					"rentalDuration": "${rentalDate.selectedDays}",
@@ -1472,6 +1816,17 @@
           window.dmpgDl = window.dmpgDl || {};
 			dmpgDl.events = [
 				{
+					"event":"screen.load.auto.dataLayer.load",
+					"screen" : 
+					{
+	  					"type": "${genericPageType}"
+					},
+					"platform": 
+					   {
+		 				   "env": "${jalosession.tenant.config.getParameter('tealiumiqaddon.target')}"
+						}
+				},
+				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
 	    				"id": "${currentUserId}",
@@ -1486,7 +1841,7 @@
 
 			dmpgDl.screen = 
 				{
-  					type: "${genericPageType}"
+  					"type": "${genericPageType}"
 				};
 			dmpgDl.user = 
 			  	{
