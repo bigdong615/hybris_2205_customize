@@ -60,6 +60,11 @@
                 									<a href="${viewOrderAction}">
                 										<spring:theme code="text.myaccount.order.view" /> </a>
                 								</li>
+                								<c:if test="${order.isCancellable eq true }">
+													<li>
+														<a href="#" onclick="orderCancel()"><spring:theme code="order.myaccount.cancel.order" /></a>
+													<li>
+												</c:if>
                								<c:if test="${order.rentalCart}">
                 								<li>
                 								
@@ -115,14 +120,6 @@
 											<li><a href="#" onclick="openFedExModalAndPrintList()">
 													<spring:theme code="order.myaccount.print.return.label" />
 											</a></li>
-										</c:if>
-										<c:if test="${order.isCancellable eq true }">
-										<li>
-											<c:url value="/my-account/order/${order.code}/cancel" var="orderCode" />
-											<a href="${orderCode}">
-												<spring:theme code="order.myaccount.cancel.order" />
-											</a>
-										<li>
 										</c:if>
 									</ul>
                 						</div>
@@ -223,6 +220,11 @@
                 									<a href="${viewOrderAction}">
                 										<spring:theme code="text.myaccount.order.view" /> </a>
                 								</li>
+                								<c:if test="${order.isCancellable eq true }">
+													<li>
+														<a href="#" onclick="orderCancel()"><spring:theme code="order.myaccount.cancel.order" /></a>
+													<li>
+												</c:if>
                 								<c:if test="${order.rentalCart}">
                 								<li>
                 								 <c:url value="/my-account/order/${order.code}" var="rentOrderAction" />
@@ -282,12 +284,6 @@
 											<li><a href="#" onclick="openFedExModalAndPrintList()">
 													<spring:theme code="order.myaccount.print.return.label" />
 											</a></li>
-										</c:if>
-										<c:if test="${order.isCancellable eq true }">
-										<li>
-										<a href="#" onclick="orderCancel()"><spring:theme code="order.myaccount.cancel.order" /></a>
-											
-										<li>
 										</c:if>
 									</ul>
                 						</div>
@@ -355,32 +351,75 @@
                 	</c:if>
                 	
 
- <div class="modal-content" id="myForm">
-            <div class="modal-header">
-              <h5 class="modal-title">Cancel Order</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeForm()"></button>
-            </div>
-            <div class="modal-body">
-  <b>Hold On!</b>
-  <p>Before you proceeding with cancelling your order, which cannot be undone, let's go over a few details.</p>
-  <br>
-  <b>Uncertain!</b>
-  <p>You have the option to cancel your order up to 24 hours before it ships. Plus you won't be charged until the day it ships!</p>
-  <br>
-  <b>Considering a Date Change!</b>
-  <p>Please call us at <a href="#" class="phnumber">844.853.6737</a>. This will help us to confirm the availability of your equipment, as cancelling may effect it.</p>
-      <button type="button" class="btn btn-outlinecancel" data-bs-dismiss="modal">Continue</button>
-      <br>
-      <a href="#" class="cancel-odr" onclick="closeForm()">Do not cancel</a>
-  </div>
+<div class="modal-content" id="cancelDialog">
+	 <div class="modal-header">
+	   <h5 class="modal-title">Cancel Order</h5>
+	   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeCancelDialog()"></button>
+	 </div>
+	 <div class="modal-body">
+		  <b>Hold On!</b>
+		  <p>Before you proceeding with cancelling your order, which cannot be undone, let's go over a few details.</p>
+		  <br>
+		  <b>Uncertain!</b>
+		  <p>You have the option to cancel your order up to 24 hours before it ships. Plus you won't be charged until the day it ships!</p>
+		  <br>
+		  <b>Considering a Date Change!</b>
+		  <p>Please call us at <a href="#" class="phnumber">844.853.6737</a>. This will help us to confirm the availability of your equipment, as cancelling may effect it.</p>
+	      <button type="button" class="btn btn-outlinecancel" data-bs-dismiss="modal" onclick="cancelReasonDialog()">Continue</button>
+	      <br>
+	      <a href="#" class="cancel-odr" onclick="closeCancelDialog()">Do not cancel</a>
+	</div>
+</div>
 
-  </div>
-  
-  
-  
-
-
+<div class="modal-content" id="cancelReasonDialog">
+	 <div class="modal-header">
+	   <h5 class="modal-title">Cancel Order</h5>
+	   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeCancelReasonDialog()"></button>
+	 </div>
+	 <div class="modal-body">
+		  <h6>Tell us why you're cancelling so we can improve your future experience</h6>
+		  <div>
+		  <h6>
+    		<input type="radio" id="option1" name="cancelReason" value="Shoot date changed" />
+    			<label for="option1">Shoot date changed</label>
+    	  </h6>
+		  </div>
+		  <div>
+		  <h6>
+		    <input type="radio" id="option2" name="cancelReason" value="No longer needed the gear" />
+		    <label for="option2">No longer needed the gear</label>
+		  </h6>
+		  </div>
+		  <div>
+		  <h6>
+		    <input type="radio" id="option3" name="cancelReason" value="Decided to buy the gear instead" />
+		    <label for="option3">Decided to buy the gear instead</label>
+		  </h6>
+		  </div>
+		  <div>
+		  <h6>
+		    <input type="radio" id="option4" name="cancelReason" value="Looking to rent a different item" />
+		    <label for="option4">Looking to rent a different item</label>
+		  </h6>
+		  </div>
+		  <div>
+		  <h6>
+		    <input type="radio" id="option5" name="cancelReason" value="Something else" />
+		    <label for="option5">Something else</label>
+		  </h6>
+		  </div>
+		  <br>
+		  <button type="button" id="cancelReasonDialog" class="btn btn-outlinecancel" data-bs-dismiss="modal" disabled="disabled">Continue</button>
+		      <br>
+		      <br>
+		      <a href="#" class="cancel-odr" onclick="closeCancelReasonDialog()">Do not cancel</a>
+	</div>
+</div>
+<head>
+    <script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+$("input:radio").change(function () {$("#cancelReasonDialog").prop("disabled", false);});
     function openModalAndPrintList(list) {
     //var list = ['https://www.google.com','https://www.facebook.com'];
     // Create the modal element
@@ -478,14 +517,22 @@
         }
     }
     function orderCancel() {
-    	  document.getElementById("myForm").style.display = "block";
-    	}
-
-    	function closeForm() {
-    	  document.getElementById("myForm").style.display = "none";
-    	}
+    	document.getElementById("cancelDialog").style.display = "block";
+    }
+   	function closeCancelDialog() {
+   		document.getElementById("cancelDialog").style.display = "none";
+   	}
+   	
+   	function cancelReasonDialog() {
+   		closeCancelDialog()
+     	document.getElementById("cancelReasonDialog").style.display = "block";
+    }
+   	function closeCancelReasonDialog() {
+   		document.getElementById("cancelReasonDialog").style.display = "none";
+   	}
 
 </script>
+</head>
 
 <html>
 <head>
@@ -502,7 +549,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
   display: none;
   position: fixed;
   padding: 10px;
-  width: 20%;
+  width: 25%;
   left: 50%;
   margin-left: -150px;
   height: 58%;
@@ -565,6 +612,9 @@ modal-header .btn-close {
     text-align:center;
     display:block;
     color: #52BFC0;
+}
+.phnumber{
+	color: #52BFC0;
 }
 /* Add styles to the form container */
 
