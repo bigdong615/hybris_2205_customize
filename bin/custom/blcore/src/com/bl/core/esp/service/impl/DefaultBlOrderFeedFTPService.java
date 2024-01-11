@@ -145,6 +145,9 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
 								  filteredOrdersList.add(abstractOrderModel);
 								  setReservedStatusForSerials(packagingInfoModel);
 							  }
+							  if( origConsignment.getActualShippingDateToCustomer().before(origConsignment.getOptimizedShippingEndDate())) {
+								  setReservedStatusForSerials(packagingInfoModel);
+							  }
 						  });
 					  }
 				  });
