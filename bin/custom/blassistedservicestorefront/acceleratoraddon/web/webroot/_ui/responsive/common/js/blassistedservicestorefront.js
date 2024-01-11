@@ -39,7 +39,7 @@ function personifyForm() {
     });
 
     $("#_asmPersonifyForm input[name='cartId']").keyup(function () {
-        formValidate(this, 8, true, 8);
+        formValidate(this, 8, true, 9);
         if (isErrorDisplayed()) {
             $("input[name='cartId']").removeClass('ASM-input-error');
             if ($('.ASM_alert')) {
@@ -70,7 +70,7 @@ function personifyForm() {
         var regEx = /^\s+$/;
         if (regEx.test($(this).val())) {
             $(this).val('');
-            formValidate(this, 8, true, 8);
+            formValidate(this, 8, true, 9);
         }
     });
 
@@ -416,7 +416,7 @@ function enableAsmPanelButtons() {
         if ($("#_asmPersonifyForm input[name='customerId']").val() !== "") {
             $("#_asmPersonifyForm input[name='customerId']").parent().addClass("checked");
         }
-        formValidate($("#_asmPersonifyForm input[name='cartId']")[0], 8, true, 8);
+        formValidate($("#_asmPersonifyForm input[name='cartId']")[0], 8, true, 9);
     }
 }
 
@@ -476,7 +476,7 @@ function checkCartIdFieldAndToggleBind(cartIdField) {
 
     function checkCartIdTyped() {
         return !isNaN(cartIdField.value)
-            && (cartIdField.value.length === 8);
+            && (cartIdField.value.length === 8 || cartIdField.value.length === 9);
     }
 
     if (checkCustomerDataTyped() && checkCartIdTyped()) {
