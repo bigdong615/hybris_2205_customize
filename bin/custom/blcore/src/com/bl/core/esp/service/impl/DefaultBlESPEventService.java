@@ -4,6 +4,8 @@ package com.bl.core.esp.service.impl;
 import com.bl.core.esp.populators.*;
 import com.bl.esp.dto.billpaid.OrderBillReceiptEventRequest;
 import com.bl.esp.dto.pendingverification.PendingVerificationEventRequest;
+import com.bl.esp.dto.product.replacement.ProductReplacementEventRequest;
+import com.bl.esp.dto.product.replacement.data.ProductReplacementData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -120,6 +122,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator;
     private BlOrderPendingVerificationsPopulator blOrderPendingVerificationsPopulator;
 	 private BlOrderVerificationReminderPopulator blOrderVerificationReminderPopulator;
+    private BlReplacementProductRequestPopulator blReplacementProductRequestPopulator;
 	 @Value("${back.in.stock.email.request.event.template.key}")
     private String backInStockTemplate;
     /**
@@ -593,6 +596,29 @@ public class DefaultBlESPEventService implements BlESPEventService {
       persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.MANUAL_ALLOCATION,orderModel.getCode(),null,null);
     }
   }
+
+    @Override
+    public void sendReplacementProductEvent(final OrderModel orderModel,final String oldProductName,final String newProductName,final String customerNotes) {
+        if (Objects.nonNull(orderModel)) {
+            final ProductReplacementEventRequest productReplacementEventRequest  = new ProductReplacementEventRequest();
+            getBlReplacementProductRequestPopulator().populate(orderModel,
+                    productReplacementEventRequest);
+            final ProductReplacementData data = productReplacementEventRequest.getData();
+            data.setOriginalProductName(oldProductName);
+            data.setReplacementProductName(newProductName);
+            data.setReplacementNotes(customerNotes);
+            ESPEventResponseWrapper espEventResponseWrapper = null;
+            try {
+                // Call replacement product ESP Event API
+                espEventResponseWrapper = getBlESPEventRestService().sendProductReplacementEsp(
+                        productReplacementEventRequest);
+            } catch (final BlESPIntegrationException exception) {
+                persistESPEventDetail(null, EspEventTypeEnum.PRODUCT_REPLACEMENT,orderModel.getCode(), exception.getMessage(),exception.getRequestString());
+            }
+            // Save send order shipped ESP Event Detail
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.PRODUCT_REPLACEMENT,orderModel.getCode(),null,null);
+        }
+    }
 
   /**
    * Order Cancel Entries
@@ -1342,4 +1368,11 @@ public class DefaultBlESPEventService implements BlESPEventService {
 	 {
 		 this.blOrderVerificationReminderPopulator = blOrderVerificationReminderPopulator;
 	 }
+    public BlReplacementProductRequestPopulator getBlReplacementProductRequestPopulator() {
+        return blReplacementProductRequestPopulator;
+    }
+
+    public void setBlReplacementProductRequestPopulator(BlReplacementProductRequestPopulator blReplacementProductRequestPopulator) {
+        this.blReplacementProductRequestPopulator = blReplacementProductRequestPopulator;
+    }
 }

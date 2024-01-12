@@ -31,24 +31,44 @@ public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, Li
 		{
 			try
 			{
-				for (final AbstractOrderEntryModel orderentry : order.getEntries())
+				if (order.getPaymentAddress() != null)
 				{
-					final OrderData orderData = new OrderData();
-					orderData.setCode(order.getCode());
-					if (orderentry.getProduct() != null)
+					if (order.getUser().getName() != null || order.getPaymentAddress().getFirstname() != null)
 					{
-						orderData.setPage_id(orderentry.getProduct().getCode());
+						for (final AbstractOrderEntryModel orderentry : order.getEntries())
+						{
+							final OrderData orderData = new OrderData();
+							orderData.setCode(order.getCode());
+							if (orderentry.getProduct() != null)
+							{
+								orderData.setPage_id(orderentry.getProduct().getCode());
+							}
+							orderData.setOrder_id(order.getCode());
+							if (order.getPaymentAddress() != null)
+							{
+								if (order.getPaymentAddress().getFirstname() != null)
+								{
+									orderData.setFirst_name(order.getPaymentAddress().getFirstname());
+								}
+								else
+								{
+									orderData.setFirst_name(order.getUser().getName());
+								}
+								if (order.getPaymentAddress().getLastname() != null)
+								{
+									orderData.setLast_name(order.getPaymentAddress().getLastname());
+								}
+								else
+								{
+									orderData.setLast_name(order.getUser().getName());
+								}
+							}
+							orderData.setEmail(order.getUser().getUid());
+							orderData.setOrder_date(formatter.format(order.getCreationtime()));
+							orderData.setLocale(LOCALE_CONSTANT);
+							target.add(orderData);
+						}
 					}
-					orderData.setOrder_id(order.getCode());
-					if (order.getPaymentAddress() != null)
-					{
-						orderData.setFirst_name(order.getPaymentAddress().getFirstname());
-						orderData.setLast_name(order.getPaymentAddress().getLastname());
-					}
-					orderData.setEmail(order.getUser().getUid());
-					orderData.setOrder_date(formatter.format(order.getCreationtime()));
-					orderData.setLocale(LOCALE_CONSTANT);
-					target.add(orderData);
 				}
 			}
 			catch (final Exception exception)
@@ -57,17 +77,5 @@ public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, Li
 				exception.printStackTrace();
 			}
 		}
-
-
-	}
-
-	/**
-	 * @param string
-	 * @return
-	 */
-	private Object SimpleDateFormat(final String string)
-	{
-		// XXX Auto-generated method stub
-		return null;
 	}
 }

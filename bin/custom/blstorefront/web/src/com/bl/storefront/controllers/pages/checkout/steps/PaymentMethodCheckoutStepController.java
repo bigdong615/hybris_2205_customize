@@ -245,7 +245,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 				final BrainTreePaymentInfoModel defaultPaymentInfo = (BrainTreePaymentInfoModel) getCheckoutCustomerStrategy()
 						.getCurrentUserForCheckout().getDefaultPaymentInfo();
 
-				if (Objects.isNull(getCheckoutFlowFacade().getCheckoutCart().getPaymentInfo()) && null != defaultPaymentInfo)
+				if (Objects.isNull(getCheckoutFlowFacade().getCheckoutCart().getPaymentInfo()) && null != defaultPaymentInfo  && defaultPaymentInfo.isSaved())
 				{
 					brainTreeCheckoutFacade.setPaymentDetails(defaultPaymentInfo.getPk().toString(), defaultPaymentInfo.getNonce());
 				}

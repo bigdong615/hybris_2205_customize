@@ -98,11 +98,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final PriceValue pv=CollectionUtils.isNotEmpty(prices) ? prices.get(0).getPriceValue() : getPriceForSkuOrSerial(order, entry, product);
 
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
-		//LOG.debug("BasePrice before dynamic : " + basePrice.getValue());
-		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"BasePrice before dynamic : {} product : {} for the order {}",
-				basePrice.getValue(),product.getCode(),order.getCode());
+		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Price info size {} BasePrice before dynamic : {} product : {} for the order {}",
+				prices.size(),basePrice.getValue(),product.getCode(),order.getCode());
 		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct()? basePrice : getDynamicBasePriceForRentalSKU(basePrice, product, order);
-		//LOG.debug("dynamicBasePrice dynamic : " + dynamicBasePrice.getValue());
 		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"BasePrice after dynamic : {} product : {} for the order {}",
 				dynamicBasePrice.getValue(),product.getCode(),order.getCode());
 		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
@@ -153,9 +151,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				order.setTotalOptionsCost(finaltotalOptionCost);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Option Cost : {}", finaltotalOptionCost);
 
+				order.setSubtotal(subtotal);
 				final Double totalPriceWithDamageWaiverCostAndOption = Double
 						.valueOf(subtotal + totalDamageWaiverCost+ totalOptionCost);
-
 				order.setTotalPrice(totalPriceWithDamageWaiverCostAndOption);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {} for the order {}",
 						totalPriceWithDamageWaiverCostAndOption,order.getCode());
@@ -207,8 +205,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				final int digits = curr.getDigits().intValue();
 				// subtotal
 				final double subtotal = order.getSubtotal().doubleValue();
-				LOG.debug("calculateTotals->subtotal before : " + subtotal + " for the order "+order.getCode());
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total subtotal : {}", subtotal);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "CalculateTotals->Order subtotal : {} for the order {}", subtotal,order.getCode());
 				//totalDamageWaiverCost
 				if (BooleanUtils.isTrue(order.getIsRentalOrder())) {
 					totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
@@ -656,8 +653,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
 		order.setTotalPrice(totalPriceWithDamageWaiverCost);
 		order.setDeliveryCost(0.0);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {} for the order {}", totalPriceWithDamageWaiverCost,order.getCode());
-		BlLogger.logFormatMessageInfo(LOG,Level.INFO,"DefaultBlCalculationService : calculateEntriesForExtendOrder : Before calculateExternalTaxes for the order {}" , order.getCode());
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {} before tax calculation for the order {}", totalPriceWithDamageWaiverCost,order.getCode());
 		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 	}
 
@@ -679,7 +675,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			pv=CollectionUtils.isNotEmpty(prices) ? prices.get(0).getPriceValue() : getPriceForSkuOrSerial(order, entry, product);
 		}
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
-		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"BasePrice before dynamic : {} product : {} for the order {}",
+		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Price info size BasePrice before dynamic : {} product : {} for the order {}",
 				basePrice.getValue(),product.getCode(),order.getCode());
 		final PriceValue dynamicBasePrice = entry.isBundleMainEntry()? basePrice:getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
 		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"BasePrice after dynamic : {} product : {} for the order {}",

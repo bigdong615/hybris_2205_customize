@@ -101,6 +101,16 @@
                 <div id="ship-it-notification"></div>
                 <div id="ship-it-am-notification"></div>
             </div>
+            <c:choose>
+	            <c:when test="${signatureRequiredMandatory eq true}">
+	            	<input type="checkbox" id="signatureRequired" checked disabled = "true"><label for="signatureRequired"><spring:theme code="basket.page.delivery.signature.required.fee"/></label>
+	            	<span><spring:theme code="basket.page.delivery.signature.required.free"/></span>
+	            </c:when>
+	            <c:otherwise>
+	            	<input type="checkbox" id="signatureRequired"><label for="signatureRequired"><spring:theme code="basket.page.delivery.signature.required.fee"/></label>
+	            	<span>($${signatureRequiredFee})</span>
+	            </c:otherwise>
+            </c:choose>
         </div>
     </div>
 </div>

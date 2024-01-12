@@ -105,6 +105,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             cartModel.setRentalEndDate(null);
             cartModel.setGiftCardCost(0.0);
             cartModel.setGiftCardOrder(Boolean.FALSE);
+            cartModel.setPaymentInfo(null);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
             final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();

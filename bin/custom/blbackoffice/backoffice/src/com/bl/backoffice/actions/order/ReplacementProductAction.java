@@ -30,6 +30,6 @@ public class ReplacementProductAction  extends AbstractComponentWidgetAdapterAwa
     @Override
     public boolean canPerform(final ActionContext<OrderModel> actionContext) {
         order = actionContext.getData();
-        return (order != null);
+        return (order != null && order.getIsRentalOrder());
     }
 }
