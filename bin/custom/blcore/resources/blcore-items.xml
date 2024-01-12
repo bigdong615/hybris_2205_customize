@@ -45,10 +45,6 @@
         <collectiontype code="subpartsList" elementtype="BlSubparts" type="list"/>
         <collectiontype code="SerialStatusEnumSet" elementtype="SerialStatusEnum" type="set"/>
 
-        <collectiontype code="SerialCodeList" elementtype="java.lang.String" type="list"/>
-
-        <collectiontype code="UnpaidBillNotesList" elementtype="java.lang.String" type="list"/>
-
     </collectiontypes>
 
     <enumtypes>
@@ -627,18 +623,6 @@
                 <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
             </targetElement>
         </relation>
-
-        <relation code="Order2OrderBills" generate="true" localized="false" autocreate="true">
-            <sourceElement qualifier="order" type="AbstractOrder" cardinality="one">
-                <modifiers read="true" write="true" search="true" optional="true"/>
-            </sourceElement>
-
-            <targetElement qualifier="orderBills" type="BlItemsBillingCharge" cardinality="many"
-                           collectiontype="list">
-                <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
-            </targetElement>
-        </relation>
-
 
         <relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
             <deployment table="ConsToOrderNotesRel" typecode="12220"/>
@@ -4761,16 +4745,6 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
                         <description>serial code to map bill charge against serial</description>
-                    </attribute>
-                    <attribute qualifier="serialCodes" type="SerialCodeList">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="true"/>
-                        <description>serial code to map bill charge against serials</description>
-                    </attribute>
-                    <attribute qualifier="unPaidBillingNotes" type="UnpaidBillNotesList">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="true"/>
-                        <description>UnPaid bill notes for the multiple serials</description>
                     </attribute>
                     <attribute qualifier="orderCode" type="java.lang.String">
                         <persistence type="property"/>

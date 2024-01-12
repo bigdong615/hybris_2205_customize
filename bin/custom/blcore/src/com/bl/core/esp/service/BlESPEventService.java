@@ -205,7 +205,6 @@ public interface BlESPEventService {
      */
     void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData,final Date requestedDate);
 
-    void sendBillPaidESPEvent(final OrderModel orderModel);
     /**
      * Send Order Verification Required by calling Order Verification ESP Event API
      *

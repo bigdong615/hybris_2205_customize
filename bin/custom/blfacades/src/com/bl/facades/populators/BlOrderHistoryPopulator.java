@@ -120,17 +120,6 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
       target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
 
-      final AtomicDouble totalOrderBillAmt = new AtomicDouble(0.0);
-      if (source.getStatus().getCode().startsWith(OrderStatus.INCOMPLETE.getCode())
-              && BooleanUtils.isTrue(source.isOrderReturnedToWarehouse())) {
-          source.getOrderBills().forEach(bill -> {
-              if(BooleanUtils.isFalse(bill.isBillPaid())){
-                  totalOrderBillAmt.addAndGet(bill.getChargedAmount().doubleValue());
-              }
-          });
-      }
-
-	  target.setOrderBillingCost(convertDoubleToPriceData(totalOrderBillAmt.get(), source));
 
 
     if (null != source.getReturnRequestForOrder() && BooleanUtils.isTrue(source.getIsReplacementOrder())) {
