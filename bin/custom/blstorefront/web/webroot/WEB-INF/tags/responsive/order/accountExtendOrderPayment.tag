@@ -65,13 +65,13 @@
       <input type="hidden" id="isPayPalPresent" name="isPayPalPresent" value="true"/>
    </c:if>
    <div class="row">
-      <div class="col-1 text-center pt-2">
+    <!--  <div class="col-1 text-center pt-2">
          <c:choose>
             <c:when test="${disablePayment}">
                <button class="btn-checkbox paymentDisabled" type="button" disabled></button>
             </c:when>
             <c:otherwise>
-               <button class="btn-checkbox" type="button"
+                <button class="btn-checkbox" type="button"
                   data-bs-toggle="collapse"
                   data-bs-target="#paypal-expand"
                   aria-controls="paypal-expand" aria-expanded="false">
@@ -80,8 +80,8 @@
                </button>
             </c:otherwise>
          </c:choose>
-      </div>
-      <div class="col-11">
+      </div>-->
+     <!-- <div class="col-11">
          <b> <spring:theme code="text.order.extend.paypal"/> <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" style="height: 44px; width: auto;"></b>
          <div class="collapse" id="paypal-expand" data-bs-parent="#paymentOptions">
             <br/>
@@ -96,7 +96,7 @@
             </div>
             <div id="payPalErrorMessage"></div>
          </div>
-      </div>
+      </div>-->
    </div>
 </div>
 

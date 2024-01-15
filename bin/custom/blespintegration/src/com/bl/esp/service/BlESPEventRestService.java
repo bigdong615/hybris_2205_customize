@@ -2,7 +2,6 @@ package com.bl.esp.service;
 
 
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
-import com.bl.esp.dto.billpaid.OrderBillReceiptEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
@@ -243,7 +242,6 @@ public interface BlESPEventRestService {
   ESPEventResponseWrapper sendESPEmailEventRequest(
       ESPEmailCommonEventRequest emailRequiredEventRequest);
 
-  ESPEventResponseWrapper sendBillPaidESP( final OrderBillReceiptEventRequest orderBillReceiptEventRequest);
     /**
      * Send Pending Verification by calling Order Pending Verification ESP Event API
      * @param pendingVerificationEventRequest order deposit request

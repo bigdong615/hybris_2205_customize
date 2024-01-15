@@ -1,6 +1,5 @@
 package com.bl.facades.order;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
@@ -9,7 +8,6 @@ import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.impl.DefaultBlCalculationService;
@@ -32,7 +30,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
-import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.order.impl.DefaultOrderFacade;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -566,71 +563,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
       target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get() + currentTax.get() , source));
   }
 
-    @Override
-    public void setPayOrderBillAttributes(final OrderData target) {
-        final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
-        OrderModel source = getOrderModel(target.getCode(), baseStoreModel);
-
-        final AtomicDouble totalAmt = new AtomicDouble(0.0);
-        applyTaxOnPayOrderBillCharges(source);
-        final AtomicDouble currentTax = new AtomicDouble(0.0);
-        source.setUnPaidBillPresent(false);
-        getModelService().save(source);
-
-        final List<AvailabilityMessage> messagesList = Lists.newArrayList();
-        source.getOrderBills().forEach(billing -> {
-            if (BooleanUtils.isFalse(billing.isBillPaid()))
-            {
-                billing.getUnPaidBillingNotes().forEach(msg -> messagesList.add(getMessage(msg)));
-                totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
-                currentTax.addAndGet(billing.getTaxAmount().doubleValue());
-            }
-        });
-            target.getEntries().forEach(entry -> {
-                messagesList.forEach(msg -> {
-                    String productName= msg.getMessageCode().split(BlCoreConstants.SEPARATOR)[1];
-
-                    if (productName.trim().equals(entry.getProduct().getName()))
-                    {
-                        final List<AvailabilityMessage> entryMessages = Lists
-                                .newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
-                        String billingNotes = msg.getMessageCode().replace(" | "," - ");
-                        AvailabilityMessage ms = getMessage(billingNotes);
-                        entryMessages.add(ms);
-                        entry.setMessages(entryMessages);
-                    }
-                });
-            });
-
-
-        target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
-        target.setTotalPayBillTax(convertDoubleToPriceData(currentTax.get(), source ));
-        target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get() + currentTax.get(), source));
-  }
-
-    private void applyTaxOnPayOrderBillCharges(OrderModel source) {
-        final AtomicBoolean isTaxBeAppliedOnOrderBill = new AtomicBoolean(Boolean.FALSE);
-        isTaxApplicableOnPayOrderBillCharges(isTaxBeAppliedOnOrderBill, source);
-        if(isTaxBeAppliedOnOrderBill.get()) {
-            source.setUnPaidBillPresent(true);
-            BlLogger.logMessage(LOG,Level.INFO,"DefaultBlOrderFacade : applyTaxOnPayOrderBillCharges : Before calculateExternalTaxes " + source.getCode());
-            getDefaultBlExternalTaxesService().calculateExternalTaxes(source);
-        }
-    }
-
-    private void isTaxApplicableOnPayOrderBillCharges(AtomicBoolean isTaxBeAppliedOnOrderBill, OrderModel source) {
-        final boolean result = source.getOrderBills().stream().anyMatch(blItemsBillingChargeModel ->
-                BooleanUtils.isFalse(blItemsBillingChargeModel.isBillPaid()));
-        if (result) {
-            isTaxBeAppliedOnOrderBill.set(Boolean.TRUE);
-            return;
-        }
-  }
-
-    private OrderModel getOrderModel(String orderCode, BaseStoreModel baseStoreModel) {
-        return getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(),
-                orderCode, baseStoreModel);
-    }
 
   /**
    * This method created to get SKU product code.

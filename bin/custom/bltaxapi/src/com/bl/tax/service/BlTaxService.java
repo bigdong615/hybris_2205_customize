@@ -2,7 +2,6 @@ package com.bl.tax.service;
 
 import java.net.URISyntaxException;
 
-import com.bl.tax.billing.BillingPojo;
 import org.springframework.web.client.RestClientException;
 
 import com.bl.tax.ResponseData;
@@ -18,7 +17,6 @@ public interface BlTaxService<REQUEST, RESPONSE> {
    */
   public RESPONSE process(final REQUEST pRequest) throws RestClientException , URISyntaxException;
 
-  public Double processBillingTax(final BillingPojo billing) throws RestClientException , URISyntaxException;
   /**
    * Process shipping tax.
    *
