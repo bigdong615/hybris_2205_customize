@@ -6,7 +6,6 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.facades.process.email.impl.DefaultBlDomoFailureNotificationService;
-import org.apache.commons.collections.CollectionUtils;
 
 
 public class BlItemsBillingChargePopulator implements Populator<BlItemsBillingChargeModel, BlItemsBillingChargeData>
@@ -42,9 +41,6 @@ public class BlItemsBillingChargePopulator implements Populator<BlItemsBillingCh
 			target.setUnPaidBillNotes(source.getUnPaidBillNotes());
 			target.setUpdatedBillTime(source.getUpdatedBillTime());
 			target.setPrimaryKey(source.getPk().toString());
-			if(CollectionUtils.isNotEmpty(source.getUnPaidBillingNotes())) {
-				target.setUnPaidBillingNotes(source.getUnPaidBillingNotes());
-			}
 		}
 		catch (final Exception exception)
 		{

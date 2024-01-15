@@ -1655,7 +1655,7 @@
                 <entry key="DEFAULT"
                        value="createdTS,modifiedTS,code"/>
                 <entry key="FULL" 
-                	   value="createdTS,modifiedTS,billChargeType,primaryKey,chargedAmount,taxAmount,billPaid,unPaidBillNotes,code,serialCode,orderCode,customer,updatedBillTime,billStatus,unPaidBillingNotes"/>
+                	   value="createdTS,modifiedTS,billChargeType,primaryKey,chargedAmount,taxAmount,billPaid,unPaidBillNotes,code,serialCode,orderCode,customer,updatedBillTime,billStatus"/>
             </map>
         </property>
     </bean>

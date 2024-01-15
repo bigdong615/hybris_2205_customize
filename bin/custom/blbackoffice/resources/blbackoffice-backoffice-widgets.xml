@@ -283,28 +283,6 @@
 			<setting key="_height" type="String">650px</setting>
 			<virtual-sockets />
 		</widget>
-                    
-		<widget id="customOrderBillingPopup" widgetDefinitionId="com.bl.backoffice.widgets.order.billingtransaction" slotId="cockpitWidgetChildrenInvisible"
-				title="Billing Transaction" template="true">
-
-			<instance-settings socketEventRoutingMode="LAST_USED">
-				<create onInit="false" reuseExisting="true">
-					<all-incoming-events/>
-				</create>
-				<close>
-					<all-outgoing-events/>
-				</close>
-				<select onInit="false">
-					<all-incoming-events/>
-				</select>
-			</instance-settings>
-			<setting key="widgetStyleClass" type="String"/>
-			<setting key="__externalLocationPath" type="String">extension://braintreecustomersupport1811backoffice</setting>
-			<setting key="widgetStyleAttribute" type="String"/>
-			<setting key="_width" type="String">1250px</setting>
-			<setting key="_height" type="String">650px</setting>
-			<virtual-sockets />
-		</widget>
 
            <widget id="InboundTrackingScanTool_propertyextractor" widgetDefinitionId="custom.bl.widgets.inboundTrackingScan" slotId="cockpitWidgetChildrenInvisible"
               template="true">
@@ -523,7 +501,6 @@
 	<widget-connection sourceWidgetId="STUB_com.bl.backoffice.actions.blFrontScan.frontdeskscanaction" outputId="frontDeskScanOutContext" targetWidgetId="frontDeskScanPopUp" inputId="inputObject"/>
 	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.customCancelOrderAction" outputId="customCancelOrderContext" targetWidgetId="customCancelOrderPopup" inputId="inputObject"/>
 	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.customOrderRefundAction" outputId="orderRefundContext" targetWidgetId="customRefundOrderPopup" inputId="inputObject"/>
-	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.customOrderBillingAction" outputId="customOrderBillingContext" targetWidgetId="customOrderBillingPopup" inputId="inputObject"/>
 	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.productReplacementAction" outputId="blProductReplacementContext" targetWidgetId="replacementProductPopup" inputId="inputObject"/>
 
 	<!-- Unboxing Tool Section -->
