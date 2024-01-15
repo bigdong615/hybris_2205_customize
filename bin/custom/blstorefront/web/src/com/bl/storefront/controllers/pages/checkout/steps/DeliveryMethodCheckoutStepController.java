@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages.checkout.steps;
 
+import com.bl.facades.shipping.data.BlShippingGroupData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -28,6 +29,7 @@ import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -148,8 +150,11 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if((boolean) getSessionService().getAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED)) {
             model.addAttribute("previousPage", Boolean.TRUE);
         }
-
-        model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
+        Collection<BlShippingGroupData> allShippingGroups = getCheckoutFacade().getAllShippingGroups();
+        List<BlShippingGroupData> upsShipping = allShippingGroups.stream().filter(blShippingGroupData -> blShippingGroupData.getCode().contains("UPS")).collect(Collectors.toList());
+       allShippingGroups.removeAll(upsShipping);
+        //model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
+        model.addAttribute("shippingGroup", allShippingGroups);
         model.addAttribute("deliveryAddresses", brainTreeUserFacade.getShippingAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
 
