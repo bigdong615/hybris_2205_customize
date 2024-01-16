@@ -90,25 +90,30 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			long startTime = System.nanoTime();
 			blSerialProduct.setIsSyncRequired(false);
 			addDateFirstActiveOnSerial(blSerialProduct, ctx);
-			//Intercepting the change in serialStatus and changing the consignment status accordingly if available
-			doStatusChangeOnConsignment(blSerialProduct, ctx);
-			createRepairLogIfRepairNeeded(blSerialProduct, ctx);
 			//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
 			calculateFinalSalePriceForSerial(blSerialProduct, ctx);
 			//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
 			calculateIncentivizedPriceForSerial(blSerialProduct, ctx);
-			updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
-			updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
-			updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
-			updateStockRecordsForBufferInventoryFlag(blSerialProduct, ctx);
-			//removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
-			setLastUserChangedConditionRating(blSerialProduct, ctx);
-			setFlagForBufferedInventoryOnSerial(blSerialProduct);
-			updateStockRecordsOnSerialCodeUpdate(blSerialProduct, ctx);
-			updateStockRecordOnSerialApprovalStatusChange(blSerialProduct,ctx);
-			long stopTime = System.nanoTime();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Prepare interceptor main method took {} time to execute", stopTime - startTime);
+			//Intercepting the change in serialStatus and changing the consignment status accordingly if available
+			doStatusChangeOnConsignment(blSerialProduct, ctx);
+			createRepairLogIfRepairNeeded(blSerialProduct, ctx);
+			//calculateFinalSalePriceForSerial(blSerialProduct, ctx);
 
+			if(blSerialProduct.getCatalogVersion().getVersion().equals("Online")) {
+				updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
+				updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
+				updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
+				updateStockRecordsForBufferInventoryFlag(blSerialProduct, ctx);
+				//removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
+				setLastUserChangedConditionRating(blSerialProduct, ctx);
+				setFlagForBufferedInventoryOnSerial(blSerialProduct);
+				updateStockRecordsOnSerialCodeUpdate(blSerialProduct, ctx);
+				updateStockRecordOnSerialApprovalStatusChange(blSerialProduct, ctx);
+			}
+			long stopTime = System.nanoTime();
+			if (LOG.isDebugEnabled()) {
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Prepare interceptor main method having serialProduct {} took {} time to execute", blSerialProduct.getCode(), stopTime - startTime);
+			}
 		}
 	}
 
@@ -207,7 +212,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			}
 		}
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsForBufferInventoryFlag took {} time to execute", stopTime - startTime);
+		if (LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsForBufferInventoryFlag having serialProduct {} took {} time to execute", blSerialProduct.getCode(), stopTime - startTime);
+           }
 	}
 
 	/**
@@ -258,7 +265,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					blSerialProduct.getWarehouseLocation(), blSerialProduct.getCode());
 		}
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateWarehouseInStockRecordsOnWHLocUpdate took {} time to execute", stopTime - startTime);
+		if (LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateWarehouseInStockRecordsOnWHLocUpdate having serialProduct {} took {} time to execute", blSerialProduct.getCode(), stopTime - startTime);
+		}
 	}
 
 	/**
@@ -285,7 +294,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					blSerialProduct.getCode());
 		}
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsOnForRentFlagUpdate took {} time to execute", stopTime - startTime);
+		if (LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsOnForRentFlagUpdate having serialProduct {} took {} time to execute", blSerialProduct.getCode(), stopTime - startTime);
+		}
 	}
 
 	/**
@@ -337,7 +348,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		}
 
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsOnSerialStatusUpdate took {} time to execute", stopTime - startTime);
+		if (LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsOnSerialStatusUpdate having serialProduct {} took {} time to execute", blSerialProduct.getCode(), stopTime - startTime);
+		}
 	}
 
 	private void updateStockRecordOnSerialApprovalStatusChange(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
@@ -362,7 +375,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					blSerialProduct.getCode());
 		}
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordOnSerialApprovalStatusChange took {} time to execute", stopTime - startTime);
+		if (LOG.isDebugEnabled()){
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordOnSerialApprovalStatusChange having serialProduct {} took {} time to execute", blSerialProduct.getCode(),stopTime - startTime);
+		}
 	}
 		/**
 		 * It updates the stock records when serial status of a serial product is changed
@@ -389,7 +404,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 						blSerialProduct.getCode());
 			}
 			long stopTime = System.nanoTime();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsOnSerialCodeUpdate took {} time to execute", stopTime - startTime);
+			if (LOG.isDebugEnabled()) {
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method updateStockRecordsOnSerialCodeUpdate having serialProduct {} took {} time to execute", blSerialProduct.getCode(), stopTime - startTime);
+			}
 		}
 
 	private void createAndExecuteBusinessProcess(BlSerialProductModel blSerialProduct, String initialCode) {
@@ -445,15 +462,12 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void calculateFinalSalePriceForSerial(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
-		long startTime = System.nanoTime();
 		if (BooleanUtils.isTrue(blSerialProduct.getForSale()) && hasForSaleBaseAndConditionalRating(blSerialProduct)
 				&& isForSalePriceCalculationRequired(blSerialProduct, ctx))
 		{
 			blSerialProduct.setFinalSalePrice(getBlPricingService().calculateFinalSalePriceForSerial(
 					blSerialProduct.getBlProduct().getForSaleBasePrice(), blSerialProduct.getConditionRatingOverallScore()));
 		}
-		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method calculateFinalSalePriceForSerial took {} time to execute", stopTime - startTime);
 	}
 
 	/**
@@ -501,7 +515,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void calculateIncentivizedPriceForSerial(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
-		long startTime = System.nanoTime();
 		final BlProductModel skuProduct = blSerialProduct.getBlProduct();
 		if (Objects.nonNull(blSerialProduct.getFinalSalePrice()) && Objects.nonNull(skuProduct) && Objects.nonNull(skuProduct.getForSaleDiscount()))
 		{
@@ -520,8 +533,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				blSerialProduct.setIncentivizedPrice(calculatedIncentivizedPrice);
 			}
 		}
-		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method calculateIncentivizedPriceForSerial took {} time to execute", stopTime - startTime);
 	}
 
 	/**
@@ -582,7 +593,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			}
 		}
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method doStatusChangeOnConsignment took {} time to execute", stopTime - startTime);
+		if (LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method doStatusChangeOnConsignment having serialProduct {} took {} time to execute", blSerialProduct.getCode(), stopTime - startTime);
+		}
 	}
 
 	/**
@@ -674,7 +687,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void createRepairLogIfRepairNeeded(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
-		long startTime = System.nanoTime();
 		if (isEligibleForRepairLogCreation(blSerialProduct, ctx)
 				&& isRepairLogTypeAvailable(blSerialProduct))
 		{
@@ -702,8 +714,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					break;
 			}
 		}
-		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "interceptor method createRepairLogIfRepairNeeded took {} time to execute", stopTime - startTime);
 	}
 
 	/**

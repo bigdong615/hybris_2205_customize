@@ -236,6 +236,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 */
 	@Override
 	public List<String> getFailedBarcodeList(final List<String> barcodes) {
+		long startTime = System.nanoTime();
 		final List<String> failedBarcodeList = new ArrayList<>();
 		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
 		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
@@ -245,6 +246,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			return failedBarcodeList;
 		}
 		subList.forEach(barcode -> setInventoryLocationOnSerial(failedBarcodeList, blSerialProducts, barcode));
+		long stopTime = System.nanoTime();
+		if(LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "getFailedBarcodeList method with barcodes {} took {} time to execute ", barcodes, stopTime - startTime);
+		}
 		return failedBarcodeList;
 	}
 
@@ -351,6 +356,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			final BlInventoryLocationModel blBINInventoryLocationModel,
 			final BlInventoryLocationModel blLocalInventoryLocation) {
 
+		long startTime = System.nanoTime();
 		final Collection<BlSerialProductModel> serialProductModels = getBlInventoryScanToolDao()
 				.getAllSerialsByBinLocation(blBINInventoryLocationModel.getCode());
 
@@ -382,10 +388,16 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 				modelService.save(serial);
 				modelService.refresh(serial);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"Parent Location {} updated for the serial with code : {}",
-						blLocalInventoryLocation.getCode(), serial.getCode());
+				if(LOG.isDebugEnabled()) {
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+							"Parent Location {} updated for the serial with code : {}",
+							blLocalInventoryLocation.getCode(), serial.getCode());
+				}
 			});
+		}
+		long stopTime = System.nanoTime();
+		if(LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "updateParentOnSerialsOfThisBIN method with location {} took {} time to execute", blLocalInventoryLocation.getCode(), stopTime - startTime);
 		}
 	}
 
@@ -519,9 +531,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
 		modelService.save(blInventoryLocationScanHistory);
 		modelService.refresh(blInventoryLocationScanHistory);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location Scan History creation is completed with pk {} for unboxing flow with unbox status {} for serial Product {} ",
-					blInventoryLocationScanHistory.getPk(), unboxStatus, blSerialProduct.getCode());
 
+		if(LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location Scan History creation is completed with pk {} for unboxing flow with unbox status {} for serial Product {} ",
+					blInventoryLocationScanHistory.getPk(), unboxStatus, blSerialProduct.getCode());
+		}
 		if(unboxStatus)
 		{
 			setLastOcLocationHistoryOnSerial(blSerialProduct, blInventoryLocationScanHistory);
@@ -546,8 +560,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
 		modelService.save(blInventoryLocationScanHistory);
 		modelService.refresh(blInventoryLocationScanHistory);
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Location Scan History creation is completed with pk {} for package scan flow with unbox status {}: ",
-				blInventoryLocationScanHistory.getPk(), unboxStatus);
+		if(LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location Scan History creation is completed with pk {} for package scan flow with unbox status {}: ",
+					blInventoryLocationScanHistory.getPk(), unboxStatus);
+		}
 		if (unboxStatus)
 		{
 			setLastOcLocationHistoryOnSerial(blSerialProduct, blInventoryLocationScanHistory);
@@ -1481,16 +1497,16 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			{
 				if(CollectionUtils.isNotEmpty(removedUnboxedSerialBarcodeList))
 				{
-   				setLocationDP(BlInventoryScanUtility.getDirtyPriorityCartLocations().contains(locationCategory));
-   				final Collection<PackagingInfoModel> packagingInfoModels = this.getPackageForSerials(removedUnboxedSerialBarcodeList);
-   				if(CollectionUtils.isEmpty(packagingInfoModels))
-   				{
-   					//result.put(BlInventoryScanLoggingConstants.INT_NINE, removedUnboxedSerialBarcodeList);
+				setLocationDP(BlInventoryScanUtility.getDirtyPriorityCartLocations().contains(locationCategory));
+				final Collection<PackagingInfoModel> packagingInfoModels = this.getPackageForSerials(removedUnboxedSerialBarcodeList);
+				if(CollectionUtils.isEmpty(packagingInfoModels))
+				{
+					  //result.put(BlInventoryScanLoggingConstants.INT_NINE, removedUnboxedSerialBarcodeList);
 					   final Collection<ConsignmentEntryModel> consignmentEntryModels = this.getConignmentEntriesForSerials(removedUnboxedSerialBarcodeList);
 					performSerialToDPCOrDCLocationScanWithConsignment(result, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
 							availablePackageBarcodes, consignmentEntryModels);
-   					return result;
-   				}else {
+					return result;
+				}else {
 				performSerialToDPCOrDCLocationScan(result, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
 							availablePackageBarcodes, packagingInfoModels);
 				}}
@@ -1499,7 +1515,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "doUnboxing method took {} time to execute", stopTime - startTime);
+		if(LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "doUnboxing method having barcodes {} took {} time to execute", barcodes, stopTime - startTime);
+		}
 		return result;
 	}
 
@@ -1832,7 +1850,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public Map<Integer,List<String>> checkSerialsForDPAndSubParts(final Collection<BlProductModel> blSerialProductModels,
 																  final ConsignmentModel consignmentModel, final BlInventoryLocationModel blInventoryLocationModel)
 	{
-		long startTime = System.nanoTime();
 		final List<String> dirtyPrioritySerialList = new ArrayList<>();
 		final List<String> dirtySerialList = new ArrayList<>();
 		final Map<Integer,List<String>> errorList = new HashMap<>();
@@ -1856,8 +1873,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 		errorList.put(BlInventoryScanLoggingConstants.FOUR, dirtySerialList);
 		errorList.put(BlInventoryScanLoggingConstants.FIVE, dirtyPrioritySerialList);
-		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "checkSerialsForDPAndSubParts method took {} time to execute", stopTime - startTime);
 		return errorList;
 	}
 
@@ -2539,7 +2554,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				binLocation.getCode(), blLocalInventoryLocation.getCode());
 		performBinScannedSerials(barcodes, errors, binLocation, blLocalInventoryLocation, isUnboxingFlow);
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "performBinToCartScanning method took {} time to execute", stopTime - startTime);
+		if(LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "performBinToCartScanning method having barcodes {} took {} time to execute", barcodes, stopTime - startTime);
+		}
 		return errors;
 	}
 
@@ -2971,7 +2988,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 		}
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "processSerialsForUnboxing method took {} time to execute", stopTime - startTime);
+		if(LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "processSerialsForUnboxing method having barcodes {} took {} time to execute", serialBarcodeList, stopTime - startTime);
+		}
 		return errors;
 	}
 	/**
