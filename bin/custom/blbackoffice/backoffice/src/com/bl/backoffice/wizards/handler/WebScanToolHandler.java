@@ -17,6 +17,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,8 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
     @Override
     public void perform(final CustomType customType, final FlowActionHandlerAdapter flowActionHandlerAdapter,
                         final Map<String, String> map) {
+        long startTime = System.nanoTime();
+        List<String> barcodeList = new ArrayList<>();
         final WebScanToolData webScanToolData = (WebScanToolData) flowActionHandlerAdapter.getWidgetInstanceManager().getModel().
                 getValue((String) map.get(BlInventoryScanLoggingConstants.WEB_SCAN_TOOL_DATA_MODEL_KEY), WebScanToolData.class);
 
@@ -63,7 +66,12 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
                 this.displayNotificationForString(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
                         BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
             }
+            barcodeList = webScanToolData.getBarcodeInputField();
             this.triggerClear(webScanToolData);
+            long stopTime = System.nanoTime();
+            if(LOG.isDebugEnabled()) {
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "WebScanTool perform method having barcodes {} took {} time to execute", barcodeList, stopTime - startTime);
+            }
         }
     }
 
