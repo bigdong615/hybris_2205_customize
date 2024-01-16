@@ -91,6 +91,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 			final Map<String, String> map)
 	{
 		long startTime = System.nanoTime();
+		List<String> barcodeList = new ArrayList<>();
 		setAllowSuccessMsgDisplay(Boolean.TRUE);
 		final WebScanToolData webScanToolData = flowActionHandlerAdapter.getWidgetInstanceManager().getModel()
 				.getValue(map.get(BlInventoryScanLoggingConstants.WEB_SCAN_TOOL_DATA_MODEL_KEY), WebScanToolData.class);
@@ -119,10 +120,13 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 				});
 				createResponseForScanResult(filteredBarcode);
 			}
+			barcodeList = webScanToolData.getBarcodeInputField();
 			this.triggerClear(webScanToolData, this.getWebScanToolUtil());
 		}
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Unboxing tool method perform took {} time to execute", stopTime - startTime);
+		if (LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Unboxing tool method perform with barcodes {} took {} time to execute", barcodeList, stopTime - startTime);
+		 }
 	}
 
 	/**
@@ -137,18 +141,12 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		{
 			if (getBlInventoryScanToolService().checkIfLocationIsBin(barcodes.get(BlInventoryScanLoggingConstants.ZERO), false))
 			{
-				long startTime = System.nanoTime();
 				performBinLocationUpdate(barcodes);
-				long stopTime = System.nanoTime();
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "unboxing tool method performBinLocationUpdate took {} time to execute", stopTime - startTime);
 			}
 			else if (getBlInventoryScanToolService()
 					.checkIfLocationIsBin(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE), true))
 			{
-				long startTime = System.nanoTime();
 				logUnboxingBinErrors(barcodes, getBlInventoryScanToolService().doSerialLocationToBinScanningForUnboxing(barcodes));
-				long stopTime = System.nanoTime();
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "unboxing tool method doSerialLocationToBinScanningForUnboxing took {} time to execute", stopTime - startTime);
 			}
 			else if (getBlInventoryScanToolService().checkIfFirstEntryIsLocation(barcodes))
 			{
@@ -159,10 +157,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 			}
 			else
 			{
-				long startTime = System.nanoTime();
 				createResponseMegForScan(getBlInventoryScanToolService().checkValidLocationInBarcodeListOfDPC(barcodes), barcodes);
-				long stopTime = System.nanoTime();
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "unboxing tool method checkValidLocationInBarcodeListOfDPC took {} time to execute", stopTime - startTime);
 			}
 		}
 		else
@@ -291,7 +286,9 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 					successBarcodes.subList(0, successBarcodes.size() - 1));
 		}
 		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "logUnboxingBinErrors method took {} time to execute", stopTime - startTime);
+		if(LOG.isDebugEnabled()) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "logUnboxingBinErrors method with barcodes {} took {} time to execute", successBarcodes, stopTime - startTime);
+		}
 	}
 
 	/**
@@ -402,7 +399,6 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	private void evaluateErrors(final List<String> barcodes)
 	{
 		final Map<Integer, Collection<String>> unboxingResultMap = getBlInventoryScanToolService().doUnboxing(barcodes);
-		long startTime = System.nanoTime();
 		if (MapUtils.isEmpty(unboxingResultMap))
 		{
 
@@ -441,8 +437,6 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		{
 			logUnboxingStatus(barcodes, unboxingResultMap);
 		}
-		long stopTime = System.nanoTime();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "evaluateErrors method post unboxing took {} time to execute", stopTime - startTime);
 	}
 
 	/**
