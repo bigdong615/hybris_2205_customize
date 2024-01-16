@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages.checkout.steps;
 
+import com.bl.core.services.order.BlOrderService;
 import com.bl.facades.shipping.data.BlShippingGroupData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
@@ -112,6 +113,9 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Resource(name = "userFacade")
     private BrainTreeUserFacade brainTreeUserFacade;
 
+    @Resource(name="blOrderService")
+    private BlOrderService blOrderService;
+
     @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
  	 private RentalDateDto getRentalsDuration()
  	 {
@@ -151,9 +155,10 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             model.addAttribute("previousPage", Boolean.TRUE);
         }
         Collection<BlShippingGroupData> allShippingGroups = getCheckoutFacade().getAllShippingGroups();
-        List<BlShippingGroupData> upsShipping = allShippingGroups.stream().filter(blShippingGroupData -> blShippingGroupData.getCode().contains("UPS")).collect(Collectors.toList());
-       allShippingGroups.removeAll(upsShipping);
-        //model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
+        if(blOrderService.isAquatechProductsPresentInOrder(cartModel)) {
+            List<BlShippingGroupData> upsShipping = allShippingGroups.stream().filter(blShippingGroupData -> blShippingGroupData.getCode().contains("UPS")).collect(Collectors.toList());
+            allShippingGroups.removeAll(upsShipping);
+        }
         model.addAttribute("shippingGroup", allShippingGroups);
         model.addAttribute("deliveryAddresses", brainTreeUserFacade.getShippingAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
