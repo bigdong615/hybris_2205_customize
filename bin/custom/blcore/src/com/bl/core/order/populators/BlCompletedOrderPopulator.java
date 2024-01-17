@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+
 /**
  * @author kumar
  *
@@ -37,36 +39,39 @@ public class BlCompletedOrderPopulator implements Populator<List<OrderModel>, Li
 					{
 						for (final AbstractOrderEntryModel orderentry : order.getEntries())
 						{
-							final OrderData orderData = new OrderData();
-							orderData.setCode(order.getCode());
 							if (orderentry.getProduct() != null)
 							{
-								orderData.setPage_id(orderentry.getProduct().getCode());
+								final OrderData orderData = new OrderData();
+								orderData.setCode(order.getCode());
+								if (orderentry.getProduct() != null)
+								{
+									orderData.setPage_id(orderentry.getProduct().getCode());
+								}
+								orderData.setOrder_id(order.getCode());
+								if (order.getPaymentAddress() != null)
+								{
+									if (order.getPaymentAddress().getFirstname() != null)
+									{
+										orderData.setFirst_name(order.getPaymentAddress().getFirstname());
+									}
+									else
+									{
+										orderData.setFirst_name(order.getUser().getName());
+									}
+									if (order.getPaymentAddress().getLastname() != null)
+									{
+										orderData.setLast_name(order.getPaymentAddress().getLastname());
+									}
+									else
+									{
+										orderData.setLast_name(order.getUser().getName());
+									}
+								}
+								orderData.setEmail(order.getUser().getUid());
+								orderData.setOrder_date(formatter.format(order.getCreationtime()));
+								orderData.setLocale(LOCALE_CONSTANT);
+								target.add(orderData);
 							}
-							orderData.setOrder_id(order.getCode());
-							if (order.getPaymentAddress() != null)
-							{
-								if (order.getPaymentAddress().getFirstname() != null)
-								{
-									orderData.setFirst_name(order.getPaymentAddress().getFirstname());
-								}
-								else
-								{
-									orderData.setFirst_name(order.getUser().getName());
-								}
-								if (order.getPaymentAddress().getLastname() != null)
-								{
-									orderData.setLast_name(order.getPaymentAddress().getLastname());
-								}
-								else
-								{
-									orderData.setLast_name(order.getUser().getName());
-								}
-							}
-							orderData.setEmail(order.getUser().getUid());
-							orderData.setOrder_date(formatter.format(order.getCreationtime()));
-							orderData.setLocale(LOCALE_CONSTANT);
-							target.add(orderData);
 						}
 					}
 				}

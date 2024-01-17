@@ -175,19 +175,22 @@ public class DefaultBlStockService implements BlStockService
 			} else {
 				stock_Message = "Release";
 			}
-			stockLevels.forEach(stockLevel -> {
+			for(StockLevelModel stockLevel:stockLevels) {
 				try {
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-							stock_Message + " stock for serial product {}, for stock date {} while update serial status before change Hard Assign {} , reserve status {}, associated order {} "
-									+ ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
-							stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
-				} catch (Exception e) {
+					if(LOG.isDebugEnabled()) {
+						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+								stock_Message + " stock for serial product {}, for stock date {} while update serial status before change Hard Assign {} , reserve status {}, associated order {} "
+										+ ",current date {} current user {}", stockLevel.getSerialProductCode(), stockLevel.getDate(), stockLevel.getHardAssigned(), stockLevel.getReservedStatus(),
+								stockLevel.getOrder(), new Date(), (defaultBlUserService.getCurrentUser() != null ? defaultBlUserService.getCurrentUser().getUid() : "In Automation"));
+					  }
+					} catch (Exception e) {
 					BlLogger.logMessage(LOG, Level.ERROR, "Some error occur while " + stock_Message + " stock in update serial status flow", e);
 				}
 					stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
-					saveStockRecord(stockLevel, reservedStatus);
-				});
-
+				    stockLevel.setReservedStatus(reservedStatus);
+					//saveStockRecord(stockLevel, reservedStatus);
+				}
+			getModelService().saveAll(stockLevels);
 		}
 	}
 
@@ -436,9 +439,15 @@ public class DefaultBlStockService implements BlStockService
 		} else {
 			final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(
 					blSerialProduct);
-			stockLevels.forEach(stockLevel ->
-				upDateWarehouseAndSaveStockRecord(stockLevel, blSerialProduct.getWarehouseLocation())
-			);
+
+			for(StockLevelModel stockLevel: stockLevels){
+				stockLevel.setWarehouse(blSerialProduct.getWarehouseLocation());
+			}
+
+			getModelService().saveAll(stockLevels);
+			//stockLevels.forEach(stockLevel ->
+			//	upDateWarehouseAndSaveStockRecord(stockLevel, blSerialProduct.getWarehouseLocation())
+			//);
 		}
 	}
 
