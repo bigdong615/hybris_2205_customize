@@ -12,7 +12,11 @@ import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractSearchPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.*;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateEmailForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePasswordForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateProfileForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.AddressValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.EmailValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.PasswordValidator;
@@ -21,6 +25,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.verification.Addres
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
 import de.hybris.platform.assistedservicefacades.AssistedServiceFacade;
+import de.hybris.platform.basecommerce.enums.CancelReason;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.address.AddressVerificationFacade;
@@ -29,8 +34,10 @@ import de.hybris.platform.commercefacades.consent.CustomerConsentDataStrategy;
 import de.hybris.platform.commercefacades.customer.CustomerFacade;
 import de.hybris.platform.commercefacades.i18n.I18NFacade;
 import de.hybris.platform.commercefacades.order.CheckoutFacade;
+import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
+import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.user.data.AddressData;
@@ -52,6 +59,9 @@ import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.ordermanagementfacades.cancellation.data.OrderCancelEntryData;
+import de.hybris.platform.ordermanagementfacades.cancellation.data.OrderCancelRequestData;
+import de.hybris.platform.ordermanagementfacades.order.OmsOrderFacade;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
@@ -121,6 +131,7 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.product.data.VerificationDocumentData;
 import com.bl.facades.wishlist.BlWishListFacade;
 import com.bl.facades.wishlist.data.Wishlist2EntryData;
+import com.bl.forms.OrderEntryCancelForm;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
@@ -313,6 +324,12 @@ public class AccountPageController extends AbstractSearchPageController
 	@Resource(name="generateInvoicePdfService")
 	private GenerateInvoicePdfService generateInvoicePdfService;
 
+	@Resource(name = "orderFacade")
+	private OrderFacade orderFacade;
+
+	@Resource(name = "omsOrderFacade")
+	private OmsOrderFacade omsOrderFacade;
+
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
 		return BlRentalDateUtils.getRentalsDuration();
@@ -491,6 +508,58 @@ public class AccountPageController extends AbstractSearchPageController
 			model.addAttribute("asmUser", true);
 		}
 		return getViewForPage(model);
+	}
+
+	@GetMapping(value = "/{orderCode:.*}/cancelOrder")
+	@RequireHardLogIn
+	public String submitCancelOrderPage(@PathVariable("orderCode") final String orderCode, final Model model,
+			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+	{
+
+		final OrderEntryCancelForm orderEntryCancelForm = new OrderEntryCancelForm();
+		final Map<Integer, Integer> cancelEntryQuantityMap = new HashMap<Integer, Integer>();
+		final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+		for(final OrderEntryData entryData : orderDetails.getEntries()) {
+			cancelEntryQuantityMap.put(entryData.getEntryNumber(), entryData.getQuantity().intValue());
+		}
+		orderEntryCancelForm.setCancelEntryQuantityMap(cancelEntryQuantityMap);
+		try
+		{
+			omsOrderFacade.createRequestOrderCancel(
+					prepareOrderCancelRequestData(orderCode, orderEntryCancelForm.getCancelEntryQuantityMap()));
+			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.INFO_MESSAGES_HOLDER,
+					getMessageSource().getMessage("text.account.cancel.success", null, getI18nService().getCurrentLocale()), null);
+			return REDIRECT_PREFIX + "/my-account/order/" + orderCode;
+		}
+		catch (final Exception exception) //NOSONAR
+		{
+			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "text.account.cancel.fail.generic");
+			return REDIRECT_TO_ORDER_HISTORY_PAGE;
+		}
+	}
+
+	protected OrderCancelRequestData prepareOrderCancelRequestData(final String orderCode,
+			final Map<Integer, Integer> cancelEntryQuantityMap)
+	{
+		final OrderCancelRequestData result = new OrderCancelRequestData();
+		result.setOrderCode(orderCode);
+		result.setEntries(prepareOrderCancelEntryData(cancelEntryQuantityMap));
+		result.setUserId(userService.getCurrentUser().getUid());
+		return result;
+	}
+
+	protected List<OrderCancelEntryData> prepareOrderCancelEntryData(final Map<Integer, Integer> cancelEntryQuantityMap)
+	{
+		final List<OrderCancelEntryData> result = new ArrayList<>();
+
+		cancelEntryQuantityMap.forEach((entryNum, cancelQty) -> {
+			final OrderCancelEntryData orderCancelEntryData = new OrderCancelEntryData();
+			orderCancelEntryData.setOrderEntryNumber(entryNum);
+			orderCancelEntryData.setCancelQuantity(Long.valueOf(cancelQty));
+			orderCancelEntryData.setCancelReason(CancelReason.CUSTOMERREQUEST);
+			result.add(orderCancelEntryData);
+		});
+		return result;
 	}
 
 	@RequestMapping(value = "/order/" + ORDER_CODE_PATH_VARIABLE_PATTERN
@@ -1631,12 +1700,12 @@ public class AccountPageController extends AbstractSearchPageController
 	 * @param uploadedDocumentFromCustomer
 	 * @param model
 	 */
-	 public void setFlagForUploadedDocuments(Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer, Model model) {
+	 public void setFlagForUploadedDocuments(final Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer, final Model model) {
 		final Map<String, Boolean> isDocumentUploaded = new HashMap<>();
-		for (String key : uploadedDocumentFromCustomer.keySet()) {
-			 List<VerificationDocumentMediaModel> media = uploadedDocumentFromCustomer.get(key);
+		for (final String key : uploadedDocumentFromCustomer.keySet()) {
+			 final List<VerificationDocumentMediaModel> media = uploadedDocumentFromCustomer.get(key);
 
-			 for (VerificationDocumentMediaModel mediaModel : media) {
+			 for (final VerificationDocumentMediaModel mediaModel : media) {
 				 if (!mediaModel.isRemovedByCustomer()) {
 					 isDocumentUploaded.put(mediaModel.getDocumentType().toString(), Boolean.TRUE);
 				 }

@@ -62,7 +62,7 @@
                 								</li>
                 								<c:if test="${order.isCancellable eq true }">
 													<li>
-														<a href="#" onclick="orderCancel()"><spring:theme code="order.myaccount.cancel.order" /></a>
+														<a href="#" onclick="orderCancel('${order.code}')"><spring:theme code="order.myaccount.cancel.order" /></a>
 													<li>
 												</c:if>
                								<c:if test="${order.rentalCart}">
@@ -222,7 +222,7 @@
                 								</li>
                 								<c:if test="${order.isCancellable eq true }">
 													<li>
-														<a href="#" onclick="orderCancel()"><spring:theme code="order.myaccount.cancel.order" /></a>
+													  <a href="#" onclick="orderCancel('${order.code}')"><spring:theme code="order.myaccount.cancel.order" /></a>
 													<li>
 												</c:if>
                 								<c:if test="${order.rentalCart}">
@@ -404,8 +404,8 @@
 		    <label for="option5">Something else</label>
 		  </h6>
 		  </div>
-		  <br>
-		  <button type="button" id="cancelReasonDialog" class="btn btn-outlinecancel" data-bs-dismiss="modal" disabled="disabled">Continue</button>
+		  <br>    									
+		  <button type="button" id="cancelReasonDialog"  class="btn btn-outlinecancel cancelReasonDialog" data-bs-dismiss="modal" onclick="cancelContinueReasonDialog()" disabled="disabled">Continue</button>
 		      <br>
 		      <br>
 		      <a href="#" class="cancel-odr" onclick="closeCancelReasonDialog()">Do not cancel</a>
@@ -415,7 +415,12 @@
     <script src=
 "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-$("input:radio").change(function () {$("#cancelReasonDialog").prop("disabled", false);});
+var selectedOrderCode;
+
+$("input:radio").change(function (event) {
+
+	$('.cancelReasonDialog').prop('disabled', false);
+	});
     function openModalAndPrintList(list) {
     //var list = ['https://www.google.com','https://www.facebook.com'];
     // Create the modal element
@@ -512,12 +517,13 @@ $("input:radio").change(function () {$("#cancelReasonDialog").prop("disabled", f
             document.body.removeChild(modal);
         }
     }
-    function orderCancel() {
+    function orderCancel(orderCodeValue) {
+    	selectedOrderCode = orderCodeValue;
     	document.getElementById("cancelDialog").style.display = "block";
     }
    	function closeCancelDialog() {
    		document.getElementById("cancelDialog").style.display = "none";
-   	}
+   	}s
    	
    	function cancelReasonDialog() {
    		closeCancelDialog()
@@ -526,6 +532,9 @@ $("input:radio").change(function () {$("#cancelReasonDialog").prop("disabled", f
    	function closeCancelReasonDialog() {
    		document.getElementById("cancelReasonDialog").style.display = "none";
    	}
+   	function cancelContinueReasonDialog() {
+   		window.location = '/my-account/'+selectedOrderCode+'/cancelOrder';
+    }
 
 </script>
 </head>
