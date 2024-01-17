@@ -412,7 +412,6 @@ var selectedOrderCode;
 $("input:radio").change(function (event) {
 
 	$('.cancelReasonDialog').prop('disabled', false);
-	console.log(selectedOrderCode);
 	});
     function openModalAndPrintList(list) {
     //var list = ['https://www.google.com','https://www.facebook.com'];
@@ -512,12 +511,11 @@ $("input:radio").change(function (event) {
     }
     function orderCancel(orderCodeValue) {
     	selectedOrderCode = orderCodeValue;
-    	console.log(selectedOrderCode);
     	document.getElementById("cancelDialog").style.display = "block";
     }
    	function closeCancelDialog() {
    		document.getElementById("cancelDialog").style.display = "none";
-   	}
+   	}s
    	
    	function cancelReasonDialog() {
    		closeCancelDialog()
