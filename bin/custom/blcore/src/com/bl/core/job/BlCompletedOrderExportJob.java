@@ -205,6 +205,7 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 	{
 		final String logFileName = new SimpleDateFormat(BlespintegrationConstants.COMPLETED_FILE_FORMAT).format(new Date());
 		final String fileName = new StringBuilder(BlespintegrationConstants.COMPLETED_ORDER_FILE_NAME_PREFIX).append(logFileName)
+				.append(Config.getParameter(BlespintegrationConstants.TEST_FILE_EXTENSION))
 				.append(BlespintegrationConstants.RETURN_ORDER_FILE_SUFFIX).toString();
 		final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
 		createDirectoryForFTPFeed(path);

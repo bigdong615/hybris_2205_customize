@@ -115,7 +115,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
     });
     final String xmlString = covertXMLIntoString(orderFeedData);
     final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
-    final String fileName = BlespintegrationConstants.FILE_NAME_PREFIX + logFileName + BlespintegrationConstants.FILE_SUFFIX;
+    final String fileName = BlespintegrationConstants.FILE_NAME_PREFIX + logFileName +Config.getParameter(BlespintegrationConstants.TEST_FILE_EXTENSION)+ BlespintegrationConstants.FILE_SUFFIX;
     final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
     createDirectoryForFTPFeed(path);
     final File file = new File(path + BlespintegrationConstants.SLASH + fileName);
