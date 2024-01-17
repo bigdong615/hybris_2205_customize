@@ -439,9 +439,15 @@ public class DefaultBlStockService implements BlStockService
 		} else {
 			final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(
 					blSerialProduct);
-			stockLevels.forEach(stockLevel ->
-				upDateWarehouseAndSaveStockRecord(stockLevel, blSerialProduct.getWarehouseLocation())
-			);
+
+			for(StockLevelModel stockLevel: stockLevels){
+				stockLevel.setWarehouse(blSerialProduct.getWarehouseLocation());
+			}
+
+			getModelService().saveAll(stockLevels);
+			//stockLevels.forEach(stockLevel ->
+			//	upDateWarehouseAndSaveStockRecord(stockLevel, blSerialProduct.getWarehouseLocation())
+			//);
 		}
 	}
 
