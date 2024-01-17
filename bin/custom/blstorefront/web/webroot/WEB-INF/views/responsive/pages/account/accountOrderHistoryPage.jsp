@@ -525,7 +525,7 @@ $("input:radio").change(function (event) {
    		document.getElementById("cancelReasonDialog").style.display = "none";
    	}
    	function cancelContinueReasonDialog() {
-   		window.location = '/blstorefront/my-account/'+selectedOrderCode+'/cancelOrder';
+   		window.location = '/my-account/'+selectedOrderCode+'/cancelOrder';
     }
 
 </script>
