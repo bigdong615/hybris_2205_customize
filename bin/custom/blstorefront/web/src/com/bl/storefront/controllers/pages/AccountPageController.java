@@ -131,7 +131,6 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.product.data.VerificationDocumentData;
 import com.bl.facades.wishlist.BlWishListFacade;
 import com.bl.facades.wishlist.data.Wishlist2EntryData;
-import com.bl.forms.OrderEntryCancelForm;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
@@ -515,18 +514,15 @@ public class AccountPageController extends AbstractSearchPageController
 	public String submitCancelOrderPage(@PathVariable("orderCode") final String orderCode, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
-
-		final OrderEntryCancelForm orderEntryCancelForm = new OrderEntryCancelForm();
 		final Map<Integer, Integer> cancelEntryQuantityMap = new HashMap<Integer, Integer>();
 		final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
 		for(final OrderEntryData entryData : orderDetails.getEntries()) {
 			cancelEntryQuantityMap.put(entryData.getEntryNumber(), entryData.getQuantity().intValue());
 		}
-		orderEntryCancelForm.setCancelEntryQuantityMap(cancelEntryQuantityMap);
 		try
 		{
 			omsOrderFacade.createRequestOrderCancel(
-					prepareOrderCancelRequestData(orderCode, orderEntryCancelForm.getCancelEntryQuantityMap()));
+					prepareOrderCancelRequestData(orderCode, cancelEntryQuantityMap));
 			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.INFO_MESSAGES_HOLDER,
 					getMessageSource().getMessage("text.account.cancel.success", null, getI18nService().getCurrentLocale()), null);
 			return REDIRECT_PREFIX + "/my-account/order/" + orderCode;
