@@ -62,7 +62,7 @@
                 								</li>
                 								<c:if test="${order.isCancellable eq true }">
 													<li>
-														<a href="#" onclick="orderCancel()"><spring:theme code="order.myaccount.cancel.order" /></a>
+														<a href="#" onclick="orderCancel('${order.code}')"><spring:theme code="order.myaccount.cancel.order" /></a>
 													<li>
 												</c:if>
                								<c:if test="${order.rentalCart}">
@@ -396,7 +396,7 @@
 		    <label for="option5">Something else</label>
 		  </h6>
 		  </div>
-		  <br>
+		  <br>    									
 		  <button type="button" id="cancelReasonDialog"  class="btn btn-outlinecancel cancelReasonDialog" data-bs-dismiss="modal" onclick="cancelContinueReasonDialog()" disabled="disabled">Continue</button>
 		      <br>
 		      <br>
@@ -527,8 +527,7 @@ $("input:radio").change(function (event) {
    		document.getElementById("cancelReasonDialog").style.display = "none";
    	}
    	function cancelContinueReasonDialog() {
-   		window.location.href = selectedOrderCode+'/cancel/cancelconfirmation';
-   	
+   		window.location = '/blstorefront/my-account/'+selectedOrderCode+'/cancelOrder';
     }
 
 </script>
