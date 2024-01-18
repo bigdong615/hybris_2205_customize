@@ -143,7 +143,7 @@
 				  	}
 				},
 				{
-					"event":"moduleItem.interact.auto.view",
+					"event":"module.load.auto.dataLayer.load",
 					"modules":{
 	   					 "id": "modules-home",
 	   					 "name": "new-rentals",
