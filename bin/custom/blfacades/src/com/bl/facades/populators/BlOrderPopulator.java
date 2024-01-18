@@ -81,7 +81,7 @@ public class BlOrderPopulator extends OrderPopulator
 			}
 			target.setOrderShippedStatusDate(source.getOrderShippedStatusDate());
 			target.setNonRefundableDeposit(source.isNonRefundableDeposit());
-			//target.setSumOfGearValueOnOrder(source.getSumOfGearValueOnOrder());
+			target.setSumOfGearValueOnOrder(source.getSumOfGearValueOnOrder());
 			target.setOrderUnboxingTimestamp(source.getOrderUnboxingTimestamp());
 			target.setIsOrderCommittedToAvalara(source.getIsOrderCommittedToAvalara());
 			target.setTaxRate(source.getTaxRate());
