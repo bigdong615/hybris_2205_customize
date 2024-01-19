@@ -201,6 +201,10 @@
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
                 								</c:if>
+                								<c:if test="${not empty agent.uid && order.isRentalActive eq false && order.orderStatus eq 'Shipped'}">
+                                                   <a href="${extendRentAction}" class="btn btn-primary">
+                                                   <spring:theme code="text.myaccount.order.extend.rent" /> </a>
+                                                </c:if>
                 								<c:if test="${order.orderStatus ne null && order.orderStatus eq 'Shipped'}">
                 								 <p class="my-2">${order.orderStatus}</p>
                 								 </c:if>
