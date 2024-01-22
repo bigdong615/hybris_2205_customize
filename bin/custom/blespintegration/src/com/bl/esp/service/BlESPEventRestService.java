@@ -5,6 +5,7 @@ import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
+import com.bl.esp.dto.email.marketing.CustomerMarketingEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.giftcard.FreeGiftCardPurchaseEventRequest;
 import com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest;
@@ -255,5 +256,6 @@ public interface BlESPEventRestService {
 	 */
 	ESPEventResponseWrapper sendOrderVerificationReminder(VerificationReminderEventRequest verificationReminderEventRequest);
     ESPEventResponseWrapper sendProductReplacementEsp(ProductReplacementEventRequest productReplacementEventRequest);
+    ESPEventResponseWrapper sendCustomerMarketingESP(final CustomerMarketingEventRequest customerMarketingEventRequest);
 
     }

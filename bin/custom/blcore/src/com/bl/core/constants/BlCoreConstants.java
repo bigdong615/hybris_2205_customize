@@ -702,6 +702,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String VERIFICATION_REMINDER_MESSAGE_BOX_ERROR_TEXT = "error.message.verificationreminder.emailsent";
 	public static final String SITE_NAME = "BorrowLenses.com";
 	public static final String PRODUCT_REPLACEMENT_EVENT_DEFINITION_KEY = "product.replacement.event.definition.key";
+	public static final String CUSTOMER_MARKETING_EVENT_DEFINITION_KEY ="customer.email.marketing.event.definition.key";
 	private BlCoreConstants()
 	{
 		//empty

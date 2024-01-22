@@ -3,11 +3,17 @@
  */
 package com.bl.facades.subscription.impl;
 
+import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.subscription.models.ContactRequest;
 import com.bl.core.subscription.service.BlEmailSubscriptionService;
+import com.bl.esp.dto.email.marketing.data.CustomerMarketingData;
 import com.bl.facades.populators.BlEmailSubscriptionRequestPopulator;
 import com.bl.facades.subscription.BlEmailSubscriptionFacade;
+import de.hybris.platform.core.model.user.UserModel;
+import de.hybris.platform.servicelayer.user.UserService;
 import org.apache.commons.lang.StringUtils;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -19,17 +25,39 @@ public class DefaultBlEmailSubscriptionFacade implements BlEmailSubscriptionFaca
 
 	private BlEmailSubscriptionService blEmailSubscriptionService;
 	private BlEmailSubscriptionRequestPopulator blEmailSubscriptionRequestPopulator;
-
+	@Resource(name="blEspEventService")
+	private BlESPEventService blESPEventService;
+	@Resource(name = "userService")
+	private UserService userService;
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void subscribe(final String emailId) {
-		if (StringUtils.isNotEmpty(emailId)) {
+	public void subscribe(final String orderCode,final CustomerMarketingData customerMarketingData) {
+		if (StringUtils.isNotEmpty(customerMarketingData.getEmailId())) {
 		final ContactRequest contactRequest = new ContactRequest();
-		blEmailSubscriptionRequestPopulator.populate(emailId, contactRequest);
+		blEmailSubscriptionRequestPopulator.populate(customerMarketingData.getEmailId(), contactRequest);
+		if(orderCode==null) {
+			final UserModel currentUser = userService.getCurrentUser();
+			if (userService.isAnonymousUser(currentUser)) {
+				customerMarketingData.setSubscriberID(customerMarketingData.getEmailId());
+				customerMarketingData.setFirstName(StringUtils.EMPTY);
+                customerMarketingData.setCustomer(Boolean.FALSE);
+			} else {
+				customerMarketingData.setSubscriberID(currentUser.getUid());
+				customerMarketingData.setFirstName(currentUser.getName());
+				customerMarketingData.setCustomer(Boolean.TRUE);
+			}
+			customerMarketingData.setZipcode(StringUtils.EMPTY);
+			customerMarketingData.setState(StringUtils.EMPTY);
+			blESPEventService.sendCustomerMarketingEvent(customerMarketingData.getEmailId(),customerMarketingData);
+		}else {
+            blESPEventService.sendCustomerMarketingEvent(orderCode,customerMarketingData);
+			}
+
 		// call API to create contact
 		blEmailSubscriptionService.subscribe(contactRequest);
+
 		}
 	}
 

@@ -4,6 +4,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.common.data.ESPEmailCommonRequestData;
+import com.bl.esp.dto.email.marketing.data.CustomerMarketingData;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -214,6 +215,6 @@ public interface BlESPEventService {
      
      void sendOrderVerificationReminderEvent(final OrderModel orderModel);
     void sendReplacementProductEvent(final OrderModel orderModel,final String oldProductName,final String newProductName,final String customerNotes);
-
+    void sendCustomerMarketingEvent(final String orderCode,final CustomerMarketingData customerMarketingData) ;
 
     }
