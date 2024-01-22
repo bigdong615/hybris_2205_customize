@@ -5,6 +5,7 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlReplaceMentOrderUtils;
+import com.bl.esp.dto.email.marketing.data.CustomerMarketingData;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.subscription.BlEmailSubscriptionFacade;
@@ -19,6 +20,7 @@ import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.model.BrainTreePaymentInfoModel;
+import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.core.model.order.CartModel;
 import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
@@ -403,11 +405,15 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 		try {
 			if (paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
-				if (StringUtils.isNotEmpty(paymentInfo.getBillingAddress().getEmail())) {
-					blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
-				} else {
-					blEmailSubscriptionFacade.subscribe(orderData.getUser().getUid());
-				}
+				AddressData billingAddress = paymentInfo.getBillingAddress();
+				final CustomerMarketingData customerMarketingData = new CustomerMarketingData();
+				customerMarketingData.setSubscriberID(orderData.getUser().getUid());
+				customerMarketingData.setFirstName(orderData.getUser().getName());
+				customerMarketingData.setZipcode(billingAddress.getPostalCode());
+				customerMarketingData.setState(billingAddress.getRegion().getName());
+				customerMarketingData.setEmailId(StringUtils.isNotEmpty(billingAddress.getEmail()) ?billingAddress.getEmail():orderData.getUser().getUid());
+                customerMarketingData.setCustomer(Boolean.TRUE);
+				blEmailSubscriptionFacade.subscribe(orderData.getCode(),customerMarketingData);
 			}
 		} catch (Exception ex) {
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,

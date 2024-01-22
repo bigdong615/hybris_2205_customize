@@ -41,10 +41,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.esp.dto.email.marketing.data.CustomerMarketingData;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 import com.bl.logging.BlLogger;
+
 
 /**
  * Controller for home page
@@ -91,9 +93,10 @@ public class HomePageController extends AbstractPageController
 	}
 
 	@GetMapping
-	public String home(@RequestParam(value = WebConstants.CLOSE_ACCOUNT, defaultValue = "false") final boolean closeAcc,
-			@RequestParam(value = LOGOUT, defaultValue = "false") final boolean logout, final Model model,
-			final RedirectAttributes redirectModel,final HttpServletRequest request) throws CMSItemNotFoundException
+	public String home(@RequestParam(value = WebConstants.CLOSE_ACCOUNT, defaultValue = "false")
+	final boolean closeAcc, @RequestParam(value = LOGOUT, defaultValue = "false")
+	final boolean logout, final Model model, final RedirectAttributes redirectModel, final HttpServletRequest request)
+			throws CMSItemNotFoundException
 	{
 
 		if (logout)
@@ -103,13 +106,14 @@ public class HomePageController extends AbstractPageController
 		final ContentPageModel contentPage = getContentPageForLabelOrId(null);
 		storeCmsPageInModel(model, contentPage);
 		setUpMetaDataForContentPage(model, contentPage);
-		if(StringUtils.isNotEmpty(googleSiteVerification)){
+		if (StringUtils.isNotEmpty(googleSiteVerification))
+		{
 			final List<MetaElementData> metadata = (List<MetaElementData>) model.getAttribute("metatags");
 			metadata.add(createMetaElement("google-site-verification", googleSiteVerification));
 		}
 		updatePageTitle(model, contentPage);
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
-		model.addAttribute(blCartFacade.identifyCartType(),true);
+		model.addAttribute(blCartFacade.identifyCartType(), true);
 		ProductCarouselComponentModel component = null;
 
 		BlLogger.logMessage(LOG, Level.INFO, "Before new rentals load", "" + System.currentTimeMillis());
@@ -149,12 +153,14 @@ public class HomePageController extends AbstractPageController
 	}
 
 	@GetMapping(value = "/subscribe-email")
-	public void subscribeEmail(@RequestParam("emailId") final String emailId, final Model model,
-			final HttpServletResponse response) {
+	public void subscribeEmail(@RequestParam("emailId")
+	final String emailId, final Model model, final HttpServletResponse response)
+	{
 
 		XSSFilterUtil.filter(emailId);
-		blEmailSubscriptionFacade.subscribe(emailId);
-
+		final CustomerMarketingData customerMarketingData = new CustomerMarketingData();
+		customerMarketingData.setEmailId(emailId);
+		blEmailSubscriptionFacade.subscribe(null, customerMarketingData);
 	}
 
 	/**
