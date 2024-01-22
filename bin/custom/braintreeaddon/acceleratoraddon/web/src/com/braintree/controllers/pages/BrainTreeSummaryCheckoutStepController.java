@@ -24,6 +24,8 @@ import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
+import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
+import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ProductBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.CheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkout.steps.AbstractCheckoutStepController;
@@ -102,6 +104,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	@Resource(name = "blBlackoutDateService")
   private BlBlackoutDateService blBlackoutDateService;
 	
+	@Resource(name = "productBreadcrumbBuilder")
+	private ProductBreadcrumbBuilder productBreadcrumbBuilder;
+	
 	@ModelAttribute(name = BraintreeaddonControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
@@ -149,6 +154,35 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY,
 				getResourceBreadcrumbBuilder().getBreadcrumbs("checkout.multi.summary.breadcrumb"));
 		model.addAttribute("metaRobots", "noindex,nofollow");
+		
+		
+		
+		//To pass breadcrumb data for each product in cart - Tealium
+				try
+				{
+					final CartData cartData1 = (CartData) model.getAttribute("cartData");
+					cartData1.getEntries().forEach(entry -> {
+						final List<String> productBreadcrumbData = new ArrayList<String>();
+						final List<Breadcrumb> productBreadcrumb = new ArrayList<Breadcrumb>(
+								productBreadcrumbBuilder.getBreadcrumbs(entry.getProduct().getCode()));
+						productBreadcrumb.forEach(breadcrumb -> {
+							if (null != breadcrumb.getCategoryCode())
+							{
+								productBreadcrumbData.add(breadcrumb.getCategoryCode());
+							}
+						});
+						entry.getProduct().setProductBreadcrumbData(productBreadcrumbData);
+					});
+
+					model.addAttribute("cartData", cartData1);
+				}
+				catch (final Exception e)
+				{
+					e.printStackTrace();
+				}
+				
+		
+		
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
 		return ControllerConstants.Views.Pages.MultiStepCheckout.CheckoutSummaryPage;
 	}

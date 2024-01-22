@@ -6,30 +6,14 @@ package com.bl.storefront.controllers.pages.checkout.steps;
 
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.services.blackout.BlBlackoutDateService;
-import com.bl.core.services.cart.BlCartService;
-import com.bl.core.utils.BlRentalDateUtils;
-import com.bl.facades.cart.BlCartFacade;
-import com.bl.facades.customer.BlCustomerFacade;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.facades.shipping.BlCheckoutFacade;
-import com.bl.logging.BlLogger;
-import com.bl.storefront.controllers.ControllerConstants;
-import com.bl.storefront.controllers.pages.BlControllerConstants;
-import com.bl.storefront.forms.GiftCardForm;
-import com.bl.storefront.forms.GiftCardPurchaseForm;
-import com.braintree.facade.impl.BrainTreeCheckoutFacade;
-import com.braintree.model.BrainTreePaymentInfoModel;
-
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
 import de.hybris.platform.acceleratorservices.payment.data.PaymentData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
+import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
+import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ProductBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.CheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkout.steps.AbstractCheckoutStepController;
@@ -47,9 +31,8 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commerceservices.enums.CountryType;
-import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
-import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.session.SessionService;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -59,9 +42,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -77,6 +62,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.services.blackout.BlBlackoutDateService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.customer.BlCustomerFacade;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.forms.GiftCardForm;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
+import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
 
 
 @Controller
@@ -104,18 +107,21 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	@Resource(name = "cartFacade")
 	private BlCartFacade blCartFacade;
-	
+
 	@Resource(name = "blDatePickerService")
 	private BlDatePickerService blDatePickerService;
-	
+
 	@Resource(name = "blBlackoutDateService")
-   private BlBlackoutDateService blBlackoutDateService;
-	
+	private BlBlackoutDateService blBlackoutDateService;
+
 	@Resource(name = "cartService")
 	private BlCartService blCartService;
-		
+
 	@Resource(name = "brainTreeCheckoutFacade")
 	private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
+
+	@Resource(name = "productBreadcrumbBuilder")
+	private ProductBreadcrumbBuilder productBreadcrumbBuilder;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -192,14 +198,15 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-		 if (blBlackoutDateService.checkForBlackoutDate(rentalDateDto))
-		 {
-			 return REDIRECT_CART_URL;
-		 }
-		 model.addAttribute(BlControllerConstants.ENABLE_DATE_PICKER, blCartService.isRentalCartOnly());
+		if (blBlackoutDateService.checkForBlackoutDate(rentalDateDto))
+		{
+			return REDIRECT_CART_URL;
+		}
+		model.addAttribute(BlControllerConstants.ENABLE_DATE_PICKER, blCartService.isRentalCartOnly());
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, true);
-		model.addAttribute("pageType",BlControllerConstants.BILLING_PAGE);
-		model.addAttribute("paymentErrorMessage",getMessageSource().getMessage("text.payment.error.message", null,getI18nService().getCurrentLocale()));
+		model.addAttribute("pageType", BlControllerConstants.BILLING_PAGE);
+		model.addAttribute("paymentErrorMessage",
+				getMessageSource().getMessage("text.payment.error.message", null, getI18nService().getCurrentLocale()));
 		showMessageForRemovedGiftCard(model);
 		getCheckoutFacade().setDeliveryModeIfAvailable();
 		setupAddPaymentPage(model);
@@ -207,15 +214,21 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 		model.addAttribute(BlControllerConstants.GIFT_CARD_FORM, new GiftCardForm());
 
-		if(null != sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION) && BooleanUtils.isTrue(sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION))) {
-			return REDIRECT_PREFIX  + BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL;
+		if (null != sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION)
+				&& BooleanUtils.isTrue(sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION)))
+		{
+			return REDIRECT_PREFIX + BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL;
 		}
 
-		
-		
+
+
 		// Use the checkout PCI strategy for getting the URL for creating new subscriptions.
 		final CheckoutPciOptionEnum subscriptionPciOption = getCheckoutFlowFacade().getSubscriptionPciOption();
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
+
+		final CartData cartData = getCheckoutFacade().getCheckoutCart();
+		model.addAttribute(CART_DATA_ATTR, cartData);
+
 		if (CheckoutPciOptionEnum.HOP.equals(subscriptionPciOption))
 		{
 			// Redirect the customer to the HOP page or show error message if it fails (e.g. no HOP configurations).
@@ -245,31 +258,62 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 				final BrainTreePaymentInfoModel defaultPaymentInfo = (BrainTreePaymentInfoModel) getCheckoutCustomerStrategy()
 						.getCurrentUserForCheckout().getDefaultPaymentInfo();
 
-				if (Objects.isNull(getCheckoutFlowFacade().getCheckoutCart().getPaymentInfo()) && null != defaultPaymentInfo  && defaultPaymentInfo.isSaved())
+				if (Objects.isNull(getCheckoutFlowFacade().getCheckoutCart().getPaymentInfo()) && null != defaultPaymentInfo
+						&& defaultPaymentInfo.isSaved())
 				{
 					brainTreeCheckoutFacade.setPaymentDetails(defaultPaymentInfo.getPk().toString(), defaultPaymentInfo.getNonce());
 				}
 			}
-			
+
 			// Build up the SOP form data and render page containing form
 			final SopPaymentDetailsForm sopPaymentDetailsForm = new SopPaymentDetailsForm();
 			try
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
-				final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
-        if(Objects.nonNull(cartData) && StringUtils.isNotEmpty(cartData.getPoNumber())){
-          model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NUMBER, cartData.getPoNumber());
-          model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NOTES, cartData.getPoNotes());
-        }
-				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
+				//final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
+				if (Objects.nonNull(cartData) && StringUtils.isNotEmpty(cartData.getPoNumber()))
+				{
+					model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NUMBER, cartData.getPoNumber());
+					model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NOTES, cartData.getPoNotes());
+				}
+				if (Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
 				{
 					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
-					setPaymentDetailForPage(paymentInfo, model);					
+					setPaymentDetailForPage(paymentInfo, model);
 				}
 				// adding model attribute to disable other payment excluding Credit card if Gift card is applied
 				disableOtherPayments(cartData, model);
-				
+
 				model.addAttribute(BlControllerConstants.DEFAULT_BILLING_ADDRESS, getBlCustomerFacade().getDefaultBillingAddress());
+
+
+				//To pass breadcrumb data for each product in cart - Tealium
+				try
+				{
+					final CartData cartData1 = (CartData) model.getAttribute("cartData");
+					cartData1.getEntries().forEach(entry -> {
+						final List<String> productBreadcrumbData = new ArrayList<String>();
+						final List<Breadcrumb> productBreadcrumb = new ArrayList<Breadcrumb>(
+								productBreadcrumbBuilder.getBreadcrumbs(entry.getProduct().getCode()));
+						productBreadcrumb.forEach(breadcrumb -> {
+							if (null != breadcrumb.getCategoryCode())
+							{
+								productBreadcrumbData.add(breadcrumb.getCategoryCode());
+							}
+						});
+						entry.getProduct().setProductBreadcrumbData(productBreadcrumbData);
+					});
+
+					model.addAttribute("cartData", cartData1);
+				}
+				catch (final Exception e)
+				{
+					e.printStackTrace();
+				}
+
+
+
+
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
 			catch (final Exception e)
@@ -286,8 +330,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		paymentDetailsForm.setBillingAddress(addressForm);
 		model.addAttribute(paymentDetailsForm);
 
-		final CartData cartData = getCheckoutFacade().getCheckoutCart();
-		model.addAttribute(CART_DATA_ATTR, cartData);
+		//	final CartData cartData = getCheckoutFacade().getCheckoutCart();
+		//model.addAttribute(CART_DATA_ATTR, cartData);
 
 		if (Boolean.TRUE.equals(cartData.getIsRentalCart()))
 		{
@@ -300,65 +344,76 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@RequireHardLogIn
 	@PreValidateQuoteCheckoutStep
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
-	public String enterStep(final Model model, final RedirectAttributes redirectAttributes, final HttpServletRequest request, @Valid final GiftCardPurchaseForm giftCardPurchaseForm, final BindingResult bindingResult) throws CMSItemNotFoundException
+	public String enterStep(final Model model, final RedirectAttributes redirectAttributes, final HttpServletRequest request,
+			@Valid
+			final GiftCardPurchaseForm giftCardPurchaseForm, final BindingResult bindingResult) throws CMSItemNotFoundException
 	{
-		if(getCheckoutFacade().updateGiftCardPurchaseForm(giftCardPurchaseForm)){
-			return enterStep(model,redirectAttributes);
+		if (getCheckoutFacade().updateGiftCardPurchaseForm(giftCardPurchaseForm))
+		{
+			return enterStep(model, redirectAttributes);
 		}
-		GlobalMessages
-				.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-						"gift.card.error.message", new Object[]{StringUtils.EMPTY});
+		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER, "gift.card.error.message",
+				new Object[]
+				{ StringUtils.EMPTY });
 		return REDIRECT_PREFIX + "/cart";
 	}
-	
+
 	/**
 	 * Disable other payments excluding Credit Card.
 	 *
-	 * @param cart the cart
-	 * @param model the model
+	 * @param cart
+	 *           the cart
+	 * @param model
+	 *           the model
 	 */
-	private void disableOtherPayments(final CartData cart, final Model model){
+	private void disableOtherPayments(final CartData cart, final Model model)
+	{
 		model.addAttribute(BlControllerConstants.DISABLE_PAYMENT, Boolean.FALSE);
-		if(Objects.nonNull(cart) && CollectionUtils.isNotEmpty(cart.getGiftCardData()))
+		if (Objects.nonNull(cart) && CollectionUtils.isNotEmpty(cart.getGiftCardData()))
 		{
 			model.addAttribute(BlControllerConstants.DISABLE_PAYMENT, Boolean.TRUE);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Sets the payment detail for payment page if already selected.
 	 *
-	 * @param paymentInfo the payment info
-	 * @param model the model
+	 * @param paymentInfo
+	 *           the payment info
+	 * @param model
+	 *           the model
 	 */
 	private void setPaymentDetailForPage(final CCPaymentInfoData paymentInfo, final Model model)
 	{
-		if(BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		if (BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
 		{
 			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
 			model.addAttribute(BlControllerConstants.SELECTED_PAYMENT_METHOD_NONCE, paymentInfo.getPaymentMethodNonce());
 			model.addAttribute(BlControllerConstants.PAYMENT_INFO_BILLING_ADDRESS, paymentInfo.getBillingAddress());
 			model.addAttribute(BlControllerConstants.IS_SAVED_CARD_ORDER, Boolean.TRUE);
 		}
-		else if(BlControllerConstants.PAYPAL_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		else if (BlControllerConstants.PAYPAL_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
 		{
 			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYPAL_PAYMENT_INFO, paymentInfo);
 		}
 	}
-	
+
 	/**
 	 * If gift card removed from cart then it add message to model attribute for removed gift card.
+	 *
 	 * @param model
 	 */
-	private void showMessageForRemovedGiftCard(final Model model) {
+	private void showMessageForRemovedGiftCard(final Model model)
+	{
 		final List<String> removedGiftCardCodeList = getCheckoutFacade().recalculateCartForGiftCard();
-		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
+		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList))
+		{
 			final Locale locale = getI18nService().getCurrentLocale();
-			List<String> removeGiftCardMessage = new ArrayList<>();
-			for (String gcCode : removedGiftCardCodeList) {
-				removeGiftCardMessage
-						.add(getMessageSource().getMessage("text.gift.cart.insufficient.balance", new Object[]
-								{gcCode}, locale));
+			final List<String> removeGiftCardMessage = new ArrayList<>();
+			for (final String gcCode : removedGiftCardCodeList)
+			{
+				removeGiftCardMessage.add(getMessageSource().getMessage("text.gift.cart.insufficient.balance", new Object[]
+				{ gcCode }, locale));
 			}
 			model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE, removeGiftCardMessage);
 		}
@@ -367,8 +422,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@RequestMapping(value =
 	{ "/add" }, method = RequestMethod.POST)
 	@RequireHardLogIn
-	public String add(final Model model, @Valid final PaymentDetailsForm paymentDetailsForm, final BindingResult bindingResult)
-			throws CMSItemNotFoundException
+	public String add(final Model model, @Valid
+	final PaymentDetailsForm paymentDetailsForm, final BindingResult bindingResult) throws CMSItemNotFoundException
 	{
 		getPaymentDetailsValidator().validate(paymentDetailsForm, bindingResult);
 		setupAddPaymentPage(model);
@@ -421,8 +476,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		return getCheckoutStep().nextStep();
 	}
 
-	protected boolean checkPaymentSubscription(final Model model, @Valid final PaymentDetailsForm paymentDetailsForm,
-			final CCPaymentInfoData newPaymentSubscription)
+	protected boolean checkPaymentSubscription(final Model model, @Valid
+	final PaymentDetailsForm paymentDetailsForm, final CCPaymentInfoData newPaymentSubscription)
 	{
 		if (newPaymentSubscription != null && StringUtils.isNotBlank(newPaymentSubscription.getSubscriptionId()))
 		{
@@ -440,7 +495,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		return true;
 	}
 
-	protected void fillInPaymentData(@Valid final PaymentDetailsForm paymentDetailsForm, final CCPaymentInfoData paymentInfoData)
+	protected void fillInPaymentData(@Valid
+	final PaymentDetailsForm paymentDetailsForm, final CCPaymentInfoData paymentInfoData)
 	{
 		paymentInfoData.setId(paymentDetailsForm.getPaymentId());
 		paymentInfoData.setCardType(paymentDetailsForm.getCardTypeCode());
@@ -459,8 +515,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	@RequestMapping(value = "/remove", method = RequestMethod.POST)
 	@RequireHardLogIn
-	public String remove(@RequestParam(value = "paymentInfoId") final String paymentMethodId,
-			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+	public String remove(@RequestParam(value = "paymentInfoId")
+	final String paymentMethodId, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		getUserFacade().unlinkCCPaymentInfo(paymentMethodId);
 		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
@@ -478,7 +534,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	 */
 	@RequestMapping(value = "/choose", method = RequestMethod.GET)
 	@RequireHardLogIn
-	public String doSelectPaymentMethod(@RequestParam("selectedPaymentMethodId") final String selectedPaymentMethodId)
+	public String doSelectPaymentMethod(@RequestParam("selectedPaymentMethodId")
+	final String selectedPaymentMethodId)
 	{
 		if (StringUtils.isNotBlank(selectedPaymentMethodId))
 		{
@@ -554,8 +611,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 				&& sopPaymentDetailsForm.getParameters().containsKey(BlControllerConstants.BILL_TO_COUNTRY)
 				&& StringUtils.isNotBlank(sopPaymentDetailsForm.getParameters().get(BlControllerConstants.BILL_TO_COUNTRY)))
 		{
-			model.addAttribute("regions",
-					getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getParameters().get(BlControllerConstants.BILL_TO_COUNTRY)));
+			model.addAttribute("regions", getI18NFacade()
+					.getRegionsForCountryIso(sopPaymentDetailsForm.getParameters().get(BlControllerConstants.BILL_TO_COUNTRY)));
 			model.addAttribute("country", sopPaymentDetailsForm.getBillTo_country());
 		}
 		if (sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null)
@@ -582,25 +639,31 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		return sopCardTypes;
 	}
 
-  /**
-   * It saves PO payment details.
-   * @param poNumber
-   * @param poNotes
-   * @param model
-   * @param redirectAttributes
-   * @return
-   */
+	/**
+	 * It saves PO payment details.
+	 *
+	 * @param poNumber
+	 * @param poNotes
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
 	@PostMapping(value = "/reviewSavePoPayment")
 	@RequireHardLogIn
-	public String savePoPaymentMethod(@RequestParam("poNumber") final String poNumber, @RequestParam("poNotes") final String poNotes,
-      final Model model, final RedirectAttributes redirectAttributes){
-		try {
-			if(StringUtils.isNotBlank(poNumber)) {
+	public String savePoPaymentMethod(@RequestParam("poNumber")
+	final String poNumber, @RequestParam("poNotes")
+	final String poNotes, final Model model, final RedirectAttributes redirectAttributes)
+	{
+		try
+		{
+			if (StringUtils.isNotBlank(poNumber))
+			{
 				blCartFacade.savePoPaymentDetails(poNumber, poNotes);
 			}
-		} catch (final Exception exception) {
-			BlLogger.logMessage(LOGGER, Level.ERROR,
-					"Error occurred while setting selected PO payment details", exception);
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logMessage(LOGGER, Level.ERROR, "Error occurred while setting selected PO payment details", exception);
 			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
 					getLocalizedString("braintree.billing.general.error"), null);
 			return getCheckoutStep().currentStep();

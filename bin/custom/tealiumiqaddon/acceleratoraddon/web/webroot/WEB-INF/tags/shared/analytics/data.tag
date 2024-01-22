@@ -949,15 +949,15 @@
 				{
 					"event":"user.load.auto.dataLayer.load",
 					"user":{
-	    				"id": "${currentUserId}",
+						"id": "${ currentUserId }",
 	  					"status": "${currentUserStatus}",
-	  					"daysUntilRental": "${rentalDate.daysUntilRental}",
-	  					"rentalStartDate": "${rentalDate.selectedFromDateMMDDYYY}",
-	  					"rentalDuration": "${rentalDate.selectedDays}",
-	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
+	  					"daysUntilRental": "${daysUntilRental}",
+	  					"rentalStartDate": "${rentalStartDateForTealium}",
+	  					"rentalDuration": "${orderData.rentalDates.numberOfDays}",
+	  					"rentalEndDate": "${orderData.rentalEndDateForJs.replace('/','-')}"
 				  	}
 				},
-				
+					
 				{
 					"event":"transaction.load.auto.success.transactionSuccess",
 					"transaction":{
@@ -971,16 +971,15 @@
 						  						"id": "${ycommerce:encodeJavaScript(entry.product.code)}",
 						 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
 												 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
-						 						 <c:choose>
-												 <c:when test="${not empty entry.product.categories}">
-												 "category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
-												</c:when>
-												<c:otherwise>
-												"category": "",
-												</c:otherwise>
-						  						</c:choose>
-						  						"subCategory2": "",
-	            								"subCategory3": "",
+												 <c:if test="${not empty entry.product.productBreadcrumbData[0]}">
+													"category": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[0])}",
+									 		    	</c:if>
+									 				 <c:if test="${not empty entry.product.productBreadcrumbData[1]}">
+													"subCategory2": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[1])}",
+									 				 </c:if>
+									  				<c:if test="${not empty entry.product.productBreadcrumbData[2]}">
+									   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[2])}",
+									  				</c:if>
 						  						"variant": "${orderType}",
 						  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 						  						"value": {
@@ -1091,16 +1090,15 @@
 					  						"id": "${ycommerce:encodeJavaScript(entry.product.code)}",
 					 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
 											 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
-					 						 <c:choose>
-											 <c:when test="${not empty entry.product.categories}">
-											 "category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
-											</c:when>
-											<c:otherwise>
-											"category": "",
-											</c:otherwise>
-					  						</c:choose>
-					  						"subCategory2": "",
-            								"subCategory3": "",
+											 <c:if test="${not empty entry.product.productBreadcrumbData[0]}">
+												"category": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[0])}",
+								 		    	</c:if>
+								 				 <c:if test="${not empty entry.product.productBreadcrumbData[1]}">
+												"subCategory2": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[1])}",
+								 				 </c:if>
+								  				<c:if test="${not empty entry.product.productBreadcrumbData[2]}">
+								   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[2])}",
+								  				</c:if>
 					  						"variant": "${orderType}",
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
@@ -1318,16 +1316,23 @@
 					  						"id": "${ycommerce:encodeJavaScript(entry.product.code)}",
 					 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
 											 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
-					 						 <c:choose>
-											 <c:when test="${not empty entry.product.categories}">
-											 "category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
-											</c:when>
-											<c:otherwise>
-											"category": "",
-											</c:otherwise>
-					  						</c:choose>
-					  						"subCategory2": "",
-            								"subCategory3": "",
+					 						
+					  						
+					  						
+					  						
+					  						
+					  						 <c:if test="${not empty entry.product.productBreadcrumbData[0]}">
+												"category": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[0])}",
+								 		    	</c:if>
+								 				 <c:if test="${not empty entry.product.productBreadcrumbData[1]}">
+												"subCategory2": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[1])}",
+								 				 </c:if>
+								  				<c:if test="${not empty entry.product.productBreadcrumbData[2]}">
+								   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[2])}",
+								  				</c:if>
+								   				 
+					  						
+					  						
 					  						"variant": "${orderType}",
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
@@ -1515,16 +1520,15 @@
 					  						"id": "${ycommerce:encodeJavaScript(entry.product.code)}",
 					 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
 											 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
-					 						 <c:choose>
-											 <c:when test="${not empty entry.product.categories}">
-											 "category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
-											</c:when>
-											<c:otherwise>
-											"category": "",
-											</c:otherwise>
-					  						</c:choose>
-					  						"subCategory2": "",
-            								"subCategory3": "",
+											 <c:if test="${not empty entry.product.productBreadcrumbData[0]}">
+												"category": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[0])}",
+								 		    	</c:if>
+								 				 <c:if test="${not empty entry.product.productBreadcrumbData[1]}">
+												"subCategory2": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[1])}",
+								 				 </c:if>
+								  				<c:if test="${not empty entry.product.productBreadcrumbData[2]}">
+								   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[2])}",
+								  				</c:if>
 					  						"variant": "${orderType}",
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
@@ -1724,16 +1728,15 @@
 					  						"id": "${ycommerce:encodeJavaScript(entry.product.code)}",
 					 						 "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
 											 "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
-					 						 <c:choose>
-											 <c:when test="${not empty entry.product.categories}">
-											 "category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
-											</c:when>
-											<c:otherwise>
-											"category": "",
-											</c:otherwise>
-					  						</c:choose>
-					  						"subCategory2": "",
-            								"subCategory3": "",
+											 <c:if test="${not empty entry.product.productBreadcrumbData[0]}">
+												"category": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[0])}",
+								 		    	</c:if>
+								 				 <c:if test="${not empty entry.product.productBreadcrumbData[1]}">
+												"subCategory2": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[1])}",
+								 				 </c:if>
+								  				<c:if test="${not empty entry.product.productBreadcrumbData[2]}">
+								   				 "subCategory3": "${ycommerce:encodeJavaScript(entry.product.productBreadcrumbData[2])}",
+								  				</c:if>
 					  						"variant": "${orderType}",
 					  						"quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
 					  						"value": {
