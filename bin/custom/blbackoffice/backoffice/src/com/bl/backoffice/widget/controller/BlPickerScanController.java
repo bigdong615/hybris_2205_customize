@@ -13,7 +13,9 @@ import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -161,8 +163,9 @@ public class BlPickerScanController extends DefaultWidgetController
 					BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Number of associated order consignment {}",associatedOtherUserConsignments.size());
 					BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Number of remaining order consignment {} ", remainingConsignments.size());
 					this.sendOutput(OUT_CONFIRM, COMPLETE);
-
-					Messagebox.show("Some order already associated with other user. Do you want to assign you?", "Picker Confirmation", new Messagebox.Button[]
+					Set<String> orders = new HashSet<>();
+					associatedOtherUserConsignments.stream().forEach(consignmentModel -> orders.add(consignmentModel.getOrder().getCode()));
+					Messagebox.show("Bing bong! "+ orders +" already claimed. Reassign to you?", "Picker Confirmation", new Messagebox.Button[]
 							{Messagebox.Button.YES, Messagebox.Button.NO},null, Messagebox.QUESTION, null, clickEvent -> {
 						if (Messagebox.Button.YES == clickEvent.getButton())
 						{
