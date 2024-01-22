@@ -280,7 +280,35 @@
      			  "keyword": "${searchKeyword}",
       			  "type": "${datesSettedInSession ? 'date' : 'product'}",
       			  "location": "hero"
-     		 }
+     		 },
+     		{
+					"event":"product.load.auto.dataLayer.load",
+					"products": [
+						
+						<c:forEach items='${searchPageData.results}' var='product' varStatus='status'>
+			  	{
+				  	"id": "${product.code}",
+				  	"name": "${product.displayName}",
+	          		"brand": "${product.manufacturer}",
+					  <c:if test="${not empty product.productBreadcrumbData[0]}">
+						"category": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[0])}",
+					  </c:if>
+					  <c:if test="${not empty product.productBreadcrumbData[1]}">
+						"subCategory2": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[1])}",
+						</c:if>
+					  <c:if test="${not empty product.productBreadcrumbData[2]}">
+					    "subCategory3": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[2])}",
+					    </c:if>
+	         		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType).toLowerCase()}",
+	         		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
+	  				"index": "${status.index + 1}",
+				  	"value": {
+	       					"displayGross": ${product.price.value}
+	     					 }
+				  	 },	
+				  	 </c:forEach>
+				  	 ]
+				}
      		
    		 }
 			];
@@ -367,7 +395,42 @@
 	  					"rentalDuration": "${rentalDate.selectedDays}",
 	  					"rentalEndDate": "${rentalDate.selectedToDateMMDDYYY}"
 				  	}
+				},
+				
+				{
+					"event":"product.load.auto.dataLayer.load",
+					"products": [
+						 <c:forEach items='${searchPageData.results}' var='product' varStatus='status'>
+						  	{
+						  	"id": "${product.code}",
+						  	"name": "${product.displayName}",
+			          		"brand": "${product.manufacturer}",
+							  <c:if test="${not empty product.productBreadcrumbData[0]}">
+								"category": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[0])}",
+							  </c:if>
+							  <c:if test="${not empty product.productBreadcrumbData[1]}">
+								"subCategory2": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[1])}",
+							  </c:if>
+							  <c:if test="${not empty product.productBreadcrumbData[2]}">
+							    "subCategory3": "${ycommerce:encodeJavaScript(product.productBreadcrumbData[2])}",
+							  </c:if>
+			         		"variant" : "${ycommerce:encodeJavaScript(blCategoryPageType).toLowerCase()}",
+			         		"listName": "${searchKeyword}",
+			  				"index": "${status.index+1}",
+			  				"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
+						  	"value": 
+						  	    {
+			       				  "displayGross": ${product.price.value ==null ? 0.0: product.price.value}
+			     		    	 }
+						  	 },	
+						  	 
+						  	 </c:forEach>
+						
+					]
+				
+				
 				}
+				
 			];
 
 			dmpgDl.screen = 
