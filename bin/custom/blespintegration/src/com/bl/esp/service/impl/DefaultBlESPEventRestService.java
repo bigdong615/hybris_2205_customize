@@ -4,6 +4,7 @@ import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
+import com.bl.esp.dto.email.marketing.CustomerMarketingEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.giftcard.FreeGiftCardPurchaseEventRequest;
 import com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest;
@@ -267,5 +268,9 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
     @Override
     public ESPEventResponseWrapper sendProductReplacementEsp(ProductReplacementEventRequest productReplacementEventRequest) {
         return super.getTokenAndTriggerEvent(productReplacementEventRequest);
+    }
+    @Override
+   public ESPEventResponseWrapper sendCustomerMarketingESP(final CustomerMarketingEventRequest customerMarketingEventRequest){
+        return super.getTokenAndTriggerEvent(customerMarketingEventRequest);
     }
 }

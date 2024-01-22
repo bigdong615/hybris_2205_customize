@@ -2,12 +2,16 @@ package com.bl.core.esp.service.impl;
 
 
 import com.bl.core.esp.populators.*;
+import com.bl.esp.dto.email.marketing.CustomerMarketingEventRequest;
+import com.bl.esp.dto.email.marketing.data.CustomerMarketingData;
 import com.bl.esp.dto.product.replacement.ProductReplacementEventRequest;
 import com.bl.esp.dto.product.replacement.data.ProductReplacementData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Utilities;
 
@@ -23,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.annotation.Resource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -122,6 +127,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlReplacementProductRequestPopulator blReplacementProductRequestPopulator;
 	 @Value("${back.in.stock.email.request.event.template.key}")
     private String backInStockTemplate;
+     @Resource(name="configurationService")
+    private ConfigurationService configurationService;
     /**
      * This method created to prepare the request and response from ESP service
      * @param orderModel ordermodel
@@ -614,6 +621,31 @@ public class DefaultBlESPEventService implements BlESPEventService {
             }
             // Save send order shipped ESP Event Detail
             persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.PRODUCT_REPLACEMENT,orderModel.getCode(),null,null);
+        }
+    }
+
+@Override
+    public void sendCustomerMarketingEvent(final String orderCode,final CustomerMarketingData customerMarketingData) {
+        if (Objects.nonNull(customerMarketingData)) {
+            CustomerMarketingEventRequest customerMarketingEventRequest = new CustomerMarketingEventRequest();
+            customerMarketingEventRequest.setContactKey(getRequestValue(customerMarketingData.getSubscriberID()));
+            customerMarketingEventRequest
+                    .setEventDefinitionKey(getRequestValue(configurationService.getConfiguration().
+                            getString(BlCoreConstants.CUSTOMER_MARKETING_EVENT_DEFINITION_KEY)));
+            final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
+            customerMarketingData.setLastOrderDate(formatter.format(new Date()));
+            customerMarketingEventRequest.setData(customerMarketingData);
+
+            ESPEventResponseWrapper espEventResponseWrapper = null;
+            try {
+                // Call customer marketing ESP Event API
+                espEventResponseWrapper = getBlESPEventRestService().sendCustomerMarketingESP(
+                        customerMarketingEventRequest);
+            } catch (final BlESPIntegrationException exception) {
+                persistESPEventDetail(null, EspEventTypeEnum.EMAIL_MARKETING,orderCode, exception.getMessage(),exception.getRequestString());
+            }
+            // Save send order shipped ESP Event Detail
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.EMAIL_MARKETING,orderCode,null,null);
         }
     }
 

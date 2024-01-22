@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.esp.dto.email.marketing.data.CustomerMarketingData;
 import de.hybris.platform.acceleratorservices.storefront.data.MetaElementData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
@@ -89,7 +90,8 @@ public class HomePageController extends AbstractPageController
 			final HttpServletResponse response) {
 
 		XSSFilterUtil.filter(emailId);
-		blEmailSubscriptionFacade.subscribe(emailId);
-
+		final CustomerMarketingData customerMarketingData = new CustomerMarketingData();
+customerMarketingData.setEmailId(emailId);
+		blEmailSubscriptionFacade.subscribe(null,customerMarketingData);
 	}
 }
