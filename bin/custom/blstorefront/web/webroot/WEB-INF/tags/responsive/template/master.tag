@@ -47,6 +47,9 @@
 			<link rel="shortcut icon" type="image/x-icon" media="all" href="${originalContextPath}${favIconPath}" />
 		</c:otherwise>
 	</c:choose>
+	 <c:if test="${cmsPage.uid eq 'homepage'}">
+            <link rel="canonical" href="https://www.borrowlenses.com" />
+     </c:if>
 	<%-- Tealium sync data --%>
     <tealium:sync/>
 
