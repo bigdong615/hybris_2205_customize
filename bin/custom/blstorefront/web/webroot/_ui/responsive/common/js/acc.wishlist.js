@@ -34,15 +34,16 @@
                                                  });
 
  										window.dmpgDl = window.dmpgDl || {};
-			                       		dmpgDl.events = [
+ 										
+			                       		events1 = 
 									  	 {
       									 "event": "product.interact.manual.click.removeFromWishlist",
       									 "product": {
        											 "id": productCode
       											}
-  									  	 }
-									   ];
-
+  									  	 };
+									   
+ dmpgDl.events.unshift(events1);
                                         }
                                         else{
                                        $.ajax({
@@ -63,14 +64,15 @@
                                        });
                                        
                                         window.dmpgDl = window.dmpgDl || {};
-			                       		dmpgDl.events = [
+			                       		events1 = 
 									  	 {
       									 "event": "product.interact.manual.click.addToWishlist",
       									 "product": {
        											 "id": productCode
       											}
   									  	 }
-									   ];
+									   ;
+									   dmpgDl.events.unshift(events1);
                                      }
                                      
                                      

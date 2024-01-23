@@ -329,15 +329,16 @@ ACC.account = {
                     	status = true;
                     	
                     	window.dmpgDl = window.dmpgDl || {};
-				dmpgDl.events = [
+				events1 = 
 				 {
     			   "event": "platform.interact.auto.error",
       			   "error": {
        				 "type": "checkout-miscellaneous-errors",
         			 "message": "User is not signed in"
         			  }
-  				 }
-			 ];
+  				 };
+  				 dmpgDl.events.unshift(events1);
+			 
                     	}else {
                     	status = false;
                     	}

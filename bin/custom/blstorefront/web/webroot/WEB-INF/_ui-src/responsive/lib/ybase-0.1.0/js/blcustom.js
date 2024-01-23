@@ -198,7 +198,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                        //});
                                        
                                         window.dmpgDl = window.dmpgDl || {};
-			                       		dmpgDl.events = [
+			                       		events1 = 
 									  	 {
       									 "event": "product.interact.manual.click.addToCart",
       									 "product": {
@@ -206,8 +206,9 @@ $('.shopping-cart__item-remove').on("click", function (e){
        										 "stockAvailability": "yes",
        										 "quantity": quantity
      											    }
-  									  	 }
-									   ];
+  									  	 };
+  									  	 dmpgDl.events.unshift(events1);
+									   
 
                                       //On empty cart page, add class on close & continue shopping button of add to rental modal.
                                       $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
@@ -718,15 +719,16 @@ $('.btn-number').click(function(e){
 	
 	
 	window.dmpgDl = window.dmpgDl || {};
-	dmpgDl.events = [
+	events1 =
 	 {
        "event": eventName,
        "product": {
        	  "id": productCode ,
        	  "quantity": 1
      	     }
-  		}
-	 ];
+  		};
+  		dmpgDl.events.unshift(events1);
+	 
 	 
 	 
   if (bouncer)
