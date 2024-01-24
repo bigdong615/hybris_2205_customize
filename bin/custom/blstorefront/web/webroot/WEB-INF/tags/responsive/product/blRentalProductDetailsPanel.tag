@@ -67,7 +67,7 @@
                               <p class="overline"><a href="${brandUrl}">${fn:toUpperCase(product.manufacturer)}</a></p>
                              </c:if>
                               </c:forEach>
-                                <h1 class="mb-4">${product.displayName}</h1>
+                                <h1 class="mb-4">${product.displayName}&nbsp; Rental</h1>
                                 <c:choose>
                                     <c:when test="${not empty disableButton and disableButton == true}">
                                       	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock"/></span>
