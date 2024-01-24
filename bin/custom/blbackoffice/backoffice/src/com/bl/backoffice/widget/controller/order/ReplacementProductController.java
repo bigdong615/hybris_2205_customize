@@ -38,6 +38,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Sets;
@@ -149,6 +150,10 @@ public class ReplacementProductController extends DefaultWidgetController {
             replacementProductData.setSelectedReason(( (Combobox)row.getChildren().get(5)).getValue());
 
             final BlSerialProductModel serial = this.defaultBlProductDao.getSerialByBarcode(replacementProductData.getNewSerial());
+                    if(StringUtils.isEmpty(selectedReason)){
+                        Messagebox.show("Please select the reason for the replacement");
+                        return;
+                    }
             if (Objects.isNull(serial)) {
                 Messagebox.show("No serial present with given barcode :" + replacementProductData.getNewSerial());
                 return;
