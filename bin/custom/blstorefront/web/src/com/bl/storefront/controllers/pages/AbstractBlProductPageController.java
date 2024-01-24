@@ -148,17 +148,21 @@ public class AbstractBlProductPageController extends AbstractPageController
 		}
 
 		updatePageTitleForPDP(productData, model);
-		populateProductDetailForDisplay(productCode, model, request, extraOptions);
+		ProductData productOptionData = populateProductDetailForDisplay(productCode, model, request, extraOptions);
 
 		model.addAttribute(new ReviewForm());
 		model.addAttribute("pageType", PageType.PRODUCT.name());
 		model.addAttribute("futureStockEnabled",
 				Boolean.valueOf(Config.getBoolean(FUTURE_STOCK_ENABLED, false)));
 
-		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(productData.getKeywords());
+		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(productOptionData.getKeywords());
 		final String metaDescription = MetaSanitizerUtil
-				.sanitizeDescription(productData.getDescription());
+				.sanitizeDescription(productOptionData.getDescription());
+		if(StringUtils.isNotEmpty(metaDescription) && metaDescription.length()>155){
+			setUpMetaData(model, metaKeywords, metaDescription.substring(0, 155) + ((metaDescription.substring(155)).split(" ", 2))[0]);
+		}else {
 		setUpMetaData(model, metaKeywords, metaDescription);
+		}
 		return getViewForPage(model);
 	}
 
@@ -415,7 +419,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 		storeContentPageTitleInModel(model, getPageTitleResolver().resolveProductPageTitle(productCode));
 	}
 
-	protected void populateProductDetailForDisplay(final String productCode, final Model model, final HttpServletRequest request,
+	protected  ProductData populateProductDetailForDisplay(final String productCode, final Model model, final HttpServletRequest request,
 			final List<ProductOption> extraOptions) throws CMSItemNotFoundException
 	{
 		final ProductModel productModel = productService.getProductForCode(productCode);
@@ -438,6 +442,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 				}
 				model.addAttribute(WebConstants.BREADCRUMBS_KEY, breadList);
 			}
+			productData.setDescription(productData.getUsedDescription());
 		}else {
 			model.addAttribute(WebConstants.BREADCRUMBS_KEY,
 					productBreadcrumbBuilder.getBreadcrumbs(productCode));
@@ -454,6 +459,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 		if( ProductTypeEnum.SUBPARTS.equals(((BlProductModel)productModel).getProductType())){
 			model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		}
+		return productData;
 	}
 
 	protected void populateProductData(final ProductData productData, final Model model)
