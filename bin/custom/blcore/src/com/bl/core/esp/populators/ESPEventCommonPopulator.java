@@ -3,6 +3,7 @@
  */
 package com.bl.core.esp.populators;
 
+import de.hybris.platform.acceleratorservices.urlresolver.SiteBaseUrlResolutionService;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
@@ -14,7 +15,10 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Utilities;
+import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 
 import java.io.StringWriter;
 import java.text.DecimalFormat;
@@ -73,6 +77,10 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     private ConfigurationService configurationService;
     private ProductService productService;
     private CatalogVersionService catalogVersionService;
+
+    private SiteBaseUrlResolutionService siteBaseUrlResolutionService;
+    private BaseStoreService baseStoreService ;
+
 
 
     private static final String POPULATOR_ERROR = "Error while populating data for ESP Event";
@@ -294,9 +302,32 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @return string
      */
     protected String getProductURL(final AbstractOrderEntryModel abstractOrderEntryModel){
-        return Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) &&
-            StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getPicture().getURL()) ?
-            abstractOrderEntryModel.getProduct().getPicture().getURL() : StringUtils.EMPTY;
+
+        if(Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) && StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getPicture().getURL())){
+            if(abstractOrderEntryModel.getProduct().getPicture().getURL().startsWith("/media")){
+                return getFullResponseUrl(abstractOrderEntryModel.getProduct().getPicture().getURL(),true);
+            }
+            else{
+               return abstractOrderEntryModel.getProduct().getPicture().getURL();
+            }
+        }
+        else{
+            return StringUtils.EMPTY;
+        }
+        //return Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) &&
+          //  StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getPicture().getURL()) ?
+            //    getFullResponseUrl(abstractOrderEntryModel.getProduct().getPicture().getURL(),true) : StringUtils.EMPTY;
+        //"https://localhost:9002" +abstractOrderEntryModel.getProduct().getPicture().getURL()
+    }
+
+    /**      * Resolves a given URL to a full URL including server and port, etc.      *      * @param responseUrl - the URL to resolve
+     * @param isSecure    - flag to indicate whether the final URL should use a secure connection or not.      * @return a full URL including HTTP protocol, server, port, path etc.      */
+    protected String getFullResponseUrl(final String responseUrl, final boolean isSecure)
+    {
+        final BaseStoreModel baseStore = baseStoreService.getBaseStoreForUid("bl");
+        final BaseSiteModel currentBaseSite = baseStore.getCmsSites().iterator().next();
+        final String fullResponseUrl = getSiteBaseUrlResolutionService().getWebsiteUrlForSite(currentBaseSite, isSecure,   responseUrl);
+        return fullResponseUrl == null ? "" : fullResponseUrl;
     }
 
     /**
@@ -586,5 +617,21 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     public void setCatalogVersionService(
         final CatalogVersionService catalogVersionService) {
         this.catalogVersionService = catalogVersionService;
+    }
+
+    public SiteBaseUrlResolutionService getSiteBaseUrlResolutionService() {
+        return siteBaseUrlResolutionService;
+    }
+
+    public void setSiteBaseUrlResolutionService(SiteBaseUrlResolutionService siteBaseUrlResolutionService) {
+        this.siteBaseUrlResolutionService = siteBaseUrlResolutionService;
+    }
+
+    public BaseStoreService getBaseStoreService() {
+        return baseStoreService;
+    }
+
+    public void setBaseStoreService(BaseStoreService baseStoreService) {
+        this.baseStoreService = baseStoreService;
     }
 }
