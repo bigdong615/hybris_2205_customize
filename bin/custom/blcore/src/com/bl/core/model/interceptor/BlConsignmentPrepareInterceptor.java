@@ -5,6 +5,7 @@ import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
+import com.bl.core.payment.service.impl.DefaultBlPaymentService;
 import com.bl.core.services.order.note.BlOrderNoteService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
@@ -37,6 +39,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
   private static final Logger LOG = Logger.getLogger(BlConsignmentPrepareInterceptor.class);
   private BlOrderNoteService blOrderNoteService;
   private DefaultBlESPEventService blEspEventService;
+  private DefaultBlPaymentService blPaymentService;
 
   @Override
   public void onPrepare(final ConsignmentModel consignmentModel,
@@ -64,6 +67,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
     }
 
     changePriorityStatusOnSerial(consignmentModel, interceptorContext); //BL-822 AC.4
+    authorizeAndCapturePayment(consignmentModel,interceptorContext);
     triggerEspReadyForPickupEvent(consignmentModel, interceptorContext);
     triggerEspPickedUpEvent(consignmentModel, interceptorContext);
 
@@ -125,6 +129,16 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 	  }
   }
 
+  private void authorizeAndCapturePayment(final ConsignmentModel consignmentModel ,final InterceptorContext interceptorContext) {
+      AbstractOrderModel order = consignmentModel.getOrder();
+      if (!interceptorContext.isNew(consignmentModel)
+              && interceptorContext.isModified(consignmentModel, ConsignmentModel.PICKER)
+              && Objects.nonNull(consignmentModel.getPicker())) {
+
+          if (BooleanUtils.isFalse(order.getIsCaptured())) {
+              getBlPaymentService().authorizeAndCapturePaymentForOrder(order);}
+      }
+  }
   /**
    * Check and change priority status on serial.
    *
@@ -231,5 +245,15 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 		  consignment.setShipmentBlShippedStatusDate(new Date());
 	  }
   }
+
+    public DefaultBlPaymentService getBlPaymentService() {
+        return blPaymentService;
+    }
+
+    public void setBlPaymentService(DefaultBlPaymentService blPaymentService) {
+        this.blPaymentService = blPaymentService;
+    }
+
+
 
 }

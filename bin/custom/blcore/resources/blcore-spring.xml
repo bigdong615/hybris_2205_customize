@@ -1173,6 +1173,7 @@
 	<bean id="blConsignmentPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentPrepareInterceptor">
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
 		<property name="blEspEventService" ref="blEspEventService"/>
+		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
 
 	<bean id="blConsignmentPrepareInterceptorMapping"
