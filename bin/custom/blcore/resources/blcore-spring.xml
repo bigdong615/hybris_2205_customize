@@ -1606,6 +1606,8 @@
 		<property name="configurationService" ref="configurationService"/>
 		<property name="productService" ref="productService"/>
 		<property name="catalogVersionService" ref="catalogVersionService"/>
+	    <property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 
 	<!--ESP Event service -->
