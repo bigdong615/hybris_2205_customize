@@ -130,5 +130,7 @@ UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       
                              ;                         ; CustomBrandsComponent2 ; /images/logo-sony.svg       ; "/rent/category/brands/Sony"      ; Sony                       
                              ;                         ; CustomBrandsComponent3 ; /images/logo-nikon1.svg     ; "/rent/category/brands/nikon"     ; Nikon                      
                              ;                         ; CustomBrandsComponent4 ; /images/logo-dji1.svg       ; "/rent/category/brands/DJI"       ; DJI                        
-                             ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg ; "/rent/category/brands/Panasonic" ; Panasonic                  
+                             ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg ; "/rent/category/brands/Panasonic" ; Panasonic
 
+UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true] ; title[lang=$lang];description[lang=$lang];
+                          ;                         ; homepage ; Camera Bodies, Lenses, and Equipment For Rent ;Pro-level cameras, lighting, audio and cinematography gear await at BorrowLenses. Reserve the finest equipment for your next project. Rent with ease today!

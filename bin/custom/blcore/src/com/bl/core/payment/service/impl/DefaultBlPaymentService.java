@@ -165,35 +165,34 @@ public class DefaultBlPaymentService implements BlPaymentService
 	public void authorizeAndCapturePaymentForOrders()
 	{
 		final List<AbstractOrderModel> ordersToAuthorizePayment = getOrderDao().getOrdersForAuthorization();
-		final List<AbstractOrderModel> claimedOrdersToAuthorizePayment = getOrderDao().getClaimedOrdersForAuthorization();
+		ordersToAuthorizePayment.forEach(order -> {
+			authorizeAndCapturePaymentForOrder(order);
+		});
+	}
 
-		final Set<AbstractOrderModel> ordersToAuthPayment = new HashSet<>();
-		ordersToAuthPayment.addAll(ordersToAuthorizePayment);
-		ordersToAuthPayment.addAll(claimedOrdersToAuthorizePayment);
-
-		ordersToAuthPayment.forEach(order -> {
-			if(order.getTotalPrice() > 0) {
-				final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order,
-						BigDecimal.valueOf(order.getTotalPrice()), Boolean.FALSE, null);
-				if (isSuccessAuth) {
-					order.setIsAuthorised(Boolean.TRUE);
-					order.setIsAuthorizationAttempted(true);
-					getModelService().save(order);
-					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is successful for the order {}", order.getCode());
-					if(BooleanUtils.isFalse(order.getIsCaptured()))
-					{
-						processCapturePaymentForOrder((OrderModel) order);
-					}
-				} else {
-					order.setIsAuthorizationAttempted(true);
-					order.setStatus(OrderStatus.PAYMENT_NOT_AUTHORIZED);
-					modelService.save(order);
-					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is not successful for the order {}", order.getCode());
+	public void authorizeAndCapturePaymentForOrder(AbstractOrderModel order)
+	{
+		if(order.getTotalPrice() > 0) {
+			final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order,
+					BigDecimal.valueOf(order.getTotalPrice()), Boolean.FALSE, null);
+			if (isSuccessAuth) {
+				order.setIsAuthorised(Boolean.TRUE);
+				order.setIsAuthorizationAttempted(true);
+				getModelService().save(order);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is successful for the order {}", order.getCode());
+				if(BooleanUtils.isFalse(order.getIsCaptured()))
+				{
+					processCapturePaymentForOrder((OrderModel) order);
 				}
 			} else {
-				setIsAuthorizedFlagForGiftCard(order);
+				order.setIsAuthorizationAttempted(true);
+				order.setStatus(OrderStatus.PAYMENT_NOT_AUTHORIZED);
+				modelService.save(order);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is not successful for the order {}", order.getCode());
 			}
-		});
+		} else {
+			setIsAuthorizedFlagForGiftCard(order);
+		}
 	}
 
 
