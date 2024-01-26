@@ -280,6 +280,7 @@
      			  "keyword": "${searchKeyword}",
       			  "type": "${datesSettedInSession ? 'date' : 'product'}",
       			  "location": "hero"
+     			 }
      		 },
      		{
 					"event":"product.load.auto.dataLayer.load",
