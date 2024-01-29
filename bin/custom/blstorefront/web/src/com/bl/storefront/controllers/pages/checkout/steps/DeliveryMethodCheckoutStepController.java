@@ -3,8 +3,6 @@
  */
 package com.bl.storefront.controllers.pages.checkout.steps;
 
-import com.bl.core.services.order.BlOrderService;
-import com.bl.facades.shipping.data.BlShippingGroupData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -58,6 +56,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.blackout.BlBlackoutDateService;
 import com.bl.core.services.cart.BlCartService;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
@@ -66,6 +65,7 @@ import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
+import com.bl.facades.shipping.data.BlShippingGroupData;
 import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
@@ -154,9 +154,9 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if((boolean) getSessionService().getAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED)) {
             model.addAttribute("previousPage", Boolean.TRUE);
         }
-        Collection<BlShippingGroupData> allShippingGroups = getCheckoutFacade().getAllShippingGroups();
+        final Collection<BlShippingGroupData> allShippingGroups = getCheckoutFacade().getAllShippingGroups();
         if(blOrderService.isAquatechProductsPresentInOrder(cartModel)) {
-            List<BlShippingGroupData> upsShipping = allShippingGroups.stream().filter(blShippingGroupData -> blShippingGroupData.getCode().contains("UPS")).collect(Collectors.toList());
+            final List<BlShippingGroupData> upsShipping = allShippingGroups.stream().filter(blShippingGroupData -> blShippingGroupData.getCode().contains("UPS")).collect(Collectors.toList());
             allShippingGroups.removeAll(upsShipping);
         }
         model.addAttribute("shippingGroup", allShippingGroups);
@@ -182,8 +182,8 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             Objects.nonNull(cartModel.getReturnRequestForOrder())){
             model.addAttribute("isReplacementOrderCart" , true);
         }
-		  baseStoreService.getCurrentBaseStore().getSignatureRequiredEquipMinimum();
-		  if(cartData.getTotalPrice().getValue().doubleValue() >= baseStoreService.getCurrentBaseStore().getSignatureRequiredEquipMinimum() || isSignatureAlwaysRequired(cartModel)) {
+		  if (isSignatureAlwaysRequired(cartModel))
+		  {
 			  model.addAttribute("signatureRequiredMandatory", true);
 		  }
 		  else {
@@ -209,7 +209,12 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     }
 
     private boolean isSignatureAlwaysRequired(final CartModel cartModel) {
-   	return cartModel.getEntries().stream().anyMatch(entry -> (((BlProductModel)entry.getProduct()).getSignatureAlwaysRequired() != null && ((BlProductModel)entry.getProduct()).getSignatureAlwaysRequired()));
+		 return cartModel.getEntries().stream()
+				 .anyMatch(entry -> ((((BlProductModel) entry.getProduct()).getSignatureAlwaysRequired() != null
+						 && ((BlProductModel) entry.getProduct()).getSignatureAlwaysRequired())
+						 || (baseStoreService.getCurrentBaseStore().getSignatureRequiredEquipMinimum() != null
+								 && ((BlProductModel) entry.getProduct()).getRetailPrice() > baseStoreService.getCurrentBaseStore()
+										 .getSignatureRequiredEquipMinimum())));
     }
 
     /**

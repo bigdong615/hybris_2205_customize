@@ -49,6 +49,14 @@
 				<input type="hidden" class="cart-cost" id="${cartData.deliveryCost.formattedValue}">
 			</tr>
 			<tr>
+			 <td class="gray80">
+			 	<spring:theme code="basket.page.delivery.signature.required"/>
+			 </td>
+			 <td class="text-end" id="signatureRequired">
+			 	 <format:blPrice priceData="${cartData.signatureRequiredFee}"/>
+			  </td>
+			</tr>
+			<tr>
 				<td class="gray80">
 				    <c:choose>
                        <c:when test="${pageType =='reviewSummaryPage'}">
