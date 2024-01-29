@@ -59,6 +59,8 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 	private DefaultBlOrderFeedFTPService defaultBlOrderFeedFTPService;
 	private MediaService mediaService;
 	public static final String COMPLETED_ORDER_MEDIA_FILE_NAME = "BlCompletedOrderFeedCronJob";
+	public static final String COMPLETED_ORDER_FILE_NAME = "bl_completed_order_feed.csv";
+	public static final String COMPLETED_ORDER_TEST_FILE_NAME = "bl_completed_order_feed_test.csv";
 
 	private BlCompletedOrderPopulator blCompletedOrderPopulator;
 
@@ -134,6 +136,7 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 
 	private MediaModel createMediaModel(final File productFeedFile, final SimpleDateFormat formatter)
 	{
+
 		final MediaModel media = modelService.create(MediaModel.class);
 		final String logFileName = new SimpleDateFormat(BlespintegrationConstants.COMPLETED_FILE_FORMAT).format(new Date());
 		media.setCode(COMPLETED_ORDER_MEDIA_FILE_NAME + "_" + logFileName);
@@ -169,6 +172,14 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 			channel.connect();
 			channelSftp = (ChannelSftp) channel;
 			channelSftp.cd(Config.getParameter(BlespintegrationConstants.ORDER_CLIENT_FTP_PATH));
+			if (file.getName().contains("_test"))
+			{
+				channelSftp.rm(COMPLETED_ORDER_TEST_FILE_NAME);
+			}
+			else
+			{
+				channelSftp.rm(COMPLETED_ORDER_FILE_NAME);
+			}
 			final File f = new File(file.getAbsolutePath());
 			try (FileInputStream fileInputStream = new FileInputStream(f))
 			{
@@ -204,7 +215,7 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 	private File getFile()
 	{
 		final String logFileName = new SimpleDateFormat(BlespintegrationConstants.COMPLETED_FILE_FORMAT).format(new Date());
-		final String fileName = new StringBuilder(BlespintegrationConstants.COMPLETED_ORDER_FILE_NAME_PREFIX).append(logFileName)
+		final String fileName = new StringBuilder(BlespintegrationConstants.COMPLETED_ORDER_FILE_NAME_PREFIX)
 				.append(Config.getParameter(BlespintegrationConstants.TEST_FILE_EXTENSION))
 				.append(BlespintegrationConstants.RETURN_ORDER_FILE_SUFFIX).toString();
 		final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
@@ -222,6 +233,7 @@ public class BlCompletedOrderExportJob extends AbstractJobPerformable<BlComplete
 			{
 				directory.mkdirs();
 			}
+
 		}
 		catch (final Exception e)
 		{
