@@ -128,6 +128,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		else {
 			double totalOptionCost = 0.0;
 			double subtotal = 0.0;
+			double signatureRequired = 0.0;
 			double totalDamageWaiverCost = 0.0;
 			final List<AbstractOrderEntryModel> entries =order.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(
 					Collectors.toList());
@@ -141,6 +142,10 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 					totalOptionCost += getTotalOptionPrice(e);
 				}
 			}
+			if (order.getSignatureRequiredFee() != null)
+			{
+				signatureRequired = order.getSignatureRequiredFee();
+			}
 			if(BooleanUtils.isFalse(order.isGiftCardOrder()) && BooleanUtils.isFalse(order.getIsRetailGearOrder())){
 				final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
 				order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
@@ -153,7 +158,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 
 				order.setSubtotal(subtotal);
 				final Double totalPriceWithDamageWaiverCostAndOption = Double
-						.valueOf(subtotal + totalDamageWaiverCost+ totalOptionCost);
+						.valueOf(subtotal + totalDamageWaiverCost + totalOptionCost + signatureRequired);
 				order.setTotalPrice(totalPriceWithDamageWaiverCostAndOption);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {} for the order {}",
 						totalPriceWithDamageWaiverCostAndOption,order.getCode());

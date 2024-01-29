@@ -106,6 +106,14 @@
 					</td>
 				</c:if>
 			</tr>
+			<tr>
+			 <td class="gray80">
+			 	<spring:theme code="basket.page.delivery.signature.required"/>
+			 </td>
+			 <td class="text-end" id="signatureRequired">
+			 	 <format:blPrice priceData="${cartData.signatureRequiredFee}"/>
+			  </td>
+			</tr>
 			<tr class="total">
 				<td><spring:theme code="basket.page.total" /></td>
 				<td class="text-end" id="cart-shipping-total"><format:price
