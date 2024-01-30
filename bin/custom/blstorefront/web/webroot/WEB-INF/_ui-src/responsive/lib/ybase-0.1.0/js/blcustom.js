@@ -207,7 +207,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
        										 "quantity": quantity
      											    }
   									  	 };
-  									  	 dmpgDl.events.unshift(events1);
+  									  	 dmpgDl.events.push(events1);
 									   
 
                                       //On empty cart page, add class on close & continue shopping button of add to rental modal.
@@ -727,7 +727,7 @@ $('.btn-number').click(function(e){
        	  "quantity": 1
      	     }
   		};
-  		dmpgDl.events.unshift(events1);
+  		dmpgDl.events.push(events1);
 	 
 	 
 	 

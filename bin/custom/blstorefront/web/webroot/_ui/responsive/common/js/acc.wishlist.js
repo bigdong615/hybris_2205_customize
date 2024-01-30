@@ -43,7 +43,7 @@
       											}
   									  	 };
 									   
- dmpgDl.events.unshift(events1);
+ dmpgDl.events.push(events1);
                                         }
                                         else{
                                        $.ajax({
@@ -72,7 +72,7 @@
       											}
   									  	 }
 									   ;
-									   dmpgDl.events.unshift(events1);
+									   dmpgDl.events.push(events1);
                                      }
                                      
                                      

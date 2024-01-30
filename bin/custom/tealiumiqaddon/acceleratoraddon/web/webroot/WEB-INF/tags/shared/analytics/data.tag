@@ -236,7 +236,7 @@
 			    					 "variant" : "rental",
        								 "value": 
        								    {
-         								 "displayGross": ${product.price.value}
+       									  "displayGross": ${product.price.value !='' ? "0" : "00"}
         								}
        							    }<c:if test='${not status.last}'>,</c:if>
                			</c:forEach>
@@ -304,14 +304,14 @@
 	         		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
 	  				"index": "${status.index + 1}",
 				  	"value": {
-	       					"displayGross": ${product.price.value}
+	       					"displayGross": ${product.price.value !='' ? "0" : "00"}
 	     					 }
 				  	 },	
 				  	 </c:forEach>
 				  	 ]
 				}
      		
-   		 }
+   		 
 			];
 
 			dmpgDl.screen = 
@@ -352,7 +352,7 @@
          		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
   				"index": "${status.index + 1}",
 			  	"value": {
-       					"displayGross": ${product.price.value}
+			  		"displayGross": ${product.price.value !='' ? "0" : "00"}
      					 }
 			  	 },	
 			  	 </c:forEach>
