@@ -226,8 +226,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		final CheckoutPciOptionEnum subscriptionPciOption = getCheckoutFlowFacade().getSubscriptionPciOption();
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
 
-		final CartData cartData = getCheckoutFacade().getCheckoutCart();
-		model.addAttribute(CART_DATA_ATTR, cartData);
+		//final CartData cartData = getCheckoutFacade().getCheckoutCart();
+		//model.addAttribute(CART_DATA_ATTR, cartData);
 
 		if (CheckoutPciOptionEnum.HOP.equals(subscriptionPciOption))
 		{
@@ -270,19 +270,19 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			try
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
-				//final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
-				if (Objects.nonNull(cartData) && StringUtils.isNotEmpty(cartData.getPoNumber()))
+				final CartData cartData2 = getCheckoutFlowFacade().getCheckoutCart();
+				if (Objects.nonNull(cartData2) && StringUtils.isNotEmpty(cartData2.getPoNumber()))
 				{
-					model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NUMBER, cartData.getPoNumber());
-					model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NOTES, cartData.getPoNotes());
+					model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NUMBER, cartData2.getPoNumber());
+					model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NOTES, cartData2.getPoNotes());
 				}
-				if (Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
+				if (Objects.nonNull(cartData2) && Objects.nonNull(cartData2.getPaymentInfo()))
 				{
-					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
+					final CCPaymentInfoData paymentInfo = cartData2.getPaymentInfo();
 					setPaymentDetailForPage(paymentInfo, model);
 				}
 				// adding model attribute to disable other payment excluding Credit card if Gift card is applied
-				disableOtherPayments(cartData, model);
+				disableOtherPayments(cartData2, model);
 
 				model.addAttribute(BlControllerConstants.DEFAULT_BILLING_ADDRESS, getBlCustomerFacade().getDefaultBillingAddress());
 
@@ -290,7 +290,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 				//To pass breadcrumb data for each product in cart - Tealium
 				try
 				{
-					final CartData cartData1 = (CartData) model.getAttribute("cartData");
+					final CartData cartData1 = getCheckoutFacade().getCheckoutCart();
 					cartData1.getEntries().forEach(entry -> {
 						final List<String> productBreadcrumbData = new ArrayList<String>();
 						final List<Breadcrumb> productBreadcrumb = new ArrayList<Breadcrumb>(
@@ -330,8 +330,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		paymentDetailsForm.setBillingAddress(addressForm);
 		model.addAttribute(paymentDetailsForm);
 
-		//	final CartData cartData = getCheckoutFacade().getCheckoutCart();
-		//model.addAttribute(CART_DATA_ATTR, cartData);
+		final CartData cartData = getCheckoutFacade().getCheckoutCart();
+		model.addAttribute(CART_DATA_ATTR, cartData);
 
 		if (Boolean.TRUE.equals(cartData.getIsRentalCart()))
 		{
