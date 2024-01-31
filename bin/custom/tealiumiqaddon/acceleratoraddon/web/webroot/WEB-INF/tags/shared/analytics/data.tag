@@ -566,6 +566,37 @@
 		               			   ]
 		               			  }		
 				},
+				
+				
+				{
+					"event":"product.load.auto.dataLayer.load",
+					"product": [
+						  	{
+						  		{
+								  	"id": "${product.code}",
+								  	"name": "${product.displayName}",
+					          		"brand": "${product.manufacturer}",
+									 <c:if test="${not empty breadcrumbs[0]}">
+									 "category": "${ycommerce:encodeJavaScript(breadcrumbs[0].categoryCode)}",
+									  </c:if>
+									  <c:if test="${not empty breadcrumbs[1]}">
+										"subCategory2": "${ycommerce:encodeJavaScript(breadcrumbs[1].categoryCode)}",
+									  </c:if>
+									  <c:if test="${not empty breadcrumbs[2]}">
+									    "subCategory3": "${ycommerce:encodeJavaScript(breadcrumbs[2].categoryCode)}",
+									  </c:if>
+					         		"variant" : "${ycommerce:encodeJavaScript(blPageType.toLowerCase())}",
+					         		"stockAvailability" : "${datesSettedInSession ? (product.stock.stockLevelStatus.code == 'outOfStock' ? 'out of stock' : 'in stock') : ''}",
+								  	"value": 
+								  	    {
+					       				   "displayGross": ${product.price.value == null ? 0.0: product.price.value}
+					     				}
+								  	 }	
+						  	 }
+					]
+				
+				}
+				
 			];
 
 			dmpgDl.screen = 
@@ -1277,7 +1308,7 @@
 				{
 					"event":"cart.load.auto.dataLayer.load",
 					"cart":{
-						
+						 "checkoutStep": "1",
 						    "lines": [  
 						         <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
 		        					{
@@ -1485,7 +1516,7 @@
 				{
 					"event":"cart.load.auto.dataLayer.load",
 					"cart":{
-						
+						 "checkoutStep": "2",
 						    "lines": [  
 						         <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
 		        					{
@@ -1694,7 +1725,7 @@
 				{
 					"event":"cart.load.auto.dataLayer.load",
 					"cart":{
-						
+						 "checkoutStep": "3",
 						    "lines": [  
 						         <c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
 		        					{
